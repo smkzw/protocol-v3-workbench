@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "policy_id": "mw-protocol-v3-repository-hygiene-v1",
+  "current_age_days": 14,
+  "text_reference_scan_max_bytes": 2097152,
+  "classifications": [
+    "reuse",
+    "migrate_then_retire",
+    "authority_regression",
+    "historical_archive",
+    "regenerable",
+    "quarantine",
+    "protected_out_of_scope"
+  ],
+  "rules": [
+    {
+      "id": "protected_medical_monitoring",
+      "classification": "protected_out_of_scope",
+      "owner": "medical_monitoring",
+      "patterns": [
+        "*medical_monitoring*",
+        "*monitoring*",
+        "services/api/app/monitoring_*",
+        "tests/test_monitoring_*",
+        "frontend/src/features/medical-monitoring/*",
+        "records/*/monitoring*",
+        "runs/execution/monitoring*"
+      ],
+      "reason": "Concurrent medical-monitoring work is outside Protocol scope and deny-mutation protected."
+    },
+    {
+      "id": "protected_harness_runtime",
+      "classification": "protected_out_of_scope",
+      "owner": "harness_runtime",
+      "patterns": ["logs/agent_health/*"],
+      "reason": "Cross-task harness health state is externally owned runtime evidence and not a Protocol cleanup target."
+    },
+    {
+      "id": "protected_other_pocs",
+      "classification": "protected_out_of_scope",
+      "owner": "other_subsystem",
+      "patterns": ["poc/*", "pocs/*"],
+      "exclude_patterns": ["pocs/protocol_v3/*"],
+      "reason": "Other subsystem proof-of-concept trees are not Protocol cleanup targets."
+    },
+    {
+      "id": "protected_runtime_evidence",
+      "classification": "protected_out_of_scope",
+      "owner": "immutable_runtime_evidence",
+      "patterns": [
+        "runtime/*",
+        "*.sqlite",
+        "*.sqlite3",
+        "*.sqlite3-wal",
+        "*.sqlite3-shm",
+        "*.db",
+        "*.db-wal",
+        "*.db-shm"
+      ],
+      "reason": "Runtime databases, WAL/SHM and logs require logical/physical protection in Task 0.4 and are never hygiene targets."
+    },
+    {
+      "id": "protocol_authority",
+      "classification": "authority_regression",
+      "owner": "protocol_v3_authority",
+      "patterns": [
+        ".hermes/plans/2026-08-09_020923-mw-protocol-multi-agent-rearchitecture.md",
+        "plans/mw_protocol_multi_agent_rearchitecture_design_20260809.md",
+        "plans/mw_system_rearchitecture_design_decisions_20260808.md",
+        "runs/MW_PROTOCOL_REARCHITECTURE_DESIGN_READY_FOR_USER_REVIEW_20260809.md",
+        "runs/MW_PROTOCOL_DESIGN_D017_SCOPE_SUPERSESSION_20260809.md",
+        "runs/role_acceptance/mw_protocol_p0_20260805_round17_*",
+        "evidence/mw_docx_release_gate_20260727/*"
+      ],
+      "reason": "Approved design, decisions and release-regression evidence remain immutable authority."
+    },
+    {
+      "id": "clinical_and_product_source_authority",
+      "classification": "authority_regression",
+      "owner": "clinical_product_source_corpus",
+      "patterns": [
+        "docs/*",
+        "research/*",
+        "protocol-corpus/*",
+        "services/api/assets/*"
+      ],
+      "reason": "Clinical source documents, product research and existing corpus/glossary assets remain read-only migration and regression authority."
+    },
+    {
+      "id": "medical_writing_regression_tests",
+      "classification": "authority_regression",
+      "owner": "medical_writing_regression",
+      "patterns": [
+        "tests/test_medical_writing*",
+        "tests/test_*d017*",
+        "frontend/tests/*medical_writing*",
+        "frontend/tests/*d017*"
+      ],
+      "reason": "Existing medical-writing and D017 tests are migration regression inputs until explicitly superseded."
+    },
+    {
+      "id": "historical_design_and_visual_process",
+      "classification": "historical_archive",
+      "owner": "design_visual_process_archive",
+      "patterns": [
+        ".superpowers/*",
+        "artifacts/*",
+        "output/*",
+        "frontend/output/*",
+        "KNOWN_ISSUES.md",
+        "REPORT.md",
+        "cms_alignment_worker.md",
+        "design-qa.md",
+        "test_worker*.py"
+      ],
+      "reason": "Early design explorations, worker notes and rendered evidence remain indexed history, not active build source."
+    },
+    {
+      "id": "protected_local_toolchain_config",
+      "classification": "quarantine",
+      "owner": "local_toolchain_config",
+      "patterns": ["frontend/.npmrc"],
+      "quarantine_blocked": true,
+      "reason": "Local registry/auth configuration is excluded from source and cannot move until Task 0.3 reconstructs the toolchain without it."
+    },
+    {
+      "id": "orphan_cli_artifact",
+      "classification": "quarantine",
+      "owner": "orphan_process_artifact",
+      "patterns": ["--indications"],
+      "quarantine_blocked": true,
+      "reason": "A loose CLI-output artifact has no build role; preserve in place until locator and occupancy checks approve quarantine."
+    },
+    {
+      "id": "nested_workbench_candidate",
+      "classification": "quarantine",
+      "owner": "legacy_nested_workbench",
+      "patterns": ["implementation/workbench/*"],
+      "quarantine_blocked": true,
+      "reason": "Nested workbench requires per-file canonical hash and locator resolution before any move."
+    },
+    {
+      "id": "regenerable_build_and_cache",
+      "classification": "regenerable",
+      "owner": "toolchain_cache",
+      "patterns": [
+        "*.pyc",
+        "*/__pycache__/*",
+        ".pytest_cache/*",
+        ".ruff_cache/*",
+        ".vite/*",
+        ".playwright-cli/*",
+        ".venv/*",
+        "frontend/node_modules/*",
+        "frontend/dist/*",
+        "frontend/.npm-cache/*",
+        "tools/openxml_docx_validator/bin/Release/*",
+        "tools/openxml_docx_validator/obj/*",
+        "deploy/medical_writing_local/logs/*",
+        "screenlog.0",
+        ".DS_Store",
+        "*/.DS_Store"
+      ],
+      "reason": "Derived or cache material is reproducible, but mutation stays blocked until Tasks 0.3-0.5 gates pass."
+    },
+    {
+      "id": "historical_evidence_surfaces",
+      "classification": "historical_archive",
+      "owner": "workbench_evidence_archive",
+      "patterns": [
+        "runs/*",
+        "records/*",
+        "logs/*",
+        "evidence/*",
+        "archives/*",
+        "source_backups/*",
+        "backups/*",
+        "context/*",
+        "reviews/*",
+        "metrics/*",
+        "prompts/*",
+        "plans/*"
+      ],
+      "reason": "Process and acceptance history is indexed as current/cold evidence, never deleted by static non-reference alone."
+    },
+    {
+      "id": "legacy_medical_writing_implementation",
+      "classification": "migrate_then_retire",
+      "owner": "medical_writing_legacy",
+      "patterns": [
+        "services/api/app/medical_writing*",
+        "frontend/src/features/medical-writing/*",
+        "frontend/src/App.jsx",
+        "frontend/src/styles.css"
+      ],
+      "reason": "Reusable behavior must migrate behind Protocol v3 contracts before legacy surfaces may retire."
+    },
+    {
+      "id": "protocol_v3_future_source",
+      "classification": "reuse",
+      "owner": "protocol_v3",
+      "patterns": ["pocs/protocol_v3/*"],
+      "reason": "Protocol v3 implementation source is the clean target tree."
+    },
+    {
+      "id": "active_source_and_toolchain",
+      "classification": "reuse",
+      "owner": "shared_workbench_source",
+      "patterns": [
+        "AGENTS.md",
+        "README.md",
+        "pytest.ini",
+        "packages/contracts/*",
+        "services/api/app/*",
+        "services/api/requirements-*.txt",
+        "frontend/AGENTS.md",
+        "frontend/index.html",
+        "frontend/package*.json",
+        "frontend/pnpm-*.yaml",
+        "frontend/vite.config.mjs",
+        "frontend/src/*",
+        "frontend/tests/*",
+        "tests/*",
+        "scripts/*",
+        "tools/*",
+        "config/*",
+        "deploy/*"
+      ],
+      "reason": "Current source and declared toolchain remain available for migration and regression."
+    }
+  ],
+  "default": {
+    "classification": "quarantine",
+    "owner": "workbench_unresolved",
+    "quarantine_blocked": true,
+    "reason": "No approved rule owns this path; retain in place and block every mutator until resolved."
+  }
+}

@@ -1,6 +1,6 @@
 # MW Protocol v3 Phase 0 baseline
 
-Status: `TASK_0_1_REMEDIATED_AWAITING_SAME_SESSION_REVIEW`
+Status: `READY_TASK_0_1`
 Task ID: `mw_protocol_v3_phase0_20260809_111313`  
 Created: 2026-08-09  
 
@@ -52,4 +52,4 @@ The fresh verifier observed post-intake changes only under the active medical-mo
 
 ## Next safe action
 
-Commit the remediation in the isolated Git workspace, then obtain a same-session independent re-review. Only after explicit Task 0.1 acceptance may Task 0.2 begin.
+The same-session Luna re-review returned `READY_TASK_0_1` with zero P0/P1. Task 0.2 may proceed only inside the isolated workspace; no live mutator is allowed.
