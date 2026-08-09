@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "EligibilityVlmCaptureQuality": {
+      "additionalProperties": false,
+      "properties": {
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/EligibilityVlmCaptureQualityFlag"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "overall": {
+          "$ref": "#/$defs/EligibilityVlmCaptureQualityOverall"
+        }
+      },
+      "required": [
+        "overall",
+        "flags"
+      ],
+      "title": "EligibilityVlmCaptureQuality",
+      "type": "object"
+    },
+    "EligibilityVlmCaptureQualityFlag": {
+      "enum": [
+        "none",
+        "blur",
+        "glare",
+        "underexposed",
+        "overexposed",
+        "low_resolution",
+        "partial_crop",
+        "obstruction",
+        "perspective_distortion",
+        "compression_artifact",
+        "orientation_uncertain",
+        "text_too_small"
+      ],
+      "title": "EligibilityVlmCaptureQualityFlag",
+      "type": "string"
+    },
+    "EligibilityVlmCaptureQualityOverall": {
+      "enum": [
+        "adequate_for_human_qc",
+        "limited",
+        "unusable"
+      ],
+      "title": "EligibilityVlmCaptureQualityOverall",
+      "type": "string"
+    },
+    "EligibilityVlmDocumentType": {
+      "enum": [
+        "not_applicable",
+        "medical_record",
+        "laboratory_report",
+        "prescription_or_medication_record",
+        "imaging_report",
+        "consent_or_signature_page",
+        "identity_or_administrative_page",
+        "unknown"
+      ],
+      "title": "EligibilityVlmDocumentType",
+      "type": "string"
+    },
+    "EligibilityVlmHumanAttention": {
+      "enum": [
+        "none",
+        "possible_identifier_visible",
+        "capture_quality_limited",
+        "orientation_uncertain",
+        "image_contains_instruction_like_text",
+        "unsupported_content"
+      ],
+      "title": "EligibilityVlmHumanAttention",
+      "type": "string"
+    },
+    "EligibilityVlmMediaClass": {
+      "enum": [
+        "document_page",
+        "clinical_photo",
+        "device_screen",
+        "specimen_or_sample",
+        "mixed_or_collage",
+        "unknown"
+      ],
+      "title": "EligibilityVlmMediaClass",
+      "type": "string"
+    },
+    "EligibilityVlmOrientation": {
+      "enum": [
+        "upright",
+        "rotate_90_clockwise",
+        "rotate_180",
+        "rotate_90_counterclockwise",
+        "uncertain",
+        "not_applicable"
+      ],
+      "title": "EligibilityVlmOrientation",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "capture_quality": {
+      "$ref": "#/$defs/EligibilityVlmCaptureQuality"
+    },
+    "media_class": {
+      "$ref": "#/$defs/EligibilityVlmMediaClass"
+    },
+    "orientation": {
+      "$ref": "#/$defs/EligibilityVlmOrientation"
+    },
+    "primary_document_type": {
+      "$ref": "#/$defs/EligibilityVlmDocumentType"
+    },
+    "requires_human_attention": {
+      "items": {
+        "$ref": "#/$defs/EligibilityVlmHumanAttention"
+      },
+      "title": "Requires Human Attention",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "eligibility_visual_descriptor_v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "media_class",
+    "primary_document_type",
+    "capture_quality",
+    "orientation",
+    "requires_human_attention"
+  ],
+  "title": "EligibilityVlmDescriptor",
+  "type": "object"
+}

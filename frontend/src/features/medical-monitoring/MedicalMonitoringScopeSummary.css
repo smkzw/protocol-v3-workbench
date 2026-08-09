@@ -1,0 +1,95 @@
+.monitoring-scope-summary {
+  margin: 14px 0 18px;
+  padding: 14px 18px 16px;
+  border: 1px solid #d5e2ec;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f8fbfe 0%, #ffffff 72%);
+  box-shadow: 0 5px 16px rgba(24, 60, 92, 0.06);
+}
+
+.monitoring-scope-summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.monitoring-scope-summary-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #2b638e;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.monitoring-scope-summary h2 { margin: 3px 0 4px; color: #16354c; font-size: 17px; }
+.monitoring-scope-summary-head p { max-width: 740px; margin: 0; color: #6b7e8d; font-size: 11px; line-height: 1.5; }
+.monitoring-scope-summary-status { flex: 0 0 auto; padding: 4px 8px; border-radius: 999px; background: #eef3f6; color: #627582; font-size: 10px; }
+.monitoring-scope-summary-status.available { background: #e8f7ed; color: #2f7049; }
+.monitoring-scope-summary-status.partial { background: #fff4d7; color: #8a650e; }
+.monitoring-scope-summary-status.malformed { background: #fff0ec; color: #a13e2d; }
+.monitoring-scope-summary-error, .monitoring-scope-summary-note { margin: 8px 0 0; color: #8a5a30; font-size: 11px; line-height: 1.45; }
+.monitoring-scope-summary-note { color: #6e7f8c; }
+
+.monitoring-scope-summary-blocker {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid #efc7b3;
+  border-radius: 8px;
+  background: #fff7f2;
+  color: #8c4d30;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.monitoring-scope-summary-grid { display: grid; grid-template-columns: minmax(245px, .95fr) minmax(225px, 1fr) minmax(225px, 1fr); gap: 10px; }
+.monitoring-scope-trial-card, .monitoring-scope-list-card { min-width: 0; padding: 10px; border: 1px solid #e0e9f0; border-radius: 10px; background: rgba(255,255,255,.9); }
+.monitoring-scope-card-title { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; color: #355b73; font-size: 11px; }
+.monitoring-scope-card-title strong { color: #284d64; font-size: 12px; }
+.monitoring-scope-card-title span { margin-left: auto; color: #8293a0; font-weight: 400; }
+
+.monitoring-scope-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.monitoring-scope-count { min-width: 0; padding: 6px 7px; border-radius: 7px; background: #f4f7f9; }
+.monitoring-scope-count.warning { background: #fff7df; }
+.monitoring-scope-count.info { background: #eef7fc; }
+.monitoring-scope-count b { display: block; overflow: hidden; color: #234860; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-scope-count small { display: block; margin-top: 1px; color: #718391; font-size: 9px; }
+
+.monitoring-scope-distributions { display: grid; gap: 7px; margin-top: 9px; }
+.monitoring-scope-distribution { display: grid; gap: 4px; }
+.monitoring-scope-distribution-label { color: #5f7481; font-size: 9px; font-weight: 700; line-height: 1.25; }
+.monitoring-scope-distribution-row { display: grid; grid-template-columns: 62px minmax(0,1fr) 22px; align-items: center; gap: 6px; color: #728391; font-size: 9px; }
+.monitoring-scope-distribution-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-scope-distribution-row i { display: block; height: 5px; overflow: hidden; border-radius: 999px; background: #edf2f5; }
+.monitoring-scope-distribution-row i b { display: block; height: 100%; border-radius: inherit; background: #70a8c8; }
+.monitoring-scope-distribution-row strong { color: #3b5d70; text-align: right; font-size: 10px; }
+.monitoring-scope-inline-warning { margin: 8px 0 0; color: #8a650e; font-size: 10px; line-height: 1.4; }
+.monitoring-scope-trial-empty, .monitoring-scope-empty { margin: 8px 0 2px; color: #7d8e9a; font-size: 11px; line-height: 1.45; }
+
+.monitoring-scope-row { display: grid; grid-template-columns: auto minmax(0,1fr) auto auto; align-items: center; gap: 6px; width: 100%; margin-top: 5px; padding: 7px 6px; border: 1px solid transparent; border-radius: 7px; background: #f8fafb; color: #2e5167; text-align: left; }
+button.monitoring-scope-row { cursor: pointer; }
+button.monitoring-scope-row:hover, .monitoring-scope-row.active { border-color: #8ab5d2; background: #f1f8fc; }
+.monitoring-scope-row-icon { display: inline-flex; align-items: center; justify-content: center; color: #5c8aaa; }
+.monitoring-scope-row-main { min-width: 0; display: grid; gap: 2px; }
+.monitoring-scope-row-main strong { overflow: hidden; color: #2c5168; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-scope-row-main small { overflow: hidden; color: #788a98; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-scope-row-state { padding: 2px 4px; border-radius: 999px; background: #fff4d7; color: #8a650e; font-size: 9px; white-space: nowrap; }
+.monitoring-scope-more { display: block; margin: 7px 2px 0; color: #8494a0; font-size: 9px; line-height: 1.4; }
+
+@media (max-width: 1050px) {
+  .monitoring-scope-summary-grid { grid-template-columns: 1fr 1fr; }
+  .monitoring-scope-trial-card { grid-column: 1 / -1; }
+}
+
+@media (max-width: 700px) {
+  .monitoring-scope-summary { padding: 12px; }
+  .monitoring-scope-summary-head { flex-direction: column; gap: 8px; }
+  .monitoring-scope-summary-grid { grid-template-columns: 1fr; }
+  .monitoring-scope-trial-card { grid-column: auto; }
+}

@@ -1,0 +1,412 @@
+{
+  "schema_version": "mw-final-4x3-harness-config-2026-07-27.2",
+  "status": "prepared_not_executed",
+  "timezone": "Asia/Shanghai",
+  "authoritative_sources": [
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TEST_MATRIX_DRAFT.md",
+      "sha256": "167e6ab701ba3e0ed2b2136652053c9666b10e27511bf94488a37c5f558fe24b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TESTER_D_AMENDMENT_20260727.md",
+      "sha256": "32608cc71c91025de5ba65cb2cbc48aacf3d3b4d9fc0033eb001ec56c2df1dfb",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TESTER_D_IDENTITY_CORRECTION_20260728.md",
+      "sha256": "35dd27e159cd76003c17a8ac62fffc5a815394e0273a0a84f5dbf1f452fc532f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/00_AUDIT_JOURNAL.md",
+      "sha256": "71fae63870bcbed374b1cce48e26530c4346501eaea2a926fbb3ebc767fd2ece",
+      "drift_policy": "record_only"
+    },
+    {
+      "path": "context/mw_source_to_docx_launch_loop_20260726_context.md",
+      "sha256": "e8a447d2a56fba5b0878de21cea812cebc8c59827c0169a10c28424b710f73ab",
+      "drift_policy": "record_only"
+    },
+    {
+      "path": "runs/execution/mw_systemic_e2e_loop_20260726/cursor_lane_real_loop.py",
+      "sha256": "c0fb5213aa7a0993304393dc490ce38517b92be75e9ef993fd4c338c29faade1",
+      "drift_policy": "record_only"
+    },
+    {
+      "path": "runs/execution/mw_systemic_e2e_loop_20260726/wave_c_p018/cursor_selftest_v2.py",
+      "sha256": "259c8cf1fda3ff799d3312e488863bc56c6a92cf428c75e883adba25e605fee5",
+      "drift_policy": "record_only"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/MATRIX_ASSIGNMENT.json",
+      "sha256": "0e63f901ffa6219d37ff0ffc5e5fc5af44dba328f457b2cf6f046820ca2146b4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/ROUTE_TIME_GUARD.md",
+      "sha256": "22064adae31dd3971bb18d4ffa79d05961e0248bf5b2b422412693ccb3801376",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/CLEAN_STATE_BACKUP_RESET_CHECKLIST.md",
+      "sha256": "4cce54a93af5a0d1f88632673885d7445db90b7837eeb898b22ee78bdf6a6785",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_document_exporter.py",
+      "sha256": "ae9760f2949a8515139b1e2243f1205933b279e5edecae7f900d21b50d74cbc1",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_document_exporter.py",
+      "sha256": "d119c0563aa186bd0d00a14da9af5894bcf1e6da8bf95f2a597dfa8434dd81f4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_competitor_triage.py",
+      "sha256": "e5dc40d85189507593efd1364bd5261289c23e1ac6b50449e806f496841cf689",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_competitor_triage.py",
+      "sha256": "1c933056af19926fbac031eb03b3f7f27c27d78f49e38a68bfb6dd2547113455",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "sha256": "05a4290e84e5689107396b7e4db77767abdfb00843e3c33a6a3e388674eb91c6",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/styles.css",
+      "sha256": "8915175c1aa5d7ab5e43347e1b838e5fa01555d40ed26fd15f17e7d38dacb799",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/tests/medical_writing_editor_pending_body_notice_qc.mjs",
+      "sha256": "916da8673272f1879515cdffae1d397b6e9310e541450e4474cb7675b45fa86d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "scripts/qc/mw_final_4x3_harness.py",
+      "sha256": "d577dea4800366dcd1938e5fcf1e25dbc19f722d6ff41f904309f88573c75221",
+      "drift_policy": "block"
+    },
+    {
+      "path": "scripts/qc/mw_final_e2e_runtime.py",
+      "sha256": "edb5cd26a1980832d25e52aab6201120b9b1450c0e352ddd27f4ad2e561537ca",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_final_e2e_runtime.py",
+      "sha256": "16e0fb15d103ada8b064a00a7d6815e4d7560e218f503e0a01c8cf1fb2d8ccb4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/COMMON_TESTER_CONTRACT.md",
+      "sha256": "269310967a99f670f3cfc2e3b7f132c994f3a5b87a1fe53897f641772d627a0e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/TESTER_A_PI_ALIBABA_QWEN38.md",
+      "sha256": "f072a9f072421fc09a52c2fa961b0a9055563f8cc2475074d4f5c4c783a093cd",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/TESTER_B_PI_AISHUO_CMS.md",
+      "sha256": "8657f67acbee6373e7a23b2a3c44d2f99a8e2573d3d5370c0772ea9714ce5bfb",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/TESTER_C_CODEBUDDY_HY3.md",
+      "sha256": "1ae7f1328f9b14f4d12cbe756c36ac245f17d40a9256b460db7282bc11503b65",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/TESTER_D_PI_ANTIGRAVITY_GEMINI36_FLASH_HIGH.md",
+      "sha256": "5b9733ca61a7b0911133c73b531e8f71e210503e4892847416a6ce2e57ff7dfe",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_4x3_e2e_20260727/PER_SLOT_COMPLETION_SCHEMA.json",
+      "sha256": "93e2a3677e46f9d4396cbec8b96669dd10c8d1039a3d76ddf668b7339165add8",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_research_pipeline.py",
+      "sha256": "75f769bcfd6bfd0301761e89e27e4e9255fd9168599b04f76aa762051cad250a",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference_preparation_batch.py",
+      "sha256": "ece63441b79b73b1182953bec79e0f8ee6a1c70d098acdf68de37631697ff3ed",
+      "drift_policy": "block"
+    },
+    {
+      "path": "packages/contracts/workbench_contracts/models.py",
+      "sha256": "73e3e7e84efd926dfd1dbdce28231d99e8707c255c950ec5523ee01a530c83e0",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_prefill.py",
+      "sha256": "fd726a312be0fb584a726827ca085e122b525d9856927b5f641a949b23e68171",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_journey.py",
+      "sha256": "ff8cdb5ace32699df1c106eacedae94e38e457d8171fac7a28f13b31a554b8b0",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingSynopsisProjectIntake.jsx",
+      "sha256": "1b5789fa5364b63347d04838334fe1b4039b7819c5705c2a2f90aefd15aa2968",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+      "sha256": "680566d2463db937e1e93fba067a472ca93688839258d519ea367ca656ab3cdd",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/AuthoringCandidatePackagePanel.jsx",
+      "sha256": "1898c2be2c2e2f27eec4cae0f8b42e3b9cd22700745274802d17925c531b8e73",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+      "sha256": "131bffa6bf1f306bc9d6b81e2648c0543831222d91fb8af17f7e9bfdbd4d0141",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx",
+      "sha256": "639a91e07f4e8f5d922d54b7fbfd124d08271aad57df481844399756dae0bee9",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_r5_a1_batch_repair.py",
+      "sha256": "eb926ab5dc8ef17aec5058f5ddd0fbb578b137412848ecd41fc2b90fea4aa0f8",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_r5_a1_preparation_progress.py",
+      "sha256": "f4f96471a277ecbb55a0157b87b76621415c68efacf30177f6410f1c8c932757",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_preparation_batch.py",
+      "sha256": "d687b84f9d2929fed8b5f497fa59694cae096019571ecb43e1c1d4852ae03ca7",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_composite_adopt.py",
+      "sha256": "90bbb9eafaef12f5191302a91fd32657269752aa5682f0be988e2142d2effa3b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_composite_adopt_api.py",
+      "sha256": "2f8c7049f65a5104f819de3c3864fe16a6313925346d70833b40dd2a2f478e7b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_package_contract.py",
+      "sha256": "d342256da768711831eba6297e1ddb456818c3293330e39de27a5bcc457d728e",
+      "drift_policy": "block"
+    }
+  ],
+  "testers": [
+    {
+      "code": "A",
+      "declared_identity": "Codex subAgent/gpt-5.6-luna-high",
+      "requested_selector": "gpt-5.6-luna",
+      "thinking_level": "high"
+    },
+    {
+      "code": "B",
+      "declared_identity": "pi/aishuo/cms-model",
+      "requested_selector": "aishuo/cms-model",
+      "blackout_window": {
+        "start": "00:00",
+        "end": "08:30",
+        "inclusive_end_minute": true
+      }
+    },
+    {
+      "code": "C",
+      "declared_identity": "codebuddy cli/hy3",
+      "requested_selector": "hy3"
+    },
+    {
+      "code": "D",
+      "declared_identity": "pi/google-antigravity/gemini-3.6-flash",
+      "requested_selector": "google-antigravity/gemini-3.6-flash",
+      "thinking_level": "high"
+    }
+  ],
+  "slots": [
+    {
+      "slot": "A1",
+      "tester_code": "A",
+      "indication": "慢性阻塞性肺疾病",
+      "phase": "III",
+      "administration_route": "吸入",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "A2",
+      "tester_code": "A",
+      "indication": "α1-抗胰蛋白酶缺乏症",
+      "phase": "I",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "A3",
+      "tester_code": "A",
+      "indication": "不伴鼻息肉的慢性鼻窦炎",
+      "phase": "II",
+      "administration_route": "鼻喷",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "B1",
+      "tester_code": "B",
+      "indication": "2型糖尿病",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "B2",
+      "tester_code": "B",
+      "indication": "发作性睡病",
+      "phase": "I",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "B3",
+      "tester_code": "B",
+      "indication": "过敏性结膜炎",
+      "phase": "II",
+      "administration_route": "眼用滴剂",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "C1",
+      "tester_code": "C",
+      "indication": "重度抑郁障碍",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "C2",
+      "tester_code": "C",
+      "indication": "C3肾小球病",
+      "phase": "II",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "C3",
+      "tester_code": "C",
+      "indication": "脂溢性皮炎",
+      "phase": "I",
+      "administration_route": "外用泡沫",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "D1",
+      "tester_code": "D",
+      "indication": "帕金森病",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "D2",
+      "tester_code": "D",
+      "indication": "杜氏肌营养不良",
+      "phase": "IIb",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "D3",
+      "tester_code": "D",
+      "indication": "玫瑰痤疮",
+      "phase": "I",
+      "administration_route": "外用乳膏",
+      "project_route": "synopsis_import"
+    }
+  ],
+  "perspectives": [
+    "lazy_medical_writer",
+    "engineer"
+  ],
+  "required_evidence": [
+    "TESTER_AND_SCENARIO.json",
+    "TESTER_ROUTE_RECEIPT.json",
+    "CLEAN_STATE_RECEIPT.json",
+    "BROWSER_ACTION_TRACE.json",
+    "source_receipts.json",
+    "pipeline_lineage.json",
+    "document_validation_and_resume.json",
+    "corpus_admission.json",
+    "chapter_mapping.json",
+    "candidate_sets.json",
+    "quality_scorecard.json",
+    "browser_qc.json",
+    "DOCX_OOXML_GATE.json",
+    "WORD_NATIVE_GATE.md",
+    "DEFECTS.md",
+    "FIX_RETEST_LEDGER.md",
+    "artifacts/protocol/*.docx",
+    "artifacts/rendered/*.pdf",
+    "artifacts/word_native/*",
+    "screenshots/original_resolution/*"
+  ],
+  "pass_artifact": {
+    "path": "PASS.md",
+    "creation_policy": "forbidden_by_harness_until_full_external_gate"
+  },
+  "clean_state": {
+    "inventory_mode": "metadata_only_no_file_content_read",
+    "runtime_root_policy": {
+      "default": "product_root/runtime",
+      "product_root_relative_to_workbench": "../..",
+      "test_override": "explicit_system_temp_root_only",
+      "workbench_runtime_forbidden": true
+    },
+    "inventory_surfaces": [
+      "user_projects.sqlite3",
+      "workbench_runtime.sqlite3",
+      "workbench_runtime.sqlite3-wal",
+      "workbench_runtime.sqlite3-shm",
+      "medical_writing_authoring_journey.sqlite3",
+      "medical_writing_authoring_journey.sqlite3-wal",
+      "medical_writing_authoring_journey.sqlite3-shm",
+      "medical_writing_greenfield.sqlite3",
+      "medical_writing_protocol_assembly_plan.sqlite3",
+      "medical_writing_fact_intake.sqlite3",
+      "medical_writing_shared_corpus.sqlite3",
+      "writing_reference.sqlite3",
+      "writing_reference.sqlite3-wal",
+      "writing_reference.sqlite3-shm",
+      "medical_writing_literature.sqlite3",
+      "medical_writing_synopsis_import.sqlite3",
+      "medical_writing_durable_jobs.sqlite3",
+      "source_content_validations.sqlite3",
+      "source_content_validations.sqlite3-wal",
+      "source_content_validations.sqlite3-shm",
+      "source_registry.jsonl",
+      "source_artifacts",
+      "writing_reference_artifacts",
+      "medical_writing_synopsis_artifacts",
+      "writing_reference_translation_ai_runs.jsonl"
+    ],
+    "snapshot_policy": "plan_only_sqlite_online_backup_or_coordinated_stop",
+    "deletion_policy": "plan_only_no_delete_commands_emitted"
+  }
+}

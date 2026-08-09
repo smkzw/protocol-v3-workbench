@@ -1,0 +1,766 @@
+{
+  "schema_version": "mw-final-5x3-harness-config-2026-07-28.1",
+  "status": "prepared_not_executed",
+  "timezone": "Asia/Shanghai",
+  "authoritative_sources": [
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TEST_MATRIX_DRAFT.md",
+      "sha256": "167e6ab701ba3e0ed2b2136652053c9666b10e27511bf94488a37c5f558fe24b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TESTER_D_AMENDMENT_20260727.md",
+      "sha256": "32608cc71c91025de5ba65cb2cbc48aacf3d3b4d9fc0033eb001ec56c2df1dfb",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/FINAL_4X3_TESTER_D_IDENTITY_CORRECTION_20260728.md",
+      "sha256": "35dd27e159cd76003c17a8ac62fffc5a815394e0273a0a84f5dbf1f452fc532f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "records/handoffs/codex_retake_20260726/CODEX_SOFT_PAUSE_A1_R6_20260728.md",
+      "sha256": "0214e7e285a986e7d49dabfbfed751e54ea3b081bf81ce6fa5f72725f404f3ab",
+      "drift_policy": "block"
+    },
+    {
+      "path": "context/mw_source_to_docx_launch_loop_20260726_context.md",
+      "sha256": "e8a447d2a56fba5b0878de21cea812cebc8c59827c0169a10c28424b710f73ab",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/COMMON_TESTER_CONTRACT.md",
+      "sha256": "bc4ae66585367998fbf6737ed7c71078f052c446a8d8bc1546b95ccd89bb9786",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/ROUTE_TIME_GUARD.md",
+      "sha256": "559a2fe7b0c56a7b19ea9417825342285249a28e3eebc8af64d89ad5e5a4c98f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/CLEAN_STATE_BACKUP_RESET_CHECKLIST.md",
+      "sha256": "4cce54a93af5a0d1f88632673885d7445db90b7837eeb898b22ee78bdf6a6785",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/PER_SLOT_COMPLETION_SCHEMA.json",
+      "sha256": "f456bdadac9154d580c62788902fea91bdf7263cd5d2da9a51f224af5e7b8df5",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/MATRIX_ASSIGNMENT.json",
+      "sha256": "902dd382d8e486acb2aa0012b77468647245be9b7f3df8947df4362479b4af77",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/README.md",
+      "sha256": "7ed0cd0b99dcabd97db5e8fa28fe80d115d1ee399a9406c7e870f06cc6b8be06",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/TESTER_A_CODEX_SUBAGENT_LUNA_HIGH.md",
+      "sha256": "9ea5aa19a550096e4f7d42472fa95a0f95711e99a129feef68614ee53d9f61d4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/TESTER_B_PI_AISHUO_CMS.md",
+      "sha256": "c5ee9f3a68d53b08b3d185f94ca11afdb616181bebafbb7889139412941c019e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/TESTER_C_CODEBUDDY_HY3.md",
+      "sha256": "1ae7f1328f9b14f4d12cbe756c36ac245f17d40a9256b460db7282bc11503b65",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/TESTER_D_PI_ANTIGRAVITY_GEMINI36_FLASH_HIGH.md",
+      "sha256": "5b9733ca61a7b0911133c73b531e8f71e210503e4892847416a6ce2e57ff7dfe",
+      "drift_policy": "block"
+    },
+    {
+      "path": "prompts/final_5x3_e2e_20260728/TESTER_E_PI_ALIBABA_QWEN38.md",
+      "sha256": "464589833f66331ce03267dd26098bcdaa6dec1c3f4051956ecea0fb9cccc9c6",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_document_exporter.py",
+      "sha256": "7c106649a1e292f86a7d2380cff3b8bcc831c2553df9af113753ee9c72255a9d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_document_exporter.py",
+      "sha256": "d119c0563aa186bd0d00a14da9af5894bcf1e6da8bf95f2a597dfa8434dd81f4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_competitor_triage.py",
+      "sha256": "7ae00c6c0571315164773fe5d598fb560f48fc8c5f62311b6b385a90b95b75f1",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_competitor_triage.py",
+      "sha256": "3a9de47fae106ee951db365a14c3bd2a088385999450fd178add70b692c0fe9e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_research_pipeline.py",
+      "sha256": "221e56f7db510bbc4fd1ba573720bc3ade97ad96ea702f1356dc100cc777b50d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_research_pipeline_validation_gate.py",
+      "sha256": "89a892062489a52601a242c435faa13e62ce723431a85defeb4679a5ebb43458",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_durable_jobs.py",
+      "sha256": "3f440872f75057812b05057a5f44be296b28dc509aab3631b42c1d23c5833028",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_research_pipeline_progress.py",
+      "sha256": "1e6315d0fd54bd2185674bcfa351b4c1da79eb077f8734f75cb0aea43634331d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_triage_deadline_reconcile_r10.py",
+      "sha256": "95d9141a11836224fd10544f03128ee616d9cf48b342b1db1f0b043b984041cf",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_durable_jobs.py",
+      "sha256": "d18f3f88b36e4c8f502e67dcedb6ab9a94a2176ee08d6a9f2c50839458720c4e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference_translation_batch.py",
+      "sha256": "d8f157223d51c301221ab98ce9b1a491130f2edab28f5f61300c96253f9be87c",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference_preparation_batch.py",
+      "sha256": "f577261b7c5db329f1b79d2eeeb62aaacc0929209b018fdc2a4c72e409a27410",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference_repository.py",
+      "sha256": "dd58b60247ce1c5c6e4c2019b3c61e025ae53d4888a51c41ae856f2ae7c8fcd9",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_repository.py",
+      "sha256": "c93832ad999b9e633ae2e2fbf9a64c84e4cc009a18127517d2c9f65968248fe7",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_upper_layer_execution.py",
+      "sha256": "188b7073878fddeb503f2db988eb2b476c0a5fa27322830a66a16590982d77dc",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_api.py",
+      "sha256": "58f90fd432d21285ec980f1dcb5ee097489a19a3f0b902a67d74edbe6445e899",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_prefill.py",
+      "sha256": "22559c76d3a17edaf431a8b6a31147f35c0aff0b1bfbf9248ceb5f05d037de5c",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill.py",
+      "sha256": "b15a1acc5fc2fac5d4854dbd452e52927c89151231698529067029b2f720052d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_prefill_ai.py",
+      "sha256": "54ee1c116a7c676bcee511cecb32a2d5541870e56cce0f0bd8bb3a3f176a1c49",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_journey.py",
+      "sha256": "ff8cdb5ace32699df1c106eacedae94e38e457d8171fac7a28f13b31a554b8b0",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/main.py",
+      "sha256": "03446691f1dceec911f1fccd6d9fa01e1d7f952bb62ebda5b53c7a52b2392efc",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_document_export_jobs.py",
+      "sha256": "b809ebe2956be3f5bee1487bf047856d4724cf3b3c35ed0011add951f03191e5",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_document_export_jobs.py",
+      "sha256": "15571ac9f62c4de22b21b9d61d90e30cde91ca5afe7098495e86747df8eb7e1c",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_document_export_api.py",
+      "sha256": "25cce6e48ab0e82e638376e36a82a9cb16bb6a1c78a1bf8c68e3c7029cb000cf",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_medical_writing_contract.py",
+      "sha256": "5dcdf9db06613132f6d4879542ae97e1652778a9e19ede4cee2b7f656f82ba96",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/ai_role_runtime_settings.py",
+      "sha256": "d6f3006644e74ec4307dbe8ec5977227ab8b2c384cc4265232400c7fae38923f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/ai_runtime_settings.py",
+      "sha256": "fc65b316873e7d6000d4cccbe0a2bcdf75a5dac030aa330e42e71448d06d7114",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/ai_gateway.py",
+      "sha256": "a4170e329d595e2dd788aaf3f01899f2516b4667e0f85e75734bf9f0ef41f9a3",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/omlx_workload_gate_client.py",
+      "sha256": "2356901949c3f14fa418a12e3681723387ef1183fed538641a5240fa8471df5d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "packages/contracts/workbench_contracts/models.py",
+      "sha256": "71adefb987e40ae1e31253a67f22977d317511983fa46aeaaadd77b12e361bd0",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "sha256": "c9a6e499733b8603177a1048edfc631dd21ea754d2993e8dcef1bb2b76ff0595",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/styles.css",
+      "sha256": "0b5b56bb8aa49272e8ed760ca6de83e037ee654ec3a37a0cf6538c7c6a98c975",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/vite.config.mjs",
+      "sha256": "3d0ba8368ebecb1ea2ee5a59e7a14d9589f1a3b595ebba69000662f6f2f70345",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingSynopsisProjectIntake.jsx",
+      "sha256": "1b5789fa5364b63347d04838334fe1b4039b7819c5705c2a2f90aefd15aa2968",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+      "sha256": "680566d2463db937e1e93fba067a472ca93688839258d519ea367ca656ab3cdd",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/AuthoringCandidatePackagePanel.jsx",
+      "sha256": "1898c2be2c2e2f27eec4cae0f8b42e3b9cd22700745274802d17925c531b8e73",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+      "sha256": "131bffa6bf1f306bc9d6b81e2648c0543831222d91fb8af17f7e9bfdbd4d0141",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx",
+      "sha256": "eac469fddc0ca8b4a9e5f1740d840bbe6ece2701aa1931da93599c5d883f7586",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/MedicalWritingAuthoringJourneySetup.css",
+      "sha256": "2a66cd3fbc90ed986a5ed5e6496d3891e179b2b53f4006c616f6c53a77559704",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_medical_writing_pipeline_waiting_contract.py",
+      "sha256": "3b13c217e87d70cd6a300e85074979899a47cb26a36ef313c00498f4f3ab9918",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/AuthoringCompetitorDrawer.jsx",
+      "sha256": "3bcff41ec7f9ea2c80d4c6fd0096cf484c669d63ef7d104acb777febe4addc5b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/WritingReferencePanel.jsx",
+      "sha256": "9278eba4c8b1266cd8c3ef452496daf4abd2ba5e6e87c1f5ee2f4a8369d00a1b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_triage_status_propagation_contract.py",
+      "sha256": "c74aa387e825ffd43179bd302282eea48de8d67bc26322b5d8e6cf09c3c1b550",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/referenceIdentity.mjs",
+      "sha256": "0bdfd23f638e550cb751d6c77b91f5136748a07157838eba9bf7ae00aea10a66",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/referenceIdentity.test.mjs",
+      "sha256": "0a8583025b3e3020886f7730b8c9c54cc796a5ca329276c051d3898ff8a12f7c",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_ai_role_runtime_settings.py",
+      "sha256": "cf237c1b3fc4505ee5836c676dde715a2d6e99d56b63d04848bb14c3b5597e3b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_ai_runtime_settings.py",
+      "sha256": "dfbd85d4b0bb46d72d9cffb14e6fc687680e3403b881a7a488d9afd67219f6e8",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_ai_role_settings_contract.py",
+      "sha256": "b7d0063f82ec7d95a252f3c7a97c35bafcfaafe32d2734102d40732d74669b44",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_competitor_drawer_refresh_contract.py",
+      "sha256": "e1e07442c75e6f25f1deb56a95962ebab052cb358e28abf5d229756c05ef7f6b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_document_validation.py",
+      "sha256": "8c9a7fef5ab46987084427ed4cc27d2726db8e1418c7ef0d2b21cf1db1524f92",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_ocr_evidence.py",
+      "sha256": "b289df07ac20c89d2c062d147be2dc978174ffc3b77fb41109a4dc94ed279e62",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/triagePresentationState.mjs",
+      "sha256": "cbd9401c6d2552a0af77c37ddcd40ee9863caec6ecabf991824e65fee2be8a70",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/triagePresentationState.test.mjs",
+      "sha256": "e9904b65db111c3ff2d0814ec0f9a52545ba63fcf7baf7f9a275839520f6af2a",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/durableJobState.test.mjs",
+      "sha256": "24c36326d97a30a5acfb783e75c3cab43ccb2ddf2be758b8a245f632f8bf75f4",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/tests/medical_writing_editor_pending_body_notice_qc.mjs",
+      "sha256": "a9074fb7c1adf99e12633db2428b9cf07a42dc3e2b0d299208962326fd67d8f5",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/tests/medical_writing_triage_progress_projection_qc.mjs",
+      "sha256": "bfd37da392f1f9ba4a6b1535278e6d55f48ba59592fe3497c06a1ce512d23df9",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/tests/medical_writing_competitor_drawer_overflow_qc.mjs",
+      "sha256": "3d7551246f4be312f2c837e9ab98c41597015e61d3fc3fa743ea4ec7b4e59012",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_r5_a1_batch_repair.py",
+      "sha256": "53b77d3823e848e0b203161a780b43779c7862e373d8bdcd7a31451ca144b34a",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_r5_a1_preparation_progress.py",
+      "sha256": "3896219c344cae4dd4d7995f121ae68f7af71d0ae7e836886ed91c2bfae6afb9",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_preparation_batch.py",
+      "sha256": "52e97c09bcd8cc0ab544d9f54d6c696dfdbbb8e16a8a2313ed75685f4f54f572",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_composite_adopt.py",
+      "sha256": "90bbb9eafaef12f5191302a91fd32657269752aa5682f0be988e2142d2effa3b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_composite_adopt_api.py",
+      "sha256": "2f8c7049f65a5104f819de3c3864fe16a6313925346d70833b40dd2a2f478e7b",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_authoring_prefill_package_contract.py",
+      "sha256": "d342256da768711831eba6297e1ddb456818c3293330e39de27a5bcc457d728e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_triage_recovery_api.py",
+      "sha256": "e3bcff255100674664f8117edfe627072bdfb62073701fece88290691a5a7a7e",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_translation_batch.py",
+      "sha256": "e2e30d3426e0f31c016c47a9a8bc8f2c22d7eac1b84d95339eaceb05eb80a35d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_research_pipeline_minimum_start.py",
+      "sha256": "7b2e70959fb235275fc34547e4ab9b74c20d11624c71f24e711a83c3f9173eff",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_medical_writing_translation_batch_contract.py",
+      "sha256": "6e578672ff9f0e8fa27a67361de3a6065621e1c08ba62a4bd42b5ddde68fbf06",
+      "drift_policy": "block"
+    },
+    {
+      "path": "scripts/qc/mw_final_5x3_harness.py",
+      "sha256": "8cbbbd4a3f97277ca882a44586f7dd38bbe057065e57bf128bff5a97adaff44d",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_final_5x3_harness.py",
+      "sha256": "8c02b1383b002bec72b3e78a1029640f766adc2fe5f222fb35dc01ab7a037e7a",
+      "drift_policy": "block"
+    },
+    {
+      "path": "scripts/qc/mw_final_5x3_e2e_runtime.py",
+      "sha256": "26649b4bdcec32f611f595f07004c70925d6f720e3c3ecb902ae206b99ed4cf6",
+      "drift_policy": "block"
+    },
+    {
+      "path": "scripts/qc/mw_isolated_runtime_baseline.py",
+      "sha256": "65efd3f0f18bcb5c6830a94068b5be87e264e1710c49e04e8c30f023b0545564",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_isolated_runtime_baseline.py",
+      "sha256": "ba84d611ef24dedfbdda9c1e86069264770fa27b9c4c51369363eea1a3492029",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_mw_final_5x3_e2e_runtime.py",
+      "sha256": "584805f9aa40ac3f0a224a8c5631668200727c61674bd51963cf5e65075dec4c",
+      "drift_policy": "block"
+    },
+    {
+      "path": "frontend/src/features/writing-reference/ReferencePreparationBatchPanel.jsx",
+      "sha256": "bdaf726cf295461fe8e3724cdeab150965cb7e6843edaaedbd8c4f4ed2174545",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/ai_execution_policy.py",
+      "sha256": "c3235a0fce53b3b26e3c93a6ad7b08cf79bf6345e193815aa606de95ccc1e324",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/ai_task_runner.py",
+      "sha256": "771535965af185685d8b972cbd299260435ec5426452a72c618ad6f4848c9b15",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing.py",
+      "sha256": "2253d0a256c914a76ff0c939fa9c219f87e54ef020c26c9d57e5a1e6cf8478c7",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/medical_writing_synopsis_import.py",
+      "sha256": "570f88f5841d81b47271fb916a7dc266775c260c019b59ad69a41ddd0ace565f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference.py",
+      "sha256": "f1b48a5c21a7ec215428cdc5f10ca198311f2c9a61c4791926a792867be60d05",
+      "drift_policy": "block"
+    },
+    {
+      "path": "services/api/app/writing_reference_m11.py",
+      "sha256": "8033296385f7742100cc2094fcf7c36fb4ac72756f62b8c0d076e86d48264b76",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_ai_route_freeze.py",
+      "sha256": "9b5cd73c21e34f62f4a38c014d7022b1a68bdd5363d10d20ff77885d6b00bf32",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_frontend_medical_writing_revision_progress_contract.py",
+      "sha256": "08c645b11e70925320449b9c84c4cb77e4ee7c0d7d582531a77a9ec23a48c597",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_generation_context_v2.py",
+      "sha256": "8679223973fdf97e01b085503b9593306ec5b369fe08ccbd09afd6727ab34d12",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_synopsis_import.py",
+      "sha256": "8eb824756e547fb8a52b9ca646bcfaa13bac83e6c31fbfad048d59b84214456f",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_medical_writing_synopsis_merge_integrity.py",
+      "sha256": "b21d9017a0f761ae98e298fc5837fd7895a461a64186345e70a68ce5c9e3b186",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_synopsis_async_real_chunks.py",
+      "sha256": "cb9c1fb43834a49d1b9594b23718f050537a3969c2c0fc443487fc6ce4c8c622",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_extraction.py",
+      "sha256": "316902aac800fbc6f9890f28dda0d02b19ffa7eec854b4db2231e8dc6fa465a3",
+      "drift_policy": "block"
+    },
+    {
+      "path": "tests/test_writing_reference_m11.py",
+      "sha256": "9a3f50c006a91e67135dfba1467206054f47a5e276a0f00e33457925e442c43b",
+      "drift_policy": "block"
+    }
+  ],
+  "testers": [
+    {
+      "code": "A",
+      "declared_identity": "Codex subAgent/gpt-5.6-luna-high",
+      "requested_selector": "gpt-5.6-luna",
+      "thinking_level": "high",
+      "reasoning_effort": "high"
+    },
+    {
+      "code": "B",
+      "declared_identity": "pi/aishuo/cms-model",
+      "requested_selector": "aishuo/cms-model",
+      "thinking_level": "high",
+      "reasoning_effort": "high",
+      "blackout_window": {
+        "start": "23:30",
+        "end": "08:30",
+        "inclusive_end_minute": true
+      }
+    },
+    {
+      "code": "C",
+      "declared_identity": "codebuddy cli/hy3",
+      "requested_selector": "hy3",
+      "thinking_level": "max",
+      "reasoning_effort": "max"
+    },
+    {
+      "code": "D",
+      "declared_identity": "pi/google-antigravity/gemini-3.6-flash",
+      "requested_selector": "google-antigravity/gemini-3.6-flash",
+      "thinking_level": "high",
+      "reasoning_effort": "high"
+    },
+    {
+      "code": "E",
+      "declared_identity": "pi/alibaba/qwen3.8-max-preview",
+      "requested_selector": "alibaba/qwen3.8-max-preview",
+      "thinking_level": "xhigh",
+      "reasoning_effort": "xhigh",
+      "preferred_window": {
+        "start": "22:00",
+        "end": "06:00",
+        "strict": true,
+        "inclusive_end_minute": true,
+        "outside_requires_reason": false
+      }
+    }
+  ],
+  "slots": [
+    {
+      "slot": "A1",
+      "tester_code": "A",
+      "indication": "慢性阻塞性肺疾病",
+      "phase": "III",
+      "administration_route": "吸入",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "A2",
+      "tester_code": "A",
+      "indication": "α1-抗胰蛋白酶缺乏症",
+      "phase": "I",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "A3",
+      "tester_code": "A",
+      "indication": "不伴鼻息肉的慢性鼻窦炎",
+      "phase": "II",
+      "administration_route": "鼻喷",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "B1",
+      "tester_code": "B",
+      "indication": "2型糖尿病",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "B2",
+      "tester_code": "B",
+      "indication": "发作性睡病",
+      "phase": "I",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "B3",
+      "tester_code": "B",
+      "indication": "过敏性结膜炎",
+      "phase": "II",
+      "administration_route": "眼用滴剂",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "C1",
+      "tester_code": "C",
+      "indication": "重度抑郁障碍",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "C2",
+      "tester_code": "C",
+      "indication": "C3肾小球病",
+      "phase": "II",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "C3",
+      "tester_code": "C",
+      "indication": "脂溢性皮炎",
+      "phase": "I",
+      "administration_route": "外用泡沫",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "D1",
+      "tester_code": "D",
+      "indication": "帕金森病",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "D2",
+      "tester_code": "D",
+      "indication": "杜氏肌营养不良",
+      "phase": "IIb",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "D3",
+      "tester_code": "D",
+      "indication": "玫瑰痤疮",
+      "phase": "I",
+      "administration_route": "外用乳膏",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "E1",
+      "tester_code": "E",
+      "indication": "类风湿关节炎",
+      "phase": "III",
+      "administration_route": "口服",
+      "project_route": "greenfield"
+    },
+    {
+      "slot": "E2",
+      "tester_code": "E",
+      "indication": "遗传性血管性水肿",
+      "phase": "I",
+      "administration_route": "皮下注射",
+      "project_route": "synopsis_import"
+    },
+    {
+      "slot": "E3",
+      "tester_code": "E",
+      "indication": "溃疡性结肠炎",
+      "phase": "II",
+      "administration_route": "直肠泡沫",
+      "project_route": "greenfield"
+    }
+  ],
+  "perspectives": [
+    "lazy_medical_writer",
+    "engineer"
+  ],
+  "required_evidence": [
+    "TESTER_AND_SCENARIO.json",
+    "TESTER_ROUTE_RECEIPT.json",
+    "CLEAN_STATE_RECEIPT.json",
+    "BROWSER_ACTION_TRACE.json",
+    "source_receipts.json",
+    "pipeline_lineage.json",
+    "document_validation_and_resume.json",
+    "corpus_admission.json",
+    "chapter_mapping.json",
+    "candidate_sets.json",
+    "quality_scorecard.json",
+    "browser_qc.json",
+    "DOCX_OOXML_GATE.json",
+    "WORD_NATIVE_GATE.md",
+    "DEFECTS.md",
+    "FIX_RETEST_LEDGER.md",
+    "artifacts/protocol/*.docx",
+    "artifacts/rendered/*.pdf",
+    "artifacts/word_native/*",
+    "screenshots/original_resolution/*"
+  ],
+  "pass_artifact": {
+    "path": "PASS.md",
+    "creation_policy": "forbidden_by_harness_until_full_external_gate"
+  },
+  "clean_state": {
+    "inventory_mode": "metadata_only_no_file_content_read",
+    "runtime_root_policy": {
+      "default": "product_root/runtime",
+      "product_root_relative_to_workbench": "../..",
+      "test_override": "explicit_system_temp_root_only",
+      "workbench_runtime_forbidden": true
+    },
+    "inventory_surfaces": [
+      "user_projects.sqlite3",
+      "workbench_runtime.sqlite3",
+      "workbench_runtime.sqlite3-wal",
+      "workbench_runtime.sqlite3-shm",
+      "medical_writing_authoring_journey.sqlite3",
+      "medical_writing_authoring_journey.sqlite3-wal",
+      "medical_writing_authoring_journey.sqlite3-shm",
+      "medical_writing_greenfield.sqlite3",
+      "medical_writing_protocol_assembly_plan.sqlite3",
+      "medical_writing_fact_intake.sqlite3",
+      "medical_writing_shared_corpus.sqlite3",
+      "writing_reference.sqlite3",
+      "writing_reference.sqlite3-wal",
+      "writing_reference.sqlite3-shm",
+      "medical_writing_literature.sqlite3",
+      "medical_writing_synopsis_import.sqlite3",
+      "medical_writing_durable_jobs.sqlite3",
+      "source_content_validations.sqlite3",
+      "source_content_validations.sqlite3-wal",
+      "source_content_validations.sqlite3-shm",
+      "source_registry.jsonl",
+      "source_artifacts",
+      "writing_reference_artifacts",
+      "medical_writing_synopsis_artifacts",
+      "writing_reference_translation_ai_runs.jsonl"
+    ],
+    "snapshot_policy": "plan_only_sqlite_online_backup_or_coordinated_stop",
+    "deletion_policy": "plan_only_no_delete_commands_emitted"
+  }
+}

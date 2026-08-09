@@ -1,0 +1,520 @@
+.profile-domain-coverage {
+  border: 1px solid var(--soft-line);
+  border-radius: 4px;
+  background: #fff;
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.profile-domain-coverage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.profile-domain-coverage-header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.profile-domain-coverage-header span {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.profile-domain-coverage-header strong {
+  font-size: 14px;
+}
+
+.profile-domain-coverage-header small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.profile-domain-coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 6px;
+}
+
+.profile-domain-coverage-item {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid var(--soft-line);
+  border-left: 3px solid var(--info);
+  border-radius: 3px;
+  padding: 6px 8px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  background: #fbfcfd;
+}
+
+.profile-domain-coverage-item > span,
+.profile-domain-coverage-item > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-domain-coverage-item > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.profile-domain-coverage-item > strong {
+  font-size: 12px;
+}
+
+.profile-domain-coverage-item.success {
+  border-left-color: var(--success);
+  background: var(--success-bg);
+}
+
+.profile-domain-coverage-item.warning {
+  border-left-color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.profile-domain-coverage-item.danger {
+  border-left-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.profile-domain-coverage-message,
+.profile-domain-coverage-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.profile-domain-coverage-disclaimer {
+  border-top: 1px solid var(--soft-line);
+  padding-top: 7px;
+}
+
+.profile-metric-candidate-review {
+  border: 1px solid var(--soft-line);
+  border-left: 3px solid var(--warning);
+  border-radius: 4px;
+  background: #fff;
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.profile-metric-candidate-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.profile-metric-candidate-header > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.profile-metric-candidate-header span {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.profile-metric-candidate-header strong {
+  font-size: 14px;
+}
+
+.profile-metric-candidate-header small,
+.profile-metric-candidate-message,
+.profile-metric-candidate-overflow,
+.profile-metric-candidate-issues small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.profile-metric-candidate-message,
+.profile-metric-candidate-overflow {
+  margin: 0;
+}
+
+.profile-metric-candidate-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.profile-metric-candidate-summary > div {
+  min-width: 0;
+  border: 1px solid var(--soft-line);
+  border-radius: 3px;
+  background: #fbfcfd;
+  padding: 6px 8px;
+  display: grid;
+  gap: 2px;
+}
+
+.profile-metric-candidate-summary strong {
+  font-size: 15px;
+}
+
+.profile-metric-candidate-summary span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.profile-metric-candidate-list {
+  display: grid;
+  gap: 5px;
+}
+
+.profile-metric-candidate-row {
+  min-width: 0;
+  border: 1px solid var(--soft-line);
+  border-radius: 3px;
+  background: #fbfcfd;
+  padding: 7px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.profile-metric-candidate-row > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.profile-metric-candidate-row > div:last-child {
+  justify-items: end;
+  text-align: right;
+}
+
+.profile-metric-candidate-row strong,
+.profile-metric-candidate-row span,
+.profile-metric-candidate-row small {
+  overflow-wrap: anywhere;
+}
+
+.profile-metric-candidate-row strong {
+  font-size: 12px;
+}
+
+.profile-metric-candidate-row span,
+.profile-metric-candidate-row small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.profile-metric-candidate-issues {
+  border-top: 1px solid var(--soft-line);
+  padding-top: 7px;
+  display: grid;
+  gap: 4px;
+}
+
+.profile-metric-candidate-issues > strong {
+  font-size: 12px;
+}
+
+.profile-metric-candidate-issues p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.profile-metric-candidate-issues p span {
+  color: var(--danger);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.chart-point-interactive {
+  cursor: pointer;
+  outline: none;
+}
+
+.chart-point-hit-area {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.chart-point-interactive:focus-visible .chart-point,
+.chart-point-interactive.chart-point-selected .chart-point {
+  stroke-width: 4;
+  filter: drop-shadow(0 0 3px rgba(44, 103, 140, 0.35));
+}
+
+.chart-point-interactive.chart-point-selected .chart-point {
+  stroke: var(--brand);
+}
+
+.metric-point-inspector {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid #b9d2df;
+  border-left: 3px solid var(--brand);
+  border-radius: 4px;
+  background: #f7fbfd;
+  padding: 9px 10px;
+}
+
+.metric-point-inspector > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.metric-point-inspector > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.metric-point-inspector > header span,
+.metric-point-inspector > header button,
+.metric-point-inspector > p,
+.metric-point-inspector-source > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric-point-inspector > header button {
+  border: 0;
+  background: transparent;
+  padding: 0 2px;
+  cursor: pointer;
+}
+
+.metric-point-inspector > header button:hover,
+.metric-point-inspector > header button:focus-visible {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+.metric-point-inspector dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.metric-point-inspector dl > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid #dce8ee;
+  padding-top: 5px;
+}
+
+.metric-point-inspector dt,
+.metric-point-inspector dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.metric-point-inspector dt {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric-point-inspector dd {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.metric-point-inspector-source {
+  display: grid;
+  gap: 3px;
+  border-top: 1px solid #dce8ee;
+  padding-top: 6px;
+}
+
+.metric-point-inspector-source code {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 11px;
+}
+
+.metric-point-inspector > p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.metric-point-selected {
+  border: 2px solid var(--brand) !important;
+  border-radius: 4px;
+  background: #f7fbfd;
+  padding: 5px 7px !important;
+}
+
+.timeline-event-interactive {
+  cursor: pointer;
+  outline: none;
+}
+
+.timeline-event-interactive:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.reference-timeline-svg .timeline-event-interactive:focus-visible .reference-svg-event-block,
+.reference-timeline-svg .timeline-event-selected .reference-svg-event-block {
+  stroke-width: 4;
+  filter: drop-shadow(0 0 3px rgba(44, 103, 140, 0.35));
+}
+
+.reference-timeline-svg .timeline-event-selected .reference-svg-event-block {
+  stroke: var(--brand);
+}
+
+.timeline-detail-row.timeline-event-interactive:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+.timeline-detail-row.timeline-event-selected {
+  border: 2px solid var(--brand);
+  border-left-width: 5px;
+  border-radius: 4px;
+  background: #f3f9fc;
+}
+
+.timeline-event-inspector {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  border: 1px solid #b9d2df;
+  border-left: 3px solid var(--brand);
+  border-radius: 4px;
+  background: #f7fbfd;
+  padding: 9px 10px;
+}
+
+.timeline-event-inspector > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.timeline-event-inspector > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.timeline-event-inspector > header span,
+.timeline-event-inspector > header button,
+.timeline-event-inspector > p,
+.timeline-event-inspector-source > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.timeline-event-inspector > header button {
+  border: 0;
+  background: transparent;
+  padding: 0 2px;
+  cursor: pointer;
+}
+
+.timeline-event-inspector > header button:hover,
+.timeline-event-inspector > header button:focus-visible {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+.timeline-event-inspector dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.timeline-event-inspector dl > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid #dce8ee;
+  padding-top: 5px;
+}
+
+.timeline-event-inspector dt,
+.timeline-event-inspector dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.timeline-event-inspector dt {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.timeline-event-inspector dd {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.timeline-event-inspector-source {
+  display: grid;
+  gap: 3px;
+  border-top: 1px solid #dce8ee;
+  padding-top: 6px;
+}
+
+.timeline-event-inspector-source code {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 11px;
+}
+
+.timeline-event-inspector > p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 560px) {
+  .profile-domain-coverage-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-domain-coverage-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-metric-candidate-header,
+  .profile-metric-candidate-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-metric-candidate-row > div:last-child {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .metric-point-inspector dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .timeline-event-inspector dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

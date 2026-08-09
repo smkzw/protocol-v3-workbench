@@ -1,0 +1,1878 @@
+{
+  "generated_from": {
+    "main_py": "services/api/app/main.py",
+    "models_py": "packages/contracts/workbench_contracts/models.py"
+  },
+  "routes": {
+    "GET /api/projects": {
+      "method": "GET",
+      "path": "/api/projects",
+      "func": "list_projects",
+      "line": 1433,
+      "path_params": [],
+      "request_model": null
+    },
+    "POST /api/projects": {
+      "method": "POST",
+      "path": "/api/projects",
+      "func": "create_project",
+      "line": 1438,
+      "path_params": [],
+      "request_model": "UserProjectCreateRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/authoring-journey": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey",
+      "func": "get_medical_writing_authoring_journey",
+      "line": 3324,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "POST /api/projects/{project_id}/medical-writing/authoring-journey": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey",
+      "func": "create_medical_writing_authoring_journey",
+      "line": 3306,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "MedicalWritingAuthoringJourneyCreateRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/authoring-journey/impact-preview": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey/impact-preview",
+      "func": "preview_medical_writing_authoring_impact",
+      "line": 3813,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "MedicalWritingJourneyImpactPreviewRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/authoring-journey/stages/{stage}/commit": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey/stages/{stage}/commit",
+      "func": "commit_medical_writing_authoring_stage",
+      "line": 3833,
+      "path_params": [
+        "project_id",
+        "stage"
+      ],
+      "request_model": "MedicalWritingAuthoringJourneyCommitRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/authoring-journey/competitor-search": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey/competitor-search",
+      "func": "execute_medical_writing_authoring_competitor_search",
+      "line": 3787,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "MedicalWritingCompetitorSearchExecuteRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/authoring-journey/corpus-triage/finalize": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/authoring-journey/corpus-triage/finalize",
+      "func": "finalize_medical_writing_corpus_triage",
+      "line": 3899,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "MedicalWritingCorpusTriageFinalizeRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/search-snapshots": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/search-snapshots",
+      "func": "create_writing_reference_search_snapshot",
+      "line": 2478,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "WritingReferenceSearchCreateRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/workspace": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/workspace",
+      "func": "get_writing_reference_workspace",
+      "line": 2558,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "str"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/documents/ingest": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/documents/ingest",
+      "func": "ingest_writing_reference_document",
+      "line": 2700,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "WritingReferenceDocumentIngestRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/evidence-briefs": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/evidence-briefs",
+      "func": "get_writing_reference_evidence_briefs",
+      "line": 3156,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "str"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/translations": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/translations",
+      "func": "create_writing_reference_translation",
+      "line": 3063,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "WritingReferenceTranslationRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/translations/{translation_id}/medical-review": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/translations/{translation_id}/medical-review",
+      "func": "review_writing_reference_translation",
+      "line": 3105,
+      "path_params": [
+        "project_id",
+        "translation_id"
+      ],
+      "request_model": "WritingReferenceMedicalReviewRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/translations/{translation_id}/admissions": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/translations/{translation_id}/admissions",
+      "func": "admit_writing_reference_translation",
+      "line": 3133,
+      "path_params": [
+        "project_id",
+        "translation_id"
+      ],
+      "request_model": "WritingReferenceAdmissionRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/working-copies/{section_id}": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}",
+      "func": "get_medical_writing_working_copy",
+      "line": 4558,
+      "path_params": [
+        "project_id",
+        "section_id"
+      ],
+      "request_model": null
+    },
+    "POST /api/projects/{project_id}/medical-writing/working-copies/{section_id}": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}",
+      "func": "save_medical_writing_working_copy",
+      "line": 4710,
+      "path_params": [
+        "project_id",
+        "section_id"
+      ],
+      "request_model": "MedicalWritingWorkingCopySaveRequest"
+    },
+    "GET /api/projects/{project_id}/revision-threads": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/revision-threads",
+      "func": "get_revision_threads",
+      "line": 5043,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "POST /api/projects/{project_id}/revision-threads": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/revision-threads",
+      "func": "submit_revision_thread",
+      "line": 5054,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "MedicalWritingRevisionRequest"
+    },
+    "POST /api/projects/{project_id}/revision-threads/{thread_id}/actions": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/revision-threads/{thread_id}/actions",
+      "func": "apply_revision_action",
+      "line": 5066,
+      "path_params": [
+        "project_id",
+        "thread_id"
+      ],
+      "request_model": "RevisionActionRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/extraction-reviews": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/extraction-reviews",
+      "func": "review_writing_reference_extraction",
+      "line": 3005,
+      "path_params": [
+        "project_id",
+        "artifact_id"
+      ],
+      "request_model": "WritingReferenceExtractionReviewRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/extract": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/extract",
+      "func": "extract_writing_reference_document",
+      "line": 2981,
+      "path_params": [
+        "project_id",
+        "artifact_id"
+      ],
+      "request_model": "WritingReferenceExtractionRequest"
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/preparation-batches": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/preparation-batches",
+      "func": "create_writing_reference_preparation_batch",
+      "line": 2718,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "WritingReferencePreparationBatchCreateRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/preparation-batches/latest": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/preparation-batches/latest",
+      "func": "get_latest_writing_reference_preparation_batch",
+      "line": 2748,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/preparation-batches/{batch_id}": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/preparation-batches/{batch_id}",
+      "func": "get_writing_reference_preparation_batch",
+      "line": 2768,
+      "path_params": [
+        "project_id",
+        "batch_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/translation-batches/preview": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/translation-batches/preview",
+      "func": "preview_writing_reference_translation_batch",
+      "line": 2814,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "POST /api/projects/{project_id}/medical-writing/references/translation-batches": {
+      "method": "POST",
+      "path": "/api/projects/{project_id}/medical-writing/references/translation-batches",
+      "func": "create_writing_reference_translation_batch",
+      "line": 2840,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": "WritingReferenceTranslationBatchCreateRequest"
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/translation-batches/latest": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/translation-batches/latest",
+      "func": "get_latest_writing_reference_translation_batch",
+      "line": 2870,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/translation-batches/{batch_id}": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/translation-batches/{batch_id}",
+      "func": "get_writing_reference_translation_batch",
+      "line": 2890,
+      "path_params": [
+        "project_id",
+        "batch_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/spans": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/references/documents/{artifact_id}/spans",
+      "func": "get_writing_reference_spans",
+      "line": 2615,
+      "path_params": [
+        "project_id",
+        "artifact_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/document-index": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/document-index",
+      "func": "get_medical_writing_document_index",
+      "line": 3280,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/projects/{project_id}/medical-writing/document-session": {
+      "method": "GET",
+      "path": "/api/projects/{project_id}/medical-writing/document-session",
+      "func": "get_medical_writing_document_session",
+      "line": 3199,
+      "path_params": [
+        "project_id"
+      ],
+      "request_model": null
+    },
+    "GET /api/health": {
+      "method": "GET",
+      "path": "/api/health",
+      "func": "health",
+      "line": 1397,
+      "path_params": [],
+      "request_model": null
+    }
+  },
+  "models": {
+    "UserProjectCreateRequest": {
+      "fields": {
+        "project_code": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "project_name": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "indication": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "product_name": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "study_phase": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "protocol_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "protocol_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "protocol_date": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "entry_mode": {
+          "annotation": "Literal['from_zero', 'synopsis_import']",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 66
+    },
+    "MedicalWritingAuthoringJourney": {
+      "fields": {
+        "schema_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "journey_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "entry_mode": {
+          "annotation": "Literal['guided_greenfield', 'synopsis_import']",
+          "has_default": true
+        },
+        "synopsis_import": {
+          "annotation": "MedicalWritingSynopsisImport",
+          "has_default": true
+        },
+        "study_definition": {
+          "annotation": "Optional[MedicalWritingStudyDefinition]",
+          "has_default": true
+        },
+        "study_schema_presentation": {
+          "annotation": "Optional[MedicalWritingStudySchemaPresentation]",
+          "has_default": true
+        },
+        "status": {
+          "annotation": "Literal['stage1_in_progress', 'stage1_complete', 'stage2_in_progress', 'corpus_not_ready', 'writing_allowed', 'document_creation_reserved', 'document_created']",
+          "has_default": true
+        },
+        "current_stage": {
+          "annotation": "Literal['framing', 'picos', 'corpus', 'writing']",
+          "has_default": true
+        },
+        "framing": {
+          "annotation": "MedicalWritingStudyFraming",
+          "has_default": true
+        },
+        "picos": {
+          "annotation": "MedicalWritingPicosDefinition",
+          "has_default": true
+        },
+        "framing_draft": {
+          "annotation": "Optional[MedicalWritingAuthoringStageDraft]",
+          "has_default": true
+        },
+        "picos_draft": {
+          "annotation": "Optional[MedicalWritingAuthoringStageDraft]",
+          "has_default": true
+        },
+        "document_creation_reservation": {
+          "annotation": "Optional[MedicalWritingDocumentCreationReservation]",
+          "has_default": true
+        },
+        "framing_complete": {
+          "annotation": "bool",
+          "has_default": true
+        },
+        "picos_complete": {
+          "annotation": "bool",
+          "has_default": true
+        },
+        "search_plan": {
+          "annotation": "Optional[MedicalWritingCompetitorSearchPlan]",
+          "has_default": true
+        },
+        "corpus_triage": {
+          "annotation": "MedicalWritingCorpusTriage",
+          "has_default": true
+        },
+        "picos_corpus_alignment": {
+          "annotation": "MedicalWritingPicosCorpusAlignment",
+          "has_default": true
+        },
+        "corpus_gate": {
+          "annotation": "MedicalWritingCorpusGate",
+          "has_default": true
+        },
+        "invalidated_dependents": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        },
+        "updated_at": {
+          "annotation": "datetime",
+          "has_default": false
+        },
+        "updated_by": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 3436
+    },
+    "MedicalWritingStudyFraming": {
+      "fields": {
+        "protocol_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "document_title": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "indication": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "clinicaltrials_condition_term": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "study_phase": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "intrinsic_objectives": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "investigational_product": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "target_mechanism": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "competitor_target_scope": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "development_regions": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "design_pattern": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "population_intent": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "key_uncertainties": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "manual_source_ids": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "terminology_policy": {
+          "annotation": "Literal['cde_participant', 'subject', 'project_override']",
+          "has_default": true
+        }
+      },
+      "line": 1992
+    },
+    "MedicalWritingJourneyImpactPreviewRequest": {
+      "fields": {
+        "expected_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "stage": {
+          "annotation": "Literal['framing', 'picos']",
+          "has_default": false
+        },
+        "framing": {
+          "annotation": "Optional[MedicalWritingStudyFraming]",
+          "has_default": true
+        },
+        "picos": {
+          "annotation": "Optional[MedicalWritingPicosDefinition]",
+          "has_default": true
+        }
+      },
+      "line": 3603
+    },
+    "MedicalWritingAuthoringJourneyCommitRequest": {
+      "fields": {
+        "impact_preview_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 3628
+    },
+    "MedicalWritingCompetitorSearchExecuteRequest": {
+      "fields": {
+        "search_plan_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 3734
+    },
+    "MedicalWritingCorpusTriageFinalizeRequest": {
+      "fields": {
+        "expected_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "retained_candidate_ids": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "reason": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 3686
+    },
+    "WritingReferenceSearchCreateRequest": {
+      "fields": {
+        "search": {
+          "annotation": "WritingReferenceSearchRequest",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4393
+    },
+    "WritingReferenceSearchRequest": {
+      "fields": {
+        "indication": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "phases": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "study_type": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "regions": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "intervention_terms": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "page_size": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "page_token": {
+          "annotation": "Optional[str]",
+          "has_default": true
+        }
+      },
+      "line": 4383
+    },
+    "WritingReferenceSearchSnapshot": {
+      "fields": {
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "request": {
+          "annotation": "WritingReferenceSearchRequest",
+          "has_default": false
+        },
+        "query_url": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "api_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "data_timestamp": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "total_count": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "returned_count": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "page_count": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "candidates": {
+          "annotation": "List[WritingReferenceTrialCandidate]",
+          "has_default": true
+        },
+        "created_by": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        }
+      },
+      "line": 4430
+    },
+    "WritingReferenceTrialCandidate": {
+      "fields": {
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "brief_title": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "official_title": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "conditions": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "phases": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "study_type": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "lead_sponsor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "overall_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "first_posted": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "last_update_posted": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "study_record_url": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "relevance_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "relevance_reason": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "public_documents": {
+          "annotation": "List[WritingReferencePublicDocument]",
+          "has_default": true
+        }
+      },
+      "line": 4413
+    },
+    "WritingReferencePublicDocument": {
+      "fields": {
+        "document_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_type": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "label": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "filename": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_date": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "upload_date": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "declared_size": {
+          "annotation": "Optional[int]",
+          "has_default": true
+        },
+        "download_url": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "rights_status": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 4399
+    },
+    "WritingReferenceDocumentIngestRequest": {
+      "fields": {
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4467
+    },
+    "WritingReferenceDocumentArtifact": {
+      "fields": {
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_document_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_type": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "filename": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_date": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "upload_date": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "requested_url": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "final_url": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "content_type": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "declared_size": {
+          "annotation": "Optional[int]",
+          "has_default": true
+        },
+        "actual_size": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "content_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "file_integrity_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_current": {
+          "annotation": "bool",
+          "has_default": true
+        },
+        "state_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "invalidation_reason": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_by": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        }
+      },
+      "line": 4583
+    },
+    "WritingReferenceExtractedSpan": {
+      "fields": {
+        "span_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "physical_page": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "block_index": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "source_locator": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "section_heading": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "ich_m11_anchor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_text": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_text_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "extraction_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "needs_visual_qc": {
+          "annotation": "bool",
+          "has_default": true
+        },
+        "source_fragments": {
+          "annotation": "List[WritingReferenceSourceFragment]",
+          "has_default": true
+        },
+        "skipped_interstitials": {
+          "annotation": "List[WritingReferenceSkippedInterstitial]",
+          "has_default": true
+        },
+        "semantic_merge_method": {
+          "annotation": "Literal['none', 'cross_page_continuation_v1']",
+          "has_default": true
+        },
+        "semantic_merge_reason_codes": {
+          "annotation": "List[str]",
+          "has_default": true
+        }
+      },
+      "line": 4628
+    },
+    "WritingReferenceTranslationRequest": {
+      "fields": {
+        "span_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "glossary_version": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "user_instruction": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4761
+    },
+    "WritingReferenceTranslationRevision": {
+      "fields": {
+        "translation_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "span_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_span_revision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "glossary_version": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "translated_text": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "rationale": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "fidelity_status": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "fidelity_failure_codes": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "ai_run_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "task_type": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "prompt_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "schema_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "provider": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "model_name": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "contract_hash": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_by": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        }
+      },
+      "line": 4737
+    },
+    "WritingReferenceMedicalReviewRequest": {
+      "fields": {
+        "translation_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "decision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "comment": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "expected_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 5008
+    },
+    "WritingReferenceMedicalReviewDecision": {
+      "fields": {
+        "review_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "translation_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "translation_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "decision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "comment": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "identity_assurance": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        }
+      },
+      "line": 5030
+    },
+    "WritingReferenceAdmissionRequest": {
+      "fields": {
+        "expected_translation_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "medical_review_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 5017
+    },
+    "WritingReferenceEvidenceBrief": {
+      "fields": {
+        "brief_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "span_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "translation_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "translation_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "ich_m11_anchor": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "approved_zh_text": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_locator": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_text_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "glossary_version": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "medical_review_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        }
+      },
+      "line": 5043
+    },
+    "MedicalWritingRevisionRequest": {
+      "fields": {
+        "document_id": {
+          "annotation": "Optional[str]",
+          "has_default": true
+        },
+        "section_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "anchor_type": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "anchor_path": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "selected_text": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "table_cell_anchor": {
+          "annotation": "Optional[MedicalWritingTableCellAnchor]",
+          "has_default": true
+        },
+        "user_instruction": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "intent": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "evidence_brief_ids": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "requested_by": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 4277
+    },
+    "RevisionThread": {
+      "fields": {
+        "thread_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "section_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "anchor_type": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "anchor_path": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "selected_text": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "user_instruction": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "intent": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "ai_run_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "source_entry_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_locator": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "table_cell_anchor": {
+          "annotation": "Optional[MedicalWritingTableCellAnchor]",
+          "has_default": true
+        },
+        "evidence_brief_ids": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "ai_policy_decision_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "suggestions": {
+          "annotation": "List[RevisionSuggestion]",
+          "has_default": true
+        },
+        "status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "datetime",
+          "has_default": false
+        },
+        "resolved_at": {
+          "annotation": "Optional[datetime]",
+          "has_default": true
+        }
+      },
+      "line": 4254
+    },
+    "RevisionSuggestion": {
+      "fields": {
+        "suggestion_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "proposal_text": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "diff_patch": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "rationale": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "evidence_span_ids": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "uncertainty": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "user_decision": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "turn_number": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "parent_suggestion_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "user_instruction": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "user_comment": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "ai_run_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "created_at": {
+          "annotation": "Optional[datetime]",
+          "has_default": true
+        }
+      },
+      "line": 4232
+    },
+    "WritingReferenceExtractionReviewRequest": {
+      "fields": {
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "decision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "confirmed_anchor_coverage": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "unresolved_structure_issues": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "comment": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "expected_revision": {
+          "annotation": "int",
+          "has_default": false
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4689
+    },
+    "WritingReferenceExtractionRequest": {
+      "fields": {
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "extraction_idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4484
+    },
+    "WritingReferencePreparationBatchCreateRequest": {
+      "fields": {
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4489
+    },
+    "WritingReferencePreparationBatchItem": {
+      "fields": {
+        "item_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "batch_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "item_kind": {
+          "annotation": "Literal[\"public_document\", \"study_manual_upload_required\"]",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "document_type": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "filename": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_scope_sha256": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "validation_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "validation_status": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 4516
+    },
+    "WritingReferenceTranslationBatchCreateRequest": {
+      "fields": {
+        "snapshot_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "glossary_version": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "anchor_filter": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "idempotency_key": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4915
+    },
+    "WritingReferenceTranslationBatchItem": {
+      "fields": {
+        "item_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "batch_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "span_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "nct_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "ich_m11_anchor": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "validation_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "validation_revision": {
+          "annotation": "int",
+          "has_default": false
+        },
+        "validation_status": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "structure_review_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "structure_review_revision": {
+          "annotation": "int",
+          "has_default": false
+        },
+        "generation_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "translation_id": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "translation_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "fidelity_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "fidelity_failure_codes": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "pipeline_stage": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "medical_review_status": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "admission_status": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 4962
+    },
+    "WritingReferenceDocumentValidationRecord": {
+      "fields": {
+        "validation_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "revision": {
+          "annotation": "int",
+          "has_default": false
+        },
+        "status": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "document_sha256": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "source_state_revision": {
+          "annotation": "int",
+          "has_default": true
+        },
+        "checks": {
+          "annotation": "List[WritingReferenceDocumentValidationCheck]",
+          "has_default": true
+        },
+        "summary": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": false
+        }
+      },
+      "line": 4709
+    },
+    "WritingReferenceExtractionReviewDecision": {
+      "fields": {
+        "review_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "project_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "artifact_id": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "extraction_revision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "decision": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "confirmed_anchor_coverage": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "unresolved_structure_issues": {
+          "annotation": "List[str]",
+          "has_default": true
+        },
+        "comment": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": false
+        },
+        "revision": {
+          "annotation": "int",
+          "has_default": false
+        }
+      },
+      "line": 4674
+    },
+    "RevisionActionRequest": {
+      "fields": {
+        "action": {
+          "annotation": "RevisionAction",
+          "has_default": false
+        },
+        "suggestion_id": {
+          "annotation": "Optional[str]",
+          "has_default": true
+        },
+        "actor": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "comment": {
+          "annotation": "str",
+          "has_default": true
+        },
+        "rewrite_instruction": {
+          "annotation": "str",
+          "has_default": true
+        }
+      },
+      "line": 5062
+    }
+  }
+}

@@ -1,0 +1,38 @@
+.monitoring-risk-history-trend {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid #dce7ef;
+  border-radius: 9px;
+  background: #f8fbfd;
+}
+
+.monitoring-risk-history-trend.empty { color: #7c8d9b; font-size: 11px; }
+.monitoring-risk-history-trend header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.monitoring-risk-history-trend header div { display: grid; gap: 2px; }
+.monitoring-risk-history-trend header strong { color: #2c5068; font-size: 12px; }
+.monitoring-risk-history-trend header span { color: #718493; font-size: 10px; line-height: 1.4; }
+.monitoring-risk-history-trend header em { flex: 0 0 auto; padding: 3px 6px; border-radius: 999px; background: #eef4f8; color: #557389; font-size: 10px; font-style: normal; }
+.monitoring-risk-history-trend.warning, .monitoring-risk-history-trend.partial { border-color: #ecd9a6; background: #fffdf6; }
+.monitoring-risk-history-trend.malformed { border-color: #efc7b3; background: #fff8f3; }
+
+.monitoring-risk-history-trend-warning { display: flex; align-items: flex-start; gap: 5px; margin: 7px 0 0; color: #8d4f32; font-size: 10px; line-height: 1.4; }
+.monitoring-risk-history-trend-track { display: grid; grid-template-columns: repeat(8, minmax(54px, 1fr)); gap: 5px; margin: 10px 0 0; padding: 0; list-style: none; }
+.monitoring-risk-history-trend-track li { position: relative; min-width: 0; padding-top: 8px; border-top: 1px solid #cbdbe6; }
+.monitoring-risk-history-trend-track li::before { position: absolute; top: -1px; left: 0; width: 100%; height: 1px; background: #cbdbe6; content: ""; }
+.monitoring-risk-history-trend-track li.current { border-top-color: #8aaec5; }
+.monitoring-risk-history-trend-dot { position: absolute; top: -5px; left: 3px; width: 9px; height: 9px; border: 2px solid #fff; border-radius: 50%; background: #9aabb5; box-shadow: 0 0 0 1px #9aabb5; }
+.monitoring-risk-history-trend-dot.danger { background: #c84d3b; box-shadow: 0 0 0 1px #c84d3b; }
+.monitoring-risk-history-trend-dot.high { background: #db7b31; box-shadow: 0 0 0 1px #db7b31; }
+.monitoring-risk-history-trend-dot.medium { background: #d0a32a; box-shadow: 0 0 0 1px #d0a32a; }
+.monitoring-risk-history-trend-dot.low { background: #4c9a70; box-shadow: 0 0 0 1px #4c9a70; }
+.monitoring-risk-history-trend-point { display: grid; min-width: 0; gap: 2px; padding-right: 3px; }
+.monitoring-risk-history-trend-point strong { overflow: hidden; color: #2c5068; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-risk-history-trend-point span, .monitoring-risk-history-trend-point small { overflow: hidden; color: #728493; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-risk-history-trend-point em { display: inline-flex; align-items: center; gap: 2px; width: max-content; padding: 2px 4px; border-radius: 999px; background: #eef3f6; color: #688093; font-size: 9px; font-style: normal; }
+.monitoring-risk-history-trend-point em.direction-up { background: #fff0ec; color: #a13e2d; }
+.monitoring-risk-history-trend-point em.direction-down { background: #e8f7ed; color: #2f7049; }
+.monitoring-risk-history-trend-more, .monitoring-risk-history-trend-note { display: block; margin-top: 7px; color: #7b8c99; font-size: 9px; line-height: 1.4; }
+
+@media (max-width: 720px) {
+  .monitoring-risk-history-trend-track { grid-template-columns: repeat(4, minmax(70px, 1fr)); row-gap: 12px; }
+}

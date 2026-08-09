@@ -1,0 +1,70 @@
+.monitoring-daily-diff-summary {
+  display: grid;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #d9e4ea;
+  background: #fbfdfe;
+}
+
+.monitoring-daily-diff-summary.empty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6e8290;
+  font-size: 11px;
+}
+
+.monitoring-daily-diff-summary.partial { border-color: #ead8a9; background: #fffdf7; }
+.monitoring-daily-diff-summary.malformed { border-color: #ecc6b5; background: #fff8f3; }
+.monitoring-daily-diff-summary header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.monitoring-daily-diff-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.monitoring-daily-diff-head > div { display: grid; gap: 2px; }
+.monitoring-daily-diff-head strong, .monitoring-daily-diff-summary header strong { color: #315568; font-size: 12px; }
+.monitoring-daily-diff-head span { color: #718391; font-size: 10px; line-height: 1.35; }
+.monitoring-daily-diff-evidence { flex: 0 0 auto; padding: 3px 6px; border-radius: 999px; background: #edf5f8; color: #55788a; font-size: 10px; }
+.monitoring-daily-diff-meta { display: flex; flex-wrap: wrap; gap: 5px 12px; color: #6c808c; font-size: 10px; }
+.monitoring-daily-diff-grid { display: grid; grid-template-columns: repeat(8, minmax(68px, 1fr)); gap: 5px; }
+.monitoring-daily-diff-metric { display: grid; gap: 3px; min-width: 0; padding: 6px 7px; border: 1px solid #e3eaee; background: #fff; }
+.monitoring-daily-diff-metric span { overflow: hidden; color: #71818b; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-daily-diff-metric strong { color: #315568; font-size: 16px; line-height: 1; }
+.monitoring-daily-diff-metric.attention strong { color: #9c5e19; }
+.monitoring-daily-diff-metric.danger strong { color: #a94f3d; }
+.monitoring-daily-diff-removal { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: #6e7f88; font-size: 10px; }
+.monitoring-daily-diff-removal strong { color: #536f7d; font-weight: 700; }
+.monitoring-daily-diff-removal strong:nth-of-type(2) { color: #a0523d; }
+.monitoring-daily-diff-details { border-top: 1px solid #e4ecef; padding-top: 7px; }
+.monitoring-daily-diff-details summary { cursor: pointer; color: #466b7b; font-size: 10px; font-weight: 700; }
+.monitoring-daily-diff-details summary::marker { color: #8aa0aa; }
+.monitoring-daily-diff-detail-note { margin: 5px 0 0; color: #788b94; font-size: 9px; line-height: 1.4; }
+.monitoring-daily-diff-detail-section { display: grid; gap: 4px; margin-top: 7px; }
+.monitoring-daily-diff-detail-section > strong { color: #587583; font-size: 10px; }
+.monitoring-daily-diff-detail-section ul { display: grid; gap: 3px; margin: 0; padding-left: 16px; }
+.monitoring-daily-diff-detail-section li { color: #536c78; font-size: 9px; line-height: 1.35; }
+.monitoring-daily-diff-detail-section li > span { display: block; color: #456b7a; font-weight: 700; }
+.monitoring-daily-diff-detail-section li > small { display: block; color: #84949b; font-size: 9px; overflow-wrap: anywhere; }
+.monitoring-daily-diff-schema-list li { display: grid; gap: 1px; }
+.monitoring-daily-diff-detail-groups { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 7px 10px; margin-top: 7px; }
+.monitoring-daily-diff-detail-group { min-width: 0; }
+.monitoring-daily-diff-detail-group > strong { color: #587583; font-size: 9px; }
+.monitoring-daily-diff-detail-group ul { display: grid; gap: 2px; margin: 3px 0 0; padding-left: 14px; }
+.monitoring-daily-diff-detail-group li { overflow: hidden; color: #71858e; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-daily-diff-detail-truncated { display: block; margin-top: 7px; color: #8a6b48; font-size: 9px; }
+.monitoring-daily-diff-warning { display: flex; align-items: flex-start; gap: 5px; margin: 0; color: #8e5337; font-size: 10px; line-height: 1.4; }
+.monitoring-daily-diff-safety { display: flex; align-items: flex-start; gap: 7px; padding: 7px 8px; border: 1px solid #e6c7b8; background: #fff8f3; color: #8e5337; font-size: 10px; line-height: 1.4; }
+.monitoring-daily-diff-safety > svg { flex: 0 0 auto; margin-top: 1px; }
+.monitoring-daily-diff-safety strong { display: block; color: #8b4d36; font-size: 10px; }
+.monitoring-daily-diff-safety ul { display: grid; gap: 3px; margin: 4px 0 0; padding-left: 14px; }
+.monitoring-daily-diff-safety li { padding-left: 1px; }
+.monitoring-daily-diff-safety li span { color: #8b4d36; font-weight: 700; }
+.monitoring-daily-diff-safety li small { display: block; color: #9d6a54; font-size: 9px; }
+.monitoring-daily-diff-source { color: #8a989f; font-size: 9px; line-height: 1.35; overflow-wrap: anywhere; }
+
+@media (max-width: 980px) {
+  .monitoring-daily-diff-grid { grid-template-columns: repeat(4, minmax(90px, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .monitoring-daily-diff-head { display: grid; }
+  .monitoring-daily-diff-grid { grid-template-columns: repeat(2, minmax(90px, 1fr)); }
+  .monitoring-daily-diff-detail-groups { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+}

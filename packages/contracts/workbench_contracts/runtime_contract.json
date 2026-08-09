@@ -1,0 +1,50 @@
+{
+  "schema_version": "workbench_runtime_contract_v1",
+  "api_contract_version": "medical-writing-api-2026-07-17.1",
+  "client_contract_header": "X-Workbench-Api-Contract",
+  "build_fingerprint": {
+    "backend_source_root": "services/api/app",
+    "backend_extensions": [".py"],
+    "frontend_source_root": "frontend/src",
+    "frontend_extensions": [".css", ".js", ".jsx", ".json"],
+    "frontend_additional_files": [
+      "frontend/vite.config.mjs",
+      "frontend/package.json",
+      "frontend/package-lock.json"
+    ],
+    "digest_prefix_length": 16
+  },
+  "required_capabilities": [
+    {"id": "runtime_readiness", "method": "GET", "path": "/api/runtime-readiness"},
+    {"id": "ai_gateway_status", "method": "GET", "path": "/api/ai-gateway/status"},
+    {"id": "project_catalog", "method": "GET", "path": "/api/projects"},
+    {"id": "project_create", "method": "POST", "path": "/api/projects"},
+    {"id": "project_source_manifest", "method": "GET", "path": "/api/projects/{project_id}/source-manifest"},
+    {"id": "authoring_configuration", "method": "GET", "path": "/api/medical-writing/authoring-product-configuration"},
+    {"id": "authoring_journey_read", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/authoring-journey"},
+    {"id": "authoring_journey_create", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/authoring-journey"},
+    {"id": "authoring_stage_draft", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/authoring-journey/stages/{stage}/draft"},
+    {"id": "authoring_stage_commit", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/authoring-journey/stages/{stage}/commit"},
+    {"id": "competitor_search", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/authoring-journey/competitor-search"},
+    {"id": "corpus_gate_recalculate", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/authoring-journey/corpus-gate/recalculate"},
+    {"id": "reference_workspace", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/references/workspace"},
+    {"id": "reference_search", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/references/search-snapshots"},
+    {"id": "reference_upload", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/references/documents/upload"},
+    {"id": "reference_translation", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/references/translations"},
+    {"id": "literature_library", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/literature"},
+    {"id": "literature_import", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/literature/imports"},
+    {"id": "greenfield_document_read", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/greenfield-document"},
+    {"id": "greenfield_document_create", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/greenfield-document"},
+    {"id": "document_session", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/document-session"},
+    {"id": "document_index", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/document-index"},
+    {"id": "study_consistency", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/study-consistency"},
+    {"id": "section_read", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/document-session/sections/{section_id}"},
+    {"id": "working_copy_read", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}"},
+    {"id": "working_copy_save", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}"},
+    {"id": "revision_apply", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}/revision-threads/{thread_id}/apply"},
+    {"id": "approval_gate", "method": "POST", "path": "/api/projects/{project_id}/medical-writing/working-copies/{section_id}/approval-gate"},
+    {"id": "document_export", "method": "GET", "path": "/api/projects/{project_id}/medical-writing/document.docx"},
+    {"id": "table_templates", "method": "GET", "path": "/api/medical-writing/table-templates"},
+    {"id": "table_domain_profiles", "method": "GET", "path": "/api/medical-writing/table-domain-profiles"}
+  ]
+}

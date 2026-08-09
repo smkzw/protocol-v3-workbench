@@ -1,0 +1,46 @@
+.monitoring-assurance-remediation {
+  display: grid;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 9px 10px;
+  border: 1px solid #e0e9f1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.monitoring-assurance-remediation.partial { border-color: #ead8a9; background: #fffdf7; }
+.monitoring-assurance-remediation.malformed { border-color: #ecc6b5; background: #fff8f3; }
+.monitoring-assurance-remediation.empty { color: #738596; font-size: 11px; }
+.monitoring-assurance-remediation header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.monitoring-assurance-remediation header > div:first-child { display: grid; gap: 2px; min-width: 0; }
+.monitoring-assurance-remediation header strong { display: inline-flex; align-items: center; gap: 5px; color: #315568; font-size: 12px; }
+.monitoring-assurance-remediation header span { color: #718391; font-size: 10px; line-height: 1.35; }
+.monitoring-assurance-remediation-counts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.monitoring-assurance-remediation-counts em { padding: 3px 6px; border-radius: 999px; background: #eef3f6; color: #617986; font-size: 9px; font-style: normal; white-space: nowrap; }
+.monitoring-assurance-remediation-counts em.open { background: #fff4d7; color: #8a650e; }
+.monitoring-assurance-remediation-counts em.missing { background: #fff0ec; color: #a13e2d; }
+.monitoring-assurance-remediation-table { overflow: hidden; border: 1px solid #e4ebef; border-radius: 6px; }
+.monitoring-assurance-remediation-row { min-height: 38px; display: grid; grid-template-columns: 1.05fr 1fr .8fr 1.35fr 26px; align-items: center; gap: 7px; padding: 5px 7px; border-bottom: 1px solid #edf2f5; color: #536b78; font-size: 10px; }
+.monitoring-assurance-remediation-row:last-child { border-bottom: 0; }
+.monitoring-assurance-remediation-row.header { min-height: 30px; background: #f6f9fb; color: #768895; font-size: 9px; font-weight: 700; }
+.monitoring-assurance-remediation-row > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-assurance-remediation-row > span:first-child { display: grid; gap: 2px; }
+.monitoring-assurance-remediation-row > span:first-child strong { font-size: 10px; }
+.monitoring-assurance-remediation-row > span:first-child strong.severity-critical, .monitoring-assurance-remediation-row > span:first-child strong.severity-high { color: #a13e2d; }
+.monitoring-assurance-remediation-row > span:first-child strong.severity-medium { color: #8a650e; }
+.monitoring-assurance-remediation-row > span:first-child small { color: #778996; }
+.monitoring-assurance-remediation-row code { min-width: 0; overflow: hidden; color: #748793; text-overflow: ellipsis; white-space: nowrap; }
+.monitoring-assurance-remediation-row .evidence-present { color: #2f7049; }
+.monitoring-assurance-remediation-row .evidence-missing { color: #a13e2d; font-weight: 700; }
+.monitoring-assurance-remediation-row button { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 23px; padding: 2px; border: 1px solid #d4e2eb; border-radius: 5px; background: #fff; color: #2c668e; cursor: pointer; }
+.monitoring-assurance-remediation-row button:disabled { cursor: not-allowed; opacity: .45; }
+.monitoring-assurance-remediation-more, .monitoring-assurance-remediation-warning { color: #8494a0; font-size: 9px; line-height: 1.4; }
+.monitoring-assurance-remediation-warning { display: flex; align-items: flex-start; gap: 5px; margin: 0; color: #8e5337; }
+.monitoring-assurance-remediation p { margin: 0; line-height: 1.45; }
+
+@media (max-width: 720px) {
+  .monitoring-assurance-remediation header { display: grid; }
+  .monitoring-assurance-remediation-counts { justify-content: flex-start; }
+  .monitoring-assurance-remediation-row { grid-template-columns: 1fr 1fr .75fr 1fr 24px; }
+}
+
