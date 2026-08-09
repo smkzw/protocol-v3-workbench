@@ -40,6 +40,8 @@ class RepositoryHygieneTests(unittest.TestCase):
             self._write(root, "runtime/medical_writing.sqlite3", "")
             self._write(root, "services/api/assets/medical_writing_corpus/corpus.jsonl")
             self._write(root, "--indications")
+            self._write(root, "records/handoffs/CODEX_NO_LOSS_PAUSE_MEDICAL_MONITORING.md")
+            self._write(root, "runs/browser_profile/DIPS-wal")
 
             inventory = build_inventory(root, self.rules, task_id="unit-test", workers=2)
             by_path = {entry["path"]: entry for entry in inventory["entries"]}
@@ -55,7 +57,9 @@ class RepositoryHygieneTests(unittest.TestCase):
             self.assertEqual(by_path["runtime/medical_writing.sqlite3"]["owner"], "immutable_runtime_evidence")
             self.assertEqual(by_path["services/api/assets/medical_writing_corpus/corpus.jsonl"]["classification"], "authority_regression")
             self.assertEqual(by_path["--indications"]["owner"], "orphan_process_artifact")
-            self.assertEqual(inventory["summary"]["entry_count"], 11)
+            self.assertEqual(by_path["records/handoffs/CODEX_NO_LOSS_PAUSE_MEDICAL_MONITORING.md"]["owner"], "medical_monitoring")
+            self.assertEqual(by_path["runs/browser_profile/DIPS-wal"]["owner"], "immutable_runtime_evidence")
+            self.assertEqual(inventory["summary"]["entry_count"], 13)
             self.assertEqual(set(inventory["summary"]["classification_counts"]), set(self.rules["classifications"]))
 
     def test_nested_workbench_records_canonical_hash_relation_and_stays_blocked(self) -> None:
@@ -106,6 +110,38 @@ class RepositoryHygieneTests(unittest.TestCase):
             self.assertGreaterEqual(helper["references"]["test"], 1)
             self.assertGreaterEqual(helper["references"]["checkpoint"], 1)
             json.dumps(inventory, ensure_ascii=False, sort_keys=True)
+
+    def test_new_path_owner_is_resolved_by_rules_not_filename_substring(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write(root, "services/api/app/main.py")
+            inventory = build_inventory(root, self.rules, task_id="unit-test", workers=2)
+
+            self._write(root, "notes/medical_monitoring_injection.txt")
+            with self.assertRaises(HygieneError):
+                verify_inventory_against_root(
+                    inventory,
+                    root,
+                    allowed_drift_owners=("medical_monitoring",),
+                    rules=self.rules,
+                )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write(root, "services/api/app/main.py")
+            inventory = build_inventory(root, self.rules, task_id="unit-test", workers=2)
+            self._write(
+                root,
+                "prompts/execution/medical_monitoring_ai_native_r1/worker_followup.md",
+            )
+            result = verify_inventory_against_root(
+                inventory,
+                root,
+                allowed_drift_owners=("medical_monitoring",),
+                rules=self.rules,
+            )
+            self.assertEqual(result["blocked_drift_count"], 0)
+            self.assertEqual(result["allowed_added"][0]["owner"], "medical_monitoring")
 
 
 if __name__ == "__main__":

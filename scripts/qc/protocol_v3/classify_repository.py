@@ -59,7 +59,8 @@ def load_rules(path: Path) -> Mapping[str, object]:
 
 
 def _matches(path: str, patterns: Iterable[str]) -> bool:
-    return any(fnmatchcase(path, pattern) for pattern in patterns)
+    folded_path = path.casefold()
+    return any(fnmatchcase(folded_path, pattern.casefold()) for pattern in patterns)
 
 
 def classify_path(path: str, rules: Mapping[str, object]) -> Mapping[str, object]:

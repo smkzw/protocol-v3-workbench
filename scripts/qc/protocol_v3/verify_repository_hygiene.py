@@ -3,19 +3,33 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Iterable, Mapping, Sequence
+from typing import Iterable, Mapping, Optional, Sequence
 
-from classify_repository import HygieneError, _iter_repository_paths, _metadata_for_path
+from classify_repository import (
+    HygieneError,
+    _iter_repository_paths,
+    _metadata_for_path,
+    classify_path,
+    load_rules,
+)
 
 
 def _entry_owner(entry: Mapping[str, object]) -> str:
     return str(entry.get("owner", "workbench_unresolved"))
 
 
+def _drift_is_allowed(entry: Mapping[str, object], allowed: set) -> bool:
+    return (
+        _entry_owner(entry) in allowed
+        and entry.get("classification") in {"protected_out_of_scope", "regenerable"}
+    )
+
+
 def verify_inventory_against_root(
     inventory: Mapping[str, object],
     root: Path,
     allowed_drift_owners: Iterable[str] = (),
+    rules: Optional[Mapping[str, object]] = None,
 ) -> Mapping[str, object]:
     root = root.resolve(strict=True)
     allowed = set(allowed_drift_owners)
@@ -29,16 +43,24 @@ def verify_inventory_against_root(
     blocked_added = []
     allowed_added = []
     for path in added:
-        owner = "workbench_unresolved"
-        if "medical_monitoring" in path or "/monitoring_" in path:
-            owner = "medical_monitoring"
-        elif path.startswith("logs/agent_health/"):
-            owner = "harness_runtime"
-        elif any(part in {".pytest_cache", ".ruff_cache", ".vite", ".playwright-cli", ".npm-cache"} for part in Path(path).parts):
-            owner = "toolchain_cache"
-        (allowed_added if owner in allowed else blocked_added).append({"path": path, "owner": owner})
-    blocked_missing = [path for path in missing if _entry_owner(expected_entries[path]) not in allowed]
-    allowed_missing = [path for path in missing if _entry_owner(expected_entries[path]) in allowed]
+        disposition = (
+            classify_path(path, rules)
+            if rules is not None
+            else {
+                "classification": "quarantine",
+                "owner": "workbench_unresolved",
+                "rule_id": "no_rules_for_added_path",
+            }
+        )
+        record = {
+            "path": path,
+            "owner": disposition["owner"],
+            "classification": disposition["classification"],
+            "rule_id": disposition["rule_id"],
+        }
+        (allowed_added if _drift_is_allowed(disposition, allowed) else blocked_added).append(record)
+    blocked_missing = [path for path in missing if not _drift_is_allowed(expected_entries[path], allowed)]
+    allowed_missing = [path for path in missing if _drift_is_allowed(expected_entries[path], allowed)]
 
     changed = []
     allowed_changed = []
@@ -54,7 +76,7 @@ def verify_inventory_against_root(
         if not mismatches:
             continue
         record = {"path": path, "owner": _entry_owner(expected), "mismatches": mismatches}
-        if record["owner"] in allowed:
+        if _drift_is_allowed(expected, allowed):
             allowed_changed.append(record)
         else:
             changed.append(record)
@@ -80,10 +102,16 @@ def main(argv: Sequence[str] = ()) -> int:
     parser = argparse.ArgumentParser(description="Verify a repository hygiene inventory against its live root.")
     parser.add_argument("--inventory", required=True, type=Path)
     parser.add_argument("--root", required=True, type=Path)
+    parser.add_argument("--rules", required=True, type=Path)
     parser.add_argument("--allow-drift-owner", action="append", default=[])
     args = parser.parse_args(list(argv) if argv else None)
     inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
-    result = verify_inventory_against_root(inventory, args.root, args.allow_drift_owner)
+    result = verify_inventory_against_root(
+        inventory,
+        args.root,
+        args.allow_drift_owner,
+        rules=load_rules(args.rules),
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0
 
