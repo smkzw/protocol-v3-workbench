@@ -1,0 +1,130 @@
+{
+  "schema_version": "protocol-v3-toolchain.v1",
+  "task": "mw_protocol_v3_phase0_task03_20260809_111313",
+  "generated_for": "Protocol v3 Phase 0 Task 0.3 — reproducible Python/frontend toolchain",
+  "authority": "This manifest is the only CLI command authority. Wrappers read package manager, lock hashes, scripts, Python version and lock from here; no CLI override is accepted. The Task 0.3 verifier source independently anchors every referenced source hash until Task 0.4 supplies the external immutable authority. Both anchors are checked before any command runs.",
+  "python": {
+    "version": "3.12",
+    "interpreter": "python3.12",
+    "compiler": {
+      "name": "pip-tools",
+      "version": "7.6.0",
+      "command": "python -m piptools compile --generate-hashes --resolver=backtracking --strip-extras --output-file services/api/requirements-protocol-v3.lock services/api/requirements-protocol-v3.in"
+    },
+    "requirements_input": {
+      "path": "services/api/requirements-protocol-v3.in",
+      "sha256": "9fd153ebb36125d68d575383ce15334f15ca294eff4ed6d50af72cdc58495045"
+    },
+    "lock": {
+      "path": "services/api/requirements-protocol-v3.lock",
+      "sha256": "1e771c8f4f3a90410714f94107cecd42662574fa560eb72ce9ee89e6e5921698",
+      "direct_count": 15,
+      "entry_count": 38,
+      "hash_algorithm": "sha256",
+      "excluded": ["PyMuPDF", "fitz"]
+    },
+    "license_groups": {
+      "runtime_api": ["fastapi", "pydantic", "starlette", "uvicorn", "python-multipart", "cryptography"],
+      "medical_writing": ["python-docx", "lxml", "openpyxl", "pandas"],
+      "ocr_pdf": ["Pillow", "pypdfium2", "rfc8785"],
+      "dev_test": ["httpx", "pytest"]
+    },
+    "clean_install": {
+      "venv_create": ["{python}", "-m", "venv", "{venv}"],
+      "install": ["{venv_python}", "-m", "pip", "install", "--disable-pip-version-check", "--no-cache-dir", "--require-hashes", "--no-deps", "-r", "{lock}"],
+      "verify": ["{venv_python}", "-m", "pip", "check"],
+      "import_probe_modules": ["scripts.qc.protocol_v3.verify_toolchain_rebuild"]
+    }
+  },
+  "frontend": {
+    "package_manager": "npm",
+    "node_version": "22.22.3",
+    "npm_version": "10.9.8",
+    "runtime_binaries": {
+      "node": {
+        "version": "22.22.3",
+        "sha256": "5d9d3872911e2340a43b707962e68143de8a4e8d54628845c0c4f2de1fb7cd5c"
+      },
+      "npm": {
+        "version": "10.9.8",
+        "sha256": "8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7"
+      }
+    },
+    "package": {
+      "path": "frontend/package.json",
+      "sha256": "94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd",
+      "package_manager_field": "npm@10.9.8"
+    },
+    "lock": {
+      "path": "frontend/package-lock.json",
+      "sha256": "83378e52cc1fdf764ea5d34c418aa0e7da2c4bdf1b099ec85e8feaadca1b2134",
+      "lockfile_version": 3,
+      "package_count": 255
+    },
+    "quarantined_inactive_pnpm": {
+      "status": "inactive_quarantined",
+      "note": "The non-selected pnpm lock/workspace are preserved byte-identically outside the active frontend. Only package-lock.json is executable; Task 0.5 owns final archive/cleanup disposition.",
+      "pnpm_lock": {
+        "path": "quarantine/protocol_v3/task03/frontend/pnpm-lock.yaml",
+        "sha256": "3f101b4e9c833a5154af12f250644cfe60ada682d351c9f028484159d038fba8"
+      },
+      "pnpm_workspace": {
+        "path": "quarantine/protocol_v3/task03/frontend/pnpm-workspace.yaml",
+        "sha256": "d6d0c24446d91ef762d37c6ba801bb516e65d7055aa9f8027fcd457409a97ce1"
+      }
+    },
+    "test_inventory": {
+      "path": "frontend/tests/protocol_v3_test_inventory.mjs",
+      "sha256": "0a037e0d24de4674fadc52fa8a1cb46aeb95afb9378e3790074cd1297766d75d",
+      "schema_version": "protocol-v3-test-inventory.v1",
+      "ignored_directories": [".cache", ".git", ".npm-cache", ".vite", "coverage", "dist", "node_modules", "output", "runtime"],
+      "test_suffixes": {
+        ".test.jsx": "vitest",
+        ".test.mjs": "node"
+      },
+      "counts": {
+        "total": 49,
+        "vitest": 3,
+        "node": 46
+      },
+      "paths_sha256": "26c7c88c09bf0bdfd52cf1c0599e8dea2ff7f0e2c6f32dccf5cfe2fe089312ce",
+      "explicit_node_paths": [
+        "tests/monitoring_child_read_contract_qc.mjs",
+        "tests/monitoring_source_only_ui_qc.mjs"
+      ],
+      "excluded_controlled_qc_paths": [
+        "tests/monitoring_content_confirmation_qc.mjs",
+        "tests/monitoring_real_projects_actions_qc.mjs",
+        "tests/monitoring_real_projects_qc.mjs",
+        "tests/monitoring_upload_qc.mjs"
+      ],
+      "excluded_controlled_qc_reason": "requires live service, browser and/or runtime data; protected E2E gate only",
+      "excluded_stale_qc_paths": [
+        "tests/monitoring_unavailable_state_qc.mjs"
+      ],
+      "excluded_stale_qc_reason": "protected medical-monitoring baseline QC is stale against baseline source; monitoring owner adjudication required",
+      "vitest_paths": [
+        "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+        "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
+        "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx"
+      ]
+    },
+    "scripts": {
+      "install": ["npm", "ci", "--ignore-scripts", "--audit=false", "--fund=false"],
+      "test:inventory": ["node", "tests/protocol_v3_test_inventory.mjs", "--check"],
+      "test:inventory:json": ["node", "tests/protocol_v3_test_inventory.mjs", "--json"],
+      "test:unit:vitest": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "vitest"],
+      "test:unit:node": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "node"],
+      "test:unit": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "all"],
+      "build": ["npm", "run", "build"]
+    },
+    "vitest_args": ["run", "--config", "vite.config.mjs", "--environment", "jsdom"],
+    "vitest_entry": "frontend/node_modules/vitest/vitest.mjs",
+    "node_runner_args": ["--test"]
+  },
+  "side_effect_contract": {
+    "import_probe": "New tool imports must not write to disk, create DB/directories, or start workers. The Python import probe snapshots the watched root before and after import and fails closed on any changed path.",
+    "no_main_py": "No wrapper, verifier, or import probe may import or start legacy services/api/app/main.py.",
+    "clean_rebuild": "Clean rebuild roots must be outside the source tree, must not pre-exist, and must exclude inherited .venv, node_modules, cache and dist."
+  }
+}

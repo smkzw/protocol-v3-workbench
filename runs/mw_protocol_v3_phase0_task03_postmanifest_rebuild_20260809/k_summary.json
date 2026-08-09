@@ -1,0 +1,61 @@
+{
+  "action_gate_hash_counts": [
+    7,
+    7,
+    7
+  ],
+  "action_gate_order": [
+    "install",
+    "unit",
+    "build"
+  ],
+  "all_action_gates_ok": true,
+  "build_returncode": 0,
+  "bundle_warning_observed": true,
+  "dist_exists_after_build": true,
+  "install_returncode": 0,
+  "inventory_counts": {
+    "node": 44,
+    "total": 47,
+    "vitest": 3
+  },
+  "label": "k",
+  "medical_monitoring_suite_observed": true,
+  "node_48_passed": true,
+  "node_modules_exists_after_install": true,
+  "root": "/private/tmp/mw-v3-task03-k.fuwKSR",
+  "runtime_versions": {
+    "node": {
+      "actual": "22.22.3",
+      "command": [
+        "node",
+        "--version"
+      ],
+      "expected": "22.22.3",
+      "ok": true,
+      "returncode": 0
+    },
+    "npm": {
+      "actual": "10.9.8",
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "expected": "10.9.8",
+      "ok": true,
+      "returncode": 0
+    }
+  },
+  "schema_version": "protocol-v3-clean-rebuild-result.v2",
+  "unit_declared_command": [
+    "node",
+    "tests/protocol_v3_test_inventory.mjs",
+    "--run",
+    "all"
+  ],
+  "unit_returncode": 0,
+  "used_usr_bin_true": false,
+  "vite_1947_modules": true,
+  "vitest_18_passed": true,
+  "wrapper_json_sha256": "6d1815e71e8bf2d537d9597f46fb66eaf97db53d542174a37f7b0bd51579ccb3"
+}

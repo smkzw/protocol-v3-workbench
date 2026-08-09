@@ -1,0 +1,498 @@
+{
+  "action_gates": [
+    {
+      "before_action": "install",
+      "hash_check_count": 7,
+      "hashes_ok": true,
+      "inventory_counts": {
+        "node": 44,
+        "total": 47,
+        "vitest": 3
+      },
+      "runtime_versions": {
+        "node": "22.22.3",
+        "npm": "10.9.8"
+      }
+    },
+    {
+      "before_action": "unit",
+      "hash_check_count": 7,
+      "hashes_ok": true,
+      "inventory_counts": {
+        "node": 44,
+        "total": 47,
+        "vitest": 3
+      },
+      "runtime_versions": {
+        "node": "22.22.3",
+        "npm": "10.9.8"
+      }
+    },
+    {
+      "before_action": "build",
+      "hash_check_count": 7,
+      "hashes_ok": true,
+      "inventory_counts": {
+        "node": 44,
+        "total": 47,
+        "vitest": 3
+      },
+      "runtime_versions": {
+        "node": "22.22.3",
+        "npm": "10.9.8"
+      }
+    }
+  ],
+  "build": {
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/private/tmp/mw-v3-task03-j.FgPxdQ/frontend",
+    "passed": true,
+    "returncode": 0,
+    "stderr": "\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n",
+    "stdout": "\n> frontend@0.0.0 build\n> vite build\n\nvite v6.4.2 building for production...\ntransforming...\n✓ 1947 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/runtime-build.json                   0.27 kB │ gzip:   0.20 kB\ndist/index.html                           0.50 kB │ gzip:   0.35 kB\ndist/assets/header_logo-clkbaD-d.png     10.06 kB\ndist/assets/index-BRT3yirv.css          449.04 kB │ gzip:  67.76 kB\ndist/assets/index-CMJFtBaH.js         2,075.29 kB │ gzip: 600.57 kB\n✓ built in 1.82s\n"
+  },
+  "hash_check": {
+    "checks": [
+      {
+        "actual": "9fd153ebb36125d68d575383ce15334f15ca294eff4ed6d50af72cdc58495045",
+        "expected": "9fd153ebb36125d68d575383ce15334f15ca294eff4ed6d50af72cdc58495045",
+        "label": "python.requirements_input",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/services/api/requirements-protocol-v3.in"
+      },
+      {
+        "actual": "1e771c8f4f3a90410714f94107cecd42662574fa560eb72ce9ee89e6e5921698",
+        "expected": "1e771c8f4f3a90410714f94107cecd42662574fa560eb72ce9ee89e6e5921698",
+        "label": "python.lock",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/services/api/requirements-protocol-v3.lock"
+      },
+      {
+        "actual": "94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd",
+        "expected": "94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd",
+        "label": "frontend.package",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/frontend/package.json"
+      },
+      {
+        "actual": "83378e52cc1fdf764ea5d34c418aa0e7da2c4bdf1b099ec85e8feaadca1b2134",
+        "expected": "83378e52cc1fdf764ea5d34c418aa0e7da2c4bdf1b099ec85e8feaadca1b2134",
+        "label": "frontend.lock",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/frontend/package-lock.json"
+      },
+      {
+        "actual": "f04e933dfcdd228ea26544c142cac29946c1e0714ece1b6719b20dd8d1e24442",
+        "expected": "f04e933dfcdd228ea26544c142cac29946c1e0714ece1b6719b20dd8d1e24442",
+        "label": "frontend.test_inventory",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/frontend/tests/protocol_v3_test_inventory.mjs"
+      },
+      {
+        "actual": "3f101b4e9c833a5154af12f250644cfe60ada682d351c9f028484159d038fba8",
+        "expected": "3f101b4e9c833a5154af12f250644cfe60ada682d351c9f028484159d038fba8",
+        "label": "frontend.quarantined_inactive_pnpm.pnpm_lock",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/quarantine/protocol_v3/task03/frontend/pnpm-lock.yaml"
+      },
+      {
+        "actual": "d6d0c24446d91ef762d37c6ba801bb516e65d7055aa9f8027fcd457409a97ce1",
+        "expected": "d6d0c24446d91ef762d37c6ba801bb516e65d7055aa9f8027fcd457409a97ce1",
+        "label": "frontend.quarantined_inactive_pnpm.pnpm_workspace",
+        "ok": true,
+        "path": "/private/tmp/mw-v3-task03-j.FgPxdQ/quarantine/protocol_v3/task03/frontend/pnpm-workspace.yaml"
+      }
+    ],
+    "schema_version": "protocol-v3-toolchain.v1"
+  },
+  "install": {
+    "command": [
+      "npm",
+      "ci",
+      "--ignore-scripts",
+      "--audit=false",
+      "--fund=false"
+    ],
+    "cwd": "/private/tmp/mw-v3-task03-j.FgPxdQ/frontend",
+    "passed": true,
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "\nadded 206 packages in 1s\n"
+  },
+  "inventory": {
+    "expected_counts": {
+      "node": 44,
+      "total": 47,
+      "vitest": 3
+    },
+    "inventory": {
+      "commands": {
+        "node": {
+          "args": [
+            "--test",
+            "src/features/medical-monitoring/medicalMonitoringApi.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringModels.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs",
+            "src/features/medical-writing/durableJobState.test.mjs",
+            "src/features/writing-reference/progressJourneyLogic.test.mjs",
+            "src/features/writing-reference/referenceIdentity.test.mjs",
+            "src/features/writing-reference/triagePresentationState.test.mjs",
+            "tests/final_matrix_process.test.mjs",
+            "tests/protocol_v3_test_inventory.test.mjs"
+          ],
+          "command": "/Users/smkzw/.hermes/node/bin/node",
+          "paths": [
+            "src/features/medical-monitoring/medicalMonitoringApi.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringModels.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs",
+            "src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs",
+            "src/features/medical-writing/durableJobState.test.mjs",
+            "src/features/writing-reference/progressJourneyLogic.test.mjs",
+            "src/features/writing-reference/referenceIdentity.test.mjs",
+            "src/features/writing-reference/triagePresentationState.test.mjs",
+            "tests/final_matrix_process.test.mjs",
+            "tests/protocol_v3_test_inventory.test.mjs"
+          ],
+          "runner": "node"
+        },
+        "vitest": {
+          "args": [
+            "run",
+            "--config",
+            "vite.config.mjs",
+            "--environment",
+            "jsdom",
+            "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+            "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
+            "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx"
+          ],
+          "command": "vitest",
+          "paths": [
+            "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+            "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
+            "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx"
+          ],
+          "runner": "vitest"
+        }
+      },
+      "counts": {
+        "node": 44,
+        "total": 47,
+        "vitest": 3
+      },
+      "ignored_directories": [
+        ".cache",
+        ".git",
+        ".npm-cache",
+        ".vite",
+        "coverage",
+        "dist",
+        "node_modules",
+        "output",
+        "runtime"
+      ],
+      "root": "frontend",
+      "schema_version": "protocol-v3-test-inventory.v1",
+      "tests": [
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringApi.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringModels.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+          "runner": "vitest"
+        },
+        {
+          "path": "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
+          "runner": "vitest"
+        },
+        {
+          "path": "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+          "runner": "vitest"
+        },
+        {
+          "path": "src/features/medical-writing/durableJobState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/writing-reference/progressJourneyLogic.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/writing-reference/referenceIdentity.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "src/features/writing-reference/triagePresentationState.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "tests/final_matrix_process.test.mjs",
+          "runner": "node"
+        },
+        {
+          "path": "tests/protocol_v3_test_inventory.test.mjs",
+          "runner": "node"
+        }
+      ]
+    }
+  },
+  "manifest": "config/medical_writing/protocol_v3/toolchain_manifest.json",
+  "mode": "frontend",
+  "package_manager": "npm",
+  "runtime_versions": {
+    "node": {
+      "actual": "22.22.3",
+      "command": [
+        "node",
+        "--version"
+      ],
+      "expected": "22.22.3",
+      "ok": true,
+      "returncode": 0
+    },
+    "npm": {
+      "actual": "10.9.8",
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "expected": "10.9.8",
+      "ok": true,
+      "returncode": 0
+    }
+  },
+  "unit": {
+    "command": [
+      "node",
+      "tests/protocol_v3_test_inventory.mjs",
+      "--run",
+      "all"
+    ],
+    "passed": true,
+    "returncode": 0,
+    "stderr": "[protocol-v3-test-inventory] runner=vitest tests=3\n[protocol-v3-test-inventory] runner=node tests=44\n",
+    "stdout": "\n RUN  v4.1.10 /private/tmp/mw-v3-task03-j.FgPxdQ/frontend\n\n\n Test Files  3 passed (3)\n      Tests  18 passed (18)\n   Start at  15:29:12\n   Duration  406ms (transform 134ms, setup 0ms, import 260ms, tests 9ms, environment 759ms)\n\nTAP version 13\n# medicalMonitoringApi: 130 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringApi.test.mjs\nok 1 - src/features/medical-monitoring/medicalMonitoringApi.test.mjs\n  ---\n  duration_ms: 54.594584\n  type: 'test'\n  ...\n# medicalMonitoringAssurance: 46 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs\nok 2 - src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs\n  ---\n  duration_ms: 44.245417\n  type: 'test'\n  ...\n# medicalMonitoringAssuranceRemediation: contract checks passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs\nok 3 - src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs\n  ---\n  duration_ms: 34.35575\n  type: 'test'\n  ...\n# medicalMonitoringAssuranceRollup: 16 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs\nok 4 - src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs\n  ---\n  duration_ms: 41.355\n  type: 'test'\n  ...\n# medicalMonitoringAssuranceView: 31 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs\nok 5 - src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs\n  ---\n  duration_ms: 39.466417\n  type: 'test'\n  ...\n# medicalMonitoringBatchView: 13 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs\nok 6 - src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs\n  ---\n  duration_ms: 31.68625\n  type: 'test'\n  ...\n# medicalMonitoringChecklistState: 20 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs\nok 7 - src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs\n  ---\n  duration_ms: 32.3365\n  type: 'test'\n  ...\n# medicalMonitoringConsumerContract: 33 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs\nok 8 - src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs\n  ---\n  duration_ms: 42.732417\n  type: 'test'\n  ...\n# medicalMonitoringDailyAiCandidates: contract checks passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs\nok 9 - src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs\n  ---\n  duration_ms: 34.142583\n  type: 'test'\n  ...\n# medicalMonitoringDailyAiEvidence: 36 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs\nok 10 - src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs\n  ---\n  duration_ms: 34.334459\n  type: 'test'\n  ...\n# medicalMonitoringDailyDiffView: 27 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs\nok 11 - src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs\n  ---\n  duration_ms: 33.404542\n  type: 'test'\n  ...\n# medicalMonitoringDailyRunEvidence: 31 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs\nok 12 - src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs\n  ---\n  duration_ms: 31.67175\n  type: 'test'\n  ...\n# medicalMonitoringDailyRunStartGate: 7 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs\nok 13 - src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs\n  ---\n  duration_ms: 35.265875\n  type: 'test'\n  ...\n# medicalMonitoringDailyRunView: 41 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs\nok 14 - src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs\n  ---\n  duration_ms: 37.447417\n  type: 'test'\n  ...\n# medicalMonitoringFieldMappingState: 8 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs\nok 15 - src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs\n  ---\n  duration_ms: 35.913166\n  type: 'test'\n  ...\n# medicalMonitoringFieldMappingView: 15 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs\nok 16 - src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs\n  ---\n  duration_ms: 33.282542\n  type: 'test'\n  ...\n# medicalMonitoringMetricConfiguration: 18 checks passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs\nok 17 - src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs\n  ---\n  duration_ms: 32.407542\n  type: 'test'\n  ...\n# medicalMonitoringModeCatalog: 18 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs\nok 18 - src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs\n  ---\n  duration_ms: 37.18425\n  type: 'test'\n  ...\n# medicalMonitoringModels: 84 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringModels.test.mjs\nok 19 - src/features/medical-monitoring/medicalMonitoringModels.test.mjs\n  ---\n  duration_ms: 45.6575\n  type: 'test'\n  ...\n# Subtest: src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs\nok 20 - src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs\n  ---\n  duration_ms: 39.057625\n  type: 'test'\n  ...\n# medicalMonitoringPrincipal: 17 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs\nok 21 - src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs\n  ---\n  duration_ms: 41.810917\n  type: 'test'\n  ...\n# medicalMonitoringProjectNeutralContract: 66 production files scanned\n# Subtest: src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs\nok 22 - src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs\n  ---\n  duration_ms: 42.19425\n  type: 'test'\n  ...\n# medicalMonitoringProjectRequestScope: 14 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs\nok 23 - src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs\n  ---\n  duration_ms: 34.083375\n  type: 'test'\n  ...\n# medicalMonitoringProjectSwitchIsolation: 69 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs\nok 24 - src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs\n  ---\n  duration_ms: 35.072083\n  type: 'test'\n  ...\n# medicalMonitoringProtocolPreparation: 32 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs\nok 25 - src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs\n  ---\n  duration_ms: 41.12425\n  type: 'test'\n  ...\n# medicalMonitoringRiskEvidenceContext: 24 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs\nok 26 - src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs\n  ---\n  duration_ms: 36.059708\n  type: 'test'\n  ...\n# medicalMonitoringRiskHistoryTrend: 23 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs\nok 27 - src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs\n  ---\n  duration_ms: 34.863625\n  type: 'test'\n  ...\n# medicalMonitoringRiskProjection: 26 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs\nok 28 - src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs\n  ---\n  duration_ms: 39.14875\n  type: 'test'\n  ...\n# medicalMonitoringRouteState: 56 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs\nok 29 - src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs\n  ---\n  duration_ms: 30.925834\n  type: 'test'\n  ...\n# medicalMonitoringRuleRelease: 71 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs\nok 30 - src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs\n  ---\n  duration_ms: 43.350375\n  type: 'test'\n  ...\n# medicalMonitoringRuleReleaseView: 21 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs\nok 31 - src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs\n  ---\n  duration_ms: 33.175542\n  type: 'test'\n  ...\n# medicalMonitoringRuleTemplateRecommendation: 24 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs\nok 32 - src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs\n  ---\n  duration_ms: 36.923417\n  type: 'test'\n  ...\n# medicalMonitoringRuleTemplateView: 13 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs\nok 33 - src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs\n  ---\n  duration_ms: 35.902792\n  type: 'test'\n  ...\n# medicalMonitoringScopeSummary: 29 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs\nok 34 - src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs\n  ---\n  duration_ms: 33.018875\n  type: 'test'\n  ...\n# medicalMonitoringScrollState: 8 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs\nok 35 - src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs\n  ---\n  duration_ms: 29.858334\n  type: 'test'\n  ...\n# medicalMonitoringServerIdentity: 56 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs\nok 36 - src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs\n  ---\n  duration_ms: 45.338583\n  type: 'test'\n  ...\n# medicalMonitoringSourceReadiness: 25 passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs\nok 37 - src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs\n  ---\n  duration_ms: 27.050209\n  type: 'test'\n  ...\n# medicalMonitoringSubjectModels tests passed\n# Subtest: src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs\nok 38 - src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs\n  ---\n  duration_ms: 40.607333\n  type: 'test'\n  ...\n# 52 passed, 0 failed\n# Subtest: src/features/medical-writing/durableJobState.test.mjs\nok 39 - src/features/medical-writing/durableJobState.test.mjs\n  ---\n  duration_ms: 29.383833\n  type: 'test'\n  ...\n# progressJourneyLogic: 12 passed\n# Subtest: src/features/writing-reference/progressJourneyLogic.test.mjs\nok 40 - src/features/writing-reference/progressJourneyLogic.test.mjs\n  ---\n  duration_ms: 28.902208\n  type: 'test'\n  ...\n# Subtest: candidate selection replaces a cross-study artifact with the current study artifact\nok 41 - candidate selection replaces a cross-study artifact with the current study artifact\n  ---\n  duration_ms: 0.446334\n  type: 'test'\n  ...\n# Subtest: candidate selection preserves an artifact already bound to the same study\nok 42 - candidate selection preserves an artifact already bound to the same study\n  ---\n  duration_ms: 0.054834\n  type: 'test'\n  ...\n# Subtest: candidate selection clears artifact state when the study has no prepared document\nok 43 - candidate selection clears artifact state when the study has no prepared document\n  ---\n  duration_ms: 0.108042\n  type: 'test'\n  ...\n# triagePresentationState: 17 passed\n# Subtest: src/features/writing-reference/triagePresentationState.test.mjs\nok 42 - src/features/writing-reference/triagePresentationState.test.mjs\n  ---\n  duration_ms: 28.1075\n  type: 'test'\n  ...\n# {\"completed\":{\"status\":0},\"timedOut\":{\"status\":null,\"timeoutSignal\":\"SIGKILL\"},\"descendant\":{\"status\":null,\"timeoutSignal\":\"SIGKILL\",\"pid\":77452,\"alive\":false}}\n# Subtest: tests/final_matrix_process.test.mjs\nok 43 - tests/final_matrix_process.test.mjs\n  ---\n  duration_ms: 912.505541\n  type: 'test'\n  ...\n# Subtest: the frontend inventory discovers every supported test exactly once\nok 46 - the frontend inventory discovers every supported test exactly once\n  ---\n  duration_ms: 9.942667\n  type: 'test'\n  ...\n# Subtest: the inventory validator rejects duplicate, unknown, or uncollected tests\nok 47 - the inventory validator rejects duplicate, unknown, or uncollected tests\n  ---\n  duration_ms: 0.54725\n  type: 'test'\n  ...\n# Subtest: runner commands remain explicit and separate\nok 48 - runner commands remain explicit and separate\n  ---\n  duration_ms: 0.191542\n  type: 'test'\n  ...\n1..48\n# tests 48\n# suites 0\n# pass 48\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 999.203584\n"
+  }
+}

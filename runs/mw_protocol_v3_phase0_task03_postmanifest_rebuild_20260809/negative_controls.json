@@ -1,0 +1,34 @@
+{
+  "alternate_manifest": {
+    "rejected_by_argparse": true,
+    "returncode": 2,
+    "stderr_tail": [
+      "run_frontend_checks.py: error: unrecognized arguments: --manifest /private/tmp/alternate.json"
+    ]
+  },
+  "canonical_true_install": {
+    "contract_rejected": true,
+    "node_modules_exists_after": false,
+    "returncode": 1,
+    "stderr": "frontend check failed: manifest frontend.scripts.install does not match the frozen command"
+  },
+  "node_binary_true_unit_action": {
+    "declared_command": [
+      "node",
+      "tests/protocol_v3_test_inventory.mjs",
+      "--run",
+      "all"
+    ],
+    "node_48_passed": true,
+    "returncode": 0,
+    "used_usr_bin_true": false,
+    "vitest_18_passed": true
+  },
+  "schema_version": "protocol-v3-negative-controls.v1",
+  "stale_count_install_action": {
+    "count_rejected": true,
+    "node_modules_exists_after": false,
+    "returncode": 1,
+    "stderr": "frontend check failed: inventory count 'total' mismatch: manifest=48 actual=47"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "active_frontend_lock_files": [
+    "package-lock.json"
+  ],
+  "canonical_manifest": "config/medical_writing/protocol_v3/toolchain_manifest.json",
+  "canonical_manifest_sha256": "a7e222734e63724e364832f574e8bffffab80d09f8d2a1e6c0a616f6832e15f4",
+  "dist_exists_before_install": false,
+  "excluded_directory_hits_before_install": [],
+  "label": "h",
+  "node_modules_exists_before_install": false,
+  "package_lock_sha256": "83378e52cc1fdf764ea5d34c418aa0e7da2c4bdf1b099ec85e8feaadca1b2134",
+  "package_sha256": "94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd",
+  "recorded_at": "2026-08-09T06:51:50.890019+00:00",
+  "root": "/private/tmp/mw-v3-task03-h.G5Rvwp",
+  "root_birthtime": "2026-08-09T06:46:13+00:00",
+  "schema_version": "protocol-v3-clean-rebuild-prestate.v1",
+  "wrapper_command": [
+    "python3.12",
+    "scripts/qc/protocol_v3/run_frontend_checks.py",
+    "--install",
+    "--unit",
+    "--build",
+    "--json"
+  ]
+}
