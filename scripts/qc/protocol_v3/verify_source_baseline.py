@@ -9,7 +9,7 @@ import shutil
 import stat
 import tarfile
 import tempfile
-from typing import Mapping, Sequence
+from typing import Collection, Mapping, Sequence
 
 from build_source_baseline import BaselineError, build_manifest, validate_relative_path
 
@@ -33,7 +33,11 @@ def _within(path: Path, root: Path) -> bool:
     return True
 
 
-def safe_extract_tar(tar_path: Path, destination: Path) -> None:
+def safe_extract_tar(
+    tar_path: Path,
+    destination: Path,
+    expected_paths: Collection[str] | None = None,
+) -> None:
     destination = destination.absolute()
     if destination.exists():
         raise BaselineError("extraction target already exists: %s" % destination)
@@ -41,7 +45,19 @@ def safe_extract_tar(tar_path: Path, destination: Path) -> None:
     destination_root = destination.resolve(strict=True)
     try:
         with tarfile.open(str(tar_path), "r") as archive:
-            for member in archive.getmembers():
+            members = archive.getmembers()
+            member_paths = [validate_relative_path(member.name) for member in members]
+            if len(member_paths) != len(set(member_paths)):
+                raise BaselineError("source tar contains duplicate member paths")
+            if expected_paths is not None:
+                expected = {validate_relative_path(path) for path in expected_paths}
+                actual = set(member_paths)
+                if actual != expected:
+                    raise BaselineError(
+                        "source tar member set differs from manifest; extra=%r missing=%r"
+                        % (sorted(actual - expected), sorted(expected - actual))
+                    )
+            for member in members:
                 relative = validate_relative_path(member.name)
                 target = (destination_root / relative).resolve(strict=False)
                 if not _within(target, destination_root):
@@ -128,7 +144,8 @@ def verify_tar_against_manifest(
     manifest: Mapping[str, object],
     extraction_root: Path,
 ) -> Mapping[str, object]:
-    safe_extract_tar(tar_path, extraction_root)
+    expected_paths = [str(entry["path"]) for entry in manifest["entries"]]
+    safe_extract_tar(tar_path, extraction_root, expected_paths=expected_paths)
     return verify_manifest_against_root(manifest, extraction_root, strict_metadata=False)
 
 

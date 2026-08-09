@@ -17,7 +17,7 @@ class BaselineError(RuntimeError):
     """Raised when the source-only boundary cannot be proven safe."""
 
 
-POLICY_VERSION = "mw-protocol-v3-source-baseline-v1"
+POLICY_VERSION = "mw-protocol-v3-source-baseline-v2"
 
 ROOT_ALLOWED_FILES = {
     "AGENTS.md",
@@ -81,6 +81,9 @@ DENIED_DIRECTORY_NAMES = {
     "__pycache__",
     "archives",
     "backups",
+    "cache",
+    "caches",
+    ".cache",
     "dist",
     "evidence",
     "logs",
@@ -119,6 +122,10 @@ SPECIAL_DENIED_PREFIXES = {
 }
 
 PLAN_POC_PATTERN = re.compile(r"pocs/protocol_v3/[A-Za-z0-9_.\-/]+")
+RUNTIME_STATE_FILE_PATTERN = re.compile(
+    r"^runtime(?:[-_].*)?\.(?:json|jsonl|toml|ya?ml)$",
+    flags=re.IGNORECASE,
+)
 
 
 def validate_relative_path(value: str) -> str:
@@ -174,7 +181,15 @@ def is_source_candidate(relative_path: str) -> bool:
         return False
     if any(_has_prefix(path, prefix) for prefix in SPECIAL_DENIED_PREFIXES):
         return False
-    if PurePosixPath(path).suffix.lower() in DENIED_SUFFIXES:
+    name = PurePosixPath(path).name.lower()
+    if (
+        PurePosixPath(path).suffix.lower() in DENIED_SUFFIXES
+        or name.endswith(("-wal", "-shm"))
+        or (
+            _has_prefix(path, "services/api/app")
+            and RUNTIME_STATE_FILE_PATTERN.fullmatch(name)
+        )
+    ):
         return False
 
     if path in ROOT_ALLOWED_FILES or path in EXACT_ALLOWED_FILES:

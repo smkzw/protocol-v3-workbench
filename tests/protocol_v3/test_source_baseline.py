@@ -36,6 +36,7 @@ class SourcePolicyTests(unittest.TestCase):
             "README.md",
             "pytest.ini",
             "packages/contracts/workbench_contracts/models.py",
+            "packages/contracts/workbench_contracts/runtime_contract.json",
             "services/api/app/main.py",
             "services/api/requirements-medical-writing.txt",
             "frontend/AGENTS.md",
@@ -68,6 +69,15 @@ class SourcePolicyTests(unittest.TestCase):
             "evidence/receipt.pdf",
             "archives/archive.tar",
             "services/api/app/state.sqlite3",
+            "services/api/app/state.sqlite3-wal",
+            "services/api/app/state.sqlite3-shm",
+            "services/api/app/state.db-wal",
+            "services/api/app/state.db-shm",
+            "services/api/app/cache/result.json",
+            "services/api/app/caches/result.json",
+            "services/api/app/.cache/result.json",
+            "services/api/app/runtime_state.json",
+            "services/api/app/runtime-state.yaml",
             "services/api/app/__pycache__/main.pyc",
             "frontend/node_modules/react/index.js",
             "frontend/dist/index.html",
@@ -85,6 +95,14 @@ class SourcePolicyTests(unittest.TestCase):
         for relative_path in rejected:
             with self.subTest(relative_path=relative_path):
                 self.assertFalse(is_source_candidate(relative_path))
+
+    def test_runtime_source_modules_are_not_confused_with_runtime_state(self) -> None:
+        for relative_path in (
+            "services/api/app/runtime_readiness.py",
+            "services/api/app/runtime_policy.py",
+        ):
+            with self.subTest(relative_path=relative_path):
+                self.assertTrue(is_source_candidate(relative_path))
 
     def test_relative_path_validation_rejects_escape_and_absolute_paths(self) -> None:
         for value in ("../escape", "a/../../escape", "/absolute", "", "."):
@@ -174,6 +192,35 @@ class ManifestAndTarTests(unittest.TestCase):
                 archive.addfile(info, io.BytesIO(payload))
             with self.assertRaises(BaselineError):
                 safe_extract_tar(tar_path, base / "out")
+
+    def test_tar_verifier_rejects_extra_or_duplicate_members(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            source = base / "source"
+            source.mkdir()
+            self._make_source_root(source)
+            manifest = build_manifest(source, task_id="unit-test")
+
+            extra_tar = base / "extra.tar"
+            create_source_tar(source, manifest, extra_tar)
+            with tarfile.open(extra_tar, "a") as archive:
+                info = tarfile.TarInfo("services/api/app/unexpected.py")
+                payload = b"unexpected\n"
+                info.size = len(payload)
+                archive.addfile(info, io.BytesIO(payload))
+            with self.assertRaises(BaselineError):
+                verify_tar_against_manifest(extra_tar, manifest, base / "extra-out")
+
+            duplicate_tar = base / "duplicate.tar"
+            with tarfile.open(duplicate_tar, "w") as archive:
+                first = dict(manifest["entries"][0])
+                payload = (source / str(first["path"])).read_bytes()
+                for _ in range(2):
+                    info = tarfile.TarInfo(str(first["path"]))
+                    info.size = len(payload)
+                    archive.addfile(info, io.BytesIO(payload))
+            with self.assertRaises(BaselineError):
+                verify_tar_against_manifest(duplicate_tar, manifest, base / "duplicate-out")
 
     def test_manifest_json_is_serializable(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

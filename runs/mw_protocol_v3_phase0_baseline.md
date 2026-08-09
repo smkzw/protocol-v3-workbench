@@ -1,6 +1,6 @@
 # MW Protocol v3 Phase 0 baseline
 
-Status: `TASK_0_1_IMPLEMENTATION_IN_PROGRESS`  
+Status: `TASK_0_1_REMEDIATED_AWAITING_SAME_SESSION_REVIEW`
 Task ID: `mw_protocol_v3_phase0_20260809_111313`  
 Created: 2026-08-09  
 
@@ -22,9 +22,10 @@ The user-authorized implementation goal points to the approved plan. Therefore t
 
 - Live evidence root: `/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/workbench`
 - Live Git status at intake: no Git repository found in the workbench or its parents.
-- Snapshot: `/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-snapshots/mw_protocol_v3_phase0_20260809_111313`
+- Authority snapshot: `/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-snapshots/mw_protocol_v3_phase0_20260809_111313-r3`
+- Superseded evidence snapshots: the original v1 and rejected r2 directories remain immutable; r2 incorrectly excluded the legitimate `packages/contracts/workbench_contracts/runtime_contract.json` and must not be used.
 - Isolated implementation workspace: `/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313`
-- Manifest SHA-256: `573852280402e7b5ebf048a993ff46993939e46ee3c616f41b5cf19f8823b453`
+- Manifest SHA-256: `cb8c350354129e9fdbfabae71edf82c9dcb5e96264da0aa0c49c4c09c132b122`
 - Source tar SHA-256: `f238e8eff899fa7101852cab1f6c82c229604059c3fa62281c1ee935941ba7c7`
 - Source content fingerprint: `a9ece82faffde0106dcda2ff2dab29bc79ba1ec6bed94fca87e19606dc64b8f2`
 - Source entries: `1,017`
@@ -40,11 +41,15 @@ The baseline excludes runtime, credentials, SQLite/WAL/SHM, `.venv`, `node_modul
 ## Verification evidence
 
 1. External TDD red: `python3 -m unittest -v test_source_baseline.py` failed with `ModuleNotFoundError: build_source_baseline` before implementation.
-2. External TDD green: 9/9 source-policy, manifest, symlink and traversal tests passed.
-3. `verify_source_baseline.py` checked both checksum lines, safely extracted the tar, matched all 1,017 entries and content fingerprint, and reverified live with strict metadata.
-4. The same 9 tests passed inside this isolated workspace via `python3 -m pytest tests/protocol_v3/test_source_baseline.py -q`.
+2. Fresh verification exposed a v1 policy gap for compound WAL/SHM and generic cache names. New tests failed on 9 cases before remediation.
+3. External TDD green: 11/11 source-policy, manifest, symlink, traversal and exact tar-member tests passed. The same 11 tests passed inside this isolated workspace.
+4. `verify_source_baseline.py` checked both checksum lines, rejected duplicate/extra tar members, safely extracted the tar, matched all 1,017 entries and content fingerprint, and reverified live with strict metadata.
 5. Git is initialized only in this isolated workspace; no remote is configured.
+
+## Concurrent-owner attribution
+
+The fresh verifier observed post-intake changes only under the active medical-monitoring owner surfaces (`poc/medical_monitoring_ai_native_r1`, matching monitoring run records) plus shared test cache. Those paths are outside the Protocol source allowlist. Every one of the 1,017 allowlisted writing-source entries remained byte/size/mode/mtime identical and no task-ID path or live `.git` appeared. Stopping that owner would contradict the user's explicit parallel-development requirement; Task 0.4 will freeze its then-current resolved paths and enforce deny-mutation before repository hygiene begins. Unknown-owner or shared-source deltas remain fail-closed.
 
 ## Next safe action
 
-Finish the isolated baseline commit, then independently verify Task 0.1: live `.git` absent, live source manifest byte/metadata identical, isolated Git clean, tar/checksums reproducible, and no task-created files inside the live evidence root. Only after Task 0.1 acceptance may Task 0.2 begin.
+Commit the remediation in the isolated Git workspace, then obtain a same-session independent re-review. Only after explicit Task 0.1 acceptance may Task 0.2 begin.
