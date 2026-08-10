@@ -1,0 +1,133 @@
+{
+  "fixture_schema_version": "mw_protocol_v3_word_receipt_fixtures_v1",
+  "current_identity": {
+    "source_snapshot_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "input_docx_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "semantic_document_revision": "semantic-document-r17",
+    "template_revision": "TP-MA-07-r3"
+  },
+  "valid_receipt": {
+    "schema_version": "mw_protocol_v3_word_native_receipt_v1",
+    "receipt_id": "mwwr_v1_1472e884ac1b47295134999c7b150622",
+    "verification_engine": "microsoft_word",
+    "verification_status": "word_native_verified",
+    "workflow": "open_without_repair_update_all_story_fields_toc_repaginate_check_bookmarks_refs_save_reopen_export_pdf",
+    "source_snapshot_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "input_artifact_id": "artifact_protocol_export_r17",
+    "input_docx_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "semantic_document_revision": "semantic-document-r17",
+    "template_revision": "TP-MA-07-r3",
+    "word_application_version": "Microsoft Word for Mac 16.99 (25071410)",
+    "os_and_font_environment": {
+      "os_name": "macOS",
+      "os_version": "15.6",
+      "architecture": "arm64",
+      "locale": "zh-CN",
+      "font_manifest_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "font_count": 18,
+      "missing_fonts": [],
+      "substituted_fonts": []
+    },
+    "open_without_repair": true,
+    "field_update_scope": "all_story_ranges",
+    "field_update_error_count": 0,
+    "field_count_before": 37,
+    "field_count_after": 37,
+    "toc_count": 1,
+    "repaginate_pass": true,
+    "bookmark_checks": [
+      {
+        "bookmark_id": "bm_protocol_summary",
+        "expected_target": "semantic-node-protocol-summary",
+        "observed_target": "semantic-node-protocol-summary",
+        "exists": true,
+        "target_sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "cross_reference_checks": [
+      {
+        "reference_id": "xref_protocol_summary",
+        "field_code": "PAGEREF bm_protocol_summary \\h",
+        "target_bookmark": "bm_protocol_summary",
+        "rendered_text": "6",
+        "resolved": true,
+        "page_number": 6
+      }
+    ],
+    "saved_artifact_id": "artifact_word_saved_r17",
+    "saved_docx_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "reopen_pass": true,
+    "pdf_artifact_id": "artifact_word_pdf_r17",
+    "pdf_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "page_count": 2,
+    "page_evidence_producer": {
+      "name": "protocol-v3-internal-page-evidence-fixture",
+      "version": "1",
+      "license_spdx": "LicenseRef-Internal",
+      "license_source": "candidate repository Task 0.7",
+      "license_status": "not_applicable_internal",
+      "data_egress": "none"
+    },
+    "page_evidence": [
+      {
+        "page_number": 1,
+        "pdf_page_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+        "image_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "width_px": 1240,
+        "height_px": 1754,
+        "renderer": "microsoft_word_pdf",
+        "visual_qc_status": "pass"
+      },
+      {
+        "page_number": 2,
+        "pdf_page_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "image_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "width_px": 1240,
+        "height_px": 1754,
+        "renderer": "microsoft_word_pdf",
+        "visual_qc_status": "pass"
+      }
+    ],
+    "page_evidence_manifest_sha256": "ec10fa140a3dc6121a7a231fd7cb5cdbf19a1bdc23fc718eac03876860cc9c2c",
+    "normalized_ooxml_fingerprint": {
+      "algorithm": "mw_ooxml_normalized_v1",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "artifact_id": "artifact_word_saved_r17",
+      "artifact_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "ignored_parts_profile": "volatile-word-metadata-v1",
+      "normalizer_version": "protocol-v3-ooxml-normalizer-poc-v1",
+      "part_count": 42
+    },
+    "edit_reimport_export_lineage": {
+      "mode": "no_external_edit",
+      "source_artifact_id": "artifact_protocol_export_r17",
+      "source_artifact_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "edited_artifact_id": "",
+      "edited_artifact_sha256": "",
+      "reimported_artifact_id": "",
+      "reimported_artifact_sha256": "",
+      "merged_semantic_revision": "",
+      "reexport_artifact_id": "",
+      "reexport_artifact_sha256": ""
+    },
+    "started_at": "2026-08-10T01:20:00Z",
+    "completed_at": "2026-08-10T01:24:30Z",
+    "producer_identity": {
+      "producer_id": "fixture-word-producer",
+      "producer_type": "producer-neutral-contract-fixture",
+      "producer_version": "1",
+      "implementation_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "idempotency_key": "mw-word-receipt-v1:37aff116d0cf382de6912108cd0786b7653885c41ef5d9b8cc787c920a59b411"
+  },
+  "historical_trace_missing_evidence": {
+    "schema_version": "mw_docx_native_word_gate_trace_v1",
+    "result": "ok",
+    "steps": [
+      {"open": "open_issued"},
+      {"update_save": "code=0 out=toc=1,tof=0,fields=37 err="},
+      {"export": "code=0 out=pdf_exported err="}
+    ],
+    "limitation": "Historical execution trace only; it is intentionally not a Protocol v3 native Word receipt."
+  }
+}
