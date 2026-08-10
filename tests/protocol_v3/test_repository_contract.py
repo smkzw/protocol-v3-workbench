@@ -62,6 +62,7 @@ from app.protocol_workflow.ports.repositories import (
     OutboxRepository,
     OutboxStatus,
     ReadModelRepository,
+    RepositoryStateTransitionError,
     RevisionConflictError,
     RevisionCasRepository,
     UnknownOutcomeConflictError,
@@ -476,6 +477,19 @@ class TestEventStream:
         with pytest.raises(EventSequenceConflictError):
             repo.append_events(_PROJ_A, "stream:test:1", [e1_seq])
 
+    def test_event_stream_id_must_match_append_target(self) -> None:
+        repo = InMemoryEventStreamRepository()
+        wrong_stream = _event(
+            event_id="evt:wrong-stream",
+            stream_id="stream:other:1",
+            sequence=1,
+            previous=None,
+            event_sha=_sha(1),
+        )
+        with pytest.raises(EventSequenceConflictError):
+            repo.append_events(_PROJ_A, "stream:test:1", [wrong_stream])
+        assert repo.read_events(_PROJ_A, "stream:test:1") == ()
+
     def test_empty_stream_head_is_none(self) -> None:
         repo = InMemoryEventStreamRepository()
         assert repo.get_stream_head(_PROJ_A, "stream:empty:1") is None
@@ -563,6 +577,24 @@ class TestOutboxIdempotency:
         completed = repo.mark_completed(_PROJ_A, msg_id, completed_at=_T2)
         assert completed.status is OutboxStatus.COMPLETED
 
+    def test_pending_cannot_bypass_dispatch_to_terminal_state(self) -> None:
+        repo = InMemoryOutboxRepository()
+        pending = repo.enqueue(
+            _PROJ_A,
+            "wr:test:1",
+            SideEffectKind.EXTERNAL_FETCH,
+            logical_key="fetch:protocol:1",
+            payload_sha256=_sha(1),
+            created_at=_T0,
+        )
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.mark_completed(_PROJ_A, pending.outbox_message_id, _T1)
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.mark_failed(_PROJ_A, pending.outbox_message_id, "boom", _T1)
+        assert (
+            repo.get(_PROJ_A, pending.outbox_message_id).status is OutboxStatus.PENDING
+        )
+
     def test_claim_does_not_reclaim_dispatched(self) -> None:
         repo = InMemoryOutboxRepository()
         repo.enqueue(
@@ -609,6 +641,99 @@ class TestOutboxIdempotency:
 
 
 # ---------------------------------------------------------------------------
+# Port 4 — recoverable dispatched discovery
+# ---------------------------------------------------------------------------
+
+
+class TestOutboxListDispatched:
+    """``list_dispatched`` discovers recoverable ``DISPATCHED`` messages for
+    deterministic restart recovery without retained in-memory objects."""
+
+    def test_returns_only_dispatched_messages(self) -> None:
+        repo = InMemoryOutboxRepository()
+        repo.enqueue(
+            _PROJ_A,
+            "wr:test:1",
+            SideEffectKind.EXTERNAL_FETCH,
+            logical_key="fetch:1",
+            payload_sha256=_sha(1),
+            created_at=_T0,
+        )
+        repo.enqueue(
+            _PROJ_A,
+            "wr:test:1",
+            SideEffectKind.EXTERNAL_FETCH,
+            logical_key="fetch:2",
+            payload_sha256=_sha(2),
+            created_at=_T1,
+        )
+        # Only claim the first → second stays PENDING.
+        repo.claim_pending(_PROJ_A, limit=1, claimed_at=_T1)
+        dispatched = repo.list_dispatched(_PROJ_A, limit=10)
+        assert len(dispatched) == 1
+        assert dispatched[0].status is OutboxStatus.DISPATCHED
+        assert dispatched[0].logical_key == "fetch:1"
+
+    def test_excludes_completed_and_failed(self) -> None:
+        repo = InMemoryOutboxRepository()
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "k:1", _sha(1), _T0)
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "k:2", _sha(2), _T0)
+        claimed = repo.claim_pending(_PROJ_A, limit=10, claimed_at=_T1)
+        repo.mark_completed(_PROJ_A, claimed[0].outbox_message_id, _T2)
+        repo.mark_failed(_PROJ_A, claimed[1].outbox_message_id, "boom", _T2)
+        assert repo.list_dispatched(_PROJ_A, limit=10) == ()
+
+    def test_project_isolation(self) -> None:
+        repo = InMemoryOutboxRepository()
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "k:a", _sha(1), _T0)
+        repo.enqueue(_PROJ_B, "wr:1", SideEffectKind.EXPORT, "k:b", _sha(2), _T0)
+        repo.claim_pending(_PROJ_A, limit=10, claimed_at=_T1)
+        repo.claim_pending(_PROJ_B, limit=10, claimed_at=_T1)
+        a = repo.list_dispatched(_PROJ_A, limit=10)
+        b = repo.list_dispatched(_PROJ_B, limit=10)
+        assert len(a) == 1 and a[0].logical_key == "k:a"
+        assert len(b) == 1 and b[0].logical_key == "k:b"
+
+    def test_stable_order_by_created_then_id(self) -> None:
+        repo = InMemoryOutboxRepository()
+        # Enqueue in reverse chronological order to prove sorting.
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "late", _sha(1), _T2)
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "early", _sha(2), _T0)
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "mid", _sha(3), _T1)
+        repo.claim_pending(_PROJ_A, limit=10, claimed_at=_T1)
+        dispatched = repo.list_dispatched(_PROJ_A, limit=10)
+        keys = [m.logical_key for m in dispatched]
+        assert keys == ["early", "mid", "late"]
+
+    def test_limit_caps_results(self) -> None:
+        repo = InMemoryOutboxRepository()
+        for i in range(5):
+            repo.enqueue(
+                _PROJ_A,
+                "wr:1",
+                SideEffectKind.EXPORT,
+                f"k:{i}",
+                _sha(i),
+                _T0,
+            )
+        repo.claim_pending(_PROJ_A, limit=10, claimed_at=_T1)
+        assert len(repo.list_dispatched(_PROJ_A, limit=2)) == 2
+        assert len(repo.list_dispatched(_PROJ_A, limit=10)) == 5
+
+    def test_is_read_only(self) -> None:
+        """``list_dispatched`` does not transition status or increment attempt."""
+        repo = InMemoryOutboxRepository()
+        repo.enqueue(_PROJ_A, "wr:1", SideEffectKind.EXPORT, "k:1", _sha(1), _T0)
+        claimed = repo.claim_pending(_PROJ_A, limit=1, claimed_at=_T1)
+        assert claimed[0].attempt == 1
+        before = repo.get(_PROJ_A, claimed[0].outbox_message_id)
+        repo.list_dispatched(_PROJ_A, limit=10)
+        after = repo.get(_PROJ_A, claimed[0].outbox_message_id)
+        assert after.status is OutboxStatus.DISPATCHED
+        assert after.attempt == before.attempt
+
+
+# ---------------------------------------------------------------------------
 # Port 5 — idempotent inbox
 # ---------------------------------------------------------------------------
 
@@ -643,6 +768,9 @@ class TestInboxIdempotency:
         consumed = repo.mark_consumed(_PROJ_A, "fetch:protocol:1", _T1)
         assert consumed.status is InboxStatus.CONSUMED
         assert consumed.consumed_at == _T1
+
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.mark_consumed(_PROJ_A, "fetch:protocol:1", _T2)
 
 
 # ---------------------------------------------------------------------------

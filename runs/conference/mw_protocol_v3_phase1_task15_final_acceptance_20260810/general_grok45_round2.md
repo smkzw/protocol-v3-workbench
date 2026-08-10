@@ -1,0 +1,1 @@
+Continuing the read-only Task 1.5 audit: loading Task 1.5/design §18 and the named source/test files, then challenging double-replay and running the three allowed tests.Reading `reconcile_checkpoint` and the critical outbox/inbox/UoW paths next.

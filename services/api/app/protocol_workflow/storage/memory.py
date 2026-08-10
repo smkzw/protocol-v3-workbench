@@ -66,6 +66,7 @@ from app.protocol_workflow.ports.repositories import (
     InboxStatus,
     OutboxMessage,
     OutboxStatus,
+    RepositoryStateTransitionError,
     RevisionConflictError,
     StreamHead,
     UnknownOutcomeConflictError,
@@ -458,6 +459,17 @@ class InMemoryEventStreamRepository:
             last_seq = stream[-1].sequence if stream else 0
             pending: List[DomainEvent] = []
             for evt in events:
+                if evt.stream_id != stream_id:
+                    raise EventSequenceConflictError(
+                        project_id,
+                        stream_id,
+                        expected_sequence=last_seq + 1 + len(pending),
+                        actual_sequence=evt.sequence,
+                        detail=(
+                            f"event stream_id={evt.stream_id!r} does not match "
+                            f"append target {stream_id!r}"
+                        ),
+                    )
                 expected_prev = (
                     None
                     if (not stream and not pending)
@@ -629,6 +641,13 @@ class InMemoryOutboxRepository:
             message = self._messages.get(outbox_message_id)
             if message is None or message.project_id != project_id:
                 raise AggregateNotFoundError(project_id, aggregate_id=outbox_message_id)
+            if message.status is not OutboxStatus.DISPATCHED:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    outbox_message_id,
+                    from_status=message.status.value,
+                    to_status=OutboxStatus.COMPLETED.value,
+                )
             updated = OutboxMessage(
                 outbox_message_id=message.outbox_message_id,
                 project_id=message.project_id,
@@ -659,6 +678,13 @@ class InMemoryOutboxRepository:
             message = self._messages.get(outbox_message_id)
             if message is None or message.project_id != project_id:
                 raise AggregateNotFoundError(project_id, aggregate_id=outbox_message_id)
+            if message.status is not OutboxStatus.DISPATCHED:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    outbox_message_id,
+                    from_status=message.status.value,
+                    to_status=OutboxStatus.FAILED.value,
+                )
             updated = OutboxMessage(
                 outbox_message_id=message.outbox_message_id,
                 project_id=message.project_id,
@@ -691,6 +717,27 @@ class InMemoryOutboxRepository:
             if message_id is None:
                 return None
             return self._messages.get(message_id)
+
+    def list_dispatched(
+        self,
+        project_id: str,
+        *,
+        limit: int,
+    ) -> Tuple[OutboxMessage, ...]:
+        """Return recoverable ``DISPATCHED`` messages in stable order.
+
+        Stable order is ``(created_at, outbox_message_id)`` so that repeated
+        recovery sweeps observe the same sequence regardless of dict iteration
+        order.  Read-only: does not transition status or increment attempt.
+        """
+        with self._lock:
+            candidates = [
+                m
+                for m in self._messages.values()
+                if m.project_id == project_id and m.status is OutboxStatus.DISPATCHED
+            ]
+            candidates.sort(key=lambda m: (m.created_at, m.outbox_message_id))
+            return tuple(candidates[:limit])
 
 
 # ---------------------------------------------------------------------------
@@ -758,6 +805,13 @@ class InMemoryInboxRepository:
             existing = self._results.get(key)
             if existing is None:
                 raise AggregateNotFoundError(project_id, aggregate_id=logical_key)
+            if existing.status is not InboxStatus.RECEIVED:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    logical_key,
+                    from_status=existing.status.value,
+                    to_status=InboxStatus.CONSUMED.value,
+                )
             updated = InboxResult(
                 inbox_result_id=existing.inbox_result_id,
                 project_id=existing.project_id,
@@ -1137,6 +1191,10 @@ class InMemoryUnitOfWork:
         return restore
 
     # -- UnitOfWork ---------------------------------------------------------
+
+    @property
+    def is_active(self) -> bool:
+        return not self._closed and self._depth > 0
 
     def commit(self) -> None:
         if self._closed:

@@ -185,6 +185,16 @@ class UnitOfWork(Protocol):
 
     # -- transaction lifecycle ----------------------------------------------
 
+    @property
+    def is_active(self) -> bool:
+        """Whether the caller is currently inside an open transaction scope.
+
+        Application coordinators use this before the first write so a caller
+        cannot accidentally perform part of an atomic mutation without the
+        rollback boundary established by ``with uow:``.
+        """
+        ...
+
     def commit(self) -> None:
         """Atomically commit all repository mutations performed in this UoW.
 

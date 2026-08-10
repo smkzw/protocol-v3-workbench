@@ -54,6 +54,7 @@ __all__ = [
     "RevisionConflictError",
     "EventSequenceConflictError",
     "IdempotencyConflictError",
+    "RepositoryStateTransitionError",
     "UnknownOutcomeConflictError",
     # enums
     "OutboxStatus",
@@ -219,6 +220,28 @@ class UnknownOutcomeConflictError(RepositoryError):
     Per design section 18, an unknown-outcome reservation MUST be explicitly
     resolved before the graph may retry or mark completion.
     """
+
+
+class RepositoryStateTransitionError(RepositoryError):
+    """Raised when a repository mutator is asked to bypass its state machine."""
+
+    __slots__ = ("from_status", "to_status")
+
+    def __init__(
+        self,
+        project_id: str,
+        aggregate_id: str,
+        *,
+        from_status: str,
+        to_status: str,
+    ) -> None:
+        self.from_status = from_status
+        self.to_status = to_status
+        super().__init__(
+            project_id,
+            aggregate_id=aggregate_id,
+            detail=f"illegal state transition {from_status!r} -> {to_status!r}",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -573,6 +596,33 @@ class OutboxRepository(Protocol):
     ) -> Optional[OutboxMessage]:
         """Return the message for a logical key, or ``None``."""
         ...
+
+    def list_dispatched(
+        self,
+        project_id: StableId,
+        *,
+        limit: PositiveRevision,
+    ) -> tuple[OutboxMessage, ...]:
+        """Return recoverable ``DISPATCHED`` messages for *project_id* in stable
+        order, without mutating state.
+
+        This is the deterministic restart-recovery discovery path: after a
+        crash, a process that retained no in-memory ``OutboxMessage`` objects
+        can still find dispatched-but-unacknowledged work through the
+        repository (design section 18).  The returned messages MUST be:
+
+        * scoped to *project_id* (project isolation);
+        * filtered to ``status == DISPATCHED`` only (terminal ``COMPLETED`` /
+          ``FAILED`` and not-yet-claimed ``PENDING`` are excluded);
+        * ordered deterministically so that repeated recovery sweeps observe
+          the same sequence (e.g. by creation timestamp then message id);
+        * capped at *limit*.
+
+        The method is read-only: it MUST NOT transition message status or
+        increment ``attempt``.  Call :meth:`claim_pending` for state-changing
+        dispatch, and the outbox dispatcher's recovery methods for
+        re-acknowledgement.
+        """
 
 
 # ---------------------------------------------------------------------------

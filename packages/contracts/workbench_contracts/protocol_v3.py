@@ -1014,6 +1014,7 @@ class DomainEvent(ProtocolV3Model):
     reason: NonEmptyText
     payload: dict[NonEmptyText, JsonValue]
     payload_sha256: Sha256
+    migrated_payload_sha256: Optional[Sha256] = None
     previous_event_sha256: Optional[Sha256] = None
     event_sha256: Sha256
     emitted_at: AwareDateTime

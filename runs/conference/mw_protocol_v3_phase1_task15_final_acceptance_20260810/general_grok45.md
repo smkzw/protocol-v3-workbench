@@ -1,0 +1,1 @@
+I'll run a fresh read-only Task 1.5 acceptance: load the conference context and plan first, then challenge the double-replay checkpoint repair against the named counterexamples and regression invariants.Next I'll pull the frozen Task 1.5 plan, design section 18, and the named source/test files.
