@@ -1,7 +1,7 @@
 # Protocol v3 Word 原生验收回执 PoC 合同
 
-状态：`Task 0.7 — contract only`
-范围：离线、无副作用的机器判定合同；**不是 Word producer，也不是 Protocol 发布验收**。
+状态：`Task 0.8 — contract + target-machine producer candidate`
+范围：冻结合同及目标 macOS 的真实 Word 生产路径；**不是 Protocol 内容或发布验收**。
 
 ## 为什么先冻结回执合同
 
@@ -90,14 +90,36 @@ PyMuPDF 不因“曾经能运行”自动成为产品依赖。`fixtures.json` �
 python3 -m pytest pocs/protocol_v3/word_receipt/tests -q
 ```
 
-## Task 0.8 接缝
+## Task 0.8 结果
 
-下一任务只比较 producer，不改变本合同：
+Task 0.8 没有改变本合同。当前已实现并实测 AppleScript bridge：
 
-1. 先对目标 Word 和候选 bridge 做只读 inventory；
-2. 只操作任务副本，绝不覆盖源；
-3. 相同 key 重放不得重复编辑；unknown outcome 必须先核对 artifact/receipt；
-4. 在 TP-MA-07、D017 骨架、CMS-UC-301 完整方案和复杂 Word 对象 corpus 上生成
-   真实 receipt；
-5. 只有至少一个 producer 完整通过才可标 `P0-WORD`。否则保持
-   `NO_RELEASE_WORD_BLOCKED`，不以人工口头确认降级。
+1. 目标 Word 只读 inventory 后，仅操作 task-owned 副本；
+2. CMS-UC-301 完整方案已形成 27 页最终回执；
+3. 已完成一次真实 Word wording-only edit → reimport → re-export，并绑定新语义版本；
+4. source/edited/reimported/re-exported 文件 hash、语义版本和 reservation lineage 均参与
+   重放核对；相同 key 直接重放 receipt，任何 lineage 漂移 fail closed；Word 完成、
+   后处理未完成时只恢复后处理；
+5. TP-MA-07 的第 2 页页脚裁切被逐页复核拦截；D017 因无稳定业务书签返回 typed blocker；
+6. 候选、版本、许可、证据和残余边界详见 `decision.md`。
+
+当前 gate：`P0-WORD_TECHNICAL_PASS_WITH_RESIDUALS`。这里的技术通过只说明目标
+macOS/Word 代表样本生产路径已闭环；研究方案内容、前端工作台和最终发布仍由后续
+Phase 的独立总门控制。
+
+运行接口：
+
+```bash
+python3 pocs/protocol_v3/word_receipt/run_matrix.py inventory
+python3 pocs/protocol_v3/word_receipt/run_matrix.py inspect-source --source <source.docx>
+python3 pocs/protocol_v3/word_receipt/run_matrix.py run \
+  --label <label> --source <task-copy.docx> --results-root <ignored-results> \
+  --semantic-revision <revision> --template-revision <revision>
+python3 pocs/protocol_v3/word_receipt/run_matrix.py prepare-roundtrip \
+  --source-run-dir <finalized-run> --roundtrip-dir <new-roundtrip-dir>
+python3 pocs/protocol_v3/word_receipt/run_matrix.py stage-reimport \
+  --roundtrip-dir <roundtrip-dir> --merged-semantic-revision <new-revision>
+```
+
+所有内部错误码、artifact identity 和技术字段只用于审计；产品前端必须改写为原生
+中文临床写作提示，不得直接显示程序员标签、日志内容或纯英文状态。

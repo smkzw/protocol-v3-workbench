@@ -489,12 +489,12 @@ immutable_protected_assets 无 unresolved；quarantine 目标预先不存在。
 
 **Micro-steps:**
 
-- [ ] 缺 reopen、bookmark/ref、PDF 页面证据或 OOXML 指纹的历史 trace 不得升级。
-- [ ] LibreOffice、HTML preview 或仅可下载 DOCX 不能标 microsoft_word verified。
-- [ ] source snapshot、template、semantic revision 或 DOCX hash 变化使 receipt stale。
-- [ ] 外部编辑必须形成新 immutable artifact/revision，不覆盖源。
-- [ ] 页面证据依赖另做许可证核验；现有 PyMuPDF 脚本不能自动成为生产依赖。
-- [ ] 运行 `python3 -m pytest pocs/protocol_v3/word_receipt/tests -q`。
+- [x] 缺 reopen、bookmark/ref、PDF 页面证据或 OOXML 指纹的历史 trace 不得升级。
+- [x] LibreOffice、HTML preview 或仅可下载 DOCX 不能标 microsoft_word verified。
+- [x] source snapshot、template、semantic revision 或 DOCX hash 变化使 receipt stale。
+- [x] 外部编辑必须形成新 immutable artifact/revision，不覆盖源。
+- [x] 页面证据依赖另做许可证核验；现有 PyMuPDF 脚本不能自动成为生产依赖。
+- [x] 运行 `python3 -m pytest pocs/protocol_v3/word_receipt/tests -q`。
 
 ### Task 0.8：比较 Word receipt producer 候选
 
@@ -514,15 +514,15 @@ SoA、图表目录、书签、REF/PAGEREF、页眉页脚、分节、批注/修�
 
 **Micro-steps:**
 
-- [ ] 核验 bridge 代码许可证、Word 自动化边界、辅助权限、桌面会话、失败恢复、
+- [x] 核验 bridge 代码许可证、Word 自动化边界、辅助权限、桌面会话、失败恢复、
   用户已打开文档隔离、数据路径和部署约束。
-- [ ] 先执行 dry-run inventory，不修改 Word 文档。
-- [ ] 只在任务副本执行 open→update fields/TOC→bookmark/ref→save→close→
+- [x] 先执行 dry-run inventory，不修改 Word 文档。
+- [x] 只在任务副本执行 open→update fields/TOC→bookmark/ref→save→close→
   reopen→PDF→page evidence→OOXML fingerprint。
-- [ ] 相同 idempotency key 重放复用 receipt，不重复编辑；update 后强停再恢复
+- [x] 相同 idempotency key 重放复用 receipt，不重复编辑；update 后强停再恢复
   不得重复改变文档。
-- [ ] 执行 export→外部 wording-only 编辑→reimport→export，验证 lineage。
-- [ ] decision.md 记录每个候选 PASS/FAIL、版本/许可、证据、残余风险、回滚。
+- [x] 执行 export→外部 wording-only 编辑→reimport→export，验证 lineage。
+- [x] decision.md 记录每个候选 PASS/FAIL、版本/许可、证据、残余风险、回滚。
 
 **Gate P0-CORE / P0-WORD：**
 
