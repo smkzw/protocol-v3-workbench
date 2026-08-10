@@ -121,15 +121,83 @@ def _unique(values: tuple[str, ...], label: str) -> tuple[str, ...]:
     return values
 
 
-def _strip_material_metadata(value: JsonValue) -> JsonValue:
+class _FrozenJsonDict(dict[str, JsonValue]):
+    """JSON mapping that preserves ``dict`` serialization but rejects mutation."""
+
+    @staticmethod
+    def _immutable(*_args, **_kwargs):
+        raise TypeError("canonical JSON mapping is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    clear = _immutable
+    pop = _immutable
+    popitem = _immutable
+    setdefault = _immutable
+    update = _immutable
+    __ior__ = _immutable
+
+    def __copy__(self):
+        return self
+
+    def __deepcopy__(self, _memo):
+        return self
+
+
+class _FrozenJsonList(list[JsonValue]):
+    """JSON list that remains serializer-compatible but rejects mutation."""
+
+    @staticmethod
+    def _immutable(*_args, **_kwargs):
+        raise TypeError("canonical JSON list is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    append = _immutable
+    clear = _immutable
+    extend = _immutable
+    insert = _immutable
+    pop = _immutable
+    remove = _immutable
+    reverse = _immutable
+    sort = _immutable
+    __iadd__ = _immutable
+    __imul__ = _immutable
+
+    def __copy__(self):
+        return self
+
+    def __deepcopy__(self, _memo):
+        return self
+
+
+def _freeze_json_value(value: JsonValue) -> JsonValue:
     if isinstance(value, dict):
-        return {
-            key: _strip_material_metadata(item)
-            for key, item in value.items()
-            if key not in ProtocolV3Model.material_metadata_fields
-        }
+        return _FrozenJsonDict(
+            {key: _freeze_json_value(item) for key, item in value.items()}
+        )
     if isinstance(value, list):
-        return [_strip_material_metadata(item) for item in value]
+        return _FrozenJsonList(_freeze_json_value(item) for item in value)
+    return value
+
+
+def _material_value(value):
+    """Serialize model metadata structurally without stripping domain keys."""
+
+    if isinstance(value, ProtocolV3Model):
+        return {
+            name: _material_value(getattr(value, name))
+            for name in type(value).model_fields
+            if name not in ProtocolV3Model.material_metadata_fields
+        }
+    if isinstance(value, dict):
+        return {key: _material_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_material_value(item) for item in value]
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
     return value
 
 
@@ -143,9 +211,7 @@ class ProtocolV3Model(BaseModel):
         use_enum_values=False,
     )
 
-    schema_version: Literal["mw_protocol_v3_contract_v1"] = (
-        PROTOCOL_V3_SCHEMA_VERSION
-    )
+    schema_version: Literal["mw_protocol_v3_contract_v1"] = PROTOCOL_V3_SCHEMA_VERSION
 
     material_metadata_fields: ClassVar[frozenset[str]] = frozenset(
         {
@@ -164,8 +230,7 @@ class ProtocolV3Model(BaseModel):
     )
 
     def material_payload(self) -> dict[str, JsonValue]:
-        dumped = self.model_dump(mode="json")
-        material = _strip_material_metadata(dumped)
+        material = _material_value(self)
         assert isinstance(material, dict)
         return material
 
@@ -337,7 +402,9 @@ class SourceAcquisitionPlan(StatefulProtocolV3Model):
 
     @model_validator(mode="after")
     def validate_plan(self) -> Self:
-        _unique(tuple(item.value for item in self.source_categories), "source_categories")
+        _unique(
+            tuple(item.value for item in self.source_categories), "source_categories"
+        )
         _unique(self.registries_and_sites, "registries_and_sites")
         _unique(self.query_families, "query_families")
         if self.linked_protocol_denominator > self.researched_competitor_denominator:
@@ -501,7 +568,9 @@ class DecisionRecord(StatefulProtocolV3Model):
         if self.selected_option_id not in self.option_ids:
             raise ValueError("selected_option_id must be one of option_ids")
         if self.state_revision != self.expected_state_revision + 1:
-            raise ValueError("state_revision must advance the expected CAS revision once")
+            raise ValueError(
+                "state_revision must advance the expected CAS revision once"
+            )
         if self.canonical_state not in {
             CanonicalState.CONFIRMED,
             CanonicalState.FROZEN,
@@ -539,6 +608,7 @@ class StudyDefinitionV3(StatefulProtocolV3Model):
             CanonicalState.QUARANTINED,
         }:
             raise ValueError("StudyDefinitionV3 cannot be raw or merely normalized")
+        object.__setattr__(self, "facts", _freeze_json_value(self.facts))
         return self
 
 
@@ -863,12 +933,19 @@ class ExecutionReservation(ProtocolV3Model):
             ReservationStatus.UNKNOWN_OUTCOME,
         }
         if self.status in terminal_statuses:
-            if self.terminal_state is None or self.terminal_state.value != self.status.value:
-                raise ValueError("terminal_state must match terminal reservation status")
+            if (
+                self.terminal_state is None
+                or self.terminal_state.value != self.status.value
+            ):
+                raise ValueError(
+                    "terminal_state must match terminal reservation status"
+                )
             if self.provider_session_id is None:
                 raise ValueError("terminal reservations require provider_session_id")
         elif self.terminal_state is not None:
-            raise ValueError("non-terminal reservations must not declare terminal_state")
+            raise ValueError(
+                "non-terminal reservations must not declare terminal_state"
+            )
         if self.status is ReservationStatus.COMPLETED:
             if self.output_sha256 is None or self.error_code is not None:
                 raise ValueError("completed reservations require output and no error")
@@ -877,9 +954,13 @@ class ExecutionReservation(ProtocolV3Model):
             ReservationStatus.UNKNOWN_OUTCOME,
         }:
             if self.error_code is None or self.output_sha256 is not None:
-                raise ValueError("failed/unknown reservations require an error and no output")
+                raise ValueError(
+                    "failed/unknown reservations require an error and no output"
+                )
         elif self.output_sha256 is not None or self.error_code is not None:
-            raise ValueError("non-terminal reservations cannot contain terminal results")
+            raise ValueError(
+                "non-terminal reservations cannot contain terminal results"
+            )
         return self
 
 
@@ -974,9 +1055,10 @@ class ProjectionArtifact(StatefulProtocolV3Model):
         )
         if receipt_identity[0] != receipt_identity[1]:
             raise ValueError("Word receipt identity must be complete")
-        if self.projection_kind in {ProjectionKind.DOCX, ProjectionKind.PDF} and not all(
-            receipt_identity
-        ):
+        if self.projection_kind in {
+            ProjectionKind.DOCX,
+            ProjectionKind.PDF,
+        } and not all(receipt_identity):
             raise ValueError("DOCX/PDF projections require a Word receipt")
         return self
 
