@@ -30,6 +30,34 @@ from verify_source_baseline import (
 
 
 class SourcePolicyTests(unittest.TestCase):
+    def test_medical_writing_protected_token_modules_remain_in_source_closure(self) -> None:
+        required = (
+            "packages/contracts/workbench_contracts/protected_tokens.py",
+            "services/api/app/medical_writing_protected_tokens.py",
+            "tests/test_medical_writing_protected_tokens.py",
+        )
+        for relative_path in required:
+            with self.subTest(relative_path=relative_path):
+                self.assertTrue(is_source_candidate(relative_path))
+
+    def test_medical_writing_protected_token_modules_appear_in_manifest(self) -> None:
+        required = {
+            "packages/contracts/workbench_contracts/protected_tokens.py",
+            "services/api/app/medical_writing_protected_tokens.py",
+            "tests/test_medical_writing_protected_tokens.py",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)
+            for relative_path in required:
+                path = source / relative_path
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("# functional source fixture\n", encoding="utf-8")
+            manifest = build_manifest(source, task_id="medical-writing-source-closure")
+        self.assertEqual(
+            required,
+            {entry["path"] for entry in manifest["entries"]},
+        )
+
     def test_allowlist_keeps_required_source_and_toolchain_files(self) -> None:
         allowed = (
             "AGENTS.md",

@@ -17,7 +17,7 @@ class BaselineError(RuntimeError):
     """Raised when the source-only boundary cannot be proven safe."""
 
 
-POLICY_VERSION = "mw-protocol-v3-source-baseline-v2"
+POLICY_VERSION = "mw-protocol-v3-source-baseline-v3"
 
 ROOT_ALLOWED_FILES = {
     "AGENTS.md",
@@ -40,6 +40,15 @@ EXACT_ALLOWED_FILES = {
     "plans/mw_protocol_multi_agent_rearchitecture_design_20260809.md",
     "plans/mw_system_rearchitecture_design_decisions_20260808.md",
     ".hermes/plans/2026-08-09_020923-mw-protocol-multi-agent-rearchitecture.md",
+}
+
+# These are application source/test modules, not authentication material.  Keep
+# the exemption exact so the generic filename heuristic cannot silently omit
+# an import dependency while unrelated token-named files remain outside it.
+EXACT_TOKEN_SOURCE_FILES = {
+    "packages/contracts/workbench_contracts/protected_tokens.py",
+    "services/api/app/medical_writing_protected_tokens.py",
+    "tests/test_medical_writing_protected_tokens.py",
 }
 
 ALLOWED_PREFIXES = (
@@ -155,6 +164,8 @@ def _contains_denied_directory(path: str) -> bool:
 
 def _looks_sensitive(path: str) -> bool:
     name = PurePosixPath(path).name.lower()
+    if path in EXACT_TOKEN_SOURCE_FILES:
+        return False
     if path == "config/ai.env.example":
         return False
     if name in {".env", ".npmrc"}:
