@@ -1273,11 +1273,9 @@ def test_edge_labels_carry_data_edge_label_for_association():
 
 
 def test_real_ibdq_fixture_edge_labels_preserve_clip_regression_and_geometry():
-    from records.active_slices.medical_writing_real_scale_word_e5_20260724.scripts.run_real_ibdq_docx_gate import (
-        my009_uc_schema,
-    )
+    from tests._real_ibdq_study_schema_fixture import build_real_ibdq_study_schema
 
-    schema = my009_uc_schema()
+    schema = build_real_ibdq_study_schema()
     svg = render_study_schema_svg(schema)
     png = render_study_schema_png(svg)
     assert png.startswith(b"\x89PNG\r\n\x1a\n")

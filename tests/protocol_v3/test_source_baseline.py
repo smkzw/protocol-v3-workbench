@@ -30,6 +30,38 @@ from verify_source_baseline import (
 
 
 class SourcePolicyTests(unittest.TestCase):
+    def test_medical_writing_functional_assets_remain_in_source_closure(self) -> None:
+        required = (
+            "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.jsonl",
+            "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.manifest.json",
+            "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.json",
+            "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.manifest.json",
+            "services/api/assets/medical_writing_glossary/regulatory_translation_glossary_v1.json",
+        )
+        for relative_path in required:
+            with self.subTest(relative_path=relative_path):
+                self.assertTrue(is_source_candidate(relative_path))
+
+    def test_medical_writing_functional_assets_appear_in_manifest(self) -> None:
+        required = {
+            "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.jsonl",
+            "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.manifest.json",
+            "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.json",
+            "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.manifest.json",
+            "services/api/assets/medical_writing_glossary/regulatory_translation_glossary_v1.json",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)
+            for relative_path in required:
+                path = source / relative_path
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("{}\n", encoding="utf-8")
+            manifest = build_manifest(
+                source,
+                task_id="medical-writing-functional-asset-source-closure",
+            )
+        self.assertEqual(required, {entry["path"] for entry in manifest["entries"]})
+
     def test_medical_writing_protected_token_modules_remain_in_source_closure(self) -> None:
         required = (
             "packages/contracts/workbench_contracts/protected_tokens.py",

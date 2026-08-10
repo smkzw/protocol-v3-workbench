@@ -17,7 +17,7 @@ class BaselineError(RuntimeError):
     """Raised when the source-only boundary cannot be proven safe."""
 
 
-POLICY_VERSION = "mw-protocol-v3-source-baseline-v3"
+POLICY_VERSION = "mw-protocol-v3-source-baseline-v4"
 
 ROOT_ALLOWED_FILES = {
     "AGENTS.md",
@@ -49,6 +49,18 @@ EXACT_TOKEN_SOURCE_FILES = {
     "packages/contracts/workbench_contracts/protected_tokens.py",
     "services/api/app/medical_writing_protected_tokens.py",
     "tests/test_medical_writing_protected_tokens.py",
+}
+
+# Immutable application inputs loaded by medical-writing services at import or
+# service construction time.  Keep this list exact: the isolated Protocol v3
+# worktree needs the glossary and the two corpus/manifest pairs, not an open
+# invitation to copy arbitrary service assets or runtime output.
+EXACT_FUNCTIONAL_ASSET_FILES = {
+    "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.jsonl",
+    "services/api/assets/medical_writing_corpus/cms_cn_protocol_corpus_20260715_v1.manifest.json",
+    "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.json",
+    "services/api/assets/medical_writing_corpus/phase1_autoimmune_mnc_candidates_v1.manifest.json",
+    "services/api/assets/medical_writing_glossary/regulatory_translation_glossary_v1.json",
 }
 
 ALLOWED_PREFIXES = (
@@ -203,7 +215,11 @@ def is_source_candidate(relative_path: str) -> bool:
     ):
         return False
 
-    if path in ROOT_ALLOWED_FILES or path in EXACT_ALLOWED_FILES:
+    if (
+        path in ROOT_ALLOWED_FILES
+        or path in EXACT_ALLOWED_FILES
+        or path in EXACT_FUNCTIONAL_ASSET_FILES
+    ):
         return True
     if _has_prefix(path, POC_PREFIX):
         return PurePosixPath(path).suffix.lower() in POC_ALLOWED_SUFFIXES
@@ -237,7 +253,9 @@ def iter_source_paths(root: Path) -> Iterator[Path]:
     root = root.resolve(strict=True)
     candidates: Dict[str, Path] = {}
 
-    for relative in sorted(ROOT_ALLOWED_FILES | EXACT_ALLOWED_FILES):
+    for relative in sorted(
+        ROOT_ALLOWED_FILES | EXACT_ALLOWED_FILES | EXACT_FUNCTIONAL_ASSET_FILES
+    ):
         path = root / relative
         if path.exists() or path.is_symlink():
             candidates[relative] = path

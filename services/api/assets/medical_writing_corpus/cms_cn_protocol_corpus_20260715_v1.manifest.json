@@ -1,0 +1,47 @@
+{
+  "base_library": {
+    "entry_count": 2430,
+    "file_name": "protocol_clause_library.jsonl",
+    "sha256": "ee09ce2124498c3ed82b6114f289d0379c347dd7e65c17e11485dec080f0977e"
+  },
+  "entry_count": 3878,
+  "generated_at": "2026-07-15T14:08:23.179947+00:00",
+  "schema_version": "cms_medical_writing_corpus_snapshot_v1",
+  "snapshot_id": "cms_cn_protocol_corpus",
+  "snapshot_sha256": "ae13656aca40b5fda099528bd1e8d449ad0ebb235013639495a628a1b0d23c1c",
+  "snapshot_version": "cms_cn_protocol_corpus_20260715_v1",
+  "supplemental_sources": [
+    {
+      "authority_priority": 0,
+      "authority_scope": "方案摘要、中文表达、首页、概要表格、研究流程表及附注的最高参照",
+      "entry_count": 113,
+      "file_name": "CMS-D017-PNH-方案摘要_v0.2.docx",
+      "sha256": "dcd60942b1a77b2b109583923d0126ae86481a4a12d44c873e26f010463ba4da",
+      "source_role": "primary_synopsis_reference"
+    },
+    {
+      "authority_priority": 2,
+      "authority_scope": "完整方案正文、多级标题、目录和全文条款补充",
+      "entry_count": 1108,
+      "file_name": "CMS-D017Ⅰ期方案-v1.1-20260209-clean.docx",
+      "sha256": "589ece291e554de81bfc72bea1e29571e896ad0318dd11e2d4906b9f870c3447",
+      "source_role": "full_protocol_style_and_clause_reference"
+    },
+    {
+      "authority_priority": 3,
+      "authority_scope": "RA IIb、阳性药/安慰剂对照、量表和研究流程的项目化参考",
+      "entry_count": 115,
+      "file_name": "MY004-RA-2b 研究方案摘要_V0.3-with Comments to ABBV.docx",
+      "sha256": "1bdf617d72a87d833f807f3672da4117625317ffae3d7fe3837b405284c0fb64",
+      "source_role": "cross_project_synopsis_reference"
+    },
+    {
+      "authority_priority": 3,
+      "authority_scope": "多适应症PoC、量表、PD和皮肤活检的项目化参考",
+      "entry_count": 112,
+      "file_name": "MY004567片-炎症性皮肤病-方案摘要-V0.4-clean.docx",
+      "sha256": "a6d4abb9b1101017befe15d405ea5341a0e43fa62f0a24584639cf51934d335e",
+      "source_role": "cross_project_synopsis_reference"
+    }
+  ]
+}
