@@ -1,0 +1,31 @@
+{
+  "expected_gate": "E3",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-E3-EVIDENCE-HEADING_ONLY",
+  "failure_identity": "protocol_v3:failure:E3:evidence:heading_only:v1",
+  "failure_reason": "标题不能证明目标、终点定义、评估工具或时间点；正文和 target claim 均为空。",
+  "fixture_id": "mwp3fail_e3_evidence_heading_only_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": false,
+  "owner": "agent_1_medical_admission",
+  "payload": {
+    "body": "",
+    "endpoint_definitions": [],
+    "heading": "Objectives and Endpoints",
+    "locator": "reconstructed://r17/objectives_endpoints/heading",
+    "runtime_note": "仅重建耐久报告确认的失败形态，不声称恢复原始 span。",
+    "source_role": "competitor_protocol_objectives_endpoints",
+    "target_claims": []
+  },
+  "provenance": "evidence_reconstructed",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "r17 报告记录 heading-only objectives span，最终无 objectives/endpoints 准入。",
+    "kind": "durable_report",
+    "lines": "6-9",
+    "path": "legacy_workbench:runs/role_acceptance/mw_protocol_p0_20260805_round17_engineer_cursor_full_protocol_semantic_span_selection.md"
+  },
+  "title": "只有目标标题、没有 objectives/endpoints 实质证据",
+  "xfail": false
+}

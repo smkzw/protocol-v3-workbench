@@ -1,0 +1,131 @@
+{
+  "cross_layer_identity_sha256": "00715cbc8e8cb02f2a32d81511db68b1d643f6b0ac5a93b34ea5474348b193e1",
+  "fixture_count": 8,
+  "fixtures": [
+    {
+      "expected_gate": "E3",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-E3-EVIDENCE-THIN_ELIGIBILITY",
+      "failure_identity": "protocol_v3:failure:E3:evidence:thin_eligibility:v1",
+      "file": "r17_thin_eligibility.json",
+      "fixture_id": "mwp3fail_e3_evidence_thin_eligibility_v1",
+      "owner": "agent_1_medical_admission",
+      "provenance": "evidence_reconstructed",
+      "sha256": "5283ebc167d441e307fd933f57e08dfff49baba9fc9162bf458fa7317ea533a5"
+    },
+    {
+      "expected_gate": "E3",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-E3-EVIDENCE-HEADING_ONLY",
+      "failure_identity": "protocol_v3:failure:E3:evidence:heading_only:v1",
+      "file": "heading_only.json",
+      "fixture_id": "mwp3fail_e3_evidence_heading_only_v1",
+      "owner": "agent_1_medical_admission",
+      "provenance": "evidence_reconstructed",
+      "sha256": "2eb4cb13f54b387baa47acd41ac29704a05be6018668722af99096c4ee3eb5f9"
+    },
+    {
+      "expected_gate": "E3",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-E3-EVIDENCE-GENERIC_BODY",
+      "failure_identity": "protocol_v3:failure:E3:evidence:generic_body:v1",
+      "file": "generic_long_body.json",
+      "fixture_id": "mwp3fail_e3_evidence_generic_body_v1",
+      "owner": "agent_1_medical_admission",
+      "provenance": "controlled_synthetic",
+      "sha256": "8c0c38be4fede17a4d697f54db10871e4bfe951c5f59028471b49a3448f5a7c7"
+    },
+    {
+      "expected_gate": "W1",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-W1-DOCUMENT-SKELETON_ONLY",
+      "failure_identity": "protocol_v3:failure:W1:document:skeleton_only:v1",
+      "file": "empty_protocol_d017.json",
+      "fixture_id": "mwp3fail_w1_document_skeleton_only_v1",
+      "owner": "agent_3_protocol_writer",
+      "provenance": "observed_artifact",
+      "sha256": "7cf20bb495d5029b73a68a4e758779657ace2ebab66904f678e62f85870874f5"
+    },
+    {
+      "expected_gate": "E0",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-E0-SOURCE-ZERO_RESULT_UNEXPLAINED",
+      "failure_identity": "protocol_v3:failure:E0:source:zero_result_unexplained:v1",
+      "file": "zero_registry_result.json",
+      "fixture_id": "mwp3fail_e0_source_zero_result_unexplained_v1",
+      "owner": "agent_1_source_acquisition",
+      "provenance": "controlled_synthetic",
+      "sha256": "2b8394f36cd1ba00c6985f5744676ce663795075e68454a7a26ce6ef15eb756d"
+    },
+    {
+      "expected_gate": "E3",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-E3-DECISION-REJECT_RESURRECTED",
+      "failure_identity": "protocol_v3:failure:E3:decision:reject_resurrected:v1",
+      "file": "batch_reject_resurrection.json",
+      "fixture_id": "mwp3fail_e3_decision_reject_resurrected_v1",
+      "owner": "agent_1_medical_admission",
+      "provenance": "evidence_reconstructed",
+      "sha256": "a66d2ff2ed0ab2194e0bce056eaa1a86c33b7d6f8008fd60172ab019691c40e5"
+    },
+    {
+      "expected_gate": "P1-G1",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-P1G1-EXECUTION-UNKNOWN_OUTCOME_REDISPATCH",
+      "failure_identity": "protocol_v3:failure:P1-G1:execution:unknown_outcome_redispatch:v1",
+      "file": "unknown_outcome.json",
+      "fixture_id": "mwp3fail_p1g1_execution_unknown_outcome_redispatch_v1",
+      "owner": "agent_5_workflow_control",
+      "provenance": "controlled_synthetic",
+      "sha256": "cfa34e8079d37137a1962136e751e762673e11b9747f81478071c1635cc4d59a"
+    },
+    {
+      "expected_gate": "P1-G1",
+      "expected_result": "fail_closed",
+      "failure_code": "MW-PRO-P1G1-STATE-CHECKPOINT_EVENT_MISMATCH",
+      "failure_identity": "protocol_v3:failure:P1-G1:state:checkpoint_event_mismatch:v1",
+      "file": "checkpoint_event_split_brain.json",
+      "fixture_id": "mwp3fail_p1g1_state_checkpoint_event_mismatch_v1",
+      "owner": "agent_5_workflow_control",
+      "provenance": "controlled_synthetic",
+      "sha256": "224e363250c3965b9d8bf57d99c51923f6207eb24d42d8987b304bf1147e0ed3"
+    }
+  ],
+  "immutability_contract": {
+    "allow_expected_gate_change": false,
+    "allow_fixture_deletion": false,
+    "allow_identity_reuse": false,
+    "allow_skip": false,
+    "allow_xfail": false,
+    "change_requires_new_schema_version": true
+  },
+  "manifest_id": "mw_protocol_v3_permanent_failure_corpus_v1",
+  "positive_controls": [
+    {
+      "claim_type": "primary_endpoint_definition",
+      "context_after": "在预先规定的时间点进行评估",
+      "context_before": "主要疗效终点",
+      "control_id": "mwp3control_e3_short_substantive_primary_endpoint_v1",
+      "evidence_class": "competitor_protocol",
+      "expected_gate": "E3",
+      "expected_result": "pass",
+      "provenance": "controlled_synthetic",
+      "source_locator": "synthetic://protocol/objectives_endpoints/primary#p1",
+      "source_role": "competitor_protocol_primary_endpoint",
+      "study_definition_binding": "study.endpoints.primary[0]",
+      "text": "主要终点为第12周平均每日症状评分较基线的变化。"
+    }
+  ],
+  "provenance_note": "r17 content fixtures are evidence-reconstructed from durable reports; the deleted r18 runtime and deleted parent-session rows were not recovered.",
+  "required_files": [
+    "r17_thin_eligibility.json",
+    "heading_only.json",
+    "generic_long_body.json",
+    "empty_protocol_d017.json",
+    "zero_registry_result.json",
+    "batch_reject_resurrection.json",
+    "unknown_outcome.json",
+    "checkpoint_event_split_brain.json"
+  ],
+  "schema_version": "protocol_v3_failure_corpus_v1"
+}

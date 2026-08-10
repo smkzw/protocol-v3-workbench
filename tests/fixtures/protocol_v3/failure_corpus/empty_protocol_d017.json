@@ -1,0 +1,39 @@
+{
+  "expected_gate": "W1",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-W1-DOCUMENT-SKELETON_ONLY",
+  "failure_identity": "protocol_v3:failure:W1:document:skeleton_only:v1",
+  "failure_reason": "页面和标题数量不能替代适用章节的实质 claim/object/fact/evidence 覆盖；该产物不得进入 W1 正向路径。",
+  "fixture_id": "mwp3fail_w1_document_skeleton_only_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": true,
+  "owner": "agent_3_protocol_writer",
+  "payload": {
+    "artifact_locator": "legacy_workbench:records/active_slices/medical_writing_ai_first_docx_release_v2_20260720/word_acceptance_final_20260720/project_A_D017_PNH_synopsis_import_word.docx",
+    "artifact_sha256": "bae34f096ef5769a8d025ac03f72d9dfed06278d03faef97dff33beaae9705e9",
+    "controlled_heading_sample": [
+      "方案概要",
+      "方案摘要",
+      "研究背景和立项依据",
+      "研究目的及终点"
+    ],
+    "figure_count": 0,
+    "heading_count": 106,
+    "paragraph_text_character_count": 2627,
+    "rendered_page_count": 28,
+    "skeleton_risk": true,
+    "substantive_coverage_complete": false,
+    "table_count": 2
+  },
+  "provenance": "observed_artifact",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "只读审计确认 106 个标题、28 页、正文段落字符 2,627、2 表、0 图。",
+    "kind": "durable_audit",
+    "lines": "9-10",
+    "path": "legacy_workbench:runs/MW_SYSTEM_REARCHITECTURE_AUDIT_CHECKPOINT_20260808.md"
+  },
+  "title": "D017 结构完整但正文近乎空白的骨架方案",
+  "xfail": false
+}

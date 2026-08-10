@@ -1,0 +1,32 @@
+{
+  "expected_gate": "P1-G1",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-P1G1-EXECUTION-UNKNOWN_OUTCOME_REDISPATCH",
+  "failure_identity": "protocol_v3:failure:P1-G1:execution:unknown_outcome_redispatch:v1",
+  "failure_reason": "首次 transport 已可能到达供应商；unknown_outcome 不能自动创建第二次模型调用，必须恢复同一 reservation/session 或形成可审计 retry decision。",
+  "fixture_id": "mwp3fail_p1g1_execution_unknown_outcome_redispatch_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": false,
+  "owner": "agent_5_workflow_control",
+  "payload": {
+    "explicit_retry_decision_id": null,
+    "idempotency_key": "protocol-v3:fixture:unknown-outcome:v1",
+    "logical_call_id": "mwlogicalcall_unknown_fixture_v1",
+    "reservation_id": "mwexecres_unknown_outcome_fixture_v1",
+    "same_session_recovery_attempted": false,
+    "semantic_effect_count": 2,
+    "state": "unknown_outcome",
+    "transport_attempts": 2
+  },
+  "provenance": "controlled_synthetic",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "ExecutionReservation 必须将 unknown_outcome 与显式恢复/重试决定绑定。",
+    "kind": "approved_design",
+    "lines": "666-705,983-986",
+    "path": "approved_design:plans/mw_protocol_multi_agent_rearchitecture_design_20260809.md"
+  },
+  "title": "模型调用结果未知时被重新派发造成重复语义效果",
+  "xfail": false
+}

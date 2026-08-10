@@ -1,0 +1,33 @@
+{
+  "expected_gate": "E3",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-E3-EVIDENCE-THIN_ELIGIBILITY",
+  "failure_identity": "protocol_v3:failure:E3:evidence:thin_eligibility:v1",
+  "failure_reason": "文本只有资格标准引言，没有任何逐条入选/排除条件、判定阈值或目标 claim；字符数或标题存在不能替代 MedicalAdmissionUnit 的正向内容合同。",
+  "fixture_id": "mwp3fail_e3_evidence_thin_eligibility_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": false,
+  "owner": "agent_1_medical_admission",
+  "payload": {
+    "content_status": "incomplete_eligibility_criterion",
+    "context_after": "具体标准未出现在候选 span 中",
+    "context_before": "Eligibility Criteria",
+    "criteria_items": [],
+    "observed_character_count": 44,
+    "reconstructed_text": "本节概述研究对象资格要求，但未列出任何可执行的入选或排除标准，也未给出任何具体判定条件。",
+    "runtime_note": "该文本为按耐久报告约束构造的最小重建样例，不是已删除 r18 runtime 的逐字恢复。",
+    "source_role": "competitor_protocol_eligibility",
+    "target_claims": []
+  },
+  "provenance": "evidence_reconstructed",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "报告记录 44 字资格标准引言被批量准入，且无 objectives/endpoints 可用证据。",
+    "kind": "durable_report",
+    "lines": "225-240",
+    "path": "legacy_workbench:runs/mw_protocol_p0_max_clean_rounds_20260805.md"
+  },
+  "title": "r17 资格标准引言被误作实质准入证据",
+  "xfail": false
+}

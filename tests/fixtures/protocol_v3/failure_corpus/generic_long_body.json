@@ -1,0 +1,30 @@
+{
+  "expected_gate": "E3",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-E3-EVIDENCE-GENERIC_BODY",
+  "failure_identity": "protocol_v3:failure:E3:evidence:generic_body:v1",
+  "failure_reason": "字数充足但不含研究药物、人群、对照、终点、评估时间点或统计假设，对其他项目仍可原样成立。",
+  "fixture_id": "mwp3fail_e3_evidence_generic_body_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": false,
+  "owner": "agent_1_medical_admission",
+  "payload": {
+    "character_count": 214,
+    "required_object_bindings": [],
+    "source_role": "generic_generated_body",
+    "study_definition_bindings": [],
+    "study_specific_claim_count": 0,
+    "text": "本研究将遵循科学、规范和可操作的原则开展，并根据受试者具体情况进行综合评估。研究过程中将持续关注疗效与安全性，按照方案要求完成相关观察、记录和分析。研究团队将依据适用法规和质量管理要求实施研究，确保各项工作有序推进。如出现需要进一步判断的情况，将结合研究实际进行综合考虑并采取适当措施。所有研究活动均应保持一致性和完整性，并在必要时根据总体情况进行合理调整。本段未说明研究药物、目标人群、对照、终点、评估工具、时间点或统计假设。"
+  },
+  "provenance": "controlled_synthetic",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "设计明确长通用段落、短无目标 claim 和真空 Chapter Contract 必须失败。",
+    "kind": "approved_design",
+    "lines": "416-422,516-527",
+    "path": "approved_design:plans/mw_protocol_multi_agent_rearchitecture_design_20260809.md"
+  },
+  "title": "长篇通用套话缺少研究特异 claim 和事实绑定",
+  "xfail": false
+}

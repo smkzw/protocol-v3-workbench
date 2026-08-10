@@ -1,0 +1,33 @@
+{
+  "expected_gate": "E0",
+  "expected_result": "fail_closed",
+  "failure_code": "MW-PRO-E0-SOURCE-ZERO_RESULT_UNEXPLAINED",
+  "failure_identity": "protocol_v3:failure:E0:source:zero_result_unexplained:v1",
+  "failure_reason": "零结果本身不是完整检索证据；未验证连通性、术语扩展、适应症同义词、过滤条件和替代查询时必须停在 E0 并给出问题卡。",
+  "fixture_id": "mwp3fail_e0_source_zero_result_unexplained_v1",
+  "must_remain_negative": true,
+  "original_runtime_available": false,
+  "owner": "agent_1_source_acquisition",
+  "payload": {
+    "connectivity_verified": false,
+    "filter_relaxation_attempted": false,
+    "incorrect_downstream_state": "source_acquisition_complete",
+    "query": "非标准适应症简称",
+    "registry": "ClinicalTrials.gov",
+    "registry_response_verified": false,
+    "result_count": 0,
+    "root_cause": "not_investigated",
+    "synonym_queries_attempted": []
+  },
+  "provenance": "controlled_synthetic",
+  "schema_version": "protocol_v3_failure_fixture_v1",
+  "skip": false,
+  "source_locator": {
+    "evidence": "Gate E0 要求区分真实零结果、查询/连通性/术语问题并可复现根因。",
+    "kind": "approved_design",
+    "lines": "348-377,899-906",
+    "path": "approved_design:plans/mw_protocol_multi_agent_rearchitecture_design_20260809.md"
+  },
+  "title": "零注册库结果未经根因调查即被视为充分检索",
+  "xfail": false
+}
