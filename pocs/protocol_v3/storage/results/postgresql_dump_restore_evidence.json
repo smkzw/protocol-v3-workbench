@@ -1,0 +1,14 @@
+{
+  "backup_event_count": 10000,
+  "checksums_enabled": true,
+  "data_checksum_version": 1,
+  "dump_path": "/tmp/pg18_dump_evidence/poc.dump",
+  "dump_size_bytes": 3689149,
+  "hash_match": true,
+  "pg_version": "18.4",
+  "restored_event_count": 10000,
+  "restored_replay_hash": "b37b2bed6e74d1341e7621e000ea14d46e06b38c542b890fa3e2426bf1c375b8",
+  "restored_study_revision": 1,
+  "source_replay_hash": "b37b2bed6e74d1341e7621e000ea14d46e06b38c542b890fa3e2426bf1c375b8",
+  "tool": "pg_dump -F c / pg_restore"
+}

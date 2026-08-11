@@ -1,0 +1,492 @@
+{
+  "all_passed": true,
+  "candidate": "sqlite_3_53_1",
+  "deterministic_digest": "64a56f66e4300b318f6586803151f475e2ad8de9a74d0acfad14fe46a81adad8",
+  "invariants": [
+    {
+      "deterministic": {
+        "distinct_connection_count": 8,
+        "duplicate_semantic_effects": 0,
+        "expected_final_revision": 1000,
+        "final_revision": 1000,
+        "lost_updates": 0,
+        "overlap_at_application_boundary": 8,
+        "successful_saves": 1000,
+        "target_ops": 1000,
+        "writers": 8
+      },
+      "error": null,
+      "measured": {
+        "busy_retries_per_writer": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1,
+          "6": 0,
+          "7": 0
+        },
+        "busy_retries_total": 1,
+        "cas_conflicts_observed": 0,
+        "cas_p95_threshold_ms": 500,
+        "connection_ids": [
+          {
+            "connection_identity": "ECD66945FB83F96C",
+            "connection_label": "writer-6",
+            "writer_index": 6
+          },
+          {
+            "connection_identity": "8E1868F607988091",
+            "connection_label": "writer-2",
+            "writer_index": 2
+          },
+          {
+            "connection_identity": "4B3DF326A622C787",
+            "connection_label": "writer-3",
+            "writer_index": 3
+          },
+          {
+            "connection_identity": "4C4BBEC0722F2C90",
+            "connection_label": "writer-5",
+            "writer_index": 5
+          },
+          {
+            "connection_identity": "5D69C6F5C6385450",
+            "connection_label": "writer-7",
+            "writer_index": 7
+          },
+          {
+            "connection_identity": "02E5A3DC7D2601F7",
+            "connection_label": "writer-0",
+            "writer_index": 0
+          },
+          {
+            "connection_identity": "6F323B9E074700BE",
+            "connection_label": "writer-4",
+            "writer_index": 4
+          },
+          {
+            "connection_identity": "92029FD4142A51DA",
+            "connection_label": "writer-1",
+            "writer_index": 1
+          }
+        ],
+        "elapsed_ms": 232.83,
+        "p50_ms": 0.105,
+        "p95_ms": 0.603,
+        "p99_ms": 26.913,
+        "per_writer": {
+          "writer-0": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-1": {
+            "busy_retries": 1,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-2": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-3": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-4": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-5": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-6": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          },
+          "writer-7": {
+            "busy_retries": 0,
+            "conflicts": 0,
+            "successes": 125
+          }
+        }
+      },
+      "name": "cas_concurrency",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "chain_breaks": 0,
+        "event_count": 10000,
+        "head_count": 10000,
+        "head_sequence": 10000,
+        "read_back_count": 10000,
+        "reference_hash": "d80c1f0369b55e63885aa052b52f7eb396405bb6c7a32e422958b15c0eaefb88",
+        "replay_hash": "d80c1f0369b55e63885aa052b52f7eb396405bb6c7a32e422958b15c0eaefb88"
+      },
+      "error": null,
+      "measured": {
+        "append_ms": 135.98,
+        "verify_ms": 49.59
+      },
+      "name": "event_chain",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "commit_outbox_durable": true,
+        "commit_study_revision_durable": 1,
+        "rollback_outbox_absent": true,
+        "rollback_study_absent": true,
+        "rollback_triggered": true
+      },
+      "error": null,
+      "measured": {},
+      "name": "transaction_outbox_atomicity",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "after_count": 200,
+        "after_hash": "89b29a0cb0a7e620341acf5048ccbcaf7fa5e321e03e492843384b45c0798c7f",
+        "event_count_unchanged": true,
+        "event_hash_unchanged": true,
+        "project_isolation": true,
+        "ref_count": 200,
+        "ref_hash": "89b29a0cb0a7e620341acf5048ccbcaf7fa5e321e03e492843384b45c0798c7f",
+        "run_a1_seq": 150,
+        "run_a1_sha": "00000000000000000000000000000000000000000000000000000000000003e7",
+        "run_a2_deleted": true,
+        "run_b1_present": true,
+        "runs_a": [
+          "run:ckpt:1"
+        ],
+        "total_events": 200
+      },
+      "error": null,
+      "measured": {},
+      "name": "checkpoint_isolation",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "accounting_100_percent": true,
+        "canonical_hash_match_all": true,
+        "every_family_has_quarantine": true,
+        "per_family": {
+          "SemanticDocumentRevision": {
+            "accounted": true,
+            "hash_match": true,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": "8fbd73557ec184da7e2915d4522f0f39515e3035169ea8165463d2569c69918f",
+            "quarantine_records": [
+              {
+                "body_hash": "d68abf8476f565d8f7ff701e930e3ed48cab5d53ac32c09af567261b4dc3e520",
+                "reason_code": "missing_blocks",
+                "source_key": "sdr:mig:bad:1"
+              },
+              {
+                "body_hash": "0a337aaca2093a65f2705bc84fe0a7d0c0f5d6902c8d7f1882131cc9cf976c4a",
+                "reason_code": "invalid_revision",
+                "source_key": "sdr:mig:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": "8fbd73557ec184da7e2915d4522f0f39515e3035169ea8165463d2569c69918f"
+          },
+          "StudyDefinitionV3": {
+            "accounted": true,
+            "hash_match": true,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": "e107b90c0eca09cc943d51eb11b4a4120d03f265bdf92677e74912d7f05cf449",
+            "quarantine_records": [
+              {
+                "body_hash": "2e8744f61674331120e37f5147fe9d0cc670bf1d87f70842f0e0149ffd22787f",
+                "reason_code": "missing_facts",
+                "source_key": "sd:mig:bad:1"
+              },
+              {
+                "body_hash": "9b78b49766aef216b1d92e71c8b42dec3eb35c873012c9fd00ce12eba492718c",
+                "reason_code": "invalid_revision",
+                "source_key": "sd:mig:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": "e107b90c0eca09cc943d51eb11b4a4120d03f265bdf92677e74912d7f05cf449"
+          },
+          "chapter_coverage": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "1b0197e57fd50f6aa7a7d8e0049615ae385167ab9d00ae24f7ba65053c009697",
+                "reason_code": "missing_hashes",
+                "source_key": "node:bad:1"
+              }
+            ],
+            "quarantine_survived": 1,
+            "quarantined": 1,
+            "source": 9,
+            "source_hash": null
+          },
+          "checkpoints": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "70007f408dd020cde967e0ffe641aea2a5dd6088a772906a50289f8c220caa04",
+                "reason_code": "missing_stream_id",
+                "source_key": "run:mig:bad:1"
+              }
+            ],
+            "quarantine_survived": 1,
+            "quarantined": 1,
+            "source": 9,
+            "source_hash": null
+          },
+          "decision_graph": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "232fd4873600b25fcfc03a2ad50e4d29dcf49d9f4e513b3f7ed04d254c17eb31",
+                "reason_code": "missing_option",
+                "source_key": "dk:bad:1"
+              }
+            ],
+            "quarantine_survived": 1,
+            "quarantined": 1,
+            "source": 9,
+            "source_hash": null
+          },
+          "events": {
+            "accounted": true,
+            "hash_match": true,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": "ac094c13fb41c1bcef43fef20490aba126e6545b71be2429855fc6cabb5f0fe2",
+            "quarantine_records": [
+              {
+                "body_hash": "7aa382334288b21767aa0524012b23f29065de976faefe6ade8d641bb740205e",
+                "reason_code": "chain_break",
+                "source_key": "mig-evt:bad:1"
+              },
+              {
+                "body_hash": "14b0035d9b24138822d9a80e6512ae8ebdc824528e393e455ef188fc015845bf",
+                "reason_code": "unknown_event_type",
+                "source_key": "mig-evt:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": "ac094c13fb41c1bcef43fef20490aba126e6545b71be2429855fc6cabb5f0fe2"
+          },
+          "inbox": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "c35feede5188f6e0217d189c6c9c77c7615bd97049d63a70b38f531ff5270fe9",
+                "reason_code": "missing_result_hash",
+                "source_key": "mig-ib:bad:1"
+              },
+              {
+                "body_hash": "3744452148d7d431e9d6ab4651372c1fcf00beb605f2d5686644b23793ae8d0f",
+                "reason_code": "invalid_status",
+                "source_key": "mig-ib:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": null
+          },
+          "outbox": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "2dc7b3b9567af47f3e1323e2ebc634505c47ab0d64d0457f62b6461aea5741bd",
+                "reason_code": "missing_payload_hash",
+                "source_key": "mig-ob:bad:1"
+              },
+              {
+                "body_hash": "bd5a3a9e41069932dd5e5457fe5b73442ef6215a6567dde70d71df953242f29d",
+                "reason_code": "invalid_status",
+                "source_key": "mig-ob:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": null
+          },
+          "reservations": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "526b01e3cb219e809c32e5fac987ab297747faba6659627c4505c207b1b27162",
+                "reason_code": "missing_input_hash",
+                "source_key": "rsv:mig:bad:1"
+              },
+              {
+                "body_hash": "b11f406232b1ba4ed23ee76b0c5f15bffaa778d06295795ef9b08c1f241d5514",
+                "reason_code": "invalid_terminal_state",
+                "source_key": "rsv:mig:bad:2"
+              }
+            ],
+            "quarantine_survived": 2,
+            "quarantined": 2,
+            "source": 10,
+            "source_hash": null
+          },
+          "workflow_run_status": {
+            "accounted": true,
+            "hash_match": null,
+            "mappable": 8,
+            "migrated": 8,
+            "migrated_hash": null,
+            "quarantine_records": [
+              {
+                "body_hash": "88aecf38a8430464bdf5bfb64f25b060f5db4921d51a39762e25cc12f7a7589d",
+                "reason_code": "missing_status",
+                "source_key": "wr:mig:bad:1"
+              }
+            ],
+            "quarantine_survived": 1,
+            "quarantined": 1,
+            "source": 9,
+            "source_hash": null
+          }
+        },
+        "quarantine_survived": true,
+        "rows_per_mappable_family": 8
+      },
+      "error": null,
+      "measured": {},
+      "name": "migration_quarantine",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "duplicate_semantic_effects": 0,
+        "hash_chain_breaks": 0,
+        "kill_exit_code": null,
+        "kill_ok": true,
+        "kill_return_code": -9,
+        "kill_verified": true,
+        "kill_wifexited": false,
+        "kill_wifignaled": true,
+        "kill_wtermsig": 9,
+        "outbox_key_present": true,
+        "outbox_status": "pending",
+        "receipt_committed": true,
+        "receipt_committed_event_count": 300,
+        "receipt_outbox_key": "side:crash:1",
+        "reopened_event_count": 300,
+        "replay_hash": "d61bd649295df2cfec0996b0d097620254b0bbbc59ba737d18a88da1fe35bd40",
+        "rpo_zero": true
+      },
+      "error": null,
+      "measured": {
+        "child_pid": 36659,
+        "kill_error": null,
+        "kill_method": "SIGKILL",
+        "kill_waitpid_pid": 36659,
+        "receipt_commit_boundary_ts": "2026-08-11T13:33:35.906091+00:00",
+        "receipt_path": "/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/tmpzdv39v9d/crash_receipt.json"
+      },
+      "name": "crash_recovery",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "backup_event_count": 10000,
+        "budget_seconds": 900,
+        "reference_event_count": 1000,
+        "restored_event_count": 10000,
+        "restored_replay_hash": "d966720f93cb51fd0b170cd70c1f0a234ba4ada0af35e33da8bb9072ebcffbc4",
+        "restored_study_revision": 1,
+        "scale_multiplier": 10,
+        "source_event_count": 10000,
+        "source_replay_hash": "d966720f93cb51fd0b170cd70c1f0a234ba4ada0af35e33da8bb9072ebcffbc4"
+      },
+      "error": null,
+      "measured": {
+        "total_ms": 63.38,
+        "total_seconds": 0.063
+      },
+      "name": "backup_restore_replay",
+      "passed": true
+    },
+    {
+      "deterministic": {
+        "live_hash": "7e9eb0f1d6497b1fceff8fd88cc9dc10b57dbb8304a5199e1b0bbeb0c66f786b",
+        "live_hash_differs": true,
+        "live_revision_after_mutation": 2,
+        "pre_switch_hash": "ecc3d26831d86c314f6efa5745fdadb9d8384f7c6f9f52c398a5e5f440ec87c6",
+        "pre_switch_revision": 1,
+        "restored_hash": "ecc3d26831d86c314f6efa5745fdadb9d8384f7c6f9f52c398a5e5f440ec87c6",
+        "restored_hash_matches_pre_switch": true,
+        "restored_revision": 1
+      },
+      "error": null,
+      "measured": {},
+      "name": "rollback_to_snapshot",
+      "passed": true
+    }
+  ],
+  "measured_ms": {
+    "backup_restore_replay": 343.83,
+    "cas_concurrency": 233.68,
+    "checkpoint_isolation": 8.19,
+    "crash_recovery": 415.42,
+    "event_chain": 366.9,
+    "migration_quarantine": 4.03,
+    "rollback_to_snapshot": 36.16,
+    "transaction_outbox_atomicity": 3.63
+  },
+  "sqlite_version": "3.53.1",
+  "workload": {
+    "backup_event_count": 10000,
+    "cas_operations": 1000,
+    "events": 10000,
+    "reference_event_count": 1000,
+    "scale_multiplier": 10,
+    "writers": 8
+  }
+}

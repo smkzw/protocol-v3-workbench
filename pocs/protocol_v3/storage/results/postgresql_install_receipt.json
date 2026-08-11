@@ -1,0 +1,31 @@
+{
+  "postgresql": {
+    "version": "18.4",
+    "license": "PostgreSQL",
+    "install_path": "/opt/homebrew/opt/postgresql@18",
+    "binaries": {
+      "postgres": "/opt/homebrew/opt/postgresql@18/bin/postgres",
+      "pg_dump": "/opt/homebrew/opt/postgresql@18/bin/pg_dump",
+      "pg_restore": "/opt/homebrew/opt/postgresql@18/bin/pg_restore",
+      "initdb": "/opt/homebrew/opt/postgresql@18/bin/initdb",
+      "pg_ctl": "/opt/homebrew/opt/postgresql@18/bin/pg_ctl",
+      "pg_controldata": "/opt/homebrew/opt/postgresql@18/bin/pg_controldata"
+    },
+    "brew_list": "postgresql@18 18.4",
+    "brew_services": "none",
+    "data_checksums": true,
+    "data_checksum_version": 1
+  },
+  "driver": {
+    "name": "psycopg",
+    "version": "3.3.4",
+    "license": "LGPL-3.0-only",
+    "install_path": "pocs/protocol_v3/storage/.task18_pg_venv/lib/python3.12/site-packages/psycopg",
+    "interpreter": "3.12.13"
+  },
+  "runtime_notes": {
+    "pydantic": "2.13.4 (system Python 3.12, used for contract models)",
+    "interpreter_for_suite": "/opt/homebrew/bin/python3.12 with task venv site-packages prepended",
+    "cluster": "disposable initdb under mktemp -d, local Unix socket trust only, no LaunchAgent, no external listener"
+  }
+}
