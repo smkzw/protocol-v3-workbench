@@ -202,6 +202,7 @@ def _reservation(
     error_code: Optional[str] = None,
     provider_session_id: Optional[str] = None,
     attempt: int = 1,
+    transport_attempts: int = 0,
 ) -> ExecutionReservation:
     return ExecutionReservation(
         execution_reservation_id=reservation_id,
@@ -210,7 +211,7 @@ def _reservation(
         idempotency_key=idempotency_key,
         input_sha256=input_sha,
         attempt=attempt,
-        transport_attempts=0,
+        transport_attempts=transport_attempts,
         provider_session_id=provider_session_id,
         status=status,
         terminal_state=terminal_state,
@@ -805,6 +806,14 @@ class TestReservationIdempotency:
     def test_transition_to_completed(self) -> None:
         repo = InMemoryExecutionReservationRepository()
         repo.reserve(_PROJ_A, _reservation())
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
         updated = repo.transition(
             _PROJ_A,
             "rsv:test:1",
@@ -812,6 +821,7 @@ class TestReservationIdempotency:
             terminal_state=ExecutionTerminalState.COMPLETED,
             output_sha256=_sha(200),
             provider_session_id="sess:1",
+            transport_attempts=1,
             updated_at=_T1,
         )
         assert updated.status is ReservationStatus.COMPLETED
@@ -823,10 +833,19 @@ class TestReservationIdempotency:
         repo.transition(
             _PROJ_A,
             "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
             to_status=ReservationStatus.UNKNOWN_OUTCOME,
             terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
             error_code="err:transport:unknown",
             provider_session_id="sess:1",
+            transport_attempts=1,
             updated_at=_T1,
         )
         # Re-dispatching the same logical call while unknown-outcome must fail.
@@ -839,15 +858,197 @@ class TestReservationIdempotency:
         repo.transition(
             _PROJ_A,
             "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
             to_status=ReservationStatus.UNKNOWN_OUTCOME,
             terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
             error_code="err:transport:unknown",
             provider_session_id="sess:1",
+            transport_attempts=1,
             updated_at=_T1,
         )
         unknowns = repo.find_unknown_outcome(_PROJ_A)
         assert len(unknowns) == 1
         assert unknowns[0].status is ReservationStatus.UNKNOWN_OUTCOME
+
+    def test_find_unresolved_includes_running_and_unknown_only_for_project(
+        self,
+    ) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        running = repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.reserve(
+            _PROJ_B,
+            _reservation(
+                reservation_id="rsv:other:1",
+                logical_call_id="call:other:1",
+            ),
+        )
+        assert repo.find_unresolved(_PROJ_A) == (running,)
+        assert repo.find_unresolved(_PROJ_B)[0].execution_reservation_id == (
+            "rsv:other:1"
+        )
+
+    def test_closed_state_machine_rejects_illegal_edges(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.transition(
+                _PROJ_A,
+                "rsv:test:1",
+                to_status=ReservationStatus.COMPLETED,
+                terminal_state=ExecutionTerminalState.COMPLETED,
+                output_sha256=_sha(200),
+                provider_session_id="sess:1",
+                updated_at=_T1,
+            )
+
+    def test_transport_attempts_increment_only_when_dispatch_starts(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        running = repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        assert running.transport_attempts == 1
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.transition(
+                _PROJ_A,
+                "rsv:test:1",
+                to_status=ReservationStatus.COMPLETED,
+                terminal_state=ExecutionTerminalState.COMPLETED,
+                output_sha256=_sha(200),
+                provider_session_id="sess:1",
+                transport_attempts=2,
+                updated_at=_T2,
+            )
+
+    def test_transition_revalidates_terminal_record_before_commit(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        with pytest.raises(ValueError, match="completed reservations require output"):
+            repo.transition(
+                _PROJ_A,
+                "rsv:test:1",
+                to_status=ReservationStatus.COMPLETED,
+                terminal_state=ExecutionTerminalState.COMPLETED,
+                provider_session_id="sess:1",
+                transport_attempts=1,
+                updated_at=_T2,
+            )
+        persisted = repo.get(_PROJ_A, "rsv:test:1")
+        assert persisted is not None
+        assert persisted.status is ReservationStatus.RUNNING
+
+    def test_attempt_lineage_is_append_only_ordered_and_project_isolated(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        first = _reservation()
+        second = _reservation(
+            reservation_id="rsv:test:2",
+            idempotency_key="idem-key-2",
+            attempt=2,
+        )
+        repo.reserve(_PROJ_A, first)
+        repo.reserve(_PROJ_A, second)
+        assert repo.list_attempts(_PROJ_A, "call:test:1") == (first, second)
+        assert repo.list_attempts(_PROJ_B, "call:test:1") == ()
+        assert repo.get(_PROJ_A, first.execution_reservation_id) == first
+
+    def test_duplicate_attempt_number_is_rejected(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        with pytest.raises(IdempotencyConflictError):
+            repo.reserve(
+                _PROJ_A,
+                _reservation(
+                    reservation_id="rsv:test:other",
+                    idempotency_key="idem-key:other",
+                    attempt=1,
+                ),
+            )
+
+    def test_unknown_recovery_requires_same_provider_session(self) -> None:
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.UNKNOWN_OUTCOME,
+            terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
+            error_code="err:transport:unknown",
+            provider_session_id="sess:1",
+            transport_attempts=1,
+            updated_at=_T2,
+        )
+        with pytest.raises(RepositoryStateTransitionError):
+            repo.transition(
+                _PROJ_A,
+                "rsv:test:1",
+                to_status=ReservationStatus.COMPLETED,
+                terminal_state=ExecutionTerminalState.COMPLETED,
+                output_sha256=_sha(200),
+                provider_session_id="sess:other",
+                transport_attempts=1,
+                updated_at=_T2,
+            )
+
+    def test_live_completion_may_adopt_provider_receipt_session(self) -> None:
+        """RUNNING carries a coordinator placeholder; its live success receipt
+        may replace that value before the outcome becomes recovery-bound."""
+        repo = InMemoryExecutionReservationRepository()
+        repo.reserve(_PROJ_A, _reservation())
+        repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:harness-placeholder",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        completed = repo.transition(
+            _PROJ_A,
+            "rsv:test:1",
+            to_status=ReservationStatus.COMPLETED,
+            terminal_state=ExecutionTerminalState.COMPLETED,
+            output_sha256=_sha(200),
+            provider_session_id="sess:provider-receipt",
+            transport_attempts=1,
+            updated_at=_T2,
+        )
+        assert completed.provider_session_id == "sess:provider-receipt"
 
 
 # ---------------------------------------------------------------------------
@@ -996,10 +1197,27 @@ class TestReservationProjectIsolation:
         repo.transition(
             _PROJ_A,
             "rsv:a:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:a:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.transition(
+            _PROJ_A,
+            "rsv:a:1",
             to_status=ReservationStatus.UNKNOWN_OUTCOME,
             terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
             error_code="err:transport:unknown",
             provider_session_id="sess:a:1",
+            transport_attempts=1,
+            updated_at=_T1,
+        )
+        repo.transition(
+            _PROJ_B,
+            "rsv:b:1",
+            to_status=ReservationStatus.RUNNING,
+            provider_session_id="sess:b:1",
+            transport_attempts=1,
             updated_at=_T1,
         )
         repo.transition(
@@ -1009,6 +1227,7 @@ class TestReservationProjectIsolation:
             terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
             error_code="err:transport:unknown",
             provider_session_id="sess:b:1",
+            transport_attempts=1,
             updated_at=_T1,
         )
 

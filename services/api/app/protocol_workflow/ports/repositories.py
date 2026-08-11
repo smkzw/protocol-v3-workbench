@@ -745,15 +745,33 @@ class ExecutionReservationRepository(Protocol):
         output_sha256: Optional[Sha256] = None,
         error_code: Optional[StableId] = None,
         provider_session_id: Optional[NonEmptyText] = None,
+        transport_attempts: Optional[int] = None,
         updated_at: datetime,
     ) -> ExecutionReservation:
         """Transition a reservation to a new status.
 
-        The resulting record MUST satisfy the ``ExecutionReservation`` invariants
-        (terminal-state consistency).  Transitioning away from
-        ``UNKNOWN_OUTCOME`` is the only way to unblock re-dispatch.  Raises
-        :class:`UnknownOutcomeConflictError` if the transition is illegal under
-        the unknown-outcome rule.
+        The resulting record MUST satisfy the ``ExecutionReservation``
+        invariants (terminal-state consistency).  A live
+        ``RUNNING → COMPLETED`` transition may adopt the provider-issued
+        session identity from its receipt.  Once a row is
+        ``UNKNOWN_OUTCOME``, recovery MUST retain the already-persisted session
+        identity and no implicit re-dispatch is allowed.  A later explicit
+        retry is a new append-only attempt and does not mutate or unblock the
+        original idempotency key.  Illegal state or recovery-session changes
+        fail closed.
+        """
+        ...
+
+    def list_attempts(
+        self,
+        project_id: StableId,
+        logical_call_id: StableId,
+    ) -> tuple[ExecutionReservation, ...]:
+        """Return the append-only attempt lineage in deterministic order.
+
+        Attempt numbers are unique within a project/logical call.  Existing
+        attempts are never re-keyed or overwritten when a later explicit
+        retry is appended.
         """
         ...
 
@@ -763,6 +781,18 @@ class ExecutionReservationRepository(Protocol):
     ) -> tuple[ExecutionReservation, ...]:
         """Return all reservations in ``UNKNOWN_OUTCOME`` status for the
         project.  Used by recovery to ensure none are silently re-dispatched."""
+        ...
+
+    def find_unresolved(
+        self,
+        project_id: StableId,
+    ) -> tuple[ExecutionReservation, ...]:
+        """Return RESERVED, RUNNING and UNKNOWN_OUTCOME work for recovery.
+
+        This includes the crash window where a physical call completed but
+        persisting its terminal receipt failed, leaving a RUNNING row that
+        must be reconciled rather than redispatched.
+        """
         ...
 
 

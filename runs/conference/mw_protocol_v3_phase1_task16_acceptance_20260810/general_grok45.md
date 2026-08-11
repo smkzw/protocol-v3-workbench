@@ -1,0 +1,1 @@
+I'll run an independent Task 1.6 acceptance pass: read the declared conference packet, then probe the ExecutionReservation path with only the allowed tests.Reading the Task 1.6 source packet: contracts, runtime, repository ports, and the two allowed test files.

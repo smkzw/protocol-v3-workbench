@@ -844,6 +844,8 @@ class InMemoryExecutionReservationRepository:
     _by_id: Dict[Tuple[str, str], ExecutionReservation] = field(default_factory=dict)
     # (project_id, logical_call_id, idempotency_key) -> execution_reservation_id
     _by_logical_call: Dict[Tuple[str, str, str], str] = field(default_factory=dict)
+    # (project_id, logical_call_id, attempt) -> execution_reservation_id
+    _by_attempt: Dict[Tuple[str, str, int], str] = field(default_factory=dict)
     _lock: RLock = field(default_factory=RLock)
     _mutation_guard: Optional[_MutationGuard] = field(default=None, repr=False)
 
@@ -889,8 +891,23 @@ class InMemoryExecutionReservationRepository:
                     identity_collision.input_sha256,
                     reservation.input_sha256,
                 )
+            attempt_key = (
+                project_id,
+                reservation.logical_call_id,
+                reservation.attempt,
+            )
+            attempt_collision_id = self._by_attempt.get(attempt_key)
+            if attempt_collision_id is not None:
+                attempt_collision = self._by_id[(project_id, attempt_collision_id)]
+                raise IdempotencyConflictError(
+                    project_id,
+                    f"{reservation.logical_call_id}:attempt:{reservation.attempt}",
+                    attempt_collision.input_sha256,
+                    reservation.input_sha256,
+                )
             self._by_id[identity_key] = reservation
             self._by_logical_call[key] = reservation.execution_reservation_id
+            self._by_attempt[attempt_key] = reservation.execution_reservation_id
             return reservation
 
     def get(
@@ -923,6 +940,7 @@ class InMemoryExecutionReservationRepository:
         output_sha256: Optional[str] = None,
         error_code: Optional[str] = None,
         provider_session_id: Optional[str] = None,
+        transport_attempts: Optional[int] = None,
         updated_at: datetime,
     ) -> ExecutionReservation:
         if self._mutation_guard is not None:
@@ -934,31 +952,125 @@ class InMemoryExecutionReservationRepository:
                 raise AggregateNotFoundError(
                     project_id, aggregate_id=execution_reservation_id
                 )
+            allowed_transitions = {
+                ReservationStatus.RESERVED: {
+                    ReservationStatus.RUNNING,
+                    ReservationStatus.FAILED,
+                },
+                ReservationStatus.RUNNING: {
+                    ReservationStatus.COMPLETED,
+                    ReservationStatus.FAILED,
+                    ReservationStatus.UNKNOWN_OUTCOME,
+                },
+                ReservationStatus.UNKNOWN_OUTCOME: {
+                    ReservationStatus.COMPLETED,
+                },
+                ReservationStatus.COMPLETED: set(),
+                ReservationStatus.FAILED: set(),
+            }
+            if to_status not in allowed_transitions[existing.status]:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    execution_reservation_id,
+                    from_status=existing.status.value,
+                    to_status=to_status.value,
+                )
+            next_transport_attempts = (
+                existing.transport_attempts
+                if transport_attempts is None
+                else transport_attempts
+            )
+            if next_transport_attempts < existing.transport_attempts:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    execution_reservation_id,
+                    from_status=existing.status.value,
+                    to_status=to_status.value,
+                )
+            if existing.status is ReservationStatus.RESERVED:
+                expected_attempts = (
+                    existing.transport_attempts + 1
+                    if to_status is ReservationStatus.RUNNING
+                    else existing.transport_attempts
+                )
+                if next_transport_attempts != expected_attempts:
+                    raise RepositoryStateTransitionError(
+                        project_id,
+                        execution_reservation_id,
+                        from_status=existing.status.value,
+                        to_status=to_status.value,
+                    )
+            elif next_transport_attempts != existing.transport_attempts:
+                raise RepositoryStateTransitionError(
+                    project_id,
+                    execution_reservation_id,
+                    from_status=existing.status.value,
+                    to_status=to_status.value,
+                )
+            next_provider_session_id = (
+                provider_session_id
+                if provider_session_id is not None
+                else existing.provider_session_id
+            )
+            # During a live RUNNING dispatch, a successful provider receipt may
+            # replace the coordinator's placeholder session id.  After the row
+            # becomes UNKNOWN_OUTCOME, that persisted identity is the recovery
+            # boundary and cannot be changed by a later receipt.
             if (
                 existing.status is ReservationStatus.UNKNOWN_OUTCOME
-                and to_status is ReservationStatus.UNKNOWN_OUTCOME
+                and provider_session_id is not None
+                and provider_session_id != existing.provider_session_id
             ):
-                raise UnknownOutcomeConflictError(
+                raise RepositoryStateTransitionError(
                     project_id,
-                    aggregate_id=execution_reservation_id,
-                    detail="cannot re-dispatch while unknown-outcome unresolved",
+                    execution_reservation_id,
+                    from_status=existing.status.value,
+                    to_status=to_status.value,
                 )
-            # Build the new immutable record; the contract invariants are
-            # enforced by the ExecutionReservation model validator.
-            updated = existing.model_copy(
-                update={
+            # Re-validate the complete immutable record.  Pydantic's
+            # ``model_copy(update=...)`` deliberately skips validation and
+            # therefore cannot enforce terminal-state consistency here.
+            updated = ExecutionReservation.model_validate(
+                {
+                    **existing.model_dump(),
                     "status": to_status,
                     "terminal_state": terminal_state,
                     "output_sha256": output_sha256,
                     "error_code": error_code,
-                    "provider_session_id": provider_session_id
-                    if provider_session_id is not None
-                    else existing.provider_session_id,
+                    "provider_session_id": next_provider_session_id,
+                    "transport_attempts": next_transport_attempts,
                     "updated_at": updated_at,
                 }
             )
             self._by_id[identity_key] = updated
             return updated
+
+    def list_attempts(
+        self,
+        project_id: str,
+        logical_call_id: str,
+    ) -> Tuple[ExecutionReservation, ...]:
+        with self._lock:
+            attempts = [
+                reservation
+                for (
+                    owner_project_id,
+                    owner_logical_call_id,
+                    _attempt,
+                ), reservation_id in self._by_attempt.items()
+                if owner_project_id == project_id
+                and owner_logical_call_id == logical_call_id
+                for reservation in (self._by_id[(project_id, reservation_id)],)
+            ]
+            return tuple(
+                sorted(
+                    attempts,
+                    key=lambda reservation: (
+                        reservation.attempt,
+                        reservation.execution_reservation_id,
+                    ),
+                )
+            )
 
     def find_unknown_outcome(self, project_id: str) -> Tuple[ExecutionReservation, ...]:
         with self._lock:
@@ -970,6 +1082,32 @@ class InMemoryExecutionReservationRepository:
                 ), reservation in self._by_id.items()
                 if reservation.status is ReservationStatus.UNKNOWN_OUTCOME
                 and owner_project_id == project_id
+            )
+
+    def find_unresolved(self, project_id: str) -> Tuple[ExecutionReservation, ...]:
+        unresolved_statuses = {
+            ReservationStatus.RESERVED,
+            ReservationStatus.RUNNING,
+            ReservationStatus.UNKNOWN_OUTCOME,
+        }
+        with self._lock:
+            return tuple(
+                sorted(
+                    (
+                        reservation
+                        for (
+                            owner_project_id,
+                            _reservation_id,
+                        ), reservation in self._by_id.items()
+                        if owner_project_id == project_id
+                        and reservation.status in unresolved_statuses
+                    ),
+                    key=lambda reservation: (
+                        reservation.logical_call_id,
+                        reservation.attempt,
+                        reservation.execution_reservation_id,
+                    ),
+                )
             )
 
 
