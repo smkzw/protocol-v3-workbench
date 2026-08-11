@@ -1,0 +1,1 @@
+I'll run a fresh-context, read-only Task 2.1 acceptance: load the conference context and plan, then inspect the seven artifacts and run focused compile/tests plus the listed counterexamples.Next I'll inspect the frozen Task 2.1 plan lines, the seven artifact files, and design context for the three clinical cases.
