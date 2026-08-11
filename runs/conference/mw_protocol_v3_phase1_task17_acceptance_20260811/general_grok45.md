@@ -1,0 +1,1 @@
+I'll act as a fresh-context read-only verifier for Task 1.7 acceptance: read the frozen plan and context first, then audit registries/adapters/tests and run the prescribed checks without editing anything.Next I'll load the Task 1.7 contract, frozen-plan section, and locate the registry/adapter implementation paths.

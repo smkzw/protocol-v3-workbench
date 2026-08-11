@@ -1,0 +1,363 @@
+{
+  "schema_version": "protocol-v3-skill-registry.v1",
+  "generated_for": "mw_protocol_v3_phase1_task17_20260811",
+  "authority": "Design plan mw_protocol_multi_agent_rearchitecture_design_20260809.md sections 5.3 and 17.1. Each entry builds a canonical SkillDefinition (typed I/O schema refs, allowed tools/paths, evidence requirements, side-effect kind, acceptance tests) plus registry-level metadata (applicability, idempotency policy, error codes, prompt/tool versions, rollback) that the frozen canonical contract does not carry. The loader constructs SkillDefinition objects from the representable fields without modifying the canonical contract and surfaces the remaining typed metadata separately.",
+  "skills": [
+    {
+      "skill_definition_id": "skill.source-acquisition-plan",
+      "skill_version": "1.0.0",
+      "agent_role": "corpus",
+      "input_schema_ref": "https://protocol-v3.local/schemas/source-acquisition-plan-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/source-acquisition-plan-output.v1.json",
+      "evidence_requirements": [
+        "source-acquisition-plan:project_id",
+        "source-acquisition-plan:denominator-rules-frozen"
+      ],
+      "allowed_tools": ["http-fetch", "checksum-verify"],
+      "allowed_paths": ["artifacts/source-acquisition/", "config/medical_writing/protocol_v3/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.source-acquisition-plan.denominator-not-narrowed",
+        "test.source-acquisition-plan.version-rules-frozen"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["research_seed.study_drug", "research_seed.indication"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "source-acquisition-plan:project_id+denominator-revision"
+      },
+      "error_codes": [
+        "MW-PRO-E1-SOURCE-UNREGISTERED_CAUSE",
+        "MW-PRO-E1-SOURCE-DENOMINATOR_NARROWED"
+      ],
+      "prompt_version": "source-acquisition-plan.v1",
+      "tool_versions": {
+        "http-fetch": "stdlib-urllib.v1",
+        "checksum-verify": "sha256.v1"
+      },
+      "rollback": {
+        "method": "discard-unsourced-proposals-and-replan",
+        "preserves": ["prior-source-acquisition-plan-revision", "denominator-history"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.document-ocr-parse",
+      "skill_version": "1.0.0",
+      "agent_role": "corpus",
+      "input_schema_ref": "https://protocol-v3.local/schemas/ocr-parse-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/ocr-parse-output.v1.json",
+      "evidence_requirements": [
+        "ocr:source-artifact-id",
+        "ocr:file-page-model-identity",
+        "ocr:fidelity-checksum"
+      ],
+      "allowed_tools": ["paddle-ocr-vl-1.6-async"],
+      "allowed_paths": ["artifacts/ocr-parsed/"],
+      "side_effect_kind": "artifact_create",
+      "acceptance_test_ids": [
+        "test.ocr-parse.file-page-model-bound",
+        "test.ocr-parse.no-glm-labeled-as-paddle"
+      ],
+      "applicability": {
+        "status": "conditional",
+        "triggering_fact_paths": ["source_artifact.requires_ocr"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "ocr:source-artifact-id+page-range+model-version"
+      },
+      "error_codes": [
+        "MW-PRO-E1-OCR-GATE-MISMATCH",
+        "MW-PRO-E1-OCR-FIDELITY-FAILED"
+      ],
+      "prompt_version": "ocr-parse.v1",
+      "tool_versions": {
+        "paddle-ocr-vl-1.6-async": "PaddleOCR-VL-1.6"
+      },
+      "rollback": {
+        "method": "quarantine-parsed-artifact-and-recover-prior",
+        "preserves": ["prior-source-artifact", "ocr-fidelity-history"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.document-translation",
+      "skill_version": "1.0.0",
+      "agent_role": "corpus",
+      "input_schema_ref": "https://protocol-v3.local/schemas/translation-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/translation-output.v1.json",
+      "evidence_requirements": [
+        "translation:source-target-spans",
+        "translation:fidelity-score",
+        "translation:model-identity"
+      ],
+      "allowed_tools": ["local-omlx-translator"],
+      "allowed_paths": ["artifacts/translation/"],
+      "side_effect_kind": "artifact_create",
+      "acceptance_test_ids": [
+        "test.translation.source-target-span-bound",
+        "test.translation.lease-heartbeat-release"
+      ],
+      "applicability": {
+        "status": "conditional",
+        "triggering_fact_paths": ["source_artifact.requires_translation"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "translation:source-artifact-id+language-pair+model-version"
+      },
+      "error_codes": [
+        "MW-PRO-E1-TRANSLATION-LEASE-DENIED",
+        "MW-PRO-E1-TRANSLATION-FIDELITY-FAILED"
+      ],
+      "prompt_version": "document-translation.v1",
+      "tool_versions": {
+        "local-omlx-translator": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
+      },
+      "rollback": {
+        "method": "release-lease-and-quarantine-translation",
+        "preserves": ["prior-translation-artifact", "fidelity-history"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.medical-admission-extraction",
+      "skill_version": "1.0.0",
+      "agent_role": "corpus",
+      "input_schema_ref": "https://protocol-v3.local/schemas/medical-admission-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/medical-admission-output.v1.json",
+      "evidence_requirements": [
+        "medical-admission:claim-locator",
+        "medical-admission:evidence-class",
+        "medical-admission:context-bound"
+      ],
+      "allowed_tools": ["product-llm"],
+      "allowed_paths": ["artifacts/medical-admission/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.medical-admission.positive-claim-bound",
+        "test.medical-admission.locator-context-quality"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["evidence_unit.admitted"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "medical-admission:evidence-unit-id+claim-revision"
+      },
+      "error_codes": [
+        "MW-PRO-E2-MEDICAL-ADMISSION-UNBOUND-CLAIM",
+        "MW-PRO-E2-MEDICAL-ADMISSION-QUALITY-GATE-FAILED"
+      ],
+      "prompt_version": "medical-admission-extraction.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "drop-unadmitted-proposals-keep-evidence-history",
+        "preserves": ["evidence-unit-history", "claim-evidence-link-revisions"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.clinical-design-and-estimand",
+      "skill_version": "1.0.0",
+      "agent_role": "design_and_summary",
+      "input_schema_ref": "https://protocol-v3.local/schemas/clinical-design-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/clinical-design-output.v1.json",
+      "evidence_requirements": [
+        "study-definition:picos-m-a-opr",
+        "study-definition:estimand-bound",
+        "study-definition:statistical-approach"
+      ],
+      "allowed_tools": ["product-llm"],
+      "allowed_paths": ["artifacts/clinical-design/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.clinical-design.picos-complete",
+        "test.clinical-design.estimand-consistent"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["research_seed.study_drug", "research_seed.indication"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "study-definition:project-id+revision"
+      },
+      "error_codes": [
+        "MW-PRO-E2-STUDY-DEFINITION-PICOS-INCOMPLETE",
+        "MW-PRO-E2-STUDY-DEFINITION-ESTIMAND-CONFLICT"
+      ],
+      "prompt_version": "clinical-design.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "restore-prior-study-definition-revision-via-cas",
+        "preserves": ["study-definition-revision-history", "decision-records"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.protocol-summary-reducer",
+      "skill_version": "1.0.0",
+      "agent_role": "design_and_summary",
+      "input_schema_ref": "https://protocol-v3.local/schemas/protocol-summary-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/protocol-summary-output.v1.json",
+      "evidence_requirements": [
+        "protocol-summary:fact-revision-bound",
+        "protocol-summary:cross-reference-consistent"
+      ],
+      "allowed_tools": ["product-llm"],
+      "allowed_paths": ["artifacts/protocol-summary/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.protocol-summary.fact-bound",
+        "test.protocol-summary.cross-reference-consistent"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["study_definition.confirmed"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "protocol-summary:document-revision+fact-revision"
+      },
+      "error_codes": [
+        "MW-PRO-D1-SUMMARY-FACT-MISMATCH",
+        "MW-PRO-D1-SUMMARY-CROSS-REFERENCE-BROKEN"
+      ],
+      "prompt_version": "protocol-summary-reducer.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "restore-prior-semantic-document-revision",
+        "preserves": ["semantic-document-revision-history", "chapter-contracts"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.chapter-draft",
+      "skill_version": "1.0.0",
+      "agent_role": "full_draft",
+      "input_schema_ref": "https://protocol-v3.local/schemas/chapter-draft-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/chapter-draft-output.v1.json",
+      "evidence_requirements": [
+        "chapter:substantive-content-contract-bound",
+        "chapter:fact-source-bound",
+        "chapter:structural-object-complete"
+      ],
+      "allowed_tools": ["product-llm"],
+      "allowed_paths": ["artifacts/chapter-draft/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.chapter-draft.substantive-contract-met",
+        "test.chapter-draft.no-skeleton-only",
+        "test.chapter-draft.source-bound"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["chapter_contract.applicable"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "chapter-draft:chapter-contract-id+fact-revision"
+      },
+      "error_codes": [
+        "MW-PRO-D1-CHAPTER-SUBSTANTIVE-UNMET",
+        "MW-PRO-D1-CHAPTER-SKELETON-ONLY",
+        "MW-PRO-D1-CHAPTER-SOURCE-UNBOUND"
+      ],
+      "prompt_version": "chapter-draft.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "restore-prior-semantic-block-revision-keep-contract",
+        "preserves": ["semantic-block-history", "chapter-contract", "chapter-lock-snapshot"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.clean-context-verification",
+      "skill_version": "1.0.0",
+      "agent_role": "quality_control",
+      "input_schema_ref": "https://protocol-v3.local/schemas/qc-verification-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/qc-verification-output.v1.json",
+      "evidence_requirements": [
+        "qc:fresh-context-probe",
+        "qc:finding-locator-bound",
+        "qc:no-drafter-scratchpad-reuse"
+      ],
+      "allowed_tools": ["product-ocr-translation-support", "product-llm"],
+      "allowed_paths": ["artifacts/qc-findings/"],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.qc.fresh-context",
+        "test.qc.finding-locator-bound",
+        "test.qc.no-scratchpad-reuse"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["semantic_document_revision.proposed"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "qc:document-revision+gate-version"
+      },
+      "error_codes": [
+        "MW-PRO-Q1-QC-FRESH-CONTEXT-VIOLATION",
+        "MW-PRO-Q1-QC-FINDING-UNBOUND",
+        "MW-PRO-Q1-QC-CLEAN-VERDICT-DENIED"
+      ],
+      "prompt_version": "clean-context-verification.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash",
+        "product-ocr-translation-support": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "void-qc-verdict-and-re-probe-fresh-context",
+        "preserves": ["prior-qc-findings", "semantic-document-revision"]
+      }
+    },
+    {
+      "skill_definition_id": "skill.workflow-coordination",
+      "skill_version": "1.0.0",
+      "agent_role": "coordinator",
+      "input_schema_ref": "https://protocol-v3.local/schemas/workflow-coordination-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/workflow-coordination-output.v1.json",
+      "evidence_requirements": [
+        "coordination:pinned-skill-graph-versions",
+        "coordination:run-manifest-bound",
+        "coordination:decision-queue-audited"
+      ],
+      "allowed_tools": ["product-llm"],
+      "allowed_paths": ["artifacts/run-manifest/", "artifacts/exception-cards/"],
+      "side_effect_kind": "artifact_create",
+      "acceptance_test_ids": [
+        "test.coordination.cannot-mutate-clinical-facts",
+        "test.coordination.cannot-lower-gate",
+        "test.coordination.cannot-replace-qc"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": ["workflow_run.created"]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "coordination:workflow-run-id+logical-call-id"
+      },
+      "error_codes": [
+        "MW-PRO-F1-COORDINATION-AUTHORITY-VIOLATION",
+        "MW-PRO-F1-COORDINATION-VERSION-SELF-APPROVAL"
+      ],
+      "prompt_version": "workflow-coordination.v1",
+      "tool_versions": {
+        "product-llm": "deepseek-v4-flash"
+      },
+      "rollback": {
+        "method": "terminate-run-preserve-artifacts-and-decisions",
+        "preserves": ["run-manifest", "artifact-manifest", "decision-records", "reservation-history"]
+      }
+    }
+  ]
+}
