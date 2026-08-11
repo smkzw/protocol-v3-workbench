@@ -1,0 +1,434 @@
+{
+  "schema_version": "mw_v2_v3_mapping_v1",
+  "mapping_version": "mw-v2-v3-mapping.2026.08.12-task110",
+  "generated_for": "mw_protocol_v3_phase1_task110_20260812",
+  "authority": "Frozen plan .hermes/plans/2026-08-09_020923-mw-protocol-multi-agent-rearchitecture.md Task 1.10; approved design mw_protocol_multi_agent_rearchitecture_design_20260809.md sections 6.2 and 20 (strangler migration route). Versioned, schema-validated, explicit mapping specification bound to real v2 contracts: every source_type is the mechanically derived identifier of a declared source_contract (Pydantic model symbol in packages/contracts/workbench_contracts/models.py, SQLite table in its owning service module, or the immutable company-corpus JSONL snapshot bound to SNAPSHOT_PATH/MANIFEST_PATH in medical_writing_company_corpus.py). Every mapped type independently binds project/identity/revision from its real contract location (missing or mismatched values fail closed into incomplete_record quarantine, never a mapped outcome under a wrong identity); types that cannot bind (nested stage drafts and tenant-global corpus objects) are declared quarantine with explicit Chinese reasons. Field rules reference actual model fields or physical columns; payload_json columns declare their payload model explicitly; whole_payload rules carry the deep-frozen real payload into the mapped output and explicitly enumerate every covered model field so contract drift cannot be silently absorbed; omitted rules require a Chinese justification. Immutable approvals/decisions/events use their checked-in updated_at/created_at physical columns as deterministic source revision tokens. The mapper never invents a target type, identity, semantic node or default field at runtime. Company corpus rows are a read-only legacy denominator: they are declared unmappable rather than silently dropped or fabricated. A pure read-only drift verifier (verify_mapping_spec_contracts) proves every declared symbol/table/column/field exists in the checked-in contracts and that every real model field / DDL column / payload-model field of a mapped type is dispositioned (role, rule, or explicitly enumerated whole-payload preservation).",
+  "identity_rule_bases": ["source_id"],
+  "derive_ops": ["string_join", "revision_token", "payload_sha256"],
+  "families": {
+    "study_definition": {
+      "family_label_zh": "研究方案定义",
+      "types": [
+        {
+          "source_type": "models.MedicalWritingStudyDefinition",
+          "outcome": "direct",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingStudyDefinition",
+            "identity_fields": ["definition_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "target_type": "study_definition_node",
+          "identity_rule": {"basis": "source_id", "prefix": "v3::study_definition::"},
+          "field_rules": [
+            {"kind": "direct", "source_field": "origin", "target_field": "origin"},
+            {"kind": "direct", "source_field": "state_sha256", "target_field": "state_sha256"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "derived", "derive": "payload_sha256", "target_field": "content_hash"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["definition_id", "project_id", "revision", "schema_version", "origin", "framing", "picos", "study_schema", "synopsis_text", "synopsis_origin", "field_states", "module_resolutions", "source_artifact_ids", "unresolved_paths", "state_sha256", "created_at", "updated_at", "updated_by"]}
+          ]
+        },
+        {
+          "source_type": "models.MedicalWritingStudySchemaSnapshot",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingStudySchemaSnapshot",
+            "identity_fields": ["project_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["journey_revision", "study_definition_revision"]
+          },
+          "quarantine_detail_zh": "研究方案 schema 快照仅保留为只读历史证据，不映射为 v3 语义节点"
+        }
+      ]
+    },
+    "journey_stage_draft": {
+      "family_label_zh": "写作旅程阶段草稿",
+      "types": [
+        {
+          "source_type": "models.MedicalWritingAuthoringJourney",
+          "outcome": "direct",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingAuthoringJourney",
+            "identity_fields": ["journey_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "target_type": "journey_stage_draft_node",
+          "identity_rule": {"basis": "source_id", "prefix": "v3::journey::"},
+          "field_rules": [
+            {"kind": "direct", "source_field": "status", "target_field": "state"},
+            {"kind": "direct", "source_field": "current_stage", "target_field": "stage"},
+            {"kind": "direct", "source_field": "entry_mode", "target_field": "entry_mode"},
+            {"kind": "direct", "source_field": "framing_complete", "target_field": "framing_complete"},
+            {"kind": "direct", "source_field": "picos_complete", "target_field": "picos_complete"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "derived", "derive": "payload_sha256", "target_field": "content_hash"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["schema_version", "journey_id", "project_id", "revision", "entry_mode", "synopsis_import", "study_definition", "study_schema_presentation", "status", "current_stage", "framing", "picos", "framing_draft", "picos_draft", "document_creation_reservation", "framing_complete", "picos_complete", "search_plan", "prefill_package", "corpus_triage", "discovery_basket_projection", "picos_corpus_alignment", "corpus_gate", "research_pipeline", "invalidated_dependents", "created_at", "updated_at", "updated_by"]}
+          ]
+        },
+        {
+          "source_type": "models.MedicalWritingAuthoringStageDraft",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingAuthoringStageDraft",
+            "identity_fields": ["stage"],
+            "revision_fields": ["saved_from_revision"]
+          },
+          "quarantine_detail_zh": "嵌套阶段草稿仅存在于父旅程载荷中，无独立项目/身份字段，无法独立绑定来源身份；不映射为 v3 节点，保留只读证据"
+        },
+        {
+          "source_type": "sqlite.medical_writing_authoring_journey_generation_reservations",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_authoring_journey.py",
+            "table": "medical_writing_authoring_journey_generation_reservations",
+            "identity_fields": ["project_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["expected_revision"]
+          },
+          "quarantine_detail_zh": "旅程生成预留为瞬态只读状态，不映射为 v3 阶段草稿节点"
+        }
+      ]
+    },
+    "working_copy_snapshot": {
+      "family_label_zh": "工作副本与快照",
+      "types": [
+        {
+          "source_type": "sqlite.medical_writing_working_copies",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/sqlite_runtime_store.py",
+            "table": "medical_writing_working_copies",
+            "payload_model": "MedicalWritingWorkingCopy",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["working_copy_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "target_type": "working_copy_snapshot",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::working_copy::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "document_id", "target_field": "document_id"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "section_id", "target_field": "section_id"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "approval_state", "target_field": "approval_state"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "updated_at", "omission_reason_zh": "更新时间戳仅审计用途，不进入 v3 目标"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["working_copy_id", "project_id", "document_id", "section_id", "source_document_version", "revision", "content_blocks", "approval_state", "approved_revision", "approved_snapshot_id", "freeze_status", "frozen_revision", "frozen_snapshot_id", "frozen_by", "frozen_at", "frozen_study_definition_id", "frozen_study_definition_revision", "frozen_study_definition_sha256", "source_study_definition_id", "source_study_definition_revision", "source_study_definition_sha256", "content_authority_state", "quarantined_revision", "quarantine_reason", "study_definition_reconciliation_required", "study_definition_reconciliation_reason", "applied_revision_thread_ids", "created_by", "updated_by", "created_at", "updated_at"]}
+          ]
+        },
+        {
+          "source_type": "sqlite.medical_writing_working_copy_snapshots",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/sqlite_runtime_store.py",
+            "table": "medical_writing_working_copy_snapshots",
+            "payload_model": "MedicalWritingWorkingCopy",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["snapshot_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "target_type": "working_copy_snapshot",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::snapshot::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "snapshot_type", "target_field": "snapshot_type"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "working_copy_id", "target_field": "working_copy_id"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "audit_id", "omission_reason_zh": "审计引用标识仅存储层用途，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "created_at", "omission_reason_zh": "快照创建时间戳仅审计用途，不进入 v3 目标"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["working_copy_id", "project_id", "document_id", "section_id", "source_document_version", "revision", "content_blocks", "approval_state", "approved_revision", "approved_snapshot_id", "freeze_status", "frozen_revision", "frozen_snapshot_id", "frozen_by", "frozen_at", "frozen_study_definition_id", "frozen_study_definition_revision", "frozen_study_definition_sha256", "source_study_definition_id", "source_study_definition_revision", "source_study_definition_sha256", "content_authority_state", "quarantined_revision", "quarantine_reason", "study_definition_reconciliation_required", "study_definition_reconciliation_reason", "applied_revision_thread_ids", "created_by", "updated_by", "created_at", "updated_at"]}
+          ]
+        }
+      ]
+    },
+    "corpus_evidence": {
+      "family_label_zh": "语料与证据",
+      "types": [
+        {
+          "source_type": "models.WritingReferenceDocumentArtifact",
+          "outcome": "direct",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "WritingReferenceDocumentArtifact",
+            "identity_fields": ["artifact_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["state_revision"]
+          },
+          "target_type": "corpus_evidence_node",
+          "identity_rule": {"basis": "source_id", "prefix": "v3::corpus_artifact::"},
+          "field_rules": [
+            {"kind": "direct", "source_field": "nct_id", "target_field": "nct_id"},
+            {"kind": "direct", "source_field": "document_type", "target_field": "document_type"},
+            {"kind": "direct", "source_field": "content_sha256", "target_field": "content_sha256"},
+            {"kind": "direct", "source_field": "source_status", "target_field": "source_status"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "derived", "derive": "payload_sha256", "target_field": "content_hash"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["artifact_id", "project_id", "snapshot_id", "nct_id", "source_document_id", "document_type", "filename", "document_date", "upload_date", "requested_url", "final_url", "content_type", "declared_size", "actual_size", "content_sha256", "source_status", "file_integrity_status", "source_current", "state_revision", "invalidation_reason", "created_by", "created_at"]}
+          ]
+        },
+        {
+          "source_type": "models.MedicalWritingCorpusSnapshotDefinition",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingCorpusSnapshotDefinition",
+            "identity_fields": ["snapshot_id"],
+            "revision_fields": ["snapshot_version"]
+          },
+          "quarantine_detail_zh": "公司语料快照定义为租户级全局对象，无项目作用域，无法独立绑定项目身份；保留只读证据，不映射为 v3 节点"
+        },
+        {
+          "source_type": "models.MedicalWritingSharedCorpusCandidate",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "pydantic_model",
+            "source_file": "packages/contracts/workbench_contracts/models.py",
+            "symbol": "MedicalWritingSharedCorpusCandidate",
+            "identity_fields": ["segment_id"],
+            "revision_fields": ["asset_version"]
+          },
+          "quarantine_detail_zh": "共享语料候选为租户级全局对象，无项目作用域，无法独立绑定项目身份；保留只读证据，不映射为 v3 节点"
+        },
+        {
+          "source_type": "jsonl.cms_cn_protocol_corpus_20260715_v1",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "jsonl_snapshot",
+            "source_file": "services/api/app/medical_writing_company_corpus.py",
+            "snapshot_file": "cms_cn_protocol_corpus_20260715_v1.jsonl",
+            "snapshot_constants": ["SNAPSHOT_PATH", "MANIFEST_PATH"],
+            "identity_fields": ["segment_id"]
+          },
+          "quarantine_detail_zh": "公司语料行作为只读历史证据保留：3,878 行分母不进行语义映射，不伪造 semantic node，也不静默丢弃"
+        }
+      ]
+    },
+    "decision_approval": {
+      "family_label_zh": "决策与审批",
+      "types": [
+        {
+          "source_type": "sqlite.writing_reference_extraction_review_records",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/writing_reference_repository.py",
+            "table": "writing_reference_extraction_review_records",
+            "payload_model": "WritingReferenceExtractionReviewDecision",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["review_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "target_type": "decision_record_preserved",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::extraction_review::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "artifact_id", "target_field": "artifact_id"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "extraction_revision", "target_field": "extraction_revision"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "decision", "target_field": "decision"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "created_at", "omission_reason_zh": "评审记录时间戳仅审计用途，不进入 v3 目标"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["review_id", "project_id", "artifact_id", "extraction_revision", "decision", "confirmed_anchor_coverage", "unresolved_structure_issues", "comment", "actor", "revision", "identity_assurance", "created_at"]}
+          ]
+        },
+        {
+          "source_type": "sqlite.approval_gates",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/sqlite_runtime_store.py",
+            "table": "approval_gates",
+            "payload_model": "ApprovalGate",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["approval_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["updated_at"]
+          },
+          "target_type": "approval_gate_preserved",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::approval_gate::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_field": "target_type", "target_field": "target_type"},
+            {"kind": "preserved_legacy_only", "source_field": "target_id", "target_field": "target_id"},
+            {"kind": "preserved_legacy_only", "source_field": "state", "target_field": "state"},
+            {"kind": "preserved_legacy_only", "source_field": "display_title", "target_field": "display_title"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["approval_id", "project_id", "target_type", "target_id", "target_revision", "display_title", "display_detail", "state", "requested_by", "reviewed_by", "approved_by", "review_comments", "created_at", "updated_at"]}
+          ]
+        },
+        {
+          "source_type": "sqlite.approval_decisions",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/sqlite_runtime_store.py",
+            "table": "approval_decisions",
+            "payload_model": "ApprovalDecisionRecord",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["decision_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["created_at"]
+          },
+          "target_type": "approval_decision_preserved",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::approval_decision::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "approval_id", "target_field": "approval_id"},
+            {"kind": "preserved_legacy_only", "source_field": "action", "target_field": "action"},
+            {"kind": "preserved_legacy_only", "source_field": "actor", "target_field": "actor"},
+            {"kind": "preserved_legacy_only", "source_field": "previous_state", "target_field": "previous_state"},
+            {"kind": "preserved_legacy_only", "source_field": "new_state", "target_field": "new_state"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["decision_id", "approval_id", "project_id", "action", "actor", "previous_state", "new_state", "comment", "blocked", "blockers", "audit_event_id", "created_at"]}
+          ]
+        },
+        {
+          "source_type": "sqlite.approval_audit_events",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/sqlite_runtime_store.py",
+            "table": "approval_audit_events",
+            "identity_fields": ["audit_id"],
+            "project_scope_fields": ["project_id"]
+          },
+          "quarantine_detail_zh": "审批审计事件为只读历史证据，不映射为 v3 决策节点"
+        }
+      ]
+    },
+    "protocol_document": {
+      "family_label_zh": "方案文档",
+      "types": [
+        {
+          "source_type": "sqlite.medical_writing_greenfield_documents",
+          "outcome": "direct",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_greenfield.py",
+            "table": "medical_writing_greenfield_documents",
+            "payload_model": "ProtocolDocument",
+            "payload_model_file": "packages/contracts/workbench_contracts/models.py",
+            "payload_container": "payload_json",
+            "identity_fields": ["document_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["baseline_revision"]
+          },
+          "target_type": "protocol_document_node",
+          "identity_rule": {"basis": "source_id", "prefix": "v3::protocol_doc::"},
+          "field_rules": [
+            {"kind": "direct", "source_scope": "physical", "source_field": "document_id", "target_field": "document_id"},
+            {"kind": "direct", "source_scope": "physical", "source_field": "baseline_revision", "target_field": "baseline_revision"},
+            {"kind": "direct", "source_scope": "physical", "source_field": "baseline_sha256", "target_field": "baseline_sha256"},
+            {"kind": "direct", "source_field": "protocol_id", "target_field": "protocol_id"},
+            {"kind": "direct", "source_field": "version", "target_field": "version"},
+            {"kind": "direct", "source_field": "status", "target_field": "state"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "create_request_sha256", "omission_reason_zh": "创建请求哈希仅幂等审计用途，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "create_idempotency_key", "omission_reason_zh": "创建幂等键仅审计用途，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "created_at", "omission_reason_zh": "创建时间戳仅审计用途，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "updated_at", "omission_reason_zh": "更新时间戳仅审计用途，不进入 v3 目标"},
+            {"kind": "derived", "derive": "payload_sha256", "target_field": "content_hash"},
+            {"kind": "whole_payload", "target_field": "legacy_payload", "covered_fields": ["document_id", "project_id", "document_type", "template_version", "protocol_id", "version", "status", "sections", "quality_gates", "template_id", "template_definition_sha256", "template_language", "template_country", "style_profile_id", "style_profile_version", "style_profile_definition_sha256", "corpus_snapshot_id", "corpus_snapshot_version", "corpus_snapshot_sha256", "source_study_definition_id", "source_study_definition_revision", "source_study_definition_sha256", "module_resolutions"]}
+          ]
+        },
+        {
+          "source_type": "sqlite.medical_writing_greenfield_events",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_greenfield.py",
+            "table": "medical_writing_greenfield_events",
+            "identity_fields": ["event_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["revision"]
+          },
+          "quarantine_detail_zh": "v2 方案文档事件为只读审计证据，不映射为 v3 文档节点"
+        }
+      ]
+    },
+    "artifact_lineage": {
+      "family_label_zh": "产物谱系",
+      "types": [
+        {
+          "source_type": "sqlite.medical_writing_artifact_lifecycle_records",
+          "outcome": "derived",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_artifact_lifecycle.py",
+            "table": "medical_writing_artifact_lifecycle_records",
+            "identity_fields": ["artifact_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["generation_id"]
+          },
+          "target_type": "artifact_lineage_node",
+          "identity_rule": {"basis": "source_id", "prefix": "v3::artifact_lineage::"},
+          "field_rules": [
+            {"kind": "direct", "source_scope": "physical", "source_field": "document_id", "target_field": "document_id"},
+            {"kind": "direct", "source_scope": "physical", "source_field": "generation_id", "target_field": "generation_id"},
+            {"kind": "direct", "source_scope": "physical", "source_field": "artifact_relpath", "target_field": "artifact_relpath"},
+            {"kind": "derived", "source_scope": "physical", "derive": "string_join", "source_fields": ["identity_json", "artifact_relpath"], "target_field": "lineage_ref"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "created_at", "omission_reason_zh": "创建时间戳仅审计用途，不进入 v3 目标"}
+          ]
+        },
+        {
+          "source_type": "sqlite.medical_writing_artifact_lifecycle_events",
+          "outcome": "preserved_legacy_only",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_artifact_lifecycle.py",
+            "table": "medical_writing_artifact_lifecycle_events",
+            "identity_fields": ["event_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["created_at"]
+          },
+          "target_type": "artifact_lineage_event_preserved",
+          "identity_rule": {"basis": "source_id", "prefix": "legacy::artifact_event::"},
+          "field_rules": [
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "artifact_id", "target_field": "artifact_id"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "action", "target_field": "action"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "state_from", "target_field": "state_from"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "state_to", "target_field": "state_to"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "idempotency_key", "target_field": "idempotency_key"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "request_hash", "target_field": "request_hash"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "principal_subject", "target_field": "principal_subject"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "detail_json", "target_field": "detail_json"},
+            {"kind": "preserved_legacy_only", "source_scope": "physical", "source_field": "result_json", "target_field": "result_json"},
+            {"kind": "derived", "derive": "revision_token", "target_field": "source_revision"},
+            {"kind": "omitted", "source_scope": "physical", "source_field": "tenant_id", "omission_reason_zh": "租户标识仅存储层作用域，不进入 v3 目标"}
+          ]
+        },
+        {
+          "source_type": "sqlite.medical_writing_artifact_lifecycle_state",
+          "outcome": "quarantine",
+          "source_contract": {
+            "kind": "sqlite_table",
+            "source_file": "services/api/app/medical_writing_artifact_lifecycle.py",
+            "table": "medical_writing_artifact_lifecycle_state",
+            "identity_fields": ["artifact_id"],
+            "project_scope_fields": ["project_id"],
+            "revision_fields": ["version"]
+          },
+          "quarantine_detail_zh": "产物生命周期状态投影为只读运行时状态，不映射为 v3 谱系节点"
+        }
+      ]
+    }
+  }
+}
