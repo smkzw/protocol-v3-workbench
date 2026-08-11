@@ -4,6 +4,8 @@
 
 Task 2.1 is accepted at its declared **offline functional PoC contract** boundary. Task 2.2 has not started. No service, live database, provider/model, scheduler/LangGraph, product API/UI, medical-monitoring path or security test was run.
 
+Implementation and evidence commit: `273ad86` (`feat(protocol-v3): add typed orchestrator case contracts`).
+
 ## Authority and immutable anchor
 
 - Frozen plan: `.hermes/plans/2026-08-09_020923-mw-protocol-multi-agent-rearchitecture.md`.
