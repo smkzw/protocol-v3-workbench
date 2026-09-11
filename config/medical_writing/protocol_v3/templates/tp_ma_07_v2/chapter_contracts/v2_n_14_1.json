@@ -1,0 +1,72 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-1:v2",
+  "semantic_node_id": "v2_n_14_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-1",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-1:v2",
+    "chapter_contract_id": "contract:v2-n-14-1:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.critical_to_quality_factors", "obligation": "required", "rationale": "关键质量因素必须逐项绑定本项目事实；模板示例或通用清单不构成已识别 CtQ 内容。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.associated_risks", "obligation": "required", "rationale": "每项关键质量因素必须有实际关联风险，缺失进入待补，不得以口号替代。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.proportionate_controls", "obligation": "required", "rationale": "控制措施必须与风险相称并逐项可追溯，不得照抄未经验证的通用措施。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.control_responsibility", "obligation": "required", "rationale": "每项控制必须有责任角色；缺失走待补/建议解决，不得写为不适用。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.decision_and_data_review_linkage", "obligation": "required", "rationale": "质量活动必须与试验重要决策和数据复核联动，而不是独立清单。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.risk_management_plan_applicable", "obligation": "optional", "rationale": "风险管理计划适用性触发事实，采用裸 true/false 编码；不适用不豁免本节的 CtQ 义务。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.risk_management_plan_identity", "obligation": "optional", "rationale": "适用时必须给出实际计划身份；占位计划名不是已识别的 CtQ 内容。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.plan_review_cadence", "obligation": "optional", "rationale": "适用时必须声明复核节奏并绑定项目事实，不得沿用模板示例周期。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.template_example_plan_name", "obligation": "forbidden", "rationale": "模板示例计划名不得作为项目计划身份写入；负向夹具据此触发 forbidden_fact_present。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "quality.ctq_risk_control_chain", "obligation": "required", "rationale": "主张必须串起关键因素→风险→控制→责任→决策/数据复核的完整链，不能只列因素。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "quality.controls_proportionate_to_risks", "obligation": "required", "rationale": "控制与风险的相称性主张必须由适用项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "ctq_generic_slogan_without_anchors", "obligation": "forbidden", "rationale": "无锚点的通用 CtQ 口号不得作为本节内容；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["quality.ctq_risk_control_chain", "quality.controls_proportionate_to_risks"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_14 为 §14 结构容器（非载体）；其 883 引语不构成本叶内容义务，本叶绑定源窗口 884–885。",
+      "CtQ/风险管理是试验质量内容，不是新的安全代码或权限工程；范围限于本节质量义务。",
+      "涉及试验参与者的质量安排以项目确认事实为准；CtQ 锚点不得用通用口号代替。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准、医学结论或监管承诺。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题、空表或通用质量口号而无关键因素/风险/控制/责任锚点时不算实质内容。",
+      "源窗口 884–885：示例计划名或示例清单不得当作已识别 CtQ 内容或已批准计划。",
+      "结构检查不等于医学、质量或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-1",
+    "required_styles": ["3"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc9900005"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-1:source-bound", "rule": "源窗口 884–885 的实际 CtQ 内容必须逐项绑定项目事实，不得复制模板示例或口号。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-1:chain", "rule": "每项锚点必须闭合关键因素→关联风险→相称控制→责任→重要决策/数据复核链，不允许只有锚点或只有口号。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-1:no-placeholder", "rule": "占位计划名、空白责任或未验证控制不得进入正文；缺失走待补/建议解决。"}
+  ],
+  "conditional_applicability_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "conditional_applicability_rule_id": "applicability:n-14-1:risk-plan", "triggering_fact_paths": ["quality.risk_management_plan_applicable"], "condition": "quality.risk_management_plan_applicable 为 true 时风险管理计划义务激活", "rationale": "计划适用性由项目事实决定；激活时必须有实际计划身份与复核节奏，不适用不豁免基础 CtQ 链。", "required_when_active_fact_paths": ["quality.risk_management_plan_identity", "quality.plan_review_cadence"], "required_when_active_claim_types": [], "required_when_active_source_roles": [], "required_when_active_structural_objects": []}
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-14-1:anchored-chain", "question": "关键质量因素的每项关联风险是否都有项目化控制、责任角色与重要决策/数据复核联动？", "linked_fact_paths": ["quality.critical_to_quality_factors", "quality.associated_risks", "quality.proportionate_controls", "quality.decision_and_data_review_linkage"], "linked_claim_types": ["quality.ctq_risk_control_chain"], "positive_qc_rule_ids": ["qc:v2-n-14-1:source-bound", "qc:v2-n-14-1:chain"], "risk_if_unmet": "缺少锚点会把通用口号或模板示例写成项目质量结论。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

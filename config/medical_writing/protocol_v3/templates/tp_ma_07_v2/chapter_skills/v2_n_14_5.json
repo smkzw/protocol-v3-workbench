@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-14-5",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_14_5",
+  "chapter_contract_id": "contract:v2-n-14-5:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-14-5:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 稽查和视察 的 ChapterSkillOutput。稽查与视察必须作为两个可区分程序分别写入目的、独立性、记录与沟通路径；涉及试验参与者记录的安排以项目事实为准。本地 TP-MA-15 标题不构成其内容已读取或已整合的证据（provenance pending），缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "用本地 TP-MA-15 标题代替已整合的稽查/视察内容",
+      "把稽查与视察写成同一程序或互相替代",
+      "把缺失事实写成不适用或已完成",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：稽查和视察，零基 body-child 索引 910–911；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=3 与 bookmarks=['_Toc48315559', '_Toc132623420']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、质量或审批释放；合成测试值不是真实项目批准，TP-MA-15 内容登记为待验证。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-14-5:missing-obligation",
+    "skill:chapter:v2-n-14-5:unresolved-fact",
+    "skill:chapter:v2-n-14-5:wrong-source"
+  ]
+}

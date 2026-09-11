@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-16",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_16",
+  "chapter_contract_id": "contract:v2-n-16:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-16:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 附录 容器的 ChapterSkillOutput。只汇总实际适用附件并给出逐项收录依据；附录涉及试验参与者信息与样本附件时不得自动收录模板全部附件。容器义务不得替代 v2_n_16_x1/x2/x3 大纲叶子各自的覆盖义务，缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "把模板示例附件或占位附件作为最终内容",
+      "用容器义务替代或吸收大纲叶子的独立义务",
+      "把缺失附件写成不适用或已收录",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：附录（heading-only 标题级容器），零基 body-child 索引 970–972；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=2 与 bookmarks=['_Toc132623424']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是附件适用性、医学或审批判断；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-16:missing-obligation",
+    "skill:chapter:v2-n-16:unresolved-fact",
+    "skill:chapter:v2-n-16:wrong-source"
+  ]
+}

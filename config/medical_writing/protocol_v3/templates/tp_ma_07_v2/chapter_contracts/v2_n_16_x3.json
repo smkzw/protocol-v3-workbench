@@ -1,0 +1,70 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-16-x3:v2",
+  "semantic_node_id": "v2_n_16_x3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-16-x3",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-16-x3:v2",
+    "chapter_contract_id": "contract:v2-n-16-x3:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.laboratory_name", "obligation": "required", "rationale": "中心实验室必须是真实适用名称；模板示例实验室不是项目供应商。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.laboratory_identifying_details", "obligation": "required", "rationale": "实验室识别信息（地址/联系方式/资质）必须为项目事实；空白或编造单元格不得通过。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.laboratory_roles_and_scope", "obligation": "required", "rationale": "实验室职责与检测范围必须逐项登记，不得只写名称。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.destruction_provider_name", "obligation": "required", "rationale": "样本销毁公司必须是真实适用名称；模板示例公司不是项目供应商。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.destruction_provider_identifying_details", "obligation": "required", "rationale": "销毁方识别信息必须为项目事实；空白或编造单元格不得通过。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.destruction_provider_roles", "obligation": "required", "rationale": "销毁职责与边界必须逐项登记，不得只写公司名。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.template_example_supplier_row", "obligation": "forbidden", "rationale": "模板示例实验室/销毁公司行不得作为项目供应商；负向夹具据此触发 forbidden_fact_present。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix.laboratory_identity_and_roles", "obligation": "required", "rationale": "中心实验室身份与职责主张必须由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix.destruction_provider_identity_and_roles", "obligation": "required", "rationale": "销毁方身份与职责主张必须由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "template_example_lab_or_destruction_company_as_project_supplier", "obligation": "forbidden", "rationale": "把模板示例实验室/销毁公司写成项目供应商属于禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "blank_or_invented_supplier_content", "obligation": "forbidden", "rationale": "空白或编造的供应商内容不得作为附录内容；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["appendix.laboratory_identity_and_roles"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9},
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["appendix.destruction_provider_identity_and_roles"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 appendix.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_16_x3 为大纲叶子（outline_only_leaf，源窗口 981–995）；模板自带的两个示例实验室与示例销毁公司不是现有项目供应商，只有经确认的项目事实才能写入。",
+      "中心实验室与销毁方为两条独立来源义务，分别建立证据下限；空白或编造内容不得通过结构检查。",
+      "中心实验室与样本销毁安排涉及试验参与者样本时必须有真实适用供应商信息。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或真实供应商信息。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题、示例行或空白供应商表格而无真实项目名称/识别信息/职责时不算实质内容。",
+      "源窗口 981–995：模板示例实验室与示例销毁公司不得因模板有行即视为项目供应商。",
+      "结构检查不等于供应商资质、医学或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-16-x3",
+    "required_styles": [],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc147489439", "_Hlk147489751"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x3:actual-providers", "rule": "中心实验室与样本销毁公司必须使用经确认的真实名称、识别信息与职责，不得使用模板示例行。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x3:no-blank-cells", "rule": "供应商单元格不得空白或编造；缺失走待补/建议解决，不得以不适用替代。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x3:separation", "rule": "实验室与销毁方为独立来源义务，不得合并降级或互相替代证据。"}
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-16-x3:actual-identity", "question": "中心实验室与销毁方是否都有真实适用名称、识别信息和职责，且未使用模板示例行？", "linked_fact_paths": ["appendix.laboratory_name", "appendix.laboratory_identifying_details", "appendix.destruction_provider_name", "appendix.destruction_provider_identifying_details"], "linked_claim_types": ["appendix.laboratory_identity_and_roles", "appendix.destruction_provider_identity_and_roles"], "positive_qc_rule_ids": ["qc:v2-n-16-x3:actual-providers", "qc:v2-n-16-x3:no-blank-cells"], "risk_if_unmet": "示例供应商或空白单元格会被误读为已确认的项目安排。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

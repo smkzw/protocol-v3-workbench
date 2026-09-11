@@ -1,0 +1,70 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-3:v2",
+  "semantic_node_id": "v2_n_14_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-3",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-3:v2",
+    "chapter_contract_id": "contract:v2-n-14-3:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitoring_scope_and_extent", "obligation": "required", "rationale": "监查范围与程度必须绑定本项目安排，不得只保留通用监查清单。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitoring_proportionate_approach", "obligation": "required", "rationale": "监查必须与实际选择的比例化方式一致，不得照抄未经验证的通用承诺。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitoring_methods", "obligation": "required", "rationale": "现场/中心化/远程方法必须逐项登记；缺失走待补，不得以不适用替代。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitoring_findings_and_followup", "obligation": "required", "rationale": "发现与跟进安排必须有项目事实与记录载体。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitor_qualification", "obligation": "required", "rationale": "监查员资格与授权必须登记为实际安排，不得推断已完成培训。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.monitoring_records", "obligation": "required", "rationale": "监查记录必须可追溯，不得用模板示例记录代替项目记录。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.remote_monitoring_applicable", "obligation": "optional", "rationale": "远程监查适用性触发事实，采用裸 true/false 编码；不适用不豁免基础监查义务。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.remote_monitoring_records", "obligation": "optional", "rationale": "适用远程监查时必须声明记录方式与留存边界。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.copied_template_company_name", "obligation": "forbidden", "rationale": "模板示例公司名不得写入项目监查安排；负向夹具据此触发 forbidden_fact_present。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "monitoring_actual_proportionate_plan", "obligation": "required", "rationale": "监查主张必须描述实际选择的比例化方案，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "universal_100_percent_source_verification_promised", "obligation": "forbidden", "rationale": "不得承诺对每一字段的全覆盖源数据核查；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["monitoring_actual_proportionate_plan"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_14 为 §14 结构容器（非载体）；本节绑定源窗口 892–900，监查安排与 14.2 申办者、14.4 研究者责任保持独立归属。",
+      "监查发现涉及试验参与者安全或权益时必须进入项目沟通与记录，不得留白。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或已完成的监查结论。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或通用监查职责句而无范围/比例化方法/记录事实时不算实质内容。",
+      "源窗口 892–900：全覆盖源数据核查承诺与示例公司名均不得作为项目安排。",
+      "结构检查不等于医学、质量或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-3",
+    "required_styles": ["3"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc48315556", "_Toc132623418"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-3:proportionate", "rule": "监查范围、程度与方法必须与项目选择的比例化方式相称，不得承诺对所有字段的全覆盖源数据核查。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-3:source-bound", "rule": "源窗口 892–900 的监查安排必须逐项绑定项目事实，不得复制模板示例或示例公司名。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-3:records", "rule": "监查发现、跟进与记录必须可追溯；缺失走待补/建议解决。"}
+  ],
+  "conditional_applicability_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "conditional_applicability_rule_id": "applicability:n-14-3:remote-monitoring", "triggering_fact_paths": ["quality.remote_monitoring_applicable"], "condition": "quality.remote_monitoring_applicable 为 true 时远程监查记录义务激活", "rationale": "远程监查由项目事实决定适用性；激活时必须声明记录方式与留存边界。", "required_when_active_fact_paths": ["quality.remote_monitoring_records"], "required_when_active_claim_types": [], "required_when_active_source_roles": [], "required_when_active_structural_objects": []}
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-14-3:proportionate-coverage", "question": "监查范围与程度是否与所选比例化方式一致，且发现/跟进/记录均可追溯？", "linked_fact_paths": ["quality.monitoring_scope_and_extent", "quality.monitoring_proportionate_approach", "quality.monitoring_records"], "linked_claim_types": ["monitoring_actual_proportionate_plan"], "positive_qc_rule_ids": ["qc:v2-n-14-3:proportionate", "qc:v2-n-14-3:records"], "risk_if_unmet": "不成比例的监查声明会造成无法履行的质量承诺。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

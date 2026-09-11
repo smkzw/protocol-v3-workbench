@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-14-7",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_14_7",
+  "chapter_contract_id": "contract:v2-n-14-7:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-14-7:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 安全性监督 的 ChapterSkillOutput。显式陈述实际监督主体类型（独立 DSMB / 申办者参与的 SMC / 终点 IRC 不可互换）、组成、角色、信息流、审议与升级路径；涉及试验参与者安全信息的安排以项目事实为准。半年一次会议与升级判定只是示例，缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "把独立 DSMB、申办者参与的 SMC 与终点 IRC 互相替换或混用",
+      "虚构委员会成员名单或已批准章程",
+      "把半年会议写成通用规则、把缺失事实写成不适用",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：安全性监督，零基 body-child 索引 916–921；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=3 与 bookmarks=['_Toc14880132', '_Toc14883333', '_Toc89521025', '_Toc89521032', '_Toc132623422']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、安全性或审批释放；合成测试值不是真实项目批准，也不构成真实成员或章程。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-14-7:missing-obligation",
+    "skill:chapter:v2-n-14-7:unresolved-fact",
+    "skill:chapter:v2-n-14-7:wrong-source"
+  ]
+}

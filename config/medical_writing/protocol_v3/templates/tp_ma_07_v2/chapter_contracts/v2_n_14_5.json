@@ -1,0 +1,66 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-5:v2",
+  "semantic_node_id": "v2_n_14_5",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-5",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-5:v2",
+    "chapter_contract_id": "contract:v2-n-14-5:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.audit_program", "obligation": "required", "rationale": "稽查计划必须绑定本项目安排；缺失走待补，不得以不适用替代。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.audit_inspection_distinction", "obligation": "required", "rationale": "稽查与视察必须是两个可区分的程序，不得合并为一句通用声明。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.audit_records", "obligation": "required", "rationale": "稽查记录与报告必须可追溯并绑定实际角色。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.inspection_access_and_notification", "obligation": "required", "rationale": "视察访问、通知与配合安排必须为项目事实。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.audit_findings_communication", "obligation": "required", "rationale": "发现与整改沟通必须声明适用对象和路径，不得留空。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "audit_inspection_processes_distinct", "obligation": "required", "rationale": "稽查与视察的独立性/目的/记录主张必须分开陈述，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "local_tp_ma_15_title_equals_integrated_content", "obligation": "forbidden", "rationale": "本地 TP-MA-15 标题不构成其内容已读取或已整合的证据；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "audit_inspection_conflated", "obligation": "forbidden", "rationale": "把稽查与视察写成同一程序或互相替代属于禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary", "regulatory_or_guideline"], "admission_claim_types": ["audit_inspection_processes_distinct"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "本地 TP-MA-15 标题不构成其内容已读取或已整合的证据；TP-MA-15 内容来源登记为待验证（provenance pending），本批次不以标题替代内容、不据此校验。",
+      "v2_n_14 为 §14 结构容器（非载体）；本节绑定源窗口 910–911。",
+      "稽查/视察涉及试验参与者记录时必须在项目事实中登记，不得以标题替代。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或已完成的稽查结论。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或一句“按法规接受稽查”而无稽查/视察分管程序、记录和沟通事实时不算实质内容。",
+      "源窗口 910–911：TP-MA-15 本地标题不得当作已整合的偏离/稽查内容。",
+      "结构检查不等于医学、质量或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-5",
+    "required_styles": ["3"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc48315559", "_Toc132623420"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-5:distinct", "rule": "稽查与视察必须作为两个可区分程序分别陈述目的、独立性、记录和沟通路径。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-5:source-bound", "rule": "源窗口 910–911 的安排必须逐项绑定项目事实；本地 TP-MA-15 标题不构成已整合内容的证据。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-5:records", "rule": "稽查/视察记录、发现与整改沟通必须可追溯；缺失走待补/建议解决。"}
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-14-5:distinct-records", "question": "稽查与视察是否作为不同程序分别具备安排、记录与沟通证据，而未被本地标题替代？", "linked_fact_paths": ["quality.audit_program", "quality.audit_inspection_distinction", "quality.audit_records"], "linked_claim_types": ["audit_inspection_processes_distinct"], "positive_qc_rule_ids": ["qc:v2-n-14-5:distinct", "qc:v2-n-14-5:source-bound"], "risk_if_unmet": "把标题当作已整合内容会掩盖缺失的程序与记录义务。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}
