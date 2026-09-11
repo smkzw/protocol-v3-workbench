@@ -1,0 +1,184 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-1-5:v2",
+  "semantic_node_id": "v2_n_10_1_5",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-1-5:ae-recording",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-1-5:v2",
+    "chapter_contract_id": "contract:v2-n-10-1-5:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.recording_requirements",
+        "obligation": "required",
+        "rationale": "AE 记录要求（字段与来源）必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.separate_times",
+        "obligation": "required",
+        "rationale": "发生时间、采样/评估时间、获知时间与报告时间必须分别保留。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.report_time_selection_rule",
+        "obligation": "required",
+        "rationale": "报告时间选择规则必须明确，不得为便利而替换临床日期。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.terminology_boundary",
+        "obligation": "required",
+        "rationale": "事件术语与严重性标准必须与治疗/结局分开记录。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.template_example_report_time",
+        "obligation": "forbidden",
+        "rationale": "模板示例报告时间不得作为项目规则。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_recording_requirement",
+        "obligation": "required",
+        "rationale": "必须声明记录字段与时间口径。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_date_selected_for_convenience",
+        "obligation": "forbidden",
+        "rationale": "不得为便于追溯而以报告日期替代临床日期。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_label_only_record",
+        "obligation": "forbidden",
+        "rationale": "仅有非空事件标签不满足记录义务。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "ae_recording_requirement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须逐字段说明记录要求，并分别保留发生/采样或评估/获知/报告时间。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "AE 记录为项目事实集合（字段/时间口径/术语边界）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅保留事件名称与结局标签，或为便利而以报告日期替代临床日期即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-1-5",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623376",
+      "_Toc48315527",
+      "_Toc90487622"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-5:times",
+      "rule": "发生时间、采样/评估时间、获知时间与报告时间必须分别保留；不得为便于追溯而替换临床日期。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-5:labels",
+      "rule": "仅有非空事件标签不满足记录义务；事件术语与严重性标准、治疗与结局必须分开记录。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-4:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-1-5:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-4:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-5:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-5:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-5:times",
+      "question": "获知与报告时间是否分别保留且可追溯？",
+      "linked_fact_paths": [
+        "ae.separate_times",
+        "ae.report_time_selection_rule"
+      ],
+      "linked_claim_types": [
+        "ae_recording_requirement"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-5:times"
+      ],
+      "risk_if_unmet": "合并时间会使报告义务不可审计。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

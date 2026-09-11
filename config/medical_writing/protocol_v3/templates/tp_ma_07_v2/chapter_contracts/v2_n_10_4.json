@@ -1,0 +1,182 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-4:v2",
+  "semantic_node_id": "v2_n_10_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-4:other-serious-safety-info",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-4:v2",
+    "chapter_contract_id": "contract:v2-n-10-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "other_ssi.signal_definition",
+        "obligation": "required",
+        "rationale": "信号定义必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "other_ssi.reporting_criteria",
+        "obligation": "required",
+        "rationale": "报告标准必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "other_ssi.recipient_and_clock",
+        "obligation": "required",
+        "rationale": "报告对象与时限必须分别给出。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "other_ssi.review_responsibility",
+        "obligation": "required",
+        "rationale": "审核职责（谁评估信号与后续行动）必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "other_ssi.template_example_signal",
+        "obligation": "forbidden",
+        "rationale": "模板示例信号不得作为项目信号。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "other_ssi_reporting",
+        "obligation": "required",
+        "rationale": "必须声明信号定义、报告标准、对象时限与审核职责。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "fabricated_approval",
+        "obligation": "forbidden",
+        "rationale": "不得编造医学或审批回执。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "协议正文禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "other_ssi_reporting"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明信号定义、报告标准、报告对象/时限与审核职责。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "其他严重安全性风险信息为项目事实集合（信号/标准/对象时限/审核）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“发现信号后按规定报告”通用句即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-4",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623386",
+      "_Toc46411103",
+      "_Toc48315539",
+      "_Toc90487634"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-4:other-ssi",
+      "rule": "其他潜在严重安全性风险信息的信号定义、报告标准、报告对象/时限与审核责任必须项目化；不得编造医学或审批回执。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-3-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-4:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-3-2:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-4:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-4:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-4:other-ssi",
+      "question": "信号与报告义务是否逐项项目化？",
+      "linked_fact_paths": [
+        "other_ssi.signal_definition",
+        "other_ssi.reporting_criteria",
+        "other_ssi.recipient_and_clock",
+        "other_ssi.review_responsibility"
+      ],
+      "linked_claim_types": [
+        "other_ssi_reporting"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-4:other-ssi"
+      ],
+      "risk_if_unmet": "信号未报告会使安全性监测失效。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}
