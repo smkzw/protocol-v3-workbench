@@ -1,0 +1,130 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-3-2:v2",
+  "semantic_node_id": "v2_n_3_3_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-3-2:safety-endpoints",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-3-2:v2",
+    "chapter_contract_id": "contract:v2-n-3-3-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.endpoint_definitions",
+        "obligation": "required",
+        "rationale": "安全性终点必须给出评估定义（评估内容与判定口径）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.observation_period",
+        "obligation": "required",
+        "rationale": "必须给出与安全性终点一致的观察期。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.aesi_definitions",
+        "obligation": "required",
+        "rationale": "特别关注不良事件（AESI）定义复用既有 picos.aesi_definitions 绑定，并与本药风险一致。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "safety_endpoint_definition",
+        "obligation": "required",
+        "rationale": "安全性终点定义声明必须包含评估定义与观察期。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "安全性终点章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "safety_endpoint_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "安全性终点表必须逐行给出终点定义与观察期，不得只有表头。",
+        "required_object_cells": [
+          "safety:cell:endpoint",
+          "safety:cell:observation_period"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "AESI 定义复用既有绑定，不设第二可编辑存储。",
+      "观察期必须与安全性目的中的观察期一致。"
+    ],
+    "skeleton_risk_rules": [
+      "只有终点名称列表即失败；安全性终点表为空壳即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-3-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623329"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-3-2:assessment-definition",
+      "rule": "安全性终点必须给出实际评估定义与观察期；仅列终点名称即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-3-2:primary",
+      "question": "安全性终点是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "safety.endpoint_definitions"
+      ],
+      "linked_claim_types": [
+        "safety_endpoint_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-3-2:assessment-definition"
+      ],
+      "risk_if_unmet": "安全性终点缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

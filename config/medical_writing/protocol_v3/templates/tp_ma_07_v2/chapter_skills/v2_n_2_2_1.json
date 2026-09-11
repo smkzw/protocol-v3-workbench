@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-2-2-1:investigational-product",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_2_2_1",
+  "chapter_contract_id": "contract:v2-n-2-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按研究药物章节合同逐条满足：产品身份、剂型/规格/理化性质、化学结构适用性结论、当前产品权威版本定位，以及继承自 background.mechanism 的作用机制义务。机制义务是声明的实质补充，必须在输出中标注来源为继承合同而非源文 @284。",
+    "forbidden_behaviors": [
+      "把结构式/分子式当作所有模态的普遍必填项",
+      "把继承的作用机制义务伪造成源文已含内容",
+      "编造产品权威版本或定位"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与产品权威版本/定位。",
+    "作用机制输出必须标注继承义务来源（background.mechanism）。",
+    "产品身份与特征不得新建第二可编辑事实存储。"
+  ],
+  "error_codes": [
+    "skill:v2-n-2-2-1:missing-obligation",
+    "skill:v2-n-2-2-1:unresolved-fact",
+    "skill:v2-n-2-2-1:unsupported-source-role"
+  ]
+}

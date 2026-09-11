@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-2-2-3:competitor-and-own-clinical",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_2_2_3",
+  "chapter_contract_id": "contract:v2-n-2-2-3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按同类药物研究概述章节合同分别满足同类药物证据与本药既往临床证据两个独立义务：两组证据来源角色不同，各自需要符合的声明；本药临床结果必须带匹配的研究上下文。",
+    "forbidden_behaviors": [
+      "用竞品/同类药物证据充当本药临床结论",
+      "用 IB 文件号代替研究上下文",
+      "编造本药临床数据或研究编号"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与两组证据各自的来源角色、定位与上下文窗口。",
+    "@298 与 @299 的来源归属必须在输出中显式区分。",
+    "本药临床证据不得来自竞品来源。"
+  ],
+  "error_codes": [
+    "skill:v2-n-2-2-3:missing-obligation",
+    "skill:v2-n-2-2-3:unresolved-fact",
+    "skill:v2-n-2-2-3:unsupported-source-role"
+  ]
+}

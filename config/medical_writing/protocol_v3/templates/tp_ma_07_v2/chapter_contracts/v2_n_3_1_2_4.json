@@ -1,0 +1,229 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-1-2-4:v2",
+  "semantic_node_id": "v2_n_3_1_2_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-1-2-4:estimand-ice-summary",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-1-2-4:v2",
+    "chapter_contract_id": "contract:v2-n-3-1-2-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.intercurrent_events",
+        "obligation": "required",
+        "rationale": "每个相关伴发事件的名称与定义必须逐条给出；空壳行或“事件1”占位不构成属性四。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.ice_strategy",
+        "obligation": "required",
+        "rationale": "每个伴发事件必须给出选定处理策略。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.ice_rationale",
+        "obligation": "required",
+        "rationale": "必须给出策略理由及其与后续分析的兼容处置。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.population_summary_measure",
+        "obligation": "required",
+        "rationale": "群体层面汇总指标（源 @323）是独立语义义务：它不是伴发事件策略，也不是统计方法名；必须给出可判定的汇总指标定义。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.population_summary",
+        "obligation": "optional",
+        "rationale": "此处仍表示人群描述（population description）；它与 estimand.primary.population_summary_measure 含义不同，禁止互相替代。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.ice_strategy_crosscheck",
+        "obligation": "optional",
+        "rationale": "涉及补救治疗等策略时，与随访/分析/缺失数据/敏感性分析合同的交叉核对结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_ice_attribute",
+        "obligation": "required",
+        "rationale": "伴发事件属性声明必须逐事件给出定义、策略与理由。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_population_summary_attribute",
+        "obligation": "required",
+        "rationale": "群体层面汇总指标属性声明必须给出指标本身，而不是方法名。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ice_shell_placeholder",
+        "obligation": "forbidden",
+        "rationale": "空壳伴发事件行或“事件1”占位禁止作为属性四内容。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_ice_attribute"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_population_summary_attribute"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "伴发事件策略段与群体层面汇总指标段必须分列；汇总指标不得被写成统计方法名。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "表 1 伴发事件及处理策略（源 @321：3列×4行）必须逐行给出伴发事件、定义、处理策略与理由；空壳行或“事件1”占位即失败。",
+        "required_object_cells": [
+          "estimand:ice:cell:event",
+          "estimand:ice:cell:definition",
+          "estimand:ice:cell:strategy",
+          "estimand:ice:cell:rationale"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "第五属性承载：源 @323 群体层面汇总指标物理位于本载体（@320/@323/@324/@325），不新造第五个源标题。",
+      "词汇边界：picos.population_summary 表示人群描述；汇总指标使用独立的 estimand.primary.population_summary_measure，两者不得互换或合并。",
+      "源 @324 处置：示例中潜在的补救治疗措辞不得整体照搬，策略必须与随访/分析/缺失数据合同交叉核对。"
+    ],
+    "skeleton_risk_rules": [
+      "伴发事件表为空壳或含“事件1”占位即失败；汇总指标段缺失或只有方法名即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-1-2-4",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": [
+      "表 1 伴发事件及处理策略"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-1-2-4:fifth-attribute-separate",
+      "rule": "群体层面汇总指标是本载体内的独立义务（源 @323），不得与伴发事件策略合并，也不得与 picos.population_summary 人群描述互换；仅给统计方法名不满足该义务。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-1-2-4:strategy-crosscheck",
+      "triggering_fact_paths": [
+        "estimand.primary.population_summary_measure"
+      ],
+      "condition": "汇总指标与伴发事件策略涉及补救治疗或背景治疗改变",
+      "rationale": "策略必须与随访、分析、缺失数据与敏感性分析合同交叉核对后才能定稿（源 @324 措辞存在潜在冲突）。",
+      "required_when_active_fact_paths": [
+        "estimand.primary.ice_strategy_crosscheck"
+      ],
+      "required_when_active_claim_types": [
+        "estimand_cross_contract_consistency"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-3-1-2-1:v2",
+    "contract:v2-n-3-1-2-2:v2",
+    "contract:v2-n-3-1-2-3:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:n-3-1-2-4:policy",
+    "dependency_ids": [
+      "contract:v2-n-3-1-2-1:v2",
+      "contract:v2-n-3-1-2-2:v2",
+      "contract:v2-n-3-1-2-3:v2"
+    ],
+    "downstream_impact": "目标人群/研究变量/治疗条件属性修订后，伴发事件策略与汇总指标必须同步复核，并重算跨合同一致性声明。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:n-3-1-2-4:step-1",
+        "sequence": 1,
+        "action": "重读上游属性差异并重算属性四/五的一致性。",
+        "owner": "ai"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:n-3-1-2-4:step-2",
+        "sequence": 2,
+        "action": "将仍影响结论的差异提交跨章节审核队列，不自动改写策略。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-1-2-4:primary",
+      "question": "伴发事件（估计目标属性四）与群体层面汇总指标是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "estimand.primary.intercurrent_events"
+      ],
+      "linked_claim_types": [
+        "estimand_ice_attribute"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-1-2-4:fifth-attribute-separate"
+      ],
+      "risk_if_unmet": "伴发事件（估计目标属性四）与群体层面汇总指标缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

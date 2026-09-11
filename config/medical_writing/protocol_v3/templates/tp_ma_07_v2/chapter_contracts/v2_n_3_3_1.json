@@ -1,0 +1,166 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-3-1:v2",
+  "semantic_node_id": "v2_n_3_3_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-3-1:safety-objectives",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-3-1:v2",
+    "chapter_contract_id": "contract:v2-n-3-3-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.safety_objectives",
+        "obligation": "required",
+        "rationale": "安全性目的必须以本药实际风险为依据，而非通用安全性套话。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.safety_endpoints",
+        "obligation": "required",
+        "rationale": "安全性目的必须链接已确认安全性终点事实（复用既有绑定）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.observation_period",
+        "obligation": "required",
+        "rationale": "必须明确安全性观察期（源 @333-335 要求真实观察周期）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.injection_reaction_applicability",
+        "obligation": "required",
+        "rationale": "注射反应是条件性义务：必须显式给出给药途径是否适用及理由，而不是所有给药途径的必填项。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.injection_reaction_definitions",
+        "obligation": "optional",
+        "rationale": "仅当注射反应适用时给出定义与观察方式。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "safety_objective",
+        "obligation": "required",
+        "rationale": "安全性目的声明必须与本药实际风险一致。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "injection_reaction_statement",
+        "obligation": "qualified",
+        "rationale": "注射反应声明必须限定在适用的给药途径。",
+        "qualifying_conditions": [
+          "仅当给药途径可能引起注射反应且已确认适用性判定时"
+        ]
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "安全性目的章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "safety_objective"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "安全性目的段与观察期/适用性段必须分列；不得只给通用安全性套话。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "给药途径条件性：注射反应定义不是所有给药途径的普遍义务，必须显式判定适用性。",
+      "安全性目的必须使用本药实际风险与观察期。"
+    ],
+    "skeleton_risk_rules": [
+      "只有通用“评价安全性”字样即失败；观察期或适用性判定缺失即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-3-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623328"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-3-1:route-conditional",
+      "rule": "注射反应义务只在给药途径适用时成立；必须显式给出适用性判定，不得默认所有途径必填。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-3-1:injection-reaction",
+      "triggering_fact_paths": [
+        "safety.injection_reaction_applicability"
+      ],
+      "condition": "给药途径可能引起注射反应（适用性判定为适用）",
+      "rationale": "仅当给药途径适用时，注射反应定义与观察方式才成为义务；不适用时须显式记录不适用理由。",
+      "required_when_active_fact_paths": [
+        "safety.injection_reaction_definitions"
+      ],
+      "required_when_active_claim_types": [
+        "injection_reaction_statement"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-3-1:primary",
+      "question": "安全性目的是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "safety.safety_objectives"
+      ],
+      "linked_claim_types": [
+        "safety_objective"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-3-1:route-conditional"
+      ],
+      "risk_if_unmet": "安全性目的缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,133 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-3:v2",
+  "semantic_node_id": "v2_n_front_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-3:sponsor-commitment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-3:v2",
+    "chapter_contract_id": "contract:v2-n-front-3:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "signature.sponsor.protocol_identity",
+        "obligation": "required",
+        "rationale": "申办方承诺必须绑定同一现行方案元数据。"
+      },
+      {
+        "fact_path": "signature.sponsor.representative",
+        "obligation": "required",
+        "rationale": "申办方授权代表签署控件必须使用现行真实代表信息，姓名控件保持未签署状态。"
+      },
+      {
+        "fact_path": "signature.additional_signatory_applicable",
+        "obligation": "optional",
+        "rationale": "存在其他适用签署方时触发附加签署页义务。"
+      },
+      {
+        "fact_path": "signature.additional_signatory_identity",
+        "obligation": "optional",
+        "rationale": "附加签署方的身份事实，仅在适用时必需。"
+      },
+      {
+        "fact_path": "signature.completed_receipt",
+        "obligation": "forbidden",
+        "rationale": "不得复制已签署日期或虚构签收回执。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "sponsor_commitment",
+        "obligation": "required",
+        "rationale": "申办方承诺段必须声明对同一现行方案的承诺。"
+      },
+      {
+        "claim_type": "synthetic_signature",
+        "obligation": "forbidden",
+        "rationale": "不得输出已完成签署状态或合成签名/日期。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sponsor_commitment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "申办方承诺段与代表签署控件段；附加签署页仅在适用时出现。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "申办方承诺与代表签署控件（现行元数据绑定）"
+    ],
+    "skeleton_risk_rules": [
+      "承诺段或代表签署控件缺失即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-3",
+    "required_styles": [
+      "2",
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-3:binding",
+      "rule": "申办方承诺与代表签署控件必须使用同一现行方案元数据，不得沿用旧申办方信息。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-3:no-copied-date",
+      "rule": "不得复制已签署日期或虚构签收；签署状态属于内部信息。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:front-3:additional-signatory",
+      "triggering_fact_paths": [
+        "signature.additional_signatory_applicable"
+      ],
+      "condition": "存在申办方代表以外的适用签署方",
+      "rationale": "仅在实际适用时提供附加签署页并给出其身份。",
+      "required_when_active_fact_paths": [
+        "signature.additional_signatory_identity"
+      ]
+    }
+  ],
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-3:binding",
+      "question": "申办方承诺与代表签署控件是否使用同一现行方案元数据？",
+      "linked_fact_paths": [
+        "signature.sponsor.protocol_identity",
+        "signature.sponsor.representative"
+      ],
+      "linked_claim_types": [
+        "sponsor_commitment"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-3:binding"
+      ],
+      "risk_if_unmet": "旧版申办方元数据会使签署控件失效。"
+    }
+  ]
+}

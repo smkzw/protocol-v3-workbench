@@ -1,0 +1,161 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-2-2-1:v2",
+  "semantic_node_id": "v2_n_2_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-2-2-1:investigational-product",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-2-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-2-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.investigational_product",
+        "obligation": "required",
+        "rationale": "研发代号/通用名等产品身份复用既有 framing.investigational_product 绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.product_profile",
+        "obligation": "required",
+        "rationale": "剂型、规格、理化性质等适用特征复用既有 framing.product_profile 绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.product.structure_applicability",
+        "obligation": "required",
+        "rationale": "化学结构/分子式等特征不是所有模态的普遍要求，必须显式声明其适用性（适用/不适用及理由）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.product.authority_identity",
+        "obligation": "required",
+        "rationale": "产品身份与特征必须以当前 IB/产品权威的版本与定位为据，不得以历史或未版本化资料替代。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.product.mechanism",
+        "obligation": "required",
+        "rationale": "本药作用机制为继承性义务（来源 background.mechanism 语义）；源 @284 未显式含机制表述，本条为声明的实质补充，不得反向引用源文作为已含证据。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "product_identity",
+        "obligation": "required",
+        "rationale": "产品身份声明必须可回溯到当前产品权威。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "mechanism_statement",
+        "obligation": "required",
+        "rationale": "作用机制声明必须与继承义务一致并标明证据来源。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "研究药物章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "product_identity"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "mechanism_statement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "产品身份/适用特征段与作用机制段必须分别给出；机制段必须显式标注其为继承义务与声明的实质补充。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "声明式补充：本药作用机制义务继承自 background.mechanism；源 @284 仅列研发代号/化学名/结构式/理化性质，未显式含机制表述，不得反向引用源文作为已含证据。",
+      "化学结构/分子式适用性结论及其理由（非普遍要求）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有产品名称行或模板示例特征即失败；机制段落缺失或直接照抄同类药机制即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-2-2-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623314"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-2-2-1:structure-applicability",
+      "rule": "化学结构/分子式必须给出适用性结论（适用或不适用及理由）；默认套用结构式描述即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-2-2-1:primary",
+      "question": "研究药物是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "framing.investigational_product"
+      ],
+      "linked_claim_types": [
+        "product_identity"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-2-2-1:structure-applicability"
+      ],
+      "risk_if_unmet": "研究药物缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

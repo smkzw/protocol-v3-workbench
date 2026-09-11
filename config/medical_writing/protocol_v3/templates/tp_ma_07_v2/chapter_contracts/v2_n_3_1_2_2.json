@@ -1,0 +1,134 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-1-2-2:v2",
+  "semantic_node_id": "v2_n_3_1_2_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-1-2-2:estimand-variable",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-1-2-2:v2",
+    "chapter_contract_id": "contract:v2-n-3-1-2-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.variable",
+        "obligation": "required",
+        "rationale": "研究变量即终点变量，必须足以与“疗效”这类标签区分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.variable_measurement",
+        "obligation": "required",
+        "rationale": "必须给出测量方式（如何测）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.variable_aggregation",
+        "obligation": "required",
+        "rationale": "必须给出聚合方式（如何汇总到个体层）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.variable_timepoint_window",
+        "obligation": "required",
+        "rationale": "必须给出时间点/时间窗（何时评价）。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_variable_attribute",
+        "obligation": "required",
+        "rationale": "研究变量属性声明必须包含测量、聚合与时间点。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "label_only_variable",
+        "obligation": "forbidden",
+        "rationale": "只写“疗效”等标签不构成研究变量属性。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_variable_attribute"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "研究变量属性表必须逐行给出测量、聚合与时间点/窗口三类要素，不得只有表头。",
+        "required_object_cells": [
+          "variable:cell:measurement",
+          "variable:cell:aggregation",
+          "variable:cell:timepoint"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "标签不足声明：仅写“研究变量：疗效”不能满足属性二，须给出测量/聚合/时间点三要素。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“疗效”标签或只给统计方法名即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-1-2-2",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-1-2-2:measurement-aggregation-timepoint",
+      "rule": "研究变量必须同时给出测量、聚合与时间点/窗口；只给标签或只给方法名即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-1-2-2:primary",
+      "question": "研究变量（估计目标属性二）是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "estimand.primary.variable"
+      ],
+      "linked_claim_types": [
+        "estimand_variable_attribute"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-1-2-2:measurement-aggregation-timepoint"
+      ],
+      "risk_if_unmet": "研究变量（估计目标属性二）缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

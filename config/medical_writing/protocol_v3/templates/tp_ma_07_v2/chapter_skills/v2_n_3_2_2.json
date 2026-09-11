@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-2-2:secondary-endpoints",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_2_2",
+  "chapter_contract_id": "contract:v2-n-3-2-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按次要终点章节合同分别给出关键次要终点与其他次要终点，并为每个终点给出测量与时点定义；不得仅列名称。",
+    "forbidden_behaviors": [
+      "只列终点名称而不给定义与时点",
+      "合并关键与其他次要终点",
+      "编造终点定义"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与每个终点定义的事实路径。",
+    "关键次要终点与其他次要终点的归类必须与已确认事实一致。",
+    "终点定义必须与次要目的映射一致。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-2-2:missing-obligation",
+    "skill:v2-n-3-2-2:unresolved-fact",
+    "skill:v2-n-3-2-2:unsupported-source-role"
+  ]
+}

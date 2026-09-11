@@ -1,0 +1,30 @@
+{
+  "skill_id": "skill:chapter:n-3-1-2-4:estimand-ice-summary",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_1_2_4",
+  "chapter_contract_id": "contract:v2-n-3-1-2-4:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按伴发事件属性合同逐事件给出定义、选定策略与理由，并以表 1 逐行承载；同时独立给出群体层面汇总指标定义（源 @323，属于本载体而非新建标题），澄清其与人群描述事实路径的区别；涉及补救治疗时命中跨合同核对规则。",
+    "forbidden_behaviors": [
+      "把群体层面汇总指标写成统计方法名",
+      "把 picos.population_summary 当作汇总指标或反之",
+      "保留空壳伴发事件行或“事件1”占位",
+      "整体照搬源 @324 的补救治疗措辞"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256、表 1 行定位与每行策略的证据来源。",
+    "汇总指标必须回链独立事实路径，并说明其与人群描述的差异。",
+    "跨合同核对结论必须保留来源与未决差异。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-1-2-4:missing-obligation",
+    "skill:v2-n-3-1-2-4:unresolved-fact",
+    "skill:v2-n-3-1-2-4:unsupported-source-role"
+  ]
+}

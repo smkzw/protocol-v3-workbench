@@ -1,0 +1,136 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-4:v2",
+  "semantic_node_id": "v2_n_front_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-4:contact-directory",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-4:v2",
+    "chapter_contract_id": "contract:v2-n-front-4:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "contact.sponsor_representative",
+        "obligation": "required",
+        "rationale": "申办方/代表联系表必须给出真实角色与地址。"
+      },
+      {
+        "fact_path": "contact.principal_investigator",
+        "obligation": "required",
+        "rationale": "主要研究者联系表必须给出真实角色与地址。"
+      },
+      {
+        "fact_path": "contact.service_parties",
+        "obligation": "optional",
+        "rationale": "服务方（监查/CRO等）联系信息，仅在适用时必需。"
+      },
+      {
+        "fact_path": "contact.service_parties_applicable",
+        "obligation": "optional",
+        "rationale": "触发服务方联系表条件义务。"
+      },
+      {
+        "fact_path": "contact.competitor_directory",
+        "obligation": "forbidden",
+        "rationale": "竞品或模板的联系信息目录不得借用；联系信息只能是本项目真实当事方。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "contact_directory",
+        "obligation": "required",
+        "rationale": "联系目录必须声明其角色/地址单元格与真实联系信息一致。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "contact_directory"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "申办方与研究者联系表（模板 table[89]/[91]/[93] 中的适用表）为无条件义务，各自保留真实角色与地址单元格；服务方联系表仅在实际适用时出现，其角色/地址义务由条件规则与 QC 承载，不得输出占位 N/A 单元格。",
+        "required_object_cells": [
+          "contact:cell:sponsor.role",
+          "contact:cell:sponsor.address",
+          "contact:cell:investigator.role",
+          "contact:cell:investigator.address"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "申办方/研究者/服务方三张联系表的角色与地址单元格"
+    ],
+    "skeleton_risk_rules": [
+      "联系表缺失或角色/地址单元格空白即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-4",
+    "required_styles": [
+      "2",
+      "28"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-4:roles",
+      "rule": "联系表必须承载真实角色与地址单元格义务（表89/91/93），缺失即为失败。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-4:no-competitor",
+      "rule": "不得借用竞品或模板的联系信息。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-4:service-cells",
+      "rule": "确认存在服务方（如中心实验室/监查/CRO）时，服务方联系表必须给出真实角色与地址值；不适用时整表省略，不得保留占位 N/A 单元格；单元格级核查属夹具与文档验证。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:front-4:service-parties",
+      "triggering_fact_paths": [
+        "contact.service_parties_applicable"
+      ],
+      "condition": "项目实际使用服务方（如中心实验室/交互式响应系统）",
+      "rationale": "服务方联系表仅在实际适用时必需。",
+      "required_when_active_fact_paths": [
+        "contact.service_parties"
+      ]
+    }
+  ],
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-4:roles",
+      "question": "各联系表的角色与地址单元格是否全部填充且来自真实联系信息？",
+      "linked_fact_paths": [
+        "contact.principal_investigator"
+      ],
+      "linked_claim_types": [
+        "contact_directory"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-4:roles"
+      ],
+      "risk_if_unmet": "联系表角色/地址缺失会阻断沟通与监查安排。"
+    }
+  ]
+}

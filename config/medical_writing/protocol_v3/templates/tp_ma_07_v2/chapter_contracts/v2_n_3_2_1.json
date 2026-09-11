@@ -1,0 +1,136 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-2-1:v2",
+  "semantic_node_id": "v2_n_3_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-2-1:secondary-objectives",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-3-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.secondary_objectives",
+        "obligation": "required",
+        "rationale": "次要目的复用既有 picos.secondary_objectives 绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.secondary_objective_endpoint_map",
+        "obligation": "required",
+        "rationale": "每个次要目的必须映射到已定义的次要终点；编号占位（“次要目的1/2/3”）不构成内容。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.secondary_multiplicity_intent",
+        "obligation": "required",
+        "rationale": "确证性多重性控制意图与探索性意图必须显式登记，供后续统计合同使用。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.statistical_strategy",
+        "obligation": "optional",
+        "rationale": "仅在已确认统计分析策略存在时引用，作为下游统计合同输入。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "secondary_objective",
+        "obligation": "required",
+        "rationale": "次要目的声明必须逐条给出并与终点映射。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "numbered_placeholder_objective",
+        "obligation": "forbidden",
+        "rationale": "编号占位不是次要目的内容。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "secondary_objective"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "次要目的—次要终点映射表必须逐行给出目的与对应终点，不得只有表头或编号占位。",
+        "required_object_cells": [
+          "secondary:cell:objective",
+          "secondary:cell:endpoint"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "编号占位禁止：源 @327-331 中的编号式示例文本不得作为项目次要目的输出。",
+      "确证性/探索性意图登记：多重性意图必须显式，供后续统计合同判定。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“次要目的”标题或编号占位即失败；映射表为空壳即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-2-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623325"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-2-1:no-numbered-placeholder",
+      "rule": "次要目的不得以编号占位或仅“次要目的1”字样呈现；每条目的必须映射到已定义次要终点。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-2-1:primary",
+      "question": "次要目的是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "picos.secondary_objectives"
+      ],
+      "linked_claim_types": [
+        "secondary_objective"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-2-1:no-numbered-placeholder"
+      ],
+      "risk_if_unmet": "次要目的缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}
