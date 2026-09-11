@@ -166,15 +166,27 @@ SOURCE_SPECIFIC_NEGATIVES = {
     "v2_n_14_1:placeholder-plan-name": ("forbidden_fact_present",),
     "v2_n_14_2:inferred-signed-acceptance": ("forbidden_claim_present",),
     "v2_n_14_3:copied-company-name": ("forbidden_fact_present",),
+    "v2_n_14_3:inferred-completed-training": ("forbidden_claim_present",),
     "v2_n_14_4:inferred-signed-acceptance": ("forbidden_claim_present",),
     "v2_n_14_5:audit-inspection-conflated": ("forbidden_claim_present",),
     "v2_n_14_6:important-deviation-undefined": ("missing_required_fact",),
     "v2_n_14_7:fabricated-membership-and-approval": ("forbidden_claim_present",),
     "v2_n_15:in-text-citation-without-target": ("forbidden_claim_present",),
     "v2_n_16:container-replaces-outline-leaves": ("forbidden_claim_present",),
+    "v2_n_16_x1:ecog-appendix-unverified-version": ("forbidden_claim_present",),
     "v2_n_16_x2:nyha-appendix-without-assessment": ("forbidden_claim_present",),
     "v2_n_16_x3:blank-provider-fields": ("missing_required_fact",),
     "v2_n_16_x3:invented-provider-content": ("forbidden_claim_present",),
+}
+
+#: Fresh-review D1/D2 (batch8): formerly-unexercised forbidden obligations now
+#: proven by extending their near-neighbour negatives; expected codes added here.
+EXTENDED_NEGATIVE_EXTRA_CODES = {
+    "v2_n_15:template-example-bibliography": ("forbidden_fact_present",),
+    "v2_n_14_7:incompatible-committee-roles": (),  # extra claim exercised, code already forbidden_claim_present
+    "v2_n_16_x1:ecog-appendix-without-assessment": ("forbidden_fact_present",),
+    "v2_n_16_x2:nyha-appendix-without-assessment": ("forbidden_fact_present",),
+    "v2_n_16_x3:template-example-supplier": (),
 }
 
 #: Positive fixtures whose forbidden-material failure is their named reason.
@@ -889,6 +901,14 @@ def test_source_specific_negatives_fail_for_their_named_reason(registry_document
         result = check_fixture(registry_document, fixture)
         assert result.passed is False, key
         assert set(expected_codes) <= _error_codes(result), (key, _error_codes(result))
+    # Fresh-review D1: extended negatives prove their newly carried forbidden
+    # obligations in addition to their original named reason.
+    for key, extra_codes in EXTENDED_NEGATIVE_EXTRA_CODES.items():
+        if not extra_codes:
+            continue
+        node_id, suffix = key.split(":", 1)
+        result = check_fixture(registry_document, _fixture(registry_document, node_id, suffix))
+        assert set(extra_codes) <= _error_codes(result), (key, _error_codes(result))
 
 
 def test_negative_fixtures_carry_no_forbidden_material_outside_named_exceptions(

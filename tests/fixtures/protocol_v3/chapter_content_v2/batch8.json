@@ -112,6 +112,7 @@
     "investigator_responsibility_matches_arrangements",
     "investigator_training_inferred_complete",
     "local_tp_ma_15_title_equals_integrated_content",
+    "monitor_training_inferred_complete",
     "monitoring_actual_proportionate_plan",
     "nyha_appendix_version_unverified",
     "nyha_appendix_without_actual_assessment",
@@ -2258,6 +2259,10 @@
           {
             "claim_type": "dsmb_smc_irc_interchangeable",
             "statement": "DSMB、SMC 与 IRC 角色可互换（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "semiannual_cadence_as_universal_rule",
+            "statement": "半年度会议频次被写成普遍规则（合成负例扩展，非真实项目）"
           }
         ],
         "evidence": [
@@ -2602,6 +2607,10 @@
           {
             "fact_path": "references.foreign_format_style",
             "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.template_example_reference_list",
+            "value": "模板示例参考文献列表被当作研究文献目录（合成负例扩展，非真实项目）"
           }
         ],
         "claims": [
@@ -2612,6 +2621,10 @@
           {
             "claim_type": "template_example_bibliography_used_as_study_bibliography",
             "statement": "直接使用模板示例书目作为研究书目（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "unused_reference_listed",
+            "statement": "列出了未被正文使用的参考文献（合成负例扩展，非真实项目）"
           }
         ],
         "evidence": [
@@ -3226,6 +3239,10 @@
           {
             "fact_path": "appendix.ecog_assessment_applicable",
             "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_template_example_table",
+            "value": "模板示例 ECOG 表被直接收录（合成负例扩展，非真实项目）"
           }
         ],
         "claims": [
@@ -3576,6 +3593,10 @@
           {
             "fact_path": "appendix.nyha_assessment_applicable",
             "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_template_example_table",
+            "value": "模板示例 NYHA 表被直接收录（合成负例扩展，非真实项目）"
           }
         ],
         "claims": [
@@ -3856,6 +3877,10 @@
           {
             "claim_type": "appendix.destruction_provider_identity_and_roles",
             "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "template_example_lab_or_destruction_company_as_project_supplier",
+            "statement": "模板示例实验室/销毁公司被当作项目供应商（合成负例扩展，非真实项目）"
           }
         ],
         "evidence": [
@@ -4013,6 +4038,124 @@
             "object_kind": "paragraph",
             "occurrences": 2,
             "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:inferred-completed-training",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "monitor_training_inferred_complete",
+            "statement": "监查员培训已按计划完成（由职责意图推断，无记录；合成负例，非真实项目）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:ecog-appendix-unverified-version",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_scale_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.ecog_version_and_contents_verified",
+            "statement": "ECOG 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "ecog_appendix_version_unverified",
+            "statement": "未核对版本即收录 ECOG 附录（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "ECOG 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:ecog_class",
+                "value": "合成 ECOG 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:ecog_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
           }
         ]
       },
