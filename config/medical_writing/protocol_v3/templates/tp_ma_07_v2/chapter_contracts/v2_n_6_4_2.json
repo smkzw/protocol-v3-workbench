@@ -1,0 +1,155 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+  "semantic_node_id": "v2_n_6_4_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-4-2:allowed-treatment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-4-2:v2",
+    "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.allowed_treatments",
+        "obligation": "required",
+        "rationale": "允许使用的治疗清单必须项目特定并给出条件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.allowed_timing",
+        "obligation": "required",
+        "rationale": "允许使用的时间安排必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.background_therapy_rules",
+        "obligation": "required",
+        "rationale": "必须使用的背景治疗规则必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.background_therapy_applicable",
+        "obligation": "optional",
+        "rationale": "确认设计包含必须使用的背景治疗。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_concomitant_drug",
+        "obligation": "forbidden",
+        "rationale": "模板示例合并用药不得作为本项目允许治疗。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "allowed_treatment_rules",
+        "obligation": "required",
+        "rationale": "允许清单、时间安排与背景治疗必须项目特定，并与禁用清单互补。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "allowed_treatment_rules"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "允许段必须承载项目特定允许清单、时间安排与背景治疗规则。",
+        "required_object_cells": [
+          "intervention:cell:allowed_item"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "允许清单/时间安排/背景治疗规则为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "允许清单或时间安排缺失即失败；仅示例药物即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-4-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623356"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-2:split",
+      "rule": "允许与禁止清单必须互补且不冲突；示例药物不得直接复制。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-2:background",
+      "rule": "背景治疗规则必须项目特定，并说明与允许清单的关系。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-4-2:background",
+      "triggering_fact_paths": [
+        "intervention.background_therapy_applicable"
+      ],
+      "condition": "确认存在必须使用的背景治疗",
+      "rationale": "存在背景治疗时，其规则必须作为项目事实给出。",
+      "required_when_active_fact_paths": [
+        "intervention.background_therapy_rules"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-4-2:complement",
+      "question": "允许清单/时间安排与背景治疗是否与禁用清单互补且项目特定？",
+      "linked_fact_paths": [
+        "intervention.allowed_treatments",
+        "intervention.background_therapy_rules"
+      ],
+      "linked_claim_types": [
+        "allowed_treatment_rules"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-4-2:split"
+      ],
+      "risk_if_unmet": "允许/禁止边界冲突会造成方案偏离误判。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

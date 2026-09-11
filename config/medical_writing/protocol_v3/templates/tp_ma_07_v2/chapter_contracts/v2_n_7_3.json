@@ -1,0 +1,195 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-7-3:v2",
+  "semantic_node_id": "v2_n_7_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-7-3:followup",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-7-3:v2",
+    "chapter_contract_id": "contract:v2-n-7-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.followup_period_definition",
+        "obligation": "required",
+        "rationale": "随访期定义（起止参考事件与总时长）必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.followup_visit_windows",
+        "obligation": "required",
+        "rationale": "随访访视窗口必须带单位与参考事件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.phone_visit_linkage",
+        "obligation": "required",
+        "rationale": "电话联系计入实际访视的规则必须与 SoA 一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+        "obligation": "optional",
+        "rationale": "确认存在计划外/电话联系访视。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.template_example_followup_plan",
+        "obligation": "forbidden",
+        "rationale": "模板示例随访计划不得作为本项目随访安排。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "visit_phase_description",
+        "obligation": "required",
+        "rationale": "随访期定义、访视窗口与计划外/电话访视必须带单位、参考事件与记录要求。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "fabricated_approval",
+        "obligation": "forbidden",
+        "rationale": "不得虚构随访记录中的批准/同意或来源回执。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "visit_phase_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "随访段必须承载随访期定义、访视窗口（含单位与参考事件）与计划外/电话访视规则。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "随访期定义/窗口/电话访视规则为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-7-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623360"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-7-3:units",
+      "rule": "访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-7-3:phone",
+      "rule": "电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-7-3:records",
+      "rule": "计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-7-3:unscheduled-contact",
+      "triggering_fact_paths": [
+        "procedure.followup_unscheduled_and_phone_visits"
+      ],
+      "condition": "确认存在计划外访视或电话联系访视",
+      "rationale": "存在计划外/电话访视时，日期、方式、原因与适用评估必须作为项目事实登记。",
+      "required_when_active_fact_paths": [
+        "procedure.contact_visit_date",
+        "procedure.contact_visit_modality",
+        "procedure.contact_visit_reason",
+        "procedure.contact_visit_assessments"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-7-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_7_3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-7-2:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_7_3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_7_3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-7-3:phone",
+      "question": "随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？",
+      "linked_fact_paths": [
+        "procedure.followup_visit_windows",
+        "procedure.phone_visit_linkage"
+      ],
+      "linked_claim_types": [
+        "visit_phase_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-7-3:phone"
+      ],
+      "risk_if_unmet": "窗口或电话访视规则缺失会造成随访数据缺口。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}
