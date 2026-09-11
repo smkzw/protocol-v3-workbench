@@ -1,0 +1,373 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-1:v2",
+  "semantic_node_id": "v2_n_11_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-1:sample-size",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-1:v2",
+    "chapter_contract_id": "contract:v2-n-11-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_endpoint",
+        "obligation": "required",
+        "rationale": "样本量必须绑定研究终点的可判定定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.structured_design.hypothesis",
+        "obligation": "required",
+        "rationale": "必须声明实际零/备择假设及其方向。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.test_model",
+        "obligation": "required",
+        "rationale": "必须声明实际检验或模型及其适用数据类型。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.sidedness",
+        "obligation": "required",
+        "rationale": "必须显式声明单侧或双侧及选择依据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.alpha",
+        "obligation": "required",
+        "rationale": "必须声明与设计匹配的显著性水平。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.power",
+        "obligation": "required",
+        "rationale": "必须声明目标把握度及其决策依据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.assumptions",
+        "obligation": "required",
+        "rationale": "必须列出与估计目标和分析方法一致的假设。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.assumption_evidence",
+        "obligation": "required",
+        "rationale": "每个关键假设必须有证据来源，不能只引用竞品样本量。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.structured_design.allocation_ratio",
+        "obligation": "required",
+        "rationale": "必须声明分配比例及其对样本量的影响。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.attrition",
+        "obligation": "required",
+        "rationale": "必须声明相关脱落/不可评价比例及调整理由。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.method",
+        "obligation": "required",
+        "rationale": "必须声明实际样本量方法及适用性。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.software_version",
+        "obligation": "required",
+        "rationale": "必须记录实际软件及版本，不把 SAS 当作依赖默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.reproducible_result",
+        "obligation": "required",
+        "rationale": "必须保留可复算输入、版本、代码或计算记录与结果。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.interim_adjustment",
+        "obligation": "optional",
+        "rationale": "如有期中或设计调整，必须说明调整对样本量的影响。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "fact_path": "statistics.sample_size.interim_alpha_adjustment",
+        "obligation": "optional",
+        "rationale": "期中分析导致的 alpha 消耗调整值，仅当存在期中调整时必需（fresh复核D1修复：条件规则引用的事实原先未声明）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.design_effect",
+        "obligation": "optional",
+        "rationale": "如有分层、聚类或其他设计效应，必须说明其适用性和数值依据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.interim_applicable",
+        "obligation": "optional",
+        "rationale": "期中样本量调整适用性必须有明确布尔状态。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.soa_alignment",
+        "obligation": "required",
+        "rationale": "样本量涉及的终点访视必须与数据收集计划一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.dose_alignment",
+        "obligation": "required",
+        "rationale": "样本量对应的治疗条件必须与给药方案一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sample_size.source_assumed_effect",
+        "obligation": "forbidden",
+        "rationale": "源/竞品效应假设不得写入项目事实。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sample_size_specification",
+        "obligation": "required",
+        "rationale": "样本量卡必须完整承载终点、假设、方法、参数和结果。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sample_size_reproducibility",
+        "obligation": "required",
+        "rationale": "样本量结果必须可由记录的输入和软件版本复算。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sample_size_decision_provenance",
+        "obligation": "required",
+        "rationale": "高风险样本量决策必须保留证据、敏感性和人工确认链。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sample_size_cross_contract_consistency",
+        "obligation": "required",
+        "rationale": "样本量必须与终点、估计目标、SOA和治疗条件一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "source_example_assumption",
+        "obligation": "forbidden",
+        "rationale": "模板或竞品样本量/效应假设不得冒充项目依据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sample_size_specification"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sample_size_reproducibility"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sample_size_decision_provenance"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sample_size_cross_contract_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "样本量卡逐项承载终点、假设、检验/模型、侧别与 alpha、把握度、假设证据、分配/脱落、方法/软件版本和可复算结果；期中调整与设计效应记录适用性处置。",
+        "required_object_cells": [
+          "sample_size:cell:endpoint",
+          "sample_size:cell:hypothesis",
+          "sample_size:cell:test-model",
+          "sample_size:cell:sidedness",
+          "sample_size:cell:alpha",
+          "sample_size:cell:power",
+          "sample_size:cell:assumptions",
+          "sample_size:cell:assumption-evidence",
+          "sample_size:cell:allocation",
+          "sample_size:cell:attrition",
+          "sample_size:cell:method",
+          "sample_size:cell:software-version",
+          "sample_size:cell:reproducible-result",
+          "sample_size:cell:interim-adjustment",
+          "sample_size:cell:design-effect"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“样本量估算”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "继承 v2_n_11 父体 757–760 的 SAP 状态/时序/修订关联义务；SAP 计划稍后完成不豁免协议层面的终点、估计目标、主要方法或样本量要求。SAS 仅是可能的软件示例，实际软件版本和工作台计算必须有独立可复算证据。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "样本量估算仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-1",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623390"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-1:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-1:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-1:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "conditional:v2-n-11-1:interim-adjustment",
+      "triggering_fact_paths": [
+        "statistics.sample_size.interim_applicable"
+      ],
+      "condition": "已确认样本量设计包含期中或自适应调整",
+      "rationale": "若适用期中调整，样本量方法必须补充调整规则和依据。",
+      "required_when_active_fact_paths": [
+        "statistics.sample_size.interim_adjustment",
+        "statistics.sample_size.interim_alpha_adjustment"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-1:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "picos.primary_endpoint"
+      ],
+      "linked_claim_types": [
+        "sample_size_specification"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-1:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-1:endpoint-estimand",
+      "registry_name": "endpoint_estimand_soa_registry",
+      "eligibility_fact_paths": [
+        "picos.primary_endpoint",
+        "estimand.primary.variable",
+        "statistics.sample_size.soa_alignment"
+      ],
+      "consistency_rules": [
+        "终点定义、主要估计目标变量和 SOA 时点必须来自同一已确认事实链。"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-1:dose",
+      "registry_name": "dose_allocation_registry",
+      "eligibility_fact_paths": [
+        "framing.structured_design.allocation_ratio",
+        "statistics.sample_size.dose_alignment"
+      ],
+      "consistency_rules": [
+        "分配比例和治疗条件必须与给药方案及流程图一致。"
+      ]
+    }
+  ]
+}

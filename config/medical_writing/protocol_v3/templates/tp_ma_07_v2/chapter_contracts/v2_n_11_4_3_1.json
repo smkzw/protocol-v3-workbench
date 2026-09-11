@@ -1,0 +1,331 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-4-3-1:v2",
+  "semantic_node_id": "v2_n_11_4_3_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-4-3-1:primary-analysis",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-4-3-1:v2",
+    "chapter_contract_id": "contract:v2-n-11-4-3-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.population",
+        "obligation": "required",
+        "rationale": "主要分析必须引用已确认主要估计目标人群。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.variable",
+        "obligation": "required",
+        "rationale": "主要分析必须引用已确认变量及测量定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.treatment_condition",
+        "obligation": "required",
+        "rationale": "主要分析必须引用已确认治疗条件。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.intercurrent_events",
+        "obligation": "required",
+        "rationale": "主要分析必须逐项承接伴发事件定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.ice_strategy",
+        "obligation": "required",
+        "rationale": "主要分析必须承接各伴发事件策略。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.method",
+        "obligation": "required",
+        "rationale": "必须声明实际主要分析方法、检验/模型和效应量。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.analysis_set",
+        "obligation": "required",
+        "rationale": "必须绑定已定义分析集及其处理规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.missing_data",
+        "obligation": "required",
+        "rationale": "必须声明缺失数据处理及其与估计目标的关系。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.effect_measure",
+        "obligation": "required",
+        "rationale": "必须声明可解释的效应量及区间估计。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.estimand_linkage",
+        "obligation": "required",
+        "rationale": "必须说明方法如何估计选定估计目标。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.dose_consistency",
+        "obligation": "required",
+        "rationale": "主要分析治疗条件必须与剂量方案一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.primary_analysis.soa_consistency",
+        "obligation": "required",
+        "rationale": "主要终点时点必须与 SOA/终点数据定义一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_endpoint",
+        "obligation": "required",
+        "rationale": "主要分析必须复用已确认的 picos.primary_endpoint 事实，不建立第二终点存储。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "primary_analysis_method",
+        "obligation": "required",
+        "rationale": "主要分析必须落实实际终点、分析集、方法和效应量。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "primary_endpoint_analysis",
+        "obligation": "required",
+        "rationale": "主要终点分析必须绑定项目终点定义和时间窗。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_linkage",
+        "obligation": "required",
+        "rationale": "主要分析必须显式链接主要估计目标和伴发事件策略。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "primary_analysis_cross_contract_consistency",
+        "obligation": "required",
+        "rationale": "主要分析必须与 SOA、剂量和估计目标事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "rescue_handling_inconsistent_with_estimand",
+        "obligation": "forbidden",
+        "rationale": "补救治疗处理不得与选定估计目标冲突。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "primary_analysis_method"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "primary_endpoint_analysis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_linkage"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "primary_analysis_cross_contract_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "主要估计目标的主要分析必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“主要估计目标的主要分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "继承 v2_n_11 父体 757–760 的 SAP framing，不因计划稍后 SAP 而省略协议级主要终点、估计目标、主要方法或样本量关联；主要分析方法必须由实际安排决定。ANCOVA/MMRM/tipping-point 仅作为按项目假设选择的方法义务，不是普遍处方。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "主要估计目标的主要分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-4-3-1",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-1:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-1:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-1:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-11-1:v2",
+    "contract:v2-n-11-2:v2",
+    "contract:v2-n-11-3:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:v2_n_11_4_3_1:dependency-drift",
+    "dependency_ids": [
+      "contract:v2-n-11-1:v2",
+      "contract:v2-n-11-2:v2",
+      "contract:v2-n-11-3:v2"
+    ],
+    "downstream_impact": "上游终点、估计目标、分析集或设计变更会使本节点统计结论失效，必须停止沿用旧草稿。",
+    "repair_owner": "user",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_3_1:recompute",
+        "sequence": 1,
+        "action": "重新读取已确认的上游事实并重算本节点统计承载。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_3_1:confirm",
+        "sequence": 2,
+        "action": "由用户核对差异、证据来源与可复算输入后确认或退回。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-4-3-1:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 789（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "estimand.primary.population"
+      ],
+      "linked_claim_types": [
+        "primary_analysis_method"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-4-3-1:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-4-3-1:estimand",
+      "registry_name": "primary_estimand_registry",
+      "eligibility_fact_paths": [
+        "picos.primary_endpoint",
+        "estimand.primary.variable",
+        "estimand.primary.population",
+        "estimand.primary.intercurrent_events",
+        "statistics.primary_analysis.estimand_linkage"
+      ],
+      "consistency_rules": [
+        "主要分析方法必须与估计目标四属性及其交叉事件策略一致。"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-4-3-1:soa",
+      "registry_name": "primary_endpoint_soa_registry",
+      "eligibility_fact_paths": [
+        "picos.primary_endpoint",
+        "soa.assessment_cells",
+        "intervention.dose_regimen"
+      ],
+      "consistency_rules": [
+        "主要终点时点和治疗条件必须与 SOA、剂量和干预事实一致。"
+      ]
+    }
+  ]
+}

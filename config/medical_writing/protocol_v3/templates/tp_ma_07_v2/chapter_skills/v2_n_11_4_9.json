@@ -1,0 +1,34 @@
+{
+  "skill_id": "skill:chapter:v2-n-11-4-9:interim-analysis",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_11_4_9",
+  "chapter_contract_id": "contract:v2-n-11-4-9:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch6:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“期中分析”逐项承载源义务：声明适用性、时点/信息量、目的、规则、责任、最终影响与 alpha；安全审查不自动消耗疗效 alpha，并区分 IDMC 与终点 IRC。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。",
+    "forbidden_behaviors": [
+      "编造项目统计事实、终点、假设或证据来源",
+      "复制模板/竞品样本量、阈值、方法或结果作为项目事实",
+      "使用空标题、占位表格、“同前”或单独方法名替代实质统计义务",
+      "混淆随机集、治疗集、可评价集、缺失结局和伴发事件",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：TP-MA-07 v2.0 零基 body-child 索引 805、806；索引为零基 body-child 计数，非段落序号。",
+    "节点书签：_Ref89873252、_Toc132623402；Word 样式ID：4。",
+    "父节点义务声明：v2_n_11、v2_n_11_4 和 v2_n_11_4_3 为非载体结构容器，继承义务在本叶节点中显式展开。",
+    "合成夹具值仅用于结构化检查，不是真实项目批准、统计有效性或医学结论；试验参与者数据处理必须保留来源与未决差异。",
+    "父体义务叶级承载标记：非载体父节点的义务已在本叶节点显式新增承载（declared_addition），不虚构父节点载体。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-11-4-9:interim-analysis:missing-obligation",
+    "skill:chapter:v2-n-11-4-9:interim-analysis:unresolved-fact",
+    "skill:chapter:v2-n-11-4-9:interim-analysis:wrong-source"
+  ]
+}
