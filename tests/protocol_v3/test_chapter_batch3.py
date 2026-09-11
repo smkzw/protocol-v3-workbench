@@ -65,7 +65,7 @@ REQUIRED_EXISTING_FACTS = {
 
 SOURCE_SPECIFIC_FIXTURES = {
     "fixture:batch3:v2-n-4-1:wrong-comparator-ratio",
-    "fixture:batch3:v2-n-4-2:stale-numbered-reference",
+    "fixture:batch3:v2-n-4-5:stale-numbered-reference",
     "fixture:batch3:v2-n-4-3:dose-other-regimen",
     "fixture:batch3:v2-n-4-4:end-of-treatment-as-follow-up",
     "fixture:batch3:v2-n-5-1:threshold-contradiction",
@@ -73,6 +73,9 @@ SOURCE_SPECIFIC_FIXTURES = {
     "fixture:batch3:v2-n-5-4:nonspecific-per-protocol",
     "fixture:batch3:v2-n-5-5:phantom-completed-approval",
 }
+# Fresh-review D1: the stale numbered cross-reference lives at source paragraph 364,
+# which is v2_n_4_5 content (node_tree body_child 363, content 364-369); the negative
+# was rebound from v2_n_4_2 accordingly.
 
 
 def _assembled():

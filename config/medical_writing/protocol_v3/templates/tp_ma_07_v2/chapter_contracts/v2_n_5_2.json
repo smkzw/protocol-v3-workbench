@@ -158,7 +158,8 @@
     ],
     "project_specific_elements": [
       "排除标准引用由纳入载体和父章 v2_n_5 承载的人群 framing，但不复制纳入标准的逆命题；排除标准是 any-applicable-criterion 谓词，必须保留布尔逻辑、单位、阈值、窗口和例外。",
-      "每个限制需有项目/人群相关理由，不能因源文未列某人口群体而自动推导排除。"
+      "每个限制需有项目/人群相关理由，不能因源文未列某人口群体而自动推导排除。",
+      "当项目确认妊娠/避孕风险适用时，排除载体必须引用纳入载体登记的 picos.risk.pregnancy_contraception 形成相应排除标准（引用，不复制逆命题，不设通用期限）；该条件义务仅在风险确认后触发（fresh复核D2修复：原避孕保留义务未达排除载体）。"
     ],
     "skeleton_risk_rules": [
       "只有“任一不符合即排除”空话、逆向复制纳入标准或缺少参数/窗口/例外即失败。"
@@ -198,6 +199,17 @@
       "required_when_active_fact_paths": [],
       "required_when_active_claim_types": [
         "exclusion_predicate"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:n-5-2:contraception-exclusion-reference",
+      "triggering_fact_paths": [
+        "picos.risk.pregnancy_contraception"
+      ],
+      "condition": "项目确认妊娠/避孕风险适用",
+      "rationale": "避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。",
+      "required_when_active_fact_paths": [
+        "population.exclusion.contraception_criterion_ref"
       ]
     }
   ],

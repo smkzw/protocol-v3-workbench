@@ -75,6 +75,7 @@
     "picos.study_epochs.overall_end_trigger",
     "picos.study_epochs.post_treatment_assessment",
     "picos.study_epochs.template_example_values",
+    "population.exclusion.contraception_criterion_ref",
     "population.lifestyle.constraints",
     "population.lifestyle.contraception_duration",
     "population.lifestyle.exceptions",
@@ -4372,8 +4373,8 @@
       "supplied_qc_verdict": "negative_reason:wrong_comparator_or_ratio"
     },
     {
-      "fixture_id": "fixture:batch3:v2-n-4-2:stale-numbered-reference",
-      "chapter_contract_id": "contract:v2-n-4-2:v2",
+      "fixture_id": "fixture:batch3:v2-n-4-5:stale-numbered-reference",
+      "chapter_contract_id": "contract:v2-n-4-5:v2",
       "fixture_kind": "wrong_source",
       "content": {
         "facts": [
@@ -4382,86 +4383,90 @@
             "value": "合成项目事实：framing.structured_design 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.comparator_type",
-            "value": "合成项目事实：framing.structured_design.comparator_type 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.randomization_procedure",
+            "value": "合成项目事实：framing.structured_design.randomization_procedure 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.comparator_rationale",
-            "value": "合成项目事实：framing.structured_design.comparator_rationale 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.allocation_ratio",
+            "value": "合成项目事实：framing.structured_design.allocation_ratio 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.hypothesis",
-            "value": "合成项目事实：framing.structured_design.hypothesis 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.allocation_roles",
+            "value": "合成项目事实：framing.structured_design.allocation_roles 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.hypothesis_rationale",
-            "value": "合成项目事实：framing.structured_design.hypothesis_rationale 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.masking_procedure",
+            "value": "合成项目事实：framing.structured_design.masking_procedure 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.clinical_context",
-            "value": "合成项目事实：framing.structured_design.clinical_context 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.masking_maintenance",
+            "value": "合成项目事实：framing.structured_design.masking_maintenance 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.evidence_floor",
-            "value": "合成项目事实：framing.structured_design.evidence_floor 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.unblinded_personnel",
+            "value": "合成项目事实：framing.structured_design.unblinded_personnel 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.noninferiority_margin_decision",
-            "value": "合成项目事实：framing.structured_design.noninferiority_margin_decision 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.emergency_unblinding",
+            "value": "合成项目事实：framing.structured_design.emergency_unblinding 已由项目实例确认（非真实项目）。"
           },
           {
-            "fact_path": "framing.structured_design.placebo_decision",
-            "value": "合成项目事实：framing.structured_design.placebo_decision 已由项目实例确认（非真实项目）。"
+            "fact_path": "framing.structured_design.accidental_unblinding",
+            "value": "合成项目事实：framing.structured_design.accidental_unblinding 已由项目实例确认（非真实项目）。"
+          },
+          {
+            "fact_path": "framing.structured_design.unblinding_records",
+            "value": "合成项目事实：framing.structured_design.unblinding_records 已由项目实例确认（非真实项目）。"
           }
         ],
         "claims": [
           {
-            "claim_type": "design_rationale",
-            "statement": "合成项目声明：design_rationale 与已确认事实一致（非真实项目）。"
+            "claim_type": "allocation_procedure",
+            "statement": "合成项目声明：allocation_procedure 与已确认事实一致（非真实项目）。"
           },
           {
-            "claim_type": "design_hypothesis",
-            "statement": "合成项目声明：design_hypothesis 与已确认事实一致（非真实项目）。"
+            "claim_type": "masking_procedure",
+            "statement": "合成项目声明：masking_procedure 与已确认事实一致（非真实项目）。"
           },
           {
-            "claim_type": "control_choice_decision",
-            "statement": "合成项目声明：control_choice_decision 与已确认事实一致（非真实项目）。"
+            "claim_type": "unblinding_procedure",
+            "statement": "合成项目声明：unblinding_procedure 与已确认事实一致（非真实项目）。"
           },
           {
-            "claim_type": "noninferiority_margin_decision",
-            "statement": "合成项目声明：noninferiority_margin_decision 与已确认事实一致（非真实项目）。"
+            "claim_type": "design_feature_applicability",
+            "statement": "合成项目声明：design_feature_applicability 与已确认事实一致（非真实项目）。"
           }
         ],
         "evidence": [
           {
             "source_role": "project_primary",
-            "admission_claim_type": "control_choice_decision",
+            "admission_claim_type": "allocation_procedure",
             "locator_kind": "figure",
-            "locator": "合成错误夹具：per statistics section 9（无实际规范目标）。",
-            "context": "合成上下文窗口：支持 control_choice_decision 的项目事实。",
+            "locator": "合成过时编号交叉引用：见“第9节统计”（源 content paragraph 364 的过时条号；测试夹具，非真实项目批准）。",
+            "context": "合成上下文：未解析实际规范目标的编号引用（测试用，非真实项目记录）。",
             "quality_score": 0.95
           },
           {
-            "source_role": "competitor_full_protocol",
-            "admission_claim_type": "design_rationale",
+            "source_role": "project_primary",
+            "admission_claim_type": "masking_procedure",
             "locator_kind": "body",
-            "locator": "合成项目来源登记：design_rationale，非真实项目批准。",
-            "context": "合成上下文窗口：支持 design_rationale 的项目事实。",
+            "locator": "合成项目来源登记：masking_procedure，非真实项目批准。",
+            "context": "合成上下文窗口：支持 masking_procedure 的项目事实。",
             "quality_score": 0.95
           },
           {
             "source_role": "regulatory_or_guideline",
-            "admission_claim_type": "design_hypothesis",
+            "admission_claim_type": "unblinding_procedure",
             "locator_kind": "body",
-            "locator": "合成项目来源登记：design_hypothesis，非真实项目批准。",
-            "context": "合成上下文窗口：支持 design_hypothesis 的项目事实。",
+            "locator": "合成项目来源登记：unblinding_procedure，非真实项目批准。",
+            "context": "合成上下文窗口：支持 unblinding_procedure 的项目事实。",
             "quality_score": 0.95
           }
         ],
         "objects": [
           {
             "object_kind": "paragraph",
-            "occurrences": 2,
+            "occurrences": 3,
             "text": "合成项目化 paragraph 内容（非真实项目）。",
             "cells": []
           },
@@ -4471,27 +4476,39 @@
             "text": "合成项目化 table 内容（非真实项目）。",
             "cells": [
               {
-                "cell_id": "rationale:clinical-context",
-                "value": "合成结构化值：rationale:clinical-context（非真实项目）。"
+                "cell_id": "randomization:procedure",
+                "value": "合成结构化值：randomization:procedure（非真实项目）。"
               },
               {
-                "cell_id": "rationale:comparator",
-                "value": "合成结构化值：rationale:comparator（非真实项目）。"
+                "cell_id": "randomization:roles",
+                "value": "合成结构化值：randomization:roles（非真实项目）。"
               },
               {
-                "cell_id": "rationale:hypothesis",
-                "value": "合成结构化值：rationale:hypothesis（非真实项目）。"
+                "cell_id": "randomization:ratio",
+                "value": "合成结构化值：randomization:ratio（非真实项目）。"
               },
               {
-                "cell_id": "rationale:evidence-floor",
-                "value": "合成结构化值：rationale:evidence-floor（非真实项目）。"
+                "cell_id": "masking:procedure",
+                "value": "合成结构化值：masking:procedure（非真实项目）。"
+              },
+              {
+                "cell_id": "masking:maintenance",
+                "value": "合成结构化值：masking:maintenance（非真实项目）。"
+              },
+              {
+                "cell_id": "unblinding:emergency",
+                "value": "合成结构化值：unblinding:emergency（非真实项目）。"
+              },
+              {
+                "cell_id": "unblinding:records",
+                "value": "合成结构化值：unblinding:records（非真实项目）。"
               }
             ]
           }
         ]
       },
       "supplied_passed": false,
-      "supplied_qc_verdict": "negative_reason:stale_numbered_reference"
+      "supplied_qc_verdict": "negative_reason: 过时编号交叉引用未解析实际规范目标，且证据定位器为不允许的figure类型（合成负例：源 content paragraph 364 的过时条号）。"
     },
     {
       "fixture_id": "fixture:batch3:v2-n-4-3:dose-other-regimen",
