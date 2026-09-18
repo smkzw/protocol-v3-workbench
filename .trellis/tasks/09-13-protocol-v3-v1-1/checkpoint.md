@@ -689,3 +689,24 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
 
 回归复核中（PYTHONPATH须含tests/protocol_v3/integration：test_chapter_source_preparation
 依赖其内helper test_template_fact_adoption）。
+
+## 2026-09-19 06:30 章节事实阶段建成并打通：plan门READY，整稿生成已启动
+
+- 新模块 agent3/chapter_facts.py：collect_chapter_gaps（缺口收集，含条件触发路径）+
+  8章/批真实deepseek派发（dispatch_fn直连、receipt_sink入工件库、内容哈希幂等回放）
+  + parse_batch_output（绑定类型/成员校验）+ deterministic_document_facts（文档控制
+  类确定性值，模型不可编造）+ predicate_corrections（成员级布尔修正）+
+  retirement_recommendations（不适用章参数退休）+ residual_recommendations（34项
+  组织/签署/补偿类用户确认建议表）
+- API：POST/GET manuscript-draft/chapter-facts/derive（后台批处理+进度）、
+  GET residual、POST residual/confirm（USER决策+revise/retire意图）
+- 前端：ManuscriptWorkspace 补齐按钮+残差确认卡；plan GET富化revision/snapshot
+- 收敛历程：needs_info 111→50→38→35→25→17→6→5→4→3→0；最终
+  all_applicable_inputs_ready=**True**（109 facts_ready + 2 not_applicable，rev24）
+- 真实模型用量：4次派发轮（约20批，452+66+16+1+10路径），全部receipt入工件库；
+  回放短路生效（重复跑零新调用）
+- 事故与修复：ConfirmationBinding需值哈希（改传dependencies）；TemplateAdoptionIntent
+  import路径；DirectApiAdapter私有_dispatch_fn；resolver必须回读输入材料；
+  template-bound需revise=True；AI actor禁revise（改USER确认）
+- 整稿生成：run manuscript-draft:a02b2145… 已由ego浏览器点击启动（109章）
+- 测试：test_chapter_facts_derivation 3/3；前端12文件95测试全过；已提交 e0c7869+
