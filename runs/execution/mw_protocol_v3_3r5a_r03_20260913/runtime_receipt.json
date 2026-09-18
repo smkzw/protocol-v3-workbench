@@ -1,0 +1,282 @@
+{
+  "agent": "zcode",
+  "requested_agent": "zcode",
+  "role_id": "E04",
+  "requested_provider": "zcode",
+  "requested_model": "GLM-5.3-Flash",
+  "requested_effort": "max",
+  "explicit_route": false,
+  "requested_route_warnings": [],
+  "scheduled_route_manifest": "runs/execution/mw_protocol_v3_3r5a_r03_20260913/scheduled_route_manifest.json",
+  "schedule_reconciliation": {
+    "enabled": true,
+    "packet_period": "off_peak",
+    "active_period": "off_peak",
+    "dispatch_period": "off_peak",
+    "changed": true,
+    "session_policy": "preserve_started_session; re-resolve_before_new_session",
+    "from_period": "off_peak",
+    "to_period": "off_peak",
+    "reason": "new session rechecked the current peak/off-peak provider window",
+    "schedule_constraints": {
+      "policy": "live-route-manifest-v1",
+      "evaluated_at": "2026-09-13T06:25:15.171112+08:00",
+      "explicit_route": false,
+      "events": [],
+      "route_rewritten": false
+    },
+    "selected_route": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max"
+    }
+  },
+  "schedule_reconciliation_events": [
+    {
+      "enabled": true,
+      "packet_period": "off_peak",
+      "active_period": "off_peak",
+      "dispatch_period": "off_peak",
+      "changed": true,
+      "session_policy": "preserve_started_session; re-resolve_before_new_session",
+      "from_period": "off_peak",
+      "to_period": "off_peak",
+      "reason": "new session rechecked the current peak/off-peak provider window",
+      "schedule_constraints": {
+        "policy": "live-route-manifest-v1",
+        "evaluated_at": "2026-09-13T06:25:15.171112+08:00",
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      },
+      "selected_route": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "effort": "max"
+      }
+    }
+  ],
+  "schedule_manifest_error": null,
+  "effective_agent": "zcode",
+  "effective_provider": "zcode",
+  "effective_model": "GLM-5.3-Flash",
+  "effective_effort": "max",
+  "route_constraints": {
+    "policy": "live-route-manifest-v1",
+    "explicit_route": false,
+    "primary_route_changed": false,
+    "route_rewritten": false,
+    "constraint_events": [],
+    "events": [],
+    "schedule": {
+      "policy": "live-route-manifest-v1",
+      "evaluated_at": "2026-09-13T06:25:15.171156+08:00",
+      "explicit_route": false,
+      "events": [],
+      "route_rewritten": false
+    },
+    "primary_replaced": false,
+    "requested_primary": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max",
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "mtplx",
+          "model": "mtplx-flash-next-optimized-speed",
+          "effort": "xhigh"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-luna",
+          "effort": "max"
+        }
+      ]
+    },
+    "effective_primary": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max"
+    }
+  },
+  "round_count": 1,
+  "estimated_input_context_tokens": 622,
+  "round_policy": "single initial pass; Codex decides whether to add same-session follow-ups",
+  "fallback": {
+    "selected_provider": "zcode",
+    "selected_model": "GLM-5.3-Flash",
+    "reason": "primary route failed before a resumable session was established",
+    "last_attempt_provider": "zcode",
+    "last_attempt_model": "GLM-5.3-Flash",
+    "selected_agent": "zcode",
+    "attempts": [
+      {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "returncode": 0,
+        "timed_out": false,
+        "session_id": "sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd",
+        "session_reused": false,
+        "failure_diagnostic": null
+      },
+      {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "returncode": 0,
+        "timed_out": false,
+        "session_id": "sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd",
+        "session_reused": false,
+        "failure_diagnostic": null
+      },
+      {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "returncode": 0,
+        "timed_out": false,
+        "session_id": "sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd",
+        "session_reused": false,
+        "failure_diagnostic": null
+      }
+    ]
+  },
+  "declared_fallback_candidates": [],
+  "fallback_candidates": [
+    {
+      "agent": "pi",
+      "provider": "mtplx",
+      "model": "mtplx-flash-next-optimized-speed",
+      "effort": "xhigh"
+    },
+    {
+      "agent": "pi",
+      "provider": "openai-codex",
+      "model": "gpt-5.6-luna",
+      "effort": "max"
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "command": [
+        "/Users/smkzw/.local/bin/zcode",
+        "app-server"
+      ],
+      "returncode": 0,
+      "output": "# Execution Output:\n\nE04 worker任务已于前一pass到达terminal完成态：3R.5A R03提取脚本、129原子义务registry、qc.r03最小检查包、47项红绿测试全部交付并通过；worker_report.md已落盘。本次为同一session的预算恢复续跑，无材料缺口、无状态变化，无需新工具调用；以下为完整执行管理报告（与已交付内容一致）。\n\n## Boundary And Context Check\n\n- 角色与边界：单一E04执行worker，未接受任务、未递归派发/会商；未调用产品模型/服务/OCR/翻译/Word；未访问凭证或生产库。\n- 源保护：`CMSS-SOP-MD-5101-R03-00 临床研究方案QC表_修订版.docx` 全程zip/XML只读，交付前后SHA256均为 `5a5affebd36979cb06e9de239accc163f954c186afcdf3668f23d054400519e9`。\n- 写入范围：仅5个允许路径新增文件+own run目录；未commit/reset/cleanup，未改既有A-D代码/类型/配置/测试/word/terminology；git中其余M文件为owner并行工作既有改动，未触碰。未更新Trellis。\n- 路线：declared `zcode/zcode/GLM-5.3-Flash`（max），统一10218，7200秒预算内完成；本续跑未产生新预算消耗的工具调用。\n\n## Work Performed\n\n1. 上下文读取：active task prd/design/implement、Plan v3 §4 3R.5A、design v1.4、review amendment六项L1边界、源预检review、审计run四个工件（r03_source_rows/source_denominator/r03_candidate_node_crosswalk/atomic_split_examples）、当前node_tree与applicability_rules.json、现有`CheckerFinding`/`FixtureCheckResult`接口。\n2. 红测先行：47项真实行为测试先写并确认红态（`47 failed in 0.48s`），覆盖无label行、表头内嵌义务、复合行拆分、未知/条件不当false、版本不一致失败/历史旧日期允许、引用目标缺失与空材料失败关闭、源错词不污染normalized、签署空白非草稿、loader六类破坏拒绝。\n3. 提取器（纯标准库）：源hash门+分母漂移即失败；零基`table/row/cell`定位，保留gridSpan/vMerge/空label/合并格；行提取与审计基线逐字段相等（测试断言）；atom_id用源定位不用6.x label；生成时自检fragment子串、节点绑定、规则ID存在、噪声串不进normalized、内容行全覆盖。\n4. registry生成：129原子义务=4身份+124（覆盖68内容行，每行≥1）+1表头fragment；deterministic 14/agent4 109/human 6（复用2个共享确认ref，未造68卡）；implemented 5/pending 124；flags：source_noise 2/reference_hint 2/source_ambiguity 1/header_embedded 1。复合行按审计示例拆分：6.3.2 estimand→7、6.5.3三情形矩阵→7、6.8.5→5（AE/妊娠随访为always，不因无委员会关闭）、6.4.11 CtQ→7、6.13→7、6.9.6 SAP→3（批准安排为将来安排，不写“已批准”）、6.9.2→4、6.11→6、6.10→2。“排斥反应”标source_ambiguity+unknown_context不改写为妊娠/过敏；6.5.2保留源词“暴露标准”；器械/IIT conditional+not_wired不当false。\n5. qc包：`check_version_consistency`（当前位置不一致→error；修订历史旧行合法不比对；空材料fail-closed）与`check_internal_citations`（以明确目标对象清单解析，缺目标/重复目标/空材料失败，合法无引用通过）；复用现有`FixtureCheckResult`/`CheckerFinding`，pending L1走`deferred_qc_obligations`；loader `validate_r03_registry`/`load_r03_criteria`实际校验源hash、分母、重复ID、locator、fragment子串、语义节点、规则ID存在、未知检查引用、implemented⇒check_ref、内容行全覆盖、表头fragment、签署区、六L1齐备，问题即`R03RegistryError`fail-closed。\n6. 六L1登记：版本四点、文字性交叉引用implemented（typed输入only，真实文档投影未接）；缩略语闭环、文献双向、数字单位、登记一致性诚实pending并附不可keyword化的理由；`product_wiring`声明generation_model/word_export/ui_consumers=`not_wired_v1`、document_projection=pending。\n7. 验证与报告：定向pytest红绿、`--check`确定性门、交付物hash清单、源hash复验、相邻共享测试回归抽样、worker_report.md写入run目录。\n\n## Artifacts And Evidence\n\n| 文件 | SHA256 |\n|---|---|\n| `scripts/qc/protocol_v3/extract_r03_criteria.py` | `9e8487321dc0d6d7723a09888719daf49e535a956ad44ec3ad517ba5afe1d34a` |\n| `config/medical_writing/protocol_v3/qc/r03_criteria.json` | `c9dd46257ba54776e5ebc831c214a51e0fe5f00c2936f04220b27daeb1129c2f` |\n| `services/api/app/protocol_workflow/qc/__init__.py` | `5c98a91c6b2b0c436ed9261047001cca465567307ea66e065bc113f8ca9d1d2d` |\n| `services/api/app/protocol_workflow/qc/r03.py` | `59f8169b0a3ad8180d98eb73d6ef6163ef8419e3c02a2a82f573352bf3b4b28e` |\n| `tests/protocol_v3/test_r03_criteria_registry.py` | `398781aac496c790d0ac2206fcf46852e5ea07375d4b2b75635eb1482af8eefd` |\n\nrun目录证据（`runs/execution/mw_protocol_v3_3r5a_r03_20260913/`）：`worker_report.md`（完整报告）、`deliverable_sha256.txt`、`test_log_green_final.txt`、`determinism_check.txt`；owner写入的prompt.md/dispatch_contract.json等未动。registry状态字段为`registered_not_accepted`，注册≠通过。\n\n## Commands And Observations\n\n- `shasum -a 256 源DOCX`：开始与结束均为 `5a5affeb…19e9`，源未改。\n- `python3.12 -m pytest tests/protocol_v3/test_r03_criteria_registry.py -q`：红 `47 failed in 0.48s` → 绿 `47 passed`（最终复跑 `47 passed in 0.52s`）；全程未xfail/降expected，未改既有fixtures。\n- `python3.12 scripts/qc/protocol_v3/extract_r03_criteria.py --check`：`deterministic registry verified`（再生成与提交字节一致）。\n- `PYTHONPATH=services/api python3.12 -m pytest tests/protocol_v3/test_chapter_fact_binding.py -q`：`51 passed`，共享registries导入面无扰。\n- `git status --short -- <允许路径>`：5个路径全部为`??`新增，无既有文件被本worker修改。\n- 过程修正（报告§6如实记录）：提取器`:=`语法错、`_atom`签名不一致、噪声自检范围误盖note字段、排斥反应atom禁词从normalized移至note、测试sys.path需同时容纳`app.`与`services.api.app.`导入根、`qc/r03.py`ROOT改parents[5]。\n\n## Blockers Or Missing Environment\n\n无阻塞。两点说明（非阻塞）：默认python3.14环境无pytest，测试改用python3.12执行；未跑全量protocol_v3回归是dispatch明确要求（避免影响owner并行独立工作），非环境缺失。\n\n## Rerun Requests Or Next Step\n\n无需重跑：交付物完整、验证通过、报告已落盘，本次续跑未做任何改动。下一步归owner：核对diff与输入输出，fresh reviewer核对原源与冻结registry后决定接受与否；接受后owner按implement.md连续推进3R7A及V1资料到Word。本worker不自行接受任务、不声称医学充分性或Word/UI/全产品已接线；registry保持`registered_not_accepted`直至owner验收。",
+      "stderr": "",
+      "duration_seconds": 45.239,
+      "timed_out": false,
+      "session_id": "sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd",
+      "session_established": true,
+      "stop_reason": "stop",
+      "zcode_model_requested": "GLM-5.3-Flash",
+      "zcode_effort_requested": "max",
+      "zcode_mode": "yolo",
+      "zcode_protocol": "ZCode Protocol",
+      "zcode_runtime_provider": "anthropic",
+      "zcode_client_requests": [
+        "session/requestRuntimePreferences",
+        "interaction/requestOfficialMcpAuthHeaders",
+        "session/requestRuntimePreferences"
+      ],
+      "zcode_protocol_event_count": 2383,
+      "zcode_protocol_errors": [],
+      "tool_call_count": 0,
+      "tool_result_count": 0,
+      "reasoning_event_count": 190,
+      "zcode_internal_loop": "app-server runtime-managed; no artificial --max-turns flag",
+      "requested_internal_turns": 128,
+      "usage": {
+        "inputTokens": 156212,
+        "outputTokens": 2220,
+        "totalTokens": 158432,
+        "cacheReadTokens": 154048,
+        "cacheWriteTokens": 0
+      },
+      "zcode_model_io": {
+        "turn_id": "turn_6146bcd5-e798-494d-abb3-18ebf77ebd6a",
+        "request_model": "GLM-5.3-Flash",
+        "response_model": "GLM-5.3-Flash",
+        "observed_effort": "max",
+        "request_count": 1,
+        "request_models": [
+          "GLM-5.3-Flash"
+        ],
+        "response_models": [
+          "GLM-5.3-Flash"
+        ],
+        "observed_efforts": [
+          "max"
+        ],
+        "reasoning_text_present": true,
+        "tool_call_count": 0,
+        "tool_names": []
+      },
+      "zcode_runtime_identity": {
+        "route_provider": "zcode",
+        "runtime_provider": "anthropic",
+        "requested_model": "GLM-5.3-Flash",
+        "request_model": "GLM-5.3-Flash",
+        "response_model": "GLM-5.3-Flash",
+        "requested_effort": "max",
+        "observed_effort": "max",
+        "verified": true
+      },
+      "input_chars": 821,
+      "estimated_input_tokens": 206,
+      "output_chars": 4491,
+      "estimated_output_tokens": 1123,
+      "input_budget": {
+        "char_limit": 240000,
+        "status": "within"
+      },
+      "output_budget": {
+        "soft_char_limit": 120000,
+        "hard_char_limit": 320000,
+        "status": "within"
+      },
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "explicit_route": false,
+      "same_session_budget_recovery": true,
+      "same_session_recovery_pass": 2
+    }
+  ],
+  "health_check": false,
+  "health_ttl_seconds": 300,
+  "require_execution_report": true,
+  "execution_dispatch": true,
+  "grok_permission_policy": {
+    "requested": "plan",
+    "effective": "bypassPermissions",
+    "adjusted_for_execution_manager": true
+  },
+  "budget_policy": {
+    "external_timeout_seconds": 7200,
+    "requested_internal_turns": 128,
+    "input_char_limit": 240000,
+    "output_soft_char_limit": 120000,
+    "output_hard_char_limit": 320000,
+    "same_session_recovery_passes": 2
+  },
+  "wait_policy": {
+    "mode": "single hard wait; no fixed controller polling",
+    "runner_timeout_seconds": 7200,
+    "parent_native_wait_max_ms": 3600000,
+    "same_session_recovery_passes": 2,
+    "fallback_after": "terminal failure, exhausted same-session recovery, or failed acceptance; latency alone is not failure"
+  },
+  "dispatch_started_at": 1789251915.17119,
+  "receipt_version": 2,
+  "output_sha256": "30cd1bf15a9a5b29f0b2537d97edcc3757a6a51f8d581ac9171d62ebf7ee7158"
+}

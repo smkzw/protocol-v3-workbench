@@ -1,0 +1,150 @@
+[
+  {
+    "name": "source_artifacts_omit_parse_identity",
+    "listed_keys": [
+      "content_sha256",
+      "source_artifact_id"
+    ],
+    "omitted_source_fields": [
+      "diagnostics",
+      "jurisdiction",
+      "parser_version",
+      "source_role",
+      "source_version",
+      "units"
+    ],
+    "listed_artifacts_unchanged_after_unit_drift": true,
+    "intake_hash_changes_on_unit_drift": true,
+    "seed_hash_changes": true,
+    "ok": true
+  },
+  {
+    "name": "mismatch_and_empty_sources",
+    "mismatch_error": "source_input_identity_mismatch",
+    "empty_sources_accepted": true,
+    "empty_still_has_brief": true,
+    "ok": true
+  },
+  {
+    "name": "wrong_study_and_cross_study_same_context",
+    "listed_study_ids": [
+      "study:alpha",
+      "study:beta"
+    ],
+    "both_studies_share_input_context": true,
+    "wrong_legacy_status": 409,
+    "wrong_dump_unchanged": true,
+    "adopt_alpha_status": 200,
+    "adopt_beta_status": 200,
+    "same_run_bound_to_two_studies": true,
+    "run_id": "regimen-design:127a09914e288b27c4be491e0839f6a0d4f628d259b43fb220b42a070b427686",
+    "beta_dump_changed": true,
+    "ok": true
+  },
+  {
+    "name": "study_context_create_identity_and_genesis_validity",
+    "derived_study_id": "study:v3:1b79a00257fcfdfa8264534669273d23",
+    "expected_from_project_hash": "study:v3:1b79a00257fcfdfa8264534669273d23",
+    "study_id_is_project_hash": true,
+    "genesis_fact_paths": [
+      "research.input_context"
+    ],
+    "has_10mg": false,
+    "has_picos": false,
+    "genesis_research_request_validity": "unverified",
+    "second_operation_status": 409,
+    "second_detail": "本项目已有研究，原内容已保留。",
+    "replay_same_operation_status": 200,
+    "replayed": true,
+    "recover_status": 200,
+    "recover_revision": 1,
+    "missing_recover_status": 404,
+    "listing_count": 1,
+    "matches_selected": true,
+    "dump_unchanged_after_rejected_second": true,
+    "seed_calls": 1,
+    "ok": true
+  },
+  {
+    "name": "legacy_study_blocks_create_update_preserves_10mg",
+    "legacy_fact_paths": [
+      "picos.intervention.dose",
+      "picos.population.indication"
+    ],
+    "legacy_has_10mg": true,
+    "listing_ids": [
+      "study:legacy-10mg"
+    ],
+    "listing_count": 1,
+    "auto_select_candidate": "study:legacy-10mg",
+    "matches_before_update": false,
+    "create_status": 409,
+    "create_dump_unchanged": true,
+    "update_status": 200,
+    "updated_fact_paths": [
+      "picos.intervention.dose",
+      "picos.population.indication",
+      "research.input_context"
+    ],
+    "updated_still_has_10mg": true,
+    "updated_has_input_context": true,
+    "ok": true
+  },
+  {
+    "name": "needs_information_not_auto_adopted",
+    "run_status": "needs_information",
+    "recover_status": 404,
+    "adopt_status": 409,
+    "dump_unchanged": true,
+    "seed_calls": 1,
+    "ok": true
+  },
+  {
+    "name": "historical_lookup_returns_current_after_successor",
+    "dose_validity_before": "current",
+    "dose_validity_after": "stale",
+    "research_validity_after": "unverified",
+    "recover_status": 200,
+    "recover_revision": 3,
+    "recover_replayed": true,
+    "recover_definition_has_changed_seed": true,
+    "recover_still_has_regimen": true,
+    "replay_status": 200,
+    "replay_revision": 3,
+    "replay_replayed": true,
+    "dump_unchanged": true,
+    "successor_did_not_rollback": true,
+    "ok": true
+  },
+  {
+    "name": "design_payload_has_no_study_definition",
+    "payload_keys": [
+      "instruction",
+      "output_schema",
+      "schema",
+      "seed_proposal",
+      "source_intake"
+    ],
+    "has_source_intake": true,
+    "has_seed": true,
+    "has_study_facts": false,
+    "run_id_identity_uses_seed_only": true,
+    "ok": true
+  },
+  {
+    "name": "run_id_ignores_study_and_full_source_intake_body",
+    "run_id": "regimen-design:3c40f124db572ca2111ff1ebb3560863f9780919951670aa971351875538653c",
+    "equals_seed_proposal_hash": true,
+    "identity_includes_study_id": false,
+    "identity_includes_source_intake_body": false,
+    "ok": true
+  },
+  {
+    "name": "frontend_wiring",
+    "intake_bypass_when_missing_actor": true,
+    "app_passes_medical_manager": true,
+    "functional_default_omits_actorId": true,
+    "study_context_auto_selects_single_study": true,
+    "ok": true
+  }
+]

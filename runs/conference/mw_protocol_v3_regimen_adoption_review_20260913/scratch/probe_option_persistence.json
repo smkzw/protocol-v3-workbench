@@ -1,0 +1,37 @@
+{
+  "decision_option_ids": [
+    "regimen-option:7aa9e249c7ac970831397727404158cae8539c8663760a75289cd9036cebdd33"
+  ],
+  "graph_status": 200,
+  "event_summary": {
+    "event_count": 2,
+    "last_sequence": 2
+  },
+  "binding": {
+    "adopted_revision_sha256": "4ccb4b193976a0ec9b01ec525e2f97091dc353e09d99a28fe2115de08688781c",
+    "fully_known": true,
+    "refs": [
+      {
+        "fact_path": "intervention.dose_regimen",
+        "members": []
+      }
+    ],
+    "schema_version": "decision-input-binding.v1",
+    "value_sha256": [
+      "f533dc53eaac9f3c712a71b1fe12e44f30ecf6a9ecce37d941c65e658e786bdf"
+    ]
+  },
+  "fact_paths": [
+    "intervention.dose_regimen"
+  ],
+  "has_recommendation_option_text": false,
+  "has_claim_evidence_text": false,
+  "events_public_keys": [
+    "project_id",
+    "study_definition_id",
+    "event_count",
+    "last_sequence",
+    "last_event_sha256",
+    "decisions"
+  ]
+}

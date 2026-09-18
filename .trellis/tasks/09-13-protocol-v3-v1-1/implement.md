@@ -1,0 +1,17 @@
+# 实施步骤和文件边界
+
+1. Owner direct从agent1/docx_parse.py及test_agent1_docx_parse.py开始，必要__init__.py；该纯解析单元和后续来源采用紧耦合，当前owner有完整复用上下文，另派executor不能带来高于整合成本的并行收益。已有独立C03正在复核前置源义务，后续按实际复杂度重评。
+2. 先行为反例：SDT正文、TOC两个识别形式、EndNote参考文献、表格单元格/合并标记、明确原始XML定位；实际已有DOCX源只读验证。必要测试不跑全量。
+3. 解析模块完成后细化source_identity/admission/API范围和真实SQLite/LocalArtifactStore整合检查，不用内存fake冒称持久化。冻结252文件审阅未终态前不修改其内容。
+4. UI/产品模型调用在实际请求合同/来源/回执链完成后按当前授权执行，保留同logical key长等待；不重新做已经成功探针。纯安全专项仍排除。
+
+
+解析与真实源对账完成后扩展允许范围：agent1/source_identity.py与tests/protocol_v3/test_source_identity_product.py，原有SQLite/ArtifactStore/合同/事件工具只复用不修改（避免受审源码漂移）。先临时SQLite与真实LocalArtifactStore测试，重复/后继版本/重开/两个service实例并发/采用失败保留暂存但无canonical事件。不是纯安全测试，不创建监听服务。再推进实际API和预填；这些基础函数不冒充完整产品路径。
+
+API接线允许范围已扩至api/sources.py、api/composition.py、integration/test_source_import_api.py；前置review已终态后接线。实际SourceAPI临时库验收见checkpoint。继续研究种子缺失与来源建议，不将旧八字段合同直译为八个必填框。
+
+下一单元允许agent1/research_seed.py和tests/protocol_v3/test_research_seed_normalization.py：先接稀疏意图+已保存资料的请求编译与候选结果映射，不在此新建第二事实存储。需覆盖空缺、多候选、多剂量、来源引用真实定位、公司旧方案不变成本项目事实、原始字段保留；产品调用走既有harness，调用前按当前logical key对账，不能拿确定性假模型输出冒真实生成。
+
+前端资料传输已扩允许protocolWorkspaceApi.mjs及protocolSourceApi.test.mjs，不涉及医学监查；3node和旧32合同验证完成。UI未实现，继续种子compiler与用户页面，不把transport wrapper当可用界面。
+
+已解除原267冻结后扩实际transport到runtime/artifact_messages.py、adapters/zhipu_api.py和两个新full-input测试；来源更正允许现有source_identity.py/api/sources.py/frontendclient及各自测试。相同文件bytesidentity复用政策不变；明确元数据更正作为新事件/SourceArtifact描述版本，不重写旧记录。97783仅7文件仍冻结，其余可独立推进。

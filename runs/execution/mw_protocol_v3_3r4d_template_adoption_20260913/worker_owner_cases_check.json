@@ -1,0 +1,31 @@
+[
+  {
+    "case": "historical_replay_without_current_template",
+    "status": 200,
+    "replayed": true,
+    "template_load_calls": 0,
+    "sqlite_unchanged": true,
+    "expected": "exact recorded request replays without loading new template rules",
+    "passed": true
+  },
+  {
+    "case": "same_work_key_new_decision",
+    "status": 409,
+    "sqlite_unchanged": true,
+    "current_sponsor": "合成申办方A",
+    "expected": "same operation key with different decision/revision/payload rejects without a new effect",
+    "passed": true
+  },
+  {
+    "case": "turn_off_with_existing_parameters",
+    "status": 409,
+    "sqlite_unchanged": true,
+    "interim_flag": true,
+    "retained_adjustment": {
+      "method": "synthetic_alpha_spending"
+    },
+    "expected": "do not save inactive contradictory current parameters merely because their own path was unchanged",
+    "passed": true,
+    "follow_on": "Then verify an explicit supported resolution can turn interim off, preserving historical values; rejecting forever is insufficient."
+  }
+]

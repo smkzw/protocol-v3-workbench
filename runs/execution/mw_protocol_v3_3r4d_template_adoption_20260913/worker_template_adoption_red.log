@@ -1,0 +1,325 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+__________ test_template_adoption_revises_an_existing_canonical_value __________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_template_adoption_revises0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b8d39b0>
+
+    def test_template_adoption_revises_an_existing_canonical_value(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            first = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:sponsor:1",
+                decision_record_id="decision:tpl:sponsor:1",
+                fact_updates={SPONSOR: "申办方A"},
+                input_refs=[{"fact_path": SPONSOR}],
+            ))
+>           assert first.status_code == 200, first.json()
+E           AssertionError: {'detail': {'can_retry': False, 'message': '请求内容与当前工作台要求不符，本次操作未执行。', 'next_step': '请核对请求内容后重新提交。', 'responsible_area': '工作台处理'}}
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:116: AssertionError
+__ test_template_adoption_persists_snapshot_impact_and_identity_in_one_event ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_template_adoption_persist0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c7a6570>
+
+    def test_template_adoption_persists_snapshot_impact_and_identity_in_one_event(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            adopted = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:interim:on",
+                decision_record_id="decision:tpl:interim:on",
+                fact_updates={INTERIM_FLAG: True},
+            ))
+>           assert adopted.status_code == 200, adopted.json()
+E           AssertionError: {'detail': {'can_retry': False, 'message': '请求内容与当前工作台要求不符，本次操作未执行。', 'next_step': '请核对请求内容后重新提交。', 'responsible_area': '工作台处理'}}
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:157: AssertionError
+___________ test_template_adoption_without_history_returns_not_found ___________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_template_adoption_without0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c956840>
+
+    def test_template_adoption_without_history_returns_not_found(tmp_path, monkeypatch):
+        client, _ = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            _seed(client)
+            missing = client.get(f"{BASE}/{SD_ID}/template-adoption")
+            assert missing.status_code == 404
+            detail = missing.json()["detail"]
+>           assert detail["can_retry"] is False
+                   ^^^^^^^^^^^^^^^^^^^
+E           TypeError: string indices must be integers, not 'str'
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:211: TypeError
+____________ test_string_false_is_rejected_for_a_boolean_bound_fact ____________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_string_false_is_rejected_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ca30ce0>
+
+    def test_string_false_is_rejected_for_a_boolean_bound_fact(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            before = _dump(database)
+            rejected = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:type:string",
+                decision_record_id="decision:tpl:type:string",
+                fact_updates={INTERIM_FLAG: "false"},
+            ))
+>           assert rejected.status_code == 409
+E           assert 422 == 409
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:231: AssertionError
+_____________________ test_null_fact_value_is_not_a_delete _____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_null_fact_value_is_not_a_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ca5a900>
+
+    def test_null_fact_value_is_not_a_delete(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            adopted = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:null:seed",
+                decision_record_id="decision:tpl:null:seed",
+                fact_updates={SPONSOR: "申办方A"},
+            ))
+>           assert adopted.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:256: AssertionError
+___________ test_alias_value_contradiction_needs_explicit_retirement ___________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_alias_value_contradiction0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cb63620>
+
+    def test_alias_value_contradiction_needs_explicit_retirement(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            alias_first = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:alias:a",
+                decision_record_id="decision:tpl:alias:a",
+                fact_updates={SPONSOR_ALIAS: "申办方甲"},
+            ))
+>           assert alias_first.status_code == 200, alias_first.json()
+E           AssertionError: {'detail': {'can_retry': False, 'message': '请求内容与当前工作台要求不符，本次操作未执行。', 'next_step': '请核对请求内容后重新提交。', 'responsible_area': '工作台处理'}}
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:280: AssertionError
+_____ test_retirement_intent_is_typed_and_restricted_to_confirmed_aliases ______
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_retirement_intent_is_type0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ca31700>
+
+    def test_retirement_intent_is_typed_and_restricted_to_confirmed_aliases(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            adopted = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:ret:seed",
+                decision_record_id="decision:tpl:ret:seed",
+                fact_updates={SPONSOR_ALIAS: "申办方甲"},
+            ))
+>           assert adopted.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:352: AssertionError
+______________ test_inactive_conditional_conflict_blocks_adoption ______________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_inactive_conditional_conf0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ca75a00>
+
+    def test_inactive_conditional_conflict_blocks_adoption(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            off = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:cond:off",
+                decision_record_id="decision:tpl:cond:off",
+                fact_updates={INTERIM_FLAG: False},
+            ))
+>           assert off.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:384: AssertionError
+____ test_unknown_condition_allows_partial_save_without_forced_completeness ____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_unknown_condition_allows_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cc9e600>
+
+    def test_unknown_condition_allows_partial_save_without_forced_completeness(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            # A fresh study whose interim flag is absent: the condition stays 未决.
+            created = _seed(client, SD_UNKNOWN)
+            partial = client.post(f"{BASE}/{SD_UNKNOWN}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:unknown:partial",
+                decision_record_id="decision:tpl:unknown:partial",
+                fact_updates={INTERIM_ADJUSTMENT: {"method": "alpha_spending"}},
+                study_definition_id=SD_UNKNOWN,
+            ))
+>           assert partial.status_code == 200, partial.json()
+E           AssertionError: {'detail': {'can_retry': False, 'message': '请求内容与当前工作台要求不符，本次操作未执行。', 'next_step': '请核对请求内容后重新提交。', 'responsible_area': '工作台处理'}}
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:413: AssertionError
+___________ test_same_key_with_different_template_intent_is_rejected ___________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_same_key_with_different_t0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cc9c2f0>
+
+    def test_same_key_with_different_template_intent_is_rejected(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            body = _template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:intent",
+                decision_record_id="decision:tpl:intent",
+                fact_updates={SPONSOR: "申办方A"},
+            )
+            first = client.post(f"{BASE}/{SD_ID}/decisions", json=body)
+>           assert first.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:442: AssertionError
+_________ test_concurrent_template_adoptions_cas_one_wins_one_retries __________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_concurrent_template_adopt0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cc6f9b0>
+
+    def test_concurrent_template_adoptions_cas_one_wins_one_retries(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            left = _template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:race:left",
+                decision_record_id="decision:tpl:race:left",
+                decision_key="decision:race:left",
+                fact_updates={SPONSOR: "申办方左"},
+            )
+            right = _template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:race:right",
+                decision_record_id="decision:tpl:race:right",
+                decision_key="decision:race:right",
+                fact_updates={SPONSOR: "申办方右"},
+            )
+            winner = client.post(f"{BASE}/{SD_ID}/decisions", json=left)
+>           assert winner.status_code == 200, winner.json()
+E           AssertionError: {'detail': {'can_retry': False, 'message': '请求内容与当前工作台要求不符，本次操作未执行。', 'next_step': '请核对请求内容后重新提交。', 'responsible_area': '工作台处理'}}
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:478: AssertionError
+____ test_legacy_apply_and_replay_stay_compatible_without_template_context _____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_legacy_apply_and_replay_s0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ce45220>
+
+    def test_legacy_apply_and_replay_stay_compatible_without_template_context(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            legacy = _apply_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:legacy",
+                fact_updates={"picos.population.age": "成人"},
+            )
+            applied = client.post(f"{BASE}/{SD_ID}/decisions", json=legacy)
+            assert applied.status_code == 200
+            adopted = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=applied.json()["revision_sha256"],
+                expected_revision=2,
+                idempotency_key="idem:tpl:legacy:after",
+                decision_record_id="decision:tpl:legacy:after",
+                fact_updates={SPONSOR: "申办方A"},
+            ))
+>           assert adopted.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:508: AssertionError
+__ test_revising_a_bound_fact_makes_related_confirmation_stale_not_unrelated ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_revising_a_bound_fact_mak0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cbdf0e0>
+
+    def test_revising_a_bound_fact_makes_related_confirmation_stale_not_unrelated(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            dose = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:rel:dose",
+                decision_record_id="decision:tpl:rel:dose",
+                decision_key="decision:tpl:rel:dose",
+                fact_updates={DOSE: "20 mg 每日一次"},
+                input_refs=[{"fact_path": DOSE}],
+            ))
+>           assert dose.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:533: AssertionError
+____ test_adopted_events_rebuild_identically_from_a_fresh_store_connection _____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-545/test_adopted_events_rebuild_id0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cbb0b90>
+
+    def test_adopted_events_rebuild_identically_from_a_fresh_store_connection(tmp_path, monkeypatch):
+        client, database = _admitted_client(tmp_path, monkeypatch)
+        with client:
+            created = _seed(client)
+            adopted = client.post(f"{BASE}/{SD_ID}/decisions", json=_template_body(
+                snapshot_sha256=created["revision_sha256"],
+                idempotency_key="idem:tpl:rebuild",
+                decision_record_id="decision:tpl:rebuild",
+                fact_updates={SPONSOR: "申办方A"},
+                input_refs=[{"fact_path": SPONSOR}],
+            ))
+>           assert adopted.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/protocol_v3/integration/test_template_fact_adoption.py:589: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_template_adoption_revises_an_existing_canonical_value
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_template_adoption_persists_snapshot_impact_and_identity_in_one_event
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_template_adoption_without_history_returns_not_found
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_string_false_is_rejected_for_a_boolean_bound_fact
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_null_fact_value_is_not_a_delete
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_alias_value_contradiction_needs_explicit_retirement
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_retirement_intent_is_typed_and_restricted_to_confirmed_aliases
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_inactive_conditional_conflict_blocks_adoption
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_unknown_condition_allows_partial_save_without_forced_completeness
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_same_key_with_different_template_intent_is_rejected
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_concurrent_template_adoptions_cas_one_wins_one_retries
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_legacy_apply_and_replay_stay_compatible_without_template_context
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_revising_a_bound_fact_makes_related_confirmation_stale_not_unrelated
+FAILED tests/protocol_v3/integration/test_template_fact_adoption.py::test_adopted_events_rebuild_identically_from_a_fresh_store_connection
+14 failed in 0.81s

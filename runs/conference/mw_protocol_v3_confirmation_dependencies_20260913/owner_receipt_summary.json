@@ -1,0 +1,36 @@
+{
+  "manifest_checks": {
+    "services/api/app/protocol_workflow/agent2/study_input.py": true,
+    "services/api/app/protocol_workflow/agent2/study_definition.py": true,
+    "services/api/app/protocol_workflow/agent2/clinical_worker.py": true,
+    "services/api/app/protocol_workflow/canonical/decision_inputs.py": true,
+    "services/api/app/protocol_workflow/application/service.py": true,
+    "services/api/app/protocol_workflow/application/commands.py": true,
+    "services/api/app/protocol_workflow/registries/dependency_graph.py": true,
+    "services/api/app/protocol_workflow/api/design.py": true,
+    "frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.jsx": true,
+    "tests/protocol_v3/test_decision_input_binding.py": true,
+    "tests/protocol_v3/test_regimen_confirmed_study_input.py": true,
+    "tests/protocol_v3/test_regimen_adoption_command.py": true,
+    "tests/protocol_v3/integration/test_regimen_adoption_api.py": true,
+    "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json": true
+  },
+  "session_id": "sess_af480def-a940-4ef6-ac3d-ca4707936846",
+  "returncode": 0,
+  "duration_seconds": 743.807,
+  "stderr": "",
+  "runtime_identity": {
+    "route_provider": "zcode",
+    "runtime_provider": "anthropic",
+    "requested_model": "GLM-5.3",
+    "request_model": "GLM-5.3",
+    "response_model": "GLM-5.3",
+    "requested_effort": "max",
+    "observed_effort": "max",
+    "verified": true
+  },
+  "fallback": null,
+  "report_sha256": "17bedfa96fca996c656a3c9140d9af59c9c054c604f92177806937d0410496fc",
+  "owner_decision": "Two bindings supported as engineering design. Do not adopt unreviewed medical irrelevant scopes. No final product or medical acceptance.",
+  "test_policy_transition": "Dispatched before latest user instruction; reviewer reported nine tests and scratch reproduction; no live steering was available. Future dispatches prohibit stage tests."
+}

@@ -1,0 +1,195 @@
+{
+  "agent": "grok",
+  "requested_agent": "grok",
+  "role_id": "evidence_single_object",
+  "requested_provider": "grok-build",
+  "requested_model": "grok-4.6",
+  "requested_effort": "high",
+  "explicit_route": false,
+  "requested_route_warnings": [],
+  "scheduled_route_manifest": "context/mw_protocol_v3_chapter_chain_review_20260913_evidence_single_object_route_manifest.json",
+  "schedule_reconciliation": {
+    "enabled": true,
+    "packet_period": "peak",
+    "active_period": "peak",
+    "dispatch_period": "off_peak",
+    "changed": false,
+    "session_policy": "preserve_started_session; re-resolve_before_new_session",
+    "reason": "existing session is resumed without route switching"
+  },
+  "schedule_reconciliation_events": [],
+  "schedule_manifest_error": null,
+  "effective_agent": "grok",
+  "effective_provider": "grok-build",
+  "effective_model": "grok-4.6",
+  "effective_effort": "high",
+  "route_constraints": {
+    "policy": "live-route-manifest-v1",
+    "explicit_route": false,
+    "primary_route_changed": false,
+    "route_rewritten": false,
+    "constraint_events": [],
+    "events": [],
+    "schedule": {
+      "policy": "live-route-manifest-v1",
+      "skipped": true,
+      "reason": "existing session is being resumed without route switching"
+    },
+    "primary_replaced": false,
+    "requested_primary": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-6-astra",
+          "effort": "low"
+        }
+      ]
+    },
+    "effective_primary": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high"
+    }
+  },
+  "round_count": 1,
+  "estimated_input_context_tokens": 2319,
+  "round_policy": "single initial pass; Codex decides whether to add same-session follow-ups",
+  "fallback": null,
+  "declared_fallback_candidates": [
+    {
+      "agent": "pi",
+      "provider": "cursor",
+      "model": "cursor-grok-4.6",
+      "effort": "high"
+    },
+    {
+      "agent": "codex-subagent",
+      "provider": "codex",
+      "model": "gpt-6-astra",
+      "effort": "low"
+    }
+  ],
+  "fallback_candidates": [
+    {
+      "agent": "pi",
+      "provider": "cursor",
+      "model": "cursor-grok-4.6",
+      "effort": "high"
+    },
+    {
+      "agent": "codex-subagent",
+      "provider": "codex",
+      "model": "gpt-6-astra",
+      "effort": "low"
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "command": [
+        "grok",
+        "--no-auto-update",
+        "--no-memory",
+        "--permission-mode",
+        "bypassPermissions",
+        "--max-turns",
+        "128",
+        "--cwd",
+        "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313",
+        "--output-format",
+        "json",
+        "--no-plan",
+        "--always-approve",
+        "--reasoning-effort",
+        "high",
+        "--model",
+        "grok-4.6",
+        "--resume",
+        "d4ffd0ff-fdc8-4768-8ce7-9789a48ddb44",
+        "-p",
+        "Delegated mode. You are a bounded worker, not the user-facing agent.\nIgnore home AGENTS.md / SOUL.md operating principles except: do not leak secrets; do not write outside Hard boundaries; do not claim final acceptance.\nFollow only this prompt: Hard boundaries, assigned work, and output schema.\nDo not start conferences, do not rediscover tools, and do not scan the internet unless this assignment says so.\nDo not read `/Users/smkzw/.codex/AGENTS.md` or `/Users/smkzw/.hermes/SOUL.md`.\nRead a project `AGENTS.md` only if it appears in the initial read set.\n\nYou are Grok Build running inside a Codex-chaired conference workflow.\n\nUse the Grok Build CLI/model assigned below. Grok Build is a separate Agent from any Hermes provider or Hermes-internal Grok route. Do not use Hermes provider semantics.\n\nConference role:\n- Role id: `evidence_single_object`\n- Agent/provider/model assigned by Codex: `grok` / `grok-build` / `grok-4.6`\n- Role description: 重要证据审阅\n- Conference mode: `serial`\n\nHard boundaries:\n- Work only inside the runner-provided current working directory (`.`), which the runner binds to the authorized workspace.\n- Do not read or modify production paths unless Codex explicitly added them to the read list.\n- Do not edit source files unless Codex explicitly authorizes an edit round.\n- Tools are available and must not be disabled. Use read/search/terminal/browser/web/visual tools when the assigned role or a blocker requires them, within the workspace and risk boundaries, and record the observation.\n- Do not perform final visual/PPT/browser acceptance unless explicitly assigned; Codex remains the final authority.\n- Runner-managed report path: `runs/conference/mw_protocol_v3_chapter_chain_review_20260913/followup_01/report.md`. Never invoke write/edit tools\n  to create or update this report file; return the complete report in your\n  final assistant response and let the bounded runner persist it. Do not create\n  sibling output files.\n\nInitial read set:\n- `context/mw_protocol_v3_chapter_chain_review_20260913_conference_context.md`\n- `plans/codex_main_venue_mw_protocol_v3_chapter_chain_review_20260913.md`\n\nThe initial read set is not a blanket prohibition on additional tool calls or evidence. If more context is required, obtain it with the available tools, explain why, and record what was read or changed.\n\nObjective:\n独立审阅Agent③章节候选链：当前研究与条件合同绑定、完整来源身份、SQLite恢复与单次同模型结构纠错。只读代码，不作为医学或Word验收，不递归派发，不调用产品模型。\n\nTask:\nRun an independent bounded chapter-chain pass for your assigned role. Start with one complete bounded advisory pass in this session. Codex may continue this same session with targeted follow-up prompts when quality review identifies omissions, contradictions, missing evidence, or a justified rerun need. Do not claim final Codex authority.\n\nAct as an active peer, not a passive answerer. Before drafting, independently audit the objective, source list, constraints, edge cases, and likely user/reviewer objections. Surface at least the highest-impact defect or uncertainty you can find, propose a concrete alternative or remediation, and challenge assumptions even when the initial plan appears plausible. If a Codex decision or missing input blocks a conclusion, ask a precise bounded question, explain why it matters, and state the safe provisional path; Codex may answer in a same-session follow-up. Before returning, include your most important objections, proposed solutions, decision points, and bounded questions for Codex; do not merely summarize the prompt. Do not wait for Codex to enumerate every defect for you.\n\nBudget and completion policy: use tools when they materially advance the work; tools remain enabled. Avoid duplicate broad exploration and preserve a compact evidence trail. The runner tracks an input prompt limit of 240000 chars, an output soft limit of 120000 chars, and an output hard limit of 320000 chars. Always return the complete schema before ending. If the internal step or output budget is reached, state the exact evidence, blocker, and resume point; Codex will request same-session completion before fallback. Slow output is pending, not failure.\n\nAssigned fallback chain (runner-owned; do not skip silently):\n- `pi` / `cursor` / `cursor-grok-4.6` / effort high\n- `codex-subagent` / `codex` / `gpt-6-astra` / effort low\n\nOutput schema:\n1. `# Conference Output: mw_protocol_v3_chapter_chain_review_20260913 - evidence_single_object`\n2. `## Output`\n\nQuality gates:\n- Preserve evidence, inference, recommendation, and uncertainty as separate categories.\n- Do not claim final clinical/regulatory/visual/current-web authority.\n- Do not collapse other model perspectives into your own unless your role is chair/main reviewer and the files are explicitly in the read list.\n- Slow or missing participant output is `pending`, not failed, unless it meets the conference failure rule.\n- One conference pass is this complete prompt; it does not limit the Agent to one internal tool-calling turn. The `--max-turns` budget controls internal Agent turns and must remain above 1.\n- This role starts with one complete pass. Additional rounds are optional and must remain in this same Grok Build session when Codex requests them.\n\n## Exact review scope and read set\nReview the current frozen files listed in runs/conference/mw_protocol_v3_chapter_chain_review_20260913/followup_01/artifact_manifest.json and relevant direct definitions they import. Do not use previous model review reports as evidence. Read current actual code/tests. This is engineering review, NOT clinical approval. Product goal: complete applicable II/III manuscript, retained original sources and typed study facts, structured tables and paragraphs, original receipts and recoverability. No new security engineering. No browser/Word acceptance assigned. No model/provider/product calls. No services. No subagents, recursive delegation, or memory writes/search.\n\nAssess: (1) ordered candidate versus content QC/admission distinction, (2) bound study id/revision/hash and effective applicability contract identity, (3) complete evidence text and ID universe versus unsupported medical claims, (4) original malformed response retained with exact structural error and one same-model correction, (5) concurrent/reopened/unknown-outcome behavior, (6) declared skill/schema/graph registration consistency, (7) product wiring remains unmounted and candidate-only: do not treat documented future UI/whole-manuscript/Word absence itself as newly implemented defect. Identify concrete present code defects or integration preconditions; prioritize user-visible functional loss. Do not fix source.\n\nTests may run using runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python and PYTHONPATH=services/api:.:tests:tests/protocol_v3:tests/protocol_v3/integration. Set PYTHONDONTWRITEBYTECODE=1, pytest -p no:cacheprovider and --basetemp=runs/conference/mw_protocol_v3_chapter_chain_review_20260913/followup_01/scratch/pytest (create this new scratch only as needed). Limit tests to decisive cases; these three are directly relevant: tests/protocol_v3/test_chapter_draft_request.py, tests/protocol_v3/test_chapter_draft_workflow.py, tests/protocol_v3/test_chapter_product_factory.py. Do not rerun historical successful probe: fake HTTP tests reuse its prior receipt, no real credentials should be resolved. Only allowed tool writes are scratch under this review directory; final report is persisted by runner. Do not run cleanup/archive, change fixtures, xfail, weaken expectations, or inspect credentials.\n\nReport each finding with precise file/line, trigger, observed/expected behavior, evidence and minimal remedy. Distinguish reproduced defects from hypotheses and unavailable checks. If no defects found, state the bounded evidence rather than inventing a defect. Do not wait for user questions; return the report.\n\n## Owner-requested targeted same-session follow-up\nVerify F1-F4 against current exact files, no source edits, no new subagent. The original report is retained. Owner decisions: F1 preserve Pydantic msg as detail; F2 enforce nested cell lineage and note source refs at read_chapter_draft generated-output boundary, preserving original general StructuredTable/ordered carrier locator semantics; F3 use existing applicability snapshot before producing requests for excluded whole chapters; F4 product factory requires bound inputs, while explicitly low-level synthetic transport tests remain unbound. Check whether each remedy actually holds; challenge edge cases. Also registry output URI now identifies the actual shipped ordered candidate JSON schema (new schema file) and key_basis names actual identity inputs. Verify same-source schema equality if relevant. No claimed content/medical/Word acceptance.\n\nRun decisive targeted tests, preserving negative cases. In addition to the prior three test modules, tests/protocol_v3/test_ordered_chapter_draft.py is now explicitly allowed to verify unchanged legacy carrier. Output bounded findings and residual integration requirements. The owner is implementing basic research-information UI/API elsewhere; those files are not frozen here and not part of this review. Do not inspect that concurrent task or treat it as reviewed. Return terminal report rather than waiting for permission.\n"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"text\": \"针对 F1–F4 做同会话核验：先读 followup 冻结清单和当前代码，再对照 owner 决策检查补救是否真正落地。清单显示若干文件哈希已变，`ordered_draft.py` 未变。接着对照 owner 决策核验这些改动。补救已写进代码。接下来跑指定测试，并核验 schema 同源、F2 定位语义与 F3 未决/排除边界。F1–F4 补救已在当前冻结文件落地。27 项测试通过；schema 与运行时同源。下面给出有界核验结论和残留集成要求。\\n\\n# Conference Output: mw_protocol_v3_chapter_chain_review_20260913 - evidence_single_object\\n\\n## Output\\n\\n同会话 follow-up：按 owner 决策核验 F1–F4 是否在**当前冻结文件**上真正成立。只读；未改源码；未调用产品模型；未查看并行 UI/API 任务。`followup_01/artifact_manifest.json` 14 文件 SHA256 一致。`ordered_draft.py` 与 `test_ordered_chapter_draft.py` 哈希相对初审未变（载体语义保留）。\\n\\n指定测试：`test_chapter_draft_request.py`、`test_chapter_draft_workflow.py`、`test_chapter_product_factory.py`、`test_ordered_chapter_draft.py`  \\n**27 passed / 1.23s**（含负例：dangling detail、表内虚构 lineage/note refs、整章 `not_applicable`、产品路径拒绝未绑定输入）。未重跑历史 probe，未解析真实凭证。\\n\\n本轮**不声称**内容 QC / 医学 / Word 验收。\\n\\n---\\n\\n### 分类\\n\\n- **证据**：当前文件、测试、只读脚本\\n- **推断**：由证据得出、指定测试未覆盖的结论\\n- **建议**：残留集成要求或 hardening，不实施\\n- **不确定**：未跑项\\n\\n---\\n\\n### F1 — Pydantic `msg` 作为 `detail`：**成立**\\n\\n**证据**\\n\\n- `subgraph.py:101-103`：`ValidationError` 映射含 `\\\"detail\\\": item[\\\"msg\\\"]`。\\n- `subgraph.py:104-105`：`ChapterDraftReferenceError` 单独处理，带 `code` / `location` / `detail`；该类是 `ValueError` 子类（`chapter_draft.py:23-28`），`except` 顺序在通用 `ValueError` 之前，不会被收成仅有 code 的条目。\\n- `test_chapter_draft_workflow.py` `malformed=='dangling'`：断言 `'evidence:missing' in result['errors'][0]['detail']`，且原始 `content` 仍保留。\\n- 只读脚本按同一映射：`detail` 为 `dangling evidence_refs not present in known_evidence_ids: ['evidence:missing'] ...`；`location` 仍为 `''`（Pydantic `loc=()`）。\\n\\n**推断**：JSON 非法路径仍有精确行列；块级悬空引用现在有可读 `detail`。空 `location` 不阻碍纠错阅读 `detail`。\\n\\n**未改**：通用 `ValueError`（如 `chapter_draft_empty`）仍只有 `code`。Owner 要求的是 Pydantic `msg`，不是所有 ValueError。表嵌套引用走 `ChapterDraftReferenceError`，有 location+detail。\\n\\n**残留**：表嵌套错误穿过完整 generate→validate→纠错 HTTP 的路径没有单独 pytest；handler 代码顺序正确。属覆盖缺口，不是 F1 失败。\\n\\n---\\n\\n### F2 — 生成输出边界强制嵌套 lineage / note source_refs；载体 locator 语义保留：**成立，有集成摩擦**\\n\\n**证据（门在 `read_chapter_draft`，不在载体）**\\n\\n- `ordered_draft.py` 哈希未变。只读脚本：载体仍接受单元格 `provenance_lineage=['evidence:invented']`。\\n- `test_ordered_chapter_draft.py` 9 passed（遗留 carrier 未回退）。\\n- `chapter_draft.py:88-99`：仅在 `model_validate` 之后扫描 `cell.provenance_lineage` 与 `note.source_refs`；不在宇宙内则 `ChapterDraftReferenceError`。\\n- `test_generated_table_nested_references`（cell/note）负例：`chapter_table_reference_unknown`。\\n- `source_locator` 未纳入宇宙门。只读脚本：表/单元格 `source_locator='invented:...'` 仍通过。符合「保留一般 StructuredTable/ordered 载体的 locator 语义」。\\n\\n**挑战（最高影响残留）**\\n\\n历史 `StructuredTableNote.source_refs` 是 **locator**（`_2x2_table` 默认 `['docx:t1:note']`），不是 `evidence_unit_id`。生成边界现在把 `source_refs` **全部**当作证据 ID。\\n\\n只读脚本：仅提供 `evidence:e1`/`evidence:e2`、保留默认 note `source_refs=['docx:t1:note']` → `chapter_table_reference_unknown` at `blocks.0.table.notes.0.source_refs`。\\n\\nF2 正例测试通过的办法是**额外造一个** `evidence_unit_id='docx:t1:note'` 的 EvidenceUnit。这是测试迁就，不是模型自然输出。\\n\\n指令同时要求「引用仅用 evidence_unit_id」和「完整保留表格脚注和引用定位」。若模型把脚注定位写进 `source_refs`（载体旧语义），结构门会失败并进入一次纠错。Locator 应写在仍未设门的 `source_locator` / `marker_source_locator`。\\n\\n**建议（集成，非否决 F2）**\\n\\n- 生成表：`provenance_lineage` 与 `note.source_refs` 只放输入 `evidence_unit_id`；docx 定位放 `source_locator` 类字段。\\n- 不要把 locator 字符串登记成假 evidence unit（测试可以，产品路径不行）。\\n- 空字符串 lineage 同样拒绝（已复现 `Reference '' is not in the supplied evidence IDs`）——正确 fail-closed。\\n\\n**不确定**：未跑表嵌套失败的同模型纠错 HTTP（F1 dangling 段级已覆盖 detail 转发）。\\n\\n---\\n\\n### F3 — 整章排除前使用现有适用性快照：**成立（排除 = `not_applicable`）**\\n\\n**证据**\\n\\n- `prepare_study_chapter`（`chapter_draft.py:105-117`）先 `build_applicability_snapshot((entry.contract,), ...)`，`entries[0].status.value == 'not_applicable'` 则 `chapter_not_applicable`，否则才 `bind_applicable_chapter`。\\n- `test_whole_chapter_not_applicable_does_not_create_a_writing_request`：ECOG 事实为 false → 该错误。\\n- 适用章（interim false）仍能编译（既有 `test_study_chapter_preparation_uses_current_catalog_and_actual_study`）。\\n\\n**边角（fail-closed，但不是 `chapter_not_applicable`）**\\n\\n- Owner 决策是 **excluded whole chapters**。快照 `CONDITIONAL`（缺触发事实）**不会**在 snapshot 门被拒。\\n- 只读：`v2_n_16_x1` 缺 ECOG 事实 → `ApplicabilityResolutionError: conditional_applicability_unresolved:...`（bind 路径）。interim 章同样。无写作请求。\\n- 每次 `prepare_study_chapter` **现场重建** snapshot（`created_at=study.updated_at`），不绑定已持久化的 `applicability_snapshot_id`。用的是现有构建函数，不是调用方持有的快照对象。\\n\\n**建议**\\n\\n- 调用方把 `chapter_not_applicable` 与 `ApplicabilityResolutionError` 都当「不要发写作请求」。\\n- 不要对 registry 全节点盲目编译；排除章现在会 typed 失败。\\n- 若需要与已批准 snapshot 字节级一致，需另接 snapshot id（当前未做）。属后续集成，不是 F3 失败。\\n\\n---\\n\\n### F4 — 产品工厂要求绑定输入；低层合成运输测试保持未绑定：**成立**\\n\\n**证据**\\n\\n- `product.py:37-39`：`require_bound_input=True`。\\n- `coordinator.py:13, 25-30`：默认 `False`；为 True 且 `schema_version != protocol-v3-bound-chapter-input.v1` → `chapter_bound_input_required`。Bound 输入仍核 project/study/hash。\\n- `test_chapter_product_factory`：`correction is False` 时未绑定 `start` 被拒；绑定输入照常执行/重开。\\n- `test_chapter_draft_workflow` 仍用 `inputs()` 未绑定 `ChapterSkillInput`，coordinator 默认不要求 bound；SQLite 恢复负例仍在。\\n\\n**残留**\\n\\n- `prepare_chapter_draft` 仍接受未绑定 `ChapterSkillInput`。产品闸在 factory/coordinator 标志，不在 prepare。\\n- 手写 `ChapterDraftCoordinator(require_bound_input=False)` 仍能对未绑定材料 `start`。产品路径必须走 factory。\\n- 产品 coordinator **不能** `read` 一条未绑定 run（`run_id()` 先抛 `chapter_bound_input_required`）。低层与产品身份空间按设计分开。\\n\\n---\\n\\n### 注册：输出 URI 与 `key_basis`\\n\\n**证据**\\n\\n- `skill_registry.json`：`output_schema_ref=https://protocol-v3.local/schemas/ordered-chapter-draft-candidate.v1.json`；新文件在 `config/medical_writing/protocol_v3/schemas/ordered-chapter-draft-candidate.v1.json`。\\n- **同源相等**：文件 JSON == `OrderedChapterDraftCandidate.model_json_schema()` == `prepare_chapter_draft` payload 的 `output_schema`（只读 `SCHEMA_EQUAL True` / `PAYLOAD_SCHEMA_EQ_FILE True`）。\\n- `key_basis`：`chapter-draft:project+branch+study-id+study-sha256+complete-input-sha256`，与 `run_id` 材料（project、branch、study id、study sha、`input_sha256`）一致。`run_id` 另含字面量 `chapter-draft.request.v1`（命名空间，不是身份输入遗漏）。\\n\\n**残留（非本轮 output URI 决策失败）**\\n\\n- `input_schema_ref` 仍为 `chapter-draft-input.v1.json`，**该路径无文件**（`INPUT_SCHEMA_FILE_EXISTS False`）。Zhipu 路径不按 URI 约束 JSON Schema（提示里是 payload 内 schema）。其他 harness 若解析 input URI 会找不到文件。\\n- 章级 `chapter_skills/*.json` 仍声明 `ChapterSkillOutput`（并行旧路径；`ordered_draft.py` 未改）。不把未挂载整稿/Word/并行 UI 算新缺陷。\\n- `acceptance_test_ids` 仍非 pytest 名。\\n\\n---\\n\\n### 其他轴（相对初审，无回归）\\n\\n| 轴 | 本轮 |\\n|---|---|\\n| 候选 vs QC | 仍 `needs_content_review` / `needs_structure_correction`；`validation_scope=structure_and_input_identity`；不写 study/document。dangling 负例保留。 |\\n| 重开 | 产品三参仍：执行前无凭证/HTTP；纠错保留原文；`still_invalid` → `can_resume is False`。 |\\n| 未挂载 | factory 仍仅测试+`agent3/product.py`。并行 UI/API **未审**。 |\\n\\n---\\n\\n### 发现 vs 残留\\n\\n**无新的用户可见功能损失否决 F1–F4。** 四项补救在声明边界上成立。\\n\\n残留集成要求（优先）：\\n\\n1. **生成表字段约定**：`provenance_lineage` / `note.source_refs` = 输入 `evidence_unit_id`；定位字符串只用 `source_locator` 类字段。否则 `chapter_table_reference_unknown`（已复现）。\\n2. 产品执行只走 `create_product_chapter_factory`（或显式 `require_bound_input=True`）。\\n3. `prepare_study_chapter`：`not_applicable` → `chapter_not_applicable`；未决 → `ApplicabilityResolutionError`。两者都不要发写作请求。\\n4. Input URI 仍无 schema 文件；output URI 已与 shipped 候选 schema 同源。\\n5. `resume` 仍需要 `artifact_store`；workflow 默认 coordinator 无 store（低层、非产品）。\\n\\n---\\n\\n### 异议、方案、决策点、有界问题\\n\\n**异议**\\n\\n- F2 正例靠把 locator `docx:t1:note` 注册成 evidence id。真实模型若按旧表语义把脚注定位写入 `source_refs`，会稳定打进结构纠错。这是边界选择，不是门没装上。\\n- F3 只挡 snapshot `not_applicable`，未决靠 bind 失败。符合「excluded」，但错误码不统一。\\n- 产品绑定闸可被默认 coordinator 绕过——与 owner「低层测试保持未绑定」一致，不能当成全局不变量。\\n\\n**方案**\\n\\n- 写作提示/下游解析明确：嵌套引用字段只允许 evidence id。\\n- 可选：`prepare_study_chapter` 对 snapshot `conditional` 给 typed `chapter_applicability_unresolved`（非必须，已 fail-closed）。\\n- 不要改 `ordered_draft.py` 来「修」locator；那会违反本轮载体不变决策。\\n\\n**决策点（若 Codex 还要收紧）**\\n\\n1. 生成输出是否应对 `note.source_refs` 与 `provenance_lineage` 区别对待（仅 lineage 当证据 ID，source_refs 保持 locator）？当前两者都当证据 ID。\\n2. 未决整章是否应在 snapshot 门拒绝，还是维持 bind 错误？\\n\\n**有界问题**\\n\\n- Q1：是否接受「生成 `source_refs` 必须是 evidence id，locator 走 `source_locator`」作为产品约定？  \\n  **暂定**：接受；F2 按 owner 边界成立。采用前把该约定告诉写作提示，避免无意义纠错循环。\\n- Q2：并行 UI/API 是否调用 `prepare_study_chapter` / factory？  \\n  **暂定**：本冻结集未包含那些文件，**未审**。若 UI 直接 `prepare_chapter_draft`+未绑定 coordinator，F3/F4 不会自动生效。\\n\\nCodex 保留最终接受权。\",\n  \"stopReason\": \"end_turn\",\n  \"sessionId\": \"d4ffd0ff-fdc8-4768-8ce7-9789a48ddb44\",\n  \"requestId\": \"eb629140-6245-42d0-8270-4b40ae41df44\",\n  \"thought\": \"The user wants me to do a targeted follow-up review of F1-F4 against current exact files. This is a conference follow-up. Let me:\\nThe hashes have changed for several files compared to the original review:Good, I can see the F1-F4 remedies in the code. Now I need to:I have a good picture. Let me now:\\nThat sounds like a solid plan for tightening up the edge cases. The key insight here is that we're deliberately keeping the original locator semantics for `source_refs` (like `docx:table:1:note`) while still enforcing the stricter evidence ID rules for provenance_lineage. By adding those synthetic evidence units in the test (`('evidence:e1','evidence:e2','docx:t1:note')`), we're bridging the gap without breaking the carrier's flexibility.\\n\\nThe tension you flagged is real—StructuredTable historically treated those as locators, but the generated-output boundary wants them validated as evidence IDs. One way to resolve it cleanly would be to update the validation logic in `read_chapter_draft` to accept either evidence IDs or locator-style strings, but only flag the latter as \\\"unresolved\\\" rather than outright rejecting them. That way, tables that faithfully copy footnote locators stay valid, and we can still catch malformed provenance_lineage entries.\\n\\n Another thing to watch: duplicates in provenance_lineage. If the same evidence ID appears twice, the check should probably just skip the second occurrence instead of failing on the first unknown. That keeps the logic simple but still catches real errors.\\n\\nOverall, this feels like a well-scoped edge case rather than a defect. The 2x2 table test is a clever workaround, but it does highlight that callers need to be aware of the evidence_unit_id requirement when generating tables with note.source_refs. If we expose a helper like `ensure_evidence_unit_id` in the carrier, it could make integration smoother.\\n\\nWhat do you think—should we 1) relax the check to accept locators as \\\"unresolved\\\" instead of rejecting, or 2) keep it strict and document the synthetic unit trick for tests? Either way, the F3 side looks solid too—conditional chapters are correctly left open, and the fail-closed path for unresolved rules is a nice touch   .  Let me know if you want to sketch out the relaxed check or run the schema equality check next.27 passed. That's 14 previous + new tests:Schema equality is True. The script died on a silly generator. Let me rerun the rest without that line.F3_MISSING_FACTS: ECOG chapter with missing presence fact raises ApplicabilityResolutionError from bind_applicable_chapter, NOT from snapshot not_applicable.\\nThe core issue here is that `CONDITIONAL` presence rules are treated as \\\"fail-closed\\\" at the `bind_applicable_chapter` gate rather than being surfaced as a first-class `chapter_applicability_unresolved` state. That means even when the snapshot correctly marks the rule as `CONDITIONAL`, the chapter still gets rejected before any writing request is generated. The only path that currently produces a writing request is when the presence predicate resolves to `TRUE` or `FALSE` (i.e., `not_applicable` or `applicable`). Anything unresolved—including `CONDITIONAL`—short-circuits the flow.\\n\\nFor the F 3_MISSING_FACTS case (v2_n_16_x1 with `study.synthetic=True`), the missing `appendix.ecog_applicability_decision_record` fact makes the predicate unresolved, so the snapshot is `CONDITIONAL` but the bind step still raises. The same pattern applies to any chapter whose presence rule depends on a missing fact.\\n\\nOn the F2 side, the integration requirement is clear: generated tables must use evidence_unit_ids in `note.source_refs` and `provenance_lineage`, while carrier locators stay in `source_locator` / `marker_source_locator`. If the model copies locator strings into `note.source_refs `, the correction fires `chapter_table_reference_unknown`. That friction is intentional—owner wants the gate at `read_chapter_draft` and carrier semantics unchanged.\\n\\nThe input_schema_ref URI pointing to a non-existent file is a registration detail, not a functional regression.\\n\\nSo the actionable takeaway is: treat `CONDITIONAL `as unresolved at the snapshot gate rather than letting it reach bind. That would give us a clean `chapter_applicability_unresolved` disposition instead of the current silent fail-closed behavior.\",\n  \"usage\": {\n    \"input_tokens\": 34817,\n    \"cache_read_input_tokens\": 1127296,\n    \"cache_creation_input_tokens\": 0,\n    \"output_tokens\": 14975,\n    \"reasoning_tokens\": 10968,\n    \"total_tokens\": 1177088\n  },\n  \"num_turns\": 7,\n  \"total_cost_usd\": 0.24586488,\n  \"total_cost_usd_ticks\": 2458648800,\n  \"modelUsage\": {\n    \"grok-4.6-build\": {\n      \"inputTokens\": 34817,\n      \"outputTokens\": 14975,\n      \"cacheReadInputTokens\": 1127296,\n      \"cacheCreationInputTokens\": 0,\n      \"modelCalls\": 7,\n      \"costUSD\": 0.24586488\n    }\n  }\n}\n",
+      "output": "针对 F1–F4 做同会话核验：先读 followup 冻结清单和当前代码，再对照 owner 决策检查补救是否真正落地。清单显示若干文件哈希已变，`ordered_draft.py` 未变。接着对照 owner 决策核验这些改动。补救已写进代码。接下来跑指定测试，并核验 schema 同源、F2 定位语义与 F3 未决/排除边界。F1–F4 补救已在当前冻结文件落地。27 项测试通过；schema 与运行时同源。下面给出有界核验结论和残留集成要求。\n\n# Conference Output: mw_protocol_v3_chapter_chain_review_20260913 - evidence_single_object\n\n## Output\n\n同会话 follow-up：按 owner 决策核验 F1–F4 是否在**当前冻结文件**上真正成立。只读；未改源码；未调用产品模型；未查看并行 UI/API 任务。`followup_01/artifact_manifest.json` 14 文件 SHA256 一致。`ordered_draft.py` 与 `test_ordered_chapter_draft.py` 哈希相对初审未变（载体语义保留）。\n\n指定测试：`test_chapter_draft_request.py`、`test_chapter_draft_workflow.py`、`test_chapter_product_factory.py`、`test_ordered_chapter_draft.py`  \n**27 passed / 1.23s**（含负例：dangling detail、表内虚构 lineage/note refs、整章 `not_applicable`、产品路径拒绝未绑定输入）。未重跑历史 probe，未解析真实凭证。\n\n本轮**不声称**内容 QC / 医学 / Word 验收。\n\n---\n\n### 分类\n\n- **证据**：当前文件、测试、只读脚本\n- **推断**：由证据得出、指定测试未覆盖的结论\n- **建议**：残留集成要求或 hardening，不实施\n- **不确定**：未跑项\n\n---\n\n### F1 — Pydantic `msg` 作为 `detail`：**成立**\n\n**证据**\n\n- `subgraph.py:101-103`：`ValidationError` 映射含 `\"detail\": item[\"msg\"]`。\n- `subgraph.py:104-105`：`ChapterDraftReferenceError` 单独处理，带 `code` / `location` / `detail`；该类是 `ValueError` 子类（`chapter_draft.py:23-28`），`except` 顺序在通用 `ValueError` 之前，不会被收成仅有 code 的条目。\n- `test_chapter_draft_workflow.py` `malformed=='dangling'`：断言 `'evidence:missing' in result['errors'][0]['detail']`，且原始 `content` 仍保留。\n- 只读脚本按同一映射：`detail` 为 `dangling evidence_refs not present in known_evidence_ids: ['evidence:missing'] ...`；`location` 仍为 `''`（Pydantic `loc=()`）。\n\n**推断**：JSON 非法路径仍有精确行列；块级悬空引用现在有可读 `detail`。空 `location` 不阻碍纠错阅读 `detail`。\n\n**未改**：通用 `ValueError`（如 `chapter_draft_empty`）仍只有 `code`。Owner 要求的是 Pydantic `msg`，不是所有 ValueError。表嵌套引用走 `ChapterDraftReferenceError`，有 location+detail。\n\n**残留**：表嵌套错误穿过完整 generate→validate→纠错 HTTP 的路径没有单独 pytest；handler 代码顺序正确。属覆盖缺口，不是 F1 失败。\n\n---\n\n### F2 — 生成输出边界强制嵌套 lineage / note source_refs；载体 locator 语义保留：**成立，有集成摩擦**\n\n**证据（门在 `read_chapter_draft`，不在载体）**\n\n- `ordered_draft.py` 哈希未变。只读脚本：载体仍接受单元格 `provenance_lineage=['evidence:invented']`。\n- `test_ordered_chapter_draft.py` 9 passed（遗留 carrier 未回退）。\n- `chapter_draft.py:88-99`：仅在 `model_validate` 之后扫描 `cell.provenance_lineage` 与 `note.source_refs`；不在宇宙内则 `ChapterDraftReferenceError`。\n- `test_generated_table_nested_references`（cell/note）负例：`chapter_table_reference_unknown`。\n- `source_locator` 未纳入宇宙门。只读脚本：表/单元格 `source_locator='invented:...'` 仍通过。符合「保留一般 StructuredTable/ordered 载体的 locator 语义」。\n\n**挑战（最高影响残留）**\n\n历史 `StructuredTableNote.source_refs` 是 **locator**（`_2x2_table` 默认 `['docx:t1:note']`），不是 `evidence_unit_id`。生成边界现在把 `source_refs` **全部**当作证据 ID。\n\n只读脚本：仅提供 `evidence:e1`/`evidence:e2`、保留默认 note `source_refs=['docx:t1:note']` → `chapter_table_reference_unknown` at `blocks.0.table.notes.0.source_refs`。\n\nF2 正例测试通过的办法是**额外造一个** `evidence_unit_id='docx:t1:note'` 的 EvidenceUnit。这是测试迁就，不是模型自然输出。\n\n指令同时要求「引用仅用 evidence_unit_id」和「完整保留表格脚注和引用定位」。若模型把脚注定位写进 `source_refs`（载体旧语义），结构门会失败并进入一次纠错。Locator 应写在仍未设门的 `source_locator` / `marker_source_locator`。\n\n**建议（集成，非否决 F2）**\n\n- 生成表：`provenance_lineage` 与 `note.source_refs` 只放输入 `evidence_unit_id`；docx 定位放 `source_locator` 类字段。\n- 不要把 locator 字符串登记成假 evidence unit（测试可以，产品路径不行）。\n- 空字符串 lineage 同样拒绝（已复现 `Reference '' is not in the supplied evidence IDs`）——正确 fail-closed。\n\n**不确定**：未跑表嵌套失败的同模型纠错 HTTP（F1 dangling 段级已覆盖 detail 转发）。\n\n---\n\n### F3 — 整章排除前使用现有适用性快照：**成立（排除 = `not_applicable`）**\n\n**证据**\n\n- `prepare_study_chapter`（`chapter_draft.py:105-117`）先 `build_applicability_snapshot((entry.contract,), ...)`，`entries[0].status.value == 'not_applicable'` 则 `chapter_not_applicable`，否则才 `bind_applicable_chapter`。\n- `test_whole_chapter_not_applicable_does_not_create_a_writing_request`：ECOG 事实为 false → 该错误。\n- 适用章（interim false）仍能编译（既有 `test_study_chapter_preparation_uses_current_catalog_and_actual_study`）。\n\n**边角（fail-closed，但不是 `chapter_not_applicable`）**\n\n- Owner 决策是 **excluded whole chapters**。快照 `CONDITIONAL`（缺触发事实）**不会**在 snapshot 门被拒。\n- 只读：`v2_n_16_x1` 缺 ECOG 事实 → `ApplicabilityResolutionError: conditional_applicability_unresolved:...`（bind 路径）。interim 章同样。无写作请求。\n- 每次 `prepare_study_chapter` **现场重建** snapshot（`created_at=study.updated_at`），不绑定已持久化的 `applicability_snapshot_id`。用的是现有构建函数，不是调用方持有的快照对象。\n\n**建议**\n\n- 调用方把 `chapter_not_applicable` 与 `ApplicabilityResolutionError` 都当「不要发写作请求」。\n- 不要对 registry 全节点盲目编译；排除章现在会 typed 失败。\n- 若需要与已批准 snapshot 字节级一致，需另接 snapshot id（当前未做）。属后续集成，不是 F3 失败。\n\n---\n\n### F4 — 产品工厂要求绑定输入；低层合成运输测试保持未绑定：**成立**\n\n**证据**\n\n- `product.py:37-39`：`require_bound_input=True`。\n- `coordinator.py:13, 25-30`：默认 `False`；为 True 且 `schema_version != protocol-v3-bound-chapter-input.v1` → `chapter_bound_input_required`。Bound 输入仍核 project/study/hash。\n- `test_chapter_product_factory`：`correction is False` 时未绑定 `start` 被拒；绑定输入照常执行/重开。\n- `test_chapter_draft_workflow` 仍用 `inputs()` 未绑定 `ChapterSkillInput`，coordinator 默认不要求 bound；SQLite 恢复负例仍在。\n\n**残留**\n\n- `prepare_chapter_draft` 仍接受未绑定 `ChapterSkillInput`。产品闸在 factory/coordinator 标志，不在 prepare。\n- 手写 `ChapterDraftCoordinator(require_bound_input=False)` 仍能对未绑定材料 `start`。产品路径必须走 factory。\n- 产品 coordinator **不能** `read` 一条未绑定 run（`run_id()` 先抛 `chapter_bound_input_required`）。低层与产品身份空间按设计分开。\n\n---\n\n### 注册：输出 URI 与 `key_basis`\n\n**证据**\n\n- `skill_registry.json`：`output_schema_ref=https://protocol-v3.local/schemas/ordered-chapter-draft-candidate.v1.json`；新文件在 `config/medical_writing/protocol_v3/schemas/ordered-chapter-draft-candidate.v1.json`。\n- **同源相等**：文件 JSON == `OrderedChapterDraftCandidate.model_json_schema()` == `prepare_chapter_draft` payload 的 `output_schema`（只读 `SCHEMA_EQUAL True` / `PAYLOAD_SCHEMA_EQ_FILE True`）。\n- `key_basis`：`chapter-draft:project+branch+study-id+study-sha256+complete-input-sha256`，与 `run_id` 材料（project、branch、study id、study sha、`input_sha256`）一致。`run_id` 另含字面量 `chapter-draft.request.v1`（命名空间，不是身份输入遗漏）。\n\n**残留（非本轮 output URI 决策失败）**\n\n- `input_schema_ref` 仍为 `chapter-draft-input.v1.json`，**该路径无文件**（`INPUT_SCHEMA_FILE_EXISTS False`）。Zhipu 路径不按 URI 约束 JSON Schema（提示里是 payload 内 schema）。其他 harness 若解析 input URI 会找不到文件。\n- 章级 `chapter_skills/*.json` 仍声明 `ChapterSkillOutput`（并行旧路径；`ordered_draft.py` 未改）。不把未挂载整稿/Word/并行 UI 算新缺陷。\n- `acceptance_test_ids` 仍非 pytest 名。\n\n---\n\n### 其他轴（相对初审，无回归）\n\n| 轴 | 本轮 |\n|---|---|\n| 候选 vs QC | 仍 `needs_content_review` / `needs_structure_correction`；`validation_scope=structure_and_input_identity`；不写 study/document。dangling 负例保留。 |\n| 重开 | 产品三参仍：执行前无凭证/HTTP；纠错保留原文；`still_invalid` → `can_resume is False`。 |\n| 未挂载 | factory 仍仅测试+`agent3/product.py`。并行 UI/API **未审**。 |\n\n---\n\n### 发现 vs 残留\n\n**无新的用户可见功能损失否决 F1–F4。** 四项补救在声明边界上成立。\n\n残留集成要求（优先）：\n\n1. **生成表字段约定**：`provenance_lineage` / `note.source_refs` = 输入 `evidence_unit_id`；定位字符串只用 `source_locator` 类字段。否则 `chapter_table_reference_unknown`（已复现）。\n2. 产品执行只走 `create_product_chapter_factory`（或显式 `require_bound_input=True`）。\n3. `prepare_study_chapter`：`not_applicable` → `chapter_not_applicable`；未决 → `ApplicabilityResolutionError`。两者都不要发写作请求。\n4. Input URI 仍无 schema 文件；output URI 已与 shipped 候选 schema 同源。\n5. `resume` 仍需要 `artifact_store`；workflow 默认 coordinator 无 store（低层、非产品）。\n\n---\n\n### 异议、方案、决策点、有界问题\n\n**异议**\n\n- F2 正例靠把 locator `docx:t1:note` 注册成 evidence id。真实模型若按旧表语义把脚注定位写入 `source_refs`，会稳定打进结构纠错。这是边界选择，不是门没装上。\n- F3 只挡 snapshot `not_applicable`，未决靠 bind 失败。符合「excluded」，但错误码不统一。\n- 产品绑定闸可被默认 coordinator 绕过——与 owner「低层测试保持未绑定」一致，不能当成全局不变量。\n\n**方案**\n\n- 写作提示/下游解析明确：嵌套引用字段只允许 evidence id。\n- 可选：`prepare_study_chapter` 对 snapshot `conditional` 给 typed `chapter_applicability_unresolved`（非必须，已 fail-closed）。\n- 不要改 `ordered_draft.py` 来「修」locator；那会违反本轮载体不变决策。\n\n**决策点（若 Codex 还要收紧）**\n\n1. 生成输出是否应对 `note.source_refs` 与 `provenance_lineage` 区别对待（仅 lineage 当证据 ID，source_refs 保持 locator）？当前两者都当证据 ID。\n2. 未决整章是否应在 snapshot 门拒绝，还是维持 bind 错误？\n\n**有界问题**\n\n- Q1：是否接受「生成 `source_refs` 必须是 evidence id，locator 走 `source_locator`」作为产品约定？  \n  **暂定**：接受；F2 按 owner 边界成立。采用前把该约定告诉写作提示，避免无意义纠错循环。\n- Q2：并行 UI/API 是否调用 `prepare_study_chapter` / factory？  \n  **暂定**：本冻结集未包含那些文件，**未审**。若 UI 直接 `prepare_chapter_draft`+未绑定 coordinator，F3/F4 不会自动生效。\n\nCodex 保留最终接受权。",
+      "stderr": "\u001b[2m2026-09-13T11:27:03.234765Z\u001b[0m \u001b[33m WARN\u001b[0m extract_initial_tokens: no totalTokens found in updates tail, token tracking will rely on conversation estimate until first model response \u001b[3mpath\u001b[0m\u001b[2m=\u001b[0m/Users/smkzw/.grok/sessions/%2FUsers%2Fsmkzw%2FDocuments%2F%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99%2FAI%2F%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0%2Fimplementation%2Fprotocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/d4ffd0ff-fdc8-4768-8ce7-9789a48ddb44/updates.jsonl\n",
+      "duration_seconds": 262.053,
+      "timed_out": false,
+      "requested_permission_mode": "bypassPermissions",
+      "effective_permission_mode": "bypassPermissions",
+      "grok_reasoning_effort": "high",
+      "requested_internal_turns": 128,
+      "diagnostics_tail": "\u001b[2m2026-09-13T11:27:03.234765Z\u001b[0m \u001b[33m WARN\u001b[0m extract_initial_tokens: no totalTokens found in updates tail, token tracking will rely on conversation estimate until first model response \u001b[3mpath\u001b[0m\u001b[2m=\u001b[0m/Users/smkzw/.grok/sessions/%2FUsers%2Fsmkzw%2FDocuments%2F%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99%2FAI%2F%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0%2Fimplementation%2Fprotocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/d4ffd0ff-fdc8-4768-8ce7-9789a48ddb44/updates.jsonl",
+      "session_id": "d4ffd0ff-fdc8-4768-8ce7-9789a48ddb44",
+      "session_established": true,
+      "stop_reason": "end_turn",
+      "stop_reason_normalized": "end_turn",
+      "request_id": "eb629140-6245-42d0-8270-4b40ae41df44",
+      "usage": {
+        "input_tokens": 34817,
+        "cache_read_input_tokens": 1127296,
+        "cache_creation_input_tokens": 0,
+        "output_tokens": 14975,
+        "reasoning_tokens": 10968,
+        "total_tokens": 1177088
+      },
+      "input_chars": 9275,
+      "estimated_input_tokens": 2319,
+      "output_chars": 8057,
+      "estimated_output_tokens": 2015,
+      "input_budget": {
+        "char_limit": 240000,
+        "status": "within"
+      },
+      "output_budget": {
+        "soft_char_limit": 120000,
+        "hard_char_limit": 320000,
+        "status": "within"
+      },
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "explicit_route": false,
+      "resumed": true
+    }
+  ],
+  "health_check": true,
+  "health_ttl_seconds": 300,
+  "require_execution_report": false,
+  "execution_dispatch": false,
+  "grok_permission_policy": {
+    "requested": "bypassPermissions",
+    "effective": "bypassPermissions",
+    "adjusted_for_execution_manager": false
+  },
+  "budget_policy": {
+    "external_timeout_seconds": 7200,
+    "requested_internal_turns": 128,
+    "input_char_limit": 240000,
+    "output_soft_char_limit": 120000,
+    "output_hard_char_limit": 320000,
+    "same_session_recovery_passes": 2
+  },
+  "wait_policy": {
+    "mode": "single hard wait; no fixed controller polling",
+    "runner_timeout_seconds": 7200,
+    "parent_native_wait_max_ms": 3600000,
+    "same_session_recovery_passes": 2,
+    "fallback_after": "terminal failure, exhausted same-session recovery, or failed acceptance; latency alone is not failure"
+  },
+  "dispatch_started_at": 1789298822.367452,
+  "receipt_version": 2,
+  "output_sha256": "078e52b7a6d6fe75939cadb8a586dbb6f5bfed888b97c0149fa3165301fed1ac"
+}

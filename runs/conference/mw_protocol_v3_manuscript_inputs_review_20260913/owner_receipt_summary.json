@@ -1,0 +1,41 @@
+{
+  "checked_files": 13,
+  "drift": [],
+  "outer_exec_exit_code": 0,
+  "effective_agent": "grok",
+  "effective_provider": "grok-build",
+  "effective_model": "grok-4.6",
+  "effort": "high",
+  "session_id": "a9b800b2-b52a-4f77-ad3e-1a2d761590e4",
+  "fallback": {
+    "selected_provider": "grok-build",
+    "selected_model": "grok-4.6",
+    "reason": "primary route failed before a resumable session was established",
+    "last_attempt_provider": "grok-build",
+    "last_attempt_model": "grok-4.6",
+    "selected_agent": "grok",
+    "attempts": [
+      {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3",
+        "returncode": 0,
+        "timed_out": false,
+        "session_id": "sess_0fb64e4b-8035-4db5-aa9f-8f5df234f018",
+        "session_reused": false,
+        "failure_diagnostic": null
+      },
+      {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "returncode": 0,
+        "timed_out": false,
+        "session_id": "a9b800b2-b52a-4f77-ad3e-1a2d761590e4",
+        "session_reused": false,
+        "failure_diagnostic": null
+      }
+    ]
+  },
+  "acceptance": "findings received; owner reproduction and fixes pending; not product acceptance"
+}

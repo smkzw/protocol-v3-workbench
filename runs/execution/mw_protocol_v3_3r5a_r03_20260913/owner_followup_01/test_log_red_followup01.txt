@@ -1,0 +1,102 @@
+............F............................FF...FF...                      [100%]
+=================================== FAILURES ===================================
+___________ test_committee_row_separates_charter_from_event_followup ___________
+
+    def test_committee_row_separates_charter_from_event_followup():
+        data = registry()
+        atoms = atoms_for(data, "table[8]/row[6]")
+        charter = [a for a in atoms if a["sub_key"].startswith("committee")]
+        followup = [a for a in atoms if a["sub_key"] in
+                    {"ae_followup", "specific_event_followup"}]
+        assert len(charter) >= 3 and len(followup) == 2
+        for atom in charter:
+            assert atom["applicability"]["rule_ref"] == (
+                "applicability:n-14-7:oversight-charter")
+        # 科学性修正（owner failed-acceptance 2026-09-13）：AE随访对进入试验的
+        # 参与者无条件适用；特殊事件（妊娠等）随访以研究存在相应事件适用性为
+        # 条件，不对所有研究普遍适用；未接线时未知保持未决、不当false。
+        ae = next(a for a in followup if a["sub_key"] == "ae_followup")
+        assert ae["applicability"]["status"] == "always"
+        special = next(a for a in followup
+                       if a["sub_key"] == "specific_event_followup")
+>       assert special["applicability"]["status"] == "conditional"
+E       AssertionError: assert 'always' == 'conditional'
+E         
+E         - conditional
+E         + always
+
+tests/protocol_v3/test_r03_criteria_registry.py:283: AssertionError
+_________ test_version_check_treats_whitespace_only_fields_as_missing __________
+
+    def test_version_check_treats_whitespace_only_fields_as_missing():
+        # owner probe r03_candidate_empty_probe.json: blank_version passed=true
+        # was a failed acceptance; whitespace-only identity fields are missing.
+        blank = {key: "   " for key in CURRENT}
+        result = qc_r03().check_version_consistency(
+            version_material(blank, {"cover": blank, "qc_table": blank}, []),
+            subject_id="study-x",
+        )
+>       assert result.passed is False
+E       AssertionError: assert True is False
+E        +  where True = FixtureCheckResult(subject_id='r03_typed_input', chapter_contract_id='r03_qc_registry', passed=True, findings=(), defe...re', 'l1_literature_bidirectional', 'l1_numbers_units', 'l1_registration_consistency'), ignored_supplied_verdict=False).passed
+
+tests/protocol_v3/test_r03_criteria_registry.py:620: AssertionError
+____________ test_subject_id_preserved_on_success_and_every_failure ____________
+
+    def test_subject_id_preserved_on_success_and_every_failure():
+        r03 = qc_r03()
+        ok = r03.check_version_consistency(
+            version_material(CURRENT, {"cover": CURRENT, "qc_table": CURRENT}, []),
+            subject_id="doc-42",
+        )
+>       assert ok.subject_id == "doc-42"
+E       AssertionError: assert 'r03_typed_input' == 'doc-42'
+E         
+E         - doc-42
+E         + r03_typed_input
+
+tests/protocol_v3/test_r03_criteria_registry.py:646: AssertionError
+______ test_citation_check_rejects_blank_identity_display_and_kind_fields ______
+
+    def test_citation_check_rejects_blank_identity_display_and_kind_fields():
+        # owner probe r03_candidate_empty_probe.json: blank_citation passed=true
+        # was a failed acceptance; blank identity/display/kind are rejected.
+        result = qc_r03().check_internal_citations(
+            citation_material(
+                [{"text": "  ", "target_id": " "}],
+                [{"target_id": "  ", "kind": "   ", "description": "附录"}],
+            )
+        )
+        assert result.passed is False
+        codes = result.error_codes()
+>       assert "r03_citation_text_blank" in codes
+E       AssertionError: assert 'r03_citation_text_blank' in ('r03_citation_target_unresolved',)
+
+tests/protocol_v3/test_r03_criteria_registry.py:701: AssertionError
+______ test_citation_check_zero_citation_scope_needs_explicit_projection _______
+
+    def test_citation_check_zero_citation_scope_needs_explicit_projection():
+        r03 = qc_r03()
+        # Default (projection_completed absent/false): empty input is an absent
+        # projection and must fail, never silently become a pass.
+        result = r03.check_internal_citations(citation_material([], []))
+        assert result.passed is False
+        assert "r03_material_missing" in result.error_codes()
+        # Explicitly completed projection with a legitimate zero-citation scope
+        # passes WITHOUT inventing any target object.
+>       zero = r03.R03CitationMaterial(
+            citations=[], targets=[], projection_completed=True,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for R03CitationMaterial
+E       projection_completed
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_r03_criteria_registry.py:725: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_r03_criteria_registry.py::test_committee_row_separates_charter_from_event_followup
+FAILED tests/protocol_v3/test_r03_criteria_registry.py::test_version_check_treats_whitespace_only_fields_as_missing
+FAILED tests/protocol_v3/test_r03_criteria_registry.py::test_subject_id_preserved_on_success_and_every_failure
+FAILED tests/protocol_v3/test_r03_criteria_registry.py::test_citation_check_rejects_blank_identity_display_and_kind_fields
+FAILED tests/protocol_v3/test_r03_criteria_registry.py::test_citation_check_zero_citation_scope_needs_explicit_projection
+5 failed, 46 passed in 0.57s

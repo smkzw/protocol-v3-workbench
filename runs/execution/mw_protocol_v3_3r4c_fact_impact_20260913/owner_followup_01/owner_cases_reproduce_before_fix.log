@@ -1,0 +1,28 @@
+[
+  {
+    "base_requirement": true,
+    "shared": false,
+    "confirmation": "confirmed_reopen",
+    "rules": [
+      {
+        "id": "rule:a",
+        "after": "conditional"
+      }
+    ]
+  },
+  {
+    "base_requirement": false,
+    "shared": true,
+    "confirmation": "candidate_check",
+    "rules": [
+      {
+        "id": "rule:a",
+        "after": "applicable"
+      },
+      {
+        "id": "rule:b",
+        "after": "conditional"
+      }
+    ]
+  }
+]

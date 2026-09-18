@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "blank_version_rejected": true,
+    "blank_citation_rejected": true,
+    "complete_zero_refs_pass": true,
+    "empty_unprojected_rejected": true,
+    "none_version_rejected": true,
+    "none_citation_rejected": true,
+    "all_subjects_preserved": true
+  },
+  "hashes": {
+    "scripts/qc/protocol_v3/extract_r03_criteria.py": "868a0dd4e9306ffb02db284d967655768739f52426e03406e654985e8d15b45e",
+    "config/medical_writing/protocol_v3/qc/r03_criteria.json": "410346cd00b98ab1cf19b1c961be11efad1a30120ee5662a8b794f6223926bed",
+    "services/api/app/protocol_workflow/qc/__init__.py": "5c98a91c6b2b0c436ed9261047001cca465567307ea66e065bc113f8ca9d1d2d",
+    "services/api/app/protocol_workflow/qc/r03.py": "ac7080e2581b46f4af591d5d20657e4964642c02f9a535e7246c1e91298c428a",
+    "tests/protocol_v3/test_r03_criteria_registry.py": "14a4681d1f6f1f2bfb213d099e3d534ff5051ccdfb4b7979f55224b64b55a46a"
+  },
+  "followup_elapsed_upper_bound_seconds": 378.5742106437683,
+  "initial_elapsed_upper_bound_seconds": 2397,
+  "total_upper_bound_seconds": 2775.5742106437683
+}

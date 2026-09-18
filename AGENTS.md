@@ -1,5 +1,13 @@
 # AGENTS.md - Codex Operating Principles
 
+## Protocol v3 Trellis continuation
+
+Use `.trellis/workflow.md`, the active `.trellis/tasks/` PRD/design/implementation
+artifacts and `.trellis/spec/protocol-v3.md` for task management. The user's current
+Goal and approved Plan v2 amendments supersede historical route tables below.
+Engineering dispatch remains governed by the latest global AGENTS and live
+workflow guard; Trellis does not independently dispatch or auto-archive evidence.
+
 This file defines the standing behavior for Codex in coding, repository, document, data, research, and local-automation tasks.
 
 **Core tradeoff:** prefer correct understanding, narrow changes, durable task records, and verified completion over speed. The fast path is only for truly atomic, low-risk tasks. If a task touches a project, codebase, document, dataset, external evidence, generated artifact, user workflow, or prior requirement, treat it as non-atomic and run the full workflow.

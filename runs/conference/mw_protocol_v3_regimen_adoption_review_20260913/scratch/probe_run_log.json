@@ -1,0 +1,40 @@
+{
+  "python": "Python 3.12.13 /opt/homebrew/opt/python@3.12/bin/python3.12",
+  "hash_recheck": {"count": 23, "mismatch": 0},
+  "pytest_existing": {
+    "files": [
+      "tests/protocol_v3/test_regimen_adoption_command.py",
+      "tests/protocol_v3/integration/test_regimen_adoption_api.py",
+      "tests/protocol_v3/integration/test_regimen_fact_adoption.py"
+    ],
+    "passed": 6
+  },
+  "pytest_probes": {
+    "file": "runs/conference/mw_protocol_v3_regimen_adoption_review_20260913/scratch/probe_regimen_adoption_counterexamples.py",
+    "passed": 5,
+    "notes": [
+      "unresolved design adopt=409 recover=422 extra-fields=422 no writes",
+      "client fact_updates/regimen extra=forbid 422 no writes",
+      "successor recover/replay revision=3 replayed=true template loader not consulted after first adopt",
+      "fresh template-missing adopt=500 recover=404 no writes",
+      "input binding only intervention.dose_regimen; no RecommendationOption/ClaimEvidenceLink in sqlite"
+    ]
+  },
+  "vitest_existing": {
+    "files": [
+      "RegimenAdoptionCard.test.jsx",
+      "RegimenDesignWorkspace.test.jsx",
+      "RegimenProposalCard.test.jsx",
+      "ProtocolIntakeWorkspace.test.jsx"
+    ],
+    "passed": 26
+  },
+  "node_test_api": {
+    "file": "frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs",
+    "passed": 6
+  },
+  "vitest_probes": {
+    "file": "scratch/probe_regimen_adoption_frontend.test.js",
+    "passed": 4
+  }
+}

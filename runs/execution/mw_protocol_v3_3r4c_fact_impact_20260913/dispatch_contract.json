@@ -1,0 +1,19 @@
+{
+  "logical_work_key": "mw_protocol_v3_3r4c_fact_impact_20260913_v1",
+  "role_id": "E04",
+  "mode": "bounded execution, owner retains integration",
+  "selection": "General tool/code development route supports this unit. E03 has malformed peak entry; E04 exact complete manifest chains selected without modifying routes; current primary identical GLM-5.3-Flash:max. Quota unknown, static schedule used.",
+  "manifest_sha256": "ef297ff3b5ba162df178fef9180e9cb1dcb3c13223db52a49d00bca3ab7a2be7",
+  "guard_limitation": "global guard import fails on malformed C01 peak string, still reproduced; approved runner with exact E04 chains, no guard audit pass claimed",
+  "allowed_product_paths": [
+    "services/api/app/protocol_workflow/registries/dependency_graph.py",
+    "tests/protocol_v3/test_dependency_graph.py",
+    "tests/protocol_v3/test_fact_labeled_impact.py"
+  ],
+  "base_hashes": {
+    "services/api/app/protocol_workflow/registries/dependency_graph.py": "2f3c7f7301d032b9c7482fc9f9285d818b451c406380dd3ece6c31d03fbfab54",
+    "tests/protocol_v3/test_dependency_graph.py": "631559d136c4a2c9ea7181f5780820b6e6fb098cb564df17bffd3a4455991d1f"
+  },
+  "status": "runner_started_pending_result",
+  "unified_exec_session_id": 29852
+}

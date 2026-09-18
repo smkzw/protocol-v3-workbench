@@ -1,0 +1,19 @@
+{
+  "logical_work_key": "mw_protocol_v3_3r5a_r03_20260913_v1",
+  "status": "runner_started_pending_result",
+  "mode": "execution-plus-conference",
+  "role_id": "E04",
+  "allowed_product_paths": [
+    "scripts/qc/protocol_v3/extract_r03_criteria.py",
+    "config/medical_writing/protocol_v3/qc/r03_criteria.json",
+    "services/api/app/protocol_workflow/qc/__init__.py",
+    "services/api/app/protocol_workflow/qc/r03.py",
+    "tests/protocol_v3/test_r03_criteria_registry.py"
+  ],
+  "base_hashes": {},
+  "timeout_seconds": 7200,
+  "route_manifest_sha256": "ef297ff3b5ba162df178fef9180e9cb1dcb3c13223db52a49d00bca3ab7a2be7",
+  "guard_limitation": "existing malformed C01 peak import; exact E04 complete approved chains via existing runner, no audit pass claimed",
+  "selection": "qualified single execution route; quota unknown static off_peak; owner integrates and separate fresh source review after freeze",
+  "unified_exec_session_id": 10218
+}

@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "policy": "live-route-manifest-v1",
+  "timezone": "Asia/Shanghai",
+  "peak_start": "12:00",
+  "peak_end": "19:00",
+  "days": "all",
+  "packet_period": "off_peak",
+  "packet_evaluated_at": "2026-09-13T10:05:49.965502+08:00",
+  "variants": {
+    "peak": {
+      "agent": "pi",
+      "provider": "cursor",
+      "model": "default",
+      "effort": "",
+      "dynamic_model": true,
+      "fallbacks": [
+        {
+          "agent": "codebuddy",
+          "provider": "codebuddy-cli",
+          "model": "deepseek-v4.1-flash",
+          "effort": "max"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-luna",
+          "effort": "max"
+        }
+      ],
+      "primary": {
+        "agent": "pi",
+        "provider": "cursor",
+        "model": "default",
+        "effort": ""
+      },
+      "schedule_constraints": {
+        "policy": "live-route-manifest-v1",
+        "evaluated_at": "2026-09-13T10:05:49.965502+08:00",
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      }
+    },
+    "off_peak": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max",
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "mtplx",
+          "model": "mtplx-flash-next-optimized-speed",
+          "effort": "xhigh"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-luna",
+          "effort": "max"
+        }
+      ],
+      "primary": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "effort": "max"
+      },
+      "schedule_constraints": {
+        "policy": "live-route-manifest-v1",
+        "evaluated_at": "2026-09-13T10:05:49.965502+08:00",
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      }
+    }
+  }
+}

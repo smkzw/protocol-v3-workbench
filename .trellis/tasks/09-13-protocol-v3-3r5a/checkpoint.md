@@ -1,0 +1,37 @@
+# 当前检查点
+
+2026-09-13，3R4工程已接受，见reviews/codex_mw_protocol_v3_3r4_acceptance_20260913.md。本任务用户授权来自active Goal与完整路径优先决定。模式execution-plus-conference：R03源拆分可交单worker，owner并行处理Word/术语边界；义务医学解释需fresh审阅。状态planning，尚未dispatch；下一步激活Trellis，核对全局AGENTS/live路线后派发有界实现。
+
+
+R03实现已实际派发：runs/execution/mw_protocol_v3_3r5a_r03_20260913，logical key mw_protocol_v3_3r5a_r03_20260913_v1，单E04 declared GLM-5.3-Flash:max，统一10218，7200秒；actual session/effective等待terminal receipt。新允许5文件均不存在，worker只写R03脚本/registry/qc模块/其测试及own run，明确不全量回归。Owner可并行Word源映射与术语disjoint，不能改worker文件。原globalAGENTS重读，manifest hash未变，guard既有入口限制按contract记录不冒audit通过。3R4已accepted，仅工程范围，365受审hash0漂移32独立probe全通过。Goal连续active，无用户决定阻塞。
+
+
+Owner disjoint Word源映射实施范围确定：scripts/qc/protocol_v3/extract_word_source_objects.py、config/medical_writing/protocol_v3/qc/word_source_objects.json、tests/protocol_v3/test_word_source_objects.py；复用PoC只读inspect_docx_ooxml，保留全部源对象，不修改旧producer/验收。源中存在一条指向外部DOCX且带\l片段的HYPERLINK，不能判当前文档缺书签；区分external_document_anchor/internal/derived_toc，避免错误分母。测试已有成功交集遗漏反例作为行为红证据；新增映射/分类/缺目标/真实源测试，原生Word/UI验收仍未做。R03 worker10218独占其5文件，双方只跑定向。
+
+
+Owner Word源映射已实现3个disjoint文件，word_mapping_source_hashes.json绑定；复用现有inspect_docx_ooxml与ChapterContractV2正常化可省略默认字段（首轮真实源因raw optional key访问失败1/5pass，已用正式model正常化修复，非改expected）。6定向pass，生成当前config/qc/word_source_objects.json后再检确定性/制品相等6pass（word_mapping_artifact_check.log）；共316书签/290字段/111合同/17表，required style/bookmark无缺失，一条external_document_anchor保留external_not_verified。missing/ambiguous/40项不截断反例有证据；此仅源映射，未做Word渲染/最终引用显示验收。R03 worker10218仍独占5文件，尚无terminal，不启动第二worker。
+
+
+Word源映射追加原始XML完整性观察：所有316个bookmarkStart均在映射中；document.xml有7个多余bookmarkEnd，作为source_xml_observations保留，不修改外部SOP、不冒称生成文档通过。旧制品保存在word_mapping_before_raw_census.json；新版本绑定word_mapping_raw_census_hashes.json。定向6 passed in 0.53s，word_mapping_raw_census_check.log。当前任务仍in_progress，等待既有R03 worker10218，随后源义务与映射冻结独立审阅；无阶段暂停。
+
+
+3R7准备新增quality_consumer_probe.py/.json：实际detector与AiTaskRunner验证器在7个合成输入中同样误报2个合法流程，未调用provider/服务。另两个直接regex消费者已定位，Plan追加共同接线义务；terminology_implementation_notes.md限定术语首选/引用保留、纯文本不能证明字体、模板说明不能作为终稿豁免。此为准备未实施，R03 worker仍唯一运行节点。
+
+
+V1只读准备：旧DOCX parser合成SDT漏字实测；9DOCX源结构筛查与两类非TOC-field控件核对，确认CMS-D008的EndNote13条参考文献会被忽略，另一份docPartGallery实际目录。已在Plan记录递归/分类及逻辑页≠物理页，不改旧源、不重跑OCR、不声称Ⅰ期验收。定位证据见docx_*probe/screen/classification/adjudication，R03仍独占worker。
+
+
+Owner切换唯一当前锚点至3R7A，进行文件完全独立的草稿/术语修复；R03仍10218依原contract继续，不重派。3R5A并未关闭，Word映射冻结候选不改；R03终态时在此记录并独立review。理由：已复现共享消费端问题无需等待R03原子拆分。
+
+
+只读健康性核对获得同任务session sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd（request含本runID，74完成请求记录，06:59新写入）；terminal仍10218等待，不能用尚无registry文件判失败/重派。原始模型IO不复制到工作区。owner3R7A现38定向通过，独立文件hash已记其run，未关闭两阶段。
+
+
+R03首次10218已terminal exit0；5hash与报告一致，129atoms，47定向+51邻接worker自测。实际GLM-5.3-Flash:max verified，session sess_2c431dcf-ebd8-4f37-bf31-eda43a9155cd；runner receipt含2次automatic same-session budget recovery及不准确fallback reason，不能把最后45.239s当全程，dispatch→receipt保守2397s，未跨模型。Owner空白版本/空引用/subject身份反例仍在最终hash复现，另修正specific_event_followup不能因不依赖委员会便always。已一次same-session followup16430实际派发，4000s仍在原7200总预算，原5路径独占不改；owner_followup_01保留新日志，旧报告不覆盖。后续等16430终态核对后fresh源审阅，不能poll旧10218或重派。
+
+
+R03 followup16430 terminal exit0，同session/GLM-5.3-Flash:max verified，含automatic same-session report recovery（最后40.725s不是总时长）；首轮+修复保守2775.575s<7200。Owner独立7checks全true、5hash报告一致，owner_followup_01/owner_verified.json。R03仍129atoms/5implemented/124pending，51worker定向pass；特殊事件conditional/not_wired，AEalways；未声称医学准入。
+
+R03+Word源映射+3R7最小库/三消费端共252文件冻结在runs/mw_protocol_v3_3r5a_3r7a_fresh_review_20260913。新C03 GLM-5.3:max独立上下文已实际派发89508，7200s；同provider family独立性限制已说明，原sourceDOCX+冻结artifact+criteria，不含worker报告。当前只等89508，旧10218/16430都终态。Owner不要修改252受审文件（含Plan/design）直到审阅返回；可以做独立V1准备/新增模块，Trellis记录实际锚点。无阶段暂停、无用户决策阻塞。
+
+Owner已完成限定工程验收，见reviews/codex_mw_protocol_v3_3r5a_3r7a_acceptance_20260913.md。两轮C03均终态，不能再poll89508/87947；继续V1.1，不archive。

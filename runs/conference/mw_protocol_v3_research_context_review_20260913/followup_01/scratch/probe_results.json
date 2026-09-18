@@ -1,0 +1,128 @@
+[
+  {
+    "name": "study_input_identity",
+    "clinical_facts": {
+      "picos.phase": "II"
+    },
+    "excludes_research_keys": true,
+    "source_only_key_unchanged": true,
+    "distinct_keys": true,
+    "producer_metadata_same_key": true,
+    "instruction_mentions_confirmed_study": true,
+    "validate_ok": true,
+    "wrong_study": "regimen_target_study_changed",
+    "wrong_facts": "regimen_clinical_facts_changed",
+    "source_only_skips_target_check": true,
+    "ok": true
+  },
+  {
+    "name": "prepare_identity_after_successor_facts",
+    "original_key": "regimen-design:4c68ee607b57fbf28462174b861be412e4fa895831f0cbffa66f052053f41ffb",
+    "new_key_after_phase_change": "regimen-design:dec5e7920bf23ce66917e397d63a03aa7a91280123d6d1a516ee8794cfa549c6",
+    "keys_differ": true,
+    "other_study_key_differs": true,
+    "opener_unchanged_after_fact_change": true,
+    "recovered_status": "ready_for_review",
+    "recovered_same_run": true,
+    "fresh_adopt_after_fact_change_status": 409,
+    "dump_unchanged": true,
+    "ok": true
+  },
+  {
+    "name": "http_prepare_start_recover_challenges",
+    "prepare_status": 200,
+    "prepare_no_generation": true,
+    "start_run": "regimen-design:0daf49ab3f802a0ad03e829b5edb70cb9162ea76813224a5e14198b14cb3f1e1",
+    "empty_recover_status": 200,
+    "empty_recover_run": "regimen-design:0daf49ab3f802a0ad03e829b5edb70cb9162ea76813224a5e14198b14cb3f1e1",
+    "unknown_recover_status": 404,
+    "unknown_start_status": 409,
+    "wrong_study_status": 409,
+    "wrong_seed_status": 409,
+    "successor_prepare_new_key": true,
+    "original_recover_after_facts": true,
+    "original_start_reuses": true,
+    "current_start_new_key": true,
+    "empty_prepare_status": 422,
+    "opener_after_challenges": 5,
+    "gen_calls_at_first_start": 2,
+    "extra_gen_for_new_key": true,
+    "ok": true
+  },
+  {
+    "name": "adoption_readset_receipt_validity",
+    "study_bound_has_all_facts": true,
+    "all_facts_excludes": [
+      "research.input_context",
+      "research.regimen_producer"
+    ],
+    "ordinary_fact_payload_omits_scope": true,
+    "ordinary_serialized_paths": [
+      "intervention.dose_regimen",
+      "research.input_context",
+      "research.regimen_producer"
+    ],
+    "source_only_ref_count": 3,
+    "source_only_has_all_facts": false,
+    "add_clinical_stale": "stale",
+    "delete_clinical_stale": "stale",
+    "producer_metadata_current": "current",
+    "adopt_status": 200,
+    "validity_before": "current",
+    "validity_after_add_clinical": "stale",
+    "historical_replayed": true,
+    "historical_revision": 3,
+    "historical_decision_id": "regimen-decision:2ecbbd2b5d0ab2475d45f1259cd8f66b0085ab5d1e0ecb0ccf946ec56a9d887b",
+    "original_decision_id": "regimen-decision:2ecbbd2b5d0ab2475d45f1259cd8f66b0085ab5d1e0ecb0ccf946ec56a9d887b",
+    "dump_unchanged": true,
+    "recover_revision": 3,
+    "ok": true
+  },
+  {
+    "name": "fact_binding_aliases",
+    "three_point_to_compound": {
+      "picos.intervention_dose_regimen": "intervention.dose_regimen",
+      "picos.intervention_dose_regimen.selected_regimen": "intervention.dose_regimen",
+      "synopsis.interventions": "intervention.dose_regimen"
+    },
+    "three_have_legacy": {
+      "picos.intervention_dose_regimen": [
+        "picos.intervention_dose_regimen"
+      ],
+      "picos.intervention_dose_regimen.selected_regimen": [
+        "picos.intervention_dose_regimen.selected_regimen"
+      ],
+      "synopsis.interventions": [
+        "picos.intervention_dose_regimen"
+      ]
+    },
+    "three_value_type": {
+      "picos.intervention_dose_regimen": "json",
+      "picos.intervention_dose_regimen.selected_regimen": "json",
+      "synopsis.interventions": "json"
+    },
+    "affected_includes_three": true,
+    "affected_from_legacy_picos": true,
+    "ten_mg_fixture_key_not_in_catalog": true,
+    "ten_mg_update_affects_nothing": true,
+    "starting_dose_not_compound": true,
+    "empty_legacy_omitted_from_hash_material": true,
+    "alias_material_keeps_legacy": true,
+    "conflicting_compound_and_legacy_detected": true,
+    "synopsis_vocab_only_does_not_fallback": true,
+    "ok": true
+  },
+  {
+    "name": "frontend_source_invariants",
+    "prepare_before_start": true,
+    "recover_uses_saved_intent": true,
+    "component_key_includes_study": true,
+    "scoped_key_includes_study": true,
+    "legacy_not_deleted": true,
+    "pending_without_intent_falls_back_to_seed": true,
+    "validity_matches_decision_id": true,
+    "graph_failure_unavailable": true,
+    "does_not_claim_current_on_failure": true,
+    "ok": true
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "source_hashes": {
+    "services/api/app/protocol_workflow/application/adoption.py": "36a2da62a256a740b95036d8d6690e461d9067a518c10ef6e1aa476ff8fa4b8d",
+    "services/api/app/protocol_workflow/registries/template_runtime.py": "f82498b2d0c1e4acafddb175edc88d32f7e8b0beba3568829efa7c4d4d481220",
+    "services/api/app/protocol_workflow/application/service.py": "9c738311db55a982deb898454442e50bc5bffb56fd3787a15f501a448e03942e",
+    "services/api/app/protocol_workflow/application/commands.py": "3f15612d77a25ddd8e1a64a2c512e3fa4420372b7833976d26704c2ac30c7d48",
+    "services/api/app/protocol_workflow/application/reconstruction.py": "d507788187386786c0328f439a93408dd1fc0404d807c02d70b0b5dc0bdeb021",
+    "services/api/app/protocol_workflow/canonical/study_definition.py": "b83bcc3824c717bf6b361c2e1d6073521dce4afe38c8759743db4a3f1943966f",
+    "services/api/app/protocol_workflow/canonical/decision_inputs.py": "872988e300fdebca94dc2d6fb86c612bd3f00436d9689a87b5a34000b713fe3f",
+    "services/api/app/protocol_workflow/api/schemas.py": "cefccf2cd99463de5e64e235a37da831d2387ac5ddf6832c42c57d619ec3c1e7",
+    "services/api/app/protocol_workflow/api/router.py": "ad1a94b871867b7c40173e5af36a1fa9be8a16788e6c550554e2cd8261639267",
+    "services/api/app/protocol_workflow/api/composition.py": "61bd989b302f957d368533f1d9e781bcb9678fd9b3c7c05426a082562b69d5d6",
+    "services/api/app/protocol_workflow/errors.py": "2bd7ef075592956de493352f038991914231baa3e3c5cf0c60c1cb3d4e9f67b6",
+    "services/api/app/protocol_workflow/ports/repositories.py": "ba221f7bfd1b480c8b37ea19421194917cf429455687e6daac0ad275f0f56758",
+    "tests/protocol_v3/integration/test_fact_impact_adoption.py": "93a7b4a42468c705a5b05e78e032c19cf943cae09918142ae753615d6c979f88",
+    "tests/protocol_v3/integration/test_template_fact_adoption.py": "15fc8e74aa9fb1a40374280b552f8339f62d92ab3e76fb4cac6df10a809bf9a8",
+    "tests/protocol_v3/test_current_template_runtime.py": "8d6d10fcf0b28199d4d6f894939cccf513f50ac73ebecfbb90c076318db39005",
+    "tests/protocol_v3/test_decision_input_binding.py": "8f74391ca1d38d54f0113002f511d7fd4f539527e3abce538f8c505dfb53e5bc",
+    "tests/protocol_v3/test_study_definition_reducer.py": "f9da0283b50146522060c0f898e8bd1f9cd4137355ccbe6450d1c1bc187528f7",
+    "tests/protocol_v3/test_study_event_reconstruction.py": "339538e9302d460e256c25c205ec39b50fca7fb2524018012df9b6e5226bb4d8"
+  },
+  "source_unchanged": true,
+  "cases": [
+    {
+      "case": "historical_replay_without_current_template",
+      "status": 200,
+      "replayed": true,
+      "template_load_calls": 0,
+      "sqlite_unchanged": true,
+      "expected": "exact recorded request replays without loading new template rules",
+      "passed": true
+    },
+    {
+      "case": "same_work_key_new_decision",
+      "status": 409,
+      "sqlite_unchanged": true,
+      "current_sponsor": "合成申办方A",
+      "expected": "same operation key with different decision/revision/payload rejects without a new effect",
+      "passed": true
+    },
+    {
+      "case": "turn_off_with_existing_parameters",
+      "status": 409,
+      "sqlite_unchanged": true,
+      "interim_flag": true,
+      "retained_adjustment": {
+        "method": "synthetic_alpha_spending"
+      },
+      "expected": "do not save inactive contradictory current parameters merely because their own path was unchanged",
+      "passed": true,
+      "follow_on": "Then verify an explicit supported resolution can turn interim off, preserving historical values; rejecting forever is insufficient."
+    }
+  ]
+}

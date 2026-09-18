@@ -1,0 +1,59 @@
+# Conference Participant Output: mw_protocol_v3_3r1_fresh_20260906 - general_single_object
+
+## Boundary Check
+
+- Worked inside the runner cwd only for reads of assigned sources plus the explicitly assigned approved DOCX path (read-only zip/XML, never written). No source edits, no DOCX writes, no services/models/network/OCR/translation, no production paths.
+- Read: `.trellis/tasks/09-06-protocol-v3-3r1/prd.md`, `design.md`, `scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py` (1903 lines, full read), `tests/protocol_v3/test_tp_ma_07_v2_registry.py` (393 lines, full read), `config/medical_writing/protocol_v3/templates/tp_ma_07_v2/{template.json,node_tree.json,v1_to_v2_mapping.json}` (full template.json; structural + targeted reads of the two large files). Did not read worker reports or private reasoning. Did not write the runner report path.
+- Ran only the assigned offline test file with `runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python`, `PYTHONPATH=tests/protocol_v3:services/api:packages:.`, plus read-only cross-check snippets. No bytecode/cache writes observed beyond pytest's normal run (used `-p no:cacheprovider`).
+- Verdict scope: candidate-registry fidelity only. No clinical/regulatory or Word-render acceptance; Codex retains promotion authority.
+
+## Independent Work Product
+
+**Verdict: REVISE** — narrowly scoped. The extraction framework is faithful and I accept its structure; three small factual-precision defects in the artifacts plus one consumption-rule gap should be fixed and re-regenerated (deterministic, minutes) before this candidate is relied on. No re-extraction design change needed.
+
+**What I verified green (evidence-backed, accepted as-is):**
+
+1. **Source gate real**: `verify_source_hash` (extract script L54–64) hard-fails on mismatch; `test_source_hash_constant_matches_authorized_docx` passes; I independently re-hashed the DOCX → `018d28d3…143756` match. SHA `ee94cd4c…` legacy module identity and `_COMPANY_CHAPTERS` 124 rows at lineno 398 independently confirmed against `services/api/app/medical_writing_protocol_template.py`; matches `v1_to_v2_mapping.json` `legacy_source` exactly.
+2. **Determinism proven, not asserted**: 27/27 tests pass; byte-identical regeneration, committed-artifacts-match-regeneration, and no-volatile-fields tests all green. `sort_keys=True` writer (L1861–64) supports it.
+3. **Coverage accounting closes**: forward 109/109 legacy leaves have dispositions (70 mapped / 15 split / 7 merged / 10 retired / 7 nonapplicable_phase1); reverse 110 entries = 109 outlined leaves ∪ 106 heading leaves (overlap 105; the two singletons are the 4 Normal/caption extras `v2_n_front_5`, `v2_n_16_x1..x3` outlined-only and `v2_n_16` heading-leaf-only as outlined-internal parent — arithmetically consistent). Builder L1623–1658 raises on any missing/stale/extra entry, so silence is structurally impossible.
+4. **Projection honesty**: 35 explicit / 74 none reconciled per-leaf with mechanism + `module:lineno` evidence; the `≈76` and `124/110` historical claims are explicitly refused as baselines in `candidate_findings`. AST evidence design (fact-paths + `section_seeds` branch scan, never importing the legacy module) is sound for a candidate.
+5. **Unheaded-obligation handling is the strongest part**: `content_paragraph_indexes` per node, `front_block` range [0,44], estimand-fifth-attribute-tail and preclinical-unheaded findings with body locators, obsolete-term zero (`受试者` 0 in all scopes) with `试验参与者` 240/218/22 triple-scope counts. Counts alone are correctly refused as closure.
+6. **Locators complete**: all 139 nodes carry `body_child_index` + non-null `para_id`; tables carry owner + caption; 8 sections with body-final holder; 4 blank outlined exclusions keep locators; bookmarks 314 (264 TOC-anchored) and per-node bookmark/field recording present.
+
+**Required fixes (small, mechanical — the REVISE scope):**
+
+1. **R1 — Financial-disclosure `source_basis` overclaims a full-text scan.** `template.json` L53–57 and script L1477–87 claim structured full-text scanning found zero matches. My read-only scan of `document.xml` `w:t` text found `披露`×1 (body index 738, background literature-disclosure sentence) and `利益冲突`×2 (body index 920, DSMB membership conflict-of-interest guidance under `v2_n_14_7`). Title-level zero for 财务披露 holds (confirmed: 0 hits in all 139 node titles), so the *default* is defensible, but the *stated basis* is factually imprecise in a registry whose contract is source fidelity. Fix: reword to title-level scan (or, better, compute it: assert zero `财务披露` title hits inside `build_mapping` so regeneration enforces it), and cite body-738/920 as evaluated-and-unrelated. File: `extract_tp_ma_07_v2_registry.py` L1477–87; regenerated `template.json` + `v1_to_v2_mapping.json` copies.
+2. **R2 — `field_inventory` mixes field switches into field kinds.** `node_tree.json` L41–49: `"\\*": 3` and `"表": 2` are `instrText` switch fragments (`\* MERGEFORMAT`-style runs, sequence-label fragments), not Word field types. Cause: L185–189 / L217–221 take the first whitespace token of every `instrText` run without an allowlist. Fix: allowlist known field names (TOC/PAGEREF/HYPERLINK/REF/SEQ/…) and bucket the rest as `field_switch_fragment` (or drop with a note). Regenerate `node_tree.json`.
+3. **R3 — Confidence grading inconsistency on `background.product.nonclinical`.** Script L898–901 maps it `mapped_to_v2 → v2_n_2_2_2` at full `structural` confidence with no `ambiguity_note`, yet the candidate's own semantic finding says that subtree contains unheaded toxicology/PK obligations and a `new_in_v2` child (`v2_n_2_2_2_1`, reverse L1377). Sibling entries (`background.disease/mechanism/clinical`) are all `partial`. Fix: grade nonclinical `partial` with an ambiguity note pointing at the unheaded-content finding. One-line change + regen.
+4. **R4 — Retired dispositions (10 leaves, empty targets) need a consumer-visible reopen rule.** Highest-impact structural gap: `immunogenicity`, `biomarker`, `statistics.pk/pd/er`, `pk_pd_sampling`, `unscheduled`, `contraception`, `safety_reporting`, `project_specific` map to `[]`. Each carries rationale + `partial` + ambiguity note (good — not silent), but a downstream consumer sees "retired" with nowhere to go; e.g. immunogenicity for a biologic, or the v1 repeatable `12.X` project-appendix mechanism (`project_specific`), which has no v2 structural counterpart at all. Fix: add a `reopen_condition` per retired entry (which project fact re-opens it, and the fallback v2 carrier, e.g. immunogenicity → `v2_n_9_2` on biologic fact). Without this, "retired" will be misread as "dropped" at consumption time.
+5. **Accepted-with-note (no fix required): container-granularity forward targets (12 entries).** E.g. `safety.ae → v2_n_10_1` (container of 6 leaves), `objectives_endpoints.primary → v2_n_3_1_2` (container), `population.size → [v2_n_5 container, v2_n_11_1]`. Mitigated because reverse entries fan out per child (e.g. `v2_n_10_1_1..6` each cite `safety.ae` plus the specific v1 leaf). Propose Codex confirm this forward-to-container + reverse-per-child pattern as the contract convention (see Q3); if confirmed, one sentence in `count_scope_notes`/`extraction_algorithm` closes it.
+
+**Not defects (checked, explicitly cleared):** 39/109 `partial` forward entries and 15 `mixed` reverse entries are honest uncertainty with per-entry ambiguity notes and a promotion gate that blocks on them — correct candidate behavior, not a flaw. `v2_n_front_4` (contact info) as `new_in_v2` is reasonable. Absolute-path `SOURCE_DOCX_PATH` is a portability wart (reproducibility tied to this mount); suggest a `--source` CLI override next touch, not blocking since the hash gate travels with it.
+
+## Evidence And Assumptions
+
+**Evidence (observed):**
+- 27/27 `test_tp_ma_07_v2_registry.py` green on the pinned venv; regen/byte-identical/committed-match/no-volatile-fields tests all pass.
+- DOCX SHA re-hash match; `财务` 0 / `披露` 1 @body-738 / `利益冲突` 2 @body-920 / `经济利益` 0 / `financial` 0 in full `w:t` text; 0 finance hits in all 139 node titles and in `node_tree.json` raw.
+- Disposition arithmetic recomputed from artifacts: 70/15/7/10/7 (sums 109); reverse 110 = 109 + 106 − 105; `new_in_v2` 16, `mixed` 15; `partial` forward leaves 39; container-target forward leaves 12 (list in work notes); zero nodes missing `para_id`; `field_inventory` contains `\\*` and `表` keys; `_COMPANY_CHAPTERS` 124 rows @lineno 398.
+- Builder invariants (script L1623–1658, L1722–26) raise on missing/stale/extra mappings and projection-count drift — verified by reading, not just by green tests.
+
+**Inference (marked):** [INFERENCE] body-920 sits under `v2_n_14_7` (ordering-adjacent; not paragraph-mapped per-node in this check) — used only to show the hits are DSMB-related, not financial disclosure. [INFERENCE] `表: 2` origin is a SEQ/TOC label fragment — mechanism (first-token split) confirmed in code; exact source runs not traced, immaterial to the allowlist fix.
+
+**Assumptions:** the DOCX at the PRD path is the approved authority (taken from PRD + hash gate, not independently established); legacy module HEAD is the correct v1 identity (per design.md); Chinese-language semantic review of the 39 partials belongs to Codex/promotion, not this pass.
+
+## Risks, Gaps, And Verification Needs
+
+1. **Consumption-time silent loss (highest impact).** Risk: a builder reading `disposition: retired, targets: []` drops immunogenicity/biomarker/contraception obligations for projects that need them. Mitigation: R4 reopen rules; promotion must not proceed without them.
+2. **Finance-default reopen path.** `financial_disclosure: not_applicable` names no carrier node; the "explicitly enable with location" instruction is procedural, not structural. Acceptable for candidate, but promotion should name the owning section convention (Q2).
+3. **39 partials = the real review workload.** This candidate correctly refuses to resolve them; risk is only if anyone treats candidate-acceptance as semantic-acceptance. The `promotion_requirements` gate already says otherwise — keep it.
+4. **No verification gap on determinism/coverage mechanics** — the test file is meaningful (source-gate negative test, count/terminology/disposition/locator assertions, anti-claim tests like "106 contracts implemented" absence), not padding. No additional tests requested; R1's computed title-scan assertion would be the one test worth adding.
+
+## Recommended Next Step
+
+**REVISE and re-regenerate** (worker, minutes, offline): apply R1 (finance wording or computed title-scan + body-738/920 citation), R2 (field-name allowlist), R3 (nonclinical → partial), R4 (reopen_condition on all 10 retired leaves); rerun the 27 tests plus byte-identical-regen check; return the diff of the three JSONs. No design change, no re-extraction, no promotion.
+
+**Bounded questions for Codex:**
+- **Q1 (blocks R4 wording):** For `retired` leaves, is `reopen_condition: {project_fact, fallback_v2_node}` the right schema, or do you want `retired` to mean permanently closed for II/III with project needs handled outside the registry? Provisional path: implement reopen_condition; a permanently-closed reading would contradict the "no silent retirement" PRD line for biologics-relevant leaves.
+- **Q2 (blocks R1):** Confirm `financial_disclosure: not_applicable` stands given the DSMB 利益冲突 hits are unrelated, and name the convention for which section would own a project-enabled disclosure (else the reopen instruction has no structural home). Provisional path: keep default, fix basis wording to title-level.
+- **Q3 (closes container-target note):** Confirm forward-to-container + reverse-per-child as the accepted contract convention for `safety.ae/sae/susar`, `objectives_endpoints.primary`, `population.size` et al. Provisional path: document the convention in one sentence; no retargeting.

@@ -1,0 +1,15 @@
+    from app.protocol_workflow.registries.dependency_graph import (
+E   ImportError: cannot import name 'ImpactPlanNotExecutable' from 'app.protocol_workflow.registries.dependency_graph' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/dependency_graph.py)
+=========================== short test summary info ============================
+ERROR tests/protocol_v3/test_fact_labeled_impact.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.38s
+=== dependency_graph (upgraded assertions against unfixed engine) ===
+/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_dependency_graph.py:570: AssertionError: assert 24 == 1
+/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_dependency_graph.py:646: AssertionError: assert 31 == 16
+/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_dependency_graph.py:818: AssertionError: assert ('contract:v2...ct:v2-t-c:v2') == ('contract:v2...ct:v2-t-b:v2')
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_dependency_graph.py::test_broad_dose_endpoint_change_returns_every_affected_chapter_without_truncation
+FAILED tests/protocol_v3/test_dependency_graph.py::test_same_fact_update_has_a_single_adoption_effect
+FAILED tests/protocol_v3/test_dependency_graph.py::test_consistency_bridge_does_not_reopen_carriers_of_unchanged_facts
+3 failed, 8 passed in 0.63s
