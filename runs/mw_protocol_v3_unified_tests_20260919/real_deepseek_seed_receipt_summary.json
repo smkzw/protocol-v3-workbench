@@ -1,0 +1,21 @@
+{
+  "workflow_run_id": "research-intake:d39304b574605eadf86ce487cef965e0979fbf9c9f906fea679e6a4ce7227fb6",
+  "status": "needs_information",
+  "declared": {
+    "provider": "deepseek",
+    "model": "deepseek-flash",
+    "requested_effort": "max"
+  },
+  "observed": {
+    "provider": "deepseek",
+    "model": "deepseek-flash",
+    "effective_effort": "not_reported_by_server"
+  },
+  "reopen_identical": true,
+  "fields": {
+    "clinical_phase": 1,
+    "comparator": 1,
+    "research_drug": 1
+  },
+  "note": "首次deepseek adapter探针曾实测 observed=deepseek-flash 与 registry 声明 deepseek-v4-flash 不符，已将 registry/builder 对齐为 API 实测 id；本 summary 的 declared 已同步。"
+}
