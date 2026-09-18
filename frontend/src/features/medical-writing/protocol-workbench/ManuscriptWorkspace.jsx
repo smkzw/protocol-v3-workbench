@@ -68,8 +68,64 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   const [sourceState, setSourceState] = useState(null);
   const [planRefresh, setPlanRefresh] = useState(0);
   const [busy, setBusy] = useState(false), [refresh, setRefresh] = useState(0);
+  const [factsBusy, setFactsBusy] = useState(false);
+  const [residual, setResidual] = useState(null);
   const apiRef = useRef(api); apiRef.current = api;
   const request = useRef(null), flight = useRef(false);
+
+  useEffect(() => {
+    // Once drafting is otherwise blocked, offer the residual user-decidable
+    // facts (organization/signing facts with transparent recommendations).
+    if (!apiRef.current?.getChapterFactsResidual) return undefined;
+    if (plan?.all_applicable_inputs_ready || factsBusy) return undefined;
+    const controller = new AbortController();
+    Promise.resolve().then(() => apiRef.current.getChapterFactsResidual(projectId, studyDefinitionId, { signal: controller.signal }))
+      .then(value => { if (!controller.signal.aborted) setResidual(value?.residual || null); })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [projectId, studyDefinitionId, plan, factsBusy, refresh]);
+
+  async function confirmResidual() {
+    if (factsBusy || !residual || !actorId) return;
+    setFactsBusy(true); setError('');
+    try {
+      const paths = Object.keys(residual);
+      await apiRef.current.confirmChapterFactsResidual(projectId, studyDefinitionId, {
+        operation_id: 'chapter-facts-residual:' + crypto.randomUUID(),
+        actor_id: actorId,
+        expected_revision: plan?.expected_revision ?? 0,
+        snapshot_sha256: plan?.snapshot_sha256 ?? '',
+        decided_at: new Date().toISOString(),
+        accepted_fact_paths: paths,
+      });
+      const next = await apiRef.current.getManuscriptPlan(projectId, studyDefinitionId);
+      if (next?.plan || next?.chapters) setPlan(next?.plan || next);
+      setResidual(null);
+    } catch (reason) { setError(readableError(reason)); }
+    finally { setFactsBusy(false); }
+  }
+
+  async function deriveFacts() {
+    if (factsBusy) return;
+    setFactsBusy(true); setError('');
+    try {
+      const client = apiRef.current;
+      await client.deriveChapterFacts(projectId, studyDefinitionId);
+      // The derivation runs in background batches; keep the plan view live
+      // until every applicable chapter is ready or the run stops progressing.
+      for (let round = 0; round < 120; round++) {
+        await new Promise(resolve => setTimeout(resolve, round < 4 ? 4000 : 15000));
+        const next = await client.getManuscriptPlan(projectId, studyDefinitionId);
+        if (!next?.plan && !next?.chapters) break;
+        setPlan(next?.plan || next);
+        if ((next?.plan || next)?.all_applicable_inputs_ready) break;
+        const status = await client.getChapterFactsStatus(projectId, studyDefinitionId)
+          .catch(() => null);
+        if (status?.progress && !status.progress.running) break;
+      }
+    } catch (reason) { setError(readableError(reason)); }
+    finally { setFactsBusy(false); }
+  }
 
   function remember(next) {
     try {
@@ -359,6 +415,23 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       <button className="kz-manuscript-primary" type="button" onClick={() => begin()}
         disabled={busy || !plan?.all_applicable_inputs_ready}>生成完整初稿</button>
       {plan && !plan.all_applicable_inputs_ready && <p>请先完成研究建议中的未决内容，已有确认会保留。</p>}
+      {plan && !plan.all_applicable_inputs_ready && apiRef.current?.deriveChapterFacts && <>
+        <button type="button" disabled={factsBusy} onClick={deriveFacts}>
+          {factsBusy ? '正在按已确认设计补齐章节事实…' : '按已确认设计补齐章节事实（AI建议）'}</button>
+        <p>缺失的章节级事实由模型按已确认研究设计起草并标为AI建议；初稿与受控编辑中可逐条核对修改。设计变化后需重新补齐。</p>
+      </>}
+      {plan && !plan.all_applicable_inputs_ready && residual && Object.keys(residual).length > 0 && <>
+        <div className="kz-manuscript-residual" role="group" aria-label="待确认的研究组织信息">
+          <p>还有 {Object.keys(residual).length} 项研究组织与执行信息需要你确认（已按常规给出建议，全部确认后即可生成初稿；正文中可继续修改）：</p>
+          <ul>
+            {Object.entries(residual).slice(0, 6).map(([path, rec]) => (
+              <li key={path}>{rec.basis || '按方案常规建议'}</li>
+            ))}
+            {Object.keys(residual).length > 6 && <li>… 其余 {Object.keys(residual).length - 6} 项同类信息</li>}
+          </ul>
+          <button type="button" disabled={factsBusy || !actorId} onClick={confirmResidual}>确认以上建议</button>
+        </div>
+      </>}
     </>}
     {packet && !job?.complete_candidate && <p role="status">{packet.phase === 'sources'
       ? (sourceState?.status === 'completed' ? '资料已准备，完整初稿尚未开始。' : sourceState && sourceState.status !== 'running' ? '资料准备已停止，原资料与记录已保留。' : '正在准备本次写作资料。')

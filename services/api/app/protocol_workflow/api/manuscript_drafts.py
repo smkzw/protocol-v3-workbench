@@ -1,7 +1,8 @@
 """One recoverable request for all applicable chapters of the current study."""
 from fastapi import APIRouter, BackgroundTasks, HTTPException
-from pydantic import Field
-from packages.contracts.workbench_contracts.protocol_v3 import StableId, Sha256
+from pydantic import BaseModel, ConfigDict, Field
+from packages.contracts.workbench_contracts.protocol_v3 import (
+    AwareDateTime, NonEmptyText, StableId, Sha256)
 
 from app.protocol_workflow.application.queries import GetStudyDefinitionQuery
 from app.protocol_workflow.agent3.manuscript_request import prepare_manuscript_request, ManuscriptInputsIncomplete
@@ -9,6 +10,16 @@ from app.protocol_workflow.agent3.source_preparation import SourcePreparationInc
 from app.protocol_workflow.graph import GraphRunError
 from .chapter_drafts import ChapterPreparationRequest, ChapterStartRequest
 from .router import _safe_call
+
+
+class ChapterFactsResidualConfirmRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    operation_id: StableId
+    actor_id: StableId
+    expected_revision: int = Field(ge=1, strict=True)
+    snapshot_sha256: Sha256
+    decided_at: AwareDateTime
+    accepted_fact_paths: list[NonEmptyText] = Field(min_length=1)
 
 
 class ManuscriptSaveRequest(ChapterStartRequest):
@@ -19,7 +30,7 @@ class ManuscriptSaveRequest(ChapterStartRequest):
 
 
 def create_manuscript_draft_router(manuscripts, preparations, *, application_service,
-        template_loader, documents, route_class):
+        template_loader, documents, route_class, chapter_facts_deriver=None):
     router = APIRouter(prefix='/api/projects/{project_id}/protocol-workflow/study-definitions/{study_definition_id}/manuscript-draft',
         tags=['研究方案写作'], route_class=route_class)
 
@@ -95,6 +106,124 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             return {'expected_workflow_run_id': manuscripts(project_id).run_id(prepared),
                 'input_sha256': prepared.input_sha256, 'plan': prepared.to_payload()['plan']}
         return _safe_call(lambda: checked(execute))
+
+    @router.post('/chapter-facts/derive', status_code=202)
+    def derive_chapter_facts(project_id: str, study_definition_id: str, tasks: BackgroundTasks):
+        """Derive missing chapter facts from the confirmed design (AI actor)."""
+        if chapter_facts_deriver is None:
+            raise HTTPException(501, detail={'message': '本部署未启用章节事实派生。'})
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        from app.protocol_workflow.agent3.chapter_facts import collect_chapter_gaps
+        gaps = collect_chapter_gaps(template_loader(), current.definition)
+        if not gaps:
+            return {'status': 'nothing_to_derive', 'gaps': 0}
+        if chapter_facts_deriver.progress.get('running'):
+            return {'status': 'running', 'gaps': len(gaps),
+                    **{k: chapter_facts_deriver.progress[k]
+                       for k in ('batches_done', 'batches_total')}}
+        snapshot = current.revision_sha256
+        revision = current.revision
+        template = template_loader()
+        study = current.definition
+        operation_id = 'chapter-facts:' + snapshot
+        def run():
+            outcome = chapter_facts_deriver.run(template, study,
+                operation_id=operation_id, expected_revision=revision,
+                snapshot_sha256=snapshot)
+            command = outcome.get('command')
+            if command is not None:
+                try:
+                    application_service.apply_decision(command)
+                except Exception as exc:  # noqa: BLE001 — surfaced via progress poll
+                    chapter_facts_deriver.progress['errors'].append(
+                        f'apply_failed:{type(exc).__name__}:{str(exc)[:180]}')
+        tasks.add_task(run)
+        return {'status': 'started', 'gaps': len(gaps),
+                'batches_total': chapter_facts_deriver.progress['batches_total']}
+
+    @router.get('/chapter-facts/derive')
+    def chapter_facts_status(project_id: str, study_definition_id: str):
+        progress = dict(chapter_facts_deriver.progress) if chapter_facts_deriver else None
+        return {'progress': progress}
+
+    @router.get('/chapter-facts/residual')
+    def chapter_facts_residual(project_id: str, study_definition_id: str):
+        """Remaining user-decidable facts with transparent recommendations."""
+        from app.protocol_workflow.agent3.chapter_facts import residual_recommendations
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        residual = residual_recommendations(template_loader(), current.definition)
+        return {'schema_version': 'chapter-facts-residual.v1', 'residual': residual}
+
+    @router.post('/chapter-facts/residual/confirm')
+    def confirm_chapter_facts_residual(project_id: str, study_definition_id: str,
+                                       body: ChapterFactsResidualConfirmRequest):
+        """Apply the user-confirmed residual values as one USER decision."""
+        import hashlib as _hashlib
+        from app.protocol_workflow.agent3.chapter_facts import (
+            residual_recommendations, RESIDUAL_RECOMMENDATIONS, _binding_index)
+        from app.protocol_workflow.application.commands import (
+            ApplyStudyDecisionCommand, TemplateAdoptionIntent)
+        from app.protocol_workflow.canonical.hashing import canonical_json
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            ActorType, DecisionRecord)
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        if current.revision != body.expected_revision or \
+                current.revision_sha256 != body.snapshot_sha256:
+            raise HTTPException(409, detail={'message': '研究内容刚有更新，本次确认未执行。',
+                'next_step': '请刷新页面后按最新建议重新确认。'})
+        residual = residual_recommendations(template_loader(), current.definition)
+        updates, retire_paths, needs_revise = {}, [], False
+        for path in body.accepted_fact_paths:
+            rec = residual.get(path)
+            if rec is None:
+                continue
+            if rec.get('retire'):
+                retire_paths.append(rec['canonical_path'])
+                needs_revise = True
+                continue
+            if path not in RESIDUAL_RECOMMENDATIONS and not rec.get('revise'):
+                continue
+            updates[rec['canonical_path']] = rec['value']
+            needs_revise = needs_revise or bool(rec.get('revise'))
+        if not updates and not retire_paths:
+            raise HTTPException(422, detail={'message': '没有可确认的章节事实，请刷新后重试。'})
+        selected = 'chapter-facts-residual:' + _hashlib.sha256(canonical_json(
+            sorted(updates)).encode()).hexdigest()[:40]
+        record = DecisionRecord(
+            decision_record_id='chapter.facts.residual-record:' + _hashlib.sha256(
+                canonical_json([study_definition_id, body.operation_id]).encode()).hexdigest(),
+            decision_key='chapter.facts.residual',
+            snapshot_sha256=body.snapshot_sha256,
+            expected_state_revision=body.expected_revision,
+            state_revision=body.expected_revision + 1,
+            option_ids=(selected,), selected_option_id=selected,
+            actor_type=ActorType.USER, actor_id=body.actor_id,
+            reason='确认章节组织与执行事实（AI建议值；正文中可继续修改）',
+            decided_at=body.decided_at)
+        command = ApplyStudyDecisionCommand(
+            project_id=project_id, study_definition_id=study_definition_id,
+            idempotency_key=body.operation_id, expected_revision=body.expected_revision,
+            actor_type=ActorType.USER, actor_id=body.actor_id,
+            reason=record.reason, decision_record=record,
+            # Corrections of already-stored values carry the explicit revision
+            # intent (USER actor on a CONFIRMED study); pure additions do not.
+            fact_updates=updates or None, revise_confirmed_facts=needs_revise,
+            template_adoption=(TemplateAdoptionIntent(
+                template_id='tp_ma_07_v2', retired_fact_paths=tuple(retire_paths))
+                if retire_paths else None))
+        receipt = application_service.apply_decision(command)
+        return {'revision': receipt.revision, 'applied_paths': len(updates),
+                'retired_paths': len(retire_paths),
+                'study_sha256': receipt.revision_sha256}
 
     @router.post('', status_code=202)
     def start(project_id: str, study_definition_id: str, body: ChapterStartRequest, tasks: BackgroundTasks):

@@ -406,6 +406,13 @@ def _register_routes(router: APIRouter, config: _RouterConfig) -> None:
                 GetStudyDefinitionQuery(project_id, study_definition_id))
             if result is None:
                 raise HTTPException(404, detail=_not_found_envelope())
+            # Residual confirmations CAS against the study revision; the read
+            # carries the current values so the client never guesses them.
+            current = config.application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if current.definition is not None:
+                result["expected_revision"] = current.revision
+                result["snapshot_sha256"] = current.revision_sha256
             return result
         return _safe_call(execute)
 

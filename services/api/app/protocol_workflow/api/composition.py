@@ -253,6 +253,14 @@ def _make_admission_dependency(
     return _admission_gate
 
 
+def _chapter_facts_deriver(adapter_config):
+    """One deriver per mount: real transport, receipt artifacts, AI-actor apply."""
+    from app.protocol_workflow.agent3.chapter_facts import ChapterFactsDeriver
+    return ChapterFactsDeriver(
+        storage_path=adapter_config['path'],
+        product_profile=resolve_product_profile())
+
+
 def create_mounted_protocol_workflow_router(
     config: ProtocolWorkflowMountConfig,
     *,
@@ -353,6 +361,7 @@ def create_mounted_protocol_workflow_router(
         create_manuscript_draft_router(manuscripts, preparations,
             application_service=service, template_loader=lambda: load_current_template(default_template_root()),
             documents=ManuscriptDocumentService(uow_factory, lambda: datetime.now(timezone.utc)),
+            chapter_facts_deriver=_chapter_facts_deriver(adapter_config),
             route_class=_ValidationEnvelopeRoute),
         dependencies=[Depends(_make_admission_dependency(adapter_config))],
     )

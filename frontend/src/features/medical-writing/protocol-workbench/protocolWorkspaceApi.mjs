@@ -323,6 +323,30 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
         signal,
       );
     },
+    deriveChapterFacts(projectId, studyDefinitionId, { signal } = {}) {
+      return post(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/derive`,
+        {}, signal,
+      );
+    },
+    getChapterFactsStatus(projectId, studyDefinitionId, { signal } = {}) {
+      return get(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/derive`,
+        signal,
+      );
+    },
+    getChapterFactsResidual(projectId, studyDefinitionId, { signal } = {}) {
+      return get(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/residual`,
+        signal,
+      );
+    },
+    confirmChapterFactsResidual(projectId, studyDefinitionId, intent, { signal } = {}) {
+      return post(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/residual/confirm`,
+        intent, signal,
+      );
+    },
     getDecisionGraph(projectId, studyDefinitionId, { signal } = {}) {
       return get(
         `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/decision-graph`,
