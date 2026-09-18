@@ -150,7 +150,10 @@ def test_contracts_reuse_shared_fact_paths_and_declare_typed_detail():
     assert "picos.exclusion_modules" in exclusion_paths
     assert any("all-applicable" in element for element in inclusion["substantive_content"]["project_specific_elements"])
     assert any("any-applicable" in element for element in exclusion["substantive_content"]["project_specific_elements"])
-    assert not inclusion_paths & exclusion_paths - {"framing.population_intent", "picos.population_summary"}
+    assert not inclusion_paths & exclusion_paths - {
+        "framing.population_intent", "picos.population_summary",
+        "picos.risk.pregnancy_contraception",
+    }
 
 
 def test_parent_population_framing_is_carried_by_inclusion_and_referenced_by_exclusion():
@@ -214,8 +217,10 @@ def test_population_predicates_are_typed_and_not_inverse_duplicates():
         assert any(path.endswith(".parameters") for path in paths)
         assert any(path.endswith(".windows") for path in paths)
         assert any(path.endswith(".exceptions") for path in paths)
-    assert any("all-applicable" in item["condition"] for item in by_id["v2_n_5_1"]["conditional_applicability_rules"])
-    assert any("any-applicable" in item["condition"] for item in by_id["v2_n_5_2"]["conditional_applicability_rules"])
+    assert any("all-applicable" in item for item in by_id["v2_n_5_1"]["substantive_content"]["project_specific_elements"])
+    assert any(item["claim_type"] == "inclusion_predicate" and item["obligation"] == "required" for item in by_id["v2_n_5_1"]["substantive_content"]["claim_requirements"])
+    assert any("any-applicable" in item for item in by_id["v2_n_5_2"]["substantive_content"]["project_specific_elements"])
+    assert any(item["claim_type"] == "exclusion_predicate" and item["obligation"] == "required" for item in by_id["v2_n_5_2"]["substantive_content"]["claim_requirements"])
 
 
 def test_design_high_risk_choices_are_decisions_not_defaults():

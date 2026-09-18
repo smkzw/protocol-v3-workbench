@@ -31,6 +31,7 @@ from datetime import datetime
 from typing import Annotated, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+from app.protocol_workflow.canonical.decision_inputs import DecisionInputRef
 
 from packages.contracts.workbench_contracts.protocol_v3 import (
     ActorType,
@@ -44,6 +45,7 @@ from packages.contracts.workbench_contracts.protocol_v3 import (
     SideEffectKind,
     StableId,
     StudyDefinitionV3,
+    SemanticDocumentRevision,
     UnitInterval,
     WorkflowRunStatus,
 )
@@ -56,15 +58,24 @@ from app.protocol_workflow.agent5 import (
     TemplatePin,
 )
 
+
+class CurrentSemanticDocumentResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    document: SemanticDocumentRevision
+    revision_sha256: Sha256
+    study_binding_status: Literal["current", "changed", "missing"]
+
 __all__ = [
     # request
     "RunManifestPinRequest",
     "SideEffectSpecRequest",
     "StudyDefinitionCreateRequest",
     "StudyDefinitionDecisionApplyRequest",
+    "TemplateAdoptionIntentRequest",
     "WorkPackageDecompositionRequest",
     "WorkPackageSpecRequest",
     # response
+    "CurrentSemanticDocumentResponse",
     "CurrentStudyDefinitionResponse",
     "DecisionGraphRecordResponse",
     "DecisionGraphResponse",
@@ -76,6 +87,8 @@ __all__ = [
     "ProgressSummaryResponse",
     "RunManifestResponse",
     "StudyDefinitionMutationResponse",
+    "TemplateAdoptionIdentityResponse",
+    "TemplateAdoptionResponse",
     "WorkPackageDecompositionResponse",
     "WorkflowRunStatusRecordResponse",
     "WorkflowRunStatusResponse",
@@ -127,6 +140,23 @@ class StudyDefinitionCreateRequest(BaseModel):
     side_effect: Optional[SideEffectSpecRequest] = None
 
 
+class TemplateAdoptionIntentRequest(BaseModel):
+    """Explicit template context for one fact adoption (3R.4D).
+
+    The workbench supplies this automatically; the caller never edits JSON.
+    ``template_id`` is an optional echo the server checks against the current
+    authored template.  ``retired_fact_paths`` is the only way a value leaves
+    the current facts: a confirmed alias mapping or a condition-controlled
+    fact whose condition is genuinely 不适用 on the resulting facts (unknown
+    is not inactive, and an applicable shared owner keeps the fact alive).
+    """
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    template_id: Optional[StableId] = None
+    retired_fact_paths: tuple[NonEmptyText, ...] = ()
+
+
 class StudyDefinitionDecisionApplyRequest(BaseModel):
     """Apply an accepted decision to the current StudyDefinition revision.
 
@@ -146,6 +176,9 @@ class StudyDefinitionDecisionApplyRequest(BaseModel):
     decision_record: DecisionRecord
     fact_updates: Optional[dict[NonEmptyText, JsonValue]] = None
     side_effect: Optional[SideEffectSpecRequest] = None
+    revise_confirmed_facts: Annotated[bool, Field(strict=True)] = False
+    decision_input_refs: Optional[Annotated[tuple[DecisionInputRef, ...], Field(min_length=1)]] = None
+    template_adoption: Optional[TemplateAdoptionIntentRequest] = None
 
 
 # ---------------------------------------------------------------------------
@@ -277,6 +310,8 @@ class DecisionGraphRecordResponse(BaseModel):
     selected_option_id: Optional[StableId]
     canonical_state: Optional[CanonicalState]
 
+    current_validity: Literal["unverified", "current", "stale"] = "unverified"
+
 
 class DecisionGraphResponse(BaseModel):
     """The decision-graph read-model projection (may be empty)."""
@@ -286,6 +321,49 @@ class DecisionGraphResponse(BaseModel):
     project_id: StableId
     study_definition_id: StableId
     records: tuple[DecisionGraphRecordResponse, ...] = ()
+
+
+class TemplateAdoptionIdentityResponse(BaseModel):
+    """Source-bound identity of the template one adoption was bound to."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    template_id: StableId
+    template_sha256: Sha256
+    registry_sha256: Sha256
+    registry_binding_sha256: Sha256
+    applicability_rules_sha256: Sha256
+    fact_binding_count: NonNegativeInt
+    applicability_rule_count: NonNegativeInt
+
+
+class TemplateAdoptionResponse(BaseModel):
+    """The latest template-bound adoption record rebuilt from events.
+
+    ``applicability_snapshot`` and ``impact_plan`` are B's and C's typed
+    outputs persisted verbatim inside the adoption event; their canonical
+    models live in the accepted registry modules.  The query performs no
+    write and triggers no model call.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    project_id: StableId
+    study_definition_id: StableId
+    cas_identity: NonEmptyText
+    decision_record_id: StableId
+    decision_key: StableId
+    base_revision: PositiveRevision
+    base_revision_sha256: Sha256
+    applied_revision: PositiveRevision
+    applied_revision_sha256: Sha256
+    facts_before_sha256: Sha256
+    facts_after_sha256: Sha256
+    changed_fact_paths: tuple[NonEmptyText, ...]
+    retired_fact_paths: tuple[NonEmptyText, ...]
+    template: TemplateAdoptionIdentityResponse
+    applicability_snapshot: dict[str, JsonValue]
+    impact_plan: dict[str, JsonValue]
 
 
 class WorkflowRunStatusRecordResponse(BaseModel):
@@ -350,6 +428,7 @@ class DecisionRequestResponse(BaseModel):
     state_revision: Optional[PositiveRevision] = None
     selected_option_id: Optional[StableId] = None
     canonical_state: Optional[CanonicalState] = None
+    current_validity: Literal["unverified", "current", "stale"] = "unverified"
 
 
 class DecisionRequestQueueResponse(BaseModel):

@@ -629,7 +629,11 @@ def test_dose_hold_restart_and_discontinuation_keep_product_specific_triggers():
         if r.conditional_applicability_rule_id == "applicability:n-6-1-2:dose-modification"
     )
     assert rule.triggering_fact_paths == ("intervention.dose_modification_required",)
-    assert "intervention.dose_hold_criteria" in rule.required_when_active_fact_paths
+    assert rule.required_when_active_fact_paths == ("intervention.dose_modification_features",)
+    hold = next(r for r in contract.conditional_applicability_rules
+                if r.conditional_applicability_rule_id == "applicability:n-6-1-2:hold")
+    assert hold.required_when_active_fact_paths == ("intervention.dose_hold_criteria",)
+    assert "intervention.dose_modification_features" in hold.triggering_fact_paths
     forbidden = {
         item.fact_path
         for item in contract.substantive_content.fact_requirements
@@ -771,7 +775,8 @@ def test_visit_phase_facts_agree_with_schedule_and_safety_period():
         for r in treatment.conditional_applicability_rules
         if r.conditional_applicability_rule_id == "applicability:n-7-2:randomization"
     )
-    assert rule.triggering_fact_paths == ("procedure.randomized_on_day1",)
+    assert rule.triggering_fact_paths == ("diagram.randomized",)
+    assert rule.required_when_active_fact_paths == ("procedure.randomization_day_rules",)
     forbidden = {
         item.fact_path
         for item in treatment.substantive_content.fact_requirements
@@ -793,16 +798,9 @@ def test_followup_carrier_requires_window_units_and_phone_visits():
         for item in contract.substantive_content.fact_requirements
         if item.obligation.value == "optional"
     }
-    rule = next(
-        r
-        for r in contract.conditional_applicability_rules
-        if r.conditional_applicability_rule_id
-        == "applicability:n-7-3:unscheduled-contact"
-    )
-    assert rule.triggering_fact_paths == (
-        "procedure.followup_unscheduled_and_phone_visits",
-    )
-    assert set(rule.required_when_active_fact_paths) == {
+    assert "procedure.unscheduled_contact_recording_plan" in required
+    assert not contract.conditional_applicability_rules
+    assert not required & {
         "procedure.contact_visit_date",
         "procedure.contact_visit_modality",
         "procedure.contact_visit_reason",

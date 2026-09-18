@@ -63,6 +63,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    JsonValue,
     ValidationError,
     field_serializer,
     field_validator,
@@ -70,6 +71,7 @@ from pydantic import (
 )
 
 from packages.contracts.workbench_contracts.protocol_v3 import (
+    _freeze_json_value,
     ChapterContractV2,
     LocatorKind,
     SourceRole,
@@ -146,16 +148,38 @@ class LintInputError(ValueError):
 # Shared typed skill I/O and content payload types.
 # ---------------------------------------------------------------------------
 
+def _is_resolved_fact(value: JsonValue) -> bool:
+    """Transport supplied JSON intact; content sufficiency is checked separately."""
+    return value is not None and (not isinstance(value, str) or bool(value.strip()))
+
+
+def _has_fact_value(value: JsonValue) -> bool:
+    """Content presence, not truthiness or proof of medical correctness."""
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return bool(value.strip())
+    if isinstance(value, dict):
+        return any(_has_fact_value(item) for item in value.values())
+    if isinstance(value, list):
+        return any(_has_fact_value(item) for item in value)
+    return True  # Both false and zero are real supplied facts.
+
 
 class ContentFact(BaseModel):
     """A supplied fact value.  ``value`` may be absent, None or blank — all of
     which fail any required-fact obligation (existence alone is insufficient);
     blankness is decided by the checker, not silently repaired here."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=True)
+    model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=False)
 
     fact_path: NonEmptyText
-    value: Optional[str] = None
+    value: JsonValue = None
+
+    @field_validator("value")
+    @classmethod
+    def _immutable_value(cls, value: JsonValue) -> JsonValue:
+        return _freeze_json_value(value)
 
 
 class ContentClaim(BaseModel):
@@ -250,28 +274,30 @@ class ChapterSkillInput(BaseModel):
     is intentionally absent here.
     """
 
-    model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=True)
+    model_config = ConfigDict(extra="forbid", frozen=True, str_strip_whitespace=False)
 
     chapter_contract_id: StableId
     node_id: StableId
     template_id: StableId
     template_sha256: Sha256
-    resolved_facts: Mapping[str, str] = Field(min_length=1)
+    resolved_facts: Mapping[str, JsonValue] = Field(min_length=1)
     active_conditional_rule_ids: tuple[StableId, ...] = ()
     word_rules: WordFormattingRules
 
     @field_validator("resolved_facts")
     @classmethod
-    def _facts_non_blank(cls, value: Mapping[str, str]) -> Mapping[str, str]:
+    def _facts_non_blank(cls, value: Mapping[str, JsonValue]) -> Mapping[str, JsonValue]:
         for path, resolved in value.items():
-            if not str(resolved).strip():
+            if not _is_resolved_fact(resolved):
                 raise ValueError(
                     f"resolved_facts[{path!r}] must carry a non-blank value"
                 )
-        return MappingProxyType(dict(value))
+        return MappingProxyType(
+            {path: _freeze_json_value(resolved) for path, resolved in value.items()}
+        )
 
     @field_serializer("resolved_facts")
-    def _serialize_facts(self, value: Mapping[str, str]) -> dict[str, str]:
+    def _serialize_facts(self, value: Mapping[str, JsonValue]) -> dict[str, JsonValue]:
         return dict(value)
 
 
@@ -612,7 +638,7 @@ def evaluate_chapter_content(
     for index, requirement in enumerate(substantive.fact_requirements):
         location = f"contract.fact_requirements[{index}]({requirement.fact_path})"
         supplied = facts_by_path.get(requirement.fact_path)
-        has_value = supplied is not None and bool((supplied.value or "").strip())
+        has_value = supplied is not None and _has_fact_value(supplied.value)
         if requirement.obligation.value == "required" and not has_value:
             findings.append(
                 _finding(
@@ -803,7 +829,7 @@ def evaluate_chapter_content(
     }
     has_any_positive_content = (
         any(
-            (fact.value or "").strip()
+            _has_fact_value(fact.value)
             for fact in content.facts
             if fact.fact_path in required_fact_paths
         )

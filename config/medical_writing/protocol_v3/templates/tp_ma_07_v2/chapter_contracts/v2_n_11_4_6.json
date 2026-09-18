@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-11-4-6:v2",
   "semantic_node_id": "v2_n_11_4_6",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-11-4-6:exploratory-pk-pd-er",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -73,6 +73,21 @@
         "fact_path": "statistics.pk_pd_er.confirmatory_analysis_link",
         "obligation": "optional",
         "rationale": "确证性 PK/PD/ER 必须链接主要或次要分析合同，不得改称探索性。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.pk_confirmatory",
+        "obligation": "optional",
+        "rationale": "PK分析已确认开展时，用原生布尔明确其是否有确证性用途；未开展不要求虚构用途。用途由项目设计确认，不由模板默认。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.pd_confirmatory",
+        "obligation": "optional",
+        "rationale": "PD分析已确认开展时，用原生布尔明确其是否有确证性用途；未开展不要求虚构用途。用途由项目设计确认，不由模板默认。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.er_confirmatory",
+        "obligation": "optional",
+        "rationale": "ER分析已确认开展时，用原生布尔明确其是否有确证性用途；未开展不要求虚构用途。用途由项目设计确认，不由模板默认。"
       }
     ],
     "claim_requirements": [
@@ -169,7 +184,7 @@
     "project_specific_elements": [
       "本节点承载“探索性终点的统计分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
       "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
-      "继承 v2_n_11_4 父体 body-child @783 的 PK/PD/暴露-效应条件义务；探索性用途由本载体承载，确证性 PK/PD/ER 必须链接主要或次要分析合同，绝不得仅改称探索性。",
+      "按20260906 batch coverage reconciliation登记的语义扩展承载PK/PD/暴露-效应条件义务；body783仅为SAP指导原则引用，不是这些字段的直接原文来源；探索性用途由本载体承载，确证性 PK/PD/ER 必须链接主要或次要分析合同，绝不得仅改称探索性。",
       "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
       "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
     ],
@@ -218,8 +233,7 @@
       "required_when_active_fact_paths": [
         "statistics.pk_pd_er.endpoint_linkage",
         "statistics.pk_pd_er.sampling_schedule",
-        "statistics.pk_pd_er.model_assumptions",
-        "statistics.pk_pd_er.confirmatory_analysis_link"
+        "statistics.pk_pd_er.model_assumptions"
       ],
       "required_when_active_claim_types": [
         "pk_pd_er_analysis"
@@ -238,8 +252,7 @@
       "required_when_active_fact_paths": [
         "statistics.pk_pd_er.endpoint_linkage",
         "statistics.pk_pd_er.sampling_schedule",
-        "statistics.pk_pd_er.model_assumptions",
-        "statistics.pk_pd_er.confirmatory_analysis_link"
+        "statistics.pk_pd_er.model_assumptions"
       ],
       "required_when_active_claim_types": [
         "pk_pd_er_analysis"
@@ -258,14 +271,49 @@
       "required_when_active_fact_paths": [
         "statistics.pk_pd_er.endpoint_linkage",
         "statistics.pk_pd_er.sampling_schedule",
-        "statistics.pk_pd_er.model_assumptions",
-        "statistics.pk_pd_er.confirmatory_analysis_link"
+        "statistics.pk_pd_er.model_assumptions"
       ],
       "required_when_active_claim_types": [
         "pk_pd_er_analysis"
       ],
       "required_when_active_source_roles": [],
       "required_when_active_structural_objects": []
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:pk-confirmatory",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.pk_applicable",
+        "statistics.pk_pd_er.pk_confirmatory"
+      ],
+      "condition": "已确认开展PK分析且用于确证性推断",
+      "rationale": "依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:pd-confirmatory",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.pd_applicable",
+        "statistics.pk_pd_er.pd_confirmatory"
+      ],
+      "condition": "已确认开展PD分析且用于确证性推断",
+      "rationale": "依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:er-confirmatory",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.er_applicable",
+        "statistics.pk_pd_er.er_confirmatory"
+      ],
+      "condition": "已确认开展ER分析且用于确证性推断",
+      "rationale": "依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ]
     }
   ],
   "dependency_ids": [

@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-5-4:v2",
   "semantic_node_id": "v2_n_5_4",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-5-4:screening-failure",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -73,6 +73,11 @@
         "fact_path": "population.screen_failure.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.rescreening.allowed",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔状态：项目已确认是否允许复筛，不由筛选失败定义文字推断。"
       }
     ],
     "claim_requirements": [
@@ -163,7 +168,7 @@
       }
     ],
     "project_specific_elements": [
-      "筛选失败与重新筛选是不同定义，必须分别给出允许原因、时点和记录；已同意但未随机化不自动等同于标准失败，需记录参与状态和原因。",
+      "筛选失败和复筛分别定义。始终说明是否允许复筛及依据；允许时补齐资格、原因、时点、记录。已同意但未随机化不自动等同标准失败，需记录参与状态和原因。",
       "本载体引入的 population.rescreening.* 为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D3修复：归属声明补齐）。"
     ],
     "skeleton_risk_rules": [
@@ -197,13 +202,17 @@
     {
       "conditional_applicability_rule_id": "applicability:v2_n_5_4:active",
       "triggering_fact_paths": [
-        "population.screen_failure.definition"
+        "population.rescreening.allowed"
       ],
       "condition": "当项目允许重新筛选时，激活其资格条件、原因、时间窗口和记录要求。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
+      "rationale": "源body411/414要求按项目条件说明复筛；筛选失败记录独立保留，不因禁止复筛而省略。",
+      "required_when_active_fact_paths": [
+        "population.rescreening.definition",
+        "population.rescreening.permitted_reasons",
+        "population.rescreening.timing",
+        "population.rescreening.records"
+      ],
       "required_when_active_claim_types": [
-        "screen_failure_record",
         "rescreening_eligibility"
       ]
     }

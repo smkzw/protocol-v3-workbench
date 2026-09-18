@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-3-4-2:v2",
   "semantic_node_id": "v2_n_3_4_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-3-4-2:exploratory-endpoints",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -45,11 +45,9 @@
       {
         "schema_version": "mw_protocol_v3_contract_v1",
         "claim_type": "exploratory_non_confirmatory",
-        "obligation": "qualified",
-        "rationale": "探索性终点不得被表述为确证性结论。",
-        "qualifying_conditions": [
-          "当探索性终点不开展或仅作支持性分析时"
-        ]
+        "obligation": "required",
+        "rationale": "探索性分析明确解释范围，不以探索性结果直接宣称确证性有效；可恰当作描述/支持，拟改变分析意图应返回假设家族与多重性方案重新确认，而非靠非空处置文字激活。",
+        "qualifying_conditions": []
       },
       {
         "schema_version": "mw_protocol_v3_contract_v1",
@@ -82,6 +80,20 @@
         ],
         "admission_claim_types": [
           "exploratory_endpoint_disposition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exploratory_non_confirmatory"
         ],
         "allowed_locator_kinds": [
           "body",
@@ -129,23 +141,7 @@
       "rule": "探索性终点必须标注其分析意图，且不得表述为确证性结论。"
     }
   ],
-  "conditional_applicability_rules": [
-    {
-      "schema_version": "mw_protocol_v3_contract_v1",
-      "conditional_applicability_rule_id": "applicability:n-3-4-2:non-confirmatory",
-      "triggering_fact_paths": [
-        "exploratory.endpoint_disposition"
-      ],
-      "condition": "探索性终点不开展或仅作支持性分析",
-      "rationale": "当探索性终点不开展或仅支持性时，必须显式声明其不构成确证性结论，避免被后续合同误用。",
-      "required_when_active_fact_paths": [],
-      "required_when_active_claim_types": [
-        "exploratory_non_confirmatory"
-      ],
-      "required_when_active_source_roles": [],
-      "required_when_active_structural_objects": []
-    }
-  ],
+  "conditional_applicability_rules": [],
   "dependency_ids": [],
   "dependency_repair_policy": null,
   "ctq_items": [

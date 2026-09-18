@@ -4,9 +4,9 @@ The package owns the closed request/response schemas and the
 :func:`create_protocol_workflow_router` factory under
 ``/api/projects/{project_id}/protocol-workflow``.
 
-* The router is factory-tested through a local in-process ``FastAPI`` app;
-  the shared ``main.py`` composition root is NOT edited and the router is NOT
-  product-mounted by this task.
+* The router remains factory-testable through a local ``FastAPI`` app.
+  Product mounting uses only ``composition.mount_protocol_workflow_router``
+  with the Task 1R.2 default-off switch.
 * Mutations translate the typed application commands (project / revision /
   idempotency / actor / reason / full immutable ``DecisionRecord``) and
   reject a path/body project mismatch before any service call; queries have
@@ -19,9 +19,9 @@ The package owns the closed request/response schemas and the
   actions and audit detail/context stay server-side.  There is no
   client-supplied exception-card endpoint (a client must never invent a
   catalog failure); the internal Agent⑤ exception-card capability stays
-  covered by the agent5 authority tests.  Hosting apps SHOULD register
-  :func:`protocol_workflow_validation_exception_handler` to keep structural
-  validation inside the same stable Chinese envelope.
+  covered by the agent5 authority tests. Product composition keeps structural
+  validation route-scoped; do not register the validation handler globally on
+  ``app.main``, because legacy validation behavior must remain unchanged.
 * The package imports no legacy writing routes and no medical-monitoring
   implementation.
 

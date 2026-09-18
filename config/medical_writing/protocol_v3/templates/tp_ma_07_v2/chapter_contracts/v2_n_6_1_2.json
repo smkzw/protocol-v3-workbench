@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-6-1-2:v2",
   "semantic_node_id": "v2_n_6_1_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-6-1-2:regimen",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -85,6 +85,16 @@
         "fact_path": "intervention.template_example_hold_threshold",
         "obligation": "forbidden",
         "rationale": "模板示例等级阈值（如 2 级暂停/1 级重启）不得作为普适规则。"
+      },
+      {
+        "fact_path": "intervention.dose_modification_features",
+        "obligation": "optional",
+        "rationale": "结构化对象hold/reduction/restart分别为原生布尔；未知成员不当false。"
+      },
+      {
+        "fact_path": "intervention.dose_escalation_or_dlt_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔适用性，区分是否存在递增或DLT安排与其说明文字。"
       }
     ],
     "claim_requirements": [
@@ -177,24 +187,60 @@
         "intervention.dose_modification_required"
       ],
       "condition": "确认设计包含剂量调整/暂停/恢复路径",
-      "rationale": "设计包含剂量调整时，暂停/降低/恢复/永久停药条件必须完整给出。",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
       "required_when_active_fact_paths": [
-        "intervention.dose_hold_criteria",
-        "intervention.dose_reduction_rules",
-        "intervention.restart_criteria",
-        "intervention.permanent_discontinuation_criteria"
+        "intervention.dose_modification_features"
       ]
     },
     {
       "schema_version": "mw_protocol_v3_contract_v1",
       "conditional_applicability_rule_id": "applicability:n-6-1-2:escalation",
       "triggering_fact_paths": [
-        "intervention.dose_escalation_or_dlt_logic"
+        "intervention.dose_escalation_or_dlt_applicable"
       ],
       "condition": "确认设计包含剂量递增或 DLT 定义",
       "rationale": "设计包含递增/DLT 时，递增与 DLT 定义逻辑必须作为项目事实给出。",
       "required_when_active_fact_paths": [
         "intervention.dose_escalation_or_dlt_logic"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:hold",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_hold_criteria"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:reduction",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_reduction_rules"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:restart",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.restart_criteria"
       ]
     }
   ],

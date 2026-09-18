@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-11-1:sample-size",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_11_1",
   "chapter_contract_id": "contract:v2-n-11-1:v2",
   "template_id": "tp_ma_07_v2",
@@ -8,8 +8,8 @@
   "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
-    "prompt_version": "prompt:tp-ma-07-v2:batch6:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“样本量估算”逐项承载源义务：不得因 SAP 稍后制定而省略终点、估计目标、主要方法或样本量参数；记录假设证据、分配/脱落、软件版本和可复算结果。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。",
+    "prompt_version": "prompt:tp-ma-07-v2:sample-size-adaptation:3.4.0",
+    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“样本量估算”逐项承载源义务：不得因 SAP 稍后制定而省略终点、估计目标、主要方法或样本量参数；记录假设证据、分配/脱落、软件版本和可复算结果。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。 期中或自适应设计分别说明样本量影响和Ⅰ类错误控制依据；有依据的不需要额外调整结论可以承载，不强制编造alpha消耗数值。盲态、非比较数据或未开展正式疗效检验均不能单独替代设计特异的错误率论证。",
     "forbidden_behaviors": [
       "编造项目统计事实、终点、假设或证据来源",
       "复制模板/竞品样本量、阈值、方法或结果作为项目事实",

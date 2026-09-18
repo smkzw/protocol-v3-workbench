@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:n-3-1-1:primary-objective",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_3_1_1",
   "chapter_contract_id": "contract:v2-n-3-1-1:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:v3.3.0",
-    "instructions": "按主要目的章节合同给出具体临床问题、治疗比较与主要终点映射，并在主要估计目标五属性齐备时给出链接声明；停药/补救治疗策略只在设计确认且完成高风险确认时才输出，且必须命中对应的条件适用性规则。",
+    "instructions": "按主要目的章节合同给出具体临床问题、治疗比较与主要终点映射，并在主要估计目标五属性齐备时给出链接声明；停药/补救治疗策略只在设计确认且完成高风险确认时才输出，且必须命中对应的条件适用性规则。 无补救治疗仅解除本章补救相关补充说明，不代表无停药等其他伴发事件；主临床问题必须保留其已确认处理含义，并与3.1.2.4一致，不能把源312示例策略当默认。",
     "forbidden_behaviors": [
       "把源示例的停药/补救治疗策略当作项目默认",
       "把“评价疗效”当作临床问题",

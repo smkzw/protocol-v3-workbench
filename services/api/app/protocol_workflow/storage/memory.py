@@ -308,6 +308,10 @@ class _AggregateIndex(Generic[AggregateT]):
             return None
         return max(revisions)
 
+    def list_current(self, project_id: str) -> Tuple[AggregateT, ...]:
+        return tuple(self.get_current(project_id, aggregate_id)
+                     for owner, aggregate_id in sorted(self._store) if owner == project_id)
+
     def get_current(self, project_id: str, aggregate_id: str) -> Optional[AggregateT]:
         revisions = self._store.get((project_id, aggregate_id))
         if not revisions:
@@ -344,6 +348,9 @@ class InMemoryCurrentAggregateRepository(Generic[AggregateT]):
 
     identity_field: str
     index: _AggregateIndex = field(default_factory=_AggregateIndex)
+
+    def list_current(self, project_id: str) -> Tuple[AggregateT, ...]:
+        return self.index.list_current(project_id)
 
     def get_current(self, project_id: str, aggregate_id: str) -> Optional[AggregateT]:
         return self.index.get_current(project_id, aggregate_id)

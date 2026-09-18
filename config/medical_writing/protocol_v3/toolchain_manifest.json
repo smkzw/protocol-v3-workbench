@@ -21,19 +21,64 @@
       "direct_count": 15,
       "entry_count": 38,
       "hash_algorithm": "sha256",
-      "excluded": ["PyMuPDF", "fitz"]
+      "excluded": [
+        "PyMuPDF",
+        "fitz"
+      ]
     },
     "license_groups": {
-      "runtime_api": ["fastapi", "pydantic", "starlette", "uvicorn", "python-multipart", "cryptography"],
-      "medical_writing": ["python-docx", "lxml", "openpyxl", "pandas"],
-      "ocr_pdf": ["Pillow", "pypdfium2", "rfc8785"],
-      "dev_test": ["httpx", "pytest"]
+      "runtime_api": [
+        "fastapi",
+        "pydantic",
+        "starlette",
+        "uvicorn",
+        "python-multipart",
+        "cryptography"
+      ],
+      "medical_writing": [
+        "python-docx",
+        "lxml",
+        "openpyxl",
+        "pandas"
+      ],
+      "ocr_pdf": [
+        "Pillow",
+        "pypdfium2",
+        "rfc8785"
+      ],
+      "dev_test": [
+        "httpx",
+        "pytest"
+      ]
     },
     "clean_install": {
-      "venv_create": ["{python}", "-m", "venv", "{venv}"],
-      "install": ["{venv_python}", "-m", "pip", "install", "--disable-pip-version-check", "--no-cache-dir", "--require-hashes", "--no-deps", "-r", "{lock}"],
-      "verify": ["{venv_python}", "-m", "pip", "check"],
-      "import_probe_modules": ["scripts.qc.protocol_v3.verify_toolchain_rebuild"]
+      "venv_create": [
+        "{python}",
+        "-m",
+        "venv",
+        "{venv}"
+      ],
+      "install": [
+        "{venv_python}",
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "--no-cache-dir",
+        "--require-hashes",
+        "--no-deps",
+        "-r",
+        "{lock}"
+      ],
+      "verify": [
+        "{venv_python}",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "import_probe_modules": [
+        "scripts.qc.protocol_v3.verify_toolchain_rebuild"
+      ]
     }
   },
   "frontend": {
@@ -77,17 +122,27 @@
       "path": "frontend/tests/protocol_v3_test_inventory.mjs",
       "sha256": "0a037e0d24de4674fadc52fa8a1cb46aeb95afb9378e3790074cd1297766d75d",
       "schema_version": "protocol-v3-test-inventory.v1",
-      "ignored_directories": [".cache", ".git", ".npm-cache", ".vite", "coverage", "dist", "node_modules", "output", "runtime"],
+      "ignored_directories": [
+        ".cache",
+        ".git",
+        ".npm-cache",
+        ".vite",
+        "coverage",
+        "dist",
+        "node_modules",
+        "output",
+        "runtime"
+      ],
       "test_suffixes": {
         ".test.jsx": "vitest",
         ".test.mjs": "node"
       },
       "counts": {
-        "total": 49,
-        "vitest": 3,
-        "node": 46
+        "total": 59,
+        "vitest": 12,
+        "node": 47
       },
-      "paths_sha256": "26c7c88c09bf0bdfd52cf1c0599e8dea2ff7f0e2c6f32dccf5cfe2fe089312ce",
+      "paths_sha256": "3aaf5a2c307e30ed8c64612a6ef7ea2b072d873d324e19c6432c6831207b5326",
       "explicit_node_paths": [
         "tests/monitoring_child_read_contract_qc.mjs",
         "tests/monitoring_source_only_ui_qc.mjs"
@@ -106,21 +161,71 @@
       "vitest_paths": [
         "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
         "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
-        "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx"
+        "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+        "src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx",
+        "src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx",
+        "src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx",
+        "src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx",
+        "src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx",
+        "src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx",
+        "src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx",
+        "src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx",
+        "tests/ProtocolSourceSelectionRecovery.test.jsx"
       ]
     },
     "scripts": {
-      "install": ["npm", "ci", "--ignore-scripts", "--audit=false", "--fund=false"],
-      "test:inventory": ["node", "tests/protocol_v3_test_inventory.mjs", "--check"],
-      "test:inventory:json": ["node", "tests/protocol_v3_test_inventory.mjs", "--json"],
-      "test:unit:vitest": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "vitest"],
-      "test:unit:node": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "node"],
-      "test:unit": ["node", "tests/protocol_v3_test_inventory.mjs", "--run", "all"],
-      "build": ["npm", "run", "build"]
+      "install": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--audit=false",
+        "--fund=false"
+      ],
+      "test:inventory": [
+        "node",
+        "tests/protocol_v3_test_inventory.mjs",
+        "--check"
+      ],
+      "test:inventory:json": [
+        "node",
+        "tests/protocol_v3_test_inventory.mjs",
+        "--json"
+      ],
+      "test:unit:vitest": [
+        "node",
+        "tests/protocol_v3_test_inventory.mjs",
+        "--run",
+        "vitest"
+      ],
+      "test:unit:node": [
+        "node",
+        "tests/protocol_v3_test_inventory.mjs",
+        "--run",
+        "node"
+      ],
+      "test:unit": [
+        "node",
+        "tests/protocol_v3_test_inventory.mjs",
+        "--run",
+        "all"
+      ],
+      "build": [
+        "npm",
+        "run",
+        "build"
+      ]
     },
-    "vitest_args": ["run", "--config", "vite.config.mjs", "--environment", "jsdom"],
+    "vitest_args": [
+      "run",
+      "--config",
+      "vite.config.mjs",
+      "--environment",
+      "jsdom"
+    ],
     "vitest_entry": "frontend/node_modules/vitest/vitest.mjs",
-    "node_runner_args": ["--test"]
+    "node_runner_args": [
+      "--test"
+    ]
   },
   "side_effect_contract": {
     "import_probe": "New tool imports must not write to disk, create DB/directories, or start workers. The Python import probe snapshots the watched root before and after import and fails closed on any changed path.",

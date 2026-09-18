@@ -346,11 +346,13 @@ EXPECTED_OBLIGATIONS: dict[str, dict] = {
         "required_claims": (
             "exploratory_endpoint",
             "exploratory_endpoint_disposition",
+            "exploratory_non_confirmatory",
         ),
         "forbidden_claims": ("marketing_claim",),
         "evidence_groups": (
             (("project_primary",), ("exploratory_endpoint",)),
             (("project_primary",), ("exploratory_endpoint_disposition",)),
+            (("project_primary",), ("exploratory_non_confirmatory",)),
         ),
         "object_kinds": ("table",),
         "required_cells": (

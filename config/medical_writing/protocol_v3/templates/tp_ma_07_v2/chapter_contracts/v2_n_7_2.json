@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-7-2:v2",
   "semantic_node_id": "v2_n_7_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-7-2:treatment-period",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -55,6 +55,12 @@
         "fact_path": "procedure.template_example_visit_schedule",
         "obligation": "forbidden",
         "rationale": "模板示例访视时间表不得作为本项目治疗期安排。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "diagram.randomized",
+        "obligation": "optional",
+        "rationale": "复用已确认随机化设计的结构化原生布尔状态；D1仅为时点示例。未知不按非随机处理。"
       }
     ],
     "claim_requirements": [
@@ -131,10 +137,10 @@
       "schema_version": "mw_protocol_v3_contract_v1",
       "conditional_applicability_rule_id": "applicability:n-7-2:randomization",
       "triggering_fact_paths": [
-        "procedure.randomized_on_day1"
+        "diagram.randomized"
       ],
-      "condition": "确认设计在实际给药/随机化日（如 D1）随机化",
-      "rationale": "设计在 D1 随机化时，随机化日规则必须作为项目事实给出；非随机化设计不得虚构。",
+      "condition": "已确认本项目为随机化设计，不限于 D1 随机化",
+      "rationale": "随机化设计必须给出实际时点规则；D1 仅为源模板示例。复用流程图已有随机设计状态，不从给药日或非空文字推断。",
       "required_when_active_fact_paths": [
         "procedure.randomization_day_rules"
       ]

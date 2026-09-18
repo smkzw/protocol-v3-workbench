@@ -79,6 +79,7 @@ class RecoveryAction(str, Enum):
     RECOVER_PROVIDER_RESULT = "recover_provider_result"
     REBUILD_FROM_DOMAIN_EVENTS = "rebuild_from_domain_events"
     COMPLETE_TEMPLATE_MAPPING = "complete_template_mapping"
+    COMPLETE_SERVICE_CONFIGURATION = "complete_service_configuration"
     COMPLETE_AI_CONFIGURATION = "complete_ai_configuration"
     REVISE_SEARCH_SCOPE = "revise_search_scope"
     COMPLETE_SOURCE_PROCESSING = "complete_source_processing"
@@ -99,6 +100,8 @@ class ProtocolErrorCode(str, Enum):
     P0_EDITOR_POC_NOT_ACCEPTED = "MW-PRO-P0-EDITOR-POC_NOT_ACCEPTED"
     P0_WORD_PRODUCER_UNAVAILABLE = "MW-PRO-P0-WORD-PRODUCER_UNAVAILABLE"
 
+    P1_OBJECT_NOT_FOUND = "MW-PRO-P1-OBJECT-NOT_FOUND"
+    P1_SERVICE_CONFIGURATION_INCOMPLETE = "MW-PRO-P1-SERVICE-CONFIGURATION_INCOMPLETE"
     P1_DECISION_CAS = "MW-PRO-P1-DECISION-CAS"
     P1_REVISION_STALE = "MW-PRO-P1-REVISION-STALE"
     P1_EXECUTION_UNKNOWN_OUTCOME = "MW-PRO-P1-EXECUTION-UNKNOWN_OUTCOME"
@@ -287,6 +290,8 @@ _DEFINITIONS: Tuple[ProtocolErrorDefinition, ...] = (
     _definition(ProtocolErrorCode.P0_SOURCE_BASELINE_MISMATCH, owner=ProtocolErrorOwner.APPLICATION_SERVICE, retryable=False, recovery_action=RecoveryAction.REBUILD_SOURCE_BASELINE, public_message="当前写作依据与已确认的资料版本不一致，暂不能继续生成方案。", public_next_step="请先恢复已确认的资料版本，并重新核对写作依据。"),
     _definition(ProtocolErrorCode.P0_EDITOR_POC_NOT_ACCEPTED, owner=ProtocolErrorOwner.APPLICATION_SERVICE, retryable=False, recovery_action=RecoveryAction.COMPLETE_PROOF_OF_CONCEPT, public_message="正文编辑能力尚未完成真实文档验证，暂不能进入正式写作。", public_next_step="请先完成编辑器与样例文档的完整验证。"),
     _definition(ProtocolErrorCode.P0_WORD_PRODUCER_UNAVAILABLE, owner=ProtocolErrorOwner.WORD_VALIDATION_SERVICE, retryable=True, recovery_action=RecoveryAction.COMPLETE_PROOF_OF_CONCEPT, public_message="Word 定稿核验暂不可用，当前内容不会被标记为可提交版本。", public_next_step="请稍后重新进行 Word 定稿核验。"),
+    _definition(ProtocolErrorCode.P1_OBJECT_NOT_FOUND, owner=ProtocolErrorOwner.APPLICATION_SERVICE, retryable=False, recovery_action=RecoveryAction.RECONCILE_CANONICAL_STATE, public_message="未找到所请求的方案工作流对象。", public_next_step="请核对项目与对象标识后重新请求。"),
+    _definition(ProtocolErrorCode.P1_SERVICE_CONFIGURATION_INCOMPLETE, owner=ProtocolErrorOwner.APPLICATION_SERVICE, retryable=False, recovery_action=RecoveryAction.COMPLETE_SERVICE_CONFIGURATION, public_message="工作台配置尚未就绪，本次操作未执行。", public_next_step="请修复工作台配置后继续。"),
     _definition(ProtocolErrorCode.P1_DECISION_CAS, owner=ProtocolErrorOwner.COORDINATOR_AGENT, retryable=True, recovery_action=RecoveryAction.RECONCILE_CANONICAL_STATE, public_message="您查看的推荐已被更新，本次选择尚未应用。", public_next_step="请查看最新推荐后重新确认。"),
     _definition(ProtocolErrorCode.P1_REVISION_STALE, owner=ProtocolErrorOwner.APPLICATION_SERVICE, retryable=True, recovery_action=RecoveryAction.REFRESH_STALE_REVISION, public_message="当前页面不是方案的最新版本，本次修改尚未应用。", public_next_step="请刷新至最新版本后继续。"),
     _definition(ProtocolErrorCode.P1_EXECUTION_UNKNOWN_OUTCOME, owner=ProtocolErrorOwner.COORDINATOR_AGENT, retryable=False, recovery_action=RecoveryAction.RECOVER_PROVIDER_RESULT, public_message="本次智能处理结果尚未确认，系统不会重复生成或覆盖已有内容。", public_next_step="请先恢复本次处理结果，再决定是否重新执行。"),
@@ -366,6 +371,10 @@ class ProtocolWorkflowError(RuntimeError):
     )
 
     def __setattr__(self, name: str, value: Any) -> None:
+        # Python context managers must restore exception bookkeeping on re-raise.
+        # Keep the workflow payload fixed without breaking exception propagation.
+        if name in {"__traceback__", "__cause__", "__context__", "__suppress_context__"}:
+            return super().__setattr__(name, value)
         if getattr(self, "_sealed", False):
             raise AttributeError("ProtocolWorkflowError is immutable")
         object.__setattr__(self, name, value)

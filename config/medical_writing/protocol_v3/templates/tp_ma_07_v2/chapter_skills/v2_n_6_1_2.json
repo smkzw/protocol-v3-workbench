@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-6-1-2:regimen",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_6_1_2",
   "chapter_contract_id": "contract:v2-n-6-1-2:v2",
   "template_id": "tp_ma_07_v2",
@@ -8,8 +8,8 @@
   "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
-    "prompt_version": "prompt:tp-ma-07-v2:batch4:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认剂量与给药事实），输出为 ChapterSkillOutput。给出实际剂量/间隔/途径与给药操作指令；暂停、剂量降低、恢复、个体永久停药与漏给药各自给出项目特定触发条件与记录要求；模板示例等级阈值（如 2 级暂停、1 级重启）仅为示例，绝不作普适规则；剂量表达必须与设计章节及 SoA 一致；缺失事实进入待补清单而不是编造；试验参与者安全相关动作不得省略。",
+    "prompt_version": "prompt:tp-ma-07-v2:dose-actions:3.4.0",
+    "instructions": "输入为 ChapterSkillInput（已确认剂量与给药事实），输出为 ChapterSkillOutput。给出实际剂量/间隔/途径与给药操作指令；暂停、剂量降低、恢复、个体永久停药与漏给药各自给出项目特定触发条件与记录要求；模板示例等级阈值（如 2 级暂停、1 级重启）仅为示例，绝不作普适规则；剂量表达必须与设计章节及 SoA 一致；缺失事实进入待补清单而不是编造；试验参与者安全相关动作不得省略。 暂停、减量、恢复按各自明确适用性承载，永久停药标准独立保留。不做递增或DLT安排不虚构相应规则，不由说明文字非空推断是否适用。",
     "forbidden_behaviors": [
       "编造证据来源或项目事实",
       "把模板示例值当作项目事实",

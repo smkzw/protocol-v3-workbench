@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:n-5-2:exclusion-criteria",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.1",
   "node_id": "v2_n_5_2",
   "chapter_contract_id": "contract:v2-n-5-2:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:tp-ma-07-v2:batch3:v2_n_5_2:3.3.0",
-    "instructions": "输入为已确认项目事实，按 v2_n_5_2 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。",
+    "instructions": "输入为已确认项目事实，按 v2_n_5_2 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。 妊娠/避孕适用性复用共享applicable与reason决定，不推定通用期限或简单从性别判断；纳排引用已确认资格事实，生活方式措施独立，只有明确适用时要求避孕期限。",
     "forbidden_behaviors": [
       "编造证据来源或项目事实",
       "复制模板示例作为项目默认值",

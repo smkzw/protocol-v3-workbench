@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-7-3:followup",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_7_3",
   "chapter_contract_id": "contract:v2-n-7-3:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:tp-ma-07-v2:batch4:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认访视与 SoA 事实），输出为 ChapterSkillOutput。给出随访期定义、带单位与参考事件的访视窗口，以及计划外/电话访视的日期、方式、原因与适用评估规则（电话联系按适用规则计入实际访视）；不得虚构批准、同意或来源回执；模板示例随访计划仅为示例；试验参与者实际随访安排须项目特定；缺失事实进入待补清单而不是编造。",
+    "instructions": "输入为 ChapterSkillInput（已确认访视与 SoA 事实），输出为 ChapterSkillOutput。给出随访期定义、带单位与参考事件的访视窗口，以及计划外/电话访视的日期、方式、原因与适用评估规则（电话联系按适用规则计入实际访视）；不得虚构批准、同意或来源回执；模板示例随访计划仅为示例；试验参与者实际随访安排须项目特定；缺失事实进入待补清单而不是编造。 必须依据unscheduled_contact_recording_plan写出如发生计划外/电话访视时如何记录日期、方式、原因、评估及安全性信息；没有实际访视也应写出此规则。不索要未来访视日期，不虚构记录，不把历史contact_visit字段复制成方案计划。",
     "forbidden_behaviors": [
       "编造证据来源或项目事实",
       "把模板示例值当作项目事实",

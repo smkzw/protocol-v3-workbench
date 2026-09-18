@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-11-4-6:exploratory-pk-pd-er",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_11_4_6",
   "chapter_contract_id": "contract:v2-n-11-4-6:v2",
   "template_id": "tp_ma_07_v2",
@@ -8,8 +8,8 @@
   "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
-    "prompt_version": "prompt:tp-ma-07-v2:batch6:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“探索性终点的统计分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。",
+    "prompt_version": "prompt:tp-ma-07-v2:pk-purpose:3.4.0",
+    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“探索性终点的统计分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。 PK、PD、E-R分别区分是否开展与确证性用途；仅确证性使用要求主要/次要分析链接，未知用途先补齐确认，不借探索性标签规避义务。",
     "forbidden_behaviors": [
       "编造项目统计事实、终点、假设或证据来源",
       "复制模板/竞品样本量、阈值、方法或结果作为项目事实",
@@ -24,7 +24,7 @@
     "节点书签：_Toc132623399；Word 样式ID：4。",
     "父节点义务声明：v2_n_11、v2_n_11_4 和 v2_n_11_4_3 为非载体结构容器，继承义务在本叶节点中显式展开。",
     "合成夹具值仅用于结构化检查，不是真实项目批准、统计有效性或医学结论；试验参与者数据处理必须保留来源与未决差异。",
-    "父体继承：v2_n_11_4 body-child @783 的 PK/PD/ER 条件义务；探索性载体不承接确证性用途，确证性用途需链接主要/次要分析合同。",
+    "语义扩展来源：reviews/mw_protocol_v3_3r3_batch_coverage_reconciliation_20260906.md；body783仅引用SAP指导原则，不能当作PK/PD/ER具体字段的原文依据；探索性载体不承接确证性用途，确证性用途需链接主要/次要分析合同。",
     "父体义务叶级承载标记：非载体父节点的义务已在本叶节点显式新增承载（declared_addition），不虚构父节点载体。"
   ],
   "error_codes": [

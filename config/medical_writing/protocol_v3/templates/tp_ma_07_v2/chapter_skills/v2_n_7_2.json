@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-7-2:treatment-period",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_7_2",
   "chapter_contract_id": "contract:v2-n-7-2:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:tp-ma-07-v2:batch4:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认设计、给药与 SoA 事实），输出为 ChapterSkillOutput。给出治疗期定义、给药起点规则、治疗期访视程序与盲态处理规则，并与 SoA、给药方案及安全评估一致；D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例访视时间表不得照抄；试验参与者实际安排不得虚构；缺失事实进入待补清单而不是编造。",
+    "instructions": "输入为 ChapterSkillInput（已确认设计、给药与 SoA 事实），输出为 ChapterSkillOutput。给出治疗期定义、给药起点规则、治疗期访视程序与盲态处理规则，并与 SoA、给药方案及安全评估一致；D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例访视时间表不得照抄；试验参与者实际安排不得虚构；缺失事实进入待补清单而不是编造。 已确认随机化设计无论是否在D1，均须提供实际随机化时点规则；非D1不等于非随机。",
     "forbidden_behaviors": [
       "编造证据来源或项目事实",
       "把模板示例值当作项目事实",

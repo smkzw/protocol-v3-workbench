@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-11-1:v2",
   "semantic_node_id": "v2_n_11_1",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-11-1:sample-size",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -101,7 +101,7 @@
       {
         "fact_path": "statistics.sample_size.interim_alpha_adjustment",
         "obligation": "optional",
-        "rationale": "期中分析导致的 alpha 消耗调整值，仅当存在期中调整时必需（fresh复核D1修复：条件规则引用的事实原先未声明）。"
+        "rationale": "期中或自适应安排下的Ⅰ类错误控制说明及项目方法依据；可承载调整方法，或有理论/模拟依据的不需要额外调整结论。字段名为兼容保留，不限定为数值，也不从盲态或未做疗效检验自动判定无影响。"
       },
       {
         "schema_version": "mw_protocol_v3_contract_v1",
@@ -313,7 +313,7 @@
         "statistics.sample_size.interim_applicable"
       ],
       "condition": "已确认样本量设计包含期中或自适应调整",
-      "rationale": "若适用期中调整，样本量方法必须补充调整规则和依据。",
+      "rationale": "如存在影响样本量的期中或自适应安排，说明样本量影响及Ⅰ类错误控制方法；允许有依据的不需要额外调整结论，不强制填alpha消耗数值。源body771的若有不等于无论证豁免。",
       "required_when_active_fact_paths": [
         "statistics.sample_size.interim_adjustment",
         "statistics.sample_size.interim_alpha_adjustment"

@@ -491,10 +491,12 @@ class Agent5Coordinator:
                 state_revision=record.state_revision,
                 selected_option_id=record.selected_option_id,
                 canonical_state=record.canonical_state,
+                current_validity=record.current_validity,
             )
             for record in result.records
             if record.decision_record_id is None
             or record.canonical_state is CanonicalState.PROPOSED
+            or record.current_validity == "stale"
         )
         return DecisionRequestQueue(
             project_id=project_id,

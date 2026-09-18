@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-3-1-2-4:v2",
   "semantic_node_id": "v2_n_3_1_2_4",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-3-1-2-4:estimand-ice-summary",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -49,6 +49,16 @@
         "fact_path": "estimand.primary.ice_strategy_crosscheck",
         "obligation": "optional",
         "rationale": "涉及补救治疗等策略时，与随访/分析/缺失数据/敏感性分析合同的交叉核对结论。"
+      },
+      {
+        "fact_path": "intervention.background_therapy_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，复用已确认项目干预状态；未知由条件执行层阻止生成。"
+      },
+      {
+        "fact_path": "design.rescue_treatment_planned",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，复用已确认项目干预状态；未知由条件执行层阻止生成。"
       }
     ],
     "claim_requirements": [
@@ -160,10 +170,11 @@
       "schema_version": "mw_protocol_v3_contract_v1",
       "conditional_applicability_rule_id": "applicability:n-3-1-2-4:strategy-crosscheck",
       "triggering_fact_paths": [
-        "estimand.primary.population_summary_measure"
+        "intervention.background_therapy_applicable",
+        "design.rescue_treatment_planned"
       ],
       "condition": "汇总指标与伴发事件策略涉及补救治疗或背景治疗改变",
-      "rationale": "策略必须与随访、分析、缺失数据与敏感性分析合同交叉核对后才能定稿（源 @324 措辞存在潜在冲突）。",
+      "rationale": "源body-child318、324要求补救/背景治疗处置与分析一致；复用干预布尔状态而非群体汇总指标文字。该条件只控制专属crosscheck，其他相关ICE定义、策略、理由和群体指标始终保留。",
       "required_when_active_fact_paths": [
         "estimand.primary.ice_strategy_crosscheck"
       ],

@@ -24,11 +24,13 @@ Boundary rules (identical for every backend):
   through the explicitly named test route
   :func:`create_test_memory_unit_of_work_factory`.
 
-Product activation is NOT complete in Task 1.8: the concrete product adapter
-for the selected backend is not yet wired.  Until a product wiring supplies an
-``adapter_builder``, :func:`create_unit_of_work_factory` raises
-:class:`StorageNotReadyError` with the exact blocker — fail closed, never a
-silent default.
+Product activation is explicit (Task 1R.1): the product adapter for the
+selected backend is wired through
+:func:`create_product_unit_of_work_factory` — the ONLY route that supplies
+the real builder.  The storage-neutral :func:`create_unit_of_work_factory`
+keeps its injection hook and still fails closed with
+:class:`StorageNotReadyError` when no builder is supplied, and memory stays
+reachable only through :func:`create_test_memory_unit_of_work_factory`.
 """
 
 from __future__ import annotations
@@ -38,6 +40,10 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Mapping, Optional, Protoc
 
 if TYPE_CHECKING:
     from app.protocol_workflow.ports.unit_of_work import UnitOfWork
+
+from app.protocol_workflow.storage.sqlite import (
+    build_unit_of_work_factory as _product_sqlite_builder,
+)
 
 __all__ = [
     "AdapterBuilder",
@@ -49,6 +55,7 @@ __all__ = [
     "StorageNotReadyError",
     "StorageSelectionError",
     "UnitOfWorkFactory",
+    "create_product_unit_of_work_factory",
     "create_test_memory_unit_of_work_factory",
     "create_unit_of_work_factory",
     "get_selected_storage",
@@ -69,9 +76,11 @@ SELECTED_CANDIDATE_IDENTITY: str = "sqlite_3_53_1"
 SELECTED_ENGINE_NAME: str = "SQLite"
 SELECTED_ENGINE_VERSION: str = "3.53.1"
 
-#: Minimum linked engine version (3.51.0–3.51.2 contain a multi-connection
-#: reset defect fixed upstream in 3.51.3+).  The concrete adapter enforces this
-#: gate fail-closed; this surface exposes it as declarative metadata.
+#: Minimum linked engine version (the multi-connection reset defect is fixed
+#: upstream in 3.51.3+; official SQLite documentation notes it may also affect
+#: earlier versions, so the gate requires >= 3.51.3 rather than enumerating
+#: affected versions).  The concrete adapter enforces this gate fail-closed;
+#: this surface exposes it as declarative metadata.
 SELECTED_MIN_ENGINE_VERSION: Tuple[int, int, int] = (3, 51, 3)
 
 #: Driver and licence recorded in the decision record.
@@ -247,11 +256,11 @@ def create_unit_of_work_factory(
       the surface never switches and never falls back (memory is test-only;
       the PostgreSQL candidate is retained as evidence, not as an activation
       path).
-    * ``adapter_builder`` is the product wiring hook.  Until the product
-      adapter is implemented and wired (a Codex follow-up after Task 1.8),
-      passing no builder raises :class:`StorageNotReadyError` with the exact
-      blocker.  The PoC adapters under ``pocs/`` are evidence and must not be
-      imported by product code.
+    * ``adapter_builder`` is the injection hook.  When no builder is
+      supplied — i.e. everywhere except the explicit product route
+      :func:`create_product_unit_of_work_factory` — this function raises
+      :class:`StorageNotReadyError` with the exact blocker.  The PoC adapters
+      under ``pocs/`` are evidence and must not be imported by product code.
     * A builder that returns ``None`` is treated as not ready (fail closed).
     """
     if not config:
@@ -272,14 +281,16 @@ def create_unit_of_work_factory(
         )
     if adapter_builder is None:
         raise StorageNotReadyError(
-            "selected storage is not yet activated: the product adapter for "
-            f"{SELECTED_BACKEND!r} is not wired. Codex follow-up: implement "
-            "services/api/app/protocol_workflow/storage/sqlite.py mirroring the "
-            "accepted PoC adapter (ports contract, engine version gate "
-            f">= {'.'.join(map(str, SELECTED_MIN_ENGINE_VERSION))}, durable commit "
-            "discipline, CAS/outbox/backup) and pass its builder here. The PoC "
-            "adapter under pocs/ is evidence only and must not be imported by "
-            "product code."
+            "selected storage is not yet activated through this call: no "
+            "adapter builder was supplied. Product route: use "
+            "create_product_unit_of_work_factory (wired to the real builder "
+            "in services/api/app/protocol_workflow/storage/sqlite.py), or "
+            "pass that builder via adapter_builder. The PoC adapters under "
+            "pocs/ are evidence only and must not be imported by product "
+            "code. Codex follow-up: the 1R.2 composition-root switch remains "
+            "the activation gate. Engine version gate >= "
+            f"{'.'.join(map(str, SELECTED_MIN_ENGINE_VERSION))}, durable "
+            "commit discipline, CAS/outbox/backup."
         )
     factory = adapter_builder(config)
     if factory is None:
@@ -288,6 +299,31 @@ def create_unit_of_work_factory(
             "product activation remains fail-closed"
         )
     return factory
+
+
+def create_product_unit_of_work_factory(
+    *,
+    config: Optional[Mapping[str, Any]] = None,
+) -> UnitOfWorkFactory:
+    """Explicitly enabled product route to the selected SQLite backend.
+
+    This is the ONLY product activation path: it supplies the real product
+    adapter builder to the fail-closed :func:`create_unit_of_work_factory`,
+    so every selection rule still applies — the config must declare
+    ``backend="sqlite"`` and the adapter validates the rest of the
+    configuration (path, timeouts, durability) with typed errors.
+
+    Adapter configuration keys (validated by the product adapter):
+    ``path`` (required, non-empty), ``busy_timeout_ms`` (optional, positive
+    int, default 5000), ``synchronous`` (optional, only ``"FULL"``).
+
+    Absent/empty config, a non-selected backend, and an invalid adapter
+    configuration all fail closed; there is no default and no fallback.
+    """
+    return create_unit_of_work_factory(
+        config=config,
+        adapter_builder=_product_sqlite_builder,
+    )
 
 
 def create_test_memory_unit_of_work_factory() -> UnitOfWorkFactory:

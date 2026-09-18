@@ -1,0 +1,533 @@
+{
+  "$defs": {
+    "ApprovalState": {
+      "enum": [
+        "ai_draft",
+        "in_medical_review",
+        "returned_for_revision",
+        "medically_approved",
+        "locked_for_submission",
+        "superseded",
+        "archived"
+      ],
+      "title": "ApprovalState",
+      "type": "string"
+    },
+    "OrderedDraftParagraphBlock": {
+      "additionalProperties": false,
+      "description": "One ordered paragraph candidate block.",
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "paragraph",
+          "default": "paragraph",
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "source_locator": {
+          "default": "",
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "block_id",
+        "text"
+      ],
+      "title": "OrderedDraftParagraphBlock",
+      "type": "object"
+    },
+    "OrderedDraftTableBlock": {
+      "additionalProperties": false,
+      "description": "One ordered table candidate block that reuses StructuredTable.",
+      "properties": {
+        "block_id": {
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "table",
+          "default": "table",
+          "title": "Kind",
+          "type": "string"
+        },
+        "table": {
+          "$ref": "#/$defs/StructuredTable"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "block_id",
+        "table"
+      ],
+      "title": "OrderedDraftTableBlock",
+      "type": "object"
+    },
+    "StructuredTable": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "structured_table_v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string"
+        },
+        "block_id": {
+          "title": "Block Id",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/StructuredTableDomain",
+          "default": "generic"
+        },
+        "role": {
+          "$ref": "#/$defs/StructuredTableRole",
+          "default": "unclassified"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "source_locator": {
+          "default": "",
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "version": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Version",
+          "type": "integer"
+        },
+        "review_state": {
+          "$ref": "#/$defs/ApprovalState",
+          "default": "ai_draft"
+        },
+        "header_row_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Header Row Count",
+          "type": "integer"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/StructuredTableColumn"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/StructuredTableRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "$ref": "#/$defs/StructuredTableNote"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "word_layout": {
+          "additionalProperties": true,
+          "title": "Word Layout",
+          "type": "object"
+        }
+      },
+      "required": [
+        "table_id",
+        "block_id"
+      ],
+      "title": "StructuredTable",
+      "type": "object"
+    },
+    "StructuredTableCell": {
+      "additionalProperties": false,
+      "properties": {
+        "cell_id": {
+          "title": "Cell Id",
+          "type": "string"
+        },
+        "row_id": {
+          "title": "Row Id",
+          "type": "string"
+        },
+        "column_id": {
+          "title": "Column Id",
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "title": "Text",
+          "type": "string"
+        },
+        "rich_text": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rich Text"
+        },
+        "semantic_value": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Value"
+        },
+        "row_span": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Row Span",
+          "type": "integer"
+        },
+        "column_span": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Column Span",
+          "type": "integer"
+        },
+        "style_role": {
+          "default": "body",
+          "title": "Style Role",
+          "type": "string"
+        },
+        "source_locator": {
+          "default": "",
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "provenance_lineage": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Provenance Lineage",
+          "type": "array"
+        },
+        "note_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Note Refs",
+          "type": "array"
+        },
+        "condition_expression": {
+          "default": "",
+          "title": "Condition Expression",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cell_id",
+        "row_id",
+        "column_id"
+      ],
+      "title": "StructuredTableCell",
+      "type": "object"
+    },
+    "StructuredTableColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "column_id": {
+          "title": "Column Id",
+          "type": "string"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "label": {
+          "default": "",
+          "title": "Label",
+          "type": "string"
+        },
+        "style_role": {
+          "default": "body",
+          "title": "Style Role",
+          "type": "string"
+        },
+        "width_twips": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width Twips"
+        },
+        "source_locator": {
+          "default": "",
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "semantic_role": {
+          "default": "",
+          "title": "Semantic Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "column_id",
+        "order"
+      ],
+      "title": "StructuredTableColumn",
+      "type": "object"
+    },
+    "StructuredTableDomain": {
+      "enum": [
+        "generic",
+        "schedule_of_activities",
+        "objectives_endpoints",
+        "sample_size_assumptions",
+        "treatment_dose",
+        "dose_modification",
+        "stopping_rules",
+        "ae_management",
+        "laboratory_panel",
+        "pk_immunogenicity_schedule",
+        "analysis_sets",
+        "version_history"
+      ],
+      "title": "StructuredTableDomain",
+      "type": "string"
+    },
+    "StructuredTableNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_id": {
+          "title": "Note Id",
+          "type": "string"
+        },
+        "marker": {
+          "default": "",
+          "title": "Marker",
+          "type": "string"
+        },
+        "note_type": {
+          "$ref": "#/$defs/StructuredTableNoteType"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "target_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Ids",
+          "type": "array"
+        },
+        "module_ref": {
+          "default": "",
+          "title": "Module Ref",
+          "type": "string"
+        },
+        "project_override": {
+          "default": false,
+          "title": "Project Override",
+          "type": "boolean"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "source_kind": {
+          "default": "",
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "marker_source_locator": {
+          "default": "",
+          "title": "Marker Source Locator",
+          "type": "string"
+        },
+        "review_status": {
+          "default": "confirmed",
+          "title": "Review Status",
+          "type": "string"
+        },
+        "association_reason": {
+          "default": "",
+          "title": "Association Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "note_type",
+        "text"
+      ],
+      "title": "StructuredTableNote",
+      "type": "object"
+    },
+    "StructuredTableNoteType": {
+      "enum": [
+        "item_set",
+        "timing_rule",
+        "condition",
+        "specimen_preparation",
+        "definition",
+        "exception",
+        "operational"
+      ],
+      "title": "StructuredTableNoteType",
+      "type": "string"
+    },
+    "StructuredTableRole": {
+      "enum": [
+        "unclassified",
+        "layout",
+        "protocol_synopsis",
+        "body_content",
+        "document_control"
+      ],
+      "title": "StructuredTableRole",
+      "type": "string"
+    },
+    "StructuredTableRow": {
+      "additionalProperties": false,
+      "properties": {
+        "row_id": {
+          "title": "Row Id",
+          "type": "string"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "label": {
+          "default": "",
+          "title": "Label",
+          "type": "string"
+        },
+        "style_role": {
+          "default": "body",
+          "title": "Style Role",
+          "type": "string"
+        },
+        "source_locator": {
+          "default": "",
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/StructuredTableCell"
+          },
+          "title": "Cells",
+          "type": "array"
+        }
+      },
+      "required": [
+        "row_id",
+        "order"
+      ],
+      "title": "StructuredTableRow",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Ordered chapter draft candidate (not a confirmed semantic document).",
+  "properties": {
+    "schema_version": {
+      "const": "ordered_chapter_draft_candidate.v1",
+      "default": "ordered_chapter_draft_candidate.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "chapter_contract_id": {
+      "minLength": 1,
+      "title": "Chapter Contract Id",
+      "type": "string"
+    },
+    "node_id": {
+      "minLength": 1,
+      "title": "Node Id",
+      "type": "string"
+    },
+    "known_evidence_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Known Evidence Ids",
+      "type": "array"
+    },
+    "blocks": {
+      "default": [],
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "paragraph": "#/$defs/OrderedDraftParagraphBlock",
+            "table": "#/$defs/OrderedDraftTableBlock"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/OrderedDraftParagraphBlock"
+          },
+          {
+            "$ref": "#/$defs/OrderedDraftTableBlock"
+          }
+        ]
+      },
+      "title": "Blocks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "chapter_contract_id",
+    "node_id"
+  ],
+  "title": "OrderedChapterDraftCandidate",
+  "type": "object"
+}

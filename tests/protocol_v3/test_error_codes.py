@@ -218,3 +218,18 @@ def test_workflow_error_cannot_be_mutated_after_construction(
     error = _workflow_error()
     with pytest.raises(AttributeError, match="immutable"):
         setattr(error, attribute, value)
+
+
+def test_workflow_error_survives_generator_context_cleanup():
+    from contextlib import contextmanager
+
+    @contextmanager
+    def transaction():
+        yield
+
+    error = _workflow_error()
+    with pytest.raises(ProtocolWorkflowError) as caught:
+        with transaction():
+            raise error
+    assert caught.value is error
+    assert error.__traceback__ is not None

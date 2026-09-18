@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-5-2:v2",
   "semantic_node_id": "v2_n_5_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.1",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-5-2:exclusion-criteria",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.1",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -68,6 +68,11 @@
         "fact_path": "picos.exclusion_modules.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.risk.pregnancy_contraception",
+        "obligation": "optional",
+        "rationale": "复用共享结构化妊娠/避孕适用性决定与理由；不推定通用期限。"
       }
     ],
     "claim_requirements": [
@@ -190,24 +195,12 @@
   ],
   "conditional_applicability_rules": [
     {
-      "conditional_applicability_rule_id": "applicability:v2_n_5_2:active",
-      "triggering_fact_paths": [
-        "picos.exclusion_modules"
-      ],
-      "condition": "any-applicable-criterion predicate 生效时，必须逐项给出适用排除条件及理由。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
-      "required_when_active_claim_types": [
-        "exclusion_predicate"
-      ]
-    },
-    {
       "conditional_applicability_rule_id": "applicability:n-5-2:contraception-exclusion-reference",
       "triggering_fact_paths": [
         "picos.risk.pregnancy_contraception"
       ],
       "condition": "项目确认妊娠/避孕风险适用",
-      "rationale": "避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。",
+      "rationale": "避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。 适用性从共享对象applicable原生布尔读取并保留reason，不从文本或人群性别单独推断。",
       "required_when_active_fact_paths": [
         "population.exclusion.contraception_criterion_ref"
       ]

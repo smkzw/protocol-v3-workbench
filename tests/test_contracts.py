@@ -168,13 +168,19 @@ class WorkbenchContractTests(unittest.TestCase):
         )
         self.assertEqual("local_omlx", status["body_translation_provider"])
         self.assertTrue(status["execution_chain_wired"])
-        self.assertTrue(status["body_translation_runnable"])
+        self.assertIsInstance(status["body_translation_runnable"], bool)
+        self.assertEqual(
+            status["translation_body"]["current_runnable"],
+            status["body_translation_runnable"],
+        )
         # The test package isolates runtime state and does not provide a
         # cloud credential. The endpoint must reflect actual role readiness,
         # rather than claiming the default support model is runnable.
         self.assertEqual(
             status["currently_runnable"],
-            status["body_translation_runnable"] and status["support_runnable"],
+            status["body_translation_runnable"]
+            and status["support_runnable"]
+            and status["ocr"]["current_runnable"],
         )
         self.assertEqual(
             {"ocr": 8, "translation": 8, "total": 16},

@@ -1,7 +1,7 @@
 {
   "schema_version": "protocol-v3-role-registry.v1",
-  "generated_for": "mw_protocol_v3_phase1_task17_20260811",
-  "authority": "Design plan mw_protocol_multi_agent_rearchitecture_design_20260809.md section 17.1. This registry records the user-approved target profile only; it is credential-free and does not claim runtime readiness. Observed model identity belongs to a runtime ExecutionReservation receipt, never to registry text. The shared workload gate currently selects GLM-OCR-bf16 for OCR; the declared PaddleOCR role therefore remains fail-closed until gate/role policy reconciliation.",
+  "generated_for": "mw_protocol_v3_1r6_glm_transport_20260905",
+  "authority": "Design plan mw_protocol_multi_agent_rearchitecture_design_20260809.md section 17.1, amended by the user-approved Plan v2 Task 1R.6 decision (2026-09-05): the default LLM and OCR/translation-support provider is the zhipu-coding-plan GLM-5.3-Flash profile on the official coding endpoint (https://open.bigmodel.cn/api/coding/paas/v4), with reasoning efforts low/high/max and default max. DeepSeek-v4-flash remains available only as the explicitly confirmed alternative profile recorded in role_registry.deepseek.json; it is never selected silently. This registry records the user-approved target profile only; it is credential-free and does not claim runtime readiness. Observed model identity belongs to a runtime ExecutionReservation receipt, never to registry text. The shared workload gate currently selects GLM-OCR-bf16 for OCR; the declared PaddleOCR role therefore remains fail-closed until gate/role policy reconciliation. OCR and translation declarations are unchanged by 1R.6.",
   "roles": [
     {
       "role_id": "product-llm",
@@ -9,14 +9,14 @@
       "description": "Primary Protocol v3 drafting and reasoning model. Thinking and effort are configurable per node execution contract.",
       "thinking_configurable": true,
       "default_effort": "max",
-      "allowed_efforts": ["low", "medium", "high", "max", "xhigh"],
+      "allowed_efforts": ["low", "high", "max"],
       "target_profile": {
-        "provider": "deepseek",
-        "model": "deepseek-v4-flash",
+        "provider": "zhipu-coding-plan",
+        "model": "glm-5.3-flash",
         "harness": "direct-api",
         "regions": ["cn"],
         "sensitivity_tier": "confidential",
-        "declared_runtime_note": "Target profile; actual identity is proven only by a runtime receipt."
+        "declared_runtime_note": "Default GLM profile per Plan v2 Task 1R.6 user decision (2026-09-05); official coding endpoint transport. Actual identity is proven only by a runtime receipt."
       }
     },
     {
@@ -57,14 +57,14 @@
       "description": "Support AI for OCR and translation orchestration, fidelity checks and structured extraction. Thinking and effort are configurable per node execution contract.",
       "thinking_configurable": true,
       "default_effort": "max",
-      "allowed_efforts": ["low", "medium", "high", "max", "xhigh"],
+      "allowed_efforts": ["low", "high", "max"],
       "target_profile": {
-        "provider": "deepseek",
-        "model": "deepseek-v4-flash",
+        "provider": "zhipu-coding-plan",
+        "model": "glm-5.3-flash",
         "harness": "direct-api",
         "regions": ["cn"],
         "sensitivity_tier": "confidential",
-        "declared_runtime_note": "Target profile; actual identity is proven only by a runtime receipt."
+        "declared_runtime_note": "Default GLM profile per Plan v2 Task 1R.6 user decision (2026-09-05); official coding endpoint transport. Actual identity is proven only by a runtime receipt."
       }
     }
   ]

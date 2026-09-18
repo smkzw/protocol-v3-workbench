@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-4-5:v2",
   "semantic_node_id": "v2_n_4_5",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-4-5:randomization-masking",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -68,6 +68,16 @@
         "fact_path": "framing.structured_design.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "diagram.randomized",
+        "obligation": "optional",
+        "rationale": "复用已确认随机设计结构化布尔，不以文字猜测。"
+      },
+      {
+        "fact_path": "framing.structured_design.masking_features",
+        "obligation": "optional",
+        "rationale": "结构化对象：blinding_applied、emergency_unblinding_required、unblinded_personnel_present为明确布尔；前者包含部分设盲，后两项按实际程序确认，不因部分设盲默认需要紧急揭盲。 条件输入层必须先解析明确适用性，缺失/未知会以conditional_applicability_unresolved阻止生成；基础结构检查不替代此执行层。"
       }
     ],
     "claim_requirements": [
@@ -198,15 +208,55 @@
     {
       "conditional_applicability_rule_id": "applicability:v2_n_4_5:active",
       "triggering_fact_paths": [
-        "framing.structured_design"
+        "diagram.randomized"
       ],
-      "condition": "随机化、盲法或开放标签偏倚控制适用时，激活对应的程序和记录义务。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
+      "condition": "已确认随机化设计",
+      "rationale": "源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.randomization_procedure",
+        "framing.structured_design.allocation_ratio"
+      ],
+      "required_when_active_claim_types": []
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_5:blinding",
+      "triggering_fact_paths": [
+        "framing.structured_design.masking_features"
+      ],
+      "condition": "已确认存在部分或全部设盲",
+      "rationale": "源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.masking_maintenance",
+        "framing.structured_design.accidental_unblinding",
+        "framing.structured_design.unblinding_records"
+      ],
       "required_when_active_claim_types": [
-        "allocation_procedure",
-        "masking_procedure"
+        "unblinding_procedure"
       ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_5:emergency",
+      "triggering_fact_paths": [
+        "framing.structured_design.masking_features"
+      ],
+      "condition": "设盲且实际设计需要紧急揭盲程序",
+      "rationale": "源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.emergency_unblinding"
+      ],
+      "required_when_active_claim_types": []
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_5:personnel",
+      "triggering_fact_paths": [
+        "framing.structured_design.masking_features"
+      ],
+      "condition": "设盲且明确存在非盲工作人员",
+      "rationale": "源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.unblinded_personnel"
+      ],
+      "required_when_active_claim_types": []
     }
   ],
   "dependency_ids": [],

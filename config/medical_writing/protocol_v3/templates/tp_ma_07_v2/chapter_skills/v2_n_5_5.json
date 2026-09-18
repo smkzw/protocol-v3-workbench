@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:n-5-5:recruitment-retention",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_5_5",
   "chapter_contract_id": "contract:v2-n-5-5:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:tp-ma-07-v2:batch3:v2_n_5_5:3.3.0",
-    "instructions": "输入为已确认项目事实，按 v2_n_5_5 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。",
+    "instructions": "输入为已确认项目事实，按 v2_n_5_5 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。 补偿适用时按项目给出范围、数额/依据、方式和计划记录；无补偿不虚构款项。招募和保留措施、伦理审查计划始终保留，禁止把计划表述为已批准或已兑付。",
     "forbidden_behaviors": [
       "编造证据来源或项目事实",
       "复制模板示例作为项目默认值",

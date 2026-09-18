@@ -1790,13 +1790,23 @@ class BatchDocumentPipelineRound8Tests(unittest.TestCase):
                 idempotency_key="r8-plan-lineage",
             ),
         )
-        self.service.run_pending(PID, batch.batch_id, "medical_manager")
+        # This case exercises an unrecoverable plan followed by explicit retry.
+        # The newer deterministic structure recovery has its own success tests;
+        # make its unavailability explicit instead of relying on old behavior.
+        with patch.object(
+            self.service,
+            "_recover_document_plan_fallback",
+            side_effect=DocumentPlanValidationError(("fixture_structure_unavailable",)),
+        ):
+            self.service.run_pending(PID, batch.batch_id, "medical_manager")
 
         failed = self.service.get(PID, batch.batch_id).items
         self.assertEqual(2, len(failed))
         self.assertEqual(
             {"failed_retryable"},
             {item.generation_status for item in failed},
+            [(call.requested_model, call.planner_attempt, call.stage_run_id)
+             for call in model_calls],
         )
         self.assertEqual(
             {failed[0].document_plan_failure_source_stage_run_id},

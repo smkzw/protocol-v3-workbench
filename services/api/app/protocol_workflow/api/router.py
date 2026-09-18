@@ -9,8 +9,8 @@ Boundary rules
 --------------
 * The factory returns an :class:`APIRouter` under
   ``/api/projects/{project_id}/protocol-workflow``.  It is tested through a
-  local in-process ``FastAPI`` app; the shared ``main.py`` composition root
-  is NOT edited and the router is NOT product-mounted by this task.
+  local in-process ``FastAPI`` app. Task 1R.2 product mounting belongs to
+  ``composition.mount_protocol_workflow_router``.
 * The router retains the :class:`ApplicationService`, the immutable
   :class:`RegistrySelection` and the typed observer/clock configuration, but
   builds a FRESH :class:`Agent5QueryFacade` and :class:`Agent5Coordinator`
@@ -33,11 +33,9 @@ Boundary rules
 * No repository, unit-of-work or storage handle is exposed, and no raw
   fact/Gate/QC/submission mutation endpoint exists.
 
-Hosting note: structural body/query validation happens before route code
-runs, so a hosting app SHOULD register
-:func:`protocol_workflow_validation_exception_handler` (exported here) to
-keep those failures inside the same stable Chinese envelope.  The contract
-tests mount the router on a local app and register it there.
+Hosting note: product composition handles structural validation at route scope.
+Do not register the exported validation handler globally on ``app.main``;
+standalone contract-test apps may register it locally.
 """
 
 from __future__ import annotations
@@ -48,6 +46,7 @@ from typing import Callable, Optional, Tuple
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
 
 from app.protocol_workflow.agent5 import (
     Agent5Coordinator,
@@ -67,6 +66,9 @@ from app.protocol_workflow.application import (
     SideEffectSpec,
     StudyDefinitionMutationResult,
 )
+from app.protocol_workflow.application.adoption import GetTemplateAdoptionQuery
+from app.protocol_workflow.application.queries import GetSemanticDocumentQuery
+from app.protocol_workflow.application.commands import TemplateAdoptionIntent
 from app.protocol_workflow.errors import (
     OWNER_PUBLIC_LABEL,
     ProtocolErrorCode,
@@ -75,6 +77,7 @@ from app.protocol_workflow.errors import (
 )
 
 from .schemas import (
+    CurrentSemanticDocumentResponse,
     CurrentStudyDefinitionResponse,
     DecisionGraphRecordResponse,
     DecisionGraphResponse,
@@ -89,6 +92,8 @@ from .schemas import (
     StudyDefinitionCreateRequest,
     StudyDefinitionDecisionApplyRequest,
     StudyDefinitionMutationResponse,
+    TemplateAdoptionIdentityResponse,
+    TemplateAdoptionResponse,
     WorkPackageDecompositionRequest,
     WorkPackageDecompositionResponse,
     WorkflowRunStatusRecordResponse,
@@ -97,6 +102,7 @@ from .schemas import (
 
 __all__ = [
     "create_protocol_workflow_router",
+    "protocol_workflow_not_found_envelope",
     "protocol_workflow_validation_exception_handler",
 ]
 
@@ -135,11 +141,21 @@ def _not_found_envelope() -> dict:
 
 def _unexpected_envelope() -> dict:
     return _envelope(
-        message="当前操作未能完成，请稍后重试。",
-        can_retry=True,
-        next_step="请稍后重新尝试该操作。",
+        message="当前操作的结果尚未确认。",
+        can_retry=False,
+        next_step="请先刷新查看已保存内容，核对本次操作结果，暂勿重复提交。",
     )
 
+
+def protocol_workflow_not_found_envelope() -> dict:
+    """Public copy of the stable Chinese not-found envelope.
+
+    Task 1R.2 composition uses this for the durable-allowlist admission
+    gate so rejected (non-admitted) projects observe exactly the same
+    envelope as an absent workflow object — never a new error shape.
+    """
+
+    return _not_found_envelope()
 
 def protocol_workflow_validation_exception_handler(
     request: Request, exc: RequestValidationError
@@ -152,6 +168,12 @@ def protocol_workflow_validation_exception_handler(
 
 
 def _status_for(error: ProtocolWorkflowError) -> int:
+    # This typed error is raised before mutation; preserve the distinction
+    # from an unclassified failure after a possible commit.
+    if error.code is ProtocolErrorCode.P1_SERVICE_CONFIGURATION_INCOMPLETE:
+        return 424
+    if error.code is ProtocolErrorCode.P1_OBJECT_NOT_FOUND:
+        return 404
     if error.code in {
         ProtocolErrorCode.P1_REVISION_STALE,
         ProtocolErrorCode.P1_DECISION_CAS,
@@ -173,8 +195,8 @@ def _safe_call(
     """Translate service/coordinator/command failures into the stable public
     envelope.  Only :meth:`ProtocolWorkflowError.to_public_payload` reaches
     the HTTP response; request-shape failures use the Chinese request
-    envelope; anything unexpected degrades to the generic retryable
-    envelope without a traceback."""
+    envelope; an unexpected failure requires reconciliation before retry
+    because its commit outcome is not known here."""
 
     try:
         return fn()
@@ -332,6 +354,18 @@ def _register_routes(router: APIRouter, config: _RouterConfig) -> None:
                     None if body.fact_updates is None else dict(body.fact_updates)
                 ),
                 side_effect=_to_side_effect_spec(body.side_effect),
+                revise_confirmed_facts=body.revise_confirmed_facts,
+                decision_input_refs=body.decision_input_refs,
+                template_adoption=(
+                    None
+                    if body.template_adoption is None
+                    else TemplateAdoptionIntent(
+                        template_id=body.template_adoption.template_id,
+                        retired_fact_paths=tuple(
+                            body.template_adoption.retired_fact_paths
+                        ),
+                    )
+                ),
             )
             return config.application_service.apply_decision(command)
 
@@ -363,6 +397,33 @@ def _register_routes(router: APIRouter, config: _RouterConfig) -> None:
             )
 
         return _safe_call(_execute)  # type: ignore[return-value]
+
+    @router.get("/study-definitions/{study_definition_id}/manuscript-plan",
+                summary="核对完整初稿所需研究信息")
+    def get_manuscript_plan(project_id: str, study_definition_id: str):
+        def execute():
+            result = config.application_service.get_manuscript_plan(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if result is None:
+                raise HTTPException(404, detail=_not_found_envelope())
+            return result
+        return _safe_call(execute)
+
+    @router.get(
+        "/study-definitions/{study_definition_id}/documents/{semantic_document_revision_id}",
+        response_model=CurrentSemanticDocumentResponse,
+        summary="读取已保存的方案正文",
+    )
+    def get_semantic_document(project_id: str, study_definition_id: str,
+                              semantic_document_revision_id: str):
+        def execute():
+            result = config.application_service.get_semantic_document(
+                GetSemanticDocumentQuery(project_id, study_definition_id, semantic_document_revision_id))
+            if result.document is None:
+                raise HTTPException(404, detail=_not_found_envelope())
+            return CurrentSemanticDocumentResponse(document=result.document,
+                revision_sha256=result.revision_sha256, study_binding_status=result.study_binding_status)
+        return _safe_call(execute)
 
     @router.get(
         "/study-definitions/{study_definition_id}/events",
@@ -428,9 +489,48 @@ def _register_routes(router: APIRouter, config: _RouterConfig) -> None:
                         state_revision=record.state_revision,
                         selected_option_id=record.selected_option_id,
                         canonical_state=record.canonical_state,
+                        current_validity=record.current_validity,
                     )
                     for record in result.records
                 ),
+            )
+
+        return _safe_call(_execute)  # type: ignore[return-value]
+
+    @router.get(
+        "/study-definitions/{study_definition_id}/template-adoption",
+        response_model=TemplateAdoptionResponse,
+        summary="读取最近一次模板事实采用记录",
+    )
+    def get_template_adoption(
+        project_id: str, study_definition_id: str
+    ) -> TemplateAdoptionResponse:
+        def _execute() -> TemplateAdoptionResponse:
+            result = config.application_service.get_template_adoption(
+                GetTemplateAdoptionQuery(
+                    project_id=project_id,
+                    study_definition_id=study_definition_id,
+                )
+            )
+            if result is None:
+                raise HTTPException(status_code=404, detail=_not_found_envelope())
+            return TemplateAdoptionResponse(
+                project_id=result.project_id,
+                study_definition_id=result.study_definition_id,
+                cas_identity=result.cas_identity,
+                decision_record_id=result.decision_record_id,
+                decision_key=result.decision_key,
+                base_revision=result.base_revision,
+                base_revision_sha256=result.base_revision_sha256,
+                applied_revision=result.applied_revision,
+                applied_revision_sha256=result.applied_revision_sha256,
+                facts_before_sha256=result.facts_before_sha256,
+                facts_after_sha256=result.facts_after_sha256,
+                changed_fact_paths=result.changed_fact_paths,
+                retired_fact_paths=result.retired_fact_paths,
+                template=TemplateAdoptionIdentityResponse(**result.template),
+                applicability_snapshot=dict(result.applicability_snapshot),
+                impact_plan=dict(result.impact_plan),
             )
 
         return _safe_call(_execute)  # type: ignore[return-value]
@@ -643,17 +743,24 @@ def create_protocol_workflow_router(
     registry_selection: RegistrySelection,
     gate_observer: Optional[Callable[[], Tuple[GateObservation, ...]]] = None,
     clock: Optional[Callable[[], datetime]] = None,
+    route_class: Optional[type] = None,
 ) -> APIRouter:
     """Build the Protocol v3 workflow router.
 
-    The router is factory-tested on a local in-process app and is NOT
-    product-mounted by Task 1.9; the shared ``main.py`` stays untouched.
+    The factory remains locally testable. Product mounting is owned only by
+    ``composition.mount_protocol_workflow_router`` (Task 1R.2).
 
     Only the immutable :class:`ApplicationService` and
     :class:`RegistrySelection` (plus the typed observer/clock configuration)
     are retained; every Agent⑤ request constructs a fresh
     :class:`Agent5QueryFacade` + :class:`Agent5Coordinator` so snapshots are
     never stale.
+
+    ``route_class`` (Task 1R.2) optionally overrides the route class for
+    every registered route — the actual-main composition passes a
+    validation-envelope route so structural 422s stay inside the stable
+    Chinese envelope at route scope without touching legacy handlers.
+    Omitted, every route keeps the default class and behaviour is unchanged.
     """
 
     if not isinstance(application_service, ApplicationService):
@@ -664,6 +771,10 @@ def create_protocol_workflow_router(
         raise TypeError("gate_observer must be callable or None")
     if clock is not None and not callable(clock):
         raise TypeError("clock must be callable or None")
+    if route_class is not None and not (
+        isinstance(route_class, type) and issubclass(route_class, APIRoute)
+    ):
+        raise TypeError("route_class must be an APIRoute subclass or None")
 
     config = _RouterConfig(
         application_service=application_service,
@@ -674,6 +785,7 @@ def create_protocol_workflow_router(
     router = APIRouter(
         prefix="/api/projects/{project_id}/protocol-workflow",
         tags=["方案工作流"],
+        route_class=route_class or APIRoute,
     )
     _register_routes(router, config)
     return router

@@ -205,7 +205,7 @@ class TestAtomicAcceptApplyValidation(unittest.TestCase):
             json={
                 "suggestion_id": "s1",
                 "expected_working_copy_revision": 1,
-                "idempotency_key": "k1",
+                "idempotency_key": "missing-thread-once",
                 "actor": "medical_manager",
             },
         )

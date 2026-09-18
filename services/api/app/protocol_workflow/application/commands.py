@@ -45,11 +45,17 @@ from packages.contracts.workbench_contracts.protocol_v3 import (
 )
 
 from app.protocol_workflow.canonical import study_revision_hash
+from app.protocol_workflow.canonical.decision_inputs import (
+    ConfirmationDependency,
+    DecisionInputRef,
+    input_refs_payload,
+)
 
 __all__ = [
     "ApplyStudyDecisionCommand",
     "CreateStudyDefinitionCommand",
     "SideEffectSpec",
+    "TemplateAdoptionIntent",
     "study_definition_genesis_snapshot",
 ]
 
@@ -248,6 +254,38 @@ class CreateStudyDefinitionCommand:
             )
 
 
+# ---------------------------------------------------------------------------
+# Template-bound adoption intent (3R.4D)
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class TemplateAdoptionIntent:
+    """Explicit template context for one fact adoption.
+
+    The intent itself carries only caller-owned choices: which confirmed alias
+    mappings and which condition-controlled facts to retire explicitly from
+    the current facts, and (optionally) the template identity the caller
+    believes it is adopting against — the service binds the actual
+    source-bound current template itself and rejects a mismatched echo.
+    Fact updates and decision input refs stay in their existing command
+    fields; the template context never changes their meaning.  Retirement is
+    an explicit removal, never a null write, and immutable history keeps every
+    removed value.
+    """
+
+    retired_fact_paths: tuple[str, ...] = ()
+    template_id: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        for path in self.retired_fact_paths:
+            _require_non_empty(path, "retired_fact_path")
+        if len(set(self.retired_fact_paths)) != len(self.retired_fact_paths):
+            raise ValueError("retired fact paths must be unique")
+        if self.template_id is not None:
+            _require_non_empty(self.template_id, "template_id")
+
+
 @dataclass(frozen=True)
 class ApplyStudyDecisionCommand:
     """Apply an accepted decision to the current StudyDefinition revision.
@@ -274,8 +312,36 @@ class ApplyStudyDecisionCommand:
     decision_record: DecisionRecord
     fact_updates: Optional[Mapping[str, JsonValue]] = None
     side_effect: Optional[SideEffectSpec] = None
+    revise_confirmed_facts: bool = False
+    decision_input_refs: Optional[tuple[DecisionInputRef, ...]] = None
+    confirmation_dependencies: Optional[tuple[ConfirmationDependency, ...]] = None
+    template_adoption: Optional[TemplateAdoptionIntent] = None
 
     def __post_init__(self) -> None:
+        input_refs_payload(self.decision_input_refs)
+        if self.confirmation_dependencies is not None:
+            object.__setattr__(
+                self,
+                "confirmation_dependencies",
+                tuple(
+                    item
+                    if isinstance(item, ConfirmationDependency)
+                    else ConfirmationDependency.model_validate(item)
+                    for item in self.confirmation_dependencies
+                ),
+            )
+        if type(self.revise_confirmed_facts) is not bool:
+            raise ValueError("revise_confirmed_facts must be a native boolean")
+        if self.template_adoption is not None:
+            if not isinstance(self.template_adoption, TemplateAdoptionIntent):
+                raise ValueError(
+                    "template_adoption must be a TemplateAdoptionIntent"
+                )
+            if self.revise_confirmed_facts is not True:
+                raise ValueError(
+                    "template-bound adoption requires explicit confirmed fact "
+                    "revision intent"
+                )
         _require_non_empty(self.project_id, "project_id")
         _require_non_empty(self.study_definition_id, "study_definition_id")
         _require_non_empty(self.idempotency_key, "idempotency_key")

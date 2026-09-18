@@ -29,7 +29,7 @@ from __future__ import annotations
 import uuid
 from dataclasses import dataclass
 from threading import RLock
-from typing import Any, Optional, Protocol
+from typing import Any, Dict, Optional, Protocol, Tuple
 
 from packages.contracts.workbench_contracts.protocol_v3 import (
     ExecutionReservation,
@@ -40,6 +40,7 @@ from packages.contracts.workbench_contracts.protocol_v3 import (
 from app.protocol_workflow.runtime.idempotency import canonical_input_hash
 from app.protocol_workflow.ports.repositories import (
     IdempotencyConflictError,
+    RepositoryStateTransitionError,
     UnknownOutcomeConflictError,
 )
 
@@ -105,10 +106,24 @@ class ReservationOutcome:
     ``reservation.terminal_state``.
     """
 
-    terminal_state: ExecutionTerminalState
-    status: ReservationStatus
     reservation: ExecutionReservation
-    error_code: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        if self.reservation.terminal_state is None:
+            raise ValueError("reservation outcome requires a terminal result")
+
+    @property
+    def terminal_state(self) -> ExecutionTerminalState:
+        assert self.reservation.terminal_state is not None
+        return self.reservation.terminal_state
+
+    @property
+    def status(self) -> ReservationStatus:
+        return self.reservation.status
+
+    @property
+    def error_code(self) -> Optional[str]:
+        return self.reservation.error_code
 
 
 # ---------------------------------------------------------------------------
@@ -122,6 +137,45 @@ _ERROR_DISPATCH_TIMEOUT = "dispatch_timeout"
 _ERROR_DISPATCH_NO_RECEIPT = "dispatch_no_receipt"
 _ERROR_DISPATCH_EXCEPTION = "dispatch_exception"
 _ERROR_DISPATCH_NOT_STARTED_RECOVERY = "dispatch_not_started_recovery"
+
+
+# ---------------------------------------------------------------------------
+# In-process live-ownership registry
+# ---------------------------------------------------------------------------
+
+
+#: Reservation shells actively owned by an in-flight dispatch of THIS process,
+#: keyed ``(project_id, execution_reservation_id)`` → owner token.  A shell is
+#: registered before its RESERVED claim is written and released when the
+#: dispatch sequence reaches a persisted terminal state or dies.  This is the
+#: liveness evidence that separates a live RESERVED owner — which a concurrent
+#: caller must neither dispose nor redispatch (it fails closed instead) — from
+#: an orphan shell (crashed process or a directly seeded
+#: recovery fixture), which the next dispatch attempt may close as a
+#: zero-attempt ``FAILED`` recovery because it proves the RUNNING/dispatch
+#: boundary was never crossed.
+#:
+#: This registry covers in-memory/UoW compatibility. The committed SQLite
+#: runtime additionally holds an OS file lock before publishing its shell;
+#: its has_live_dispatch probe covers other local processes. Process death
+#: releases that lock automatically, leaving genuine orphan recovery possible.
+_INFLIGHT_CLAIMS: Dict[Tuple[str, str], str] = {}
+_INFLIGHT_CLAIMS_LOCK = RLock()
+
+
+def _claim_inflight(project_id: str, reservation_id: str, owner_token: str) -> None:
+    with _INFLIGHT_CLAIMS_LOCK:
+        _INFLIGHT_CLAIMS[(project_id, reservation_id)] = owner_token
+
+
+def _release_inflight(project_id: str, reservation_id: str) -> None:
+    with _INFLIGHT_CLAIMS_LOCK:
+        _INFLIGHT_CLAIMS.pop((project_id, reservation_id), None)
+
+
+def _inflight_owner(project_id: str, reservation_id: str) -> Optional[str]:
+    with _INFLIGHT_CLAIMS_LOCK:
+        return _INFLIGHT_CLAIMS.get((project_id, reservation_id))
 
 
 class _RepositoryLike(Protocol):
@@ -195,6 +249,9 @@ class ReservationCoordinator:
         # duplicate retry decisions for the same logical call produce exactly
         # one new dispatch and one new attempt.
         self._retry_lock = RLock()
+        # Stable owner token identifying this coordinator's in-flight claims
+        # in the process-wide live-ownership registry.
+        self._owner_token = f"coord:{uuid.uuid4().hex[:12]}"
 
     # ------------------------------------------------------------------
     # Public API
@@ -220,9 +277,12 @@ class ReservationCoordinator:
            * ``UNKNOWN_OUTCOME`` → fail closed (the repository raises
              :class:`UnknownOutcomeConflictError` on ``reserve``; we surface
              it by delegating to ``reserve`` for the same effect).
-           * ``RESERVED`` → a crash happened before the atomic ``RUNNING``
-             transition, proving that physical dispatch never started.
-             Dispose the dangling shell as ``FAILED`` with zero transport
+           * ``RESERVED`` → the RUNNING/dispatch boundary was never crossed
+             (zero transport attempts).  If the shell is actively owned by an
+             in-process dispatch (live-ownership registry), fail closed: a
+             concurrent caller must never dispose or redispatch a live owner.
+             Otherwise the owner is dead or foreign (crash recovery), and the
+             dangling shell is disposed as ``FAILED`` with zero transport
              attempts; a new call still requires an explicit retry decision.
            * ``RUNNING`` → fail closed because physical dispatch started but
              no terminal receipt was persisted.
@@ -252,22 +312,52 @@ class ReservationCoordinator:
                     input_sha,
                 )
             if existing.status is ReservationStatus.RESERVED:
-                disposed = self._repository.transition(
-                    project_id,
-                    existing.execution_reservation_id,
-                    to_status=ReservationStatus.FAILED,
-                    terminal_state=ExecutionTerminalState.FAILED,
-                    output_sha256=None,
-                    error_code=_ERROR_DISPATCH_NOT_STARTED_RECOVERY,
-                    provider_session_id=existing.provider_session_id,
-                    transport_attempts=0,
-                    updated_at=now,
+                owner = _inflight_owner(
+                    project_id, existing.execution_reservation_id
                 )
+                durable_owner_probe = getattr(self._repository, "has_live_dispatch", None)
+                if owner is not None or (
+                    durable_owner_probe is not None
+                    and durable_owner_probe(project_id, existing.execution_reservation_id)
+                ):
+                    # Live ownership: another dispatch holds
+                    # the shell between its durable claim and its terminal
+                    # transition.  Disposing it would turn an active owner
+                    # into FAILED; fail closed and converge after the owner
+                    # resolves.
+                    raise UnknownOutcomeConflictError(
+                        project_id,
+                        aggregate_id=existing.logical_call_id,
+                        detail=(
+                            "RESERVED shell is actively owned by a live "
+                            "dispatch; concurrent caller must not dispose or "
+                            "redispatch it"
+                        ),
+                    )
+                try:
+                    disposed = self._repository.transition(
+                        project_id,
+                        existing.execution_reservation_id,
+                        to_status=ReservationStatus.FAILED,
+                        terminal_state=ExecutionTerminalState.FAILED,
+                        output_sha256=None,
+                        error_code=_ERROR_DISPATCH_NOT_STARTED_RECOVERY,
+                        provider_session_id=existing.provider_session_id,
+                        transport_attempts=0,
+                        updated_at=now,
+                    )
+                except RepositoryStateTransitionError:
+                    # Another recovery/owner may have settled the row after
+                    # our read. Converge to durable evidence, never redispatch.
+                    fresh = self._repository.get(project_id, existing.execution_reservation_id)
+                    if fresh is None:
+                        raise UnknownOutcomeConflictError(
+                            project_id, aggregate_id=existing.logical_call_id,
+                            detail="reservation disappeared during recovery; reconcile before retry",
+                        ) from None
+                    return _outcome_for_existing(project_id, fresh)
                 return ReservationOutcome(
-                    terminal_state=ExecutionTerminalState.FAILED,
-                    status=ReservationStatus.FAILED,
                     reservation=disposed,
-                    error_code=_ERROR_DISPATCH_NOT_STARTED_RECOVERY,
                 )
             return _outcome_for_existing(project_id, existing)
 
@@ -432,6 +522,16 @@ class ReservationCoordinator:
         transport attempts.  Preflight runs only after ownership is proven.
         Immediately before physical dispatch, the repository atomically moves
         the shell to RUNNING and records the first transport attempt.
+
+        The shell is registered in the process-wide live-ownership registry
+        for the whole sequence (until a terminal state is persisted or the
+        attempt dies), so a concurrent caller that observes the RESERVED
+        shell fails closed instead of disposing a live owner.  Callers that
+        need the claim durable BEFORE the transport runs must wire the
+        coordinator to a committed-operation repository (see
+        ``storage.sqlite.build_committed_reservation_repository_factory``);
+        a raw unit-of-work repository keeps business-transaction atomicity
+        and commits at the UoW boundary.
         """
         reservation_id = _new_reservation_id()
         provider_session_id = f"sess:{reservation_id}"
@@ -452,111 +552,110 @@ class ReservationCoordinator:
             reserved_at=now,
             updated_at=now,
         )
-        persisted_shell = self._repository.reserve(project_id, shell)
-        if persisted_shell.execution_reservation_id != reservation_id:
-            return _outcome_for_existing(project_id, persisted_shell)
-
+        # Register the live-ownership claim BEFORE the RESERVED shell is
+        # written, so no concurrent caller can observe the committed shell
+        # without this dispatch already being registered as its owner.
+        _claim_inflight(project_id, reservation_id, self._owner_token)
         try:
-            preflight_error = transport.preflight(
-                project_id=project_id,
-                reservation=persisted_shell,
-                payload=input_payload,
-            )
-        except Exception:
-            preflight_error = "preflight_exception"
-        if preflight_error is not None:
-            failed = self._repository.transition(
+            persisted_shell = self._repository.reserve(project_id, shell)
+            if persisted_shell.execution_reservation_id != reservation_id:
+                return _outcome_for_existing(project_id, persisted_shell)
+
+            try:
+                preflight_error = transport.preflight(
+                    project_id=project_id,
+                    reservation=persisted_shell,
+                    payload=input_payload,
+                )
+            except Exception:
+                preflight_error = "preflight_exception"
+            if preflight_error is not None:
+                failed = self._repository.transition(
+                    project_id,
+                    reservation_id,
+                    to_status=ReservationStatus.FAILED,
+                    terminal_state=ExecutionTerminalState.FAILED,
+                    output_sha256=None,
+                    error_code=preflight_error,
+                    provider_session_id=provider_session_id,
+                    transport_attempts=0,
+                    updated_at=now,
+                )
+                return ReservationOutcome(
+                    reservation=failed,
+                )
+
+            running = self._repository.transition(
                 project_id,
                 reservation_id,
-                to_status=ReservationStatus.FAILED,
-                terminal_state=ExecutionTerminalState.FAILED,
+                to_status=ReservationStatus.RUNNING,
+                terminal_state=None,
                 output_sha256=None,
-                error_code=preflight_error,
+                error_code=None,
                 provider_session_id=provider_session_id,
-                transport_attempts=0,
+                transport_attempts=1,
                 updated_at=now,
             )
-            return ReservationOutcome(
-                terminal_state=ExecutionTerminalState.FAILED,
-                status=ReservationStatus.FAILED,
-                reservation=failed,
-                error_code=preflight_error,
-            )
 
-        running = self._repository.transition(
-            project_id,
-            reservation_id,
-            to_status=ReservationStatus.RUNNING,
-            terminal_state=None,
-            output_sha256=None,
-            error_code=None,
-            provider_session_id=provider_session_id,
-            transport_attempts=1,
-            updated_at=now,
-        )
+            receipt: Optional[dict[str, Any]] = None
+            dispatch_error_code: Optional[str] = None
+            try:
+                receipt = transport.dispatch(
+                    project_id=project_id,
+                    reservation=running,
+                    payload=input_payload,
+                )
+            except TimeoutError:
+                dispatch_error_code = _ERROR_DISPATCH_TIMEOUT
+            except Exception:
+                dispatch_error_code = _ERROR_DISPATCH_EXCEPTION
 
-        receipt: Optional[dict[str, Any]] = None
-        dispatch_error_code: Optional[str] = None
-        try:
-            receipt = transport.dispatch(
-                project_id=project_id,
-                reservation=running,
-                payload=input_payload,
-            )
-        except TimeoutError:
-            dispatch_error_code = _ERROR_DISPATCH_TIMEOUT
-        except Exception:
-            dispatch_error_code = _ERROR_DISPATCH_EXCEPTION
+            if dispatch_error_code is None and not _receipt_is_usable(receipt):
+                dispatch_error_code = _ERROR_DISPATCH_NO_RECEIPT
 
-        if dispatch_error_code is None and not _receipt_is_usable(receipt):
-            dispatch_error_code = _ERROR_DISPATCH_NO_RECEIPT
+            if dispatch_error_code is not None:
+                # Post-dispatch ambiguity: the provider may have accepted the
+                # call but we cannot prove the outcome.
+                persisted = self._repository.transition(
+                    project_id,
+                    reservation_id,
+                    to_status=ReservationStatus.UNKNOWN_OUTCOME,
+                    terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
+                    output_sha256=None,
+                    error_code=dispatch_error_code,
+                    provider_session_id=provider_session_id,
+                    transport_attempts=running.transport_attempts,
+                    updated_at=now,
+                )
+                return ReservationOutcome(
+                    reservation=persisted,
+                )
 
-        if dispatch_error_code is not None:
-            # Post-dispatch ambiguity: the provider may have accepted the
-            # call but we cannot prove the outcome.
+            # --- success ------------------------------------------------
+            output_sha = receipt["output_sha256"]  # type: ignore[index]
+            # A successful live receipt may replace the harness-minted
+            # placeholder with the provider-issued session identity.  Once an
+            # outcome becomes UNKNOWN, recovery is stricter and must present
+            # that persisted session identity; the repository enforces that
+            # distinction.
+            receipt_session = receipt.get("provider_session_id") or provider_session_id  # type: ignore[union-attr]
+
             persisted = self._repository.transition(
                 project_id,
                 reservation_id,
-                to_status=ReservationStatus.UNKNOWN_OUTCOME,
-                terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
-                output_sha256=None,
-                error_code=dispatch_error_code,
-                provider_session_id=provider_session_id,
+                to_status=ReservationStatus.COMPLETED,
+                terminal_state=ExecutionTerminalState.COMPLETED,
+                output_sha256=output_sha,
+                error_code=None,
+                provider_session_id=receipt_session,
                 transport_attempts=running.transport_attempts,
                 updated_at=now,
             )
             return ReservationOutcome(
-                terminal_state=ExecutionTerminalState.UNKNOWN_OUTCOME,
-                status=ReservationStatus.UNKNOWN_OUTCOME,
                 reservation=persisted,
-                error_code=dispatch_error_code,
             )
-
-        # --- success ----------------------------------------------------
-        output_sha = receipt["output_sha256"]  # type: ignore[index]
-        # A successful live receipt may replace the harness-minted placeholder
-        # with the provider-issued session identity.  Once an outcome becomes
-        # UNKNOWN, recovery is stricter and must present that persisted session
-        # identity; the repository enforces that distinction.
-        receipt_session = receipt.get("provider_session_id") or provider_session_id  # type: ignore[union-attr]
-
-        persisted = self._repository.transition(
-            project_id,
-            reservation_id,
-            to_status=ReservationStatus.COMPLETED,
-            terminal_state=ExecutionTerminalState.COMPLETED,
-            output_sha256=output_sha,
-            error_code=None,
-            provider_session_id=receipt_session,
-            transport_attempts=running.transport_attempts,
-            updated_at=now,
-        )
-        return ReservationOutcome(
-            terminal_state=ExecutionTerminalState.COMPLETED,
-            status=ReservationStatus.COMPLETED,
-            reservation=persisted,
-            error_code=None,
-        )
+        finally:
+            _release_inflight(project_id, reservation_id)
 
 
 # ---------------------------------------------------------------------------
@@ -603,10 +702,7 @@ def _outcome_for_existing(
     if reservation.terminal_state is None:
         raise RuntimeError("terminal reservation has no terminal_state")
     return ReservationOutcome(
-        terminal_state=reservation.terminal_state,
-        status=reservation.status,
         reservation=reservation,
-        error_code=reservation.error_code,
     )
 
 

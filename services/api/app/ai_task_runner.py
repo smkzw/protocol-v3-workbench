@@ -52,7 +52,7 @@ from .ai_runtime_settings import runtime_ai_settings_store
 from .ai_role_runtime_settings import INDEPENDENT_AI_ROLE, runtime_ai_role_settings_store
 from .demo_repository import DemoRepository
 from .medical_writing_legacy_reference_index import parse_legacy_reference_marker
-from .medical_writing_content_quality import UNRESOLVED_DRAFT_MARKER_RE
+from .medical_writing_content_quality import iter_unresolved_draft_markers
 
 LOCAL_PATH_RE = re.compile(r"/Users/[^\s\"'，,；;）)\]}]+")
 SAFE_ARTIFACT_KEYS = {
@@ -2706,7 +2706,7 @@ class AiTaskRunner:
                     + ", ".join(leaked_tokens)
                 )
             unresolved_markers = sorted(
-                set(UNRESOLVED_DRAFT_MARKER_RE.findall(proposal))
+                {match.group() for match in iter_unresolved_draft_markers(proposal)}
             )
             if unresolved_markers:
                 errors.append(

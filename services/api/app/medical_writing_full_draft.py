@@ -33,7 +33,7 @@ from .medical_writing_durable_jobs import (
 )
 from .medical_writing_content_quality import (
     INTERNAL_TRANSPORT_VOCABULARY_RE,
-    UNRESOLVED_DRAFT_MARKER_RE,
+    iter_unresolved_draft_markers,
 )
 from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateError
 
@@ -693,7 +693,7 @@ class MedicalWritingFullDraftService:
                 len(proposal) < FULL_DRAFT_MINIMUM_BODY_CHARS
                 or _PLACEHOLDER_RE.search(proposal)
                 or INTERNAL_TRANSPORT_VOCABULARY_RE.search(proposal)
-                or UNRESOLVED_DRAFT_MARKER_RE.search(proposal)
+                or next(iter_unresolved_draft_markers(proposal), None)
             ):
                 raise RuntimeStoreError(f"全文初稿章节候选不具备实质内容：{section_id}")
             current = repo.working_copy(project_id, section_id)

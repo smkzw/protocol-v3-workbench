@@ -1,0 +1,95 @@
+{
+  "schema_version": "protocol-v3-role-registry.v1",
+  "generated_for": "mw_protocol_v3_1r6_glm_transport_20260905",
+  "authority": "Design plan mw_protocol_multi_agent_rearchitecture_design_20260809.md section 17.1, amended by the user-approved Plan v2 Task 1R.6 decision (2026-09-05). This document is the explicitly confirmed ALTERNATIVE product profile: DeepSeek-v4-flash for the LLM and OCR/translation-support roles. Per 1R.6 it must never be selected silently and never serves as an automatic fallback for the default zhipu-coding-plan GLM-5.3-Flash profile recorded in role_registry.json; selection requires an explicit user confirmation argument. This registry records the confirmed alternative target profile only; it is credential-free and does not claim runtime readiness. Observed model identity belongs to a runtime ExecutionReservation receipt, never to registry text. OCR and translation declarations are identical to the default registry and unchanged by 1R.6.",
+  "roles": [
+    {
+      "role_id": "product-llm",
+      "role_kind": "llm",
+      "description": "Primary Protocol v3 drafting and reasoning model (confirmed alternative). Thinking and effort are configurable per node execution contract.",
+      "thinking_configurable": true,
+      "default_effort": "max",
+      "allowed_efforts": [
+        "low",
+        "medium",
+        "high",
+        "max",
+        "xhigh"
+      ],
+      "target_profile": {
+        "provider": "deepseek",
+        "model": "deepseek-flash",
+        "harness": "direct-api",
+        "regions": [
+          "cn"
+        ],
+        "sensitivity_tier": "confidential",
+        "declared_runtime_note": "Confirmed alternative profile per Plan v2 Task 1R.6; selectable only with an explicit confirmation argument, never as a silent fallback from the default GLM profile. Actual identity is proven only by a runtime receipt."
+      }
+    },
+    {
+      "role_id": "product-ocr",
+      "role_kind": "ocr",
+      "description": "Document parsing OCR model. PaddleOCR-VL-1.6 official asynchronous typed job submission/polling service. Effort is frozen to none and exposes no thinking control.",
+      "thinking_configurable": false,
+      "default_effort": "none",
+      "allowed_efforts": [
+        "none"
+      ],
+      "target_profile": {
+        "provider": "paddle-official",
+        "model": "PaddleOCR-VL-1.6",
+        "harness": "direct-api",
+        "regions": [
+          "cn"
+        ],
+        "sensitivity_tier": "confidential",
+        "declared_runtime_note": "Fail-closed until gate reconciliation: shared workload gate currently selects GLM-OCR-bf16. No GLM output may be labeled Paddle."
+      }
+    },
+    {
+      "role_id": "product-translation",
+      "role_kind": "translation",
+      "description": "Local oMLX translation model. Effort is frozen to none and exposes no thinking control. Requires shared lease/heartbeat/release contract.",
+      "thinking_configurable": false,
+      "default_effort": "none",
+      "allowed_efforts": [
+        "none"
+      ],
+      "target_profile": {
+        "provider": "local-omlx",
+        "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
+        "harness": "local-omlx",
+        "regions": [
+          "local"
+        ],
+        "sensitivity_tier": "confidential",
+        "declared_runtime_note": "Target profile; actual identity is proven only by a runtime receipt."
+      }
+    },
+    {
+      "role_id": "product-ocr-translation-support",
+      "role_kind": "ocr_translation_support",
+      "description": "Support AI for OCR and translation orchestration, fidelity checks and structured extraction (confirmed alternative). Thinking and effort are configurable per node execution contract.",
+      "thinking_configurable": true,
+      "default_effort": "max",
+      "allowed_efforts": [
+        "low",
+        "medium",
+        "high",
+        "max",
+        "xhigh"
+      ],
+      "target_profile": {
+        "provider": "deepseek",
+        "model": "deepseek-flash",
+        "harness": "direct-api",
+        "regions": [
+          "cn"
+        ],
+        "sensitivity_tier": "confidential",
+        "declared_runtime_note": "Confirmed alternative profile per Plan v2 Task 1R.6; selectable only with an explicit confirmation argument, never as a silent fallback from the default GLM profile. Actual identity is proven only by a runtime receipt."
+      }
+    }
+  ]
+}

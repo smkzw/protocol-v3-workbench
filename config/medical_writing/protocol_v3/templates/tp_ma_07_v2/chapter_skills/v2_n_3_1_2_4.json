@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:n-3-1-2-4:estimand-ice-summary",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.0",
   "node_id": "v2_n_3_1_2_4",
   "chapter_contract_id": "contract:v2-n-3-1-2-4:v2",
   "template_id": "tp_ma_07_v2",
@@ -9,7 +9,7 @@
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
     "prompt_version": "prompt:v3.3.0",
-    "instructions": "按伴发事件属性合同逐事件给出定义、选定策略与理由，并以表 1 逐行承载；同时独立给出群体层面汇总指标定义（源 @323，属于本载体而非新建标题），澄清其与人群描述事实路径的区别；涉及补救治疗时命中跨合同核对规则。",
+    "instructions": "按伴发事件属性合同逐事件给出定义、选定策略与理由，并以表 1 逐行承载；同时独立给出群体层面汇总指标定义（源 @323，属于本载体而非新建标题），澄清其与人群描述事实路径的区别；涉及补救治疗时命中跨合同核对规则。 背景与补救治疗的跨合同复核使用明确项目状态；两者不适用不能免除停药等其他相关ICE的定义、策略、理由及其与分析的兼容说明。群体汇总指标不是条件布尔。",
     "forbidden_behaviors": [
       "把群体层面汇总指标写成统计方法名",
       "把 picos.population_summary 当作汇总指标或反之",

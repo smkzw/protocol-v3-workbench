@@ -1045,7 +1045,7 @@ class SemanticDocumentReducer:
         now: datetime,
     ) -> SemanticDocumentRevision:
         next_state = _next_canonical_state(current, decision)
-        return SemanticDocumentRevision(
+        revision = SemanticDocumentRevision(
             semantic_document_revision_id=current.semantic_document_revision_id,
             project_id=current.project_id,
             revision=decision.state_revision,
@@ -1058,6 +1058,10 @@ class SemanticDocumentReducer:
             chapter_contract_hashes=chapter_contract_hashes,
             updated_at=now,
             canonical_state=next_state,
+        )
+        return (
+            revision if revision.schema_version == current.schema_version
+            else revision.compact_dependencies()
         )
 
 

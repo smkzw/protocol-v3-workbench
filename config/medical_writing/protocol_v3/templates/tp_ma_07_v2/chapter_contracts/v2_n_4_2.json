@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-4-2:v2",
   "semantic_node_id": "v2_n_4_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-4-2:design-rationale",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -63,6 +63,16 @@
         "fact_path": "framing.structured_design.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "design.noninferiority_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，由已确认假设/对照事实给出；未知不默认不适用，不新增用户自由文本。"
+      },
+      {
+        "fact_path": "design.placebo_control_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，由已确认假设/对照事实给出；未知不默认不适用，不新增用户自由文本。"
       }
     ],
     "claim_requirements": [
@@ -189,17 +199,30 @@
   ],
   "conditional_applicability_rules": [
     {
-      "conditional_applicability_rule_id": "applicability:v2_n_4_2:active",
+      "conditional_applicability_rule_id": "applicability:v2_n_4_2:noninferiority",
       "triggering_fact_paths": [
-        "framing.structured_design"
+        "design.noninferiority_applicable"
       ],
-      "condition": "确证性设计或特定对照选择适用时，补齐假设、界值/对照理由及证据要求。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
+      "condition": "已确认存在非劣效假设",
+      "rationale": "源body-child355对照与设计按实际项目选择；不把示例升级为全部设计义务，保留所有基础对照/假设论证。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.noninferiority_margin_decision"
+      ],
       "required_when_active_claim_types": [
-        "design_rationale",
-        "control_choice_decision"
+        "noninferiority_margin_decision"
       ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_2:placebo",
+      "triggering_fact_paths": [
+        "design.placebo_control_applicable"
+      ],
+      "condition": "已确认存在安慰剂对照",
+      "rationale": "源body-child355对照与设计按实际项目选择；不把示例升级为全部设计义务，保留所有基础对照/假设论证。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.placebo_decision"
+      ],
+      "required_when_active_claim_types": []
     }
   ],
   "dependency_ids": [],

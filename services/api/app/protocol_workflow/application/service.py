@@ -63,6 +63,17 @@ from app.protocol_workflow.canonical import (
     material_sha256,
     study_revision_hash,
 )
+from app.protocol_workflow.canonical.study_definition import (
+    TEMPLATE_FACT_ADOPTION_OPERATION,
+)
+from app.protocol_workflow.canonical.decision_inputs import (
+    ConfirmationBinding,
+    DecisionInputBinding,
+    bind_confirmation_dependencies,
+    bind_decision_inputs,
+    confirmation_validity,
+    current_input_validity,
+)
 from app.protocol_workflow.errors import (
     ProtocolErrorCode,
     ProtocolErrorOwner,
@@ -83,14 +94,30 @@ from app.protocol_workflow.ports.repositories import (
     RevisionConflictError,
     WorkflowRunStatusRecord,
 )
+from app.protocol_workflow.registries.template_runtime import CurrentTemplate
 from app.protocol_workflow.storage.selected import UnitOfWorkFactory
 
+from .adoption import (
+    TEMPLATE_FACT_ADOPTION_SCHEMA,
+    GetTemplateAdoptionQuery,
+    TemplateAdoptionFlow,
+    TemplateAdoptionQueryResult,
+    TemplateAdoptionValidationError,
+    adoption_intent_material,
+    prepare_template_adoption,
+    recompute_adoption_intent_sha256,
+    validate_retirement_presence,
+)
 from .commands import (
     ApplyStudyDecisionCommand,
     CreateStudyDefinitionCommand,
     study_definition_genesis_snapshot,
 )
 from .queries import (
+    GetSemanticDocumentQuery,
+    SemanticDocumentQueryResult,
+    RecoverStudyDecisionQuery,
+    ListStudyDefinitionsQuery,
     DecisionGraphQueryResult,
     DecisionSummary,
     EventSummaryQueryResult,
@@ -179,6 +206,10 @@ class _MissingRepositoryError(_ApplicationServiceError):
     """A required repository handle is absent from the UoW scope."""
 
 
+class _CurrentTemplateUnavailableError(_ApplicationServiceError):
+    """The configured current-template loader failed or is absent."""
+
+
 # ---------------------------------------------------------------------------
 # Mutation result
 # ---------------------------------------------------------------------------
@@ -228,7 +259,7 @@ class ApplicationService:
     outside this layer.
     """
 
-    __slots__ = ("_factory", "_clock", "_coordinator", "_reducer")
+    __slots__ = ("_factory", "_clock", "_coordinator", "_reducer", "_current_template_loader")
 
     def __init__(
         self,
@@ -236,9 +267,12 @@ class ApplicationService:
         unit_of_work_factory: UnitOfWorkFactory,
         coordinator: Optional[EventSourcedUnitOfWork] = None,
         clock: Optional[Callable[[], datetime]] = None,
+        current_template_loader: Optional[Callable[[], CurrentTemplate]] = None,
     ) -> None:
         if not callable(unit_of_work_factory):
             raise ValueError("unit_of_work_factory must be callable")
+        if current_template_loader is not None and not callable(current_template_loader):
+            raise ValueError("current_template_loader must be callable or None")
         self._factory = unit_of_work_factory
         self._clock: Callable[[], datetime] = (
             clock if clock is not None else _default_utc_now
@@ -249,6 +283,7 @@ class ApplicationService:
             else EventSourcedUnitOfWork(clock=self._clock)
         )
         self._reducer: StudyDefinitionReducer = StudyDefinitionReducer()
+        self._current_template_loader = current_template_loader
 
     # ------------------------------------------------------------------
     # Public mutation API
@@ -284,7 +319,8 @@ class ApplicationService:
 
                 if current is not None:
                     # Aggregate exists: only an exact replay of the same
-                    # create decision may proceed (ledger-first classification).
+                    # create decision may proceed (ledger-first classification);
+                    # a different create decision fails closed as stale.
                     new_def, effective, _ledger, replayed = self._reducer.replay_or_apply(
                         current, command.decision_record, ledger, now=now,
                     )
@@ -347,6 +383,11 @@ class ApplicationService:
                     idempotency_key=command.idempotency_key,
                     fact_updates=None,
                 )
+                # Additive reconstruction extension: old decision-ledger events
+                # remain readable and are never rewritten. New streams carry
+                # their immutable genesis, independent of the current snapshot.
+                payload["reconstruction_schema_version"] = "study_genesis_v1"
+                payload["genesis_definition"] = created.model_dump(mode="json")
                 side = _build_side_effect(
                     command.idempotency_key, command.side_effect,
                     payload_sha256=exact_payload_sha256(payload),
@@ -433,9 +474,50 @@ class ApplicationService:
                     command.decision_record.snapshot_sha256,
                     command.decision_record.expected_state_revision,
                 )
+                # Ledger-first: the request-level adoption intent is all the
+                # reducer needs for replay classification, so an exact replay
+                # never loads the current template and template drift never
+                # invalidates an identical caller request.  The loaded
+                # template is enforced only on a genuinely fresh apply.
+                adoption_flow: Optional[TemplateAdoptionFlow] = None
+                intent_material: Optional[Mapping[str, Any]] = None
+                if command.template_adoption is not None:
+                    intent_material = adoption_intent_material(
+                        retired_fact_paths=(
+                            command.template_adoption.retired_fact_paths
+                        ),
+                        request_template_id=command.template_adoption.template_id,
+                    )
                 if ledger.find(cas_id) is None:
                     # Genuinely fresh decision: validate before CAS write.
                     self._validate_fresh_apply(command, current)
+                    # One logical operation per idempotency key within this
+                    # aggregate — a different decision reusing the key is a
+                    # conflict with zero effects (no side effect required).
+                    self._reject_reused_idempotency_key(
+                        events, command, cas_id
+                    )
+                    if command.template_adoption is not None:
+                        try:
+                            template = self._load_current_template()
+                        except _CurrentTemplateUnavailableError:
+                            raise
+                        except (ValueError, OSError) as exc:
+                            # Any current-template acquisition failure is a
+                            # configuration problem, never a request error.
+                            raise _CurrentTemplateUnavailableError(str(exc)) from exc
+                        adoption_flow = prepare_template_adoption(
+                            template=template,
+                            retired_fact_paths=(
+                                command.template_adoption.retired_fact_paths
+                            ),
+                            template_id=command.template_adoption.template_id,
+                        )
+                        # State-dependent intent checks run only on a fresh
+                        # apply, after the ledger proved no prior effect.
+                        validate_retirement_presence(
+                            adoption_flow.retired_fact_paths, current.facts
+                        )
 
                 new_def, effective, _ledger, replayed = self._reducer.replay_or_apply(
                     current,
@@ -443,6 +525,14 @@ class ApplicationService:
                     ledger,
                     fact_updates=command.fact_updates,
                     now=now,
+                    revise_confirmed_facts=command.revise_confirmed_facts,
+                    decision_input_refs=command.decision_input_refs,
+                    retired_fact_paths=(
+                        adoption_flow.retired_fact_paths
+                        if adoption_flow is not None
+                        else None
+                    ),
+                    adoption_material=intent_material,
                 )
 
                 if replayed:
@@ -465,6 +555,36 @@ class ApplicationService:
                     idempotency_key=command.idempotency_key,
                     fact_updates=command.fact_updates,
                 )
+                if adoption_flow is not None:
+                    # Validation, snapshot and impact plan run BEFORE any write
+                    # and bind the exact base/result revisions; a rejection
+                    # aborts the unit of work with nothing durable.
+                    payload["operation"] = TEMPLATE_FACT_ADOPTION_OPERATION
+                    payload["template_adoption"] = (
+                        adoption_flow.validate_and_build_payload(
+                            facts_before=current.facts,
+                            adopted=new_def,
+                            facts_before_revision=current.revision,
+                            facts_before_revision_sha256=study_revision_hash(current),
+                            request_template_id=(
+                                command.template_adoption.template_id
+                            ),
+                            now=now,
+                        )
+                    )
+                elif command.revise_confirmed_facts:
+                    payload["operation"] = "confirmed_fact_revision.v1"
+                if command.decision_input_refs is not None:
+                    payload["decision_input_binding"] = bind_decision_inputs(
+                        command.decision_input_refs, new_def.facts, study_revision_hash(new_def)
+                    ).model_dump(mode="json")
+                if command.confirmation_dependencies is not None:
+                    payload["confirmation_binding"] = bind_confirmation_dependencies(
+                        command.decision_record.decision_key,
+                        command.confirmation_dependencies,
+                        new_def.facts,
+                        study_revision_hash(new_def),
+                    ).model_dump(mode="json")
                 side = _build_side_effect(
                     command.idempotency_key, command.side_effect,
                     payload_sha256=exact_payload_sha256(payload),
@@ -518,6 +638,91 @@ class ApplicationService:
     # Public query API
     # ------------------------------------------------------------------
 
+    def lookup_decision(self, query: RecoverStudyDecisionQuery) -> Optional[StudyDefinitionMutationResult]:
+        """Read an intact committed receipt, independent of later producer code."""
+        record = query.decision_record
+        try:
+            with self._factory() as uow:
+                current = self._require_study_repo(uow).get_current(query.project_id, query.study_definition_id)
+                if current is None:
+                    raise AggregateNotFoundError(query.project_id, aggregate_id=query.study_definition_id)
+                events = self._read_stream(uow, query.project_id, study_definition_stream_id(query.study_definition_id))
+                ledger = self._rebuild_ledger(events, project_id=query.project_id,
+                                              study_definition_id=query.study_definition_id)
+                cas_id = decision_cas_identity(record.decision_record_id, record.snapshot_sha256,
+                                               record.expected_state_revision)
+                self._reject_reused_idempotency_key(events, query, cas_id)
+                effect = ledger.find(cas_id)
+                if effect is None:
+                    return None
+                # The operation must name this recorded CAS, not just another
+                # operation carrying an otherwise identical human decision.
+                if not any(e.payload.get("idempotency_key") == query.idempotency_key
+                           and e.payload.get("cas_identity") == cas_id for e in events):
+                    return None
+                incoming_sha = record.material_sha256()
+                if effect.decision_record_sha256 != incoming_sha:
+                    raise DecisionPayloadConflictError(query.study_definition_id, record.expected_state_revision,
+                        cas_id, "decision_record", effect.decision_record_sha256, incoming_sha)
+                return StudyDefinitionMutationResult(project_id=query.project_id,
+                    study_definition_id=query.study_definition_id, definition=current,
+                    revision=current.revision, revision_sha256=study_revision_hash(current),
+                    effective_decision=effect.decision_record, replayed=True)
+        except _EXCEPTION_MAP as exc:
+            raise _translate(exc, project_id=query.project_id, object_id=query.study_definition_id,
+                idempotency_key=query.idempotency_key, decision_record_id=record.decision_record_id,
+                expected_revision=record.expected_state_revision) from exc
+
+    def recover_decision(self, command: ApplyStudyDecisionCommand) -> Optional[StudyDefinitionMutationResult]:
+        """Find an exact committed intent without attempting a fresh application.
+
+        A missing receipt says only that no matching commit was observed. It
+        does not authorize redispatch of an uncertain or still-running request.
+        Existing reducer replay checks bind the complete original material;
+        current templates are neither loaded nor applied during this lookup.
+        """
+        try:
+            with self._factory() as uow:
+                current = self._require_study_repo(uow).get_current(command.project_id, command.study_definition_id)
+                if current is None:
+                    raise AggregateNotFoundError(command.project_id, aggregate_id=command.study_definition_id)
+                events = self._read_stream(uow, command.project_id, study_definition_stream_id(command.study_definition_id))
+                ledger = self._rebuild_ledger(events, project_id=command.project_id,
+                                              study_definition_id=command.study_definition_id)
+                cas_id = decision_cas_identity(command.decision_record.decision_record_id,
+                    command.decision_record.snapshot_sha256, command.decision_record.expected_state_revision)
+                self._reject_reused_idempotency_key(events, command, cas_id)
+                if ledger.find(cas_id) is None:
+                    return None
+                material = None if command.template_adoption is None else adoption_intent_material(
+                    retired_fact_paths=command.template_adoption.retired_fact_paths,
+                    request_template_id=command.template_adoption.template_id)
+                definition, effective, _, replayed = self._reducer.replay_or_apply(
+                    current, command.decision_record, ledger, fact_updates=command.fact_updates,
+                    now=self._clock(), revise_confirmed_facts=command.revise_confirmed_facts,
+                    decision_input_refs=command.decision_input_refs, adoption_material=material)
+                assert replayed  # The committed ledger entry was found above.
+                return StudyDefinitionMutationResult(project_id=command.project_id,
+                    study_definition_id=command.study_definition_id, definition=definition,
+                    revision=definition.revision, revision_sha256=study_revision_hash(definition),
+                    effective_decision=effective, replayed=True)
+        except _EXCEPTION_MAP as exc:
+            raise _translate(exc, project_id=command.project_id, object_id=command.study_definition_id,
+                idempotency_key=command.idempotency_key,
+                decision_record_id=command.decision_record.decision_record_id,
+                expected_revision=command.expected_revision) from exc
+
+    def list_study_definitions(self, query: ListStudyDefinitionsQuery) -> tuple[StudyDefinitionQueryResult, ...]:
+        """Discover existing identities without creating a competing study."""
+        try:
+            with self._factory() as uow:
+                definitions = self._require_study_repo(uow).list_current(query.project_id)
+                return tuple(StudyDefinitionQueryResult(definition=definition,
+                    revision=definition.revision, revision_sha256=study_revision_hash(definition))
+                    for definition in definitions)
+        except _EXCEPTION_MAP as exc:
+            raise _translate(exc, project_id=query.project_id, object_id=query.project_id) from exc
+
     def get_study_definition(
         self, query: GetStudyDefinitionQuery
     ) -> StudyDefinitionQueryResult:
@@ -544,6 +749,67 @@ class ApplicationService:
                 project_id=query.project_id,
                 object_id=query.study_definition_id,
             ) from exc
+
+    def get_manuscript_plan(self, query: GetStudyDefinitionQuery):
+        """Prepare every carrier from one immutable current study read."""
+        from app.protocol_workflow.agent3.manuscript_plan import manuscript_preparation_view
+        current = self.get_study_definition(query)
+        if current.definition is None:
+            return None
+        try:
+            return manuscript_preparation_view(self._load_current_template(), current.definition)
+        except _EXCEPTION_MAP as exc:
+            raise _translate(exc, project_id=query.project_id,
+                             object_id=query.study_definition_id) from exc
+
+    def prepare_manuscript_chapter(self, query: GetStudyDefinitionQuery, *, node_id,
+                                   source_preparation, source_run_id, expected_study_sha256):
+        """Pin a current study and a completed source bundle without dispatching.
+
+        Historical generation recovery reads its original request elsewhere;
+        this fresh preparation must match the study the user is viewing.
+        """
+        from app.protocol_workflow.agent3.chapter_draft import prepare_study_chapter
+        from app.protocol_workflow.agent3.source_preparation import SourcePreparationIncomplete
+        current = self.get_study_definition(query)
+        if current.definition is None:
+            raise ValueError('chapter_study_missing')
+        if current.revision_sha256 != expected_study_sha256:
+            raise ValueError('chapter_study_revision_changed')
+        if source_preparation.project_id != query.project_id:
+            raise ValueError('chapter_source_context_changed')
+        seed = source_preparation.prepared_seed(source_run_id)
+        context = current.definition.facts.get('research.input_context')
+        if not isinstance(context, dict) or context.get('source_intake_sha256') != seed.input_sha256:
+            raise ValueError('chapter_source_context_changed')
+        bundle = source_preparation.read(source_run_id)
+        if bundle is None:
+            raise SourcePreparationIncomplete(source_preparation.state(source_run_id))
+        return prepare_study_chapter(self._load_current_template(), current.definition,
+            node_id, bundle.evidence, source_material=bundle)
+
+    def get_semantic_document(self, query: GetSemanticDocumentQuery) -> SemanticDocumentQueryResult:
+        """Read persisted text and its study binding in one transaction.
+
+        A changed study does not rewrite the manuscript or prove that every
+        paragraph is clinically invalid. It requires affected-content review.
+        """
+        from app.protocol_workflow.canonical.document import document_revision_hash
+        try:
+            with self._factory() as uow:
+                repo = uow.semantic_document_repository
+                if repo is None:
+                    raise _MissingRepositoryError("semantic_document_repository")
+                document = repo.get_current(query.project_id, query.semantic_document_revision_id)
+                if document is None or document.study_definition_id != query.study_definition_id:
+                    return SemanticDocumentQueryResult(None, None, "missing")
+                study = self._require_study_repo(uow).get_current(query.project_id, query.study_definition_id)
+                binding = ("missing" if study is None else "current"
+                           if study_revision_hash(study) == document.study_definition_sha256 else "changed")
+                return SemanticDocumentQueryResult(document, document_revision_hash(document), binding)
+        except _EXCEPTION_MAP as exc:
+            raise _translate(exc, project_id=query.project_id,
+                             object_id=query.semantic_document_revision_id) from exc
 
     def get_study_definition_event_summary(
         self, query: GetStudyDefinitionEventSummaryQuery
@@ -603,21 +869,178 @@ class ApplicationService:
     def get_decision_graph(
         self, query: GetDecisionGraphQuery
     ) -> DecisionGraphQueryResult:
-        """Read the decision-graph read-model projection (existing contract)."""
+        """Read the latest applied decision per key from authoritative events."""
 
         try:
             with self._factory() as uow:
                 rm = uow.read_model_repository
                 if rm is None:
                     raise _MissingRepositoryError("read_model_repository")
-                records = rm.get_decision_graph(
+                # Planned decision nodes may exist before the first study revision.
+                planned = rm.get_decision_graph(query.project_id, query.study_definition_id)
+                events = self._read_stream(
+                    uow, query.project_id,
+                    study_definition_stream_id(query.study_definition_id),
+                )
+                ledger = self._rebuild_ledger(
+                    events, project_id=query.project_id,
+                    study_definition_id=query.study_definition_id,
+                )
+                # Reconstruct from committed events rather than an unmaintained cache.
+                # Legacy decisions have no bound input read-set: do not label them current.
+                current = self._require_study_repo(uow).get_current(
                     query.project_id, query.study_definition_id
                 )
+                bindings = {}
+                confirmations = {}
+                for event in events:
+                    payload = event.payload
+                    if event.event_type not in _DECISION_EVENT_TYPES:
+                        continue
+                    if "decision_input_binding" in payload:
+                        try:
+                            binding = DecisionInputBinding.model_validate(payload["decision_input_binding"])
+                            if binding.adopted_revision_sha256 != payload["result_revision_sha256"]:
+                                raise ValueError("input binding revision mismatch")
+                            bindings[payload["cas_identity"]] = binding
+                        except (KeyError, TypeError, ValueError) as exc:
+                            raise _LedgerRebuildError(event_id=event.domain_event_id, detail=str(exc)) from exc
+                    if "confirmation_binding" in payload:
+                        try:
+                            confirmed = ConfirmationBinding.model_validate(payload["confirmation_binding"])
+                            if confirmed.adopted_revision_sha256 != payload["result_revision_sha256"]:
+                                raise ValueError("confirmation binding revision mismatch")
+                            prior = confirmations.get(confirmed.decision_key)
+                            if prior is not None and prior != confirmed:
+                                # The same decision key must not carry two
+                                # different medical-dependency declarations;
+                                # surfacing the conflict instead of silently
+                                # trusting the newest declaration.
+                                raise ValueError(
+                                    "conflicting confirmation dependency declarations for "
+                                    f"{confirmed.decision_key}"
+                                )
+                            confirmations[confirmed.decision_key] = confirmed
+                        except (KeyError, TypeError, ValueError) as exc:
+                            raise _LedgerRebuildError(event_id=event.domain_event_id, detail=str(exc)) from exc
+                latest = {record.decision_key: record for record in planned}
+                for effect in sorted(ledger.effects.values(), key=lambda e: e.result_revision):
+                    decision = effect.decision_record
+                    confirmed = confirmations.get(decision.decision_key)
+                    if confirmed is not None and current is not None:
+                        # Medical dependencies drive the user-facing validity;
+                        # the producer read-set stays recorded for production
+                        # reconciliation but no longer reopens this card.
+                        validity = confirmation_validity(confirmed, current.facts)
+                    elif effect.cas_identity in bindings and current is not None:
+                        validity = current_input_validity(bindings[effect.cas_identity], current.facts)
+                    else:
+                        validity = "unverified"
+                    latest[decision.decision_key] = DecisionGraphRecord(
+                        project_id=query.project_id,
+                        decision_key=decision.decision_key,
+                        decision_record_id=decision.decision_record_id,
+                        state_revision=decision.state_revision,
+                        selected_option_id=decision.selected_option_id,
+                        canonical_state=decision.canonical_state,
+                        current_validity=validity,
+                    )
+                records = tuple(latest[key] for key in sorted(latest))
                 return DecisionGraphQueryResult(
                     project_id=query.project_id,
                     study_definition_id=query.study_definition_id,
                     records=tuple(records),
                 )
+        except _EXCEPTION_MAP as exc:
+            raise _translate(
+                exc,
+                project_id=query.project_id,
+                object_id=query.study_definition_id,
+            ) from exc
+
+    def get_template_adoption(
+        self, query: GetTemplateAdoptionQuery
+    ) -> Optional[TemplateAdoptionQueryResult]:
+        """Read the latest template-bound adoption record from the events.
+
+        Read-only: the record is the versioned adoption part of the committed
+        decision event, re-verified for its identity bindings before it is
+        returned.  ``None`` means this study has no template-bound adoption.
+        """
+
+        try:
+            with self._factory() as uow:
+                ev_repo = uow.event_stream_repository
+                if ev_repo is None:
+                    raise _MissingRepositoryError("event_stream_repository")
+                events = ev_repo.read_events(
+                    query.project_id,
+                    study_definition_stream_id(query.study_definition_id),
+                )
+                for event in reversed(events):
+                    payload = event.payload
+                    if (
+                        event.event_type not in _DECISION_EVENT_TYPES
+                        or "template_adoption" not in payload
+                    ):
+                        continue
+                    adoption = payload["template_adoption"]
+                    try:
+                        if adoption.get("schema_version") != TEMPLATE_FACT_ADOPTION_SCHEMA:
+                            raise ValueError("unsupported template adoption schema")
+                        if (
+                            adoption["result_revision_sha256"]
+                            != payload["result_revision_sha256"]
+                        ):
+                            raise ValueError(
+                                "adoption result hash does not bind the committed event"
+                            )
+                        snapshot = adoption["applicability_snapshot"]
+                        plan = adoption["impact_plan"]
+                        template = adoption["template"]
+                        if (
+                            snapshot["study_definition_sha256"]
+                            != payload["result_revision_sha256"]
+                        ):
+                            raise ValueError(
+                                "applicability snapshot does not bind the adopted revision"
+                            )
+                        if plan["registry_sha256"] != template["registry_sha256"]:
+                            raise ValueError(
+                                "impact plan does not bind the adopted template identity"
+                            )
+                        if (
+                            plan["applicability_rules_sha256"]
+                            != template["applicability_rules_sha256"]
+                        ):
+                            raise ValueError(
+                                "impact plan does not bind the adopted rule set"
+                            )
+                        record = payload["decision_record"]
+                        return TemplateAdoptionQueryResult(
+                            project_id=query.project_id,
+                            study_definition_id=query.study_definition_id,
+                            cas_identity=payload["cas_identity"],
+                            decision_record_id=record["decision_record_id"],
+                            decision_key=record["decision_key"],
+                            base_revision=adoption["base_revision"],
+                            base_revision_sha256=adoption["base_revision_sha256"],
+                            applied_revision=payload["result_revision"],
+                            applied_revision_sha256=payload["result_revision_sha256"],
+                            facts_before_sha256=adoption["facts_before_sha256"],
+                            facts_after_sha256=adoption["facts_after_sha256"],
+                            changed_fact_paths=tuple(adoption["changed_fact_paths"]),
+                            retired_fact_paths=tuple(adoption["retired_fact_paths"]),
+                            template=template,
+                            applicability_snapshot=snapshot,
+                            impact_plan=plan,
+                        )
+                    except (KeyError, TypeError, ValueError) as exc:
+                        raise _LedgerRebuildError(
+                            event_id=event.domain_event_id,
+                            detail=f"invalid template adoption payload: {exc}",
+                        ) from exc
+                return None
         except _EXCEPTION_MAP as exc:
             raise _translate(
                 exc,
@@ -680,6 +1103,35 @@ class ApplicationService:
             )
 
     @staticmethod
+    def _reject_reused_idempotency_key(
+        events: Sequence[DomainEvent],
+        command: Any,
+        cas_id: str,
+    ) -> None:
+        """One logical operation per idempotency key within this aggregate.
+
+        The key identifies the logical operation even when no outbox side
+        effect is attached: a *different* decision (different CAS identity)
+        reusing a recorded key is rejected with zero effects, while the key's
+        own decision replays exactly.  Runs only on the fresh path, after the
+        ledger proved no recorded effect for this CAS identity.
+        """
+
+        for event in events:
+            payload = event.payload
+            if event.event_type not in _DECISION_EVENT_TYPES:
+                continue
+            recorded_key = payload.get("idempotency_key")
+            recorded_cas = payload.get("cas_identity")
+            if recorded_key == command.idempotency_key and recorded_cas != cas_id:
+                raise IdempotencyConflictError(
+                    command.project_id,
+                    command.idempotency_key,
+                    existing_sha256=str(recorded_cas),
+                    incoming_sha256=cas_id,
+                )
+
+    @staticmethod
     def _validate_fresh_apply(
         command: ApplyStudyDecisionCommand,
         current: StudyDefinitionV3,
@@ -716,6 +1168,26 @@ class ApplicationService:
         if repo is None:
             raise MissingRepositoryError("study_definition_repository")
         return repo
+
+    def _load_current_template(self) -> CurrentTemplate:
+        """Load the current authored template through the injected loader.
+
+        Legacy commands never reach this path, so historical replays never
+        depend on template loading.  A loader failure is a configuration
+        problem, not a user decision to re-confirm.
+        """
+
+        if self._current_template_loader is None:
+            raise _MissingRepositoryError("current_template_loader")
+        try:
+            template = self._current_template_loader()
+        except (ValueError, OSError) as exc:
+            raise _CurrentTemplateUnavailableError(str(exc)) from exc
+        if not isinstance(template, CurrentTemplate):
+            raise _CurrentTemplateUnavailableError(
+                "current template loader returned an unsupported object"
+            )
+        return template
 
     @staticmethod
     def _read_stream(
@@ -780,6 +1252,22 @@ class ApplicationService:
                     event_id=event.domain_event_id,
                     detail="payload decision_record_sha256 does not match DecisionRecord material hash",
                 )
+            if payload.get("operation") == TEMPLATE_FACT_ADOPTION_OPERATION:
+                # The recorded intent hash must bind the recorded contents
+                # (updates, input binding refs, template echo, retirement),
+                # not merely exist — verified on every rebuild.
+                try:
+                    recomputed = recompute_adoption_intent_sha256(payload)
+                except (KeyError, TypeError, ValueError) as exc:
+                    raise _LedgerRebuildError(
+                        event_id=event.domain_event_id,
+                        detail=f"invalid template adoption payload: {exc}",
+                    ) from exc
+                if payload["fact_updates_sha256"] != recomputed:
+                    raise _LedgerRebuildError(
+                        event_id=event.domain_event_id,
+                        detail="payload fact_updates_sha256 does not match the recorded adoption intent",
+                    )
             try:
                 effect = DecisionEffect(
                     cas_identity=cas_identity,
@@ -820,6 +1308,7 @@ _EXCEPTION_MAP = (
     EventSequenceConflictError,
     MissingRepositoryError,
     MutationAbortedError,
+    TemplateAdoptionValidationError,
     _ApplicationServiceError,
 )
 
@@ -878,28 +1367,61 @@ def _translate(
             audit_context=ctx,
         )
 
-    # --- Ledger corruption — P1_DECISION_CAS ---
+    # --- Ledger corruption requires event recovery, not another decision. ---
     if isinstance(exc, _LedgerRebuildError):
         ctx["event_id"] = exc.event_id
         return ProtocolWorkflowError(
-            code=ProtocolErrorCode.P1_DECISION_CAS,
+            code=ProtocolErrorCode.P1_CHECKPOINT_EVENT_MISMATCH,
             object_id=object_id,
-            owner=ProtocolErrorOwner.COORDINATOR_AGENT,
-            retryable=True,
+            owner=ProtocolErrorOwner.APPLICATION_SERVICE,
+            retryable=False,
             attempt=1,
             audit_detail=exc.detail,
             audit_context=ctx,
         )
 
-    # --- Missing repository handle — P1_DECISION_CAS ---
-    if isinstance(exc, (MissingRepositoryError, _MissingRepositoryError)):
+    # Missing objects and configuration cannot be repaired by reconfirming a decision.
+    if isinstance(exc, (MissingRepositoryError, _MissingRepositoryError, AggregateNotFoundError)):
+        code = (
+            ProtocolErrorCode.P1_OBJECT_NOT_FOUND
+            if isinstance(exc, AggregateNotFoundError)
+            else ProtocolErrorCode.P1_SERVICE_CONFIGURATION_INCOMPLETE
+        )
         return ProtocolWorkflowError(
-            code=ProtocolErrorCode.P1_DECISION_CAS,
+            code=code,
             object_id=object_id,
-            owner=ProtocolErrorOwner.COORDINATOR_AGENT,
-            retryable=True,
+            owner=ProtocolErrorOwner.APPLICATION_SERVICE,
+            retryable=False,
             attempt=1,
             audit_detail=str(exc),
+            audit_context=ctx,
+        )
+
+    # The current authored template could not be loaded source-bound.
+    if isinstance(exc, _CurrentTemplateUnavailableError):
+        return ProtocolWorkflowError(
+            code=ProtocolErrorCode.P1_SERVICE_CONFIGURATION_INCOMPLETE,
+            object_id=object_id,
+            owner=ProtocolErrorOwner.APPLICATION_SERVICE,
+            retryable=False,
+            attempt=1,
+            audit_detail=exc.detail if hasattr(exc, "detail") else str(exc),
+            audit_context=ctx,
+        )
+
+    # A template-bound adoption contradicting the confirmed template state is
+    # a design-consistency problem the user resolves by revising the inputs.
+    if isinstance(exc, TemplateAdoptionValidationError):
+        ctx["adoption_rejection_kind"] = exc.kind
+        if exc.fact_paths:
+            ctx["fact_paths"] = list(exc.fact_paths)
+        return ProtocolWorkflowError(
+            code=ProtocolErrorCode.D1_STUDY_DEFINITION_INCOMPLETE,
+            object_id=object_id,
+            owner=ProtocolErrorOwner.DESIGN_AGENT,
+            retryable=True,
+            attempt=1,
+            audit_detail=exc.detail,
             audit_context=ctx,
         )
 
@@ -937,7 +1459,6 @@ def _translate(
         (
             DecisionPayloadConflictError,
             FrozenFactOverwriteError,
-            AggregateNotFoundError,
             IdempotencyConflictError,
         ),
     ):

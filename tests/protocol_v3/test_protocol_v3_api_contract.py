@@ -40,8 +40,10 @@ that mounts the router factory (never the shared ``main.py``):
 
 **Shared-surface isolation**
 * the api package imports no legacy writing routes, no medical-monitoring
-  implementation and no ``app.main``; ``main.py`` does not reference
-  ``protocol_workflow`` (router is not product-mounted by Task 1.9).
+  implementation and no ``app.main``; since Task 1R.2 the shared ``main.py``
+  references exactly one new-chain symbol — the composition mount
+  (``protocol_workflow.api.composition``) — and never the router factory,
+  service or storage layers directly.
 
 **Frontend client contract**
 * real Node execution of ``protocolWorkspaceApi.mjs`` with a fake fetch:
@@ -1066,10 +1068,18 @@ class TestSharedSurfaceIsolation:
             for name in newly_loaded
         ), f"api import pulled shared surfaces: {sorted(newly_loaded)}"
 
-    def test_main_py_does_not_reference_protocol_workflow(self) -> None:
+    def test_main_py_references_only_the_1r2_composition_entrypoint(self) -> None:
+        # Task 1R.2 supersedes the Task 1.9 no-mount rule: the shared main
+        # may reference exactly one new-chain symbol — the composition
+        # mount — and nothing from the router factory, service or storage
+        # layers. Direct product mounting outside composition stays banned.
         text = _MAIN_PATH.read_text(encoding="utf-8")
-        assert "protocol_workflow" not in text
-        assert "protocol-workflow" not in text
+        assert text.count("mount_protocol_v3_workflow_router(app)") == 1
+        assert "protocol_workflow.api.composition" in text
+        assert "create_protocol_workflow_router" not in text
+        assert "ApplicationService" not in text
+        assert "protocol_workflow.storage" not in text
+        assert "storage.selected" not in text
 
 
 # ---------------------------------------------------------------------------

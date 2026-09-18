@@ -437,16 +437,34 @@ class MedicalWritingTemplateUpgradeService:
                 )
             for body_order, block in enumerate(content_blocks):
                 block["body_order"] = body_order
+            # Imported prose is a review candidate, not proof of completeness.
+            # An empty-target blocker cannot accompany the newly migrated body.
+            migrated_readiness = {}
+            if migrated_blocks and target_section.drafting_status == "actionable_blocker":
+                migrated_readiness = {
+                    "drafting_status": "unclassified",
+                    "completion_status": "template_upgrade_candidate",
+                    "drafting_blocker_code": "",
+                    "drafting_blocker_reason": "",
+                    "drafting_missing_inputs": [],
+                    "drafting_resolution_actions": [],
+                }
             merged_sections.append(
                 target_section.model_copy(
                     update={
                         "completion_status": (
-                            "template_upgrade_candidate"
+                            target_section.completion_status
+                            if target_section.drafting_status in {
+                                "structural_content", "structural_container",
+                                "actionable_blocker", "not_applicable",
+                            }
+                            else "template_upgrade_candidate"
                             if migrated_blocks
-                            else "not_started"
+                            else target_section.completion_status
                         ),
                         "approval_state": ApprovalState.AI_DRAFT,
                         "content_blocks": content_blocks,
+                        **migrated_readiness,
                     },
                     deep=True,
                 )

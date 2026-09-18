@@ -39,16 +39,20 @@
     "estimand.primary.variable_measurement",
     "estimand.primary.variable_timepoint_window",
     "exploratory.biomarker",
+    "exploratory.biomarker_applicable",
     "exploratory.disposition",
     "exploratory.endpoint_disposition",
     "exploratory.exposure_response",
     "exploratory.immunogenicity",
+    "exploratory.immunogenicity_applicable",
     "exploratory.population_pk",
+    "exploratory.population_pk_applicable",
     "framing.indication",
     "framing.intrinsic_objectives",
     "framing.investigational_product",
     "framing.product_profile",
     "framing.target_mechanism",
+    "intervention.background_therapy_applicable",
     "nonclinical.general_pharmacology",
     "nonclinical.pharmacodynamics",
     "nonclinical.pharmacokinetics",
@@ -74,7 +78,8 @@
     "safety.injection_reaction_applicability",
     "safety.injection_reaction_definitions",
     "safety.observation_period",
-    "safety.safety_objectives"
+    "safety.safety_objectives",
+    "statistics.pk_pd_er.er_applicable"
   ],
   "claim_vocabulary": [
     "analysis_set_equivalence",
@@ -3399,6 +3404,14 @@
             "locator": "【合成定位】合成来源 §2（非真实资料）",
             "context": "合成上下文窗口：仅用于确定性校验，非真实来源摘录。",
             "quality_score": 0.93
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "exploratory_non_confirmatory",
+            "locator_kind": "body",
+            "locator": "synthetic:analysis-intent:1",
+            "context": "Synthetic agreed exploratory interpretation scope",
+            "quality_score": 0.95
           }
         ],
         "objects": [

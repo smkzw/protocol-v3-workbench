@@ -19,7 +19,8 @@ ROOT = Path(__file__).resolve().parents[2]
 BUILDER_PATH = ROOT / "scripts/qc/protocol_v3/build_frozen_authority_manifest.py"
 RULES_PATH = ROOT / "tests/fixtures/protocol_v3/protected_path_rules.json"
 MANIFEST_PATH = ROOT / "tests/fixtures/protocol_v3/immutable_protected_assets.json"
-BASELINE_PATH = ROOT / "tests/fixtures/protocol_v3/mutable_source_baseline.json"
+# R.2 moved the exact historical baseline; every original expected value remains.
+BASELINE_PATH = ROOT / "tests/fixtures/protocol_v3/mutable_source_baseline_20260809.json"
 DC018_PATH = ROOT / "plans/mw_protocol_multi_agent_rearchitecture_design_clarification_dc018.md"
 
 EXPECTED_PLAN_SHA256 = "fa99fbd38588a5d3a8f35d3936c3e84c26cfd4a9eea58d8aa739e93363d54914"

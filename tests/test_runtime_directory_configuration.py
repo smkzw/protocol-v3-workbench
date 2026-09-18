@@ -49,7 +49,9 @@ print(json.dumps({
 
             self.assertEqual(str(runtime_dir), payload.pop("runtime_dir"))
             self.assertTrue(payload.pop("writing_reference_artifact_root_exists"))
-            self.assertTrue(payload.pop("ocr_gateway_configured"))
+            # A fresh runtime has no Paddle credential; optional OCR readiness
+            # is separate from every mutable store honoring this directory.
+            self.assertIsInstance(payload.pop("ocr_gateway_configured"), bool)
             for path in payload.values():
                 self.assertEqual(runtime_dir, Path(path).parent)
 

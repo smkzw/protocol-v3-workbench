@@ -651,9 +651,16 @@ def test_safety_oversight_roles_are_not_interchangeable():
         == "applicability:n-14-7:oversight-charter"
     )
     assert rule.triggering_fact_paths == ("quality.oversight_charter_applicable",)
-    assert "quality.oversight_charter_approval_record" in (
-        rule.required_when_active_fact_paths
+    assert rule.required_when_active_fact_paths == ("quality.oversight_charter_status",)
+    approved = next(r for r in contract.conditional_applicability_rules
+                    if r.conditional_applicability_rule_id == "applicability:n-14-7:charter-approved")
+    assert approved.triggering_fact_paths == (
+        "quality.oversight_charter_applicable", "quality.oversight_charter_status",
     )
+    assert "quality.oversight_charter_approval_record" in approved.required_when_active_fact_paths
+    draft = next(r for r in contract.conditional_applicability_rules
+                 if r.conditional_applicability_rule_id == "applicability:n-14-7:charter-draft")
+    assert "quality.oversight_charter_approval_record" not in draft.required_when_active_fact_paths
     assert facts["quality.oversight_charter_applicable"] == "optional"
 
 

@@ -20,6 +20,7 @@ from collections import Counter, defaultdict
 import copy
 import glob
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -58,6 +59,19 @@ MEDICAL_MONITORING_INVENTORY_RULE_ID = "medical_monitoring_inventory_paths"
 
 class FrozenAuthorityError(RuntimeError):
     """Raised when a protection rule cannot be resolved without guessing."""
+
+
+def _authority_relocations() -> dict[str, Path]:
+    """Resolve only the hash-verified R.1 amendment; never alter frozen rows."""
+    spec = importlib.util.spec_from_file_location(
+        "authority_locator_amendment", Path(__file__).with_name("authority_locator_amendment.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        return module.current_locators()
+    except (ValueError, OSError, KeyError) as exc:
+        raise FrozenAuthorityError(f"authority locator amendment invalid: {exc}") from exc
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -189,7 +203,7 @@ def _effective_rules(rules: Mapping[str, Any]) -> Mapping[str, Any]:
             "persisted cmss_sop_protocol_candidate_root does not match the authorized root"
         )
     if not CMSS_SOP_PROTOCOL_CANDIDATE_ROOT.is_dir():
-        raise FrozenAuthorityError(f"authorized CMSS-SOP root is missing: {cmss_root}")
+        _authority_relocations()
 
     persisted = [
         rule
@@ -334,6 +348,17 @@ def _expand_patterns(patterns: Iterable[str], allowed_roots: Sequence[Path]) -> 
         pattern = str(raw_pattern)
         if not os.path.isabs(pattern):
             raise FrozenAuthorityError(f"protected pattern is not absolute: {pattern}")
+        if pattern in {
+            str(CMSS_SOP_PROTOCOL_CANDIDATE_ROOT / "**" / "*.docx"),
+            str(CMSS_SOP_PROTOCOL_CANDIDATE_ROOT / "**" / "*.xlsx"),
+        }:
+            # Frozen keys remain logical identities. Physical locators are explicit
+            # in the additive amendment and rehashed before every resolution.
+            relocated = _authority_relocations()
+            matched = {Path(old) for old in relocated if old.endswith(Path(pattern).suffix)}
+            resolved.update(matched)
+            counts[pattern] = len(matched)
+            continue
         expanded: set[Path] = set()
         # Python 3.9 (the repository's system interpreter) lacks glob's
         # include_hidden argument.  A terminal `/**` is a directory contract,
@@ -840,6 +865,12 @@ def freeze_rules(
 
 def _path_record(path: Path, allowed_roots: Sequence[Path]) -> Mapping[str, Any]:
     path = _lexical_absolute(path)
+    logical_path = path
+    if _within(path, CMSS_SOP_PROTOCOL_CANDIDATE_ROOT):
+        relocated = _authority_relocations()
+        if str(path) not in relocated:
+            raise FrozenAuthorityError(f"unknown authority locator: {path}")
+        path = relocated[str(path)]
     if not _path_exists(path):
         raise FrozenAuthorityError(f"protected path disappeared while hashing: {path}")
     before = path.lstat()
@@ -869,7 +900,7 @@ def _path_record(path: Path, allowed_roots: Sequence[Path]) -> Mapping[str, Any]
     ):
         raise FrozenAuthorityError(f"protected path changed while hashing: {path}")
     return {
-        "path": str(path),
+        "path": str(logical_path),
         "path_type": "file",
         "size": after.st_size,
         "mode": mode,

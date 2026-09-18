@@ -40,7 +40,7 @@ import json
 from datetime import datetime, timezone
 from hashlib import sha256
 import re
-from typing import Any, Mapping, Optional
+from typing import Any, Literal, Mapping, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -527,6 +527,7 @@ class DecisionRequest(BaseModel):
     state_revision: Optional[PositiveRevision] = None
     selected_option_id: Optional[StableId] = None
     canonical_state: Optional[CanonicalState] = None
+    current_validity: Literal["unverified", "current", "stale"] = "unverified"
 
 
 class DecisionRequestQueue(BaseModel):

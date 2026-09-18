@@ -988,3 +988,38 @@ class TestPurityAndDeterminism:
         )
         with pytest.raises(RevisionStaleError):
             reducer.apply_decision(current, decision, now=NOW)
+
+
+@pytest.mark.parametrize("updates", ({"picos.intervention.dose": "30 mg"}, {"new.fact": 0}))
+def test_explicit_fact_revision_does_not_edit_frozen_definition(updates):
+    current = _study_definition(canonical_state="frozen")
+    decision = _decision(snapshot_sha256=_snapshot_for(current))
+    with pytest.raises(FrozenFactOverwriteError):
+        StudyDefinitionReducer().apply_decision(
+            current, decision, fact_updates=updates, now=NOW,
+            revise_confirmed_facts=True,
+        )
+
+
+def test_fact_revision_intent_is_bound_to_replay_payload():
+    current = _study_definition(canonical_state="confirmed")
+    decision = _decision(snapshot_sha256=_snapshot_for(current))
+    reducer = StudyDefinitionReducer()
+    updates = {"picos.intervention.dose": "30 mg"}
+    advanced, _, ledger, _ = reducer.replay_or_apply(
+        current, decision, DecisionEffectLedger(), fact_updates=updates,
+        now=NOW, revise_confirmed_facts=True,
+    )
+    with pytest.raises(DecisionPayloadConflictError):
+        reducer.replay_or_apply(advanced, decision, ledger, fact_updates=updates, now=NOW)
+    assert current.facts["picos.intervention.dose"] != advanced.facts["picos.intervention.dose"]
+
+
+def test_explicit_fact_revision_requires_a_confirmed_user_decision():
+    current = _study_definition(canonical_state="confirmed")
+    decision = _decision(snapshot_sha256=_snapshot_for(current), actor_type="ai")
+    with pytest.raises(ValueError, match="confirmed user decision"):
+        StudyDefinitionReducer().apply_decision(
+            current, decision, fact_updates={"picos.intervention.dose": "30 mg"},
+            now=NOW, revise_confirmed_facts=True,
+        )

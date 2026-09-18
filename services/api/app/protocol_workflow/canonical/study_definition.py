@@ -34,14 +34,17 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 from types import MappingProxyType
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional, Sequence
 
 from packages.contracts.workbench_contracts.protocol_v3 import (
+    ActorType,
     CanonicalState,
     DecisionRecord,
     JsonValue,
     StudyDefinitionV3,
 )
+
+from .decision_inputs import DecisionInputRef, input_refs_payload
 
 from .hashing import (
     canonical_revision_hash,
@@ -51,6 +54,7 @@ from .hashing import (
 )
 
 __all__ = [
+    "TEMPLATE_FACT_ADOPTION_OPERATION",
     "StudyDefinitionCasError",
     "RevisionStaleError",
     "DecisionPayloadConflictError",
@@ -59,6 +63,12 @@ __all__ = [
     "DecisionEffectLedger",
     "DecisionEffect",
 ]
+
+
+#: Operation label for a template-bound fact adoption (3R.4D).  It is part of
+#: the CAS material and of the committed event, so the same key can never
+#: replay with a different adoption intent.
+TEMPLATE_FACT_ADOPTION_OPERATION: str = "template_fact_adoption.v1"
 
 
 # ---------------------------------------------------------------------------
@@ -355,6 +365,10 @@ class StudyDefinitionReducer:
         *,
         fact_updates: Optional[Mapping[str, JsonValue]] = None,
         now: datetime,
+        revise_confirmed_facts: bool = False,
+        decision_input_refs: Optional[tuple[DecisionInputRef, ...]] = None,
+        retired_fact_paths: Optional[Sequence[str]] = None,
+        adoption_material: Optional[Mapping[str, Any]] = None,
     ) -> tuple[StudyDefinitionV3, DecisionRecord, DecisionEffectLedger, bool]:
         """Apply *decision* idempotently under CAS discipline.
 
@@ -407,7 +421,12 @@ class StudyDefinitionReducer:
             decision.expected_state_revision,
         )
         incoming_decision_sha = decision.material_sha256()
-        incoming_fact_sha = _fact_updates_sha256(fact_updates)
+        incoming_fact_sha = _fact_updates_sha256(
+            fact_updates,
+            revise_confirmed_facts=revise_confirmed_facts,
+            decision_input_refs=decision_input_refs,
+            adoption_material=adoption_material,
+        )
 
         # --- Phase 1: ledger lookup BEFORE revision/snapshot checks ---------
         # A duplicate request after commit/restart carries the original CAS
@@ -450,6 +469,9 @@ class StudyDefinitionReducer:
             decision,
             fact_updates=fact_updates,
             now=now,
+            revise_confirmed_facts=revise_confirmed_facts,
+            decision_input_refs=decision_input_refs,
+            retired_fact_paths=retired_fact_paths,
         )
         effect = DecisionEffect(
             cas_identity=cas_identity,
@@ -474,6 +496,9 @@ class StudyDefinitionReducer:
         *,
         fact_updates: Optional[Mapping[str, JsonValue]] = None,
         now: datetime,
+        revise_confirmed_facts: bool = False,
+        decision_input_refs: Optional[tuple[DecisionInputRef, ...]] = None,
+        retired_fact_paths: Optional[Sequence[str]] = None,
     ) -> StudyDefinitionV3:
         """Advance *current* to the next revision via an accepted *decision*.
 
@@ -504,9 +529,22 @@ class StudyDefinitionReducer:
           natural first-accept transition).
         """
 
+        input_refs_payload(decision_input_refs)
         self._check_revision(current, decision)
         self._check_snapshot(current, decision)
-        merged_facts = self._merge_facts(current, decision, fact_updates)
+        if type(revise_confirmed_facts) is not bool:
+            raise ValueError("revise_confirmed_facts must be a native boolean")
+        if revise_confirmed_facts and (
+            decision.actor_type is not ActorType.USER
+            or decision.canonical_state is not CanonicalState.CONFIRMED
+        ):
+            raise ValueError("fact revision requires a confirmed user decision")
+        retired = _normalise_retired_fact_paths(retired_fact_paths)
+        merged_facts = self._merge_facts(
+            current, decision, fact_updates,
+            revise_confirmed_facts=revise_confirmed_facts,
+            retired_fact_paths=retired,
+        )
         next_state = self._next_canonical_state(current, decision)
         current_revision_hash = study_revision_hash(current)
         return StudyDefinitionV3(
@@ -624,20 +662,55 @@ class StudyDefinitionReducer:
         current: StudyDefinitionV3,
         decision: DecisionRecord,
         fact_updates: Optional[Mapping[str, JsonValue]],
+        *,
+        revise_confirmed_facts: bool = False,
+        retired_fact_paths: Sequence[str] = (),
     ) -> dict[str, JsonValue]:
+        retired = tuple(retired_fact_paths or ())
+        if retired:
+            # Removing an existing confirmed fact is itself a confirmed-fact
+            # revision; only the explicit revision intent may carry it, and a
+            # frozen definition stays untouchable on this path.
+            if not revise_confirmed_facts:
+                raise ValueError(
+                    "retiring fact paths requires explicit confirmed revision intent"
+                )
+            missing = tuple(path for path in retired if path not in current.facts)
+            if missing:
+                raise ValueError(
+                    "retired fact paths are not present in the current facts: "
+                    + ", ".join(missing)
+                )
+            if current.canonical_state is CanonicalState.FROZEN:
+                raise FrozenFactOverwriteError(
+                    study_definition_id=current.study_definition_id,
+                    expected_revision=decision.expected_state_revision,
+                    protected_fact_paths=tuple(sorted(retired)),
+                )
+
         if not fact_updates:
-            return dict(current.facts)
+            merged: dict[str, JsonValue] = dict(current.facts)
+        else:
+            protected = _protected_fact_paths(current, fact_updates)
+            if revise_confirmed_facts and current.canonical_state is CanonicalState.FROZEN:
+                protected.update(
+                    path for path, value in fact_updates.items()
+                    if path not in current.facts
+                    or exact_payload_sha256(current.facts[path]) != exact_payload_sha256(value)
+                )
+            if protected and not (
+                revise_confirmed_facts and current.canonical_state is CanonicalState.CONFIRMED
+            ):
+                raise FrozenFactOverwriteError(
+                    study_definition_id=current.study_definition_id,
+                    expected_revision=decision.expected_state_revision,
+                    protected_fact_paths=tuple(sorted(protected)),
+                )
 
-        protected = _protected_fact_paths(current, fact_updates)
-        if protected:
-            raise FrozenFactOverwriteError(
-                study_definition_id=current.study_definition_id,
-                expected_revision=decision.expected_state_revision,
-                protected_fact_paths=tuple(sorted(protected)),
-            )
-
-        merged: dict[str, JsonValue] = dict(current.facts)
-        merged.update(fact_updates)
+            merged = dict(current.facts)
+            merged.update(fact_updates)
+        for path in retired:
+            merged.pop(path, None)
         return merged
 
     @staticmethod
@@ -677,12 +750,62 @@ def study_revision_hash(definition: StudyDefinitionV3) -> str:
 
 def _fact_updates_sha256(
     fact_updates: Optional[Mapping[str, JsonValue]],
+    *,
+    revise_confirmed_facts: bool = False,
+    decision_input_refs: Optional[tuple[DecisionInputRef, ...]] = None,
+    adoption_material: Optional[Mapping[str, Any]] = None,
 ) -> str:
-    """Material hash of a fact-update payload (``None`` and empty are identical)."""
-
+    """Keep historical hashes exact; explicit revision intent is separate material."""
+    if type(revise_confirmed_facts) is not bool:
+        raise ValueError("revise_confirmed_facts must be a native boolean")
+    refs = input_refs_payload(decision_input_refs)
+    if adoption_material is not None:
+        # Template-bound adoption intent: the template identity and the
+        # explicit retirement are CAS material, so the same key can never
+        # carry a second adoption effect.  Historical branches stay untouched.
+        if not isinstance(adoption_material, Mapping):
+            raise ValueError("adoption material must be a mapping")
+        return exact_payload_sha256({
+            "operation": TEMPLATE_FACT_ADOPTION_OPERATION,
+            "adoption_material": dict(adoption_material),
+            "fact_updates": dict(fact_updates or {}),
+            "decision_input_refs": [] if refs is None else refs,
+        })
+    if refs is not None:
+        return exact_payload_sha256({
+            "operation": "confirmed_fact_revision.v1" if revise_confirmed_facts else "decision_with_inputs.v1",
+            "fact_updates": dict(fact_updates or {}),
+            "decision_input_refs": refs,
+        })
+    if revise_confirmed_facts:
+        return exact_payload_sha256({
+            "operation": "confirmed_fact_revision.v1",
+            "fact_updates": dict(fact_updates or {}),
+        })
     if not fact_updates:
         return material_sha256({})
     return exact_payload_sha256(dict(fact_updates))
+
+
+def _normalise_retired_fact_paths(
+    retired_fact_paths: Optional[Sequence[str]],
+) -> tuple[str, ...]:
+    """Validate the explicit retirement list; history keeps every removed value."""
+
+    if retired_fact_paths is None:
+        return ()
+    if isinstance(retired_fact_paths, (str, bytes)) or not isinstance(
+        retired_fact_paths, Sequence
+    ):
+        raise ValueError("retired fact paths must be a sequence of strings")
+    seen: list[str] = []
+    for path in retired_fact_paths:
+        if not isinstance(path, str) or not path.strip():
+            raise ValueError("retired fact paths must be non-empty strings")
+        if path in seen:
+            raise ValueError("retired fact paths must be unique")
+        seen.append(path)
+    return tuple(seen)
 
 
 def _protected_fact_paths(

@@ -22,7 +22,7 @@ class MedicalWritingChapterProjectionTests(unittest.TestCase):
     mw_dynamic_chapter_projection_20260720 context:
 
     - SC4: required core nodes with no confirmed fact carry an explicit
-      ``待补充`` drafting state rather than a clinically invented paragraph.
+      typed actionable drafting state outside clinical prose.
     - SC5: confirmed facts project to relevant body nodes without changing
       their numeric values, groups, time points, endpoint hierarchy,
       uncertainty, or source fact IDs.
@@ -110,15 +110,15 @@ class MedicalWritingChapterProjectionTests(unittest.TestCase):
         definition = self._definition()
         seeds = self.service.section_seeds(definition)
         background_disease = self._seed(seeds, "cms_background_disease")
-        self.assertIn("待补充", background_disease.initial_text)
+        self._assert_actionable_drafting_state(background_disease)
         self.assertEqual([], background_disease.source_fact_ids)
         # objectives_endpoints.primary has picos.primary_endpoint confirmed in
         # the base fixture, so it projects real text, not 待补充. A required
         # core node that has zero confirmed mapped fields is the one that
-        # carries the drafting-state placeholder. statistics.sample_size has
+        # carries typed drafting state. statistics.sample_size has
         # picos.sample_size_strategy unconfirmed in the base fixture.
         sample_size = self._seed(seeds, "cms_statistics_sample_size")
-        self.assertIn("待补充", sample_size.initial_text)
+        self._assert_actionable_drafting_state(sample_size)
         self.assertEqual([], sample_size.source_fact_ids)
 
     def test_required_core_node_gets_real_text_once_fact_is_confirmed(self):
@@ -270,7 +270,7 @@ class MedicalWritingChapterProjectionTests(unittest.TestCase):
         self.assertIn("特应性皮炎", disease_a.initial_text)
         self.assertNotIn("特应性皮炎", disease_b.initial_text)
         self.assertNotIn("类风湿关节炎", disease_a.initial_text)
-        self.assertIn("待补充", disease_b.initial_text)
+        self._assert_actionable_drafting_state(disease_b)
 
     def test_source_fact_ids_carry_correct_project_and_revision(self):
         definition = self._definition()
@@ -287,6 +287,16 @@ class MedicalWritingChapterProjectionTests(unittest.TestCase):
         )
 
     # -- Helpers ---------------------------------------------------------
+
+    def _assert_actionable_drafting_state(self, seed):
+        # User-approved supersession: preserve the missing-fact obligation
+        # without inserting authoring instructions into protocol prose.
+        self.assertEqual("", seed.initial_text)
+        self.assertEqual("actionable_blocker", seed.drafting_status)
+        self.assertTrue(seed.drafting_blocker_code)
+        self.assertTrue(seed.drafting_blocker_reason)
+        self.assertTrue(seed.drafting_missing_inputs)
+        self.assertTrue(seed.drafting_resolution_actions)
 
     @staticmethod
     def _seed(seeds, section_key):

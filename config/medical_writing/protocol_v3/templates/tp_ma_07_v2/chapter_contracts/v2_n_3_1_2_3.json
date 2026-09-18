@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-3-1-2-3:v2",
   "semantic_node_id": "v2_n_3_1_2_3",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-3-1-2-3:estimand-treatment-condition",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -37,6 +37,16 @@
         "fact_path": "estimand.primary.treatment_effect_label_clarification",
         "obligation": "required",
         "rationale": "必须澄清源标签“治疗效应”在本文中的确切含义，避免把属性三丢失为泛化表述。"
+      },
+      {
+        "fact_path": "intervention.background_therapy_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，复用已确认项目干预状态；未知由条件执行层阻止生成。"
+      },
+      {
+        "fact_path": "design.rescue_treatment_planned",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔，复用已确认项目干预状态；未知由条件执行层阻止生成。"
       }
     ],
     "claim_requirements": [
@@ -111,10 +121,11 @@
       "schema_version": "mw_protocol_v3_contract_v1",
       "conditional_applicability_rule_id": "applicability:n-3-1-2-3:background-rescue",
       "triggering_fact_paths": [
-        "estimand.primary.background_treatment"
+        "intervention.background_therapy_applicable",
+        "design.rescue_treatment_planned"
       ],
       "condition": "已确认研究设计存在背景治疗或允许补救治疗",
-      "rationale": "存在背景治疗时，治疗条件属性必须同时给出补救/背景改变的处置与跨合同一致性声明。",
+      "rationale": "源body-child318明确伴有或不伴有补救/背景治疗改变；复用已确认干预状态，不从背景治疗文字非空猜测。存在任一项需具体处理及跨合同一致性。",
       "required_when_active_fact_paths": [
         "estimand.primary.rescue_treatment_handling"
       ],

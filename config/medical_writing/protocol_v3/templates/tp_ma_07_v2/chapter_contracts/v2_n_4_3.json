@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-4-3:v2",
   "semantic_node_id": "v2_n_4_3",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-4-3:dose-selection",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -41,8 +41,8 @@
       },
       {
         "fact_path": "picos.intervention_dose_regimen.maximum_dose",
-        "obligation": "optional",
-        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+        "obligation": "required",
+        "rationale": "源body-child357明确要求计划最大给药量与给药方案依据；结构化项目事实，固定剂量也说明其计划上限，不要求虚构剂量递增。不从药名推算数值，需与已确认方案一致。"
       },
       {
         "fact_path": "picos.intervention_dose_regimen.comparator_route",
@@ -181,20 +181,7 @@
       "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
     }
   ],
-  "conditional_applicability_rules": [
-    {
-      "conditional_applicability_rule_id": "applicability:v2_n_4_3:active",
-      "triggering_fact_paths": [
-        "picos.intervention_dose_regimen"
-      ],
-      "condition": "当项目存在多剂量或剂量范围时，必须给出起始/最大剂量及安全性依据。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
-      "required_when_active_claim_types": [
-        "dose_regimen_rationale"
-      ]
-    }
-  ],
+  "conditional_applicability_rules": [],
   "dependency_ids": [],
   "dependency_repair_policy": null,
   "ctq_items": [

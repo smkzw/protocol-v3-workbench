@@ -928,6 +928,8 @@ def test_rebind_advances_all_bindings_and_reconciles_only_affected_content(
         ),
     )
     assert refrozen_statistics.working_copy.freeze_status == "frozen"
-    assert repository.assemble_document_for_export(
-        project_id, "approved_final"
-    ).status == "author_frozen_final"
+    assert repository.final_freeze_readiness(project_id).ready
+    # Consistent bindings/freeze do not turn two synthetic short clauses into
+    # a complete protocol. Preserve document completeness as a separate check.
+    with pytest.raises(RuntimeStoreError, match="substantive_body_missing"):
+        repository.assemble_document_for_export(project_id, "approved_final")

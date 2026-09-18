@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-5-3:v2",
   "semantic_node_id": "v2_n_5_3",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.1",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-5-3:lifestyle-constraints",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.1",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -177,12 +177,12 @@
       "triggering_fact_paths": [
         "picos.risk.pregnancy_contraception"
       ],
-      "condition": "当确认存在妊娠风险或其他生活方式限制时，激活对应的时点、范围和理由字段。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
-      "required_when_active_claim_types": [
-        "lifestyle_restriction"
-      ]
+      "condition": "项目明确确认妊娠/避孕措施适用",
+      "rationale": "仅控制避孕期限及对应表格单元格；其他生活方式范围、时点、例外和处理措施始终独立保留。",
+      "required_when_active_fact_paths": [
+        "population.lifestyle.contraception_duration"
+      ],
+      "required_when_active_claim_types": []
     }
   ],
   "dependency_ids": [],

@@ -328,7 +328,11 @@ class AiRouteFreezeTests(unittest.TestCase):
         current = AiExecutionPolicyResolver().resolve_internal(
             PROJECT_ID, self.request
         )
-        self.assertEqual("route_b", current.route_profile_id)
+        # The post-execution role binding is normalized into its own profile;
+        # endpoint/model identity, not the old unscoped label, proves mutation.
+        self.assertEqual("independent_ai__route_b", current.route_profile_id)
+        self.assertEqual(ROUTE_B_BASE_URL, current.base_url)
+        self.assertEqual("model-b", current.model_name)
         self.assertNotEqual(
             current.route_identity_hash, resolution.route_identity_hash
         )

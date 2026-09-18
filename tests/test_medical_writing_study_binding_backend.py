@@ -79,6 +79,7 @@ class ImportedDocumentService:
                         "block_type": "paragraph",
                         "text": f"{token} 权威源基线。",
                         "source_locator": "docx:paragraph:10",
+                        "source_kind": "original_protocol_docx",
                     }
                 ],
             )

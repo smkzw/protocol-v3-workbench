@@ -1170,14 +1170,17 @@ def _port_is_listening(port: int) -> bool:
         return sock.connect_ex(("127.0.0.1", port)) == 0
 
 
-def _run_lsof(args: Sequence[str]) -> subprocess.CompletedProcess[str]:
+def _run_lsof(args: Sequence[str], *, timeout: float = LSOF_TIMEOUT_SECONDS,
+              runner=None) -> subprocess.CompletedProcess[str]:
+    if not isinstance(timeout, (int, float)) or isinstance(timeout, bool) or not 0 < timeout < float("inf"):
+        raise HygieneMutatorError("occupancy timeout must be finite and positive")
     try:
-        return subprocess.run(
+        return (runner or subprocess.run)(
             ["lsof", *args],
             capture_output=True,
             text=True,
             check=False,
-            timeout=LSOF_TIMEOUT_SECONDS,
+            timeout=timeout,
         )
     except FileNotFoundError as exc:
         raise HygieneMutatorError(
@@ -1186,23 +1189,29 @@ def _run_lsof(args: Sequence[str]) -> subprocess.CompletedProcess[str]:
     except subprocess.TimeoutExpired as exc:
         raise HygieneMutatorError(
             "open-handle inspection timed out after %.1fs (treated as occupied): %s"
-            % (LSOF_TIMEOUT_SECONDS, " ".join(args))
+            % (timeout, " ".join(args))
         ) from exc
 
 
-def builtin_occupancy_checker(targets: Sequence[Path]) -> list[str]:
+def builtin_occupancy_checker(targets: Sequence[Path], *, port_probe=None,
+                              lsof_runner=None,
+                              lsof_timeout: float = LSOF_TIMEOUT_SECONDS) -> list[str]:
     """Fail-closed built-in occupancy gate used when no checker is injected."""
 
     blockers: list[str] = []
+    probe = port_probe or _port_is_listening
+    def inspect_handles(args):
+        return _run_lsof(args, timeout=lsof_timeout, runner=lsof_runner)
+
     for port in HYGIENE_PORTS:
-        if _port_is_listening(port):
+        if probe(port):
             blockers.append("hygiene port %d has an active listener" % port)
 
     for target in targets:
         path = Path(target)
         if not path.exists():
             continue
-        completed = _run_lsof(["-nP", str(path)])
+        completed = inspect_handles(["-nP", str(path)])
         if completed.returncode not in (0, 1):
             raise HygieneMutatorError(
                 "ambiguous open-handle inspection for %s: rc=%s stderr=%r"
@@ -1214,7 +1223,7 @@ def builtin_occupancy_checker(targets: Sequence[Path]) -> list[str]:
         for sidecar in (Path(str(path) + "-wal"), Path(str(path) + "-shm")):
             if not sidecar.exists():
                 continue
-            side = _run_lsof(["-nP", str(sidecar)])
+            side = inspect_handles(["-nP", str(sidecar)])
             if side.returncode not in (0, 1):
                 raise HygieneMutatorError(
                     "ambiguous SQLite sidecar inspection for %s: rc=%s"
@@ -1224,7 +1233,7 @@ def builtin_occupancy_checker(targets: Sequence[Path]) -> list[str]:
 
     # Process ownership probe for declared hygiene ports.
     for port in HYGIENE_PORTS:
-        completed = _run_lsof(["-nP", "-iTCP:%d" % port, "-sTCP:LISTEN"])
+        completed = inspect_handles(["-nP", "-iTCP:%d" % port, "-sTCP:LISTEN"])
         if completed.returncode not in (0, 1):
             raise HygieneMutatorError(
                 "ambiguous process inspection for port %d: rc=%s"

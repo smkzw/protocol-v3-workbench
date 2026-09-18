@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-4-4:v2",
   "semantic_node_id": "v2_n_4_4",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-4-4:study-end",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -58,6 +58,11 @@
         "fact_path": "picos.study_epochs.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.study_epochs.features",
+        "obligation": "optional",
+        "rationale": "结构化对象follow_up/post_treatment_assessment为明确布尔，来自项目计划阶段；未知不能当false，不作为取消其他章节安全性随访义务的决定。"
       }
     ],
     "claim_requirements": [
@@ -176,17 +181,31 @@
   ],
   "conditional_applicability_rules": [
     {
-      "conditional_applicability_rule_id": "applicability:v2_n_4_4:active",
+      "conditional_applicability_rule_id": "applicability:v2_n_4_4:follow-up",
       "triggering_fact_paths": [
-        "picos.study_epochs"
+        "picos.study_epochs.features"
       ],
-      "condition": "当研究设计包含治疗后评估或随访时，分别激活参与者完成与总体研究结束定义。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
+      "condition": "项目明确计划相应随访或治疗后评估阶段",
+      "rationale": "源359–362按实际计划阶段定义完成；两个阶段分别判断，参与者完成及总体结束定义始终必需。",
+      "required_when_active_fact_paths": [
+        "picos.study_epochs.follow_up_definition",
+        "picos.study_epochs.follow_up_window"
+      ],
       "required_when_active_claim_types": [
-        "study_follow_up_definition",
-        "overall_study_end_definition"
+        "study_follow_up_definition"
       ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_4:post-treatment",
+      "triggering_fact_paths": [
+        "picos.study_epochs.features"
+      ],
+      "condition": "项目明确计划相应随访或治疗后评估阶段",
+      "rationale": "源359–362按实际计划阶段定义完成；两个阶段分别判断，参与者完成及总体结束定义始终必需。",
+      "required_when_active_fact_paths": [
+        "picos.study_epochs.post_treatment_assessment"
+      ],
+      "required_when_active_claim_types": []
     }
   ],
   "dependency_ids": [],

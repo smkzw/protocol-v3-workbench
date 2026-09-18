@@ -19,7 +19,7 @@ The harness enforces the offline discipline mandated by the plan:
 * **Full node/skill/artifact binding.**  The node contract's
   ``skill_definition_id`` must equal the skill's id; the node's input/output
   schema refs must equal the skill's refs; the exact passed artifact hash
-  tuple must equal ``node_contract.input_artifact_hashes`` (no substitution,
+  tuple must match the contract's versioned dependency binding (no substitution,
   omission, duplicate or reordering).  Contract tools/paths are always
   enforced as subsets of the skill's closed set, even when the skill set is
   empty.
@@ -779,11 +779,11 @@ def _validate_artifact_binding(
     node_contract: NodeExecutionContract,
     artifacts: Sequence[ArtifactRef],
 ) -> None:
-    """Validate artifact-only input and exact hash-tuple binding.
+    """Validate artifact-only input and exact versioned dependency binding.
 
     The exact passed artifact hash tuple (in order) must equal
-    ``node_contract.input_artifact_hashes``.  No substitution, omission,
-    duplicate or reordering is permitted.
+    the legacy tuple or its v1.1 ordered digest. No substitution, omission,
+    duplicate or reordering is permitted; compaction does not relax binding.
     """
     if not artifacts:
         raise HarnessPolicyError("at least one input artifact is required")
@@ -792,11 +792,10 @@ def _validate_artifact_binding(
         raise HarnessPolicyError("input artifact refs must be unique")
     # Exact ordered hash-tuple equality.
     passed_hashes = tuple(a.sha256 for a in artifacts)
-    expected_hashes = tuple(node_contract.input_artifact_hashes)
-    if passed_hashes != expected_hashes:
+    if not node_contract.matches_dependencies(passed_hashes):
         raise HarnessPolicyError(
             "artifact hash tuple does not match node_contract.input_artifact_hashes; "
-            f"passed={list(passed_hashes)} expected={list(expected_hashes)}"
+            "input dependencies changed"
         )
     # Credential scan on bounded snippets.
     for artifact in artifacts:

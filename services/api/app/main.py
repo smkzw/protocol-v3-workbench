@@ -196,6 +196,9 @@ from .eligibility import configure_eligibility_review_workflow
 from .eligibility import configure_eligibility_source_admission_guard
 from .eligibility import RAW_INTAKE_PROJECTS
 from .eligibility import router as eligibility_router
+from app.protocol_workflow.api.composition import (
+    mount_protocol_workflow_router as mount_protocol_v3_workflow_router,
+)
 from .eligibility_protocol_rules import (
     EligibilityProtocolProjectConfig,
     EligibilityProtocolRuleService,
@@ -578,6 +581,14 @@ MGK10_SAR_PROTOCOL_PATH = Path(
 
 app = FastAPI(title="AI Medical Manager Workbench", version="0.1.0")
 app.include_router(eligibility_router)
+
+# Protocol v3 workflow chain (Task 1R.2): explicit default-off mount. With
+# the switch absent this call is a no-op (no routes, no database, no
+# worker); when enabled it mounts
+# ``/api/projects/{project_id}/protocol-workflow`` gated by the durable
+# product-SQLite project allowlist. Only this composition entrypoint may be
+# referenced here — never the router factory, service or storage layers.
+mount_protocol_v3_workflow_router(app)
 
 
 @app.middleware("http")
@@ -3481,8 +3492,16 @@ def _ai_role_payload_with_execution_status() -> dict:
             else None
         )
         execution_chain_wired = True
-        current_runnable = bool(role.get("ready") and role_configured)
+        workload_gate_required = provider == "omlx" and role_id in {
+            OCR_ROLE, TRANSLATION_BODY_ROLE, TRANSLATION_SUPPORT_ROLE
+        }
+        current_runnable = bool(
+            role.get("ready") and role_configured
+            and not (workload_gate_required and gate_error)
+        )
         execution_blocked_reason = str(role.get("blocked_reason") or "")
+        if workload_gate_required and gate_error and not execution_blocked_reason:
+            execution_blocked_reason = "本地 OCR/翻译服务状态暂不可用，请稍后重新检查。"
 
         role.update(
             {
@@ -3493,8 +3512,7 @@ def _ai_role_payload_with_execution_status() -> dict:
                 "execution_chain_wired": execution_chain_wired,
                 "current_runnable": current_runnable,
                 "execution_blocked_reason": execution_blocked_reason,
-                "workload_gate_required": provider == "omlx"
-                and role_id in {OCR_ROLE, TRANSLATION_BODY_ROLE, TRANSLATION_SUPPORT_ROLE},
+                "workload_gate_required": workload_gate_required,
             }
         )
         roles.append(role)

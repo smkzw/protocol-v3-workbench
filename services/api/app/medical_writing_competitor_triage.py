@@ -3173,12 +3173,14 @@ def _sanitize_reason(
             parts.append(f"样本量：{enrollment}")
 
     # Document availability
-    if doc_suitability.get("has_public_protocol"):
+    if doc_suitability.get("has_public_protocol") and doc_suitability.get("has_public_sap"):
+        parts.append("公开文档：方案与统计分析计划")
+    elif doc_suitability.get("has_public_protocol"):
         parts.append("公开文档：方案")
     elif doc_suitability.get("has_public_sap"):
         parts.append("仅公开统计分析计划（不进入竞品方案语料库）")
     else:
-        parts.append("无公开方案")
+        parts.append("无公开方案或统计分析计划")
 
     # Protected dimensions unknown
     unknown_dims = [

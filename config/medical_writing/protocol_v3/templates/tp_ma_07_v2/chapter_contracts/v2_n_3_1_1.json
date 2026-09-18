@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-3-1-1:v2",
   "semantic_node_id": "v2_n_3_1_1",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-3-1-1:primary-objective",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -135,7 +135,8 @@
     ],
     "project_specific_elements": [
       "源示例处置：@309-312 中停药/补救治疗策略属示例，不是项目默认；启用需显式高风险确认。",
-      "目的—终点—估计目标三元映射（项目化）。"
+      "目的—终点—估计目标三元映射（项目化）。",
+      "关闭补救治疗分支不改变必需的主临床问题、主要终点或估计目标中的其他ICE要求；停药处理仍依已确认临床问题与3.1.2.4事实，不能据false推断无停药或默认策略。"
     ],
     "skeleton_risk_rules": [
       "只有“主要目的”标题或“评价疗效”标签即失败。"
@@ -167,8 +168,8 @@
       "triggering_fact_paths": [
         "design.rescue_treatment_planned"
       ],
-      "condition": "已确认研究设计包含停药/补救治疗策略",
-      "rationale": "仅当设计确认包含停药/补救治疗策略时，才要求给出该策略及其与主要终点的一致性；示例不得自动升级为项目要求。",
+      "condition": "已确认设计包含补救治疗，需要说明其与停药处置及主要临床问题的关系",
+      "rationale": "源312为临床问题示例，不将示例策略默认用于本项目；本规则控制补救相关补充说明，不能免除主临床问题中的停药处置或3.1.2.4其他相关伴发事件策略。",
       "required_when_active_fact_paths": [
         "design.discontinuation_rescue_strategy"
       ],

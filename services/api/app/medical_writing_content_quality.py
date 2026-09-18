@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from typing import Any, Iterable, List
+from typing import Any, Iterable, Iterator, List
 
 from packages.contracts.workbench_contracts import (
     MedicalWritingContentFinding,
@@ -54,6 +54,31 @@ UNRESOLVED_DRAFT_MARKER_RE = re.compile(
     re.IGNORECASE,
 )
 DETECTOR_VERSION = "medical_writing_content_quality_v1"
+
+
+# These complete clauses describe study conduct, not an instruction to finish
+# writing the protocol. Match a local clause so neighbouring draft instructions
+# remain visible, including in the same table cell.
+STUDY_CONDUCT_CLAUSE_RE = re.compile(
+    r"(?:未提供书面知情同意(?:书)?(?:的)?(?:者|人员|试验参与者|受试者)"
+    r"(?:不进入筛选|不得参加(?:本)?研究|不得入组)"
+    r"|(?:若|如|如果)(?:试验参与者|受试者)未提供书面知情同意(?:书)?"
+    r"\s*[，,]?\s*(?:则)?(?:不进入筛选|不得参加(?:本)?研究|不得入组)"
+    r"|(?:数据|数据库)(?:将)?(?:在|由)生物统计(?:人员)?确认后(?:锁定|锁库))"
+)
+
+
+def iter_unresolved_draft_markers(text: str) -> Iterator[re.Match[str]]:
+    """Return original-offset matches after recognising explicit conduct clauses."""
+    for sentence in re.finditer(r"[^。；\r\n]+", text):
+        if STUDY_CONDUCT_CLAUSE_RE.fullmatch(sentence.group().strip()):
+            continue
+        for clause in re.finditer(r"[^，,]+", sentence.group()):
+            if STUDY_CONDUCT_CLAUSE_RE.fullmatch(clause.group().strip()):
+                continue
+            yield from UNRESOLVED_DRAFT_MARKER_RE.finditer(
+                text, sentence.start() + clause.start(), sentence.start() + clause.end()
+            )
 
 
 class MedicalWritingContentQualityDetector:
@@ -242,7 +267,12 @@ class MedicalWritingContentQualityDetector:
                 ),
             ),
         ):
-            for occurrence_index, match in enumerate(pattern.finditer(text)):
+            matches = (
+                iter_unresolved_draft_markers(text)
+                if rule_code == "unresolved_draft_marker"
+                else pattern.finditer(text)
+            )
+            for occurrence_index, match in enumerate(matches):
                 identity = "|".join(
                     (
                         document.project_id,

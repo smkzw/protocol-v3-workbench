@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import io
 import tempfile
 import unittest
 from pathlib import Path
-
-from docx import Document
 
 from packages.contracts.workbench_contracts import (
     MedicalWritingGreenfieldCreateRequest,
@@ -13,14 +10,13 @@ from packages.contracts.workbench_contracts import (
     MedicalWritingTemplateUpgradeApplyRequest,
     MedicalWritingTemplateUpgradeRollbackRequest,
     MedicalWritingWorkingCopySaveRequest,
+    ProtocolDocument,
+    ProtocolSection,
 )
 from services.api.app.medical_writing_company_corpus import (
     MedicalWritingCompanyCorpusService,
 )
 from services.api.app.medical_writing_document import MedicalWritingDocumentService
-from services.api.app.medical_writing_document_exporter import (
-    export_medical_writing_document_docx,
-)
 from services.api.app.medical_writing_greenfield import (
     CompositeMedicalWritingDocumentService,
     GreenfieldMedicalWritingConflictError,
@@ -40,7 +36,7 @@ from services.api.app.medical_writing_style_profile import (
 from services.api.app.medical_writing_template_upgrade import (
     MedicalWritingTemplateUpgradeService,
 )
-from services.api.app.sqlite_runtime_store import SqliteRuntimeStore
+from services.api.app.sqlite_runtime_store import RuntimeStoreError, SqliteRuntimeStore
 
 
 LEGACY_SECTIONS = [
@@ -172,6 +168,34 @@ class MedicalWritingTemplateUpgradeTests(unittest.TestCase):
         self.assertEqual("ich_m11_1_1", synopsis.target_template_node_id)
         self.assertEqual(1, preview.working_copy_count)
 
+    def test_migrated_body_replaces_empty_target_blocker_without_claiming_readiness(self):
+        self.save_synopsis("迁移的旧方案摘要，仍需医学人员核实。")
+        preview = self.service.preview("proj_legacy_ra")
+        current = self.greenfield.document_for_revision("proj_legacy_ra")
+        target_section = ProtocolSection(
+            section_id="target-synopsis", document_id=current.document_id,
+            heading="方案摘要", template_node_id="ich_m11_1_1",
+            drafting_status="actionable_blocker",
+            completion_status="blocked_missing_inputs",
+            drafting_blocker_code="missing_body",
+            drafting_blocker_reason="尚无正文",
+            drafting_missing_inputs=["方案摘要正文"],
+            drafting_resolution_actions=["导入已有摘要"],
+        )
+        target = current.model_copy(update={"sections": [target_section]}, deep=True)
+        merged = self.service._merge_current_content(
+            "proj_legacy_ra", current, target, preview,
+        )
+        restored = ProtocolDocument.model_validate_json(merged.model_dump_json())
+        section = restored.sections[0]
+        self.assertEqual("unclassified", section.drafting_status)
+        self.assertEqual("template_upgrade_candidate", section.completion_status)
+        self.assertEqual("", section.drafting_blocker_code)
+        self.assertEqual([], section.drafting_missing_inputs)
+        self.assertIn("迁移的旧方案摘要，仍需医学人员核实。",
+                      [block.get("text") for block in section.content_blocks])
+        self.assertTrue(section.content_blocks[0]["migration_source_section_id"])
+
     def test_apply_creates_new_160_node_document_preserves_content_and_can_rollback(self):
         saved = self.save_synopsis("这是医学经理保存的旧版方案摘要。")
         old_document_id = self.created.document.document_id
@@ -206,17 +230,13 @@ class MedicalWritingTemplateUpgradeTests(unittest.TestCase):
                 old_section_id,
             ).revision,
         )
-        exported = export_medical_writing_document_docx(
+        # Migration preserves the source text above; a mostly blank upgraded
+        # template is still not a complete Word draft. Do not bypass readiness.
+        with self.assertRaisesRegex(RuntimeStoreError, "substantive_body_missing"):
             self.repository.assemble_document_for_export(
                 "proj_legacy_ra",
                 "draft_preview",
-            ),
-            mode="draft_preview",
-        )
-        text = "\n".join(
-            paragraph.text for paragraph in Document(io.BytesIO(exported.content)).paragraphs
-        )
-        self.assertIn("这是医学经理保存的旧版方案摘要。", text)
+            )
 
         replay = self.service.apply("proj_legacy_ra", self.apply_request(preview))
         self.assertEqual(applied.migration_event_id, replay.migration_event_id)

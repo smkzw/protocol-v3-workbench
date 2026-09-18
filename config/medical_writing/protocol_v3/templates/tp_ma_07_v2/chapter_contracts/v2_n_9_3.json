@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-9-3:v2",
   "semantic_node_id": "v2_n_9_3",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-9-3:population-pk-pd",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -67,6 +67,26 @@
         "fact_path": "pk.template_example_sampling",
         "obligation": "forbidden",
         "rationale": "模板示例采样安排不得作为项目采样计划。"
+      },
+      {
+        "fact_path": "exploratory.population_pk_applicable",
+        "obligation": "optional",
+        "rationale": "复用项目原生布尔适用性；一般PK与群体PK不是同义项。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.pk_applicable",
+        "obligation": "optional",
+        "rationale": "复用项目原生布尔适用性；一般PK与群体PK不是同义项。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.pd_applicable",
+        "obligation": "optional",
+        "rationale": "复用项目原生布尔适用性；一般PK与群体PK不是同义项。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.er_applicable",
+        "obligation": "optional",
+        "rationale": "复用项目原生布尔适用性；一般PK与群体PK不是同义项。"
       }
     ],
     "claim_requirements": [
@@ -201,6 +221,60 @@
       ],
       "required_when_active_claim_types": [
         "immunogenicity_strategy"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-3:pk-pd-shared",
+      "triggering_fact_paths": [
+        "exploratory.population_pk_applicable",
+        "statistics.pk_pd_er.pk_applicable",
+        "statistics.pk_pd_er.pd_applicable",
+        "statistics.pk_pd_er.er_applicable"
+      ],
+      "condition": "已确认相关分析适用",
+      "rationale": "源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。",
+      "required_when_active_fact_paths": [
+        "pk.pd_analysis_requirements",
+        "pk.linked_endpoints",
+        "pk.sampling_schedule"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-3:population-pk",
+      "triggering_fact_paths": [
+        "exploratory.population_pk_applicable"
+      ],
+      "condition": "已确认相关分析适用",
+      "rationale": "源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。",
+      "required_when_active_fact_paths": [
+        "exploratory.population_pk"
+      ],
+      "required_when_active_claim_types": [
+        "population_pk_analysis"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-3:er",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.er_applicable"
+      ],
+      "condition": "已确认相关分析适用",
+      "rationale": "源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。",
+      "required_when_active_fact_paths": [
+        "exploratory.exposure_response"
+      ],
+      "required_when_active_claim_types": [
+        "exposure_response_analysis"
       ],
       "required_when_active_source_roles": [],
       "required_when_active_structural_objects": []

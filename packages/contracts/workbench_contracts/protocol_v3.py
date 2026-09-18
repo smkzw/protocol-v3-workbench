@@ -645,6 +645,11 @@ class DecisionRecord(StatefulProtocolV3Model):
 
 
 class StudyDefinitionV3(StatefulProtocolV3Model):
+    # Typed fact payloads are exact data, not labels. StableId/NonEmptyText
+    # keep their own explicit normalization; inherited JSON text trimming must
+    # not rewrite paragraph/table values while reopening a study.
+    model_config = ConfigDict(str_strip_whitespace=False)
+
     study_definition_id: StableId
     project_id: StableId
     revision: PositiveRevision
@@ -802,8 +807,8 @@ class SemanticBlock(StatefulProtocolV3Model):
     block_kind: SemanticBlockKind
     content: NonEmptyText
     fact_paths: Annotated[tuple[NonEmptyText, ...], Field(min_length=1)]
-    claim_evidence_link_ids: Annotated[tuple[StableId, ...], Field(min_length=1)]
-    medical_admission_unit_ids: Annotated[tuple[StableId, ...], Field(min_length=1)]
+    claim_evidence_link_ids: tuple[StableId, ...]
+    medical_admission_unit_ids: tuple[StableId, ...]
     content_sha256: Sha256
     canonical_state: CanonicalState = CanonicalState.CONFIRMED
 
@@ -812,6 +817,10 @@ class SemanticBlock(StatefulProtocolV3Model):
         _unique(self.fact_paths, "fact_paths")
         _unique(self.claim_evidence_link_ids, "claim_evidence_link_ids")
         _unique(self.medical_admission_unit_ids, "medical_admission_unit_ids")
+        if self.canonical_state != CanonicalState.PROPOSED and (
+            not self.claim_evidence_link_ids or not self.medical_admission_unit_ids
+        ):
+            raise ValueError("accepted semantic blocks require evidence links and medical admission units")
         return self
 
 
@@ -840,6 +849,12 @@ class SemanticDocumentRevision(DependencyBoundModel):
             tuple(block.semantic_block_id for block in self.semantic_blocks),
             "semantic_block_ids",
         )
+        if self.canonical_state in {CanonicalState.CONFIRMED, CanonicalState.FROZEN} and any(
+            block.canonical_state not in {CanonicalState.CONFIRMED, CanonicalState.FROZEN}
+            or not block.claim_evidence_link_ids or not block.medical_admission_unit_ids
+            for block in self.semantic_blocks
+        ):
+            raise ValueError("accepted semantic documents require accepted, medically bound blocks")
         return self
 
 

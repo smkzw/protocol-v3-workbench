@@ -136,7 +136,7 @@ class MedicalWritingDirectAiPolicyTests(unittest.TestCase):
             )
 
     def test_missing_or_wrong_model_is_rejected(self):
-        for model_name in ("", "deepseek-v4-flash", "deepseek-chat"):
+        for model_name in ("", "deepseek-chat"):
             with self.subTest(model_name=model_name):
                 with self.assertRaisesRegex(AiExecutionPolicyDenied, "model must be"):
                     self._resolve(
@@ -144,16 +144,17 @@ class MedicalWritingDirectAiPolicyTests(unittest.TestCase):
                     )
 
     def test_flash_exception_is_limited_to_structure_and_translation_tasks(self):
+        # Historical test name retained; current retained-route policy explicitly
+        # permits Flash for authoring too. This does not select it as v3 default.
         for task_type in (
+            "medical_writing_revision",
+            "protocol_synopsis_structuring",
             "document_section_extraction",
             "regulatory_translation_zh",
         ):
             with self.subTest(task_type=task_type):
                 resolution = self._resolve(task_type, model_name=FLASH_MODEL)
                 self.assertEqual(FLASH_MODEL, resolution.required_response_model)
-
-        with self.assertRaisesRegex(AiExecutionPolicyDenied, "model must be"):
-            self._resolve("protocol_synopsis_structuring", model_name=FLASH_MODEL)
 
     def test_fake_provider_requires_explicit_test_only_injection(self):
         with self.assertRaises(AiExecutionPolicyDenied):

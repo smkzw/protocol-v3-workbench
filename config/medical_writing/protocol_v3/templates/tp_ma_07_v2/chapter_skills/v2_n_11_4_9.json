@@ -1,6 +1,6 @@
 {
   "skill_id": "skill:chapter:v2-n-11-4-9:interim-analysis",
-  "skill_version": "3.3.0",
+  "skill_version": "3.4.1",
   "node_id": "v2_n_11_4_9",
   "chapter_contract_id": "contract:v2-n-11-4-9:v2",
   "template_id": "tp_ma_07_v2",
@@ -8,8 +8,8 @@
   "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
   "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
   "prompt_contract": {
-    "prompt_version": "prompt:tp-ma-07-v2:batch6:3.3.0",
-    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“期中分析”逐项承载源义务：声明适用性、时点/信息量、目的、规则、责任、最终影响与 alpha；安全审查不自动消耗疗效 alpha，并区分 IDMC 与终点 IRC。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。",
+    "prompt_version": "prompt:tp-ma-07-v2:interim-purposes:3.4.1",
+    "instructions": "输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“期中分析”逐项承载源义务：声明适用性、时点/信息量、目的、规则、责任、最终影响与 alpha；安全审查不自动消耗疗效 alpha，并区分 IDMC 与终点 IRC。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。 不开展期中分析时仅写真实不计划声明及依据；开展时按独立确认用途决定信息量比例、正式疗效检验alpha、IDMC和IRC的内容与表格单元格。未设置的委员会不得虚构，不将安全性审查自动视为疗效假设检验。",
     "forbidden_behaviors": [
       "编造项目统计事实、终点、假设或证据来源",
       "复制模板/竞品样本量、阈值、方法或结果作为项目事实",

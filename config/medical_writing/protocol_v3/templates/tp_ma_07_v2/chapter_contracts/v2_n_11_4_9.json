@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-11-4-9:v2",
   "semantic_node_id": "v2_n_11_4_9",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.1",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-11-4-9:interim-analysis",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.1",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -90,6 +90,11 @@
         "fact_path": "statistics.interim.stale_reference_pointer",
         "obligation": "forbidden",
         "rationale": "过时编号引用不得作为期中分析规范目标写入（解析后以现行规范目标身份为准）。"
+      },
+      {
+        "fact_path": "statistics.interim.features",
+        "obligation": "optional",
+        "rationale": "开展期中分析时确认结构化设计用途：information_fraction是否使用信息量比例、efficacy_testing是否正式检验疗效假设、idmc_review是否由IDMC承担审查，均为原生布尔；未知不默认false。IRC复用irc.applicable。"
       }
     ],
     "claim_requirements": [
@@ -179,7 +184,7 @@
       "本节点承载“期中分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
       "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
       "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
-      "源文过时引用“第14.6节”必须解析为本模板已接受的规范目标（数据监查委员会 v2_n_13_x 载体族或项目确认的现行 IDMC 章节身份），正文与引用字段不得回写“14.6”过时条号（fresh复核D5修复）。",
+      "源文示例的“第14.6节”实际指向方案偏离，不能作安全性监督目标。规范目标为安全性监督 v2_n_14_7，设盲与数据访问管理另参 v2_n_4_5；具体IDMC/DSMB职责只在项目确实采用时生成，不因模板示例虚构委员会。源正文窗口805–806、916–921及node_tree真实节点已核对。",
       "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
     ],
     "skeleton_risk_rules": [
@@ -224,24 +229,71 @@
         "statistics.interim.applicable"
       ],
       "condition": "已确认本项目包含期中分析",
-      "rationale": "适用期中分析必须将时点、信息量、目的、规则、责任、最终影响和 alpha 处置连成一致设计。",
+      "rationale": "期中分析保留目的、时点、决策、最终分析影响及监督引用；信息量比例、正式疗效检验、IDMC和终点IRC按独立确认用途激活，不由开展期中分析一并推定。",
       "required_when_active_fact_paths": [
         "statistics.interim.timing",
-        "statistics.interim.information_fraction",
         "statistics.interim.purpose",
         "statistics.interim.rules",
         "statistics.interim.decision_responsibility",
         "statistics.interim.final_analysis_impact",
-        "statistics.interim.efficacy_alpha_spending",
         "statistics.interim.safety_review_alpha_separation",
-        "statistics.interim.idmc_responsibilities",
-        "statistics.interim.endpoint_irc_responsibilities"
+        "statistics.interim.canonical_reference",
+        "statistics.interim.features",
+        "irc.applicable"
       ],
       "required_when_active_claim_types": [
         "interim_analysis_plan"
       ],
       "required_when_active_source_roles": [],
       "required_when_active_structural_objects": []
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:information-fraction",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且information-fraction用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.information_fraction"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:efficacy",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且efficacy用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.efficacy_alpha_spending"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:idmc",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且idmc用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.idmc_responsibilities"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:irc",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "irc.applicable"
+      ],
+      "condition": "已开展期中分析且irc用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.endpoint_irc_responsibilities"
+      ]
     }
   ],
   "dependency_ids": [

@@ -32,6 +32,8 @@ from .commands import (
     study_definition_genesis_snapshot,
 )
 from .queries import (
+    GetSemanticDocumentQuery,
+    SemanticDocumentQueryResult,
     DecisionGraphQueryResult,
     DecisionSummary,
     EventSummaryQueryResult,
@@ -57,6 +59,8 @@ __all__ = [
     "SideEffectSpec",
     "study_definition_genesis_snapshot",
     # queries
+    "GetSemanticDocumentQuery",
+    "SemanticDocumentQueryResult",
     "DecisionGraphQueryResult",
     "DecisionSummary",
     "EventSummaryQueryResult",

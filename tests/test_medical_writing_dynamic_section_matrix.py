@@ -10,7 +10,7 @@ the empty-section governance invariants hold across them:
   body sections (success criterion 2);
 * unknown/deferred design decisions are omitted, never materialised as empty
   body sections (success criterion 3);
-* required core chapters carry an explicit ``待补充`` drafting state when no
+* applicable chapters carry typed actionable readiness when no
   confirmed fact is available, and are never silently empty or clinically
   invented (success criterion 4);
 * confirmed facts project verbatim into relevant body chapters without numeric
@@ -38,7 +38,6 @@ from packages.contracts.workbench_contracts import (
 from services.api.app.medical_writing_protocol_template import (
     MedicalWritingProtocolTemplateService,
     TEMPLATE_ID,
-    _REQUIRED_CORE_BODY_SEMANTIC_IDS,
     _RETAIN_NA_SEMANTIC_NODES,
     _company_module_resolutions,
     _project_chapter_body_draft,
@@ -386,23 +385,33 @@ class DynamicSectionMatrixCrossProjectTests(unittest.TestCase):
     # --- success criterion 4: required core chapters never empty --------
 
     def test_retained_required_core_chapters_are_never_empty(self):
-        """Every retained required-core chapter carries either a projected
-        confirmed fact or an explicit 待补充 placeholder — never an empty
-        body and never a fabricated clinical paragraph."""
+        """Applicable chapters have content or typed readiness outside prose.
+
+        Supersedes the obsolete private core-list/placeholder assertion;
+        scope is strengthened to every applicable chapter, not narrowed.
+        """
         for definition in (self.d017, self.ra, self.rux):
             seeds = self._seeds(definition)
             for seed in seeds:
                 node = self.node_by_id[seed.template_node_id]
-                if node.semantic_node_id in _REQUIRED_CORE_BODY_SEMANTIC_IDS:
-                    self.assertTrue(
-                        seed.initial_text.strip(),
-                        f"{definition.definition_id}/{node.semantic_node_id} "
-                        "required-core chapter has empty body",
-                    )
+                if seed.applicability_status != "applicable":
+                    continue
+                self.assertNotEqual("unclassified", seed.drafting_status)
+                if seed.drafting_status == "substantive_draft":
+                    self.assertTrue(seed.initial_text.strip())
+                if seed.drafting_status == "actionable_blocker":
+                    self.assertEqual("", seed.initial_text)
+                    self.assertTrue(seed.drafting_blocker_code)
+                    self.assertTrue(seed.drafting_blocker_reason)
+                    self.assertTrue(seed.drafting_missing_inputs)
+                    self.assertTrue(seed.drafting_resolution_actions)
 
     def test_required_core_without_confirmed_fact_shows_explicit_placeholder(self):
-        """A required core chapter whose fact path is unconfirmed receives the
-        deterministic 待补充 drafting-state placeholder."""
+        """Historical placeholder obligation now lives in typed readiness.
+
+        Unknown facts cannot be put into clinical prose; the visible draft
+        must retain actionable missing-input state rather than disappear.
+        """
         # background.disease maps to framing.indication, which is NOT in the
         # confirmed field_states set built by _build_definition.
         node = self.node_by_semantic["background.disease"]
@@ -424,8 +433,12 @@ class DynamicSectionMatrixCrossProjectTests(unittest.TestCase):
             confirmed_set=confirmed_set,
             value_fn=value,
         )
-        self.assertIn("待补充", text)
+        self.assertEqual("", text)
         self.assertEqual([], fact_ids)
+        seed = next(s for s in self._seeds(self.d017) if s.template_node_id == node.node_id)
+        self.assertEqual("actionable_blocker", seed.drafting_status)
+        self.assertTrue(seed.drafting_missing_inputs)
+        self.assertTrue(seed.drafting_resolution_actions)
 
     def test_required_core_with_confirmed_fact_projects_verbatim(self):
         """intervention.regimen maps to picos.intervention_summary which IS
@@ -468,6 +481,24 @@ class DynamicSectionMatrixCrossProjectTests(unittest.TestCase):
                 )
 
     # --- success criterion 5: verbatim projection, no numeric drift -----
+
+    def test_sample_size_numbers_require_confirmed_source_and_remain_verbatim(self):
+        definition = copy.deepcopy(self.d017)
+        path = "picos.sample_size_strategy"
+        definition.picos.sample_size_strategy = "计划入组137例，分配比例2:1，脱落率12.5%。"
+        semantic_ids = ("population.size", "statistics.sample_size")
+        seeds = {s.template_node_id: s for s in self._seeds(definition)}
+        for semantic_id in semantic_ids:
+            seed = seeds[self.node_by_semantic[semantic_id].node_id]
+            self.assertEqual("", seed.initial_text)
+            self.assertEqual("actionable_blocker", seed.drafting_status)
+            self.assertNotIn(self._fact_prefix(definition) + path, seed.source_fact_ids)
+        definition.field_states[path] = MedicalWritingStudyFactState(status="confirmed")
+        seeds = {s.template_node_id: s for s in self._seeds(definition)}
+        for semantic_id in semantic_ids:
+            seed = seeds[self.node_by_semantic[semantic_id].node_id]
+            self.assertEqual(definition.picos.sample_size_strategy, seed.initial_text)
+            self.assertIn(self._fact_prefix(definition) + path, seed.source_fact_ids)
 
     def test_confirmed_fact_projects_without_value_transformation(self):
         """When a fact is confirmed, the projected body text equals the source

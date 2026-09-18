@@ -1,0 +1,23 @@
+{
+  "schema_version": "protocol-terminology.v1",
+  "authority": "plans/mw_protocol_v3_design_v1.4_20260912.md#7",
+  "scope": "current authored protocol; original sources and historical versions remain unchanged",
+  "preferred_terms": [
+    {"variant": "受试者", "preferred": "试验参与者", "code": "preferred_participant_term", "basis": "TP-MA-07 v2.0 company template preference, not a statutory prohibition"}
+  ],
+  "format_rules": [
+    {"code": "full_width_percent", "pattern": "[0-9０-９]％", "message": "百分号使用半角%，核对原值后统一显示。"},
+    {"code": "full_width_unit", "pattern": "[0-9０-９]\\s*[ｍｇｋｌＬ]+", "message": "剂量单位包含全角字符，请核对单位和原值；不自动换算剂量。"}
+  ],
+  "rule_status": {
+    "preferred_participant_term": "implemented_text_warning",
+    "full_width_percent": "implemented_text_warning",
+    "full_width_unit": "implemented_text_warning",
+    "dose_unit_upright": "requires_word_style_check",
+    "thousands_separator": "requires_numeric_role_and_style_binding",
+    "range_separator": "requires_numeric_role_and_style_binding",
+    "abbreviation_used_defined_sets": "implemented_explicit_candidate_inventory",
+    "abbreviation_first_definition": "pending_ordered_document_consumer",
+    "abbreviation_full_form": "requires_semantic_review"
+  }
+}

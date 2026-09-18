@@ -91,18 +91,24 @@ def test_role_thinking_and_effort_discipline(
     if role_kind in {"ocr", "translation"}:
         assert role.allowed_efforts == ("none",)
     else:
-        assert "none" not in role.allowed_efforts
+        # Task 1R.6: GLM-5.3-Flash supports low/high/max only.
+        assert role.allowed_efforts == ("low", "high", "max")
 
 
 def test_role_registry_records_exact_credential_free_target_profile() -> None:
+    # Task 1R.6 user decision: the default LLM/support provider is the
+    # zhipu-coding-plan GLM profile; DeepSeek moved to the explicitly
+    # confirmed alternative registry (role_registry.deepseek.json).
     document = load_role_registry(ROLE_REGISTRY_PATH)
     by_kind = {role.role_kind: role for role in document.roles}
 
-    assert by_kind["llm"].target_profile.provider == "deepseek"
-    assert by_kind["llm"].target_profile.model == "deepseek-v4-flash"
-    assert by_kind["ocr_translation_support"].target_profile.provider == "deepseek"
+    assert by_kind["llm"].target_profile.provider == "zhipu-coding-plan"
+    assert by_kind["llm"].target_profile.model == "glm-5.3-flash"
+    assert by_kind["ocr_translation_support"].target_profile.provider == (
+        "zhipu-coding-plan"
+    )
     assert (
-        by_kind["ocr_translation_support"].target_profile.model == "deepseek-v4-flash"
+        by_kind["ocr_translation_support"].target_profile.model == "glm-5.3-flash"
     )
 
     ocr = by_kind["ocr"].target_profile

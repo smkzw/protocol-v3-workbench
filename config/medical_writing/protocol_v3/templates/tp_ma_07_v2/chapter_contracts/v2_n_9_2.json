@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-9-2:v2",
   "semantic_node_id": "v2_n_9_2",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:v2-n-9-2:safety-assessments",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -79,6 +79,21 @@
         "fact_path": "safety.template_example_lab_panel",
         "obligation": "forbidden",
         "rationale": "模板实验室面板示例不得作为项目面板。"
+      },
+      {
+        "fact_path": "safety.central_lab_applicable",
+        "obligation": "optional",
+        "rationale": "以原生布尔确认是否使用中央实验室；不决定心电图集中判读，不取消本地或共同检测义务。"
+      },
+      {
+        "fact_path": "safety.central_lab_qualification",
+        "obligation": "optional",
+        "rationale": "使用中央实验室时，按源body574说明其承担检测所需资质；拟选机构尚未确定时不能虚构已获资质。"
+      },
+      {
+        "fact_path": "safety.central_lab_assay_scope",
+        "obligation": "optional",
+        "rationale": "使用中央实验室时，按源body574逐项说明由其承担的检测项目；多实验室不得混淆分工。"
       }
     ],
     "claim_requirements": [
@@ -236,10 +251,10 @@
         "safety.central_lab_applicable"
       ],
       "condition": "项目使用中央实验室且已确认适用",
-      "rationale": "中央实验室适用时才升级为必需义务。",
+      "rationale": "源body574直接要求中央实验室资质与承担检测项目；单位/参考范围和特殊检测目的独立保留，不能因不使用中央实验室而删除。心电图集中判读是body572的独立条件。",
       "required_when_active_fact_paths": [
-        "safety.lab_units_and_reference_ranges",
-        "safety.special_assay_purposes"
+        "safety.central_lab_qualification",
+        "safety.central_lab_assay_scope"
       ],
       "required_when_active_claim_types": [],
       "required_when_active_source_roles": [],

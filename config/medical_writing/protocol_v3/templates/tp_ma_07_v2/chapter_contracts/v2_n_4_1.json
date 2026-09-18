@@ -3,11 +3,11 @@
   "canonical_state": "frozen",
   "chapter_contract_id": "contract:v2-n-4-1:v2",
   "semantic_node_id": "v2_n_4_1",
-  "contract_version": "3.3.0",
+  "contract_version": "3.4.0",
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "chapter_skill_id": "skill:chapter:n-4-1:overall-design",
-  "chapter_skill_version": "3.3.0",
+  "chapter_skill_version": "3.4.0",
   "substantive_content": {
     "schema_version": "mw_protocol_v3_contract_v2",
     "canonical_state": "frozen",
@@ -78,6 +78,16 @@
         "fact_path": "framing.structured_design.template_example_values",
         "obligation": "forbidden",
         "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.features",
+        "obligation": "optional",
+        "rationale": "结构化已确认设计状态；期中复用统计章节同一布尔，features成员stratification/substudy独立明确，不以非空文字推断。"
+      },
+      {
+        "fact_path": "statistics.interim.applicable",
+        "obligation": "optional",
+        "rationale": "结构化已确认设计状态；期中复用统计章节同一布尔，features成员stratification/substudy独立明确，不以非空文字推断。"
       }
     ],
     "claim_requirements": [
@@ -201,15 +211,36 @@
   ],
   "conditional_applicability_rules": [
     {
-      "conditional_applicability_rule_id": "applicability:v2_n_4_1:active",
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:interim",
       "triggering_fact_paths": [
-        "framing.structured_design"
+        "statistics.interim.applicable"
       ],
-      "condition": "所有设计特征均以实际项目适用性为条件；模板不提供默认分配比或分层方案。",
-      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
-      "required_when_active_fact_paths": [],
-      "required_when_active_claim_types": [
-        "design_description"
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.interim_analysis"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:stratification",
+      "triggering_fact_paths": [
+        "framing.structured_design.features"
+      ],
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.stratification"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:substudy",
+      "triggering_fact_paths": [
+        "framing.structured_design.features"
+      ],
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.substudy"
       ]
     }
   ],

@@ -13,8 +13,14 @@
         "source-acquisition-plan:project_id",
         "source-acquisition-plan:denominator-rules-frozen"
       ],
-      "allowed_tools": ["http-fetch", "checksum-verify"],
-      "allowed_paths": ["artifacts/source-acquisition/", "config/medical_writing/protocol_v3/"],
+      "allowed_tools": [
+        "http-fetch",
+        "checksum-verify"
+      ],
+      "allowed_paths": [
+        "artifacts/source-acquisition/",
+        "config/medical_writing/protocol_v3/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.source-acquisition-plan.denominator-not-narrowed",
@@ -22,7 +28,10 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["research_seed.study_drug", "research_seed.indication"]
+        "triggering_fact_paths": [
+          "research_seed.study_drug",
+          "research_seed.indication"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -39,7 +48,10 @@
       },
       "rollback": {
         "method": "discard-unsourced-proposals-and-replan",
-        "preserves": ["prior-source-acquisition-plan-revision", "denominator-history"]
+        "preserves": [
+          "prior-source-acquisition-plan-revision",
+          "denominator-history"
+        ]
       }
     },
     {
@@ -53,8 +65,12 @@
         "ocr:file-page-model-identity",
         "ocr:fidelity-checksum"
       ],
-      "allowed_tools": ["paddle-ocr-vl-1.6-async"],
-      "allowed_paths": ["artifacts/ocr-parsed/"],
+      "allowed_tools": [
+        "paddle-ocr-vl-1.6-async"
+      ],
+      "allowed_paths": [
+        "artifacts/ocr-parsed/"
+      ],
       "side_effect_kind": "artifact_create",
       "acceptance_test_ids": [
         "test.ocr-parse.file-page-model-bound",
@@ -62,7 +78,9 @@
       ],
       "applicability": {
         "status": "conditional",
-        "triggering_fact_paths": ["source_artifact.requires_ocr"]
+        "triggering_fact_paths": [
+          "source_artifact.requires_ocr"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -78,7 +96,10 @@
       },
       "rollback": {
         "method": "quarantine-parsed-artifact-and-recover-prior",
-        "preserves": ["prior-source-artifact", "ocr-fidelity-history"]
+        "preserves": [
+          "prior-source-artifact",
+          "ocr-fidelity-history"
+        ]
       }
     },
     {
@@ -92,8 +113,12 @@
         "translation:fidelity-score",
         "translation:model-identity"
       ],
-      "allowed_tools": ["local-omlx-translator"],
-      "allowed_paths": ["artifacts/translation/"],
+      "allowed_tools": [
+        "local-omlx-translator"
+      ],
+      "allowed_paths": [
+        "artifacts/translation/"
+      ],
       "side_effect_kind": "artifact_create",
       "acceptance_test_ids": [
         "test.translation.source-target-span-bound",
@@ -101,7 +126,9 @@
       ],
       "applicability": {
         "status": "conditional",
-        "triggering_fact_paths": ["source_artifact.requires_translation"]
+        "triggering_fact_paths": [
+          "source_artifact.requires_translation"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -117,7 +144,10 @@
       },
       "rollback": {
         "method": "release-lease-and-quarantine-translation",
-        "preserves": ["prior-translation-artifact", "fidelity-history"]
+        "preserves": [
+          "prior-translation-artifact",
+          "fidelity-history"
+        ]
       }
     },
     {
@@ -131,8 +161,12 @@
         "medical-admission:evidence-class",
         "medical-admission:context-bound"
       ],
-      "allowed_tools": ["product-llm"],
-      "allowed_paths": ["artifacts/medical-admission/"],
+      "allowed_tools": [
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/medical-admission/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.medical-admission.positive-claim-bound",
@@ -140,7 +174,9 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["evidence_unit.admitted"]
+        "triggering_fact_paths": [
+          "evidence_unit.admitted"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -156,7 +192,10 @@
       },
       "rollback": {
         "method": "drop-unadmitted-proposals-keep-evidence-history",
-        "preserves": ["evidence-unit-history", "claim-evidence-link-revisions"]
+        "preserves": [
+          "evidence-unit-history",
+          "claim-evidence-link-revisions"
+        ]
       }
     },
     {
@@ -170,8 +209,12 @@
         "study-definition:estimand-bound",
         "study-definition:statistical-approach"
       ],
-      "allowed_tools": ["product-llm"],
-      "allowed_paths": ["artifacts/clinical-design/"],
+      "allowed_tools": [
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/clinical-design/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.clinical-design.picos-complete",
@@ -179,7 +222,10 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["research_seed.study_drug", "research_seed.indication"]
+        "triggering_fact_paths": [
+          "research_seed.study_drug",
+          "research_seed.indication"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -195,7 +241,10 @@
       },
       "rollback": {
         "method": "restore-prior-study-definition-revision-via-cas",
-        "preserves": ["study-definition-revision-history", "decision-records"]
+        "preserves": [
+          "study-definition-revision-history",
+          "decision-records"
+        ]
       }
     },
     {
@@ -208,8 +257,12 @@
         "protocol-summary:fact-revision-bound",
         "protocol-summary:cross-reference-consistent"
       ],
-      "allowed_tools": ["product-llm"],
-      "allowed_paths": ["artifacts/protocol-summary/"],
+      "allowed_tools": [
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/protocol-summary/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.protocol-summary.fact-bound",
@@ -217,7 +270,9 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["study_definition.confirmed"]
+        "triggering_fact_paths": [
+          "study_definition.confirmed"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -233,7 +288,10 @@
       },
       "rollback": {
         "method": "restore-prior-semantic-document-revision",
-        "preserves": ["semantic-document-revision-history", "chapter-contracts"]
+        "preserves": [
+          "semantic-document-revision-history",
+          "chapter-contracts"
+        ]
       }
     },
     {
@@ -241,14 +299,18 @@
       "skill_version": "1.0.0",
       "agent_role": "full_draft",
       "input_schema_ref": "https://protocol-v3.local/schemas/chapter-draft-input.v1.json",
-      "output_schema_ref": "https://protocol-v3.local/schemas/chapter-draft-output.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/ordered-chapter-draft-candidate.v1.json",
       "evidence_requirements": [
         "chapter:substantive-content-contract-bound",
         "chapter:fact-source-bound",
         "chapter:structural-object-complete"
       ],
-      "allowed_tools": ["product-llm"],
-      "allowed_paths": ["artifacts/chapter-draft/"],
+      "allowed_tools": [
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/chapter-draft/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.chapter-draft.substantive-contract-met",
@@ -257,11 +319,13 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["chapter_contract.applicable"]
+        "triggering_fact_paths": [
+          "chapter_contract.applicable"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
-        "key_basis": "chapter-draft:chapter-contract-id+fact-revision"
+        "key_basis": "chapter-draft:project+branch+study-id+study-sha256+complete-input-sha256"
       },
       "error_codes": [
         "MW-PRO-D1-CHAPTER-SUBSTANTIVE-UNMET",
@@ -270,11 +334,15 @@
       ],
       "prompt_version": "chapter-draft.v1",
       "tool_versions": {
-        "product-llm": "deepseek-v4-flash"
+        "product-llm": "glm-5.3-flash"
       },
       "rollback": {
         "method": "restore-prior-semantic-block-revision-keep-contract",
-        "preserves": ["semantic-block-history", "chapter-contract", "chapter-lock-snapshot"]
+        "preserves": [
+          "semantic-block-history",
+          "chapter-contract",
+          "chapter-lock-snapshot"
+        ]
       }
     },
     {
@@ -288,8 +356,13 @@
         "qc:finding-locator-bound",
         "qc:no-drafter-scratchpad-reuse"
       ],
-      "allowed_tools": ["product-ocr-translation-support", "product-llm"],
-      "allowed_paths": ["artifacts/qc-findings/"],
+      "allowed_tools": [
+        "product-ocr-translation-support",
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/qc-findings/"
+      ],
       "side_effect_kind": "canonical_proposal",
       "acceptance_test_ids": [
         "test.qc.fresh-context",
@@ -298,7 +371,9 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["semantic_document_revision.proposed"]
+        "triggering_fact_paths": [
+          "semantic_document_revision.proposed"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -316,7 +391,10 @@
       },
       "rollback": {
         "method": "void-qc-verdict-and-re-probe-fresh-context",
-        "preserves": ["prior-qc-findings", "semantic-document-revision"]
+        "preserves": [
+          "prior-qc-findings",
+          "semantic-document-revision"
+        ]
       }
     },
     {
@@ -330,8 +408,13 @@
         "coordination:run-manifest-bound",
         "coordination:decision-queue-audited"
       ],
-      "allowed_tools": ["product-llm"],
-      "allowed_paths": ["artifacts/run-manifest/", "artifacts/exception-cards/"],
+      "allowed_tools": [
+        "product-llm"
+      ],
+      "allowed_paths": [
+        "artifacts/run-manifest/",
+        "artifacts/exception-cards/"
+      ],
       "side_effect_kind": "artifact_create",
       "acceptance_test_ids": [
         "test.coordination.cannot-mutate-clinical-facts",
@@ -340,7 +423,9 @@
       ],
       "applicability": {
         "status": "applicable",
-        "triggering_fact_paths": ["workflow_run.created"]
+        "triggering_fact_paths": [
+          "workflow_run.created"
+        ]
       },
       "idempotency_policy": {
         "mode": "exactly-once-semantic-effect",
@@ -356,7 +441,180 @@
       },
       "rollback": {
         "method": "terminate-run-preserve-artifacts-and-decisions",
-        "preserves": ["run-manifest", "artifact-manifest", "decision-records", "reservation-history"]
+        "preserves": [
+          "run-manifest",
+          "artifact-manifest",
+          "decision-records",
+          "reservation-history"
+        ]
+      }
+    },
+    {
+      "skill_definition_id": "skill.research-seed-proposal",
+      "skill_version": "1.0.0",
+      "agent_role": "design_and_summary",
+      "input_schema_ref": "https://protocol-v3.local/schemas/research-seed-proposal-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/research-seed-proposal-output.v1.json",
+      "evidence_requirements": [
+        "source-identity-and-version",
+        "source-unit-locator-and-verbatim-quote",
+        "proposals-are-not-confirmed-facts"
+      ],
+      "allowed_tools": [
+        "glm-completion"
+      ],
+      "allowed_paths": [
+        "artifacts/research-seed/"
+      ],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.research-seed.sparse-intake",
+        "test.research-seed.source-bound-candidates",
+        "test.research-seed.registered-contract"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": [
+          "research_intake.user_brief",
+          "research_intake.sources"
+        ]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "project+branch+original-user-brief+sorted-immutable-source-ids; first compiled package and execution contract pinned"
+      },
+      "error_codes": [
+        "seed_fields_invalid",
+        "seed_source_quote_not_found",
+        "seed_source_raw_not_found",
+        "seed_empty_candidate"
+      ],
+      "prompt_version": "research-seed-proposal.v1",
+      "tool_versions": {
+        "glm-completion": "zhipu-api.v1",
+        "docx-parser": "protocol-docx-xml.v1"
+      },
+      "rollback": {
+        "method": "retain-raw-output-and-revise-proposal",
+        "preserves": [
+          "source-identities",
+          "prior-receipts",
+          "confirmed-study-facts"
+        ]
+      }
+    },
+    {
+      "skill_definition_id": "skill.regimen-design-proposal",
+      "skill_version": "1.0.0",
+      "agent_role": "design_and_summary",
+      "input_schema_ref": "https://protocol-v3.local/schemas/regimen-design-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/regimen-design-output.v1.json",
+      "evidence_requirements": [
+        "source-identity-and-version",
+        "source-unit-locator-and-verbatim-quote",
+        "proposals-are-not-confirmed-facts"
+      ],
+      "allowed_tools": [
+        "glm-completion"
+      ],
+      "allowed_paths": [
+        "artifacts/regimen-design/"
+      ],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.regimen-design.candidate-coverage",
+        "test.regimen-design.compound-proposal",
+        "test.regimen-design.sqlite-harness"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": [
+          "research_intake.user_brief",
+          "research_intake.sources"
+        ]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "project+branch+pinned-regimen-input+graph-work-identity"
+      },
+      "error_codes": [
+        "design_candidate_input_mismatch",
+        "design_candidate_coverage_incomplete",
+        "regimen_source_quote_not_found"
+      ],
+      "prompt_version": "regimen-design.v1",
+      "tool_versions": {
+        "glm-completion": "zhipu-api.v1",
+        "docx-parser": "protocol-docx-xml.v1"
+      },
+      "rollback": {
+        "method": "retain-raw-output-and-revise-proposal",
+        "preserves": [
+          "source-identities",
+          "prior-receipts",
+          "confirmed-study-facts"
+        ]
+      }
+    },
+    {
+      "skill_definition_id": "skill.design-elements-proposal",
+      "skill_version": "1.0.0",
+      "agent_role": "design_and_summary",
+      "input_schema_ref": "https://protocol-v3.local/schemas/design-elements-input.v1.json",
+      "output_schema_ref": "https://protocol-v3.local/schemas/design-elements-output.v1.json",
+      "evidence_requirements": [
+        "source-identity-and-version",
+        "source-unit-locator-and-verbatim-quote",
+        "proposals-are-not-confirmed-facts",
+        "applicability-follows-confirmed-design-facts"
+      ],
+      "allowed_tools": [
+        "glm-completion"
+      ],
+      "allowed_paths": [
+        "artifacts/design-elements/"
+      ],
+      "side_effect_kind": "canonical_proposal",
+      "acceptance_test_ids": [
+        "test.design-elements.typed-proposal",
+        "test.design-elements.applicability-agreement",
+        "test.design-elements.per-card-adoption"
+      ],
+      "applicability": {
+        "status": "applicable",
+        "triggering_fact_paths": [
+          "research_intake.user_brief",
+          "research_intake.sources"
+        ]
+      },
+      "idempotency_policy": {
+        "mode": "exactly-once-semantic-effect",
+        "key_basis": "project+branch+pinned-design-input+graph-work-identity"
+      },
+      "error_codes": [
+        "design_elements_invalid_payload",
+        "design_elements_ni_conflicts_confirmed_design",
+        "design_elements_interim_conflicts_confirmed_design",
+        "design_elements_ni_missing_for_confirmed_ni_design",
+        "design_elements_interim_missing_for_confirmed_interim_design",
+        "design_elements_information_unresolved",
+        "design_elements_needs_information_empty",
+        "design_card_unknown",
+        "design_card_not_applicable",
+        "design_card_selection_invalid"
+      ],
+      "prompt_version": "design-elements.v1",
+      "tool_versions": {
+        "glm-completion": "zhipu-api.v1",
+        "docx-parser": "protocol-docx-xml.v1"
+      },
+      "rollback": {
+        "method": "retain-raw-output-and-revise-proposal",
+        "preserves": [
+          "source-identities",
+          "prior-receipts",
+          "confirmed-study-facts"
+        ]
       }
     }
   ]

@@ -1419,6 +1419,31 @@ def _load_mutator():
 
 
 MUTATOR = _load_mutator()
+
+
+def test_r3_injected_probe_preserves_listener_and_timeout_identity(tmp_path):
+    target = tmp_path / "target.txt"
+    target.write_text("keep")
+    calls = []
+
+    def empty(command, **kwargs):
+        calls.append((command, kwargs["timeout"]))
+        return subprocess.CompletedProcess(command, 1, "", "")
+
+    blockers = MUTATOR.builtin_occupancy_checker(
+        [target], port_probe=lambda port: port == 8911, lsof_runner=empty, lsof_timeout=0.25
+    )
+    assert any("hygiene port 8911" in b and "active listener" in b for b in blockers)
+    assert calls and all(timeout == 0.25 for _, timeout in calls)
+
+    def timeout(command, **kwargs):
+        raise subprocess.TimeoutExpired(command, kwargs["timeout"])
+
+    with pytest.raises(MUTATOR.HygieneMutatorError, match="timed out.*treated as occupied"):
+        MUTATOR.builtin_occupancy_checker(
+            [target], port_probe=lambda port: False, lsof_runner=timeout, lsof_timeout=0.25
+        )
+    assert target.read_text() == "keep"
 HygieneMutatorError = MUTATOR.HygieneMutatorError
 compute_eligibility = MUTATOR.compute_eligibility
 apply_hygiene = MUTATOR.apply_hygiene
@@ -2388,26 +2413,21 @@ class TestIntegrityRemediation:
         assert important.read_bytes() == b"do-not-delete"
         assert not quarantine.exists()
 
-    def test_p1_builtin_occupancy_blocks_port_8911(self, tmp_path):
+    def test_p1_builtin_occupancy_blocks_port_8911(self, tmp_path, monkeypatch):
         (live, quarantine, pm, pm_path, inv_p, inv_s, prot_p, prot_s) = \
             _authorized_apply_bundle(tmp_path, operations=["delete"])
         source = Path(pm["entries"][0]["old_locator"])
-        srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        try:
-            srv.bind(("127.0.0.1", 8911))
-            srv.listen(1)
-            with pytest.raises(HygieneMutatorError, match="hygiene port 8911"):
-                apply_hygiene(
-                    pm, path_map_path=pm_path, quarantine_root=quarantine,
-                    inventory_path=inv_p, protected_path=prot_p,
-                    expected_inventory_sha256=inv_s,
-                    expected_protected_sha256=prot_s,
-                    occupancy_checker=None)
-            assert source.exists()
-            assert not quarantine.exists()
-        finally:
-            srv.close()
+        monkeypatch.setattr(MUTATOR, "_port_is_listening", lambda port: port == 8911)
+        monkeypatch.setattr(MUTATOR.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 1, "", ""))
+        with pytest.raises(HygieneMutatorError, match="hygiene port 8911"):
+            apply_hygiene(
+                pm, path_map_path=pm_path, quarantine_root=quarantine,
+                inventory_path=inv_p, protected_path=prot_p,
+                expected_inventory_sha256=inv_s,
+                expected_protected_sha256=prot_s,
+                occupancy_checker=None)
+        assert source.exists()
+        assert not quarantine.exists()
 
     def test_p1_quarantine_root_mismatch_rejected(self, tmp_path):
         (live, quarantine, pm, pm_path, inv_p, inv_s, prot_p, prot_s) = \
@@ -2467,17 +2487,11 @@ class TestIntegrityRemediation:
         final = json.loads(pm_path.read_text(encoding="utf-8"))
         assert final["entries"][0]["status"] == "committed"
 
-    def test_builtin_occupancy_used_when_checker_none_and_ports_clear(self, tmp_path):
+    def test_builtin_occupancy_used_when_checker_none_and_ports_clear(self, tmp_path, monkeypatch):
         (live, quarantine, pm, pm_path, inv_p, inv_s, prot_p, prot_s) = \
             _authorized_apply_bundle(tmp_path, operations=["delete"])
-        # Skip if ambient listener present on hygiene ports.
-        for port in (8910, 8911, 5173, 5174):
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            try:
-                if s.connect_ex(("127.0.0.1", port)) == 0:
-                    pytest.skip("ambient hygiene port listener present")
-            finally:
-                s.close()
+        monkeypatch.setattr(MUTATOR, "_port_is_listening", lambda port: False)
+        monkeypatch.setattr(MUTATOR.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 1, "", ""))
         report = apply_hygiene(
             pm, path_map_path=pm_path, quarantine_root=quarantine,
             inventory_path=inv_p, protected_path=prot_p,

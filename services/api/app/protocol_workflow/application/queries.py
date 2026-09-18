@@ -16,11 +16,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Literal, Optional, Tuple
 
 from packages.contracts.workbench_contracts.protocol_v3 import (
     CanonicalState,
+    DecisionRecord,
     StudyDefinitionV3,
+    SemanticDocumentRevision,
 )
 
 from app.protocol_workflow.ports.repositories import (
@@ -33,8 +35,12 @@ __all__ = [
     "DecisionSummary",
     "EventSummaryQueryResult",
     "GetDecisionGraphQuery",
+    "RecoverStudyDecisionQuery",
+    "ListStudyDefinitionsQuery",
     "GetStudyDefinitionEventSummaryQuery",
     "GetStudyDefinitionQuery",
+    "GetSemanticDocumentQuery",
+    "SemanticDocumentQueryResult",
     "GetWorkflowRunStatusQuery",
     "StudyDefinitionQueryResult",
     "WorkflowRunStatusQueryResult",
@@ -59,6 +65,24 @@ class GetStudyDefinitionQuery:
 
 
 @dataclass(frozen=True)
+class GetSemanticDocumentQuery:
+    project_id: str
+    study_definition_id: str
+    semantic_document_revision_id: str
+
+    def __post_init__(self) -> None:
+        _require_query_identity(self.project_id, self.study_definition_id,
+                                self.semantic_document_revision_id)
+
+
+@dataclass(frozen=True)
+class SemanticDocumentQueryResult:
+    document: Optional[SemanticDocumentRevision]
+    revision_sha256: Optional[str]
+    study_binding_status: Literal["current", "changed", "missing"]
+
+
+@dataclass(frozen=True)
 class GetStudyDefinitionEventSummaryQuery:
     """Read the study's event-stream summary and decision lineage.
 
@@ -76,11 +100,10 @@ class GetStudyDefinitionEventSummaryQuery:
 
 @dataclass(frozen=True)
 class GetDecisionGraphQuery:
-    """Read the decision-graph read-model projection (existing port contract).
+    """Read latest decisions from the committed event stream.
 
-    The projection may lag the canonical state by at most one committed
-    transaction and is not the source of truth; the event-derived summaries
-    (see :class:`GetStudyDefinitionEventSummaryQuery`) are authoritative.
+    Historical confirmation and current input validity are distinct. Legacy
+    records without input bindings remain unverified for current validity.
     """
 
     project_id: str
@@ -164,3 +187,25 @@ class WorkflowRunStatusQueryResult:
     project_id: str
     workflow_run_id: str
     status: Optional[WorkflowRunStatusRecord]
+
+
+@dataclass(frozen=True)
+class RecoverStudyDecisionQuery:
+    """Match the original human choice, without compiling its historical facts."""
+    project_id: str
+    study_definition_id: str
+    idempotency_key: str
+    decision_record: DecisionRecord
+
+    def __post_init__(self) -> None:
+        _require_query_identity(self.project_id, self.study_definition_id, self.idempotency_key)
+        if not isinstance(self.decision_record, DecisionRecord):
+            raise TypeError("decision_record must be a DecisionRecord")
+
+
+@dataclass(frozen=True)
+class ListStudyDefinitionsQuery:
+    project_id: str
+
+    def __post_init__(self) -> None:
+        _require_query_identity(self.project_id)

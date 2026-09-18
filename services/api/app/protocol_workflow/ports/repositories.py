@@ -24,6 +24,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import (
+    Literal,
     Optional,
     Protocol,
     Sequence,
@@ -350,6 +351,9 @@ class DecisionGraphRecord:
     selected_option_id: Optional[StableId]
     canonical_state: Optional[CanonicalState]
 
+    # Historical confirmation is not proof that its inputs are still current.
+    current_validity: Literal["unverified", "current", "stale"] = "unverified"
+
 
 @dataclass(frozen=True)
 class WorkflowRunStatusRecord:
@@ -388,6 +392,10 @@ class CurrentAggregateRepository(Protocol[AggregateT]):
     A concrete store implements this protocol once per aggregate type (e.g.
     ``CurrentAggregateRepository[StudyDefinitionV3]``).
     """
+
+    def list_current(self, project_id: StableId) -> Tuple[AggregateT, ...]:
+        """Return one latest revision per identity, ordered by aggregate id."""
+        ...
 
     def get_current(
         self,

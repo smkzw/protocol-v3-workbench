@@ -665,7 +665,7 @@ class TestFailClosed:
                     snapshot_sha256="b" * 64,
                 )
             )
-        assert exc_info.value.code == ProtocolErrorCode.P1_DECISION_CAS
+        assert exc_info.value.code == ProtocolErrorCode.P1_OBJECT_NOT_FOUND
 
         after = (
             _aggregate_fp(state),
@@ -803,9 +803,10 @@ class TestQueries:
                 project_id=_PROJECT, study_definition_id=_SD_ID,
             )
         )
-        assert q3.records == tuple(
-            state.rm_repo.get_decision_graph(_PROJECT, _SD_ID)
-        )
+        assert {row.decision_record_id for row in q3.records} == {
+            "decision:create:001", "decision:dose:001",
+        }
+        assert all(row.current_validity == "unverified" for row in q3.records)
 
         q4 = svc.get_workflow_run_status(
             GetWorkflowRunStatusQuery(

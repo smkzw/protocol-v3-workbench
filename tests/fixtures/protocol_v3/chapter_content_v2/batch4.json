@@ -5,6 +5,7 @@
   "template_id": "tp_ma_07_v2",
   "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
   "fact_vocabulary": [
+    "diagram.randomized",
     "discontinuation.basis_for_further_collection",
     "discontinuation.continued_assessment_scope",
     "discontinuation.continued_data_types",
@@ -42,8 +43,10 @@
     "intervention.destruction_authorization",
     "intervention.dispensing_and_return",
     "intervention.dose_consistency_with_design",
+    "intervention.dose_escalation_or_dlt_applicable",
     "intervention.dose_escalation_or_dlt_logic",
     "intervention.dose_hold_criteria",
+    "intervention.dose_modification_features",
     "intervention.dose_modification_required",
     "intervention.dose_reduction_rules",
     "intervention.dose_regimen",
@@ -110,7 +113,8 @@
     "procedure.template_example_screening_window",
     "procedure.template_example_visit_schedule",
     "procedure.treatment_period_definition",
-    "procedure.treatment_visit_procedures"
+    "procedure.treatment_visit_procedures",
+    "procedure.unscheduled_contact_recording_plan"
   ],
   "claim_vocabulary": [
     "accountability_procedure",
@@ -2556,6 +2560,16 @@
           {
             "fact_path": "procedure.followup_unscheduled_and_phone_visits",
             "value": "true"
+          },
+          {
+            "fact_path": "procedure.unscheduled_contact_recording_plan",
+            "value": {
+              "date_recording": "Synthetic future recording rule, not an actual visit",
+              "modality_recording": "Synthetic future recording rule, not an actual visit",
+              "reason_recording": "Synthetic future recording rule, not an actual visit",
+              "assessment_rules": "Synthetic future recording rule, not an actual visit",
+              "safety_information_handling": "Synthetic future recording rule, not an actual visit"
+            }
           }
         ],
         "claims": [
