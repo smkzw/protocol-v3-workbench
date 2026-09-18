@@ -1,0 +1,25 @@
+.kz-protocol {
+  --kz-orange:#FF9900;
+  --kz-yellow:#FFCC00;
+  --kz-risk:#C00000;
+  --kz-surface:#FFFFFF;
+  --kz-background:#F8F9FA;
+  --kz-text:#404040;
+  --kz-heading:#0F1115;
+  --kz-muted:#595959;
+  --kz-border:#D6D2CD;
+  --kz-soft:#FFF7ED;
+  --kz-link:#9A5B00;
+  --kz-shadow:0 1px 2px rgba(15,17,21,.06),0 6px 18px rgba(15,17,21,.08);
+  color-scheme:only light;
+  font-family:"Microsoft YaHei","微软雅黑","PingFang SC","Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+.kz-protocol :focus-visible { outline:2px solid var(--kz-link); outline-offset:4px; }
+.kz-protocol [id]:target { outline:2px solid var(--kz-orange); outline-offset:4px; }
+@media(prefers-reduced-motion:reduce) {
+  .kz-protocol *, .kz-protocol *::before, .kz-protocol *::after { animation:none; transition:none; scroll-behavior:auto; }
+}
+@media print {
+  .kz-protocol { box-shadow:none; }
+}

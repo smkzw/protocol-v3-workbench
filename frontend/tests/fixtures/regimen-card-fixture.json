@@ -1,0 +1,270 @@
+{
+  "status": "ready_for_review",
+  "coverage": [],
+  "regimen": {
+    "input_sha256": "30cbb7074ec3f7a0ec1e14c42b139c58f25e17b06ca4c1adbcb6af91669b9bc1",
+    "canonical_state": "proposed",
+    "periods": [
+      {
+        "id": "period-first",
+        "label": "首期",
+        "timing": "第0至4周"
+      },
+      {
+        "id": "period-next",
+        "label": "继续期",
+        "timing": "第4至8周"
+      }
+    ],
+    "arms": [
+      {
+        "id": "arm-active",
+        "label": "试验组"
+      },
+      {
+        "id": "arm-control",
+        "label": "原对照组"
+      }
+    ],
+    "schedules": [
+      {
+        "period_id": "period-first",
+        "arm_id": "arm-active",
+        "steps": [
+          {
+            "kind": "loading",
+            "timing": "本期首次",
+            "frequency": "一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 200,
+                  "unit": "mg"
+                },
+                "volume": {
+                  "value": 2,
+                  "unit": "mL"
+                }
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/0:p",
+                "quote": "合成给药依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          },
+          {
+            "kind": "maintenance",
+            "timing": "首次之后",
+            "frequency": "每2周一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 100,
+                  "unit": "mg"
+                },
+                "volume": null
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/1:p",
+                "quote": "合成维持依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          }
+        ]
+      },
+      {
+        "period_id": "period-first",
+        "arm_id": "arm-control",
+        "steps": [
+          {
+            "kind": "loading",
+            "timing": "本期首次",
+            "frequency": "一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 200,
+                  "unit": "mg"
+                },
+                "volume": {
+                  "value": 2,
+                  "unit": "mL"
+                }
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/0:p",
+                "quote": "合成给药依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          },
+          {
+            "kind": "maintenance",
+            "timing": "首次之后",
+            "frequency": "每2周一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 100,
+                  "unit": "mg"
+                },
+                "volume": null
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/1:p",
+                "quote": "合成维持依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          }
+        ]
+      },
+      {
+        "period_id": "period-next",
+        "arm_id": "arm-active",
+        "steps": [
+          {
+            "kind": "loading",
+            "timing": "本期首次",
+            "frequency": "一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 200,
+                  "unit": "mg"
+                },
+                "volume": {
+                  "value": 2,
+                  "unit": "mL"
+                }
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/0:p",
+                "quote": "合成给药依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          },
+          {
+            "kind": "maintenance",
+            "timing": "首次之后",
+            "frequency": "每2周一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 100,
+                  "unit": "mg"
+                },
+                "volume": null
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/1:p",
+                "quote": "合成维持依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          }
+        ]
+      },
+      {
+        "period_id": "period-next",
+        "arm_id": "arm-control",
+        "steps": [
+          {
+            "kind": "loading",
+            "timing": "本期首次",
+            "frequency": "一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 200,
+                  "unit": "mg"
+                },
+                "volume": {
+                  "value": 2,
+                  "unit": "mL"
+                }
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/0:p",
+                "quote": "合成给药依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          },
+          {
+            "kind": "maintenance",
+            "timing": "首次之后",
+            "frequency": "每2周一次",
+            "route": "皮下注射",
+            "products": [
+              {
+                "name": "试验药X",
+                "dose": {
+                  "value": 100,
+                  "unit": "mg"
+                },
+                "volume": null
+              }
+            ],
+            "references": [
+              {
+                "source_artifact_id": "source-fixture",
+                "locator": "word/document.xml/body/1:p",
+                "quote": "合成维持依据"
+              }
+            ],
+            "source_support": "reference_only",
+            "requires_confirmation": true
+          }
+        ]
+      }
+    ],
+    "unresolved_questions": []
+  },
+  "questions": []
+}

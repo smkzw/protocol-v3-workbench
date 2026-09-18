@@ -1,0 +1,19 @@
+.kz-manuscript { margin:32px 0; padding:24px; background:var(--kz-background); border:1px solid var(--kz-border); border-radius:8px; color:var(--kz-text); font-size:16px; line-height:1.65; }
+.kz-manuscript h2 { color:var(--kz-heading); font-size:28px; margin:8px 0 16px; }
+.kz-manuscript-eyebrow { color:var(--kz-muted); font-size:14px; margin:0; }
+.kz-manuscript button { font:inherit; color:var(--kz-heading); background:var(--kz-surface); border:1px solid var(--kz-border); border-radius:6px; padding:12px 16px; cursor:pointer; transition:box-shadow 160ms ease-out, border-color 160ms ease-out; }
+.kz-manuscript button:hover:not(:disabled) { border-color:var(--kz-orange); box-shadow:var(--kz-shadow); }
+.kz-manuscript button:disabled { cursor:default; color:var(--kz-muted); }
+.kz-manuscript .kz-manuscript-primary { display:inline-flex; justify-content:center; align-items:center; background:var(--kz-orange); color:var(--kz-heading); font-weight:600; border-color:var(--kz-orange); }
+.kz-manuscript .kz-manuscript-primary:disabled { background:var(--kz-surface); border-color:var(--kz-border); }
+.kz-manuscript-layout { display:grid; grid-template-columns:minmax(180px,240px) minmax(0,1fr); gap:24px; margin-top:24px; align-items:start; }
+.kz-manuscript-layout > * { min-width:0; }
+.kz-manuscript nav { max-height:70vh; overflow-y:auto; position:sticky; top:24px; }
+.kz-manuscript nav ol { list-style:none; margin:0; padding:0; }
+.kz-manuscript nav li { padding:8px 0; border-bottom:1px solid var(--kz-border); }
+.kz-manuscript nav button { width:100%; text-align:left; background:transparent; border:0; }
+.kz-manuscript nav [aria-current] { background:var(--kz-soft); box-shadow:inset 3px 0 var(--kz-orange); font-weight:600; }
+.kz-manuscript nav small { display:block; padding:0 16px; font-size:14px; color:var(--kz-muted); }
+.kz-manuscript .pcd-preview { margin:0; }
+.kz-manuscript [role=alert] { padding:16px; border-left:3px solid var(--kz-risk); background:var(--kz-surface); }
+@media(max-width:900px) { .kz-manuscript { padding:16px; } .kz-manuscript-layout { grid-template-columns:minmax(0,1fr); } .kz-manuscript nav { position:static; max-height:240px; } }

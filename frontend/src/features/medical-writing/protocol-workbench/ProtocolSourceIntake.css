@@ -1,0 +1,407 @@
+/* 方案资料来源录入。所有选择器均限定在 .pvs-intake 下。 */
+
+.pvs-intake {
+  --kz-orange: #FF9900;
+  --kz-yellow: #FFCC00;
+  --kz-orange-mid: #F5A000;
+  --kz-risk: #C00000;
+  --kz-surface: #FFFFFF;
+  --kz-background: #F8F9FA;
+  --kz-text: #404040;
+  --kz-heading: #0F1115;
+  --kz-muted: #595959;
+  --kz-border: #D6D2CD;
+  --kz-soft: #FFF7ED;
+  --kz-warm: #FCF5E6;
+  --kz-table-soft: #FBE3D6;
+  --kz-link: #9A5B00;
+  --kz-info: #407AAA;
+  --kz-good: #2E7D32;
+  --kz-shadow: 0 1px 2px rgba(15, 17, 21, 0.06), 0 6px 18px rgba(15, 17, 21, 0.08);
+  --kz-radius: 8px;
+  --kz-radius-sm: 6px;
+  --kz-font: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  color: var(--kz-text);
+  font-size: 16px;
+  font-family: var(--kz-font);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color-scheme: only light;
+}
+
+.pvs-intake h3,
+.pvs-intake p {
+  margin: 0;
+}
+
+.pvs-head {
+  display: grid;
+  gap: 4px;
+}
+
+.pvs-title {
+  color: var(--kz-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.pvs-sub,
+.pvs-hint,
+.pvs-selection-note {
+  color: var(--kz-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pvs-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pvs-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--kz-border);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-surface);
+  color: var(--kz-heading);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pvs-add:hover {
+  border-color: var(--kz-orange);
+  background: var(--kz-soft);
+}
+
+.pvs-add:focus-within {
+  outline: 2px solid var(--kz-info);
+  outline-offset: 2px;
+}
+
+.pvs-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pvs-intake button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  border: 1px solid transparent;
+  border-radius: var(--kz-radius-sm);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.pvs-intake button:focus-visible,
+.pvs-intake a:focus-visible,
+.pvs-intake select:focus-visible,
+.pvs-intake input:focus-visible,
+.pvs-intake textarea:focus-visible {
+  outline: 2px solid var(--kz-info);
+  outline-offset: 2px;
+}
+
+.pvs-primary {
+  padding: 5px 14px;
+  background: var(--kz-orange);
+  color: var(--kz-heading);
+  font-weight: 700;
+}
+
+.pvs-primary:hover:not(:disabled) {
+  background: var(--kz-orange-mid);
+}
+
+.pvs-primary:disabled,
+.pvs-ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pvs-ghost {
+  padding: 5px 12px;
+  border-color: var(--kz-border);
+  background: var(--kz-surface);
+  color: var(--kz-heading);
+}
+
+.pvs-ghost:hover:not(:disabled) {
+  border-color: var(--kz-orange);
+  background: var(--kz-soft);
+  color: var(--kz-link);
+}
+
+.pvs-stage {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--kz-border);
+  border-left: 3px solid var(--kz-orange);
+  border-radius: var(--kz-radius);
+  background: var(--kz-surface);
+  box-shadow: var(--kz-shadow);
+}
+
+.pvs-stage-name {
+  color: var(--kz-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.pvs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pvs-row label,
+.pvs-correct-field label,
+.pvs-brief label {
+  color: var(--kz-heading);
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.pvs-row select {
+  min-width: 210px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--kz-border);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-surface);
+  color: var(--kz-heading);
+  font: inherit;
+  font-size: 14px;
+}
+
+.pvs-brief {
+  display: grid;
+  gap: 4px;
+}
+
+.pvs-brief textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 10px;
+  border: 1px solid var(--kz-border);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-surface);
+  color: var(--kz-text);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.pvs-selection-note {
+  padding-left: 10px;
+  border-left: 3px solid var(--kz-orange);
+}
+
+.pvs-cards {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pvs-card {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--kz-border);
+  border-top: 4px solid var(--kz-orange);
+  border-radius: var(--kz-radius);
+  background: var(--kz-surface);
+  box-shadow: var(--kz-shadow);
+}
+
+.pvs-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pvs-check {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--kz-orange);
+}
+
+.pvs-card-info {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pvs-card-name {
+  color: var(--kz-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.pvs-card-meta {
+  color: var(--kz-muted);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.pvs-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 26px;
+}
+
+.pvs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--kz-link);
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pvs-link:hover {
+  text-decoration: underline;
+}
+
+.pvs-correct {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--kz-border);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-background);
+}
+
+.pvs-correct-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.pvs-correct-field {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pvs-correct-field input {
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid var(--kz-border);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-surface);
+  color: var(--kz-heading);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pvs-ok,
+.pvs-error {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pvs-ok {
+  color: var(--kz-good);
+}
+
+.pvs-error {
+  padding: 10px 12px;
+  border: 1px solid var(--kz-table-soft);
+  border-left: 3px solid var(--kz-risk);
+  border-radius: var(--kz-radius-sm);
+  background: var(--kz-warm);
+  color: var(--kz-risk);
+}
+
+.pvs-error-step {
+  color: var(--kz-muted);
+  font-size: 14px;
+}
+
+.pvs-error .pvs-ghost,
+.pvs-ok .pvs-ghost {
+  justify-self: start;
+}
+
+.pvs-prepare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--kz-border);
+}
+
+@media (max-width: 640px) {
+  .pvs-row select,
+  .pvs-row button {
+    flex: 1 1 180px;
+  }
+
+  .pvs-correct-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .pvs-card-actions {
+    padding-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pvs-intake,
+  .pvs-intake *,
+  .pvs-intake *::before,
+  .pvs-intake *::after {
+    animation: none;
+    transition: none;
+    scroll-behavior: auto;
+  }
+}

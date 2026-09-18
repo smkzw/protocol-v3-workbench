@@ -47,3 +47,11 @@ Medical writing editor contract:
 - Body content and structured tables must both support full-screen editing. Table-cell and body formatting use the same visible capabilities and must persist through save, reload, restart, and Word export; never ship visual-only formatting controls.
 - Keep AI quick actions beside the page title or in a compact title-level tool group, not in a separate row above the document.
 - Project literature uses normalized reference entities. Manual and AI paths share the same citations, numeric rendering, generated References section, audit boundary, and Word-export links.
+
+## Protocol v3 user design and build direction (2026-09-13)
+
+Scope: the isolated Protocol v3 medical-writing workbench only; do not alter other subsystems.
+- Use the user-named kangzhe-design-3d skill at `/Users/smkzw/.cc-switch/skills/kangzhe-design-3d/SKILL.md` for aesthetics. Adapt core/site visual rules to the existing React/API/SQLite product; do not replace it with a static site. Regulatory-defense high-risk tags remain red and preselected recommendations remain unconfirmed.
+- Browser testing uses ego(lite), one reused TaskSpace per goal, after complete construction. This overrides the generic in-app-browser instruction for this scope.
+- Current user direction defers writing/running stage tests until the full product is built. Preserve existing tests and evidence. Source inspection and governed execution/conference continue; full runtime, ego visual/interaction and native Word validation remain required later.
+- User has requested current-stage review/retrospective and next-stage planning, followed by lossless pause. Read the current Trellis checkpoint and `runs/MW_PROTOCOL_V3_MANUSCRIPT_NO_LOSS_PAUSE_20260913.md`; do not start the next stage without explicit user continuation.

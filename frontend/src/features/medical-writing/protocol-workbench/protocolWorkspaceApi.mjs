@@ -12,15 +12,17 @@
  * `can_retry`, `next_step`) when they exist; every other top-level or nested
  * server key is discarded.  User-facing messages contain no English/program
  * labels and no API/backend/log wording.  There is no exception-card method:
- * clients never invent a catalog failure.
+ * clients never invent a catalog failure. A recognized manuscript-save conflict
+ * carries a separate closed recoveryKind; display detail still has four fields.
  */
 
 export class ProtocolWorkspaceApiError extends Error {
-  constructor(message, { status = 0, detail = null } = {}) {
+  constructor(message, { status = 0, detail = null, recoveryKind = null } = {}) {
     super(message);
     this.name = "ProtocolWorkspaceApiError";
     this.status = status;
     this.detail = detail;
+    if (recoveryKind) this.recoveryKind = recoveryKind;
   }
 }
 
@@ -81,9 +83,16 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
         detail && typeof detail.message === "string"
           ? detail.message
           : "方案工作台未能完成本次操作。";
+      // One internal recovery type, separate from the four display fields.
+      // Do not propagate arbitrary machine/audit codes or infer from copy text.
+      const recoveryKind = response.status === 409
+        && path.endsWith('/manuscript-draft/save')
+        && rawDetail?.code === 'manuscript_document_revision_changed'
+        ? 'document_revision_changed' : null;
       throw new ProtocolWorkspaceApiError(message, {
         status: response.status,
         detail,
+        recoveryKind,
       });
     }
     return payload;
@@ -98,8 +107,184 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     });
 
   const get = (path, signal) => request(path, { method: "GET", signal });
+  const sourcePath = (projectId) =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/sources`;
+
+  const intakePath = (projectId) =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/research-intake`;
+  const regimenPath = projectId =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/design/regimen`;
+  const elementsPath = projectId =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/design/elements`;
+  const manuscriptSourcesPath = (projectId, runId) =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/manuscript-sources/${encodeURIComponent(String(runId))}`;
+  const chapterPath = (projectId, studyId, nodeId) =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/chapters/${encodeURIComponent(String(nodeId))}/draft`;
+  const manuscriptPath = (projectId, studyId) =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/manuscript-draft`;
 
   return {
+    prepareManuscriptDraft(projectId, studyId, preparation, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/prepare`, preparation, signal);
+    },
+    startManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
+      return post(manuscriptPath(projectId, studyId), intent, signal);
+    },
+    recoverManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/recover`, intent, signal);
+    },
+    prepareManuscriptSave(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/save/prepare`, intent, signal);
+    },
+    saveManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/save`, intent, signal);
+    },
+    recoverManuscriptSave(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/save/recover`, intent, signal);
+    },
+    editManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/edits`, intent, signal);
+    },
+    prepareManuscriptSourceIdentity(projectId, studyId, seedRunId, { signal } = {}) {
+      return post(`/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/manuscript-sources/prepare`,
+        { seed_run_id: seedRunId }, signal);
+    },
+    prepareManuscriptSources(projectId, studyId, seedRunId, { signal, expectedWorkflowRunId } = {}) {
+      return post(`/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/manuscript-sources`,
+        { seed_run_id: seedRunId, ...(expectedWorkflowRunId ? { expected_workflow_run_id: expectedWorkflowRunId } : {}) }, signal);
+    },
+    getManuscriptSources(projectId, runId, { signal } = {}) {
+      return get(manuscriptSourcesPath(projectId, runId), signal);
+    },
+    resumeManuscriptSources(projectId, runId, { signal } = {}) {
+      return post(`${manuscriptSourcesPath(projectId, runId)}/resume`, {}, signal);
+    },
+    retryManuscriptSources(projectId, runId, retryDecisionId, { signal } = {}) {
+      return post(`${manuscriptSourcesPath(projectId, runId)}/retry`, { retry_decision_id: retryDecisionId }, signal);
+    },
+    prepareChapterDraft(projectId, studyId, nodeId, preparation, { signal } = {}) {
+      return post(`${chapterPath(projectId, studyId, nodeId)}/prepare`, preparation, signal);
+    },
+    startChapterDraft(projectId, studyId, nodeId, intent, { signal } = {}) {
+      return post(chapterPath(projectId, studyId, nodeId), intent, signal);
+    },
+    recoverChapterDraft(projectId, studyId, nodeId, intent, { signal } = {}) {
+      return post(`${chapterPath(projectId, studyId, nodeId)}/recover`, intent, signal);
+    },
+    adoptResearchInformation(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/research-information`, intent, signal);
+    },
+    recoverResearchInformation(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/research-information/recover`, intent, signal);
+    },
+    listResearchStudies(projectId, seedRunId, { signal } = {}) {
+      return get(`${regimenPath(projectId)}/study-context?seed_run_id=${encodeURIComponent(String(seedRunId))}`, signal);
+    },
+    createResearchContext(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/study-context`, intent, signal);
+    },
+    recoverResearchContext(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/study-context/recover`, intent, signal);
+    },
+    updateResearchInputs(projectId, studyId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/study-context/${encodeURIComponent(String(studyId))}/inputs`, intent, signal);
+    },
+    recoverResearchInputs(projectId, studyId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/study-context/${encodeURIComponent(String(studyId))}/inputs/recover`, intent, signal);
+    },
+    prepareRegimenDesign(projectId, seedRunId, studyDefinitionId, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/prepare`, {seed_run_id: seedRunId, study_definition_id: studyDefinitionId}, signal);
+    },
+    startRegimenDesign(projectId, intent, { signal } = {}) {
+      return post(regimenPath(projectId), typeof intent === 'string' ? {seed_run_id: intent} : intent, signal);
+    },
+    recoverRegimenDesign(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/recover`, typeof intent === 'string' ? {seed_run_id: intent} : intent, signal);
+    },
+    getRegimenDesign(projectId, workflowRunId, { signal } = {}) {
+      return get(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}`, signal);
+    },
+    resumeRegimenDesign(projectId, workflowRunId, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/resume`, {}, signal);
+    },
+    adoptRegimenDesign(projectId, workflowRunId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/adopt`, intent, signal);
+    },
+    recoverRegimenAdoption(projectId, workflowRunId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/adopt/recover`, intent, signal);
+    },
+    prepareDesignElements(projectId, seedRunId, studyDefinitionId, { signal } = {}) {
+      return post(`${elementsPath(projectId)}/prepare`,
+        { seed_run_id: seedRunId, study_definition_id: studyDefinitionId }, signal);
+    },
+    startDesignElements(projectId, intent, { signal } = {}) {
+      return post(elementsPath(projectId), intent, signal);
+    },
+    recoverDesignElements(projectId, intent, { signal } = {}) {
+      return post(`${elementsPath(projectId)}/recover`, intent, signal);
+    },
+    getDesignElements(projectId, workflowRunId, { signal, studyDefinitionId } = {}) {
+      const suffix = studyDefinitionId ? `?study_definition_id=${encodeURIComponent(String(studyDefinitionId))}` : "";
+      return get(`${elementsPath(projectId)}/${encodeURIComponent(String(workflowRunId))}${suffix}`, signal);
+    },
+    resumeDesignElements(projectId, workflowRunId, { signal } = {}) {
+      return post(`${elementsPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/resume`, {}, signal);
+    },
+    adoptDesignCard(projectId, workflowRunId, card, intent, { signal } = {}) {
+      return post(`${elementsPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/adopt/${encodeURIComponent(String(card))}`,
+        intent, signal);
+    },
+    recoverDesignCard(projectId, workflowRunId, card, intent, { signal } = {}) {
+      return post(`${elementsPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/adopt/${encodeURIComponent(String(card))}/recover`,
+        intent, signal);
+    },
+    adoptSeedCard(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/seed-card`, intent, signal);
+    },
+    recoverSeedCard(projectId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/seed-card/recover`, intent, signal);
+    },
+    startResearchIntake(projectId, { userBrief = "", sourceArtifactIds = [] }, { signal } = {}) {
+      return post(intakePath(projectId), {
+        user_brief: userBrief, source_artifact_ids: sourceArtifactIds,
+      }, signal);
+    },
+    recoverResearchIntake(projectId, { userBrief = "", sourceArtifactIds = [] }, { signal } = {}) {
+      return post(`${intakePath(projectId)}/recover`, {
+        user_brief: userBrief, source_artifact_ids: sourceArtifactIds,
+      }, signal);
+    },
+    resumeResearchIntake(projectId, workflowRunId, { signal } = {}) {
+      return post(`${intakePath(projectId)}/${encodeURIComponent(String(workflowRunId))}/resume`, {}, signal);
+    },
+    getResearchIntake(projectId, workflowRunId, { signal } = {}) {
+      return get(`${intakePath(projectId)}/${encodeURIComponent(String(workflowRunId))}`, signal);
+    },
+    importSource(projectId, { file, logicalSourceKey, sourceRole, sourceVersion, jurisdiction }, { signal } = {}) {
+      const form = new FormData();
+      form.append("file", file, file.name || "source.docx");
+      form.append("logical_source_key", logicalSourceKey);
+      form.append("source_role", sourceRole);
+      if (sourceVersion) form.append("source_version", sourceVersion);
+      if (jurisdiction) form.append("jurisdiction", jurisdiction);
+      return request(sourcePath(projectId), { method: "POST", body: form, signal });
+    },
+    listSources(projectId, { signal } = {}) {
+      return get(sourcePath(projectId), signal);
+    },
+    correctSourceMetadata(projectId, sourceArtifactId, metadata, { signal } = {}) {
+      return request(`${sourcePath(projectId)}/${encodeURIComponent(String(sourceArtifactId))}/metadata`, {
+        method: "PATCH", signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(metadata),
+      });
+    },
+    getSourceParse(projectId, sourceArtifactId, { signal } = {}) {
+      return get(`${sourcePath(projectId)}/${encodeURIComponent(String(sourceArtifactId))}/parse`, signal);
+    },
+    sourceDownloadUrl(projectId, sourceArtifactId) {
+      return `${sourcePath(projectId)}/${encodeURIComponent(String(sourceArtifactId))}/content`;
+    },
     createStudyDefinition(projectId, payload, { signal } = {}) {
       return post(
         `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions`,
@@ -123,6 +308,18 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     getStudyDefinitionEvents(projectId, studyDefinitionId, { signal } = {}) {
       return get(
         `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/events`,
+        signal,
+      );
+    },
+    getSemanticDocument(projectId, studyDefinitionId, documentId, { signal } = {}) {
+      return get(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/documents/${encodeURIComponent(String(documentId))}`,
+        signal,
+      );
+    },
+    getManuscriptPlan(projectId, studyDefinitionId, { signal } = {}) {
+      return get(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-plan`,
         signal,
       );
     },

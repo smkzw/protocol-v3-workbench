@@ -77,6 +77,7 @@ import {
 } from "lucide-react";
 import logo from "./assets/header_logo.png";
 import { EvidenceDesignPage } from "./features/evidence-design/EvidenceDesignWorkspace";
+import { ProtocolIntakeWorkspace } from "./features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace";
 import MedicalMonitoringBatchPanel from "./features/medical-monitoring/MedicalMonitoringBatchPanel";
 import MedicalMonitoringAssurancePanel from "./features/medical-monitoring/MedicalMonitoringAssurancePanel";
 import MedicalMonitoringRiskChecklist from "./features/medical-monitoring/MedicalMonitoringRiskChecklist";
@@ -15894,6 +15895,10 @@ export function App() {
         : <ModuleUnavailablePage moduleKey="data_analysis_tfl" />;
     }
     if (activePage === "writing") {
+      if (["1", "true"].includes(import.meta.env.VITE_PROTOCOL_V3_WORKFLOW_ENABLED)
+          && activeProjectId && activeManifest?.route_bindings?.medical_writing) {
+        return <ProtocolIntakeWorkspace key={activeProjectId} projectId={activeProjectId} actorId="medical_manager" />;
+      }
       if (runtimeReadiness.status !== "ready") {
         return (
           <MedicalWritingRuntimeGate
