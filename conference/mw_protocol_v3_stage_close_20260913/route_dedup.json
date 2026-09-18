@@ -1,0 +1,93 @@
+{
+  "policy": "execution-used-route-identities-are-excluded-from-conference",
+  "linked_execution_task_id": "mw_protocol_v3_kangzhe_skin_20260913",
+  "linked": true,
+  "execution_evidence": [
+    "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/logs/execution/mw_protocol_v3_kangzhe_skin_20260913/worker_01_stdout.txt"
+  ],
+  "excluded_route_nodes": [
+    {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "source": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/logs/execution/mw_protocol_v3_kangzhe_skin_20260913/worker_01_stdout.txt",
+      "reason": "effective execution route"
+    }
+  ],
+  "effective_conference_roles": {
+    "evidence_single_object": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3",
+      "effort": "max",
+      "default_provider": "zcode",
+      "default_model": "GLM-5.3",
+      "default_effort": "max",
+      "escalate_provider": "zcode",
+      "escalate_model": "GLM-5.3",
+      "escalate_effort": "max",
+      "primary": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "zcode/zcode/GLM-5.3:max -> grok/grok-build/grok-4.6:high -> pi/cursor/cursor-grok-4.6:high -> pi/openai-codex/gpt-5.6-sol:medium",
+      "node_id": "C03",
+      "role": "重要证据审阅",
+      "fallback_only": true,
+      "tools_enabled": true,
+      "skills_enabled": true,
+      "schedule": {
+        "policy": "beijing-daily-peak-off-peak-v3",
+        "timezone": "Asia/Shanghai",
+        "period": "off_peak",
+        "period_label": "非高峰",
+        "peak_start": "12:00",
+        "peak_end": "19:00",
+        "days": "all",
+        "evaluated_at": "2026-09-13T22:18:34.162838+08:00"
+      },
+      "schedule_constraints": {
+        "policy": "live-route-manifest-v1",
+        "evaluated_at": "2026-09-13T22:18:34.162838+08:00",
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      },
+      "route_contract_frozen": true,
+      "deduplicated_against_execution": [
+        {
+          "agent": "grok",
+          "provider": "grok-build",
+          "model": "grok-4.6"
+        }
+      ]
+    }
+  },
+  "schedule": {
+    "policy": "beijing-daily-peak-off-peak-v3",
+    "timezone": "Asia/Shanghai",
+    "period": "off_peak",
+    "period_label": "非高峰",
+    "peak_start": "12:00",
+    "peak_end": "19:00",
+    "days": "all",
+    "evaluated_at": "2026-09-13T22:18:34.162838+08:00"
+  },
+  "generated_at": "2026-09-13 22:18:34 CST"
+}

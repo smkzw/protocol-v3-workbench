@@ -1,0 +1,11 @@
+# 3R.4C 接入就绪核对（非整体3R.4验收）
+
+2026-09-13 owner Codex核对，C执行范围可进入D接线。原始桥接反例已修；首轮条件owner反例失败后同会话修复，固定源再次核对34项通过（C33+当前模板装配1），日志 runs/mw_protocol_v3_3r4d_preflight_20260913/c_owner_verification.log。
+
+执行lineage：runs/execution/mw_protocol_v3_3r4c_fact_impact_20260913/，首轮2553.682s exit0；owner_followup_01续作770.25s exit0，原sess_f7fa1d2f-dc43-49d6-9b90-f0758deed6d9，实际GLM-5.3-Flash/max request/response/observed一致，无fallback。首轮错误和修复报告均保留；34pass不是独立模型review，不是医学/Word/产品验收。整体3R4需D完成后冻结独立review。
+
+当前SHA256：dependency_graph.py eb75dc674a4ee18bee08e501b77ae6422aa349d38992d49e8980361de742efc4；test_dependency_graph.py a1e27b0b994515a1382bb3a8f6d39249185047ae2936348c26e9c6e1ea8c841a；test_fact_labeled_impact.py b274086096faed2818cbf9e3fdc3579041296e9965e979eb0c549556d2a51524。
+
+owner原反例及前后证据：D preflight的c_owner_cases.py/json与C续作owner_cases_after_fix.log。受控required+unknown现candidate，shared active+unknown现confirmed_reopen；保留条件释放、未知、真实fanout和源hash绑定。C投影不是采用；全inactive字段冲突仍由B输入验证在D实际采用前阻止，不能仅凭C的resolved/reopen结果让用户重复确认不适用参数。来源绑定必须由D的当前目录装载器核对，不能传任意未绑定规则集合。
+
+B共享owner小函数提取暂不单独扩大修订：当前两边有明确真值表与反例验证，后续确有共同修改再提取，避免为了抽函数重做已验收B。源码/报告“首轮2198通过”不作为当前联合证据；其错误处理红测与owner修复并行导致中途源差异，已在续作更正，非随机故障。

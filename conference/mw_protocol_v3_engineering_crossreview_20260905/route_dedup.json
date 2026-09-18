@@ -1,0 +1,82 @@
+{
+  "policy": "execution-used-provider-model-nodes-are-excluded-from-conference",
+  "linked_execution_task_id": "mw_protocol_v3_engineering_crossreview_20260905",
+  "linked": false,
+  "execution_evidence": [],
+  "excluded_route_nodes": [],
+  "effective_conference_roles": {
+    "general_single_object": {
+      "agent": "pi",
+      "provider": "cursor",
+      "model": "default",
+      "effort": "",
+      "default_provider": "cursor",
+      "default_model": "default",
+      "default_effort": "",
+      "escalate_provider": "cursor",
+      "escalate_model": "default",
+      "escalate_effort": "",
+      "primary": {
+        "agent": "pi",
+        "provider": "cursor",
+        "model": "default",
+        "effort": ""
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "opencode-go",
+          "model": "muse-spark-1.3-contributor",
+          "effort": "xhigh"
+        },
+        {
+          "agent": "pi",
+          "provider": "cms-router",
+          "model": "minimax-m3",
+          "effort": "xhigh"
+        },
+        {
+          "agent": "pi",
+          "provider": "google-antigravity",
+          "model": "gemini-3.8-flash-high",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-luna",
+          "effort": "max"
+        }
+      ],
+      "execution_route": "Complex/logic/evidence/artifact-heavy object: Pi/Cursor/default -> Pi/OpenCode Go/muse-spark-1.3-contributor xhigh -> Pi/cms-router/minimax-m3 xhigh -> Pi/google-antigravity/gemini-3.8-flash-high high -> Pi/openai-codex/gpt-5.6-luna max",
+      "role": "single complex-task conference object; Codex chairs directly with no sub-venue chair",
+      "schedule": {
+        "policy": "beijing-peak-off-peak-v1",
+        "timezone": "Asia/Shanghai",
+        "period": "peak",
+        "period_label": "高峰",
+        "peak_start": "12:00",
+        "peak_end": "18:00",
+        "evaluated_at": "2026-09-05T12:52:26.313585+08:00"
+      },
+      "schedule_constraints": {
+        "policy": "beijing-provider-window-v1",
+        "evaluated_at": "2026-09-05T12:52:26.313585+08:00",
+        "cms_router_minimax_blocked": false,
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      }
+    }
+  },
+  "schedule": {
+    "policy": "beijing-peak-off-peak-v1",
+    "timezone": "Asia/Shanghai",
+    "period": "peak",
+    "period_label": "高峰",
+    "peak_start": "12:00",
+    "peak_end": "18:00",
+    "evaluated_at": "2026-09-05T12:52:26.313585+08:00"
+  },
+  "generated_at": "2026-09-05 12:52:26 CST"
+}

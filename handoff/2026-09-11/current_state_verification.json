@@ -1,0 +1,786 @@
+{
+  "checked_at": "2026-09-11T20:47:37.318735+08:00",
+  "scope": "Read-only file, git, task and prior-evidence checks. No product tests, servers, models, workers, Word, browser or live runtime checks executed.",
+  "workspace": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313",
+  "branch": "main",
+  "head": "3d6772f1014f2a86f96eb3dae4fd878c70a5251c",
+  "commit_count": 26,
+  "git_status_normal_lines": 349,
+  "tracked_modified_entries": 31,
+  "untracked_normal_entries": 318,
+  "goal_status": "paused",
+  "goal_utf8_sha256": "fcc090427b9d7c9d78bd7143ddec7845940f76bf86d19520c887919ee8ac30b6",
+  "pause_original_snapshot_count": 73,
+  "pause_closure_count": 4,
+  "reconciled_unique_count": 74,
+  "source_changes": [],
+  "source_checks": [
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/checkpoint.md",
+      "exists": true,
+      "sha256": "866a137a9a7b62886052c5e8b135920876de625cfacb261b32f2eda194cb3ebf",
+      "expected_sha256": "866a137a9a7b62886052c5e8b135920876de625cfacb261b32f2eda194cb3ebf",
+      "matches_pause": true,
+      "size": 10880
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/design.md",
+      "exists": true,
+      "sha256": "387f369c934ec8387e2d3d0a10f664e417b248b2f3568246b7c16cd314f5745e",
+      "expected_sha256": "387f369c934ec8387e2d3d0a10f664e417b248b2f3568246b7c16cd314f5745e",
+      "matches_pause": true,
+      "size": 1524
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/implement.md",
+      "exists": true,
+      "sha256": "435b7cac0ee75a808c9203a4b777f4ddab57131d5837a6abfb8d49691bcd5843",
+      "expected_sha256": "435b7cac0ee75a808c9203a4b777f4ddab57131d5837a6abfb8d49691bcd5843",
+      "matches_pause": true,
+      "size": 1174
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/prd.md",
+      "exists": true,
+      "sha256": "1d3fedd6242bd0fd3f8870223871f20caf7a0ebf31c78728e255a4b6e5abf3c7",
+      "expected_sha256": "1d3fedd6242bd0fd3f8870223871f20caf7a0ebf31c78728e255a4b6e5abf3c7",
+      "matches_pause": true,
+      "size": 2816
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/task.json",
+      "exists": true,
+      "sha256": "956f6d9db2d116e61200fddb9057add40bc70d13e772eab6061d3c5e2ed896bf",
+      "expected_sha256": "956f6d9db2d116e61200fddb9057add40bc70d13e772eab6061d3c5e2ed896bf",
+      "matches_pause": true,
+      "size": 1000
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/AGENTS.md",
+      "exists": true,
+      "sha256": "5603d6516f79946f490eb815a65081f06774cac41c03d360ece7c8728542e6ea",
+      "expected_sha256": "5603d6516f79946f490eb815a65081f06774cac41c03d360ece7c8728542e6ea",
+      "matches_pause": true,
+      "size": 32664
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_front_block.json",
+      "exists": true,
+      "sha256": "1f756d4ed70fdcba2766eaabaf5e7edc8ada428e34537f6140b303df0ec06ecd",
+      "expected_sha256": "1f756d4ed70fdcba2766eaabaf5e7edc8ada428e34537f6140b303df0ec06ecd",
+      "matches_pause": true,
+      "size": 5839
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_1.json",
+      "exists": true,
+      "sha256": "add9f7b75d8f90f597662bbdc0bc884071beeaecd0ada7afa7b9e53dff8c07dc",
+      "expected_sha256": "add9f7b75d8f90f597662bbdc0bc884071beeaecd0ada7afa7b9e53dff8c07dc",
+      "matches_pause": true,
+      "size": 10352
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_2.json",
+      "exists": true,
+      "sha256": "9dd9f8772ca8e9cb8b7660837e16da9638729dac9a3b035438d29c752f8eb1a8",
+      "expected_sha256": "9dd9f8772ca8e9cb8b7660837e16da9638729dac9a3b035438d29c752f8eb1a8",
+      "matches_pause": true,
+      "size": 7730
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_3.json",
+      "exists": true,
+      "sha256": "242c493e45bbc60e862e57c77a6f9fa910eff5b994d62fa605f68641e11bf937",
+      "expected_sha256": "242c493e45bbc60e862e57c77a6f9fa910eff5b994d62fa605f68641e11bf937",
+      "matches_pause": true,
+      "size": 5518
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_1.json",
+      "exists": true,
+      "sha256": "1cd6fa417aa1b02951f2063c0aa10a9c7ab6be8798311fcd04c093b7fc112ea6",
+      "expected_sha256": "1cd6fa417aa1b02951f2063c0aa10a9c7ab6be8798311fcd04c093b7fc112ea6",
+      "matches_pause": true,
+      "size": 4577
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_2.json",
+      "exists": true,
+      "sha256": "8aa97fdce588abc59674b29c7704b7b818d3b9e50c99c3a8d94cd23320fb7d22",
+      "expected_sha256": "8aa97fdce588abc59674b29c7704b7b818d3b9e50c99c3a8d94cd23320fb7d22",
+      "matches_pause": true,
+      "size": 3657
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_3.json",
+      "exists": true,
+      "sha256": "daddc1cbeffee656d3aa137b0c16b5e541a96e294372ced36c6823341054899e",
+      "expected_sha256": "daddc1cbeffee656d3aa137b0c16b5e541a96e294372ced36c6823341054899e",
+      "matches_pause": true,
+      "size": 4500
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_4.json",
+      "exists": true,
+      "sha256": "c0648f5efa75655c2570ee92bf66ee34146b08b39a05eb9f6ebd82d1702632fd",
+      "expected_sha256": "c0648f5efa75655c2570ee92bf66ee34146b08b39a05eb9f6ebd82d1702632fd",
+      "matches_pause": true,
+      "size": 4903
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_5.json",
+      "exists": true,
+      "sha256": "91e8e092663ceb30595f52ac96f43444c974861b5373689ba105896bb9bfd273",
+      "expected_sha256": "91e8e092663ceb30595f52ac96f43444c974861b5373689ba105896bb9bfd273",
+      "matches_pause": true,
+      "size": 3906
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_6.json",
+      "exists": true,
+      "sha256": "f0bbcc53bd15a3297fb05361463fb9972bfc381ce48139b819b9c16fa6cae287",
+      "expected_sha256": "f0bbcc53bd15a3297fb05361463fb9972bfc381ce48139b819b9c16fa6cae287",
+      "matches_pause": true,
+      "size": 3105
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_7.json",
+      "exists": true,
+      "sha256": "99e8fb12b99057a5646537e671ee51ab606b94c9b96cd93261aa8554545baa22",
+      "expected_sha256": "99e8fb12b99057a5646537e671ee51ab606b94c9b96cd93261aa8554545baa22",
+      "matches_pause": true,
+      "size": 3184
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_8.json",
+      "exists": true,
+      "sha256": "961900787315f12255425b953b824535ca181c4fd9b653f0ffb2a31dc72437fe",
+      "expected_sha256": "961900787315f12255425b953b824535ca181c4fd9b653f0ffb2a31dc72437fe",
+      "matches_pause": true,
+      "size": 3700
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_front_block.json",
+      "exists": true,
+      "sha256": "dd3e2df2725645af21d7e68b19575ddefb1ffdf09e01b6a420c991c01edb9e1a",
+      "expected_sha256": "dd3e2df2725645af21d7e68b19575ddefb1ffdf09e01b6a420c991c01edb9e1a",
+      "matches_pause": true,
+      "size": 2207
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_1_1.json",
+      "exists": true,
+      "sha256": "3a893a475a5218837add257578529d1ad682701fd107677cf56c58bbe01b5643",
+      "expected_sha256": "3a893a475a5218837add257578529d1ad682701fd107677cf56c58bbe01b5643",
+      "matches_pause": true,
+      "size": 2276
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_1_2.json",
+      "exists": true,
+      "sha256": "ef498fba7f378fe3edee7a69b26bae1242cc12711d1d3dd8955f1f370fa2f45c",
+      "expected_sha256": "ef498fba7f378fe3edee7a69b26bae1242cc12711d1d3dd8955f1f370fa2f45c",
+      "matches_pause": true,
+      "size": 2744
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_1_3.json",
+      "exists": true,
+      "sha256": "629020253c54381aadd4849f9c04bd4de14057ce53217aec8793dddc2fc268ca",
+      "expected_sha256": "629020253c54381aadd4849f9c04bd4de14057ce53217aec8793dddc2fc268ca",
+      "matches_pause": true,
+      "size": 2058
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_1.json",
+      "exists": true,
+      "sha256": "fba94d6a62ca6e157616a730b953b91c19fd7def1954b6a6e8438e8f013aacb4",
+      "expected_sha256": "fba94d6a62ca6e157616a730b953b91c19fd7def1954b6a6e8438e8f013aacb4",
+      "matches_pause": true,
+      "size": 1843
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_2.json",
+      "exists": true,
+      "sha256": "df3534b26b4f9715a4e04840dfea64c8f3d10aa190aa4f521cac5ca2a21a7a46",
+      "expected_sha256": "df3534b26b4f9715a4e04840dfea64c8f3d10aa190aa4f521cac5ca2a21a7a46",
+      "matches_pause": true,
+      "size": 1847
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_3.json",
+      "exists": true,
+      "sha256": "0e5851d8a6be13812547059b8d9ad4b98b8409e9cde04874051905519242fdf7",
+      "expected_sha256": "0e5851d8a6be13812547059b8d9ad4b98b8409e9cde04874051905519242fdf7",
+      "matches_pause": true,
+      "size": 1816
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_4.json",
+      "exists": true,
+      "sha256": "0412f074eff1de2b148342e2b8585979df0df960cf7cf07b318c6f1c6bf34ef1",
+      "expected_sha256": "0412f074eff1de2b148342e2b8585979df0df960cf7cf07b318c6f1c6bf34ef1",
+      "matches_pause": true,
+      "size": 1940
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_5.json",
+      "exists": true,
+      "sha256": "e7a02c657d5a155f0d95513ac04c98f20f59066efc91450f30fe168a6bacb318",
+      "expected_sha256": "e7a02c657d5a155f0d95513ac04c98f20f59066efc91450f30fe168a6bacb318",
+      "matches_pause": true,
+      "size": 1944
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_6.json",
+      "exists": true,
+      "sha256": "a5e7dac9c51d1665d5331814e55f08643a475f5883c15da5d8de647ae63822c0",
+      "expected_sha256": "a5e7dac9c51d1665d5331814e55f08643a475f5883c15da5d8de647ae63822c0",
+      "matches_pause": true,
+      "size": 1804
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_7.json",
+      "exists": true,
+      "sha256": "2336e00c542fe3e854c4d2a57b93eee35296450a4e3bcca93c64e8ab698c6e7b",
+      "expected_sha256": "2336e00c542fe3e854c4d2a57b93eee35296450a4e3bcca93c64e8ab698c6e7b",
+      "matches_pause": true,
+      "size": 1788
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_front_8.json",
+      "exists": true,
+      "sha256": "285146050f71b0c7a8c0adbf7f57cd41b4570fd6be696f9b6afff1a7f553e02a",
+      "expected_sha256": "285146050f71b0c7a8c0adbf7f57cd41b4570fd6be696f9b6afff1a7f553e02a",
+      "matches_pause": true,
+      "size": 1781
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/node_tree.json",
+      "exists": true,
+      "sha256": "14719435e3e10775c4916d4b494403357c28be349ab7261a4638dd5e12f8954d",
+      "expected_sha256": "14719435e3e10775c4916d4b494403357c28be349ab7261a4638dd5e12f8954d",
+      "matches_pause": true,
+      "size": 232536
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/template.json",
+      "exists": true,
+      "sha256": "6edbc84ee77031c0927a3db55a2a4d1799a194d3bd7a5bd5b36df070c2e879d1",
+      "expected_sha256": "6edbc84ee77031c0927a3db55a2a4d1799a194d3bd7a5bd5b36df070c2e879d1",
+      "matches_pause": true,
+      "size": 7422
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/config/medical_writing/protocol_v3/templates/tp_ma_07_v2/v1_to_v2_mapping.json",
+      "exists": true,
+      "sha256": "b34b9a5bd35695696392b56713a21419d6bb32824d89c10341afd50e773c1129",
+      "expected_sha256": "b34b9a5bd35695696392b56713a21419d6bb32824d89c10341afd50e773c1129",
+      "matches_pause": true,
+      "size": 255831
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_batch1_20260906_context.md",
+      "exists": true,
+      "sha256": "44099092fc9d089f4e89b55f6b767f5c736555b51921bc1dfb8f8e9d14123b0d",
+      "expected_sha256": "44099092fc9d089f4e89b55f6b767f5c736555b51921bc1dfb8f8e9d14123b0d",
+      "matches_pause": true,
+      "size": 5955
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_batch1_repair_20260908.md",
+      "exists": true,
+      "sha256": "4b666ae340ef273ea53e7ea72acc1fdbb69ea4227249cf4c1afd771778453cae",
+      "expected_sha256": "4b666ae340ef273ea53e7ea72acc1fdbb69ea4227249cf4c1afd771778453cae",
+      "matches_pause": true,
+      "size": 5787
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_batch2_20260908_context.md",
+      "exists": true,
+      "sha256": "39963a7f8d19a30800efa60c3f5a19c43e06b792f6650235633b9a519978e9f7",
+      "expected_sha256": "39963a7f8d19a30800efa60c3f5a19c43e06b792f6650235633b9a519978e9f7",
+      "matches_pause": true,
+      "size": 6017
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_core_fresh_20260906_conference_context.md",
+      "exists": true,
+      "sha256": "4f4f7d0af52ae093373e46558e4c9efc4935040706f49df72fdbc40d3d435c4e",
+      "expected_sha256": "4f4f7d0af52ae093373e46558e4c9efc4935040706f49df72fdbc40d3d435c4e",
+      "matches_pause": true,
+      "size": 9515
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_core_fresh_20260906_general_single_object_route_manifest.json",
+      "exists": true,
+      "sha256": "2d4473c89edc12fe354ad6af16cf4668662cb1787df6abc80c9dcee46471ecfe",
+      "expected_sha256": "2d4473c89edc12fe354ad6af16cf4668662cb1787df6abc80c9dcee46471ecfe",
+      "matches_pause": true,
+      "size": 2673
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_registry_core_20260906_execution_context.md",
+      "exists": true,
+      "sha256": "e6a3a9a40ff4d8a265aeea4329da6c0b0b1e1aa147253d4015f59f159a04d411",
+      "expected_sha256": "e6a3a9a40ff4d8a265aeea4329da6c0b0b1e1aa147253d4015f59f159a04d411",
+      "matches_pause": true,
+      "size": 7640
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/context/mw_protocol_v3_3r3_registry_core_20260906_execution_route_manifest.json",
+      "exists": true,
+      "sha256": "936930cb201c129eac088f85e914a1944c39519d0ce8cb0127d8bff78b45dad3",
+      "expected_sha256": "936930cb201c129eac088f85e914a1944c39519d0ce8cb0127d8bff78b45dad3",
+      "matches_pause": true,
+      "size": 2740
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/packages/contracts/workbench_contracts/protocol_v3.py",
+      "exists": true,
+      "sha256": "b76a048ff1f50cb89ea0504819281e7ef0d0f6f481c73496d577b2cb7ba0f2e9",
+      "expected_sha256": "b76a048ff1f50cb89ea0504819281e7ef0d0f6f481c73496d577b2cb7ba0f2e9",
+      "matches_pause": true,
+      "size": 59564
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/plans/mw_protocol_v3_execution_tracking_20260905.md",
+      "exists": true,
+      "sha256": "966446efd806b16750b114af988f11437aac5da3b2978e98e3b4dcf313c92322",
+      "expected_sha256": "966446efd806b16750b114af988f11437aac5da3b2978e98e3b4dcf313c92322",
+      "matches_pause": true,
+      "size": 5958
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/plans/mw_protocol_v3_review_amendment_20260905.md",
+      "exists": true,
+      "sha256": "e7cfe1244ed2aa5477c475a821cfa73325fcbd1a6eebef929d7c54abc49365e1",
+      "expected_sha256": "e7cfe1244ed2aa5477c475a821cfa73325fcbd1a6eebef929d7c54abc49365e1",
+      "matches_pause": true,
+      "size": 31398
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/zcode_mw_protocol_v3_3r3_batch1_20260906.md",
+      "exists": true,
+      "sha256": "9144774c8783cf97bc03965b2b638c0731f86408214d12cebea3d6bac6503da4",
+      "expected_sha256": "9144774c8783cf97bc03965b2b638c0731f86408214d12cebea3d6bac6503da4",
+      "matches_pause": true,
+      "size": 1994
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/zcode_mw_protocol_v3_3r3_batch1_repair_20260908.md",
+      "exists": true,
+      "sha256": "f846db5d151b8140b743a2e452d67df5574bf1447899fd3df93efe81f8795dc8",
+      "expected_sha256": "f846db5d151b8140b743a2e452d67df5574bf1447899fd3df93efe81f8795dc8",
+      "matches_pause": true,
+      "size": 1035
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/zcode_mw_protocol_v3_3r3_batch2_20260908.md",
+      "exists": true,
+      "sha256": "f7dff348a3320a73f34b9f86c34d2d768c67dc079af9b86996014d5edbbd668b",
+      "expected_sha256": "f7dff348a3320a73f34b9f86c34d2d768c67dc079af9b86996014d5edbbd668b",
+      "matches_pause": true,
+      "size": 1994
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_additional_m11_anchors_20260906.md",
+      "exists": true,
+      "sha256": "b54e882f9ad299d5329bc15dd95d85e2adc93d70f535a973f0be235099865470",
+      "expected_sha256": "b54e882f9ad299d5329bc15dd95d85e2adc93d70f535a973f0be235099865470",
+      "matches_pause": true,
+      "size": 1988
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch1_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "2ca02a0c88e881fcaa4056719d9a88a9d44b03e1dbfbe112f57020067287ad75",
+      "expected_sha256": "2ca02a0c88e881fcaa4056719d9a88a9d44b03e1dbfbe112f57020067287ad75",
+      "matches_pause": true,
+      "size": 6810
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch2_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "e4a51c7b347792ab606a93951f266c7fef7043cfedbb7d34f60202d580edb7d2",
+      "expected_sha256": "e4a51c7b347792ab606a93951f266c7fef7043cfedbb7d34f60202d580edb7d2",
+      "matches_pause": true,
+      "size": 7765
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch3_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "bac65114d22b17fafb21fcba7a44fd99c2f3c5c7a4caf7ae5e10c77a003af97c",
+      "expected_sha256": "bac65114d22b17fafb21fcba7a44fd99c2f3c5c7a4caf7ae5e10c77a003af97c",
+      "matches_pause": true,
+      "size": 6163
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch4_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "7b85653b7af3f5a7f5cef672add7fb4af7372a91bdeb5677e432a1888a8e4950",
+      "expected_sha256": "7b85653b7af3f5a7f5cef672add7fb4af7372a91bdeb5677e432a1888a8e4950",
+      "matches_pause": true,
+      "size": 4255
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch5_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "4fc3b9483d75b3c18fae83782188cfddd0e8c8f0d31a341bbb192b42eba14edc",
+      "expected_sha256": "4fc3b9483d75b3c18fae83782188cfddd0e8c8f0d31a341bbb192b42eba14edc",
+      "matches_pause": true,
+      "size": 7167
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch6_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "10b38a0b0b25c66c2eca5fb51359f305fa0b969999b5b77ba4f0e6cb5f2e4c4c",
+      "expected_sha256": "10b38a0b0b25c66c2eca5fb51359f305fa0b969999b5b77ba4f0e6cb5f2e4c4c",
+      "matches_pause": true,
+      "size": 3554
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch7_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "64709355fa18df11528cb9430fc88064cb50ebefdbcd5fac38e77e3c6b9468ce",
+      "expected_sha256": "64709355fa18df11528cb9430fc88064cb50ebefdbcd5fac38e77e3c6b9468ce",
+      "matches_pause": true,
+      "size": 3001
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch8_content_spec_20260906.md",
+      "exists": true,
+      "sha256": "4b9cdc64b4fb4f5bb537c567b856e15a34b35d3a37e52122fa02dba26f25fdfc",
+      "expected_sha256": "4b9cdc64b4fb4f5bb537c567b856e15a34b35d3a37e52122fa02dba26f25fdfc",
+      "matches_pause": true,
+      "size": 2987
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_batch_coverage_reconciliation_20260906.md",
+      "exists": true,
+      "sha256": "d6e03d0372be05b18bba52c428b74bfe93d195118a99626a59bfb920677f47ba",
+      "expected_sha256": "d6e03d0372be05b18bba52c428b74bfe93d195118a99626a59bfb920677f47ba",
+      "matches_pause": true,
+      "size": 2452
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_core_acceptance_20260906.md",
+      "exists": true,
+      "sha256": "c3cfa10e7d155eef46b089eda227c5b40d43796a18d83171e3f7cb863103fb14",
+      "expected_sha256": "c3cfa10e7d155eef46b089eda227c5b40d43796a18d83171e3f7cb863103fb14",
+      "matches_pause": true,
+      "size": 3455
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_diagram_reference_check_20260906.md",
+      "exists": true,
+      "sha256": "bd575f07cf66c16650f75c9318f5508e709e10e100f66680998fd5258e3963f1",
+      "expected_sha256": "bd575f07cf66c16650f75c9318f5508e709e10e100f66680998fd5258e3963f1",
+      "matches_pause": true,
+      "size": 1627
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_3r3_source_preparation_20260906.md",
+      "exists": true,
+      "sha256": "debb568021056a75c5ac3178d523e53b2f896e379c33459cf51f4a687382543c",
+      "expected_sha256": "debb568021056a75c5ac3178d523e53b2f896e379c33459cf51f4a687382543c",
+      "matches_pause": true,
+      "size": 4797
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_gcp2026_source_check_20260908.md",
+      "exists": true,
+      "sha256": "4af5552764961592465c2431f030bb4d972d92ce648ed4630a438ca8c6cfdb20",
+      "expected_sha256": "4af5552764961592465c2431f030bb4d972d92ce648ed4630a438ca8c6cfdb20",
+      "matches_pause": true,
+      "size": 1705
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/reviews/mw_protocol_v3_registration_field_check_20260908.md",
+      "exists": true,
+      "sha256": "e1d4538771d205f8b1e81c30c984b199df4bc9a40f49ba213283203e61876057",
+      "expected_sha256": "e1d4538771d205f8b1e81c30c984b199df4bc9a40f49ba213283203e61876057",
+      "matches_pause": true,
+      "size": 1189
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_batch_assembly.py",
+      "exists": true,
+      "sha256": "f96235a23f5b4f59a0e815c0603f6b4ad27e22dde64de53db764d96194d3feab",
+      "expected_sha256": "f96235a23f5b4f59a0e815c0603f6b4ad27e22dde64de53db764d96194d3feab",
+      "matches_pause": true,
+      "size": 2330
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_batch_content.py",
+      "exists": true,
+      "sha256": "96ac947df7763a78ae187ce11d0512470b1c85c19762fde463223321129bc5b8",
+      "expected_sha256": "96ac947df7763a78ae187ce11d0512470b1c85c19762fde463223321129bc5b8",
+      "matches_pause": true,
+      "size": 3301
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_multi_batch.py",
+      "exists": true,
+      "sha256": "9a42f6e89b088b75b0471a85d696aba37a85f5bcfd724e5082c01ae68695f058",
+      "expected_sha256": "9a42f6e89b088b75b0471a85d696aba37a85f5bcfd724e5082c01ae68695f058",
+      "matches_pause": true,
+      "size": 2715
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_repair_20260908/assembled_batch1_registry.json",
+      "exists": true,
+      "sha256": "f378a6501290e40fda4bb0be1ee2400ecf7d8c8d8e6a8e1bc6986acdaa6b1280",
+      "expected_sha256": "f378a6501290e40fda4bb0be1ee2400ecf7d8c8d8e6a8e1bc6986acdaa6b1280",
+      "matches_pause": true,
+      "size": 218506
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_repair_20260908/lint_full.txt",
+      "exists": true,
+      "sha256": "bca9ba3cb3a3a6cfc979e66db7f6c86661f69e2ef5c066d0b2203e7499cc9b9f",
+      "expected_sha256": "bca9ba3cb3a3a6cfc979e66db7f6c86661f69e2ef5c066d0b2203e7499cc9b9f",
+      "matches_pause": true,
+      "size": 14699
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_repair_20260908/lint_partial.txt",
+      "exists": true,
+      "sha256": "5352d91d4d2ff2bc6af18a2c8022ffae355809fa92b375d69d00132b74b9aae5",
+      "expected_sha256": "5352d91d4d2ff2bc6af18a2c8022ffae355809fa92b375d69d00132b74b9aae5",
+      "matches_pause": true,
+      "size": 1537
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r3_batch1_repair_20260908/lint_partial_fixtures.txt",
+      "exists": true,
+      "sha256": "2f601398c4d39c270814055add714f908f1725a46751c3561ad87718dd8d32a8",
+      "expected_sha256": "2f601398c4d39c270814055add714f908f1725a46751c3561ad87718dd8d32a8",
+      "matches_pause": true,
+      "size": 83896
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/assemble_chapter_registry.py",
+      "exists": true,
+      "sha256": "3c96750782c68a1473715388a33f845c33b250cf04ab200e46187c99984c2b63",
+      "expected_sha256": "3c96750782c68a1473715388a33f845c33b250cf04ab200e46187c99984c2b63",
+      "matches_pause": true,
+      "size": 8182
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/lint_chapter_registry.py",
+      "exists": true,
+      "sha256": "348abbd00a047097eaab20310fa2d6c4bf19030cc94801c089b0ae308887b353",
+      "expected_sha256": "348abbd00a047097eaab20310fa2d6c4bf19030cc94801c089b0ae308887b353",
+      "matches_pause": true,
+      "size": 5111
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/chapters.py",
+      "exists": true,
+      "sha256": "9297ed918d402a46ce47cc2ad15e80dda7ab8cf07a38632ecef4049eb9f1b739",
+      "expected_sha256": "9297ed918d402a46ce47cc2ad15e80dda7ab8cf07a38632ecef4049eb9f1b739",
+      "matches_pause": true,
+      "size": 57575
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch1.json",
+      "exists": true,
+      "sha256": "bafa03e19765408c4d7aa74d51eb8bd697dd1840c1e1d48dc4a287ebbfee8cfa",
+      "expected_sha256": "bafa03e19765408c4d7aa74d51eb8bd697dd1840c1e1d48dc4a287ebbfee8cfa",
+      "matches_pause": true,
+      "size": 102073
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_chapter_batch1.py",
+      "exists": true,
+      "sha256": "f04564b29ab7ef79941dfd567f5e6b62d1960594777e87e5d530f6e17d21612b",
+      "expected_sha256": "f04564b29ab7ef79941dfd567f5e6b62d1960594777e87e5d530f6e17d21612b",
+      "matches_pause": true,
+      "size": 27220
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/MW_PROTOCOL_V3_3R3_NO_LOSS_PAUSE_20260908_0934.md",
+      "exists": true,
+      "sha256": "6e4d8054ba739d3208b670ca69e03b9c07a3555c611cbb0439052cb03945b145",
+      "expected_sha256": "6e4d8054ba739d3208b670ca69e03b9c07a3555c611cbb0439052cb03945b145",
+      "matches_pause": true,
+      "size": 6929
+    }
+  ],
+  "authority_checks": [
+    {
+      "path": "/Users/smkzw/.codex/AGENTS.md",
+      "exists": true,
+      "sha256": "e01f795dcdf886743fe6ab7140ff3740654b8eb5eff16281dc6136414bf691b7",
+      "expected_sha256": "e01f795dcdf886743fe6ab7140ff3740654b8eb5eff16281dc6136414bf691b7",
+      "matches_pause": true,
+      "size": 12641
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/AGENTS.md",
+      "exists": true,
+      "sha256": "5603d6516f79946f490eb815a65081f06774cac41c03d360ece7c8728542e6ea",
+      "expected_sha256": "5603d6516f79946f490eb815a65081f06774cac41c03d360ece7c8728542e6ea",
+      "matches_pause": true,
+      "size": 32664
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.hermes/plans/2026-08-09_020923-mw-protocol-multi-agent-rearchitecture.md",
+      "exists": true,
+      "sha256": "fa99fbd38588a5d3a8f35d3936c3e84c26cfd4a9eea58d8aa739e93363d54914",
+      "expected_sha256": "fa99fbd38588a5d3a8f35d3936c3e84c26cfd4a9eea58d8aa739e93363d54914",
+      "matches_pause": true,
+      "size": 104386
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/plan-upgrade-20260905/mw_protocol_v3_design_v1.3_20260905.md",
+      "exists": true,
+      "sha256": "d97a0d3de6f4a5cf3ed9b8c17d43e35895c04910605605be9f668aba0f80efc5",
+      "expected_sha256": "d97a0d3de6f4a5cf3ed9b8c17d43e35895c04910605605be9f668aba0f80efc5",
+      "matches_pause": true,
+      "size": 16023
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/plan-upgrade-20260905/mw_protocol_v3_execution_handoff_20260905.md",
+      "exists": true,
+      "sha256": "ab5136d65bedf28f81d6c64405f71130986fa415f0e1dbc7b7e7b793a149e200",
+      "expected_sha256": "ab5136d65bedf28f81d6c64405f71130986fa415f0e1dbc7b7e7b793a149e200",
+      "matches_pause": true,
+      "size": 7912
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/plan-upgrade-20260905/mw_protocol_v3_implementation_plan_v2_20260905.md",
+      "exists": true,
+      "sha256": "040eb6ad323047737e8be6a3a23344fdb719dc85230ef7994b96c9af29257607",
+      "expected_sha256": "040eb6ad323047737e8be6a3a23344fdb719dc85230ef7994b96c9af29257607",
+      "matches_pause": true,
+      "size": 33356
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07 临床试验方案（2期或3期）_清洁版_v2.0_20260905.docx",
+      "exists": true,
+      "sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+      "expected_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+      "matches_pause": true,
+      "size": 365455
+    }
+  ],
+  "raw_log_checks": [
+    {
+      "path": "/Users/smkzw/.zcode/cli/rollout/model-io-sess_b91d51c2-ce9c-48fe-9add-59201fcf8927.jsonl",
+      "exists": false,
+      "sha256": null,
+      "expected_sha256": "17d759454594d97fe4435469d2a7bdbdad7f3edf8b1b026d4d3afe4558add5a2",
+      "matches_pause": false,
+      "size": null
+    },
+    {
+      "path": "/Users/smkzw/.zcode/cli/rollout/model-io-sess_4df83643-16c7-405c-af7a-1ab779584ad3.jsonl",
+      "exists": false,
+      "sha256": null,
+      "expected_sha256": "140e7f3e8ddc312d7472a45e7f9a0ec1cfbad1f8a8e35b1955407adb4401d0dc",
+      "matches_pause": false,
+      "size": null
+    }
+  ],
+  "final_runner_reports_present": {
+    "runs/zcode_mw_protocol_v3_3r3_batch1_repair_20260908.md": false,
+    "runs/zcode_mw_protocol_v3_3r3_batch2_20260908.md": false
+  },
+  "chapter_contract_count": 12,
+  "chapter_skill_count": 12,
+  "fixture_shape": [
+    "schema_version",
+    "generated_for",
+    "authority",
+    "template_id",
+    "template_sha256",
+    "fact_vocabulary",
+    "claim_vocabulary",
+    "coverage_roles",
+    "fixtures"
+  ],
+  "batch1_fixture_count": 52,
+  "batch2_fixture_present": false,
+  "tasks": [
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/00-bootstrap-guidelines/task.json",
+      "status": "in_progress",
+      "meta": {}
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-1r2/task.json",
+      "status": "in_progress",
+      "meta": {
+        "plan_task": "1R.2",
+        "functional_review": "verified",
+        "full_repository_reconciliation": "open_before_P1R-G1",
+        "successor_1r3_authorized": true
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-1r3/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "1R.3"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-1r4/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "1R.4"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-1r6/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "1R.6"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-2r1/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "2R.1"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-05-protocol-v3-p1r-integration/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "P1R-G1"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r1/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "3R.1"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r2/task.json",
+      "status": "completed",
+      "meta": {
+        "plan_task": "3R.2"
+      }
+    },
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-06-protocol-v3-3r3/task.json",
+      "status": "in_progress",
+      "meta": {
+        "plan_task": "3R.3",
+        "user_paused": true,
+        "pause_record": "runs/MW_PROTOCOL_V3_3R3_NO_LOSS_PAUSE_20260908_0934.md"
+      }
+    }
+  ],
+  "limitations": [
+    "Pause snapshot covers selected files, not the entire repository or every external document.",
+    "Historical test totals are not rerun results for 2026-09-11.",
+    "Raw private logs are only hashed in place; their contents are not copied."
+  ]
+}

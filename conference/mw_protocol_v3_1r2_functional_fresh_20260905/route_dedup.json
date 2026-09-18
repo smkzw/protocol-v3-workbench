@@ -1,0 +1,102 @@
+{
+  "policy": "execution-used-provider-model-nodes-are-excluded-from-conference",
+  "linked_execution_task_id": "mw_protocol_v3_1r2_mount_20260905",
+  "linked": true,
+  "execution_evidence": [
+    "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/logs/execution/mw_protocol_v3_1r2_mount_20260905/worker_01_stdout.txt"
+  ],
+  "excluded_route_nodes": [
+    {
+      "agent": "pi",
+      "provider": "opencode-go",
+      "model": "muse-spark-1.3-contributor",
+      "source": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/logs/execution/mw_protocol_v3_1r2_mount_20260905/worker_01_stdout.txt",
+      "reason": "effective execution route"
+    }
+  ],
+  "effective_conference_roles": {
+    "general_single_object": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "default_provider": "grok-build",
+      "default_model": "grok-4.6",
+      "default_effort": "high",
+      "escalate_provider": "grok-build",
+      "escalate_model": "grok-4.6",
+      "escalate_effort": "high",
+      "primary": {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "default",
+          "effort": "",
+          "dynamic_model": true
+        },
+        {
+          "agent": "pi",
+          "provider": "cms-router",
+          "model": "cms-model",
+          "effort": "high",
+          "dynamic_model": true
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "grok/grok-build/grok-4.6:high -> pi/cursor/default -> pi/cms-router/cms-model:high -> codex-subagent/codex/gpt-5.6-sol:medium",
+      "node_id": "C01",
+      "role": "独立代码设计审阅",
+      "fallback_only": true,
+      "no_manager": true,
+      "tools_enabled": true,
+      "skills_enabled": false,
+      "schedule": {
+        "policy": "beijing-daily-peak-off-peak-v3",
+        "timezone": "Asia/Shanghai",
+        "period": "peak",
+        "period_label": "高峰",
+        "peak_start": "12:00",
+        "peak_end": "19:00",
+        "days": "all",
+        "evaluated_at": "2026-09-05T17:39:21.605991+08:00"
+      },
+      "schedule_constraints": {
+        "policy": "beijing-provider-window-v1",
+        "evaluated_at": "2026-09-05T17:39:21.605991+08:00",
+        "cms_router_minimax_blocked": false,
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      },
+      "route_contract_frozen": true,
+      "deduplicated_against_execution": [
+        {
+          "provider": "opencode-go",
+          "model": "muse-spark-1.3-contributor"
+        }
+      ]
+    }
+  },
+  "schedule": {
+    "policy": "beijing-daily-peak-off-peak-v3",
+    "timezone": "Asia/Shanghai",
+    "period": "peak",
+    "period_label": "高峰",
+    "peak_start": "12:00",
+    "peak_end": "19:00",
+    "days": "all",
+    "evaluated_at": "2026-09-05T17:39:21.605991+08:00"
+  },
+  "generated_at": "2026-09-05 17:39:21 CST"
+}

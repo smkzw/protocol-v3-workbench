@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "policy": "beijing-daily-peak-off-peak-v3",
+  "timezone": "Asia/Shanghai",
+  "peak_start": "12:00",
+  "peak_end": "19:00",
+  "days": "all",
+  "period_labels": {
+    "peak": "高峰",
+    "off_peak": "非高峰"
+  },
+  "packet_period": "peak",
+  "packet_evaluated_at": "2026-09-05T18:19:55.360860+08:00",
+  "variants": {
+    "peak": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "default_provider": "grok-build",
+      "default_model": "grok-4.6",
+      "default_effort": "high",
+      "escalate_provider": "grok-build",
+      "escalate_model": "grok-4.6",
+      "escalate_effort": "high",
+      "primary": {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "default",
+          "effort": "",
+          "dynamic_model": true
+        },
+        {
+          "agent": "pi",
+          "provider": "cms-router",
+          "model": "cms-model",
+          "effort": "high",
+          "dynamic_model": true
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "grok/grok-build/grok-4.6:high -> pi/cursor/default -> pi/cms-router/cms-model:high -> codex-subagent/codex/gpt-5.6-sol:medium",
+      "route_contract_frozen": true,
+      "deduplicated_against_execution": [
+        {
+          "provider": "opencode-go",
+          "model": "muse-spark-1.3-contributor"
+        }
+      ]
+    },
+    "off_peak": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max",
+      "default_provider": "zcode",
+      "default_model": "GLM-5.3-Flash",
+      "default_effort": "max",
+      "escalate_provider": "zcode",
+      "escalate_model": "GLM-5.3-Flash",
+      "escalate_effort": "max",
+      "primary": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "codebuddy",
+          "provider": "codebuddy-cli",
+          "model": "deepseek-v4-flash",
+          "effort": "max"
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "zcode/zcode/GLM-5.3-Flash:max -> pi/opencode-go/muse-spark-1.3-contributor:xhigh -> codebuddy/codebuddy-cli/deepseek-v4-flash:max -> codex-subagent/codex/gpt-5.6-sol:medium",
+      "route_contract_frozen": true,
+      "deduplicated_against_execution": [
+        {
+          "provider": "opencode-go",
+          "model": "muse-spark-1.3-contributor"
+        }
+      ]
+    }
+  }
+}

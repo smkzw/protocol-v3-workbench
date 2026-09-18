@@ -1,0 +1,75 @@
+{
+  "policy": "execution-used-route-identities-are-excluded-from-conference",
+  "linked_execution_task_id": "mw_protocol_v3_regimen_adoption_review_20260913",
+  "linked": false,
+  "execution_evidence": [],
+  "excluded_route_nodes": [],
+  "effective_conference_roles": {
+    "evidence_single_object": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "default_provider": "grok-build",
+      "default_model": "grok-4.6",
+      "default_effort": "high",
+      "escalate_provider": "grok-build",
+      "escalate_model": "grok-4.6",
+      "escalate_effort": "high",
+      "primary": {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-6-astra",
+          "effort": "low"
+        }
+      ],
+      "execution_route": "grok/grok-build/grok-4.6:high -> pi/cursor/cursor-grok-4.6:high -> codex-subagent/codex/gpt-6-astra:low",
+      "node_id": "C03",
+      "role": "重要证据审阅",
+      "fallback_only": true,
+      "tools_enabled": true,
+      "skills_enabled": true,
+      "schedule": {
+        "policy": "beijing-daily-peak-off-peak-v3",
+        "timezone": "Asia/Shanghai",
+        "period": "peak",
+        "period_label": "高峰",
+        "peak_start": "12:00",
+        "peak_end": "19:00",
+        "days": "all",
+        "evaluated_at": "2026-09-13T15:18:30.929347+08:00"
+      },
+      "schedule_constraints": {
+        "policy": "live-route-manifest-v1",
+        "evaluated_at": "2026-09-13T15:18:30.929347+08:00",
+        "explicit_route": false,
+        "events": [],
+        "route_rewritten": false
+      }
+    }
+  },
+  "schedule": {
+    "policy": "beijing-daily-peak-off-peak-v3",
+    "timezone": "Asia/Shanghai",
+    "period": "peak",
+    "period_label": "高峰",
+    "peak_start": "12:00",
+    "peak_end": "19:00",
+    "days": "all",
+    "evaluated_at": "2026-09-13T15:18:30.929347+08:00"
+  },
+  "generated_at": "2026-09-13 15:18:30 CST"
+}
