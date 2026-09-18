@@ -449,7 +449,9 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     {job?.complete_candidate && <p role="status">全部适用章节初稿已生成，可开始逐章阅读核对。</p>}
     {job?.complete_candidate && !savedDocument && <button type="button" className="kz-manuscript-primary"
       disabled={busy || !actorId} onClick={saveCompleteDraft}>{packet?.saveIntent ? '核对并完成原稿保存' : '保存完整初稿'}</button>}
-    {savedDocument && <p role="status">完整工作初稿已保存，第 {savedDocument.document.revision} 版。医学核对和正式导出验收尚未完成。</p>}
+    {savedDocument && <p role="status">完整工作初稿已保存，第 {savedDocument.document.revision} 版。
+      <a className="kz-manuscript-export" href={`/api/projects/${encodeURIComponent(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(studyDefinitionId)}/manuscript-draft/export/docx`}>导出Word工作稿</a>
+      （工作稿保留模板封面与页眉页脚；替换模板正文、去除示例文字的成品级导出在后续阶段）</p>}
     {savedDocument && savedDocument.study_binding_status !== 'current' && <p role="alert">研究信息已变化或暂不可读，这份已保存初稿尚未与当前研究重新核对。</p>}
     {savedDocument && packet?.saveConflict && <button type="button" disabled={busy}
       onClick={saveCompleteDraft}>将本次初稿另存为新版本（保留历史）</button>}

@@ -710,3 +710,22 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
   template-bound需revise=True；AI actor禁revise（改USER确认）
 - 整稿生成：run manuscript-draft:a02b2145… 已由ego浏览器点击启动（109章）
 - 测试：test_chapter_facts_derivation 3/3；前端12文件95测试全过；已提交 e0c7869+
+
+## 2026-09-19 07:50 整稿生成完成 + Word工作稿导出验收
+
+- 整稿：run a02b2145（ego点击启动）→ 114个chapter-draft流全部完成（约2.5小时，
+  真实deepseek/flash/max逐章生成）；UI状态「全部适用章节初稿已生成」
+- 保存：完整工作初稿已保存第1版（QC回执挂save）
+- 导出：新增 GET manuscript-draft/export/docx（documents.saved读取+render_manuscript_docx
+  +FileResponse，X-Document-Sha256/X-Output-Sha256头）；实测200、429KB、
+  Microsoft Word 2007+格式
+- 原生验收证据：LibreOffice无头转PDF 222页渲染成功（第N页/共222页页码域真实）；
+  macOS textutil原生解析383KB HTML正常；python-docx结构完好。
+  内容覆盖检查全过（合成药X/CRSwNP/主要目的/样本量/AE/伦理/NPS+VAS/双盲安慰剂/24周）
+- 诚实边界（7R.4剩余）：现导出=设计内"追加式工作稿"（模板前件/页眉页脚/示例文字保留，
+  模板占位(申办者名称/vX.X/XXXXXX)存在于页眉页脚与模板示例正文；222页含模板体+追加章节）。
+  零占位成品级导出（模板正文逐节替换）= 7R.4 producer productization，未冒称完成
+- 遗留：①Word GUI交互验收（AppleScript授权已给，Word被其他窗口占用未走完；
+  可由用户双击导出文件人工核验）②savedDocument不随刷新恢复（导出链接仅保存当轮可见）
+  ③受控编辑浏览器走查细节（端点/服务端逻辑已有测试）
+- 测试：test_chapter_facts_derivation 3/3；前端95/95

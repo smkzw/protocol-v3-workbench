@@ -29,6 +29,17 @@ class ManuscriptDocumentService:
             'expected_revision': document.revision if document else 0,
             'expected_document_sha256': document_revision_hash(document) if document else None}
 
+    def saved(self, project_id, study_id):
+        """Full current saved revision (semantic blocks included) or None."""
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            document = uow.semantic_document_repository.get_current(project_id, document_id)
+        if document is None:
+            return None
+        return {'document': document.model_dump(mode='json'),
+            'document_sha256': document_revision_hash(document),
+            'revision': document.revision}
+
     @staticmethod
     def _intent(project_id, study_id, run_id, intent):
         return hashlib.sha256(canonical_json([project_id, study_id, run_id, intent]).encode()).hexdigest()

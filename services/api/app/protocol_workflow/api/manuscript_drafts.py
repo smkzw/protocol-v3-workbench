@@ -144,6 +144,29 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         return {'status': 'started', 'gaps': len(gaps),
                 'batches_total': chapter_facts_deriver.progress['batches_total']}
 
+    @router.get('/export/docx')
+    def export_docx(project_id: str, study_definition_id: str):
+        """Render the saved working draft as an ordered DOCX on the clean template."""
+        from fastapi.responses import FileResponse
+        from app.protocol_workflow.agent3.word_export import render_manuscript_docx
+        from app.protocol_workflow.registries.template_runtime import default_template_root
+        import json as _json
+        import tempfile as _tempfile
+        from pathlib import Path as _Path
+        saved = documents.saved(project_id, study_definition_id)
+        if saved is None:
+            raise HTTPException(404, detail={'message': '尚未保存完整工作初稿，先完成保存再导出。'})
+        template_dir = default_template_root()
+        template_meta = _json.loads((template_dir / 'template.json').read_text(encoding='utf-8'))
+        template_path = template_meta['source']['path']
+        out_dir = _Path(_tempfile.gettempdir()) / 'mw_protocol_v3_exports'
+        out_dir.mkdir(parents=True, exist_ok=True)
+        output_path = out_dir / f'manuscript-{study_definition_id.replace(":", "-")}-rev{saved["revision"]}.docx'
+        result = render_manuscript_docx(template_path, template_dir, saved['document'], output_path)
+        return FileResponse(output_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            filename=output_path.name, headers={'X-Document-Sha256': result['document_sha256'],
+                'X-Output-Sha256': result['output_sha256'], 'X-Export-Scope': result['export_scope']})
+
     @router.get('/chapter-facts/derive')
     def chapter_facts_status(project_id: str, study_definition_id: str):
         progress = dict(chapter_facts_deriver.progress) if chapter_facts_deriver else None
