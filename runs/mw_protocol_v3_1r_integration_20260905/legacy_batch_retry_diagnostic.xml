@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.598" timestamp="2026-09-05T21:01:33.263107+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.test_document_pipeline_round8.BatchDocumentPipelineRound8Tests" name="test_real_persisted_batch_retry_recovers_source_and_siblings_once" time="2.111"><failure message="AssertionError: Items in the first set but not the second:&#10;'failed_retryable'&#10;Items in the second set but not the first:&#10;'candidate_ready'&#10;'fidelity_blocked' : [('deepseek-v4-flash', 1, 'wref_ulrun_745152a4ce4bc0ec1405cd17'), ('deepseek-v4-flash', 2, 'wref_ulrun_745152a4ce4bc0ec1405cd17'), ('deepseek-v4-pro', 1, 'wref_ulrun_f107667235e575130b7ae70b')]">tests/test_document_pipeline_round8.py:1797: in test_real_persisted_batch_retry_recovers_source_and_siblings_once
+    self.assertEqual(
+E   AssertionError: Items in the first set but not the second:
+E   'failed_retryable'
+E   Items in the second set but not the first:
+E   'candidate_ready'
+E   'fidelity_blocked' : [('deepseek-v4-flash', 1, 'wref_ulrun_745152a4ce4bc0ec1405cd17'), ('deepseek-v4-flash', 2, 'wref_ulrun_745152a4ce4bc0ec1405cd17'), ('deepseek-v4-pro', 1, 'wref_ulrun_f107667235e575130b7ae70b')]</failure></testcase></testsuite></testsuites>

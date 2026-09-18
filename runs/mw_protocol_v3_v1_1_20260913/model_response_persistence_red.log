@@ -1,0 +1,28 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[{"fields":{}}] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-612/test_response_bytes_and_work_r0')
+content = '{"fields":{}}'
+
+    @pytest.mark.parametrize('content', ['{"fields":{}}', '这次返回的不是JSON。'])
+    def test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store(tmp_path, content):
+>       from app.protocol_workflow.runtime.model_response import persist_model_response, read_model_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.runtime.model_response'
+
+tests/protocol_v3/test_model_response_persistence.py:12: ModuleNotFoundError
+_ test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[\u8fd9\u6b21\u8fd4\u56de\u7684\u4e0d\u662fJSON\u3002] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-612/test_response_bytes_and_work_r1')
+content = '这次返回的不是JSON。'
+
+    @pytest.mark.parametrize('content', ['{"fields":{}}', '这次返回的不是JSON。'])
+    def test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store(tmp_path, content):
+>       from app.protocol_workflow.runtime.model_response import persist_model_response, read_model_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.runtime.model_response'
+
+tests/protocol_v3/test_model_response_persistence.py:12: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_model_response_persistence.py::test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[{"fields":{}}]
+FAILED tests/protocol_v3/test_model_response_persistence.py::test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[\u8fd9\u6b21\u8fd4\u56de\u7684\u4e0d\u662fJSON\u3002]
+2 failed in 0.61s

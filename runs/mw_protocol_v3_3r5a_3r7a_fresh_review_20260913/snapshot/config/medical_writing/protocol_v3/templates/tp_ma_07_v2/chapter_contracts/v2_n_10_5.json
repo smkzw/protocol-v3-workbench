@@ -1,0 +1,208 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-5:v2",
+  "semantic_node_id": "v2_n_10_5",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-5:aesi",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-5:v2",
+    "chapter_contract_id": "contract:v2-n-10-5:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "aesi.definition",
+        "obligation": "required",
+        "rationale": "AESI 定义与选择必须产品特异性项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.aesi_definitions",
+        "obligation": "required",
+        "rationale": "必须复用 batch2 已确认的 AESI 定义事实（引用，不复制）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "aesi.thresholds",
+        "obligation": "required",
+        "rationale": "AESI 阈值必须产品特异性项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "aesi.monitoring_and_reporting",
+        "obligation": "required",
+        "rationale": "AESI 监测与报告动作必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "aesi.template_example_list",
+        "obligation": "forbidden",
+        "rationale": "aPTT/INR 3 级与 QTc 2 级仅为示例，不得作为默认 AESI 清单。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "aesi_definition",
+        "obligation": "required",
+        "rationale": "必须声明产品特异性 AESI 选择与定义。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "aesi_reporting_plan",
+        "obligation": "required",
+        "rationale": "必须声明 AESI 监测与报告计划。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "aesi_list_from_template_example",
+        "obligation": "forbidden",
+        "rationale": "不得把模板示例清单当作本项目 AESI 清单。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "aesi_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "aesi_reporting_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须给出产品特异性 AESI 选择、阈值与监测/报告动作。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "AESI 表必须逐行给出事件、阈值与监测动作。",
+        "required_object_cells": [
+          "aesi:cell:event",
+          "aesi:cell:threshold",
+          "aesi:cell:monitoring_action"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "AESI 为产品特异性项目事实集合（定义/阈值/监测与报告）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅列出模板示例项（如 aPTT/INR、QTc）而无产品特异性选择即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-5",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623387",
+      "_Toc46411104",
+      "_Toc48315540",
+      "_Toc90487635"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-5:product-specific",
+      "rule": "AESI 必须按产品风险项目化选择并给出阈值与监测/报告动作；aPTT/INR 3 级与 QTc 2 级仅为示例，不得作为默认 AESI 清单。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-5:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-2:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-5:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-5:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-5:product-specific",
+      "question": "AESI 与阈值是否产品特异性且可追溯？",
+      "linked_fact_paths": [
+        "aesi.definition",
+        "aesi.thresholds",
+        "picos.aesi_definitions"
+      ],
+      "linked_claim_types": [
+        "aesi_definition",
+        "aesi_reporting_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-5:product-specific"
+      ],
+      "risk_if_unmet": "模板清单直用会漏掉本品特异风险。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

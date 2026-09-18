@@ -1,0 +1,59 @@
+..F........                                                              [100%]
+=================================== FAILURES ===================================
+_ test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[\u65e0\u6cd5\u89e3\u6790\u7684\u56de\u590d-needs_information-True] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-622/test_complete_intake_reaches_m2')
+content = '无法解析的回复', expected = 'needs_information', correct = True
+
+    @pytest.mark.parametrize('content, expected, correct', [
+        (' {"fields":{}} ', 'needs_information', False),
+        ('无法解析的回复', 'needs_structure_correction', False),
+        ('无法解析的回复', 'needs_information', True),
+    ])
+    def test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen(tmp_path, content, expected, correct):
+        from app.protocol_workflow.agent1.seed_workflow import build_seed_runtime, seed_plan
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        opener = _FakeOpener([
+            _FakeResponse(_completion_body(content='probe')),
+            _FakeResponse(_completion_body(content=content)),
+            _FakeResponse(_completion_body(content='{"fields":{}}', response_id='corrected-response')),
+        ])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'product.sqlite')}
+        prepared = prepare_seed_request('完整资料' * 3000 + '最后一句必须保留', ())
+    
+        def runtime():
+            return build_seed_runtime(
+                project_id='seed-project', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=LocalArtifactStore(str(tmp_path / 'artifacts')), role_entry=role, skill=skill,
+                dispatcher=dispatcher, adapter_factory=lambda **kwargs: build_zhipu_api_adapter(
+                    credential_resolver=_resolver(), http_opener=opener, max_input_bytes=100_000, **kwargs),
+            )
+    
+        plan = seed_plan('seed-project', 'branch-main')
+        rt = runtime()
+        rt.start_run(plan, workflow_run_id='seed-run', root_inputs={'research_intake': prepared.to_payload()})
+        completed = rt.run_to_completion('seed-run')
+        assert completed.status.value == 'completed'
+        output = next(e.payload['output'] for e in rt.read_events('seed-run')
+                      if e.event_type == 'graph_node_result' and e.payload['node_id'] == 'seed-validate')
+        if correct:
+            from app.protocol_workflow.agent1.seed_workflow import seed_correction_inputs
+            from app.protocol_workflow.runtime.model_response import read_model_response
+            assert output['status'] == 'needs_structure_correction'
+            record = read_model_response(LocalArtifactStore(str(tmp_path / 'artifacts')), output['raw_response']['artifact_ref'])
+            corrected = seed_correction_inputs(prepared, record, output)
+            rt.start_run(seed_plan('seed-project', 'branch-main', correction=True),
+                         workflow_run_id='seed-run-correction', root_inputs=corrected)
+            rt.run_to_completion('seed-run-correction')
+>           output = next(e.payload['output'] for e in rt.read_events('seed-run-correction')
+                          if e.event_type == 'graph_node_result' and e.payload['node_id'] == 'seed-validate')
+E           StopIteration
+
+tests/protocol_v3/test_seed_workflow_integration.py:60: StopIteration
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_workflow_integration.py::test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[\u65e0\u6cd5\u89e3\u6790\u7684\u56de\u590d-needs_information-True]
+1 failed, 10 passed in 0.64s

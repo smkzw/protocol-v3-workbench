@@ -1,0 +1,114 @@
+{
+  "artifacts": {
+    "module": "services/api/app/protocol_workflow/registries/dependency_graph.py",
+    "tests": "tests/protocol_v3/test_dependency_graph.py"
+  },
+  "environment": {
+    "implementation": "CPython",
+    "offline": true,
+    "python": "3.12.13",
+    "venv_python": "runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python"
+  },
+  "identified_findings": [],
+  "impact_probes": {
+    "diagram.phase_arm_structure": {
+      "affected": 1,
+      "consistency": 0,
+      "direct": 1,
+      "impact_sha256": "ff59f4e8eeb3cc844bf30ec7f45784c0b536ae363bb1cf961d78991a6454419b",
+      "scheduling": 0,
+      "unindexed_fact_paths": []
+    },
+    "intervention.dose_regimen": {
+      "affected": 7,
+      "consistency": 1,
+      "direct": 1,
+      "impact_sha256": "86924fb4eb93308bfd73bac08f1f8bea68bb1cb6b8d774fc0e375163e9272393",
+      "scheduling": 5,
+      "unindexed_fact_paths": []
+    },
+    "picos.intervention_dose_regimen": {
+      "affected": 24,
+      "consistency": 17,
+      "direct": 1,
+      "impact_sha256": "43949d9c0e20f5daf27778d1171c8ff8ee1100d0e0a69b4207d0f8baa504b599",
+      "scheduling": 6,
+      "unindexed_fact_paths": []
+    },
+    "picos.primary_endpoint": {
+      "affected": 24,
+      "consistency": 14,
+      "direct": 4,
+      "impact_sha256": "ddd5f1940f1fd97f5a47eb003a6d1b23dfff12dbf2b6f4591afe5d9387571e1b",
+      "scheduling": 6,
+      "unindexed_fact_paths": []
+    },
+    "procedure.contact_visit_date": {
+      "affected": 1,
+      "consistency": 0,
+      "direct": 1,
+      "impact_sha256": "b0b19def2a06e6678712e2ccabf30bb6be86799ceb032438941b71ccb3ceb533",
+      "scheduling": 0,
+      "unindexed_fact_paths": []
+    },
+    "safety.central_lab_applicable": {
+      "affected": 1,
+      "consistency": 0,
+      "direct": 1,
+      "impact_sha256": "bc84093f31e8d89f8092ac057c7fc6deda27298b64f2df67ad6768dc4f717c6a",
+      "scheduling": 0,
+      "unindexed_fact_paths": []
+    },
+    "test.fact.not.in.the.registry": {
+      "affected": 0,
+      "consistency": 0,
+      "direct": 0,
+      "impact_sha256": "9082749968f9e5772a2b81c9917ea3a1fb1cb81f05885e9206742d6fb7431605",
+      "scheduling": 0,
+      "unindexed_fact_paths": [
+        "test.fact.not.in.the.registry"
+      ]
+    }
+  },
+  "input_registry": {
+    "node_count": 111,
+    "path": "runs/mw_protocol_v3_3r3_batch8_fresh_20260911/final_all8_assembled.json",
+    "projection_sha256": "73e42eb136e43fb867c178f41b98ecf26dfcd06237d600b20bb21a80bebd8147",
+    "registry_sha256": "4b9a54d5551b62f95fc6a76009980b0e7e1ac5bb6e10b5adc4f0d16ba78bfb00",
+    "template_id": "tp_ma_07_v2"
+  },
+  "not_claimed": [
+    "task closure or acceptance (owned by the dispatching main owner)",
+    "end-to-end document-edit impact pipeline (integration remains 6R)",
+    "medical adequacy of any chapter fact or contract"
+  ],
+  "pytest_diagnostics": {
+    "adjacent_result": "117 passed",
+    "adjacent_suites": "runs/mw_protocol_v3_3r4_20260912/adjacent_suites_3r4_pytest.xml",
+    "batch1_result": "17 passed",
+    "focused_result": "10 passed",
+    "green": "runs/mw_protocol_v3_3r4_20260912/green_3r4_dependency_graph_pytest.xml",
+    "green_batch1_regression": "runs/mw_protocol_v3_3r4_20260912/green_3r4_batch1_regression_pytest.xml",
+    "red": "runs/mw_protocol_v3_3r4_20260912/red_3r4_dependency_graph_pytest.xml"
+  },
+  "task": "mw_protocol_v3_3r4_dependency_graph_20260912",
+  "typed_edges": {
+    "consistency_components_2plus": 30,
+    "consistency_edges": 43,
+    "distinct_fact_paths_indexed": 724,
+    "edge_kinds": [
+      "consistency_impact",
+      "fact_membership",
+      "scheduling"
+    ],
+    "fact_membership_by_source": {
+      "conditional_trigger": 52,
+      "conditional_when_active": 80,
+      "fact_requirement": 759
+    },
+    "fact_membership_rows": 891,
+    "scheduling_dependent_carriers": 34,
+    "scheduling_edges": 41,
+    "topological_order_length": 111
+  }
+}

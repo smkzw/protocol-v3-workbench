@@ -1,0 +1,219 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-1-2:v2",
+  "semantic_node_id": "v2_n_10_1_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-1-2:ae-severity",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-1-2:v2",
+    "chapter_contract_id": "contract:v2-n-10-1-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.severity_scale_version",
+        "obligation": "required",
+        "rationale": "严重程度分级量表版本必须项目绑定（CTCAE 版本项目确认；模板 v5.0 仅为示例）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.severity_grading_definition",
+        "obligation": "required",
+        "rationale": "各级定义与分级规则必须完整。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.severity_seriousness_distinctness",
+        "obligation": "required",
+        "rationale": "严重程度（severity）与严重性（seriousness）必须明确区分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.template_example_ctcae_version",
+        "obligation": "forbidden",
+        "rationale": "模板示例 CTCAE 版本不得作为项目版本硬编码。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_severity_grading",
+        "obligation": "required",
+        "rationale": "必须声明严重程度分级与各级定义。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "severity_scale_standard",
+        "obligation": "required",
+        "rationale": "必须声明所选量表版本的适用依据。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "severity_equals_seriousness",
+        "obligation": "forbidden",
+        "rationale": "不得将严重程度与严重性互相替代。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "ae_severity_grading"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline",
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "severity_scale_standard"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须完整给出各级严重程度定义与与严重性的区分说明。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "严重程度分级表必须逐级给出级别、定义与所用量表版本。",
+        "required_object_cells": [
+          "ae:cell:grade",
+          "ae:cell:severity_definition",
+          "ae:cell:scale_version"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "严重程度为项目事实集合（量表版本/各级定义/与严重性区分）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅有级别名称或模板版本，无各级定义与严重性区分即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-1-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623373",
+      "_Toc48315524",
+      "_Toc90487619"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-2:scale",
+      "rule": "严重程度分级量表版本必须项目绑定并记录适用依据；模板示例（如 CTCAE 5.0）仅为示例，不得作为本项目版本直接硬编码。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-2:distinct",
+      "rule": "严重程度（severity）与严重性（seriousness）是两个不同概念，不得互相替代或由分级直接判定严重性。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-1-2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-2:scale",
+      "question": "分级量表版本是否项目绑定且非模板硬编码？",
+      "linked_fact_paths": [
+        "ae.severity_scale_version"
+      ],
+      "linked_claim_types": [
+        "severity_scale_standard"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-2:scale"
+      ],
+      "risk_if_unmet": "硬编码模板版本会使分级不可比。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-2:distinct",
+      "question": "严重程度与严重性是否分别判定？",
+      "linked_fact_paths": [
+        "ae.severity_seriousness_distinctness"
+      ],
+      "linked_claim_types": [
+        "ae_severity_grading"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-2:distinct"
+      ],
+      "risk_if_unmet": "混用会误定 SAE。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

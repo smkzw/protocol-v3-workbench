@@ -1,0 +1,70 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___ test_option_has_real_literal_evidence_but_no_invented_medical_admission ____
+
+    def test_option_has_real_literal_evidence_but_no_invented_medical_admission():
+        from app.protocol_workflow.agent2.option_bundle import build_regimen_option_bundle
+>       prepared,output=prepared_reference()
+                        ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_option_bundle.py:11: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+>       from test_writing_reference_docx import build_docx, paragraph_xml
+E       ModuleNotFoundError: No module named 'test_writing_reference_docx'
+
+tests/protocol_v3/test_clinical_design_worker.py:100: ModuleNotFoundError
+_____ test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction ______
+
+    def test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction():
+        from app.protocol_workflow.agent2.option_bundle import build_regimen_option_bundle
+>       prepared,output=prepared_reference();proposal=read_regimen_response(prepared,output)
+                        ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_option_bundle.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+>       from test_writing_reference_docx import build_docx, paragraph_xml
+E       ModuleNotFoundError: No module named 'test_writing_reference_docx'
+
+tests/protocol_v3/test_clinical_design_worker.py:100: ModuleNotFoundError
+__ test_literal_evidence_retains_surrounding_source_text_for_semantic_review ___
+
+    def test_literal_evidence_retains_surrounding_source_text_for_semantic_review():
+        from app.protocol_workflow.agent2.option_bundle import build_regimen_option_bundle
+>       prepared, output = prepared_reference()
+                           ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_option_bundle.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+>       from test_writing_reference_docx import build_docx, paragraph_xml
+E       ModuleNotFoundError: No module named 'test_writing_reference_docx'
+
+tests/protocol_v3/test_clinical_design_worker.py:100: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_option_bundle.py::test_option_has_real_literal_evidence_but_no_invented_medical_admission
+FAILED tests/protocol_v3/test_regimen_option_bundle.py::test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction
+FAILED tests/protocol_v3/test_regimen_option_bundle.py::test_literal_evidence_retains_surrounding_source_text_for_semantic_review
+3 failed in 0.37s

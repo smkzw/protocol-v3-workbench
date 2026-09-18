@@ -1,0 +1,126 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 14 items
+
+tests/protocol_v3/test_chapter_contract_schema.py ...F.........F         [100%]
+
+=================================== FAILURES ===================================
+___ test_v2_fact_and_claim_requirements_roundtrip_and_reject_contradictions ____
+
+    def test_v2_fact_and_claim_requirements_roundtrip_and_reject_contradictions():
+        content = _content_contract_v2()
+        assert [item.obligation.value for item in content.fact_requirements] == [
+            "required",
+            "optional",
+            "forbidden",
+        ]
+        assert [item.obligation.value for item in content.claim_requirements] == [
+            "required",
+            "allowed",
+            "qualified",
+            "forbidden",
+        ]
+        _assert_roundtrip(content)
+    
+        # Same fact path under two obligations is a contradiction, not a merge.
+>       doubled = _content_contract_v2(
+            fact_requirements=_fact_requirements()
+            + (
+                FactRequirement(
+                    fact_path="picos.outcome.primary",
+                    obligation="forbidden",
+                    rationale="与 required 冲突。",
+                ),
+            )
+        )
+
+tests/protocol_v3/test_chapter_contract_schema.py:454: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+overrides = {'fact_requirements': (FactRequirement(schema_version='mw_protocol_v3_contract_v1', fact_path='picos.outcome.primary',...', fact_path='picos.outcome.primary', obligation=<FactObligation.FORBIDDEN: 'forbidden'>, rationale='与 required 冲突。'))}
+payload = {'chapter_contract_id': 'contract:objectives:v2', 'claim_requirements': (ClaimRequirement(schema_version='mw_protocol_...ct_path='picos.outcome.primary', obligation=<FactObligation.FORBIDDEN: 'forbidden'>, rationale='与 required 冲突。')), ...}
+
+    def _content_contract_v2(**overrides):
+        payload = {
+            "substantive_content_contract_id": "content:objectives:v2",
+            "chapter_contract_id": "contract:objectives:v2",
+            "fact_requirements": _fact_requirements(),
+            "claim_requirements": _claim_requirements(),
+            "evidence_source_requirements": (_evidence_requirement(),),
+            "structural_object_obligations": _structural_object_obligations(),
+            "project_specific_elements": ("UC301 主要终点定义", "12周给药访视窗口"),
+            "skeleton_risk_rules": ("只有标题或通用模板句即失败",),
+        }
+        payload.update(overrides)
+>       return SubstantiveContentContractV2(**payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for SubstantiveContentContractV2
+E         Value error, conflicting fact obligations: a fact path cannot carry two obligation entries [type=value_error, input_value={'substantive_content_con...模板句即失败',)}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+tests/protocol_v3/test_chapter_contract_schema.py:276: ValidationError
+_______ test_v2_full_contract_roundtrip_and_material_hash_tracks_content _______
+
+    def test_v2_full_contract_roundtrip_and_material_hash_tracks_content():
+        chapter = _chapter_contract_v2()
+        content = _content_contract_v2()
+        _assert_roundtrip(chapter)
+        _assert_roundtrip(content)
+        assert chapter.canonical_state.value == "frozen"
+        with pytest.raises(ValidationError, match="frozen before execution"):
+            _chapter_contract_v2(canonical_state="proposed")
+    
+>       metadata_only_change = _chapter_contract_v2(canonical_state="confirmed")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_contract_schema.py:737: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+overrides = {'canonical_state': 'confirmed'}
+payload = {'canonical_state': 'confirmed', 'chapter_contract_id': 'contract:objectives:v2', 'chapter_skill_id': 'skill:chapter:objectives', 'chapter_skill_version': '2.0.0', ...}
+
+    def _chapter_contract_v2(**overrides):
+        payload = {
+            "chapter_contract_id": "contract:objectives:v2",
+            "semantic_node_id": "node:study-objectives",
+            "contract_version": "2.0.0",
+            "template_id": "template:tp-ma-07",
+            "template_sha256": SHA_A,
+            "chapter_skill_id": "skill:chapter:objectives",
+            "chapter_skill_version": "2.0.0",
+            "word_rules": _word_rules(),
+            "positive_qc_rules": (_qc_rule(),),
+            "conditional_applicability_rules": (_conditional_rule(),),
+            "dependency_ids": ("contract:background:v1",),
+            "dependency_repair_policy": _repair_policy(),
+            "ctq_items": (_ctq_item(),),
+            "patient_participation_obligations": (_participation_obligation(),),
+            "registry_consistency_obligations": (_registry_obligation(),),
+        }
+        payload.update(overrides)
+>       return ChapterContractV2(**payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContractV2
+E         Value error, ChapterContractV2 must be frozen before execution [type=value_error, input_value={'chapter_contract_id': '...cal_state': 'confirmed'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+tests/protocol_v3/test_chapter_contract_schema.py:298: ValidationError
+=============================== warnings summary ===============================
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_fact_and_claim_requirements_roundtrip_and_reject_contradictions
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_rejects_vacuous_and_generic_object_only_content
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_metadata_control_content_needs_no_fabricated_medical_evidence
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_metadata_control_content_needs_no_fabricated_medical_evidence
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_patient_participation_ties_decision_record_without_arbitrary_length
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_full_contract_roundtrip_and_material_hash_tracks_content
+tests/protocol_v3/test_chapter_contract_schema.py::test_v2_full_contract_roundtrip_and_material_hash_tracks_content
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_chapter_contract_schema.py:305: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+    first_field = next(iter(model.model_fields))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_contract_schema.py::test_v2_fact_and_claim_requirements_roundtrip_and_reject_contradictions
+FAILED tests/protocol_v3/test_chapter_contract_schema.py::test_v2_full_contract_roundtrip_and_material_hash_tracks_content
+=================== 2 failed, 12 passed, 7 warnings in 0.32s ===================

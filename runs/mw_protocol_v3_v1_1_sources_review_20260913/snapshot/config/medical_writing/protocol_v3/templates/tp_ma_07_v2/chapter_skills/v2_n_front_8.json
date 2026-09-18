@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:front-8:figure-index",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_front_8",
+  "chapter_contract_id": "contract:v2-n-front-8:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（实际图题注清单），输出为 ChapterSkillOutput。生成来自实际图题注的图索引域内容；文档无图时必须显式声明无图适用性；不得指向已删除或其他图的编号；SEQ 域刷新由7R任务核对。",
+    "forbidden_behaviors": [
+      "指向已删除或其他图的编号",
+      "无图时不作显式适用性声明",
+      "虚构图题注",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 236（图索引域段；模板 SEQ 题注域×9）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：2=heading 1，21=table of figures（图表索引共用样式）。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-8:figure-index:missing-obligation",
+    "skill:chapter:front-8:figure-index:unresolved-fact",
+    "skill:chapter:front-8:figure-index:wrong-source"
+  ]
+}

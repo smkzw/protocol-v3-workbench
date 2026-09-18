@@ -1,0 +1,158 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-1-3:v2",
+  "semantic_node_id": "v2_n_1_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-1-3:soa",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-1-3:v2",
+    "chapter_contract_id": "contract:v2-n-1-3:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "soa.visit_window_definitions",
+        "obligation": "required",
+        "rationale": "访视与窗口必须带单位与参考事件；电话联系计入实际访视。"
+      },
+      {
+        "fact_path": "soa.assessment_cells",
+        "obligation": "required",
+        "rationale": "必需评估单元格按内容与适用访视身份核查，而非仅显示 X。"
+      },
+      {
+        "fact_path": "soa.footnote_bindings",
+        "obligation": "required",
+        "rationale": "脚注必须解析到既有程序/访视，不得悬空。"
+      },
+      {
+        "fact_path": "soa.early_exit_assessment",
+        "obligation": "required",
+        "rationale": "早期终止评估必须与停药/退出规则一致。"
+      },
+      {
+        "fact_path": "soa.safety_followup",
+        "obligation": "required",
+        "rationale": "安全随访必须与停药/退出规则一致。"
+      },
+      {
+        "fact_path": "soa.contact_visits",
+        "obligation": "required",
+        "rationale": "适用的电话联系人访视必须作为实际访视呈现。"
+      },
+      {
+        "fact_path": "soa.pk_sampling_present",
+        "obligation": "optional",
+        "rationale": "确认是否存在 PK 采血，触发 PK 时间单位条件义务。"
+      },
+      {
+        "fact_path": "soa.pk_timing_units",
+        "obligation": "optional",
+        "rationale": "PK 采样存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。"
+      },
+      {
+        "fact_path": "soa.template_example_scales",
+        "obligation": "forbidden",
+        "rationale": "模板示例疾病量表、实验室面板或样本处理（source[265]）不得作为项目事实。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "soa_cell_mapping",
+        "obligation": "required",
+        "rationale": "SOA 单元格必须声明与访视/窗口/脚注/退出评估的类型化链接。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "soa_cell_mapping"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "schedule_of_activities",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "SOA 表（模板 table[265]：6列×33行）呈现访视/窗口、必需评估、脚注、早期终止与安全随访，位于横向 Word 节。",
+        "required_object_cells": [
+          "soa:header:visit_window",
+          "soa:cell:assessment_identity",
+          "soa:cell:footnote_binding",
+          "soa:cell:early_exit",
+          "soa:cell:safety_followup"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "类型化 SOA 单元格与脚注/窗口/退出评估链接"
+    ],
+    "skeleton_risk_rules": [
+      "SOA 单元格 ID 存在但值为空、窗口缺失或脚注悬空即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:n-1-3",
+    "required_styles": [
+      "3",
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:n-1-3:cells",
+      "rule": "必需评估单元格按内容与适用访视身份核查，而非仅显示 X；脚注必须解析到既有程序/访视。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-3:exit-followup",
+      "rule": "早期终止评估与安全随访必须与停药/退出规则一致；错误退出访视脚注即为失败。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-3:landscape",
+      "rule": "SOA 位于横向 Word 节（sections[ordinal 6]）；原生横向/页眉/域刷新属7R义务，本合同不断言其成功。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:n-1-3:pk-sampling",
+      "triggering_fact_paths": [
+        "soa.pk_sampling_present"
+      ],
+      "condition": "确认存在 PK 采血",
+      "rationale": "PK 采血存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。",
+      "required_when_active_fact_paths": [
+        "soa.pk_timing_units"
+      ]
+    }
+  ],
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:n-1-3:exit",
+      "question": "早期终止评估与安全随访是否与停药/退出规则一致？",
+      "linked_fact_paths": [
+        "soa.early_exit_assessment",
+        "soa.safety_followup"
+      ],
+      "linked_claim_types": [
+        "soa_cell_mapping"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-1-3:exit-followup"
+      ],
+      "risk_if_unmet": "早期退出/随访与规则不一致会造成试验参与者安全流程缺口。"
+    }
+  ]
+}

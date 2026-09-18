@@ -1,0 +1,21 @@
+{
+  "checked_rules": 70,
+  "findings": [
+    {
+      "rule": "applicability:v2-n-16-x1:assessment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table"
+    },
+    {
+      "rule": "applicability:v2-n-16-x2:assessment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table"
+    },
+    {
+      "rule": "applicability:n-3-4-1:analysis-commitment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table"
+    }
+  ],
+  "scope": "static target identity only; not independent review or scientific content acceptance"
+}

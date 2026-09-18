@@ -1,0 +1,77 @@
+[
+  {
+    "role": "worker_01",
+    "report": "runs/execution/mw_protocol_v3_full_review_20260912/worker_01.md",
+    "report_sha256": "5f77203f4ed4e79a4a54f025172dc91f846ee1bbea551f4db5a1a4aa76a4c6cf",
+    "receipt": "logs/execution/mw_protocol_v3_full_review_20260912/worker_01_stdout.txt",
+    "receipt_sha256": "ce3775b747d001ad0abd7871bcef7b1737939bc827eef4c6651c5323f695cb51",
+    "bound": true,
+    "returncode": 0,
+    "stop_reason": "stop",
+    "session_id": "01a095ca-293e-7000-96ad-d6312ab60d3d",
+    "actual_round_provider": "opencode-go",
+    "actual_round_model": "muse-spark-1.3-contributor",
+    "requested_effort": "xhigh",
+    "observed_effort": null,
+    "duration_seconds": 422.156,
+    "recorded_tools": 140,
+    "runtime_identity": {
+      "requested": "opencode-go/muse-spark-1.3-contributor",
+      "observed": [
+        "opencode-go/muse-spark-1.3-contributor"
+      ],
+      "current": "opencode-go/muse-spark-1.3-contributor"
+    }
+  },
+  {
+    "role": "worker_02",
+    "report": "runs/execution/mw_protocol_v3_full_review_20260912/worker_02.md",
+    "report_sha256": "50079480bcd0923e16845e0dc6c9f8e85d4085a62d8fa92e18436739c2f75548",
+    "receipt": "logs/execution/mw_protocol_v3_full_review_20260912/worker_02_stdout.txt",
+    "receipt_sha256": "10e354b79990aca9945b2b7ad2773172b32237f4bb0f7a2473d7757f9caab931",
+    "bound": true,
+    "returncode": 0,
+    "stop_reason": "stop",
+    "session_id": "sess_8a1cb3a4-68d4-44ad-93db-8328f3c8c690",
+    "actual_round_provider": "zcode",
+    "actual_round_model": "GLM-5.3-Flash",
+    "requested_effort": "max",
+    "observed_effort": "max",
+    "duration_seconds": 917.189,
+    "recorded_tools": 2,
+    "runtime_identity": {
+      "route_provider": "zcode",
+      "runtime_provider": "anthropic",
+      "requested_model": "GLM-5.3-Flash",
+      "request_model": "GLM-5.3-Flash",
+      "response_model": "GLM-5.3-Flash",
+      "requested_effort": "max",
+      "observed_effort": "max",
+      "verified": true
+    }
+  },
+  {
+    "role": "general_single_object",
+    "report": "runs/conference/mw_protocol_v3_replan_review_20260912/general_single_object.md",
+    "report_sha256": "a2de3706cca282c8593d62a906f4cfbec6bdd90234bbbc9fcdd51f3f6f9b3472",
+    "receipt": "logs/conference/mw_protocol_v3_replan_review_20260912/general_single_object_stdout.txt",
+    "receipt_sha256": "05288f43bb802ebc9479248c45a05b2f919d82fb0e886f608926f0907a01073f",
+    "bound": true,
+    "returncode": 0,
+    "stop_reason": "stop",
+    "session_id": "01a095cc-669e-7000-a959-55fee2938455",
+    "actual_round_provider": "opencode-go",
+    "actual_round_model": "muse-spark-1.3-contributor",
+    "requested_effort": "xhigh",
+    "observed_effort": null,
+    "duration_seconds": 260.054,
+    "recorded_tools": 68,
+    "runtime_identity": {
+      "requested": "opencode-go/muse-spark-1.3-contributor",
+      "observed": [
+        "opencode-go/muse-spark-1.3-contributor"
+      ],
+      "current": "opencode-go/muse-spark-1.3-contributor"
+    }
+  }
+]

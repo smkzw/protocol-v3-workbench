@@ -1,0 +1,234 @@
+........................FFFF.F.......................................... [ 94%]
+....                                                                     [100%]
+=================================== FAILURES ===================================
+___ test_no_interim_can_reach_actual_skill_input_without_inactive_parameters ___
+
+    def test_no_interim_can_reach_actual_skill_input_without_inactive_parameters():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract, declaration = interim_case()
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        bound = bind_applicable_input(confirmed_study({"statistics.interim.applicable": False}), contract, bindings, rules=real_rule_catalog().rules)
+        assert bound.resolved_facts == {"statistics.interim.applicable": False}
+        assert bound.active_conditional_rule_ids == ()
+        assert bound.applicability_rules_sha256 is not None
+        with pytest.raises(FactBindingError, match="missing_required_fact"):
+>           bind_applicable_input(confirmed_study({"statistics.interim.applicable": True}), contract, bindings, rules=real_rule_catalog().rules)
+
+tests/protocol_v3/test_chapter_applicability.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:337: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...icable': True}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:irc
+
+services/api/app/protocol_workflow/registries/applicability.py:296: ApplicabilityResolutionError
+_____ test_bound_no_interim_output_is_checked_against_same_facts_and_rules _____
+
+    def test_bound_no_interim_output_is_checked_against_same_facts_and_rules():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, check_applicable_output
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from app.protocol_workflow.registries.chapters import ChapterSkillOutput
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract, declaration = interim_case()
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        study = confirmed_study({"statistics.interim.applicable": False})
+        bound = bind_applicable_input(study, contract, bindings, rules=real_rule_catalog().rules)
+        payload = {
+            "chapter_contract_id": contract.chapter_contract_id, "node_id": contract.semantic_node_id,
+            "facts": [{"fact_path": "statistics.interim.applicable", "value": False}],
+            "claims": [{"claim_type": "interim_not_planned", "statement": "本研究不计划开展期中分析。"}],
+            "evidence": [{"source_role": "project_primary", "admission_claim_type": "interim_not_planned", "locator_kind": "body",
+                          "locator": "test:confirmed-design", "context": "Synthetic approved-design fixture only", "quality_score": 1.0}],
+        }
+        output = ChapterSkillOutput.model_validate(payload)
+        result = check_applicable_output(bound, output, study, contract, bindings, rules=real_rule_catalog().rules)
+        assert result.passed
+        assert "medical_and_qc_judgment_not_executed" in result.deferred_qc_obligations
+        empty = output.model_copy(update={"facts": ()})
+        assert "missing_required_fact" in check_applicable_output(bound, empty, study, contract, bindings, rules=real_rule_catalog().rules).error_codes()
+        changed_rule = declaration.model_copy(update={"mode": "any"})
+        with pytest.raises(FactBindingError, match="chapter_input_binding_mismatch"):
+>           check_applicable_output(bound, output, study, contract, bindings, rules=(changed_rule,))
+
+tests/protocol_v3/test_chapter_applicability.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in check_applicable_output
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-9:interim', source_rule_sha256='ab7ab1789d215801d62a26d3ef32d7ba6efb151c...nce_targets=(ReferenceTarget(fact_path='statistics.interim.canonical_reference', semantic_node_ids=('v2_n_14_7',)),)),)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:irc
+
+services/api/app/protocol_workflow/registries/applicability.py:296: ApplicabilityResolutionError
+_ test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition[False-applicable] _
+
+value = False, status = 'applicable'
+
+    @pytest.mark.parametrize("value,status", [(False, "applicable"), (None, "conditional")])
+    def test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition(value, status):
+        from datetime import datetime, timezone
+        from app.protocol_workflow.registries.applicability import build_applicability_snapshot
+        from packages.contracts.workbench_contracts.protocol_v3 import ApplicabilitySnapshot
+        from app.protocol_workflow.canonical.study_definition import study_revision_hash
+        from test_chapter_fact_binding import confirmed_study
+        contract, rule = interim_case()
+        study = confirmed_study({"statistics.interim.applicable": value})
+>       snapshot = build_applicability_snapshot((contract,), study, (rule,), created_at=datetime(2026, 9, 13, tzinfo=timezone.utc))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:236: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+contracts = (ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, cha..._if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=()),)
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-9:interim', source_rule_sha256='ab7ab1789d215801d62a26d3ef32d7ba6efb151c...nce_targets=(ReferenceTarget(fact_path='statistics.interim.canonical_reference', semantic_node_ids=('v2_n_14_7',)),)),)
+
+    def build_applicability_snapshot(contracts, study, rules, *, created_at):
+        """Use the existing node snapshot; inner-rule false does not hide a chapter.
+    
+        Rule decisions are deterministically reproducible from the bound study and
+        ruleset. Only an explicit whole-chapter rule can exclude a semantic node.
+        """
+        from app.protocol_workflow.canonical.study_definition import study_revision_hash
+        contracts, rules = tuple(contracts), tuple(rules)
+        entries = []
+        used_rule_ids = set()
+        labels = {ApplicabilityStatus.APPLICABLE: "适用", ApplicabilityStatus.NOT_APPLICABLE: "不适用", ApplicabilityStatus.CONDITIONAL: "未决"}
+        for contract in contracts:
+            index, states, findings = _resolve_rule_states(contract, study, rules)
+            errors = [item for item in findings if item.code != "conditional_applicability_unresolved"]
+            if errors:
+>               raise ApplicabilityResolutionError(errors)
+E               app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:irc
+
+services/api/app/protocol_workflow/registries/applicability.py:368: ApplicabilityResolutionError
+_ test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition[None-conditional] _
+
+value = None, status = 'conditional'
+
+    @pytest.mark.parametrize("value,status", [(False, "applicable"), (None, "conditional")])
+    def test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition(value, status):
+        from datetime import datetime, timezone
+        from app.protocol_workflow.registries.applicability import build_applicability_snapshot
+        from packages.contracts.workbench_contracts.protocol_v3 import ApplicabilitySnapshot
+        from app.protocol_workflow.canonical.study_definition import study_revision_hash
+        from test_chapter_fact_binding import confirmed_study
+        contract, rule = interim_case()
+        study = confirmed_study({"statistics.interim.applicable": value})
+>       snapshot = build_applicability_snapshot((contract,), study, (rule,), created_at=datetime(2026, 9, 13, tzinfo=timezone.utc))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:236: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+contracts = (ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, cha..._if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=()),)
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...icable': None}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-9:interim', source_rule_sha256='ab7ab1789d215801d62a26d3ef32d7ba6efb151c...nce_targets=(ReferenceTarget(fact_path='statistics.interim.canonical_reference', semantic_node_ids=('v2_n_14_7',)),)),)
+
+    def build_applicability_snapshot(contracts, study, rules, *, created_at):
+        """Use the existing node snapshot; inner-rule false does not hide a chapter.
+    
+        Rule decisions are deterministically reproducible from the bound study and
+        ruleset. Only an explicit whole-chapter rule can exclude a semantic node.
+        """
+        from app.protocol_workflow.canonical.study_definition import study_revision_hash
+        contracts, rules = tuple(contracts), tuple(rules)
+        entries = []
+        used_rule_ids = set()
+        labels = {ApplicabilityStatus.APPLICABLE: "适用", ApplicabilityStatus.NOT_APPLICABLE: "不适用", ApplicabilityStatus.CONDITIONAL: "未决"}
+        for contract in contracts:
+            index, states, findings = _resolve_rule_states(contract, study, rules)
+            errors = [item for item in findings if item.code != "conditional_applicability_unresolved"]
+            if errors:
+>               raise ApplicabilityResolutionError(errors)
+E               app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:irc
+
+services/api/app/protocol_workflow/registries/applicability.py:368: ApplicabilityResolutionError
+___ test_interim_reference_resolves_to_real_oversight_node_before_generation ___
+
+    def test_interim_reference_resolves_to_real_oversight_node_before_generation():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract, rule = interim_case()
+        facts = {item.fact_path: "synthetic detail" for item in contract.substantive_content.fact_requirements if item.obligation.value == "required"}
+        facts["statistics.interim.applicable"] = True
+        facts["statistics.interim.canonical_reference"] = "v2_n_13_x"
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        with pytest.raises(ApplicabilityResolutionError, match="unresolved_reference_target"):
+>           bind_applicable_input(confirmed_study(facts), contract, bindings, rules=(rule,))
+
+tests/protocol_v3/test_chapter_applicability.py:272: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:337: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...: 'v2_n_13_x'}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-9:interim', source_rule_sha256='ab7ab1789d215801d62a26d3ef32d7ba6efb151c...nce_targets=(ReferenceTarget(fact_path='statistics.interim.canonical_reference', semantic_node_ids=('v2_n_14_7',)),)),)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:irc
+
+services/api/app/protocol_workflow/registries/applicability.py:296: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+    def test_interim_reference_resolves_to_real_oversight_node_before_generation():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract, rule = interim_case()
+        facts = {item.fact_path: "synthetic detail" for item in contract.substantive_content.fact_requirements if item.obligation.value == "required"}
+        facts["statistics.interim.applicable"] = True
+        facts["statistics.interim.canonical_reference"] = "v2_n_13_x"
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+>       with pytest.raises(ApplicabilityResolutionError, match="unresolved_reference_target"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'unresolved_reference_target'
+E        Input: 'conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:information-fraction; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:efficacy; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:idmc; conditional_predicate_missing:conditional_rule:conditional:v2-n-11-4-9:irc'
+
+tests/protocol_v3/test_chapter_applicability.py:271: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_no_interim_can_reach_actual_skill_input_without_inactive_parameters
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_bound_no_interim_output_is_checked_against_same_facts_and_rules
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition[False-applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_existing_snapshot_distinguishes_chapter_presence_from_inner_condition[None-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_interim_reference_resolves_to_real_oversight_node_before_generation
+5 failed, 71 passed in 1.61s

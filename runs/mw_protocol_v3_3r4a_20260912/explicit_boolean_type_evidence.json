@@ -1,0 +1,62 @@
+{
+  "ae.oncology_progression_exception_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_10_1_1.json#/substantive_content/fact_requirements/6/rationale",
+      "rationale": "肿瘤进展例外适用性必须由项目事实判定（裸 true/false）。"
+    }
+  ],
+  "statistics.sample_size.interim_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_11_1.json#/substantive_content/fact_requirements/16/rationale",
+      "rationale": "期中样本量调整适用性必须有明确布尔状态。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 761、762–772；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "quality.risk_management_plan_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_14_1.json#/substantive_content/fact_requirements/5/rationale",
+      "rationale": "风险管理计划适用性触发事实，采用裸 true/false 编码；不适用不豁免本节的 CtQ 义务。"
+    }
+  ],
+  "quality.remote_monitoring_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_14_3.json#/substantive_content/fact_requirements/6/rationale",
+      "rationale": "远程监查适用性触发事实，采用裸 true/false 编码；不适用不豁免基础监查义务。"
+    }
+  ],
+  "quality.oversight_charter_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_14_7.json#/substantive_content/fact_requirements/6/rationale",
+      "rationale": "监督章程适用性触发事实，采用裸 true/false 编码；不适用不豁免监督义务。"
+    }
+  ],
+  "references.foreign_sources_present": [
+    {
+      "source": "chapter_contracts/v2_n_15.json#/substantive_content/fact_requirements/4/rationale",
+      "rationale": "外文来源存在性触发事实，采用裸 true/false 编码；不适用不豁免书目完整性。"
+    }
+  ],
+  "appendix.ecog_assessment_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_16_x1.json#/substantive_content/fact_requirements/1/rationale",
+      "rationale": "ECOG 评估适用性触发事实，采用裸 true/false 编码；不适用时不得自动收录。"
+    }
+  ],
+  "appendix.nyha_assessment_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_16_x2.json#/substantive_content/fact_requirements/1/rationale",
+      "rationale": "NYHA 评估适用性触发事实，采用裸 true/false 编码；不适用时不得自动收录。"
+    }
+  ],
+  "exploratory.immunogenicity_applicable": [
+    {
+      "source": "chapter_contracts/v2_n_9_3.json#/substantive_content/fact_requirements/5/rationale",
+      "rationale": "免疫原性适用性必须由项目事实判定（裸 true/false）。"
+    }
+  ],
+  "irc.applicable": [
+    {
+      "source": "chapter_contracts/v2_n_9_4.json#/substantive_content/fact_requirements/0/rationale",
+      "rationale": "IRC 是否设立必须由项目事实条件判定（裸 true/false）；IRC 为条件性机制。"
+    }
+  ]
+}

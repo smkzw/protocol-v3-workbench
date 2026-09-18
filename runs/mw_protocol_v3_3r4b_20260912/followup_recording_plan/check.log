@@ -1,0 +1,54 @@
+........................................................................ [ 24%]
+........................................................................ [ 48%]
+........................................................................ [ 73%]
+...........................................F........................F... [ 97%]
+.......                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_nested_output_preserves_fact_text_and_registration_reproduces_evidence __
+
+    def test_nested_output_preserves_fact_text_and_registration_reproduces_evidence():
+        from app.protocol_workflow.registries.chapters import ChapterSkillOutput
+        from scripts.qc.protocol_v3.export_fact_resolution_registration import registration
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR, REPO_ROOT
+        value = "  first\nsecond  "
+        output = ChapterSkillOutput(chapter_contract_id="contract:test", node_id="node:test",
+                                   facts=(ContentFact(fact_path="fact:test", value=value),))
+        assert json.loads(output.model_dump_json())["facts"][0]["value"] == value
+        catalog = json.loads((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text())
+        report = registration(catalog)
+        assert {row["fact_path"] for row in report["rows"]} == {row["fact_path"] for row in catalog["bindings"]}
+>       assert report["unsupported_fact_paths"] == []
+E       AssertionError: assert ['procedure.c...visit_reason'] == []
+E         
+E         Left contains 4 more items, first extra item: 'procedure.contact_visit_assessments'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_fact_binding.py:314: AssertionError
+_________ test_followup_carrier_requires_window_units_and_phone_visits _________
+
+    def test_followup_carrier_requires_window_units_and_phone_visits():
+        contract = _contract("v2_n_7_3")
+        required = _required_facts(contract)
+        assert {
+            "procedure.followup_period_definition",
+            "procedure.followup_visit_windows",
+            "procedure.phone_visit_linkage",
+        } <= required
+        assert "procedure.followup_unscheduled_and_phone_visits" in {
+            item.fact_path
+            for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "optional"
+        }
+>       rule = next(
+            r
+            for r in contract.conditional_applicability_rules
+            if r.conditional_applicability_rule_id
+            == "applicability:n-7-3:unscheduled-contact"
+        )
+E       StopIteration
+
+tests/protocol_v3/test_chapter_batch4.py:801: StopIteration
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_nested_output_preserves_fact_text_and_registration_reproduces_evidence
+FAILED tests/protocol_v3/test_chapter_batch4.py::test_followup_carrier_requires_window_units_and_phone_visits
+2 failed, 293 passed in 6.66s

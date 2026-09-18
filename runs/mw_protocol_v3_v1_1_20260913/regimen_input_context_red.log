@@ -1,0 +1,36 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.0
+collected 3 items
+
+tests/protocol_v3/test_regimen_input_context.py FFF                      [100%]
+
+=================================== FAILURES ===================================
+________ test_context_carries_full_source_seed_and_generation_identity _________
+
+    def test_context_carries_full_source_seed_and_generation_identity():
+>       from app.protocol_workflow.agent2.input_context import regimen_input_context
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.input_context'
+
+tests/protocol_v3/test_regimen_input_context.py:10: ModuleNotFoundError
+_ test_new_seed_content_changes_context_without_fabricating_new_source_identity _
+
+    def test_new_seed_content_changes_context_without_fabricating_new_source_identity():
+>       from app.protocol_workflow.agent2.input_context import regimen_input_context
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.input_context'
+
+tests/protocol_v3/test_regimen_input_context.py:23: ModuleNotFoundError
+______ test_mismatched_pinned_source_material_is_not_an_equivalent_input _______
+
+    def test_mismatched_pinned_source_material_is_not_an_equivalent_input():
+>       from app.protocol_workflow.agent2.input_context import regimen_input_context
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.input_context'
+
+tests/protocol_v3/test_regimen_input_context.py:35: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_input_context.py::test_context_carries_full_source_seed_and_generation_identity
+FAILED tests/protocol_v3/test_regimen_input_context.py::test_new_seed_content_changes_context_without_fabricating_new_source_identity
+FAILED tests/protocol_v3/test_regimen_input_context.py::test_mismatched_pinned_source_material_is_not_an_equivalent_input
+============================== 3 failed in 0.69s ===============================

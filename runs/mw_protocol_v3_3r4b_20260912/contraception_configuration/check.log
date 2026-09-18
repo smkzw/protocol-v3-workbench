@@ -1,0 +1,36 @@
+........................................................................ [ 23%]
+........................................................................ [ 47%]
+........................................................................ [ 71%]
+...................................................................F.... [ 95%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+_______ test_contracts_reuse_shared_fact_paths_and_declare_typed_detail ________
+
+    def test_contracts_reuse_shared_fact_paths_and_declare_typed_detail():
+        payload = _assembled()
+        for entry in payload["chapters"]:
+            node_id = entry["node_id"]
+            facts = {
+                item["fact_path"]: item
+                for item in entry["contract"]["substantive_content"]["fact_requirements"]
+            }
+            assert REQUIRED_EXISTING_FACTS[node_id] in facts
+            assert all("typed" in item["rationale"] or "结构化" in item["rationale"] for item in facts.values())
+            assert entry["contract"]["substantive_content"]["project_specific_elements"]
+            assert entry["contract"]["substantive_content"]["skeleton_risk_rules"]
+    
+        inclusion = next(e for e in payload["chapters"] if e["node_id"] == "v2_n_5_1")["contract"]
+        exclusion = next(e for e in payload["chapters"] if e["node_id"] == "v2_n_5_2")["contract"]
+        inclusion_paths = {item["fact_path"] for item in inclusion["substantive_content"]["fact_requirements"]}
+        exclusion_paths = {item["fact_path"] for item in exclusion["substantive_content"]["fact_requirements"]}
+        assert "picos.inclusion_modules" in inclusion_paths
+        assert "picos.exclusion_modules" in exclusion_paths
+        assert any("all-applicable" in element for element in inclusion["substantive_content"]["project_specific_elements"])
+        assert any("any-applicable" in element for element in exclusion["substantive_content"]["project_specific_elements"])
+>       assert not inclusion_paths & exclusion_paths - {"framing.population_intent", "picos.population_summary"}
+E       AssertionError: assert not ({'framing.population_intent', 'picos.inclusion_modules', 'picos.inclusion_modules.criteria', 'picos.inclusion_modules.exceptions', 'picos.inclusion_modules.logic', 'picos.inclusion_modules.parameters', ...} & ({'framing.population_intent', 'picos.exclusion_modules', 'picos.exclusion_modules.criteria', 'picos.exclusion_modules.exceptions', 'picos.exclusion_modules.logic', 'picos.exclusion_modules.parameters', ...} - {'framing.population_intent', 'picos.population_summary'}))
+
+tests/protocol_v3/test_chapter_batch3.py:153: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_batch3.py::test_contracts_reuse_shared_fact_paths_and_declare_typed_detail
+1 failed, 300 passed in 7.28s

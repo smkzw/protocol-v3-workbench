@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.588" timestamp="2026-09-05T18:12:01.165080+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_unknown_operation_requests_reconciliation_before_retry" time="0.001"><failure message="assert True is False">def test_unknown_operation_requests_reconciliation_before_retry():
+        def unknown_result():
+            raise RuntimeError("response interrupted after possible commit")
+    
+        with pytest.raises(HTTPException) as caught:
+            _safe_call(unknown_result)
+    
+        assert caught.value.status_code == 500
+        detail = caught.value.detail
+&gt;       assert detail["can_retry"] is False
+E       assert True is False
+
+tests/protocol_v3/test_unknown_operation_response.py:18: AssertionError</failure></testcase></testsuite></testsuites>

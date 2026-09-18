@@ -1,0 +1,163 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-1-6:v2",
+  "semantic_node_id": "v2_n_10_1_6",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-1-6:ae-followup",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-1-6:v2",
+    "chapter_contract_id": "contract:v2-n-10-1-6:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.followup_scope",
+        "obligation": "required",
+        "rationale": "AE 随访范围必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.followup_duration_or_end",
+        "obligation": "required",
+        "rationale": "随访持续时间或终止条件必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.ongoing_event_handling",
+        "obligation": "required",
+        "rationale": "持续事件的临床处理必须明确。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_followup_plan",
+        "obligation": "required",
+        "rationale": "必须声明随访范围、持续时间与持续事件处理。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "label_only_event_record",
+        "obligation": "forbidden",
+        "rationale": "仅有非空事件标签不满足本节义务。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "ae_followup_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明 AE 随访范围、持续时间/终止条件与持续事件处理。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "AE 随访为项目事实集合（范围/持续时间/持续事件处理）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“持续随访至结局”通用句或标签式事件列表即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-1-6",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623377",
+      "_Toc41725849",
+      "_Toc45799878",
+      "_Toc48315528",
+      "_Toc90487623"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-6:scope",
+      "rule": "随访范围与持续时间必须项目化，持续事件的临床处理必须明确；仅有非空事件标签不满足本节义务。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-5:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-1-6:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-5:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-6:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-6:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-6:scope",
+      "question": "随访范围与持续时间是否项目化？",
+      "linked_fact_paths": [
+        "ae.followup_scope",
+        "ae.followup_duration_or_end",
+        "ae.ongoing_event_handling"
+      ],
+      "linked_claim_types": [
+        "ae_followup_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-6:scope"
+      ],
+      "risk_if_unmet": "仅有标签会使持续事件失去随访保障。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

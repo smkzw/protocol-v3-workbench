@@ -1,0 +1,18 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0 -- /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 1 item
+
+runs/mw_protocol_v3_1r1_codex_20260905/test_schema_constraint_probe.py::test_same_names_without_product_constraints_are_rejected FAILED [100%]
+
+=================================== FAILURES ===================================
+___________ test_same_names_without_product_constraints_are_rejected ___________
+runs/mw_protocol_v3_1r1_codex_20260905/test_schema_constraint_probe.py:21: in test_same_names_without_product_constraints_are_rejected
+    with pytest.raises(SqliteStorageError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.protocol_workflow.storage.sqlite.SqliteStorageError'>
+=========================== short test summary info ============================
+FAILED runs/mw_protocol_v3_1r1_codex_20260905/test_schema_constraint_probe.py::test_same_names_without_product_constraints_are_rejected
+============================== 1 failed in 0.32s ===============================

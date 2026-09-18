@@ -1,0 +1,116 @@
+[
+  {
+    "fact_path": "intervention.dose_regimen",
+    "canonical_path": "intervention.dose_regimen",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_11_4_3_1.json#/registry_consistency_obligations/1/eligibility_fact_paths/2",
+      "chapter_contracts/v2_n_6_1_2.json#/ctq_items/1/linked_fact_paths/1",
+      "chapter_contracts/v2_n_6_1_2.json#/substantive_content/fact_requirements/0/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen",
+    "canonical_path": "picos.intervention_dose_regimen",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/conditional_applicability_rules/0/triggering_fact_paths/0",
+      "chapter_contracts/v2_n_4_3.json#/ctq_items/0/linked_fact_paths/1",
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/1/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.comparator_regimen",
+    "canonical_path": "picos.intervention_dose_regimen.comparator_regimen",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/7/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.comparator_route",
+    "canonical_path": "picos.intervention_dose_regimen.comparator_route",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/6/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.investigational_route",
+    "canonical_path": "picos.intervention_dose_regimen.investigational_route",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/2/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.maximum_dose",
+    "canonical_path": "picos.intervention_dose_regimen.maximum_dose",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/5/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.population_link",
+    "canonical_path": "picos.intervention_dose_regimen.population_link",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/8/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.selected_regimen",
+    "canonical_path": "picos.intervention_dose_regimen.selected_regimen",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/3/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.starting_dose",
+    "canonical_path": "picos.intervention_dose_regimen.starting_dose",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/4/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  },
+  {
+    "fact_path": "picos.intervention_dose_regimen.template_example_values",
+    "canonical_path": "picos.intervention_dose_regimen.template_example_values",
+    "value_type": "json",
+    "source_refs": [
+      "chapter_contracts/v2_n_4_3.json#/substantive_content/fact_requirements/9/fact_path"
+    ],
+    "unit": null,
+    "timing": null,
+    "required_members": {}
+  }
+]

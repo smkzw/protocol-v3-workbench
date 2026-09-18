@@ -1,0 +1,33 @@
+{
+  "skill_id": "skill:chapter:n-1-1:summary-table",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_1_1",
+  "chapter_contract_id": "contract:v2-n-1-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（正文既定项目事实），输出为 ChapterSkillOutput。汇总表17行选择器全部保留并与正文一致：编号/标题/版本/期别复用 framing.protocol_id / framing.document_title / framing.version / framing.study_phase 绑定，版本与日期分开承载；嵌套表分别映射多个目的/估计目标/终点；登记分类是药物注册申请分类，不是注册记录证明；实际注册一致性属于适用注册的入选资格记录，无记录不得虚构；不得从模板示例复制剂量、疾病或统计值。",
+    "forbidden_behaviors": [
+      "剂量/样本量/入选标准与正文冲突",
+      "复制模板示例值作为项目事实",
+      "把多目的压平成单句",
+      "营销性表述",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 240–243 与 table[242]（2列×17行汇总表+1张嵌套表）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：3=heading 2，1=Normal。",
+    "汇总行值归属：framing.* 复用既有绑定；其余为 synopsis.* 派生投影，不设第二可编辑事实存储；注册分类不得呈现为注册记录证明。"
+  ],
+  "error_codes": [
+    "skill:chapter:n-1-1:summary-table:missing-obligation",
+    "skill:chapter:n-1-1:summary-table:unresolved-fact",
+    "skill:chapter:n-1-1:summary-table:wrong-source"
+  ]
+}

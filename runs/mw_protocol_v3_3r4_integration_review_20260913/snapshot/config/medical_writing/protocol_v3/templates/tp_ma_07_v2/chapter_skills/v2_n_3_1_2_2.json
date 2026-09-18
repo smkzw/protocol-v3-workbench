@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-1-2-2:estimand-variable",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_1_2_2",
+  "chapter_contract_id": "contract:v2-n-3-1-2-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按研究变量属性合同给出变量定义、测量方式、聚合方式与时间点/窗口，并以表格逐行承载三要素；仅给标签或方法名不满足义务。",
+    "forbidden_behaviors": [
+      "用“疗效”等标签代替变量定义",
+      "只给统计方法名而不给测量/聚合/时间点",
+      "编造终点测量工具"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与三要素各自的已确认事实路径。",
+    "变量定义必须与主要终点声明一致。",
+    "三要素缺项时不得以占位文字通过。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-1-2-2:missing-obligation",
+    "skill:v2-n-3-1-2-2:unresolved-fact",
+    "skill:v2-n-3-1-2-2:unsupported-source-role"
+  ]
+}

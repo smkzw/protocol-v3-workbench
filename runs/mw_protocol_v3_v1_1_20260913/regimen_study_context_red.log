@@ -1,0 +1,53 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 1 item
+
+tests/protocol_v3/integration/test_regimen_adoption_api.py F             [100%]
+
+=================================== FAILURES ===================================
+_ test_saved_design_adoption_reopens_and_replays_without_model_or_duplicate_writes _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-758/test_saved_design_adoption_reo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10d5cdd30>
+
+    def test_saved_design_adoption_reopens_and_replays_without_model_or_duplicate_writes(tmp_path, monkeypatch):
+        db=tmp_path/'product.sqlite'
+        shared.admit(db,PROJECT)
+        prepared, output=prepared_reference()
+        opener=_FakeOpener([_FakeResponse(_completion_body(content=json.dumps(output)))])
+        designs=create_product_regimen_factory(storage_config={'backend':'sqlite','path':str(db)},
+            prior_probe_receipt=ROOT.parents[2]/'runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json',
+            max_input_bytes=2000000,credential_resolver=lambda:'synthetic-only',http_opener=opener)
+        run=designs(PROJECT).start(prepared)
+        assert designs(PROJECT).resume(run)['status']=='ready_for_review'
+        def client():
+            app=FastAPI()
+            mount_protocol_workflow_router(app,ProtocolWorkflowMountConfig(enabled=True,db_path=db),regimen_coordinator_factory=designs)
+            return TestClient(app)
+        base=f'/api/projects/{PROJECT}/protocol-workflow'
+        with client() as c:
+            creation=prepare_research_context_creation(project_id=PROJECT, study_definition_id=SD_ID,
+                seed_run_id='seed:fixture', prepared=prepared, operation_id='operation:context:fixture',
+                actor_id='user:example', decided_at=datetime(2026,9,13,tzinfo=timezone.utc))
+            created_response=c.post(base+'/study-definitions',json=jsonable_encoder(creation))
+            assert created_response.status_code==200,created_response.text
+            created=created_response.json()
+            intent={'study_definition_id':SD_ID,'operation_id':'operation:regimen:one','expected_revision':1,
+                    'snapshot_sha256':created['revision_sha256'],'actor_id':'user:example',
+                    'decided_at':'2026-09-13T07:00:00+00:00','reason':'采用完整给药方案'}
+            legacy=c.post(base+'/study-definitions',json=_create_body(study_definition_id='study:legacy')).json()
+            wrong={**intent, 'study_definition_id':'study:legacy', 'snapshot_sha256':legacy['revision_sha256']}
+            before_wrong=_dump(db)
+            rejected=c.post(base+'/design/regimen/'+run+'/adopt',json=wrong)
+>           assert rejected.status_code==409,rejected.text
+E           AssertionError: {"project_id":"proj:1r3:api:admitted","study_definition_id":"study:legacy","definition":{"schema_version":"mw_protocol_v3_contract_v1","canonical_state":"confirmed","study_definition_id":"study:legacy","project_id":"proj:1r3:api:admitted","revision":2,"previous_revision_sha256":"05fc6352fc6b7afb887d598660448115586937a794713c63d9108f9b9d2f6013","normalized_seed_id":"seed:1r3:1","normalized_seed_sha256":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","facts":{"picos.intervention.dose":"10 mg 每日一次","picos.population.indication":"中重度活动性溃疡性结肠炎","intervention.dose_regimen":{"periods":[{"id":"period-first","label":"首期","timing":"第0至4周"},{"id":"period-next","label":"继续期","timing":"第4至8周"}],"arms":[{"id":"arm-active","label":"试验组"},{"id":"arm-control","label":"原对照组"}],"schedules":[{"period_id":"period-first","arm_id":"arm-active","steps":[{"kind":"loading","timing":"本期首次","frequency":"一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":200,"unit":"mg"},"volume":{"value":2,"unit":"mL"}}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/0:p","quote":"合成给药依据"}]},{"kind":"maintenance","timing":"首次之后","frequency":"每2周一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":100,"unit":"mg"},"volume":null}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/1:p","quote":"合成维持依据"}]}]},{"period_id":"period-first","arm_id":"arm-control","steps":[{"kind":"loading","timing":"本期首次","frequency":"一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":200,"unit":"mg"},"volume":{"value":2,"unit":"mL"}}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/0:p","quote":"合成给药依据"}]},{"kind":"maintenance","timing":"首次之后","frequency":"每2周一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":100,"unit":"mg"},"volume":null}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/1:p","quote":"合成维持依据"}]}]},{"period_id":"period-next","arm_id":"arm-active","steps":[{"kind":"loading","timing":"本期首次","frequency":"一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":200,"unit":"mg"},"volume":{"value":2,"unit":"mL"}}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/0:p","quote":"合成给药依据"}]},{"kind":"maintenance","timing":"首次之后","frequency":"每2周一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":100,"unit":"mg"},"volume":null}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/1:p","quote":"合成维持依据"}]}]},{"period_id":"period-next","arm_id":"arm-control","steps":[{"kind":"loading","timing":"本期首次","frequency":"一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":200,"unit":"mg"},"volume":{"value":2,"unit":"mL"}}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/0:p","quote":"合成给药依据"}]},{"kind":"maintenance","timing":"首次之后","frequency":"每2周一次","route":"皮下注射","products":[{"name":"试验药X","dose":{"value":100,"unit":"mg"},"volume":null}],"references":[{"source_artifact_id":"source-fixture","locator":"word/document.xml/body/1:p","quote":"合成维持依据"}]}]}]},"research.regimen_producer":{"workflow_run_id":"regimen-design:61de01d29fc293631c13421822eaf2b6b49e3c4ecf61dfeb3f03d95aacb4bd1b","input_sha256":"dda289c3edb19e782108450531d19f261735ab022590d83bc8506c6f2e22d498","output_sha256":"a5c56ec1febaf8f1d811d9a92f131ecb1005e93770ee72189845544627da9774","source_context":{"schema_version":"research-input-context.v1","user_brief":"只整理历史参考","source_intake_sha256":"50bae4e681ea8c9bdc09c74abe3dbe2272da894d0fd21690c4364f0e504e864d","seed_proposal_sha256":"aec9a0c2e50029c4ef63bb77b324cf129b09b9e97d4bb5175738e089aa570243","source_artifacts":[{"source_artifact_id":"source-fixture","content_sha256":"40d965a5a818b54ddb7ffd30723434abceaa22d0ada4b4b028430cbea7129455"}]}}},"decision_record_ids":["decision:1r3:api:create:001","regimen-decision:bebdd225371b2aeb1b8e430ec109a5da4ac837a277a09e26a5e4ebdad04469e4"],"updated_at":"2026-09-13T08:19:18.375318Z"},"revision":2,"revision_sha256":"b784096cd1adc30de64bf411577b093d0e56491f3ce2bc87fa47bb99ac432fc0","effective_decision":{"schema_version":"mw_protocol_v3_contract_v1","canonical_state":"confirmed","decision_record_id":"regimen-decision:bebdd225371b2aeb1b8e430ec109a5da4ac837a277a09e26a5e4ebdad04469e4","decision_key":"decision:dose-regimen","snapshot_sha256":"05fc6352fc6b7afb887d598660448115586937a794713c63d9108f9b9d2f6013","expected_state_revision":1,"state_revision":2,"option_ids":["regimen-option:1b8f34732a3cca3047c3240f63297a8243bc4cd990142fcd59f2a269ad2701b2"],"selected_option_id":"regimen-option:1b8f34732a3cca3047c3240f63297a8243bc4cd990142fcd59f2a269ad2701b2","actor_type":"user","actor_id":"user:example","reason":"采用完整给药方案","decided_at":"2026-09-13T07:00:00Z"},"replayed":false}
+E           assert 200 == 409
+E            +  where 200 = <Response [200 OK]>.status_code
+
+tests/protocol_v3/integration/test_regimen_adoption_api.py:46: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_regimen_adoption_api.py::test_saved_design_adoption_reopens_and_replays_without_model_or_duplicate_writes
+============================== 1 failed in 0.75s ===============================

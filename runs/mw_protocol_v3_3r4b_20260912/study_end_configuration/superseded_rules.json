@@ -1,0 +1,15 @@
+[
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_4_4:active",
+    "triggering_fact_paths": [
+      "picos.study_epochs"
+    ],
+    "condition": "当研究设计包含治疗后评估或随访时，分别激活参与者完成与总体研究结束定义。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "study_follow_up_definition",
+      "overall_study_end_definition"
+    ]
+  }
+]

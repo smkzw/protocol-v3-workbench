@@ -1,0 +1,125 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-1-2-1:v2",
+  "semantic_node_id": "v2_n_3_1_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-1-2-1:estimand-population",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-1-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-3-1-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.population",
+        "obligation": "required",
+        "rationale": "目标人群是估计目标属性一；它不是随机后分析集，也不自动等同于示例中“至少一次给药”人群。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.analysis_set_distinction",
+        "obligation": "required",
+        "rationale": "必须显式说明目标人群与随机后分析集（如 ITT/安全性集）的区别与关系。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.population_summary",
+        "obligation": "optional",
+        "rationale": "此处为人群描述（population description），复用既有绑定；它不得被当作估计目标的群体层面汇总指标。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_population_attribute",
+        "obligation": "required",
+        "rationale": "目标人群属性声明必须给出可判定的人群定义。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_equivalence",
+        "obligation": "forbidden",
+        "rationale": "禁止把目标人群等同于随机构成的分析集或“至少一次给药”人群。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_population_attribute"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "属性一段必须给出目标人群，属性二段必须给出其与分析集的区别；不得合并为一句人群描述。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "源标题去占位：源 @316 标题含说明性占位文字（“状况/疾病”），不得作为定稿标题输出。",
+      "词汇边界：picos.population_summary 表示人群描述，与估计目标群体层面汇总指标（estimand.primary.population_summary_measure）是不同含义，禁止互换。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“状况/疾病”等占位文字或直接照抄示例人群即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-1-2-1",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-1-2-1:not-analysis-set",
+      "rule": "目标人群不得默认等于随机后分析集或“至少一次给药”人群；必须给出区别说明。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-1-2-1:primary",
+      "question": "目标人群（估计目标属性一）是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "estimand.primary.population"
+      ],
+      "linked_claim_types": [
+        "estimand_population_attribute"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-1-2-1:not-analysis-set"
+      ],
+      "risk_if_unmet": "目标人群（估计目标属性一）缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

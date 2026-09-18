@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_dose_rationale_requires_planned_maximum_even_without_escalation _____
+
+    def test_dose_rationale_requires_planned_maximum_even_without_escalation():
+        from app.protocol_workflow.registries.fact_bindings import bind_chapter_input,FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_3.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        key='picos.intervention_dose_regimen.maximum_dose'
+        facts={f.fact_path:'Synthetic project dose rationale' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=key}
+>       with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.protocol_workflow.registries.fact_bindings.FactBindingError'>
+
+tests/protocol_v3/test_chapter_applicability.py:1818: Failed
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_dose_rationale_requires_planned_maximum_even_without_escalation
+1 failed, 243 deselected in 0.47s

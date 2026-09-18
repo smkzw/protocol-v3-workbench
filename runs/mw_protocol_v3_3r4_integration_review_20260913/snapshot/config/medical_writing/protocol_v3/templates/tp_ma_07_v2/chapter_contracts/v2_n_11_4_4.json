@@ -1,0 +1,207 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-4-4:v2",
+  "semantic_node_id": "v2_n_11_4_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-4-4:secondary-analysis",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-4-4:v2",
+    "chapter_contract_id": "contract:v2-n-11-4-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.secondary_analysis.endpoint_definitions",
+        "obligation": "required",
+        "rationale": "必须逐项定义每个次要终点及数据类型。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.secondary_analysis.methods",
+        "obligation": "required",
+        "rationale": "必须为每个次要终点选择项目实际统计方法。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.secondary_analysis.data_definition",
+        "obligation": "required",
+        "rationale": "必须声明次要终点数据来源、时点和分析规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.secondary_analysis.analysis_set",
+        "obligation": "required",
+        "rationale": "必须声明次要终点使用的分析集及分组。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.secondary_analysis.missing_data",
+        "obligation": "required",
+        "rationale": "必须声明次要终点缺失和不可评价处理。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "secondary_analysis_method",
+        "obligation": "required",
+        "rationale": "次要终点必须逐项绑定研究方法和数据定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "secondary_endpoint_analysis",
+        "obligation": "required",
+        "rationale": "次要终点分析不得留空或以“同前”替代。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "secondary_analysis_method"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "secondary_endpoint_analysis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "次要终点的统计分析必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": [
+          "secondary:cell:endpoint",
+          "secondary:cell:definition",
+          "secondary:cell:method",
+          "secondary:cell:data-definition"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“次要终点的统计分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "次要终点的统计分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-4-4",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623397"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-4:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-4:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-4:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-11-1:v2",
+    "contract:v2-n-11-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:v2_n_11_4_4:dependency-drift",
+    "dependency_ids": [
+      "contract:v2-n-11-1:v2",
+      "contract:v2-n-11-2:v2"
+    ],
+    "downstream_impact": "上游终点、估计目标、分析集或设计变更会使本节点统计结论失效，必须停止沿用旧草稿。",
+    "repair_owner": "user",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_4:recompute",
+        "sequence": 1,
+        "action": "重新读取已确认的上游事实并重算本节点统计承载。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_4:confirm",
+        "sequence": 2,
+        "action": "由用户核对差异、证据来源与可复算输入后确认或退回。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-4-4:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 793、794；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.secondary_analysis.endpoint_definitions"
+      ],
+      "linked_claim_types": [
+        "secondary_analysis_method"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-4-4:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

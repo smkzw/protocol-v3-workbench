@@ -1,0 +1,254 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-3-2:v2",
+  "semantic_node_id": "v2_n_10_3_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-3-2:susar-reporting",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-3-2:v2",
+    "chapter_contract_id": "contract:v2-n-10-3-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.sponsor_recipient",
+        "obligation": "required",
+        "rationale": "申办者加速报告对象必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.sponsor_clock",
+        "obligation": "required",
+        "rationale": "申办者加速报告时限必须独立于研究者报告时限。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.sponsor_followup_clock",
+        "obligation": "required",
+        "rationale": "首次报告后的跟进报告时限必须单独给出。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.authority_and_ethics_communications",
+        "obligation": "required",
+        "rationale": "监管/伦理/机构沟通对象与各自时限必须分列。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.awareness_reference",
+        "obligation": "required",
+        "rationale": "首次获知起算点必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "susar_reporting.template_example_signed_report_day_zero",
+        "obligation": "forbidden",
+        "rationale": "以签署有效报告为第 0 天仅为示例，不得推迟首次获知报告。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sponsor_expedited_reporting",
+        "obligation": "required",
+        "rationale": "必须声明申办者加速报告对象、时限与沟通分工。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sponsor_reporting_standard",
+        "obligation": "required",
+        "rationale": "必须声明申办者报告依据的当前规定。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "investigator_clock_reused_for_sponsor",
+        "obligation": "forbidden",
+        "rationale": "不得把研究者报告时钟复制给申办者。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "adr_mapping_used_for_expedited_reporting",
+        "obligation": "forbidden",
+        "rationale": "统计 ADR 分组不得用于加速报告判定。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "signed_report_delays_clock",
+        "obligation": "forbidden",
+        "rationale": "签署有效报告不得作为报告起算前提。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sponsor_expedited_reporting"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline",
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sponsor_reporting_standard"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须分别给出报告对象、首次与跟进报告时限与监管/伦理沟通。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "报告矩阵表必须逐行给出报告对象、时限与信息来源。",
+        "required_object_cells": [
+          "susar:cell:recipient",
+          "susar:cell:clock",
+          "susar:cell:information_source"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "申办者报告为项目事实集合（对象/时限/跟进时限/沟通）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“申办者按法规限时报告”通用句，或与研究者时限相同即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-3-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623384",
+      "_Toc46411100",
+      "_Toc48315536",
+      "_Toc90487631"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-3-2:clocks",
+      "rule": "申办者加速报告时限必须独立于研究者报告时限；不得把单一报告时钟复制到研究者与申办者两侧。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-3-2:recipients",
+      "rule": "报告对象（监管机构/伦理委员会/机构）与各自时限必须分别列明；“签署有效报告为第 0 天”仅为示例，不得推迟基于首次获知事实的报告。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-3-2:algorithm",
+      "rule": "统计 ADR 分组不得用于加速报告判定。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-3-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-3-2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-3-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-3-2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-3-2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-3-2:clocks",
+      "question": "申办者时钟是否与研究者时钟分离且各自可追溯？",
+      "linked_fact_paths": [
+        "susar_reporting.sponsor_clock",
+        "susar_reporting.sponsor_followup_clock",
+        "susar_reporting.awareness_reference"
+      ],
+      "linked_claim_types": [
+        "sponsor_expedited_reporting"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-3-2:clocks"
+      ],
+      "risk_if_unmet": "复制时钟会违反当前实施要求。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-3-2:recipients",
+      "question": "报告对象与沟通分工是否分列？",
+      "linked_fact_paths": [
+        "susar_reporting.sponsor_recipient",
+        "susar_reporting.authority_and_ethics_communications"
+      ],
+      "linked_claim_types": [
+        "sponsor_expedited_reporting"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-3-2:recipients"
+      ],
+      "risk_if_unmet": "沟通对象遗漏会造成监管报告不完整。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

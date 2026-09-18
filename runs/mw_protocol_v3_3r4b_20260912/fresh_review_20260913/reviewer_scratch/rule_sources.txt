@@ -1,0 +1,901 @@
+total source rules in contracts: 70
+declared: 70
+in contracts not declared: []
+declared not in contracts: []
+====================================================================================================
+### applicability:front-1:amendment  [v2_n_front_1.json] node=v2_n_front_1
+  SRC condition: 存在已确认修订历史
+  SRC rationale: 存在修订时变更依据必须逐行给出，初始版本才可省略。
+  SRC triggers: ['document_control.amendment_exists']
+  SRC when_active facts: ['document_control.change_rationale']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('document_control.amendment_exists', [], True, None)]
+  DEC conditional_fact_paths: ["document_control.change_rationale"]
+  DEC conditional_object_cells: ["version:cell:change_rationale"]
+
+### applicability:front-3:additional-signatory  [v2_n_front_3.json] node=v2_n_front_3
+  SRC condition: 存在申办方代表以外的适用签署方
+  SRC rationale: 仅在实际适用时提供附加签署页并给出其身份。
+  SRC triggers: ['signature.additional_signatory_applicable']
+  SRC when_active facts: ['signature.additional_signatory_identity']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('signature.additional_signatory_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["signature.additional_signatory_identity"]
+
+### applicability:front-4:service-parties  [v2_n_front_4.json] node=v2_n_front_4
+  SRC condition: 项目实际使用服务方（如中心实验室/交互式响应系统）
+  SRC rationale: 服务方联系表仅在实际适用时必需。
+  SRC triggers: ['contact.service_parties_applicable']
+  SRC when_active facts: ['contact.service_parties']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('contact.service_parties_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["contact.service_parties"]
+
+### applicability:front-8:figures-present  [v2_n_front_8.json] node=v2_n_front_8
+  SRC condition: 正文实际包含图
+  SRC rationale: 存在图时必须给出实际图题注清单。
+  SRC triggers: ['figure_index.has_figures']
+  SRC when_active facts: ['figure_index.caption_inventory']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('figure_index.has_figures', [], True, None)]
+  DEC conditional_fact_paths: ["figure_index.caption_inventory"]
+
+### applicability:n-1-2:allocation  [v2_n_1_2.json] node=v2_n_1_2
+  SRC condition: 确认设计实际随机化
+  SRC rationale: 分配比例义务仅在随机化设计下适用；单臂非随机设计必须能通过。
+  SRC triggers: ['diagram.randomized']
+  SRC when_active facts: ['diagram.allocation_ratio']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('diagram.randomized', [], True, None)]
+  DEC conditional_fact_paths: ["diagram.allocation_ratio"]
+
+### applicability:n-1-2:escalation  [v2_n_1_2.json] node=v2_n_1_2
+  SRC condition: 确认设计实际包含剂量升级
+  SRC rationale: source[250] 升级图示义务仅在实际含升级的设计中适用。
+  SRC triggers: ['diagram.escalation_design']
+  SRC when_active facts: ['diagram.escalation_transition']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('diagram.escalation_design', [], True, None)]
+  DEC conditional_fact_paths: ["diagram.escalation_transition"]
+
+### applicability:n-1-3:pk-sampling  [v2_n_1_3.json] node=v2_n_1_3
+  SRC condition: 确认存在 PK 采血
+  SRC rationale: PK 采血存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。
+  SRC triggers: ['soa.pk_sampling_present']
+  SRC when_active facts: ['soa.pk_timing_units']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('soa.pk_sampling_present', [], True, None)]
+  DEC conditional_fact_paths: ["soa.pk_timing_units"]
+
+### applicability:n-10-1-1:oncology-progression  [v2_n_10_1_1.json] node=v2_n_10_1_1
+  SRC condition: 已确认本项目适用肿瘤进展例外
+  SRC rationale: 肿瘤进展例外仅在适用性成立时生效。
+  SRC triggers: ['ae.oncology_progression_exception_applicable']
+  SRC when_active facts: ['ae.oncology_progression_exception']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('ae.oncology_progression_exception_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["ae.oncology_progression_exception"]
+
+### applicability:n-14-1:risk-plan  [v2_n_14_1.json] node=v2_n_14_1
+  SRC condition: quality.risk_management_plan_applicable 为 true 时风险管理计划义务激活
+  SRC rationale: 计划适用性由项目事实决定；激活时必须有实际计划身份与复核节奏，不适用不豁免基础 CtQ 链。
+  SRC triggers: ['quality.risk_management_plan_applicable']
+  SRC when_active facts: ['quality.risk_management_plan_identity', 'quality.plan_review_cadence']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('quality.risk_management_plan_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["quality.risk_management_plan_identity", "quality.plan_review_cadence"]
+
+### applicability:n-14-3:remote-monitoring  [v2_n_14_3.json] node=v2_n_14_3
+  SRC condition: quality.remote_monitoring_applicable 为 true 时远程监查记录义务激活
+  SRC rationale: 远程监查由项目事实决定适用性；激活时必须声明记录方式与留存边界。
+  SRC triggers: ['quality.remote_monitoring_applicable']
+  SRC when_active facts: ['quality.remote_monitoring_records']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('quality.remote_monitoring_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["quality.remote_monitoring_records"]
+
+### applicability:n-14-7:charter-approved  [v2_n_14_7.json] node=v2_n_14_7
+  SRC condition: 章程适用且状态为approved
+  SRC rationale: 状态与内容一致：草拟版本不等于批准；只有真实已批准状态要求批准记录。
+  SRC triggers: ['quality.oversight_charter_applicable', 'quality.oversight_charter_status']
+  SRC when_active facts: ['quality.oversight_charter_version', 'quality.oversight_charter_approval_record']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('quality.oversight_charter_applicable', [], True, None), ('quality.oversight_charter_status', [], 'approved', ['planned', 'draft', 'approved'])]
+  DEC conditional_fact_paths: ["quality.oversight_charter_version", "quality.oversight_charter_approval_record"]
+
+### applicability:n-14-7:charter-draft  [v2_n_14_7.json] node=v2_n_14_7
+  SRC condition: 章程适用且状态为draft
+  SRC rationale: 状态与内容一致：草拟版本不等于批准；只有真实已批准状态要求批准记录。
+  SRC triggers: ['quality.oversight_charter_applicable', 'quality.oversight_charter_status']
+  SRC when_active facts: ['quality.oversight_charter_version']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('quality.oversight_charter_applicable', [], True, None), ('quality.oversight_charter_status', [], 'draft', ['planned', 'draft', 'approved'])]
+  DEC conditional_fact_paths: ["quality.oversight_charter_version"]
+
+### applicability:n-14-7:oversight-charter  [v2_n_14_7.json] node=v2_n_14_7
+  SRC condition: quality.oversight_charter_applicable 为 true 时章程义务激活
+  SRC rationale: 章程适用时先明确计划/草拟/已批准状态；按状态分别要求版本与真实批准记录，不以计划意图冒充已完成。
+  SRC triggers: ['quality.oversight_charter_applicable']
+  SRC when_active facts: ['quality.oversight_charter_status']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('quality.oversight_charter_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["quality.oversight_charter_status"]
+
+### applicability:n-15:foreign-style  [v2_n_15.json] node=v2_n_15
+  SRC condition: references.foreign_sources_present 为 true 时外文格式样式义务激活
+  SRC rationale: 外文来源存在性由项目事实决定；激活时必须声明其适用格式样式，不得照抄示例。
+  SRC triggers: ['references.foreign_sources_present']
+  SRC when_active facts: ['references.foreign_format_style']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('references.foreign_sources_present', [], True, None)]
+  DEC conditional_fact_paths: ["references.foreign_format_style"]
+
+### applicability:n-3-1-1:rescue-strategy  [v2_n_3_1_1.json] node=v2_n_3_1_1
+  SRC condition: 已确认设计包含补救治疗，需要说明其与停药处置及主要临床问题的关系
+  SRC rationale: 源312为临床问题示例，不将示例策略默认用于本项目；本规则控制补救相关补充说明，不能免除主临床问题中的停药处置或3.1.2.4其他相关伴发事件策略。
+  SRC triggers: ['design.rescue_treatment_planned']
+  SRC when_active facts: ['design.discontinuation_rescue_strategy']
+  SRC when_active claims: ['rescue_strategy_statement']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('design.rescue_treatment_planned', [], True, None)]
+  DEC conditional_fact_paths: ["design.discontinuation_rescue_strategy"]
+  DEC conditional_claim_types: ["rescue_strategy_statement"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["rescue_strategy_statement"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:n-3-1-2-3:background-rescue  [v2_n_3_1_2_3.json] node=v2_n_3_1_2_3
+  SRC condition: 已确认研究设计存在背景治疗或允许补救治疗
+  SRC rationale: 源body-child318明确伴有或不伴有补救/背景治疗改变；复用已确认干预状态，不从背景治疗文字非空猜测。存在任一项需具体处理及跨合同一致性。
+  SRC triggers: ['intervention.background_therapy_applicable', 'design.rescue_treatment_planned']
+  SRC when_active facts: ['estimand.primary.rescue_treatment_handling']
+  SRC when_active claims: ['estimand_cross_contract_consistency']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=any presence=False
+  DEC preds: [('intervention.background_therapy_applicable', [], True, None), ('design.rescue_treatment_planned', [], True, None)]
+  DEC conditional_fact_paths: ["estimand.primary.rescue_treatment_handling"]
+  DEC conditional_claim_types: ["estimand_cross_contract_consistency"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["estimand_cross_contract_consistency"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:n-3-1-2-4:strategy-crosscheck  [v2_n_3_1_2_4.json] node=v2_n_3_1_2_4
+  SRC condition: 汇总指标与伴发事件策略涉及补救治疗或背景治疗改变
+  SRC rationale: 源body-child318、324要求补救/背景治疗处置与分析一致；复用干预布尔状态而非群体汇总指标文字。该条件只控制专属crosscheck，其他相关ICE定义、策略、理由和群体指标始终保留。
+  SRC triggers: ['intervention.background_therapy_applicable', 'design.rescue_treatment_planned']
+  SRC when_active facts: ['estimand.primary.ice_strategy_crosscheck']
+  SRC when_active claims: ['estimand_cross_contract_consistency']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=any presence=False
+  DEC preds: [('intervention.background_therapy_applicable', [], True, None), ('design.rescue_treatment_planned', [], True, None)]
+  DEC conditional_fact_paths: ["estimand.primary.ice_strategy_crosscheck"]
+  DEC conditional_claim_types: ["estimand_cross_contract_consistency"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["estimand_cross_contract_consistency"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:n-3-3-1:injection-reaction  [v2_n_3_3_1.json] node=v2_n_3_3_1
+  SRC condition: 给药途径可能引起注射反应（适用性判定为适用）
+  SRC rationale: 仅当给药途径适用时，注射反应定义与观察方式才成为义务；不适用时须显式记录不适用理由。
+  SRC triggers: ['safety.injection_reaction_applicability']
+  SRC when_active facts: ['safety.injection_reaction_definitions']
+  SRC when_active claims: ['injection_reaction_statement']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('safety.injection_reaction_applicability', ['applicable'], True, None)]
+  DEC conditional_fact_paths: ["safety.injection_reaction_definitions"]
+  DEC conditional_claim_types: ["injection_reaction_statement"]
+
+### applicability:n-3-4-1:analysis-commitment  [v2_n_3_4_1.json] node=v2_n_3_4_1
+  SRC condition: 任一探索性分析被判定适用
+  SRC rationale: 从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。
+  SRC triggers: ['exploratory.population_pk_applicable', 'statistics.pk_pd_er.er_applicable', 'exploratory.immunogenicity_applicable', 'exploratory.biomarker_applicable']
+  SRC when_active facts: []
+  SRC when_active claims: ['exploratory_commitment']
+  SRC when_active roles: []
+  SRC when_active objects: ['table']
+  DEC mode=any presence=False
+  DEC preds: [('exploratory.population_pk_applicable', [], True, None), ('statistics.pk_pd_er.er_applicable', [], True, None), ('exploratory.immunogenicity_applicable', [], True, None), ('exploratory.biomarker_applicable', [], True, None)]
+  DEC conditional_claim_types: ["exploratory_commitment"]
+  DEC conditional_object_kinds: ["table"]
+
+### applicability:n-3-4-1:biomarker  [v2_n_3_4_1.json] node=v2_n_3_4_1
+  SRC condition: 项目确认该类探索性分析适用
+  SRC rationale: 从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。
+  SRC triggers: ['exploratory.biomarker_applicable']
+  SRC when_active facts: ['exploratory.biomarker']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('exploratory.biomarker_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.biomarker"]
+
+### applicability:n-3-4-1:er  [v2_n_3_4_1.json] node=v2_n_3_4_1
+  SRC condition: 项目确认该类探索性分析适用
+  SRC rationale: 从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。
+  SRC triggers: ['statistics.pk_pd_er.er_applicable']
+  SRC when_active facts: ['exploratory.exposure_response']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.er_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.exposure_response"]
+
+### applicability:n-3-4-1:immunogenicity  [v2_n_3_4_1.json] node=v2_n_3_4_1
+  SRC condition: 项目确认该类探索性分析适用
+  SRC rationale: 从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。
+  SRC triggers: ['exploratory.immunogenicity_applicable']
+  SRC when_active facts: ['exploratory.immunogenicity']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('exploratory.immunogenicity_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.immunogenicity"]
+
+### applicability:n-3-4-1:population-pk  [v2_n_3_4_1.json] node=v2_n_3_4_1
+  SRC condition: 项目确认该类探索性分析适用
+  SRC rationale: 从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。
+  SRC triggers: ['exploratory.population_pk_applicable']
+  SRC when_active facts: ['exploratory.population_pk']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('exploratory.population_pk_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.population_pk"]
+
+### applicability:n-5-2:contraception-exclusion-reference  [v2_n_5_2.json] node=v2_n_5_2
+  SRC condition: 项目确认妊娠/避孕风险适用
+  SRC rationale: 避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。 适用性从共享对象applicable原生布尔读取并保留reason，不从文本或人群性别单独推断。
+  SRC triggers: ['picos.risk.pregnancy_contraception']
+  SRC when_active facts: ['population.exclusion.contraception_criterion_ref']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('picos.risk.pregnancy_contraception', ['applicable'], True, None)]
+  DEC conditional_fact_paths: ["population.exclusion.contraception_criterion_ref"]
+
+### applicability:n-6-1-2:dose-modification  [v2_n_6_1_2.json] node=v2_n_6_1_2
+  SRC condition: 确认设计包含剂量调整/暂停/恢复路径
+  SRC rationale: 按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。
+  SRC triggers: ['intervention.dose_modification_required']
+  SRC when_active facts: ['intervention.dose_modification_features']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.dose_modification_required', [], True, None)]
+  DEC conditional_fact_paths: ["intervention.dose_modification_features"]
+
+### applicability:n-6-1-2:escalation  [v2_n_6_1_2.json] node=v2_n_6_1_2
+  SRC condition: 确认设计包含剂量递增或 DLT 定义
+  SRC rationale: 设计包含递增/DLT 时，递增与 DLT 定义逻辑必须作为项目事实给出。
+  SRC triggers: ['intervention.dose_escalation_or_dlt_applicable']
+  SRC when_active facts: ['intervention.dose_escalation_or_dlt_logic']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.dose_escalation_or_dlt_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["intervention.dose_escalation_or_dlt_logic"]
+
+### applicability:n-6-1-2:hold  [v2_n_6_1_2.json] node=v2_n_6_1_2
+  SRC condition: 项目确认该剂量动作适用
+  SRC rationale: 按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。
+  SRC triggers: ['intervention.dose_modification_required', 'intervention.dose_modification_features']
+  SRC when_active facts: ['intervention.dose_hold_criteria']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.dose_modification_required', [], True, None), ('intervention.dose_modification_features', ['hold'], True, None)]
+  DEC conditional_fact_paths: ["intervention.dose_hold_criteria"]
+
+### applicability:n-6-1-2:reduction  [v2_n_6_1_2.json] node=v2_n_6_1_2
+  SRC condition: 项目确认该剂量动作适用
+  SRC rationale: 按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。
+  SRC triggers: ['intervention.dose_modification_required', 'intervention.dose_modification_features']
+  SRC when_active facts: ['intervention.dose_reduction_rules']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.dose_modification_required', [], True, None), ('intervention.dose_modification_features', ['reduction'], True, None)]
+  DEC conditional_fact_paths: ["intervention.dose_reduction_rules"]
+
+### applicability:n-6-1-2:restart  [v2_n_6_1_2.json] node=v2_n_6_1_2
+  SRC condition: 项目确认该剂量动作适用
+  SRC rationale: 按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。
+  SRC triggers: ['intervention.dose_modification_required', 'intervention.dose_modification_features']
+  SRC when_active facts: ['intervention.restart_criteria']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.dose_modification_required', [], True, None), ('intervention.dose_modification_features', ['restart'], True, None)]
+  DEC conditional_fact_paths: ["intervention.restart_criteria"]
+
+### applicability:n-6-2-2:label-text  [v2_n_6_2_2.json] node=v2_n_6_2_2
+  SRC condition: 确认需要对标签文本做监管/操作核查
+  SRC rationale: 标签文本存在时，核查状态必须作为项目事实登记，不得断言普遍合规。
+  SRC triggers: ['intervention.regulatory_labeling_check']
+  SRC when_active facts: ['intervention.label_text']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.regulatory_labeling_check', [], True, None)]
+  DEC conditional_fact_paths: ["intervention.label_text"]
+
+### applicability:n-6-4-2:background  [v2_n_6_4_2.json] node=v2_n_6_4_2
+  SRC condition: 确认存在必须使用的背景治疗
+  SRC rationale: 存在背景治疗时，其规则必须作为项目事实给出。
+  SRC triggers: ['intervention.background_therapy_applicable']
+  SRC when_active facts: ['intervention.background_therapy_rules']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('intervention.background_therapy_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["intervention.background_therapy_rules"]
+
+### applicability:n-7-2:randomization  [v2_n_7_2.json] node=v2_n_7_2
+  SRC condition: 已确认本项目为随机化设计，不限于 D1 随机化
+  SRC rationale: 随机化设计必须给出实际时点规则；D1 仅为源模板示例。复用流程图已有随机设计状态，不从给药日或非空文字推断。
+  SRC triggers: ['diagram.randomized']
+  SRC when_active facts: ['procedure.randomization_day_rules']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('diagram.randomized', [], True, None)]
+  DEC conditional_fact_paths: ["procedure.randomization_day_rules"]
+
+### applicability:n-8-1:hold-to-stop  [v2_n_8_1.json] node=v2_n_8_1
+  SRC condition: 确认个体暂停可能转为永久停药
+  SRC rationale: 存在暂停转永久停药路径时，永久停药标准与记录必须完整给出。
+  SRC triggers: ['discontinuation.individual_hold_requires_permanent_stop']
+  SRC when_active facts: ['discontinuation.permanent_stop_criteria.participant', 'discontinuation.permanent_stop_recording']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('discontinuation.individual_hold_requires_permanent_stop', [], True, None)]
+
+### applicability:n-8-1:individual-hold  [v2_n_8_1.json] node=v2_n_8_1
+  SRC condition: 确认设计包含个体暂时暂停路径
+  SRC rationale: 存在个体暂停路径时，暂停触发条件与执行记录要求必须完整给出。
+  SRC triggers: ['discontinuation.individual_hold_applicable']
+  SRC when_active facts: ['discontinuation.individual_hold_criteria', 'discontinuation.personal_hold']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('discontinuation.individual_hold_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["discontinuation.individual_hold_criteria", "discontinuation.personal_hold"]
+
+### applicability:n-9-2:central-lab  [v2_n_9_2.json] node=v2_n_9_2
+  SRC condition: 项目使用中央实验室且已确认适用
+  SRC rationale: 源body574直接要求中央实验室资质与承担检测项目；单位/参考范围和特殊检测目的独立保留，不能因不使用中央实验室而删除。心电图集中判读是body572的独立条件。
+  SRC triggers: ['safety.central_lab_applicable']
+  SRC when_active facts: ['safety.central_lab_qualification', 'safety.central_lab_assay_scope']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('safety.central_lab_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["safety.central_lab_qualification", "safety.central_lab_assay_scope"]
+
+### applicability:n-9-3:er  [v2_n_9_3.json] node=v2_n_9_3
+  SRC condition: 已确认相关分析适用
+  SRC rationale: 源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。
+  SRC triggers: ['statistics.pk_pd_er.er_applicable']
+  SRC when_active facts: ['exploratory.exposure_response']
+  SRC when_active claims: ['exposure_response_analysis']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.er_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.exposure_response"]
+  DEC conditional_claim_types: ["exposure_response_analysis"]
+  DEC conditional_evidence_admission_types: ["exposure_response_analysis"]
+
+### applicability:n-9-3:immunogenicity  [v2_n_9_3.json] node=v2_n_9_3
+  SRC condition: 产品免疫原性风险成立且项目已确认检测策略
+  SRC rationale: 免疫原性义务仅在适用性成立时生效。
+  SRC triggers: ['exploratory.immunogenicity_applicable']
+  SRC when_active facts: ['exploratory.immunogenicity']
+  SRC when_active claims: ['immunogenicity_strategy']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('exploratory.immunogenicity_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.immunogenicity"]
+  DEC conditional_claim_types: ["immunogenicity_strategy"]
+  DEC active_evidence_requirements: [{"source_roles": ["project_primary"], "admission_claim_types": ["immunogenicity_strategy"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:n-9-3:pk-pd-shared  [v2_n_9_3.json] node=v2_n_9_3
+  SRC condition: 已确认相关分析适用
+  SRC rationale: 源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。
+  SRC triggers: ['exploratory.population_pk_applicable', 'statistics.pk_pd_er.pk_applicable', 'statistics.pk_pd_er.pd_applicable', 'statistics.pk_pd_er.er_applicable']
+  SRC when_active facts: ['pk.pd_analysis_requirements', 'pk.linked_endpoints', 'pk.sampling_schedule']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=any presence=False
+  DEC preds: [('exploratory.population_pk_applicable', [], True, None), ('statistics.pk_pd_er.pk_applicable', [], True, None), ('statistics.pk_pd_er.pd_applicable', [], True, None), ('statistics.pk_pd_er.er_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["pk.pd_analysis_requirements", "pk.linked_endpoints", "pk.sampling_schedule"]
+  DEC inactive_claim_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "exploratory_disposition", "obligation": "required", "rationale": "无PK/PD/E-R分析时说明项目不适用处置。", "qualifying_conditions": []}]
+  DEC inactive_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["exploratory_disposition"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:n-9-3:population-pk  [v2_n_9_3.json] node=v2_n_9_3
+  SRC condition: 已确认相关分析适用
+  SRC rationale: 源body584–585适用才承载；共同方法与采样由任一适用PK/PD/E-R分析保留。
+  SRC triggers: ['exploratory.population_pk_applicable']
+  SRC when_active facts: ['exploratory.population_pk']
+  SRC when_active claims: ['population_pk_analysis']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('exploratory.population_pk_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["exploratory.population_pk"]
+  DEC conditional_claim_types: ["population_pk_analysis"]
+  DEC conditional_evidence_admission_types: ["population_pk_analysis"]
+
+### applicability:n-9-4:irc  [v2_n_9_4.json] node=v2_n_9_4
+  SRC condition: 已确认本项目设立 IRC
+  SRC rationale: IRC 义务仅在适用性成立时生效。
+  SRC triggers: ['irc.applicable']
+  SRC when_active facts: ['irc.charter_and_independence', 'irc.review_scope_endpoints', 'irc.adjudication_method_and_instrument', 'irc.roles_and_conflict_management']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('irc.applicable', [], True, None)]
+  DEC conditional_fact_paths: ["irc.charter_and_independence", "irc.review_scope_endpoints", "irc.adjudication_method_and_instrument", "irc.roles_and_conflict_management"]
+
+### applicability:v2-n-12-7:future-use  [v2_n_12_7.json] node=v2_n_12_7
+  SRC condition: 未来样本或数据使用适用时，必须独立说明用途、地点、期限、遗传检测、同意与复核。
+  SRC rationale: 未来使用不得与本研究当前必需检测混同；普通试验同意不得推导未来使用许可。
+  SRC triggers: ['future_use.applicable']
+  SRC when_active facts: ['future_use.purpose', 'future_use.location', 'future_use.duration', 'future_use.genetic_testing', 'future_use.consent', 'future_use.review_plan', 'future_use.current_study_assay_separation']
+  SRC when_active claims: ['future_use.separation']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('future_use.applicable', [], True, None)]
+  DEC conditional_fact_paths: ["future_use.purpose", "future_use.location", "future_use.duration", "future_use.genetic_testing", "future_use.consent", "future_use.review_plan"]
+  DEC conditional_claim_types: ["future_use.review_required"]
+  DEC conditional_evidence_admission_types: ["future_use.review_required"]
+  DEC conditional_object_kinds: ["table"]
+
+### applicability:v2-n-16-x1:assessment  [v2_n_16_x1.json] node=v2_n_16_x1
+  SRC condition: appendix.ecog_assessment_applicable 为 true 时 ECOG 附录内容义务激活
+  SRC rationale: 评分附录由实际评估决定适用性；激活时必须给出核对版本、来源与复现内容，并包含评分表格。
+  SRC triggers: ['appendix.ecog_assessment_applicable']
+  SRC when_active facts: ['appendix.ecog_version', 'appendix.ecog_source_reference', 'appendix.ecog_scale_reproduced']
+  SRC when_active claims: ['appendix.ecog_version_and_contents_verified']
+  SRC when_active roles: ['regulatory_or_guideline', 'peer_reviewed']
+  SRC when_active objects: ['table']
+  DEC mode=all presence=True
+  DEC preds: [('appendix.ecog_assessment_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["appendix.ecog_version", "appendix.ecog_source_reference", "appendix.ecog_scale_reproduced"]
+  DEC conditional_claim_types: ["appendix.ecog_version_and_contents_verified"]
+  DEC conditional_object_kinds: ["table"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["regulatory_or_guideline", "peer_reviewed"], "admission_claim_types": ["appendix.ecog_version_and_contents_verified"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:v2-n-16-x2:assessment  [v2_n_16_x2.json] node=v2_n_16_x2
+  SRC condition: appendix.nyha_assessment_applicable 为 true 时 NYHA 附录内容义务激活
+  SRC rationale: 分级附录由实际评估决定适用性；激活时必须给出核对版本、来源与复现内容，并包含分级表格。
+  SRC triggers: ['appendix.nyha_assessment_applicable']
+  SRC when_active facts: ['appendix.nyha_version', 'appendix.nyha_source_reference', 'appendix.nyha_classification_reproduced']
+  SRC when_active claims: ['appendix.nyha_version_and_contents_verified']
+  SRC when_active roles: ['regulatory_or_guideline', 'peer_reviewed']
+  SRC when_active objects: ['table']
+  DEC mode=all presence=True
+  DEC preds: [('appendix.nyha_assessment_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["appendix.nyha_version", "appendix.nyha_source_reference", "appendix.nyha_classification_reproduced"]
+  DEC conditional_claim_types: ["appendix.nyha_version_and_contents_verified"]
+  DEC conditional_object_kinds: ["table"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["regulatory_or_guideline", "peer_reviewed"], "admission_claim_types": ["appendix.nyha_version_and_contents_verified"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+
+### applicability:v2_n_4_1:interim  [v2_n_4_1.json] node=v2_n_4_1
+  SRC condition: 已确认存在相应期中分析、分层或子研究设计
+  SRC rationale: 源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。
+  SRC triggers: ['statistics.interim.applicable']
+  SRC when_active facts: ['framing.structured_design.interim_analysis']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.interim_analysis"]
+
+### applicability:v2_n_4_1:stratification  [v2_n_4_1.json] node=v2_n_4_1
+  SRC condition: 已确认存在相应期中分析、分层或子研究设计
+  SRC rationale: 源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。
+  SRC triggers: ['framing.structured_design.features']
+  SRC when_active facts: ['framing.structured_design.stratification']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('framing.structured_design.features', ['stratification'], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.stratification"]
+
+### applicability:v2_n_4_1:substudy  [v2_n_4_1.json] node=v2_n_4_1
+  SRC condition: 已确认存在相应期中分析、分层或子研究设计
+  SRC rationale: 源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。
+  SRC triggers: ['framing.structured_design.features']
+  SRC when_active facts: ['framing.structured_design.substudy']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('framing.structured_design.features', ['substudy'], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.substudy"]
+
+### applicability:v2_n_4_2:noninferiority  [v2_n_4_2.json] node=v2_n_4_2
+  SRC condition: 已确认存在非劣效假设
+  SRC rationale: 源body-child355对照与设计按实际项目选择；不把示例升级为全部设计义务，保留所有基础对照/假设论证。
+  SRC triggers: ['design.noninferiority_applicable']
+  SRC when_active facts: ['framing.structured_design.noninferiority_margin_decision']
+  SRC when_active claims: ['noninferiority_margin_decision']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('design.noninferiority_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.noninferiority_margin_decision"]
+  DEC conditional_claim_types: ["noninferiority_margin_decision"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["noninferiority_margin_decision"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.93}]
+
+### applicability:v2_n_4_2:placebo  [v2_n_4_2.json] node=v2_n_4_2
+  SRC condition: 已确认存在安慰剂对照
+  SRC rationale: 源body-child355对照与设计按实际项目选择；不把示例升级为全部设计义务，保留所有基础对照/假设论证。
+  SRC triggers: ['design.placebo_control_applicable']
+  SRC when_active facts: ['framing.structured_design.placebo_decision']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('design.placebo_control_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.placebo_decision"]
+
+### applicability:v2_n_4_4:follow-up  [v2_n_4_4.json] node=v2_n_4_4
+  SRC condition: 项目明确计划相应随访或治疗后评估阶段
+  SRC rationale: 源359–362按实际计划阶段定义完成；两个阶段分别判断，参与者完成及总体结束定义始终必需。
+  SRC triggers: ['picos.study_epochs.features']
+  SRC when_active facts: ['picos.study_epochs.follow_up_definition', 'picos.study_epochs.follow_up_window']
+  SRC when_active claims: ['study_follow_up_definition']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('picos.study_epochs.features', ['follow_up'], True, None)]
+  DEC conditional_fact_paths: ["picos.study_epochs.follow_up_definition", "picos.study_epochs.follow_up_window"]
+  DEC conditional_claim_types: ["study_follow_up_definition"]
+  DEC conditional_evidence_admission_types: ["study_follow_up_definition"]
+  DEC conditional_object_cells: ["end:follow-up-window"]
+
+### applicability:v2_n_4_4:post-treatment  [v2_n_4_4.json] node=v2_n_4_4
+  SRC condition: 项目明确计划相应随访或治疗后评估阶段
+  SRC rationale: 源359–362按实际计划阶段定义完成；两个阶段分别判断，参与者完成及总体结束定义始终必需。
+  SRC triggers: ['picos.study_epochs.features']
+  SRC when_active facts: ['picos.study_epochs.post_treatment_assessment']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('picos.study_epochs.features', ['post_treatment_assessment'], True, None)]
+  DEC conditional_fact_paths: ["picos.study_epochs.post_treatment_assessment"]
+  DEC conditional_object_cells: ["end:post-treatment-assessment"]
+
+### applicability:v2_n_4_5:active  [v2_n_4_5.json] node=v2_n_4_5
+  SRC condition: 已确认随机化设计
+  SRC rationale: 源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。
+  SRC triggers: ['diagram.randomized']
+  SRC when_active facts: ['framing.structured_design.randomization_procedure', 'framing.structured_design.allocation_ratio']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('diagram.randomized', [], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.randomization_procedure", "framing.structured_design.allocation_ratio"]
+  DEC conditional_object_cells: ["randomization:procedure", "randomization:ratio"]
+
+### applicability:v2_n_4_5:blinding  [v2_n_4_5.json] node=v2_n_4_5
+  SRC condition: 已确认存在部分或全部设盲
+  SRC rationale: 源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。
+  SRC triggers: ['framing.structured_design.masking_features']
+  SRC when_active facts: ['framing.structured_design.masking_maintenance', 'framing.structured_design.accidental_unblinding', 'framing.structured_design.unblinding_records']
+  SRC when_active claims: ['unblinding_procedure']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('framing.structured_design.masking_features', ['blinding_applied'], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.masking_maintenance", "framing.structured_design.accidental_unblinding", "framing.structured_design.unblinding_records"]
+  DEC conditional_claim_types: ["unblinding_procedure"]
+  DEC conditional_evidence_admission_types: ["unblinding_procedure"]
+  DEC conditional_object_cells: ["masking:maintenance", "unblinding:records"]
+
+### applicability:v2_n_4_5:emergency  [v2_n_4_5.json] node=v2_n_4_5
+  SRC condition: 设盲且实际设计需要紧急揭盲程序
+  SRC rationale: 源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。
+  SRC triggers: ['framing.structured_design.masking_features']
+  SRC when_active facts: ['framing.structured_design.emergency_unblinding']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('framing.structured_design.masking_features', ['blinding_applied'], True, None), ('framing.structured_design.masking_features', ['emergency_unblinding_required'], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.emergency_unblinding"]
+  DEC conditional_object_cells: ["unblinding:emergency"]
+
+### applicability:v2_n_4_5:personnel  [v2_n_4_5.json] node=v2_n_4_5
+  SRC condition: 设盲且明确存在非盲工作人员
+  SRC rationale: 源body-child364–369按实际适用性；开放设计仍需偏倚控制理由与分配安排，不能虚构揭盲。
+  SRC triggers: ['framing.structured_design.masking_features']
+  SRC when_active facts: ['framing.structured_design.unblinded_personnel']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('framing.structured_design.masking_features', ['blinding_applied'], True, None), ('framing.structured_design.masking_features', ['unblinded_personnel_present'], True, None)]
+  DEC conditional_fact_paths: ["framing.structured_design.unblinded_personnel"]
+
+### applicability:v2_n_5_3:active  [v2_n_5_3.json] node=v2_n_5_3
+  SRC condition: 项目明确确认妊娠/避孕措施适用
+  SRC rationale: 仅控制避孕期限及对应表格单元格；其他生活方式范围、时点、例外和处理措施始终独立保留。
+  SRC triggers: ['picos.risk.pregnancy_contraception']
+  SRC when_active facts: ['population.lifestyle.contraception_duration']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('picos.risk.pregnancy_contraception', ['applicable'], True, None)]
+  DEC conditional_fact_paths: ["population.lifestyle.contraception_duration"]
+  DEC conditional_object_cells: ["lifestyle:contraception"]
+
+### applicability:v2_n_5_4:active  [v2_n_5_4.json] node=v2_n_5_4
+  SRC condition: 当项目允许重新筛选时，激活其资格条件、原因、时间窗口和记录要求。
+  SRC rationale: 源body411/414要求按项目条件说明复筛；筛选失败记录独立保留，不因禁止复筛而省略。
+  SRC triggers: ['population.rescreening.allowed']
+  SRC when_active facts: ['population.rescreening.definition', 'population.rescreening.permitted_reasons', 'population.rescreening.timing', 'population.rescreening.records']
+  SRC when_active claims: ['rescreening_eligibility']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('population.rescreening.allowed', [], True, None)]
+  DEC conditional_fact_paths: ["population.rescreening.definition", "population.rescreening.permitted_reasons", "population.rescreening.timing", "population.rescreening.records"]
+  DEC conditional_object_cells: ["rescreen:definition", "rescreen:timing", "rescreen:records"]
+
+### applicability:v2_n_5_5:compensation  [v2_n_5_5.json] node=v2_n_5_5
+  SRC condition: 已确认存在参与者补偿安排
+  SRC rationale: 补偿按实际适用性；招募、保留、伦理审查计划独立保留，计划不等于完成审批。
+  SRC triggers: ['population.recruitment.compensation_applicable']
+  SRC when_active facts: ['population.recruitment.compensation_arrangement']
+  SRC when_active claims: ['compensation_arrangement']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('population.recruitment.compensation_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["population.recruitment.compensation_arrangement"]
+  DEC conditional_claim_types: ["compensation_arrangement"]
+  DEC conditional_evidence_admission_types: ["compensation_arrangement"]
+  DEC active_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["compensation_arrangement"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.94}]
+
+### conditional:v2-n-11-1:interim-adjustment  [v2_n_11_1.json] node=v2_n_11_1
+  SRC condition: 已确认样本量设计包含期中或自适应调整
+  SRC rationale: 如存在影响样本量的期中或自适应安排，说明样本量影响及Ⅰ类错误控制方法；允许有依据的不需要额外调整结论，不强制填alpha消耗数值。源body771的若有不等于无论证豁免。
+  SRC triggers: ['statistics.sample_size.interim_applicable']
+  SRC when_active facts: ['statistics.sample_size.interim_adjustment', 'statistics.sample_size.interim_alpha_adjustment']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.sample_size.interim_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.sample_size.interim_adjustment", "statistics.sample_size.interim_alpha_adjustment"]
+
+### conditional:v2-n-11-4-6:er  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认暴露-效应分析适用于本项目
+  SRC rationale: 暴露-效应义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。
+  SRC triggers: ['statistics.pk_pd_er.er_applicable']
+  SRC when_active facts: ['statistics.pk_pd_er.endpoint_linkage', 'statistics.pk_pd_er.sampling_schedule', 'statistics.pk_pd_er.model_assumptions']
+  SRC when_active claims: ['pk_pd_er_analysis']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.er_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.endpoint_linkage", "statistics.pk_pd_er.sampling_schedule", "statistics.pk_pd_er.model_assumptions"]
+  DEC conditional_claim_types: ["pk_pd_er_analysis"]
+  DEC conditional_evidence_admission_types: ["pk_pd_er_analysis"]
+
+### conditional:v2-n-11-4-6:er-confirmatory  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认开展ER分析且用于确证性推断
+  SRC rationale: 依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。
+  SRC triggers: ['statistics.pk_pd_er.er_applicable', 'statistics.pk_pd_er.er_confirmatory']
+  SRC when_active facts: ['statistics.pk_pd_er.confirmatory_analysis_link']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.er_applicable', [], True, None), ('statistics.pk_pd_er.er_confirmatory', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.confirmatory_analysis_link"]
+
+### conditional:v2-n-11-4-6:pd  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认 PD 分析适用于本项目
+  SRC rationale: PD 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。
+  SRC triggers: ['statistics.pk_pd_er.pd_applicable']
+  SRC when_active facts: ['statistics.pk_pd_er.endpoint_linkage', 'statistics.pk_pd_er.sampling_schedule', 'statistics.pk_pd_er.model_assumptions']
+  SRC when_active claims: ['pk_pd_er_analysis']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.pd_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.endpoint_linkage", "statistics.pk_pd_er.sampling_schedule", "statistics.pk_pd_er.model_assumptions"]
+  DEC conditional_claim_types: ["pk_pd_er_analysis"]
+  DEC conditional_evidence_admission_types: ["pk_pd_er_analysis"]
+
+### conditional:v2-n-11-4-6:pd-confirmatory  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认开展PD分析且用于确证性推断
+  SRC rationale: 依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。
+  SRC triggers: ['statistics.pk_pd_er.pd_applicable', 'statistics.pk_pd_er.pd_confirmatory']
+  SRC when_active facts: ['statistics.pk_pd_er.confirmatory_analysis_link']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.pd_applicable', [], True, None), ('statistics.pk_pd_er.pd_confirmatory', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.confirmatory_analysis_link"]
+
+### conditional:v2-n-11-4-6:pk  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认 PK 分析适用于本项目
+  SRC rationale: PK 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。
+  SRC triggers: ['statistics.pk_pd_er.pk_applicable']
+  SRC when_active facts: ['statistics.pk_pd_er.endpoint_linkage', 'statistics.pk_pd_er.sampling_schedule', 'statistics.pk_pd_er.model_assumptions']
+  SRC when_active claims: ['pk_pd_er_analysis']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.pk_applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.endpoint_linkage", "statistics.pk_pd_er.sampling_schedule", "statistics.pk_pd_er.model_assumptions"]
+  DEC conditional_claim_types: ["pk_pd_er_analysis"]
+  DEC conditional_evidence_admission_types: ["pk_pd_er_analysis"]
+
+### conditional:v2-n-11-4-6:pk-confirmatory  [v2_n_11_4_6.json] node=v2_n_11_4_6
+  SRC condition: 已确认开展PK分析且用于确证性推断
+  SRC rationale: 依据已登记的语义扩展，确证性使用须链接主要或次要分析，不得仅改称探索性；探索性使用不索要虚假的确证性链接。
+  SRC triggers: ['statistics.pk_pd_er.pk_applicable', 'statistics.pk_pd_er.pk_confirmatory']
+  SRC when_active facts: ['statistics.pk_pd_er.confirmatory_analysis_link']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.pk_pd_er.pk_applicable', [], True, None), ('statistics.pk_pd_er.pk_confirmatory', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.pk_pd_er.confirmatory_analysis_link"]
+
+### conditional:v2-n-11-4-8:no-adjustment  [v2_n_11_4_8.json] node=v2_n_11_4_8
+  SRC condition: 已确认本项目无需进行多重性调整
+  SRC rationale: 无需调整不是默认句，必须有实际确证性家族适用性处置。
+  SRC triggers: ['statistics.multiplicity.no_adjustment_applicable']
+  SRC when_active facts: ['statistics.multiplicity.applicability_disposition']
+  SRC when_active claims: ['multiplicity_procedure']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.multiplicity.no_adjustment_applicable', [], True, None)]
+
+### conditional:v2-n-11-4-9:efficacy  [v2_n_11_4_9.json] node=v2_n_11_4_9
+  SRC condition: 已开展期中分析且efficacy用途明确适用
+  SRC rationale: 根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。
+  SRC triggers: ['statistics.interim.applicable', 'statistics.interim.features']
+  SRC when_active facts: ['statistics.interim.efficacy_alpha_spending']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None), ('statistics.interim.features', ['efficacy_testing'], True, None)]
+  DEC conditional_fact_paths: ["statistics.interim.efficacy_alpha_spending"]
+  DEC conditional_object_cells: ["interim:cell:efficacy-alpha"]
+
+### conditional:v2-n-11-4-9:idmc  [v2_n_11_4_9.json] node=v2_n_11_4_9
+  SRC condition: 已开展期中分析且idmc用途明确适用
+  SRC rationale: 根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。
+  SRC triggers: ['statistics.interim.applicable', 'statistics.interim.features']
+  SRC when_active facts: ['statistics.interim.idmc_responsibilities']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None), ('statistics.interim.features', ['idmc_review'], True, None)]
+  DEC conditional_fact_paths: ["statistics.interim.idmc_responsibilities"]
+  DEC conditional_object_cells: ["interim:cell:idmc"]
+
+### conditional:v2-n-11-4-9:information-fraction  [v2_n_11_4_9.json] node=v2_n_11_4_9
+  SRC condition: 已开展期中分析且information-fraction用途明确适用
+  SRC rationale: 根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。
+  SRC triggers: ['statistics.interim.applicable', 'statistics.interim.features']
+  SRC when_active facts: ['statistics.interim.information_fraction']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None), ('statistics.interim.features', ['information_fraction'], True, None)]
+  DEC conditional_fact_paths: ["statistics.interim.information_fraction"]
+  DEC conditional_object_cells: ["interim:cell:information-fraction"]
+
+### conditional:v2-n-11-4-9:interim  [v2_n_11_4_9.json] node=v2_n_11_4_9
+  SRC condition: 已确认本项目包含期中分析
+  SRC rationale: 期中分析保留目的、时点、决策、最终分析影响及监督引用；信息量比例、正式疗效检验、IDMC和终点IRC按独立确认用途激活，不由开展期中分析一并推定。
+  SRC triggers: ['statistics.interim.applicable']
+  SRC when_active facts: ['statistics.interim.timing', 'statistics.interim.purpose', 'statistics.interim.rules', 'statistics.interim.decision_responsibility', 'statistics.interim.final_analysis_impact', 'statistics.interim.safety_review_alpha_separation', 'statistics.interim.canonical_reference', 'statistics.interim.features', 'irc.applicable']
+  SRC when_active claims: ['interim_analysis_plan']
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.interim.timing", "statistics.interim.purpose", "statistics.interim.rules", "statistics.interim.decision_responsibility", "statistics.interim.final_analysis_impact", "statistics.interim.safety_review_alpha_separation", "statistics.interim.canonical_reference", "statistics.interim.features"]
+  DEC conditional_claim_types: ["interim_analysis_plan", "interim_final_analysis_impact"]
+  DEC conditional_evidence_admission_types: ["interim_analysis_plan", "interim_final_analysis_impact"]
+  DEC conditional_object_kinds: ["table"]
+  DEC inactive_claim_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "interim_not_planned", "obligation": "required", "rationale": "Record the confirmed non-applicability disposition", "qualifying_conditions": []}]
+  DEC inactive_evidence_requirements: [{"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["interim_not_planned"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}]
+  DEC reference_targets: [{"fact_path": "statistics.interim.canonical_reference", "semantic_node_ids": ["v2_n_14_7"]}]
+
+### conditional:v2-n-11-4-9:irc  [v2_n_11_4_9.json] node=v2_n_11_4_9
+  SRC condition: 已开展期中分析且irc用途明确适用
+  SRC rationale: 根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。
+  SRC triggers: ['statistics.interim.applicable', 'irc.applicable']
+  SRC when_active facts: ['statistics.interim.endpoint_irc_responsibilities']
+  SRC when_active claims: []
+  SRC when_active roles: []
+  SRC when_active objects: []
+  DEC mode=all presence=False
+  DEC preds: [('statistics.interim.applicable', [], True, None), ('irc.applicable', [], True, None)]
+  DEC conditional_fact_paths: ["statistics.interim.endpoint_irc_responsibilities"]
+  DEC conditional_object_cells: ["interim:cell:irc"]
+

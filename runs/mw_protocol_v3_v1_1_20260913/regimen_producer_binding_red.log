@@ -1,0 +1,45 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.0
+collected 4 items
+
+tests/protocol_v3/test_regimen_adoption_command.py F...                  [100%]
+
+=================================== FAILURES ===================================
+_ test_adoption_command_binds_saved_output_and_keeps_replay_material_identical _
+
+    def test_adoption_command_binds_saved_output_and_keeps_replay_material_identical():
+        from app.protocol_workflow.agent2.study_definition import prepare_regimen_adoption
+        prepared, output = prepared_reference()
+        proposal = read_regimen_response(prepared, output)
+        state = {"status": "ready_for_review", "validation": {"valid": True, "proposal": proposal,
+                 "raw_response": {"output_sha256": "b" * 64}}}
+        reads = []
+        def read(run):
+            reads.append(run)
+            return state
+        coordinator = SimpleNamespace(project_id="project:one", read=read, prepared_request=lambda run: prepared)
+        intent = dict(study_definition_id="study:one", operation_id="operation:one", expected_revision=1,
+            snapshot_sha256="a" * 64, actor_id="user:one", decided_at=datetime(2026,9,13,tzinfo=timezone.utc), reason="采用完整方案")
+        first = prepare_regimen_adoption(coordinator,"regimen:one",**intent)
+        again = prepare_regimen_adoption(coordinator,"regimen:one",**intent)
+        assert first == again
+        assert reads == ["regimen:one", "regimen:one"]
+        assert len(first.fact_updates["intervention.dose_regimen"]["schedules"]) == 4
+        assert first.decision_record.actor_type.value == "user"
+        assert first.decision_record.snapshot_sha256 == intent["snapshot_sha256"]
+        assert first.template_adoption.template_id == "tp_ma_07_v2"
+>       assert {ref.fact_path for ref in first.decision_input_refs} == {"intervention.dose_regimen", "research.input_context", "research.regimen_producer"}
+E       AssertionError: assert {'intervention.dose_regimen'} == {'interventio...men_producer'}
+E         
+E         Extra items in the right set:
+E         'research.input_context'
+E         'research.regimen_producer'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_regimen_adoption_command.py:29: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_adoption_command.py::test_adoption_command_binds_saved_output_and_keeps_replay_material_identical
+========================= 1 failed, 3 passed in 0.37s ==========================

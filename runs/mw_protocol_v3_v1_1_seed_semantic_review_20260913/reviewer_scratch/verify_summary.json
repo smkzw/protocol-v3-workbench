@@ -1,0 +1,410 @@
+{
+  "hashes": {
+    "original_compiled_input.json": {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_seed_semantic_review_20260913/original_compiled_input.json",
+      "expected": "98d231d97accebbdf78761132380cf01fd25a27f9a722f359eb75e1b19699b31",
+      "actual": "98d231d97accebbdf78761132380cf01fd25a27f9a722f359eb75e1b19699b31",
+      "size": 718937,
+      "match": true
+    },
+    "outcome.json": {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_seed_semantic_review_20260913/outcome.json",
+      "expected": "301ac381bc010b1742d2942a6cf07c92d3337c20cd7756634d19663f25291bb3",
+      "actual": "301ac381bc010b1742d2942a6cf07c92d3337c20cd7756634d19663f25291bb3",
+      "size": 38383,
+      "match": true
+    },
+    "identity.json": {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_seed_semantic_review_20260913/identity.json",
+      "expected": "32bcd8d1a2b2cc923feffb3729f085da86e2fa54f1546afb8324855ed8942f3f",
+      "actual": "32bcd8d1a2b2cc923feffb3729f085da86e2fa54f1546afb8324855ed8942f3f",
+      "size": 665,
+      "match": true
+    },
+    "owner_receipt_summary.json": {
+      "path": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_seed_semantic_review_20260913/owner_receipt_summary.json",
+      "expected": "06c140a3f55bc23abe31c8e188a2f38af913be672bbf84c8d1ba850a8e6dfbf7",
+      "actual": "06c140a3f55bc23abe31c8e188a2f38af913be672bbf84c8d1ba850a8e6dfbf7",
+      "size": 1312,
+      "match": true
+    },
+    "MG-K10-CSU-001_临床研究方案-V1.3-0212-clean-0211.docx": {
+      "path": "/Users/smkzw/Documents/康哲项目资料/模版/方案模版/研究方案库/MG-K10-CSU-001_临床研究方案-V1.3-0212-clean-0211.docx",
+      "expected": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+      "actual": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+      "size": 581282,
+      "match": true
+    }
+  },
+  "identity": {
+    "project_id": "project-real-reference-intake-20260913",
+    "workflow_run_id": "research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799",
+    "source_path": "/Users/smkzw/Documents/康哲项目资料/模版/方案模版/研究方案库/MG-K10-CSU-001_临床研究方案-V1.3-0212-clean-0211.docx",
+    "source_sha256": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+    "input_sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c",
+    "complete_input_bytes": 514273,
+    "model": "glm-5.3-flash",
+    "requested_effort": "max",
+    "source_scope": "historical_reference_only",
+    "canonical_adoption": false
+  },
+  "receipt_observed_model": "glm-5.3-flash",
+  "receipt_output_sha256": "ee7e91b031327cf027b4bfad92c9e37f9e1af0aed628069cd9f95a5c639cb224",
+  "compiled_file_sha256": "98d231d97accebbdf78761132380cf01fd25a27f9a722f359eb75e1b19699b31",
+  "identity_input_sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c",
+  "proposal_input_sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c",
+  "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0",
+  "source_content_sha256": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+  "source_role": "company_style_only",
+  "source_version": "V1.3 (historical reference; not current study authority)",
+  "parser_version": "protocol-docx-xml.v1",
+  "n_units": 2586,
+  "unit_kind": {
+    "paragraph": 1258,
+    "table_cell": 1328
+  },
+  "unit_role": {
+    "body": 2433,
+    "heading": 17,
+    "derived_toc": 130,
+    "footer": 2,
+    "header": 4
+  },
+  "diagnostics": [
+    {
+      "code": "visual_objects_pending",
+      "detail": "图形或图像需视觉核对，文字提取不代表图中信息完整。",
+      "locator": "word/document.xml"
+    }
+  ],
+  "n_candidates": 24,
+  "n_references": 49,
+  "candidates_per_field": {
+    "anticipated_dose": 4,
+    "clinical_phase": 1,
+    "comparator": 4,
+    "dosage_form_and_route": 3,
+    "indication": 2,
+    "populations": 6,
+    "research_drug": 1,
+    "target_or_mechanism": 3
+  },
+  "docx_sha256": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+  "tracked_changes_xml": false,
+  "drawing_nodes_approx": 16,
+  "quote_issue_count": 15,
+  "quote_issues": [
+    {
+      "id": "comparator[1]",
+      "locator": "word/document.xml/body/303:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "comparator[1]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "comparator[2]",
+      "locator": "word/document.xml/body/482:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "comparator[2]",
+      "locator": "word/document.xml/body/135:tbl/19:tr/2:tc/8:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "comparator[3]",
+      "locator": "word/document.xml/body/303:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "comparator[3]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "dosage_form_and_route[2]",
+      "locator": "word/document.xml/body/303:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "dosage_form_and_route[2]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "populations[5]",
+      "locator": "word/document.xml/body/312:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "populations[5]",
+      "locator": "word/document.xml/body/313:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "target_or_mechanism[0]",
+      "locator": "word/document.xml/body/176:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "target_or_mechanism[0]",
+      "locator": "word/document.xml/body/308:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "target_or_mechanism[1]",
+      "locator": "word/document.xml/body/176:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "target_or_mechanism[2]",
+      "locator": "word/document.xml/body/189:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    },
+    {
+      "id": "target_or_mechanism[2]",
+      "locator": "word/document.xml/body/308:p",
+      "quote_eq_unit": false,
+      "quote_eq_xml": false,
+      "unit_found": true,
+      "xml_found": true,
+      "unit_role": "body",
+      "sid_match": true
+    }
+  ],
+  "ws_only_xml_mismatches": [
+    {
+      "id": "comparator[1]",
+      "locator": "word/document.xml/body/303:p",
+      "norm_eq": false,
+      "quote": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "comparator[1]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "norm_eq": false,
+      "quote": "筛选合格的试验参与者将进入双盲治疗期，按照1:1比例随机分配至试验组或对照组。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1:1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "comparator[2]",
+      "locator": "word/document.xml/body/482:p",
+      "norm_eq": false,
+      "quote": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。",
+      "xml": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。继续治疗期至退出访视，可由研究者结合试验参与者情况调整背景治疗药物。常用第二代H1抗组胺药详见附录 3。"
+    },
+    {
+      "id": "comparator[2]",
+      "locator": "word/document.xml/body/135:tbl/19:tr/2:tc/8:p",
+      "norm_eq": false,
+      "quote": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。",
+      "xml": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。继续治疗期至退出访视，可由研究者结合试验参与者情况调整背景治疗药物。"
+    },
+    {
+      "id": "comparator[3]",
+      "locator": "word/document.xml/body/303:p",
+      "norm_eq": false,
+      "quote": "试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "comparator[3]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "norm_eq": false,
+      "quote": "试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1:1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "dosage_form_and_route[2]",
+      "locator": "word/document.xml/body/303:p",
+      "norm_eq": false,
+      "quote": "试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "dosage_form_and_route[2]",
+      "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+      "norm_eq": false,
+      "quote": "试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。",
+      "xml": "筛选合格的试验参与者将进入双盲治疗期，按照1:1比例随机分配至试验组或对照组。试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。试验组接受MG-K10皮下注射给药，每4周给药1次（Q4W），首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml），共给药6次；安慰剂组接受安慰剂皮下注射，Q4W，共给药6次。"
+    },
+    {
+      "id": "populations[5]",
+      "locator": "word/document.xml/body/312:p",
+      "norm_eq": false,
+      "quote": "本研究拟同时纳入12岁及以上青少年慢性荨麻疹患者。",
+      "xml": "本研究拟同时纳入12岁及以上青少年慢性荨麻疹患者。目前青少年慢性荨麻疹诊断参照成人标准，青少年的治疗路径和措施与成人相似。同靶点药物度普利尤单抗在治疗慢性荨麻疹的III期临床研究中（LIBERTY-CUPID研究，研究A，NCT04180488）纳入包括4 名青少年和 2 名儿童的138例慢性荨麻疹患者。有效性结果显示，①在第24周，度普利尤单抗组患者的 UAS7、ISS7 和 HSS7 评分相对于基线的降幅大于安慰剂组患者：UAS7的最小二乘（LS）平均（标准误差SE）变化为-20.5（1.8） vs. -12.0（1.8），差异-8.5分（95%CI，-13.2至-3.9；P=0.0003）；ISS7变化为-10.2（0.9） vs. 6.0（0.9），差异-4.2分（95%CI，-6.6至-1.8；P=0.0005）；HSS7变化为-10.3（0.9）vs. -5.9（0.9），差异为-4.4分（95%CI，-6.8至-2.0；P=0.0003）。②第24周，度普利尤单抗组症状控制良好的患者比例较安慰剂组更高（UAS7≤6分：45.7% vs. 23.5%，部分缓解；优势比[OR]2.8；95%CI，1.3至6.2；P=0.0075）；CSU症状完全缓解的患者比例更高（UAS7=0分：31.4% vs. 13.2%，完全缓解；OR 2.9；95%CI，1.2至7.2；P=0.0199）；或ISS7降低≥5分的患者比例更高（72.9% vs. 42.6%，差异极小；OR 3.4；95%CI，1.6至7.3；P=0.0014）。③第24周，相比于安慰剂组，度普利尤单抗组改善了总体疾病控制，表现在UCT较基线的LS平均（SE）变化：7.7（0.6） vs. 4.9（0.6），差异2.8（95%CI，1.3至4.4；P=0.0004）。结果表明在H1-AH治疗仍有症状且未经奥马珠单抗治疗的CSU患者中，度普利尤单抗通过降低瘙痒和荨麻疹严重程度来降低荨麻疹活动度。2024年2月16日度普利尤单抗用于治疗12岁及以上、现有治疗方法无法充分控制的慢性自发性荨麻疹（CSU）已在日本获批，中国、美国的临床研究目前已完成。"
+    },
+    {
+      "id": "populations[5]",
+      "locator": "word/document.xml/body/313:p",
+      "norm_eq": false,
+      "quote": "因此认为青少年使用首次给药600mg，后续300mg Q4W的剂量是安全可接受的。",
+      "xml": "此外观察到由于体重因素，青少年暴露量高于成人，但青少年和成人安全性特征相似[11]。度普利尤单抗临床使用的药物剂量，在≥60kg的青少年和成人慢性荨麻疹患者中相同。以上提示本品在青少年试验参与者中的剂量可参考成人。本品在治疗成人哮喘的Ib期临床研究PK结果表明，300mg Q2W多次给药Cmax,ss均值为129.534（78.646~173.265）μg/ml。本品在治疗成人特应性皮炎临床研究中（MG-K10-AD-Ib和MG-K10-AD-2），最高剂量水平达到首次给药600mg，后续300mg Q2W，体重在43-112kg之间。特应性皮炎Pop-PK模拟不同体重青少年的暴露量结果显示，首次给药600mg，后续300mg Q2W多次给药后的Cmax算术平均数为69.51~172.59μg/ml。基于上述特应性皮炎Pop-PK模拟不同体重青少年的暴露量，对于青少年人群，若使用本III期研究与成人相同的剂量（300mg Q4W），其暴露量（Cmax 算术平均数为33.96~159.03μg/ml）低于上述已探索过剂量水平（特应性皮炎首次给药600mg，后续300mg Q2W，或哮喘300mg Q2W）的暴露量。因此认为青少年使用300mg Q4W的剂量是安全可接受的。MG-K10治疗中重度哮喘的III期临床正在开展中，计划纳入12-17岁（体重≥30kg）青少年试验参与者，剂量同成人试验参与者。因此认为青少年使用首次给药600mg，后续300mg Q4W的剂量是安全可接受的。"
+    },
+    {
+      "id": "target_or_mechanism[0]",
+      "locator": "word/document.xml/body/176:p",
+      "norm_eq": false,
+      "quote": "能够特异性识别人IL-4Rα，与IL-4Rα结合后能高效阻断IL-4和IL-13与IL-4Rα的结合，抑制下游JAK激酶、IRS蛋白、PI3-K激酶和STAT家族转录因子、STAT6信号通路的活化，降低血清免疫球蛋白E水平，拮抗炎症反应的发生，有助于治疗CSU。",
+      "xml": "MG-K10是由湖南麦济生物技术股份有限公司开发的人源化单抗注射液，是一种创新型抗IL-4受体抗体药物分子，采用DNA重组技术在中国仓鼠卵巢细胞系（Chinese Hamster Ovary，CHO）中高效表达的重组IgG4单克隆抗体，与重组可溶性人IL-4Rα-ECD-flag 的亲和力约为155pM，能够特异性识别人IL-4Rα，与IL-4Rα结合后能高效阻断IL-4和IL-13与IL-4Rα的结合，抑制下游JAK激酶、IRS蛋白、PI3-K激酶和STAT家族转录因子、STAT6信号通路的活化，降低血清免疫球蛋白E水平，拮抗炎症反应的发生，有助于治疗CSU。"
+    },
+    {
+      "id": "target_or_mechanism[0]",
+      "locator": "word/document.xml/body/308:p",
+      "norm_eq": false,
+      "quote": "MG-K10临床前药效学研究表明，MG-K10的生物学活性与同靶点药物度普利尤单抗相当，可高效阻断IL-4/IL-13与IL-4Rα受体的结合，阻断IL-4和IL-13结合到细胞表面受体引起的STAT6通路活化，抑制IL-4或IL-13刺激PBMC释放TARC/CCL17，抑制肥大细胞脱颗粒。",
+      "xml": "MG-K10临床前药效学研究表明，MG-K10的生物学活性与同靶点药物度普利尤单抗相当，可高效阻断IL-4/IL-13与IL-4Rα受体的结合，阻断IL-4和IL-13结合到细胞表面受体引起的STAT6通路活化，抑制IL-4或IL-13刺激PBMC释放TARC/CCL17，抑制肥大细胞脱颗粒。在与抗原IL-4Rα结合上的药效学研究中，MG-K10与度普利尤单抗均以高亲和力与可溶性人IL-4Rα-ECD结合， ELISA检测的EC50分别为27.12 ng/ml及18.08 ng/ml；而Biacore检测MG-K10和度普利尤单抗与IL-4Rα-ECD-flag的KD分别为155 pM和93.1 pM，结果提示MG-K10剂量选择可参考度普利尤单抗。此外，抗体的半衰期延长主要通过增强与细胞表面的FcRn的结合而实现[8]，MG-K10的Fc经过了延长半衰期的突变。Biacore检测发现MG-K10与FcRn的亲和力为4.7 nM，而未突变抗体为45.8 nM，度普利尤单抗为31.3 nM，亲和力提高了近10倍，揭示其在临床上有望实现比在研同靶点药物更长的给药间隔。"
+    },
+    {
+      "id": "target_or_mechanism[1]",
+      "locator": "word/document.xml/body/176:p",
+      "norm_eq": false,
+      "quote": "是一种创新型抗IL-4受体抗体药物分子，采用DNA重组技术在中国仓鼠卵巢细胞系（Chinese Hamster Ovary，CHO）中高效表达的重组IgG4单克隆抗体",
+      "xml": "MG-K10是由湖南麦济生物技术股份有限公司开发的人源化单抗注射液，是一种创新型抗IL-4受体抗体药物分子，采用DNA重组技术在中国仓鼠卵巢细胞系（Chinese Hamster Ovary，CHO）中高效表达的重组IgG4单克隆抗体，与重组可溶性人IL-4Rα-ECD-flag 的亲和力约为155pM，能够特异性识别人IL-4Rα，与IL-4Rα结合后能高效阻断IL-4和IL-13与IL-4Rα的结合，抑制下游JAK激酶、IRS蛋白、PI3-K激酶和STAT家族转录因子、STAT6信号通路的活化，降低血清免疫球蛋白E水平，拮抗炎症反应的发生，有助于治疗CSU。"
+    },
+    {
+      "id": "target_or_mechanism[2]",
+      "locator": "word/document.xml/body/189:p",
+      "norm_eq": false,
+      "quote": "MG-K10的Fc经过了延长半衰期的突变。",
+      "xml": "MG-K10的Fc经过了延长半衰期的突变。抗体的半衰期延长主要通过增强与细胞表面的FcRn的结合而实现。Biacore检测发现MG-K10与FcRn的亲和力为4.7 nM，而未突变抗体为45.8 nM，度普利尤单抗为31.3 nM，亲和力提高了近10倍。揭示其在临床上有望实现比已上市和在研同靶点药物更长的给药间隔。"
+    },
+    {
+      "id": "target_or_mechanism[2]",
+      "locator": "word/document.xml/body/308:p",
+      "norm_eq": false,
+      "quote": "此外，抗体的半衰期延长主要通过增强与细胞表面的FcRn的结合而实现[8]，MG-K10的Fc经过了延长半衰期的突变。",
+      "xml": "MG-K10临床前药效学研究表明，MG-K10的生物学活性与同靶点药物度普利尤单抗相当，可高效阻断IL-4/IL-13与IL-4Rα受体的结合，阻断IL-4和IL-13结合到细胞表面受体引起的STAT6通路活化，抑制IL-4或IL-13刺激PBMC释放TARC/CCL17，抑制肥大细胞脱颗粒。在与抗原IL-4Rα结合上的药效学研究中，MG-K10与度普利尤单抗均以高亲和力与可溶性人IL-4Rα-ECD结合， ELISA检测的EC50分别为27.12 ng/ml及18.08 ng/ml；而Biacore检测MG-K10和度普利尤单抗与IL-4Rα-ECD-flag的KD分别为155 pM和93.1 pM，结果提示MG-K10剂量选择可参考度普利尤单抗。此外，抗体的半衰期延长主要通过增强与细胞表面的FcRn的结合而实现[8]，MG-K10的Fc经过了延长半衰期的突变。Biacore检测发现MG-K10与FcRn的亲和力为4.7 nM，而未突变抗体为45.8 nM，度普利尤单抗为31.3 nM，亲和力提高了近10倍，揭示其在临床上有望实现比在研同靶点药物更长的给药间隔。"
+    }
+  ],
+  "unique_locators": 41,
+  "repeated_locators": {
+    "word/document.xml/body/299:p": 2,
+    "word/document.xml/body/8:p": 2,
+    "word/document.xml/body/303:p": 3,
+    "word/document.xml/body/135:tbl/13:tr/2:tc/4:p": 3,
+    "word/document.xml/body/176:p": 2,
+    "word/document.xml/body/308:p": 2
+  },
+  "toc_cited": [],
+  "heading_cited": [],
+  "tokens_not_in_near_source": {
+    "anticipated_dose[0]": [
+      "2",
+      "5.6"
+    ],
+    "anticipated_dose[1]": [
+      "4.0mL",
+      "5.6"
+    ],
+    "comparator[0]": [
+      "0",
+      "W0",
+      "W24"
+    ],
+    "comparator[1]": [
+      "1分"
+    ],
+    "dosage_form_and_route[0]": [
+      "5.1"
+    ],
+    "populations[1]": [
+      "4.1"
+    ],
+    "populations[2]": [
+      "4.1"
+    ],
+    "research_drug[0]": [
+      "1.3",
+      "5.1"
+    ],
+    "target_or_mechanism[0]": [
+      "1.2"
+    ]
+  },
+  "candidate_suffixes": {},
+  "canonical_all_null": true,
+  "all_basis_source": true,
+  "all_requires_confirmation": true,
+  "all_source_support_reference_only": true,
+  "confidence_basis_set": [
+    "model_estimate_not_medical_admission"
+  ],
+  "missing_fields": [],
+  "user_brief_match": true
+}

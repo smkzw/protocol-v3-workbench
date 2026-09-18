@@ -1,0 +1,1216 @@
+{
+  "schema_version": "protocol-v3-applicability-rules.v1",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "rules": [
+    {
+      "rule_id": "conditional:v2-n-11-4-6:pk",
+      "source_rule_sha256": "9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04a9b08ac9bcb631b23b1",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions"
+      ],
+      "conditional_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_evidence_admission_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-6:pd",
+      "source_rule_sha256": "f7cc1260137bbbe3ea9c51cdf89b0492781efb328cecb9c08bd1ba1eab52c582",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.pd_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions"
+      ],
+      "conditional_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_evidence_admission_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-6:er",
+      "source_rule_sha256": "46de8ffcbffc6a35bf89b1d6393f80824d836f11e2d0079c2fede92b9fa59094",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions"
+      ],
+      "conditional_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_evidence_admission_types": [
+        "pk_pd_er_analysis"
+      ],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-6:pk-confirmatory",
+      "source_rule_sha256": "1fd186895f8ffecd461e56e8f499292f4d12269f029aed9b97e22cd4b6ae08e1",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.pk_confirmatory",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-6:pd-confirmatory",
+      "source_rule_sha256": "1acb8d54c71f7669eeafae890d6f50b9473892dfde68da54f10e0201f5ae395d",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.pd_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.pd_confirmatory",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-6:er-confirmatory",
+      "source_rule_sha256": "1fb4ec53e75467c51430bab22853893d0238a97454d384fae9888de9e0b9a797",
+      "source_contract_sha256": "76d2b4287fa2f282ed258757cf1a5fdc7a54fd513f01ff963d43b35880c590df",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.er_confirmatory",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-8-1:individual-hold",
+      "source_rule_sha256": "7c30f7d287cdc18c8a1ce562037c31ec32acde318b7cd91ae23e39e35f4bb4c9",
+      "source_contract_sha256": "ea65248bf69d4ebe101ac0ba4a4ca0f8991aa9681a0151eae1d85637e577389b",
+      "predicates": [
+        {
+          "fact_path": "discontinuation.individual_hold_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "discontinuation.individual_hold_criteria",
+        "discontinuation.personal_hold"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-8-1:hold-to-stop",
+      "source_rule_sha256": "1a4e5489e8e9fcbee6ecb42908a4ebf765e059308bf0f417d078bc9cd3b4c945",
+      "source_contract_sha256": "ea65248bf69d4ebe101ac0ba4a4ca0f8991aa9681a0151eae1d85637e577389b",
+      "predicates": [
+        {
+          "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-14-1:risk-plan",
+      "source_rule_sha256": "364b9f7b922fcc770273ec4737ff30e3c9857772670ede745c33c5bbd1475f1c",
+      "source_contract_sha256": "4134e49af85b756df3093f25374f2e2dafd48bead8b6a8acf303ce01e3356d4c",
+      "predicates": [
+        {
+          "fact_path": "quality.risk_management_plan_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "quality.risk_management_plan_identity",
+        "quality.plan_review_cadence"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-14-3:remote-monitoring",
+      "source_rule_sha256": "5d501c3e3a50b35dcd7ada37e73561a4eecb706bff6d6a00a72d65af15a6d2d2",
+      "source_contract_sha256": "65f78e62fc6c821a5c21a03a930ae91c8a265f125fe105f6c104e43d8258e546",
+      "predicates": [
+        {
+          "fact_path": "quality.remote_monitoring_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "quality.remote_monitoring_records"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-15:foreign-style",
+      "source_rule_sha256": "9edf879ae38077d70f1741a17b29043da7e4aa626bdd3bb5bdc9a34327c09a3d",
+      "source_contract_sha256": "1e268620ff3c35048b478172902e64d10efc0618be879b1cf74272446ce1146e",
+      "predicates": [
+        {
+          "fact_path": "references.foreign_sources_present",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "references.foreign_format_style"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:v2-n-16-x1:assessment",
+      "source_rule_sha256": "04b765548b5acac0eab723934d85accd13121e2ebb3312c337b23eaacf15679e",
+      "source_contract_sha256": "1bd4cac451df4379c0d6d4115e0a2e87d104f3bc6495d9a52247a1e5ab277556",
+      "predicates": [
+        {
+          "fact_path": "appendix.ecog_assessment_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": true,
+      "conditional_fact_paths": [
+        "appendix.ecog_version",
+        "appendix.ecog_source_reference",
+        "appendix.ecog_scale_reproduced"
+      ],
+      "conditional_claim_types": [
+        "appendix.ecog_version_and_contents_verified"
+      ],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [
+        "table"
+      ],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "source_roles": [
+            "regulatory_or_guideline",
+            "peer_reviewed"
+          ],
+          "admission_claim_types": [
+            "appendix.ecog_version_and_contents_verified"
+          ],
+          "allowed_locator_kinds": [
+            "body",
+            "table"
+          ],
+          "require_context_window": true,
+          "minimum_quality_score": 0.9
+        }
+      ],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:v2-n-16-x2:assessment",
+      "source_rule_sha256": "4229a96efdf48303d689ec84255ade7863595079d85ec125412a5fafc73bb1b6",
+      "source_contract_sha256": "446fb0861321ef6fc68b4dc5b5e28a7d6c10c674314cdba52779fa39a043e3dc",
+      "predicates": [
+        {
+          "fact_path": "appendix.nyha_assessment_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": true,
+      "conditional_fact_paths": [
+        "appendix.nyha_version",
+        "appendix.nyha_source_reference",
+        "appendix.nyha_classification_reproduced"
+      ],
+      "conditional_claim_types": [
+        "appendix.nyha_version_and_contents_verified"
+      ],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [
+        "table"
+      ],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "source_roles": [
+            "regulatory_or_guideline",
+            "peer_reviewed"
+          ],
+          "admission_claim_types": [
+            "appendix.nyha_version_and_contents_verified"
+          ],
+          "allowed_locator_kinds": [
+            "body",
+            "table"
+          ],
+          "require_context_window": true,
+          "minimum_quality_score": 0.9
+        }
+      ],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-14-7:oversight-charter",
+      "source_rule_sha256": "0fced7654a258636a291f9eec3d2f7044bbb24b756f69c4206ef77fb960f1d08",
+      "source_contract_sha256": "2fdf99f7f4ddf17257a7308cdd4e7fbf4e59b7564357cea654d33c51cb253e25",
+      "predicates": [
+        {
+          "fact_path": "quality.oversight_charter_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "quality.oversight_charter_status"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-14-7:charter-draft",
+      "source_rule_sha256": "d50f12302fac27cafac63cebecaad2be06c02a0856aa2c8fb2632c451d38f288",
+      "source_contract_sha256": "2fdf99f7f4ddf17257a7308cdd4e7fbf4e59b7564357cea654d33c51cb253e25",
+      "predicates": [
+        {
+          "fact_path": "quality.oversight_charter_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "quality.oversight_charter_status",
+          "members": [],
+          "expected": "draft",
+          "accepted_values": [
+            "planned",
+            "draft",
+            "approved"
+          ]
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "quality.oversight_charter_version"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-14-7:charter-approved",
+      "source_rule_sha256": "50fcde121aaf3521c74fa3a01eddcd8b4f8ca35e846d72918a51a6379aaf48e9",
+      "source_contract_sha256": "2fdf99f7f4ddf17257a7308cdd4e7fbf4e59b7564357cea654d33c51cb253e25",
+      "predicates": [
+        {
+          "fact_path": "quality.oversight_charter_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "quality.oversight_charter_status",
+          "members": [],
+          "expected": "approved",
+          "accepted_values": [
+            "planned",
+            "draft",
+            "approved"
+          ]
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "quality.oversight_charter_version",
+        "quality.oversight_charter_approval_record"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-2:central-lab",
+      "source_rule_sha256": "039f201a71ed31d9819318a69ae1fce60c9dfb25e0f240d5cfbbe669fb17600d",
+      "source_contract_sha256": "3f9ac2df6420597a448b7810555b50ca6f55d05954dd23627112f45796ad0a30",
+      "predicates": [
+        {
+          "fact_path": "safety.central_lab_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "safety.central_lab_qualification",
+        "safety.central_lab_assay_scope"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-9:interim",
+      "source_rule_sha256": "ab7ab1789d215801d62a26d3ef32d7ba6efb151c21845ebf28f13c76edbcccd1",
+      "source_contract_sha256": "9ada98a2da1788e70da3b857e9f38de3e38428f7bb95a671bcd76c21cc33e4d2",
+      "predicates": [
+        {
+          "fact_path": "statistics.interim.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.interim.timing",
+        "statistics.interim.purpose",
+        "statistics.interim.rules",
+        "statistics.interim.decision_responsibility",
+        "statistics.interim.final_analysis_impact",
+        "statistics.interim.safety_review_alpha_separation",
+        "statistics.interim.canonical_reference",
+        "statistics.interim.features"
+      ],
+      "conditional_claim_types": [
+        "interim_analysis_plan",
+        "interim_final_analysis_impact"
+      ],
+      "conditional_evidence_admission_types": [
+        "interim_analysis_plan",
+        "interim_final_analysis_impact"
+      ],
+      "conditional_object_kinds": [
+        "table"
+      ],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "claim_type": "interim_not_planned",
+          "obligation": "required",
+          "rationale": "Record the confirmed non-applicability disposition",
+          "qualifying_conditions": []
+        }
+      ],
+      "inactive_evidence_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "source_roles": [
+            "project_primary"
+          ],
+          "admission_claim_types": [
+            "interim_not_planned"
+          ],
+          "allowed_locator_kinds": [
+            "body",
+            "table"
+          ],
+          "require_context_window": true,
+          "minimum_quality_score": 0.9
+        }
+      ],
+      "active_evidence_requirements": [],
+      "reference_targets": [
+        {
+          "fact_path": "statistics.interim.canonical_reference",
+          "semantic_node_ids": [
+            "v2_n_14_7"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-9:information-fraction",
+      "source_rule_sha256": "a6cece3c45bb0f2abe2537ccf510bf2fa807ae5b13723e3a07982d7f0b3f9d67",
+      "source_contract_sha256": "9ada98a2da1788e70da3b857e9f38de3e38428f7bb95a671bcd76c21cc33e4d2",
+      "predicates": [
+        {
+          "fact_path": "statistics.interim.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.interim.features",
+          "members": [
+            "information_fraction"
+          ],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.interim.information_fraction"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [
+        "interim:cell:information-fraction"
+      ],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-9:efficacy",
+      "source_rule_sha256": "515a24f78dac7b809ae3dc23aab44b91c813be4388dbac8043dbc60e36c24c7e",
+      "source_contract_sha256": "9ada98a2da1788e70da3b857e9f38de3e38428f7bb95a671bcd76c21cc33e4d2",
+      "predicates": [
+        {
+          "fact_path": "statistics.interim.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.interim.features",
+          "members": [
+            "efficacy_testing"
+          ],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.interim.efficacy_alpha_spending"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [
+        "interim:cell:efficacy-alpha"
+      ],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-9:idmc",
+      "source_rule_sha256": "f32dcbf6e5077e8134911ec031b64ffc999fd322ae9eece7d951e1959a9b6ecb",
+      "source_contract_sha256": "9ada98a2da1788e70da3b857e9f38de3e38428f7bb95a671bcd76c21cc33e4d2",
+      "predicates": [
+        {
+          "fact_path": "statistics.interim.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.interim.features",
+          "members": [
+            "idmc_review"
+          ],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.interim.idmc_responsibilities"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [
+        "interim:cell:idmc"
+      ],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-4-9:irc",
+      "source_rule_sha256": "f665b8c05a57248ec71f67f373ef5f9d39b5eb7b3ddb73a35977f0e821540fd5",
+      "source_contract_sha256": "9ada98a2da1788e70da3b857e9f38de3e38428f7bb95a671bcd76c21cc33e4d2",
+      "predicates": [
+        {
+          "fact_path": "statistics.interim.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "irc.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.interim.endpoint_irc_responsibilities"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [
+        "interim:cell:irc"
+      ],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "conditional:v2-n-11-1:interim-adjustment",
+      "source_rule_sha256": "cef66f901e47baefcae572eecedd219984e99b56d90081ec4e7151eb74d49cd2",
+      "source_contract_sha256": "690e3841468c8dcbaee508d218e6d4d16629b7a5688b19b44f1c99a15cbd2d66",
+      "predicates": [
+        {
+          "fact_path": "statistics.sample_size.interim_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "statistics.sample_size.interim_adjustment",
+        "statistics.sample_size.interim_alpha_adjustment"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-4:irc",
+      "source_rule_sha256": "043e175385075a3672d27ebb7f9ede84b90aee4f80425c70c922bea9d6654eb6",
+      "source_contract_sha256": "a7ace66dbcb843f51e4df8bb023ffad78b47490c65c72bbc883829117d905f05",
+      "predicates": [
+        {
+          "fact_path": "irc.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "irc.charter_and_independence",
+        "irc.review_scope_endpoints",
+        "irc.adjudication_method_and_instrument",
+        "irc.roles_and_conflict_management"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:v2-n-12-7:future-use",
+      "source_rule_sha256": "49810db5ff2f89c3c2800c9d876c39f7609ae21e07b45a7248961d10cd94a10e",
+      "source_contract_sha256": "b60ee042c347fa61898763e26a108f779fe31c302c1de6d6229f45a011d0ccd5",
+      "predicates": [
+        {
+          "fact_path": "future_use.applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "future_use.purpose",
+        "future_use.location",
+        "future_use.duration",
+        "future_use.genetic_testing",
+        "future_use.consent",
+        "future_use.review_plan"
+      ],
+      "conditional_claim_types": [
+        "future_use.review_required"
+      ],
+      "conditional_evidence_admission_types": [
+        "future_use.review_required"
+      ],
+      "conditional_object_kinds": [
+        "table"
+      ],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-3:immunogenicity",
+      "source_rule_sha256": "8c70732b387185006f60d20f08a54ae2322bdd54525ed94c12c13c78027bab64",
+      "source_contract_sha256": "ee985ccb184ced1000a4709db6cfda1c509ea1575999b466103cb032fdb7143d",
+      "predicates": [
+        {
+          "fact_path": "exploratory.immunogenicity_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.immunogenicity"
+      ],
+      "conditional_claim_types": [
+        "immunogenicity_strategy"
+      ],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [
+        {
+          "source_roles": [
+            "project_primary"
+          ],
+          "admission_claim_types": [
+            "immunogenicity_strategy"
+          ],
+          "allowed_locator_kinds": [
+            "body",
+            "table"
+          ],
+          "require_context_window": true,
+          "minimum_quality_score": 0.9
+        }
+      ],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-3-4-1:analysis-commitment",
+      "source_rule_sha256": "528f16f65734cd37f38e91780e388740c984e0dbfa60f79ab0d28806ffa56c54",
+      "source_contract_sha256": "07e2b72adf937696d507355a5a8706428d9a7cd84ddaa762aab551b0a75ebe07",
+      "predicates": [
+        {
+          "fact_path": "exploratory.population_pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "exploratory.immunogenicity_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "exploratory.biomarker_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "any",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [],
+      "conditional_claim_types": [
+        "exploratory_commitment"
+      ],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [
+        "table"
+      ],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-3-4-1:population-pk",
+      "source_rule_sha256": "40bb0f62b0f16a7e280714ece01cb74c69f2a48381d4d7b1bc3db53f7a4e9d6b",
+      "source_contract_sha256": "07e2b72adf937696d507355a5a8706428d9a7cd84ddaa762aab551b0a75ebe07",
+      "predicates": [
+        {
+          "fact_path": "exploratory.population_pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.population_pk"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-3-4-1:er",
+      "source_rule_sha256": "48e6da05846a89388d04f14f633714ee7b27dd1dd160d6c137705c36b29c8fa9",
+      "source_contract_sha256": "07e2b72adf937696d507355a5a8706428d9a7cd84ddaa762aab551b0a75ebe07",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.exposure_response"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-3-4-1:immunogenicity",
+      "source_rule_sha256": "4ebe11e3669f1695e9b823d6f158083a0aea234acbcabb91e54f826972fb7baf",
+      "source_contract_sha256": "07e2b72adf937696d507355a5a8706428d9a7cd84ddaa762aab551b0a75ebe07",
+      "predicates": [
+        {
+          "fact_path": "exploratory.immunogenicity_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.immunogenicity"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-3-4-1:biomarker",
+      "source_rule_sha256": "9a71591ec393c9ea5d04c64b1158ea574de3d67b3eb0cd9ccc31c3d144422108",
+      "source_contract_sha256": "07e2b72adf937696d507355a5a8706428d9a7cd84ddaa762aab551b0a75ebe07",
+      "predicates": [
+        {
+          "fact_path": "exploratory.biomarker_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.biomarker"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-3:pk-pd-shared",
+      "source_rule_sha256": "4d7807eb6de66f799e9b437a9a332b8d65784fc583e9bff1f6978acd4f0cc08f",
+      "source_contract_sha256": "ee985ccb184ced1000a4709db6cfda1c509ea1575999b466103cb032fdb7143d",
+      "predicates": [
+        {
+          "fact_path": "exploratory.population_pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.pd_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        },
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "any",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "pk.pd_analysis_requirements",
+        "pk.linked_endpoints",
+        "pk.sampling_schedule"
+      ],
+      "conditional_claim_types": [],
+      "conditional_evidence_admission_types": [],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "claim_type": "exploratory_disposition",
+          "obligation": "required",
+          "rationale": "无PK/PD/E-R分析时说明项目不适用处置。",
+          "qualifying_conditions": []
+        }
+      ],
+      "inactive_evidence_requirements": [
+        {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "source_roles": [
+            "project_primary"
+          ],
+          "admission_claim_types": [
+            "exploratory_disposition"
+          ],
+          "allowed_locator_kinds": [
+            "body",
+            "table"
+          ],
+          "require_context_window": true,
+          "minimum_quality_score": 0.9
+        }
+      ],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-3:population-pk",
+      "source_rule_sha256": "d64726eaccca7c80ad1c8bb0c64d01ee383735e657389e036b9772dfb27e9881",
+      "source_contract_sha256": "ee985ccb184ced1000a4709db6cfda1c509ea1575999b466103cb032fdb7143d",
+      "predicates": [
+        {
+          "fact_path": "exploratory.population_pk_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.population_pk"
+      ],
+      "conditional_claim_types": [
+        "population_pk_analysis"
+      ],
+      "conditional_evidence_admission_types": [
+        "population_pk_analysis"
+      ],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    },
+    {
+      "rule_id": "applicability:n-9-3:er",
+      "source_rule_sha256": "e858f556af9039f46b999ff3b309523b42f770c4c4076e6867f9a5a878bc0241",
+      "source_contract_sha256": "ee985ccb184ced1000a4709db6cfda1c509ea1575999b466103cb032fdb7143d",
+      "predicates": [
+        {
+          "fact_path": "statistics.pk_pd_er.er_applicable",
+          "members": [],
+          "expected": true,
+          "accepted_values": null
+        }
+      ],
+      "mode": "all",
+      "affects_chapter_presence": false,
+      "conditional_fact_paths": [
+        "exploratory.exposure_response"
+      ],
+      "conditional_claim_types": [
+        "exposure_response_analysis"
+      ],
+      "conditional_evidence_admission_types": [
+        "exposure_response_analysis"
+      ],
+      "conditional_object_kinds": [],
+      "conditional_object_cells": [],
+      "inactive_claim_requirements": [],
+      "inactive_evidence_requirements": [],
+      "active_evidence_requirements": [],
+      "reference_targets": []
+    }
+  ],
+  "pending_rule_ids": [
+    "applicability:front-1:amendment",
+    "applicability:front-3:additional-signatory",
+    "applicability:front-4:service-parties",
+    "applicability:front-8:figures-present",
+    "applicability:n-1-2:allocation",
+    "applicability:n-1-2:escalation",
+    "applicability:n-1-3:pk-sampling",
+    "applicability:n-10-1-1:oncology-progression",
+    "applicability:n-3-1-1:rescue-strategy",
+    "applicability:n-3-1-2-3:background-rescue",
+    "applicability:n-3-1-2-4:strategy-crosscheck",
+    "applicability:n-3-3-1:injection-reaction",
+    "applicability:n-3-4-2:non-confirmatory",
+    "applicability:n-5-2:contraception-exclusion-reference",
+    "applicability:n-6-1-2:dose-modification",
+    "applicability:n-6-1-2:escalation",
+    "applicability:n-6-2-2:label-text",
+    "applicability:n-6-4-2:background",
+    "applicability:n-7-2:randomization",
+    "applicability:n-7-3:unscheduled-contact",
+    "applicability:v2_n_4_1:active",
+    "applicability:v2_n_4_2:active",
+    "applicability:v2_n_4_3:active",
+    "applicability:v2_n_4_4:active",
+    "applicability:v2_n_4_5:active",
+    "applicability:v2_n_5_1:active",
+    "applicability:v2_n_5_2:active",
+    "applicability:v2_n_5_3:active",
+    "applicability:v2_n_5_4:active",
+    "applicability:v2_n_5_5:active",
+    "conditional:v2-n-11-4-8:no-adjustment"
+  ]
+}

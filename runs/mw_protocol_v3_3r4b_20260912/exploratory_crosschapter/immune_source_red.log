@@ -1,0 +1,44 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_____ test_no_pk_output_does_not_suppress_independent_immunogenicity[True] _____
+
+immunogenicity = True
+
+    @pytest.mark.parametrize('immunogenicity', [False, True])
+    def test_no_pk_output_does_not_suppress_independent_immunogenicity(immunogenicity):
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_9_3.json').read_text())
+        facts = {key: False for key in ('exploratory.population_pk_applicable','statistics.pk_pd_er.pk_applicable',
+                                       'statistics.pk_pd_er.pd_applicable','statistics.pk_pd_er.er_applicable')}
+        facts['exploratory.immunogenicity_applicable'] = immunogenicity
+        claims = [{'claim_type': 'exploratory_disposition', 'statement': 'Synthetic project decision: no PK/PD/E-R analyses.'}]
+        if immunogenicity:
+            facts['exploratory.immunogenicity'] = {'endpoint': 'Synthetic immunogenicity endpoint', 'schedule': 'Synthetic independent sampling'}
+            claims.append({'claim_type': 'immunogenicity_strategy', 'statement': 'Synthetic independent immunogenicity assessment.'})
+        content = ChapterContentPayload.model_validate({
+            'facts': [{'fact_path': key, 'value': value} for key, value in facts.items()], 'claims': claims,
+            'evidence': [{'source_role': 'project_primary','admission_claim_type': 'exploratory_disposition',
+                          'locator_kind': 'body','locator': 'test:analysis-scope','context': 'Synthetic project disposition only','quality_score': 1.0}],
+            'objects': [{'object_kind': 'paragraph','occurrences': 2,'text': 'Synthetic analysis disposition and independent assessment arrangements.'}],
+        })
+        def check(payload):
+            return evaluate_applicable_content(c,payload,study=confirmed_study(facts),rules=real_rule_catalog().rules,subject_id='test:independent-analysis')
+        result = check(content)
+        assert result.passed, result.error_codes()
+        assert not check(content.model_copy(update={'evidence': ()})).passed
+        if immunogenicity:
+            assert 'missing_conditional_claim' in check(content.model_copy(update={'claims': content.claims[:1]})).error_codes()
+>           assert not check(content).passed  # disposition evidence alone does not support the testing strategy
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: assert not True
+E            +  where True = FixtureCheckResult(subject_id='test:independent-analysis', chapter_contract_id='contract:v2-n-9-3:v2', passed=True, fi...ecific_element_not_evaluated: 【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。'), ignored_supplied_verdict=False).passed
+E            +    where FixtureCheckResult(subject_id='test:independent-analysis', chapter_contract_id='contract:v2-n-9-3:v2', passed=True, fi...ecific_element_not_evaluated: 【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。'), ignored_supplied_verdict=False) = <function test_no_pk_output_does_not_suppress_independent_immunogenicity.<locals>.check at 0x10cdbf240>(ChapterContentPayload(facts=(ContentFact(fact_path='exploratory.population_pk_applicable', value=False), ContentFact(f...aragraph'>, occurrences=2, text='Synthetic analysis disposition and independent assessment arrangements.', cells=()),)))
+
+tests/protocol_v3/test_chapter_applicability.py:902: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_no_pk_output_does_not_suppress_independent_immunogenicity[True]
+1 failed, 1 passed, 105 deselected in 0.65s

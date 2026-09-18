@@ -1,0 +1,32 @@
+{
+  "skill_id": "skill:chapter:v2-n-10-2-1:sae-definition",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_10_2_1",
+  "chapter_contract_id": "contract:v2-n-10-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch5:3.3.0",
+    "instructions": "输入为 ChapterSkillInput，输出为 ChapterSkillOutput。逐项给出严重性判定标准及其版本绑定，明确与 AE 定义及严重程度的区分；不得由分级单独判定 SAE；缺失事实进入待补清单而不编造。",
+    "forbidden_behaviors": [
+      "编造证据来源或项目事实",
+      "把模板示例值当作项目事实",
+      "输出任何模型/供应商设置",
+      "把合成夹具值当作真实项目批准"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：TP-MA-07 v2.0 零基 body-child 索引 708、709–710。 索引为零基 body-child 计数，非段落序号。",
+    "合成夹具值仅为测试数据，不是真实项目批准或医学结论。",
+    "模板示例（CTCAE 版本、量表、患者期限、终点定义等）仅为示例，项目事实必须由本项目确认。",
+    "本节点合同为 3R.3 batch5 逐节点合同，不构成临床、监管或 Word 原生验收。试验参与者权益与数据完整性需人工复核。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-10-2-1:sae-definition:missing-obligation",
+    "skill:chapter:v2-n-10-2-1:sae-definition:unresolved-fact",
+    "skill:chapter:v2-n-10-2-1:sae-definition:wrong-source"
+  ]
+}

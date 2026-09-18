@@ -1,0 +1,45 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_adoption_command_binds_saved_output_and_keeps_replay_material_identical _
+
+    def test_adoption_command_binds_saved_output_and_keeps_replay_material_identical():
+>       from app.protocol_workflow.agent2.study_definition import prepare_regimen_adoption
+E       ImportError: cannot import name 'prepare_regimen_adoption' from 'app.protocol_workflow.agent2.study_definition' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/study_definition.py)
+
+tests/protocol_v3/test_regimen_adoption_command.py:9: ImportError
+_____ test_unresolved_saved_design_cannot_form_an_adoption[blocked-False] ______
+
+status = 'blocked', valid = False
+
+    @pytest.mark.parametrize("status,valid", [("blocked",False),("needs_information",True),("needs_structure_correction",False)])
+    def test_unresolved_saved_design_cannot_form_an_adoption(status, valid):
+>       from app.protocol_workflow.agent2.study_definition import prepare_regimen_adoption
+E       ImportError: cannot import name 'prepare_regimen_adoption' from 'app.protocol_workflow.agent2.study_definition' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/study_definition.py)
+
+tests/protocol_v3/test_regimen_adoption_command.py:36: ImportError
+_ test_unresolved_saved_design_cannot_form_an_adoption[needs_information-True] _
+
+status = 'needs_information', valid = True
+
+    @pytest.mark.parametrize("status,valid", [("blocked",False),("needs_information",True),("needs_structure_correction",False)])
+    def test_unresolved_saved_design_cannot_form_an_adoption(status, valid):
+>       from app.protocol_workflow.agent2.study_definition import prepare_regimen_adoption
+E       ImportError: cannot import name 'prepare_regimen_adoption' from 'app.protocol_workflow.agent2.study_definition' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/study_definition.py)
+
+tests/protocol_v3/test_regimen_adoption_command.py:36: ImportError
+_ test_unresolved_saved_design_cannot_form_an_adoption[needs_structure_correction-False] _
+
+status = 'needs_structure_correction', valid = False
+
+    @pytest.mark.parametrize("status,valid", [("blocked",False),("needs_information",True),("needs_structure_correction",False)])
+    def test_unresolved_saved_design_cannot_form_an_adoption(status, valid):
+>       from app.protocol_workflow.agent2.study_definition import prepare_regimen_adoption
+E       ImportError: cannot import name 'prepare_regimen_adoption' from 'app.protocol_workflow.agent2.study_definition' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/study_definition.py)
+
+tests/protocol_v3/test_regimen_adoption_command.py:36: ImportError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_adoption_command.py::test_adoption_command_binds_saved_output_and_keeps_replay_material_identical
+FAILED tests/protocol_v3/test_regimen_adoption_command.py::test_unresolved_saved_design_cannot_form_an_adoption[blocked-False]
+FAILED tests/protocol_v3/test_regimen_adoption_command.py::test_unresolved_saved_design_cannot_form_an_adoption[needs_information-True]
+FAILED tests/protocol_v3/test_regimen_adoption_command.py::test_unresolved_saved_design_cannot_form_an_adoption[needs_structure_correction-False]
+4 failed in 0.33s

@@ -1,0 +1,52 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+________ test_body_content_controls_keep_order_and_actual_xml_locations ________
+
+    def test_body_content_controls_keep_order_and_actual_xml_locations():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:9: ModuleNotFoundError
+_________ test_toc_without_field_and_endnote_bibliography_are_distinct _________
+
+    def test_toc_without_field_and_endnote_bibliography_are_distinct():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:22: ModuleNotFoundError
+____________ test_toc_field_is_recognised_without_gallery_property _____________
+
+    def test_toc_field_is_recognised_without_gallery_property():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:34: ModuleNotFoundError
+_______ test_tables_preserve_cells_and_merge_markers_between_paragraphs ________
+
+    def test_tables_preserve_cells_and_merge_markers_between_paragraphs():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:41: ModuleNotFoundError
+______ test_revision_markers_are_reported_not_silently_accepted_as_clean _______
+
+    def test_revision_markers_are_reported_not_silently_accepted_as_clean():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:51: ModuleNotFoundError
+_____ test_existing_endnote_references_are_not_lost_inside_content_control _____
+
+    def test_existing_endnote_references_are_not_lost_inside_content_control():
+>       from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.agent1'
+
+tests/protocol_v3/test_agent1_docx_parse.py:60: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_body_content_controls_keep_order_and_actual_xml_locations
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_toc_without_field_and_endnote_bibliography_are_distinct
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_toc_field_is_recognised_without_gallery_property
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_tables_preserve_cells_and_merge_markers_between_paragraphs
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_revision_markers_are_reported_not_silently_accepted_as_clean
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_existing_endnote_references_are_not_lost_inside_content_control
+6 failed in 0.30s

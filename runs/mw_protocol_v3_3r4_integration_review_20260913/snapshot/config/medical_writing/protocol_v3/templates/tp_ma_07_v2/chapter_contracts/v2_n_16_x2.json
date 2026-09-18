@@ -1,0 +1,69 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-16-x2:v2",
+  "semantic_node_id": "v2_n_16_x2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-16-x2",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-16-x2:v2",
+    "chapter_contract_id": "contract:v2-n-16-x2:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_applicability_decision_record", "obligation": "required", "rationale": "NYHA 附录是否适用必须有实际评估决定记录；无记录不得默认收录。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_assessment_applicable", "obligation": "optional", "rationale": "NYHA 评估适用性触发事实，采用裸 true/false 编码；不适用时不得自动收录。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_version", "obligation": "optional", "rationale": "适用时必须声明实际分级版本，并与适当来源核对。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_source_reference", "obligation": "optional", "rationale": "适用时必须以适当来源核对版本与内容，不得沿用模板示例。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_classification_reproduced", "obligation": "optional", "rationale": "适用时必须按核对后的来源复现分级内容，不得照抄未经验证的表格。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.nyha_template_example_table", "obligation": "forbidden", "rationale": "模板示例表格不得作为已核对内容；负向夹具据此触发 forbidden_fact_present。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix.nyha_applicability_decided", "obligation": "required", "rationale": "必须显式给出 NYHA 附录适用性决定主张，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix.nyha_version_and_contents_verified", "obligation": "allowed", "rationale": "适用时的版本与内容核对主张，由条件规则在激活时要求。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "nyha_appendix_without_actual_assessment", "obligation": "forbidden", "rationale": "没有实际评估决定却收录 NYHA 附录属于禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "nyha_appendix_version_unverified", "obligation": "forbidden", "rationale": "未经适当来源核对版本与内容即收录属于禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["appendix.nyha_applicability_decided"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 appendix.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_16_x2 为大纲叶子（outline_only_leaf），绑定 caption 标题 977 与其自有表格 978（附录 2 纽约心脏学会（NYHA）心功能分级）；表格收录义务由条件规则在评估适用时激活，不是自动收录。",
+      "NYHA 分级涉及试验参与者心功能评估时必须在项目事实中有适用性决定记录。",
+      "适用时必须对照适当来源核对版本与内容；本文件的合成/示例值仅用于结构校验，不构成项目批准或医学结论。"
+    ],
+    "skeleton_risk_rules": [
+      "只有附录标题或未核对的示例表格而无适用性决定记录时不算实质内容。",
+      "源窗口 977–978：NYHA 附录不是自动收录；无实际评估或未核对版本时不得作为内容。",
+      "结构检查不等于医学、分级适用性或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-16-x2",
+    "required_styles": ["8"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc132623426"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x2:conditional-inclusion", "rule": "NYHA 附录只在实际评估适用时收录；不适用时不得自动收录表格。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x2:verified-version", "rule": "适用时必须对照适当来源核对版本与内容，并复现一致的分级表格。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16-x2:decision-record", "rule": "适用性决定必须留下项目记录；缺失走待补，不得以模板示例表格替代。"}
+  ],
+  "conditional_applicability_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "conditional_applicability_rule_id": "applicability:v2-n-16-x2:assessment", "triggering_fact_paths": ["appendix.nyha_assessment_applicable"], "condition": "appendix.nyha_assessment_applicable 为 true 时 NYHA 附录内容义务激活", "rationale": "分级附录由实际评估决定适用性；激活时必须给出核对版本、来源与复现内容，并包含分级表格。", "required_when_active_fact_paths": ["appendix.nyha_version", "appendix.nyha_source_reference", "appendix.nyha_classification_reproduced"], "required_when_active_claim_types": ["appendix.nyha_version_and_contents_verified"], "required_when_active_source_roles": ["regulatory_or_guideline", "peer_reviewed"], "required_when_active_structural_objects": ["table"]}
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-16-x2:conditional-inclusion", "question": "NYHA 附录是否由实际评估决定收录，且适用时的版本与内容已对照适当来源核对？", "linked_fact_paths": ["appendix.nyha_applicability_decision_record", "appendix.nyha_version", "appendix.nyha_source_reference"], "linked_claim_types": ["appendix.nyha_version_and_contents_verified"], "positive_qc_rule_ids": ["qc:v2-n-16-x2:conditional-inclusion", "qc:v2-n-16-x2:verified-version"], "risk_if_unmet": "默认收录或未核对版本会把示例表格呈现为已验证分级工具。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,278 @@
+F.F                                                                      [100%]
+=================================== FAILURES ===================================
+___ test_real_exploratory_pk_does_not_require_confirmatory_link[False-None] ____
+
+confirmatory = False, expected_error = None
+
+    @pytest.mark.parametrize("confirmatory,expected_error", [
+        (False, None), (True, "missing_required_fact"),
+        (None, "conditional_applicability_unresolved"),
+    ])
+    def test_real_exploratory_pk_does_not_require_confirmatory_link(confirmatory, expected_error):
+        from app.protocol_workflow.registries.applicability import (
+            FactPredicate, RulePredicate, bind_applicable_input, ApplicabilityResolutionError,
+        )
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_6.json").read_text())
+        declarations = tuple(RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=tuple(FactPredicate(fact_path=path, expected=True) for path in rule.triggering_fact_paths),
+        ) for rule in contract.conditional_applicability_rules)
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        facts = {f.fact_path: "synthetic confirmed analysis" for f in contract.substantive_content.fact_requirements
+                 if f.obligation.value == "required"}
+        facts.update({f"statistics.pk_pd_er.{kind}_applicable": kind == "pk" for kind in ("pk", "pd", "er")})
+        facts["statistics.pk_pd_er.pk_confirmatory"] = confirmatory
+        # Inactive PD/E-R do not require a made-up purpose decision.
+        if expected_error:
+            with pytest.raises((FactBindingError, ApplicabilityResolutionError), match=expected_error):
+                bind_applicable_input(confirmed_study(facts), contract, bindings, rules=declarations)
+        else:
+>           bound = bind_applicable_input(confirmed_study(facts), contract, bindings, rules=declarations)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:386: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:279: in bind_applicable_input
+    return bind_chapter_input(study, effective, bindings, source_format=source_format,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...atory': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+
+    def bind_chapter_input(
+        study: StudyDefinitionV3,
+        contract: ChapterContractV2,
+        bindings: Iterable[FactBinding],
+        *,
+        source_format: Literal["native_json", "legacy_strings_v1"] = "native_json",
+        active_conditional_rule_ids: tuple[StableId, ...] = (),
+        applicability_rules_sha256: Sha256 | None = None,
+    ) -> BoundChapterSkillInput:
+        """Read literal canonical dictionary keys; never split dotted paths.
+    
+        Required/conditional applicability remains the contract's responsibility.
+        This boundary fails with exact paths when a required value cannot be read.
+        Legacy conversion is opt-in and does not rewrite the original study.
+        """
+        if study.canonical_state not in (CanonicalState.CONFIRMED, CanonicalState.FROZEN):
+            raise FactBindingError("study_not_confirmed")
+        if source_format not in ("native_json", "legacy_strings_v1"):
+            raise FactBindingError("unknown_fact_source_format")
+        index = {}
+        for binding in bindings:
+            if binding.fact_path in index:
+                raise FactBindingError("duplicate_fact_binding", (binding.fact_path,))
+            index[binding.fact_path] = binding
+        required = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "required"
+        }
+        paths = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value != "forbidden"
+        }
+        # Some trigger/conditional paths have no unconditional FactRequirement.
+        # Carry available values now; 3R.4B decides which obligations activate.
+        forbidden = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "forbidden"
+        }
+        for rule in contract.conditional_applicability_rules:
+            paths.update(rule.triggering_fact_paths)
+            paths.update(rule.required_when_active_fact_paths)
+        for item in contract.ctq_items:
+            paths.update(item.linked_fact_paths)
+        for item in contract.registry_consistency_obligations:
+            paths.update(item.eligibility_fact_paths)
+        paths.difference_update(forbidden)
+        resolved, missing, unsupported = {}, [], []
+        for path in sorted(paths):
+            binding = index.get(path)
+            if binding is None or binding.canonical_path is None:
+                if path in required:
+                    unsupported.append(path)
+                continue
+            if binding.canonical_path not in study.facts:
+                if path in required:
+                    missing.append(path)
+                continue
+            value = _typed_value(binding, study.facts[binding.canonical_path], source_format)
+            if binding.canonical_path != path and path in study.facts:
+                alias_value = _typed_value(binding, study.facts[path], source_format)
+                if _json(value) != _json(alias_value):
+                    raise FactBindingError("fact_alias_conflict", (path, binding.canonical_path))
+            if not _is_resolved_fact(value):
+                if path in required:
+                    missing.append(path)
+                continue
+            resolved[path] = value
+        if unsupported:
+            raise FactBindingError("unsupported_required_fact", unsupported)
+        if missing:
+>           raise FactBindingError("missing_required_fact", missing)
+E           app.protocol_workflow.registries.fact_bindings.FactBindingError: missing_required_fact: statistics.pk_pd_er.confirmatory_analysis_link
+
+services/api/app/protocol_workflow/registries/fact_bindings.py:261: FactBindingError
+_ test_real_exploratory_pk_does_not_require_confirmatory_link[None-conditional_applicability_unresolved] _
+
+confirmatory = None, expected_error = 'conditional_applicability_unresolved'
+
+    @pytest.mark.parametrize("confirmatory,expected_error", [
+        (False, None), (True, "missing_required_fact"),
+        (None, "conditional_applicability_unresolved"),
+    ])
+    def test_real_exploratory_pk_does_not_require_confirmatory_link(confirmatory, expected_error):
+        from app.protocol_workflow.registries.applicability import (
+            FactPredicate, RulePredicate, bind_applicable_input, ApplicabilityResolutionError,
+        )
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_6.json").read_text())
+        declarations = tuple(RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=tuple(FactPredicate(fact_path=path, expected=True) for path in rule.triggering_fact_paths),
+        ) for rule in contract.conditional_applicability_rules)
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        facts = {f.fact_path: "synthetic confirmed analysis" for f in contract.substantive_content.fact_requirements
+                 if f.obligation.value == "required"}
+        facts.update({f"statistics.pk_pd_er.{kind}_applicable": kind == "pk" for kind in ("pk", "pd", "er")})
+        facts["statistics.pk_pd_er.pk_confirmatory"] = confirmatory
+        # Inactive PD/E-R do not require a made-up purpose decision.
+        if expected_error:
+            with pytest.raises((FactBindingError, ApplicabilityResolutionError), match=expected_error):
+>               bind_applicable_input(confirmed_study(facts), contract, bindings, rules=declarations)
+
+tests/protocol_v3/test_chapter_applicability.py:384: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:279: in bind_applicable_input
+    return bind_chapter_input(study, effective, bindings, source_format=source_format,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...matory': None}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+
+    def bind_chapter_input(
+        study: StudyDefinitionV3,
+        contract: ChapterContractV2,
+        bindings: Iterable[FactBinding],
+        *,
+        source_format: Literal["native_json", "legacy_strings_v1"] = "native_json",
+        active_conditional_rule_ids: tuple[StableId, ...] = (),
+        applicability_rules_sha256: Sha256 | None = None,
+    ) -> BoundChapterSkillInput:
+        """Read literal canonical dictionary keys; never split dotted paths.
+    
+        Required/conditional applicability remains the contract's responsibility.
+        This boundary fails with exact paths when a required value cannot be read.
+        Legacy conversion is opt-in and does not rewrite the original study.
+        """
+        if study.canonical_state not in (CanonicalState.CONFIRMED, CanonicalState.FROZEN):
+            raise FactBindingError("study_not_confirmed")
+        if source_format not in ("native_json", "legacy_strings_v1"):
+            raise FactBindingError("unknown_fact_source_format")
+        index = {}
+        for binding in bindings:
+            if binding.fact_path in index:
+                raise FactBindingError("duplicate_fact_binding", (binding.fact_path,))
+            index[binding.fact_path] = binding
+        required = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "required"
+        }
+        paths = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value != "forbidden"
+        }
+        # Some trigger/conditional paths have no unconditional FactRequirement.
+        # Carry available values now; 3R.4B decides which obligations activate.
+        forbidden = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "forbidden"
+        }
+        for rule in contract.conditional_applicability_rules:
+            paths.update(rule.triggering_fact_paths)
+            paths.update(rule.required_when_active_fact_paths)
+        for item in contract.ctq_items:
+            paths.update(item.linked_fact_paths)
+        for item in contract.registry_consistency_obligations:
+            paths.update(item.eligibility_fact_paths)
+        paths.difference_update(forbidden)
+        resolved, missing, unsupported = {}, [], []
+        for path in sorted(paths):
+            binding = index.get(path)
+            if binding is None or binding.canonical_path is None:
+                if path in required:
+                    unsupported.append(path)
+                continue
+            if binding.canonical_path not in study.facts:
+                if path in required:
+                    missing.append(path)
+                continue
+            value = _typed_value(binding, study.facts[binding.canonical_path], source_format)
+            if binding.canonical_path != path and path in study.facts:
+                alias_value = _typed_value(binding, study.facts[path], source_format)
+                if _json(value) != _json(alias_value):
+                    raise FactBindingError("fact_alias_conflict", (path, binding.canonical_path))
+            if not _is_resolved_fact(value):
+                if path in required:
+                    missing.append(path)
+                continue
+            resolved[path] = value
+        if unsupported:
+            raise FactBindingError("unsupported_required_fact", unsupported)
+        if missing:
+>           raise FactBindingError("missing_required_fact", missing)
+E           app.protocol_workflow.registries.fact_bindings.FactBindingError: missing_required_fact: statistics.pk_pd_er.confirmatory_analysis_link
+
+services/api/app/protocol_workflow/registries/fact_bindings.py:261: FactBindingError
+
+During handling of the above exception, another exception occurred:
+
+confirmatory = None, expected_error = 'conditional_applicability_unresolved'
+
+    @pytest.mark.parametrize("confirmatory,expected_error", [
+        (False, None), (True, "missing_required_fact"),
+        (None, "conditional_applicability_unresolved"),
+    ])
+    def test_real_exploratory_pk_does_not_require_confirmatory_link(confirmatory, expected_error):
+        from app.protocol_workflow.registries.applicability import (
+            FactPredicate, RulePredicate, bind_applicable_input, ApplicabilityResolutionError,
+        )
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_6.json").read_text())
+        declarations = tuple(RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=tuple(FactPredicate(fact_path=path, expected=True) for path in rule.triggering_fact_paths),
+        ) for rule in contract.conditional_applicability_rules)
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        facts = {f.fact_path: "synthetic confirmed analysis" for f in contract.substantive_content.fact_requirements
+                 if f.obligation.value == "required"}
+        facts.update({f"statistics.pk_pd_er.{kind}_applicable": kind == "pk" for kind in ("pk", "pd", "er")})
+        facts["statistics.pk_pd_er.pk_confirmatory"] = confirmatory
+        # Inactive PD/E-R do not require a made-up purpose decision.
+        if expected_error:
+>           with pytest.raises((FactBindingError, ApplicabilityResolutionError), match=expected_error):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'missing_required_fact: statistics.pk_pd_er.confirmatory_analysis_link'
+
+tests/protocol_v3/test_chapter_applicability.py:383: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_real_exploratory_pk_does_not_require_confirmatory_link[False-None]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_real_exploratory_pk_does_not_require_confirmatory_link[None-conditional_applicability_unresolved]
+2 failed, 1 passed, 36 deselected in 0.64s

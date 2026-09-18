@@ -1,0 +1,32 @@
+{
+  "skill_id": "skill:chapter:front-block",
+  "skill_version": "3.3.0",
+  "node_id": "v2_front_block",
+  "chapter_contract_id": "contract:v2-front-block:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认文档控制事实），输出为 ChapterSkillOutput。封面身份复用既有 framing.protocol_id / framing.document_title / framing.version 绑定，版本与日期分别以结构化事实承载（不合并为丢失版本独立性的无结构字符串）；逐项给出实际适用方、申办方保密声明与页眉/页脚元数据行；排除源0–13说明段与 XXXXXX 示例标记；缺失事实进入待补清单而不是编造。",
+    "forbidden_behaviors": [
+      "编造证据来源或项目事实",
+      "保留源0–13说明段或 XXXXXX 示例标记",
+      "虚构签署、日期或项目批准",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：TP-MA-07 v2.0 零基 body-child 索引 23、25、28–36、40–42（无标题前置块承载区）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID取自模板 style_properties：25=Title，17=header，16=footer。",
+    "身份/版本元数据复用既有 framing.protocol_id / framing.document_title / framing.version 绑定；版本日期为结构化独立事实，不设独立可编辑方案编号字段。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-block:missing-obligation",
+    "skill:chapter:front-block:unresolved-fact",
+    "skill:chapter:front-block:wrong-source"
+  ]
+}

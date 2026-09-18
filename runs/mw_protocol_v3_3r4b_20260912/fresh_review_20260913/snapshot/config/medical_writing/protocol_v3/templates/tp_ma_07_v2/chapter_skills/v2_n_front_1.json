@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:front-1:version-history",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_front_1",
+  "chapter_contract_id": "contract:v2-n-front-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认修订历史事实），输出为 ChapterSkillOutput。生成版本/日期/变更/依据四列表格内容，绑定真实修订历史；初始版本必须显式说明初始版本处理；存在修订时逐行给出变更依据；不得虚构修订行或审批回执。",
+    "forbidden_behaviors": [
+      "以模板默认版本行冒充项目修订历史",
+      "虚构修订批准记录或回执",
+      "空白变更表壳",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 44–46 与 table[46]（4列×5行修订历史表）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：2=heading 1（模板 node_tree front_1 节点实际样式）。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-1:version-history:missing-obligation",
+    "skill:chapter:front-1:version-history:unresolved-fact",
+    "skill:chapter:front-1:version-history:wrong-source"
+  ]
+}

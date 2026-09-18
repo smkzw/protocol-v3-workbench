@@ -1,0 +1,117 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-656/test_reopen_reuses_original_an0')
+first = '{"fields":{}}', second = None, calls = 2, status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='seed-project', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='seed-project', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+        initial = coordinator().execute(prepared)
+>       assert initial['status'] == status
+E       AssertionError: assert 'blocked' == 'needs_information'
+E         
+E         - needs_information
+E         + blocked
+
+tests/protocol_v3/test_seed_coordinator_integration.py:38: AssertionError
+_ test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-656/test_reopen_reuses_original_an1')
+first = 'bad json', second = '{"fields":{}}', calls = 3
+status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='seed-project', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='seed-project', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+        initial = coordinator().execute(prepared)
+>       assert initial['status'] == status
+E       AssertionError: assert 'blocked' == 'needs_information'
+E         
+E         - needs_information
+E         + blocked
+
+tests/protocol_v3/test_seed_coordinator_integration.py:38: AssertionError
+_ test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-656/test_reopen_reuses_original_an2')
+first = 'bad json', second = 'still bad', calls = 3
+status = 'needs_structure_correction'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='seed-project', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='seed-project', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+        initial = coordinator().execute(prepared)
+>       assert initial['status'] == status
+E       AssertionError: assert 'blocked' == 'needs_structure_correction'
+E         
+E         - needs_structure_correction
+E         + blocked
+
+tests/protocol_v3/test_seed_coordinator_integration.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction]
+3 failed in 0.46s

@@ -1,0 +1,76 @@
+..FF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_design_rationale_output_requires_margin_source_only_when_applicable[True-False] _
+
+ni = True, placebo = False
+
+    @pytest.mark.parametrize('ni,placebo', product((False,True),repeat=2))
+    def test_design_rationale_output_requires_margin_source_only_when_applicable(ni,placebo):
+        import json
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_2.json').read_text())
+        p=REAL_TEMPLATE_DIR.parents[4]/'tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+        raw=next(f['content'] for f in json.loads(p.read_text())['fixtures'] if f['chapter_contract_id']==c.chapter_contract_id and f['fixture_kind']=='positive')
+        selected={'framing.structured_design.noninferiority_margin_decision':ni,'framing.structured_design.placebo_decision':placebo}
+        facts={f['fact_path']:f['value'] for f in raw['facts'] if f['fact_path'] not in selected or selected[f['fact_path']]}
+        facts.update({'design.noninferiority_applicable':ni,'design.placebo_control_applicable':placebo})
+        for path,active in selected.items():
+            if active:facts[path]='Synthetic reasoned project decision'
+        raw['facts']=[{'fact_path':k,'value':v} for k,v in facts.items()]
+        claim='noninferiority_margin_decision'
+        raw['claims']=[x for x in raw['claims'] if x['claim_type']!=claim]
+        raw['evidence']=[x for x in raw['evidence'] if x['admission_claim_type']!=claim]
+        if ni:
+            raw['claims'].append({'claim_type':claim,'statement':'Synthetic margin decision','qualifying_conditions':['仅在项目确认采用非劣效设计且完成界值论证时']})
+            raw['evidence'].append({'source_role':'project_primary','admission_claim_type':claim,'locator_kind':'body','locator':'synthetic:margin:1','context':'Synthetic margin justification, not medical approval','quality_score':0.95})
+>       content=ChapterContentPayload.model_validate(raw)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E       claims.3.qualifying_conditions
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=['仅在项目确认采...完成界值论证时'], input_type=list]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:1464: ValidationError
+_ test_design_rationale_output_requires_margin_source_only_when_applicable[True-True] _
+
+ni = True, placebo = True
+
+    @pytest.mark.parametrize('ni,placebo', product((False,True),repeat=2))
+    def test_design_rationale_output_requires_margin_source_only_when_applicable(ni,placebo):
+        import json
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_2.json').read_text())
+        p=REAL_TEMPLATE_DIR.parents[4]/'tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+        raw=next(f['content'] for f in json.loads(p.read_text())['fixtures'] if f['chapter_contract_id']==c.chapter_contract_id and f['fixture_kind']=='positive')
+        selected={'framing.structured_design.noninferiority_margin_decision':ni,'framing.structured_design.placebo_decision':placebo}
+        facts={f['fact_path']:f['value'] for f in raw['facts'] if f['fact_path'] not in selected or selected[f['fact_path']]}
+        facts.update({'design.noninferiority_applicable':ni,'design.placebo_control_applicable':placebo})
+        for path,active in selected.items():
+            if active:facts[path]='Synthetic reasoned project decision'
+        raw['facts']=[{'fact_path':k,'value':v} for k,v in facts.items()]
+        claim='noninferiority_margin_decision'
+        raw['claims']=[x for x in raw['claims'] if x['claim_type']!=claim]
+        raw['evidence']=[x for x in raw['evidence'] if x['admission_claim_type']!=claim]
+        if ni:
+            raw['claims'].append({'claim_type':claim,'statement':'Synthetic margin decision','qualifying_conditions':['仅在项目确认采用非劣效设计且完成界值论证时']})
+            raw['evidence'].append({'source_role':'project_primary','admission_claim_type':claim,'locator_kind':'body','locator':'synthetic:margin:1','context':'Synthetic margin justification, not medical approval','quality_score':0.95})
+>       content=ChapterContentPayload.model_validate(raw)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E       claims.3.qualifying_conditions
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=['仅在项目确认采...完成界值论证时'], input_type=list]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:1464: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_design_rationale_output_requires_margin_source_only_when_applicable[True-False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_design_rationale_output_requires_margin_source_only_when_applicable[True-True]
+2 failed, 2 passed, 201 deselected in 0.57s

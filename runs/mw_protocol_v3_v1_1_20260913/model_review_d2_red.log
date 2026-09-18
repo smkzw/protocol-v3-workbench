@@ -1,0 +1,29 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_unknown_receipt_adoption_retains_actual_identity_in_event_without_rewriting_ledger _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-609/test_unknown_receipt_adoption_0')
+
+    def test_unknown_receipt_adoption_retains_actual_identity_in_event_without_rewriting_ledger(tmp_path):
+        calls = []
+    
+        def interrupted(request):
+            calls.append(request.reservation_id)
+            raise RuntimeError('response persistence was interrupted')
+    
+        rt = _runtime(tmp_path, {'draft_node': interrupted})
+        plan = _probe_plan()
+        rt.start_run(plan, workflow_run_id='unknown-model', root_inputs=_root_inputs())
+        rt.advance('unknown-model')
+        prior_id = rt.reservation_attempts('unknown-model', 'draft_node')[0].provider_session_id
+        payload = {'raw_artifact_ref': 'verified-test-result'}
+>       rt.resolve_unknown_with_receipt(
+            'unknown-model', node_id='draft_node', output=payload, output_sha256=_sha_of(payload),
+            provider_session_id='actual-recovered-response',
+        )
+E       TypeError: GraphRuntime.resolve_unknown_with_receipt() got an unexpected keyword argument 'provider_session_id'
+
+tests/protocol_v3/test_graph_model_contract.py:82: TypeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_graph_model_contract.py::test_unknown_receipt_adoption_retains_actual_identity_in_event_without_rewriting_ledger
+1 failed, 3 passed in 0.51s

@@ -1,0 +1,23 @@
+{
+  "static_inventory_result": [
+    {
+      "rule": "applicability:v2-n-16-x1:assessment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table",
+      "disposition": "valid conditional-only structural obligation"
+    },
+    {
+      "rule": "applicability:v2-n-16-x2:assessment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table",
+      "disposition": "valid conditional-only structural obligation"
+    },
+    {
+      "rule": "applicability:n-3-4-1:analysis-commitment",
+      "field": "conditional_object_kinds",
+      "unknown_target": "table",
+      "disposition": "valid conditional-only structural obligation"
+    }
+  ],
+  "conclusion": "All three initial structural candidates are declared by source conditional rule; do not restrict validation to unconditional base objects. The nonexistent-cell mutation remains a reproduced loader gap."
+}

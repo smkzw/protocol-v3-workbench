@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_design_uses_pinned_intake_and_reopens_without_product_regeneration ____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-730/test_design_uses_pinned_intake0')
+
+    def test_design_uses_pinned_intake_and_reopens_without_product_regeneration(tmp_path):
+>       from app.protocol_workflow.agent2.product import create_product_regimen_factory
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.product'
+
+tests/protocol_v3/integration/test_regimen_design_api.py:14: ModuleNotFoundError
+=============================== warnings summary ===============================
+../../../../../../Library/Python/3.12/lib/python/site-packages/fastapi/testclient.py:1
+  /Users/smkzw/Library/Python/3.12/lib/python/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_regimen_design_api.py::test_design_uses_pinned_intake_and_reopens_without_product_regeneration
+1 failed, 1 warning in 0.51s

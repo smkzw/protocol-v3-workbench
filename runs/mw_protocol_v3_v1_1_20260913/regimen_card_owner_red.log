@@ -1,0 +1,53 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx (10 tests | 2 failed) 159ms
+   × shows quotes verbatim, dedupes download links per source, and skips missing urls 16ms
+   × keeps confirmation pending when an equivalent proposal object is received 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx > shows quotes verbatim, dedupes download links per source, and skips missing urls
+AssertionError: expected [ <a …(2)></a>, <a …(2)></a>, …(2) ] to have a length of 1 but got 4
+
+- Expected
++ Received
+
+- 1
++ 4
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx:229:17
+    227|   expect(within(maintenanceActive).getByText("历史方案曾用相近维持剂量。")).toBeTru…
+    228|   const links = screen.getAllByRole("link", { name: "下载对应原文件" });
+    229|   expect(links).toHaveLength(1);
+       |                 ^
+    230|   expect(links[0].getAttribute("href")).toBe("/files/source:ib");
+    231|   expect(within(maintenanceActive).queryByText(/\/word\/document\.xml/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx > keeps confirmation pending when an equivalent proposal object is received
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx:285:67
+    283|   fireEvent.click(screen.getByRole("button", {name: "确认这套给药方案"}));
+    284|   view.rerender(<RegimenProposalCard proposal={JSON.parse(JSON.stringi…
+    285|   expect(screen.getByRole("button", {name: "确认这套给药方案"}).disabled).toBe…
+       |                                                                   ^
+    286|   fireEvent.click(screen.getByRole("button", {name: "确认这套给药方案"}));
+    287|   expect(onConfirm).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  14:16:58
+   Duration  539ms (transform 25ms, setup 0ms, import 67ms, tests 159ms, environment 249ms)
+

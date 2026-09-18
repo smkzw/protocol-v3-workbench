@@ -1,0 +1,11 @@
+{
+  "goal_api": "update_goal supports complete/blocked only; neither used because product incomplete and user pause is not blocked",
+  "native_ui_attempt": "cua.getApp(\"Codex\")",
+  "result": "Computer Use is not allowed to use the app 'com.openai.codex' for safety reasons.",
+  "actual_work_state": "USER_PAUSED; four owned services terminal143; all execution/conference terminal; no next phase started",
+  "native_goal_state": "last verified active; user must pause through app UI",
+  "no_workaround": "no internal DB write or alternative app-control bypass",
+  "native_goal_final_verified_state": "paused",
+  "final_state_evidence": "native_goal_final_snapshot.json",
+  "user_action_required": false
+}

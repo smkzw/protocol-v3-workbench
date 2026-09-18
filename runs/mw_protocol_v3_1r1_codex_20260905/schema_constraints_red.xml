@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.356" timestamp="2026-09-05T14:54:30.009820+08:00" hostname="MacBook-Pro-4.local"><testcase classname="runs.mw_protocol_v3_1r1_codex_20260905.test_schema_constraint_probe" name="test_same_names_without_product_constraints_are_rejected" time="0.007"><failure message="Failed: DID NOT RAISE SqliteStorageError">runs/mw_protocol_v3_1r1_codex_20260905/test_schema_constraint_probe.py:21: in test_same_names_without_product_constraints_are_rejected
+    with pytest.raises(SqliteStorageError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE SqliteStorageError</failure></testcase></testsuite></testsuites>

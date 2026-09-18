@@ -1,0 +1,102 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_competing_compiler_start_returns_first_pinned_run_without_call ______
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-709/test_competing_compiler_start_0')
+
+    def test_competing_compiler_start_returns_first_pinned_run_without_call(tmp_path):
+        opener = _FakeOpener([_FakeResponse(_completion_body(content='{"fields":{}}'))])
+        factory = create_product_seed_factory(
+            storage_config={'backend':'sqlite','path':str(tmp_path/'race.db')},
+            prior_probe_receipt=ROOT.parents[2]/'runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json',
+            max_input_bytes=100_000, credential_resolver=lambda:'synthetic-key', http_opener=opener)
+        original = prepare_seed_request('相同请求只整理一次', ())
+        changed = original.to_payload()
+        changed['output_schema']['title'] = 'another compiler package'
+        text = canonical_json(changed)
+        recompiled = PreparedSeedRequest(text, hashlib.sha256(text.encode()).hexdigest())
+        loser = factory('seed-race-project')
+        actual_start = loser.runtime.start_run
+        winner = factory('seed-race-project')
+        def winner_commits_between_lookup_and_insert(*args, **kwargs):
+            winner.start(original)
+            return actual_start(*args, **kwargs)
+        loser.runtime.start_run = winner_commits_between_lookup_and_insert
+>       run_id = loser.start(recompiled)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_seed_start_race.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:52: in start
+    self.runtime.start_run(plan,
+tests/protocol_v3/test_seed_start_race.py:26: in winner_commits_between_lookup_and_insert
+    return actual_start(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.graph.runtime.GraphRuntime object at 0x10a492840>
+plan = GraphPlan(project_id='seed-race-project', branch_id='main', graph_id='research-seed', graph_version='research-seed.v1'...take', 'raw_response'), output_schema='seed_validation', logical_key='research-seed.validate.v1', allowed_attempts=1)))
+workflow_run_id = 'research-intake:98b79ac5a8cb3387f958e461a6e968f7a3d964c345756f3058a24cf62ca23af7'
+root_inputs = {'research_intake': {'fields': {'anticipated_dose': '拟用剂量', 'clinical_phase': '研究期别', 'comparator': '对照方式', 'dosage_fo...and_route': {...}, ...}, 'type': 'object'}}, 'required': ['fields'], ...}, 'schema': 'research_seed_proposal.v1', ...}}
+
+    def start_run(
+        self,
+        plan: GraphPlan,
+        *,
+        workflow_run_id: str,
+        root_inputs: Mapping[str, Any],
+    ) -> GraphRunSnapshot:
+        """Bind a run to the plan identity and seed the root inputs.
+    
+        Idempotent for the identical plan identity *and* identical root
+        input identities.  A different graph identity OR different root
+        facts under the same run id fails closed with a typed binding error
+        — checked both in the fast pre-check and, atomically, inside the
+        append transaction, so a concurrent or stale-precheck start can
+        never double-create a run or silently rebind its identity/roots.
+        """
+    
+        if plan.project_id != self._project_id:
+            raise GraphPlanBindingError(
+                "graph_plan_binding_mismatch",
+                f"runtime is bound to project {self._project_id!r}, plan "
+                f"declares {plan.project_id!r}",
+            )
+        missing = [s for s in plan.root_inputs if s not in root_inputs]
+        extra = [s for s in root_inputs if s not in plan.root_inputs]
+        if missing or extra:
+            raise GraphRunError(
+                "graph_root_inputs_invalid",
+                f"root inputs must declare exactly {sorted(plan.root_inputs)}; "
+                f"missing={missing} extra={extra}",
+            )
+        root_payloads = {
+            schema: _jsonable(payload) for schema, payload in root_inputs.items()
+        }
+        root_hashes = {
+            schema: _payload_sha256(payload)
+            for schema, payload in root_payloads.items()
+        }
+        try:
+            view = self._load(workflow_run_id, caller_plan=None)
+        except GraphRunError as exc:
+            if exc.code != "graph_run_unknown":
+                raise
+        else:
+            # Fast sequential path: identical identity *and* identical root
+            # facts reuse the existing run; anything else fails closed.
+            self._assert_binding(view.plan, plan, workflow_run_id)
+            if view.root_hashes != root_hashes:
+>               raise GraphPlanBindingError(
+                    "graph_root_inputs_conflict",
+                    f"run {workflow_run_id!r} is already bound to root input "
+                    f"identities {sorted(view.root_hashes.items())}; the new "
+                    f"start declares {sorted(root_hashes.items())} — changed "
+                    "root facts require a new run, never a silent rebind",
+                )
+E               app.protocol_workflow.graph.state.GraphPlanBindingError: graph_root_inputs_conflict: run 'research-intake:98b79ac5a8cb3387f958e461a6e968f7a3d964c345756f3058a24cf62ca23af7' is already bound to root input identities [('research_intake', 'ff05e60782b90d3d5bc92f8b53af795ad9404b37df03c6c32ddf6ddd457025b1')]; the new start declares [('research_intake', '38cb22c6cd004d6158118cf750b8febc800576db33a1c60cca29a23a926f69cc')] — changed root facts require a new run, never a silent rebind
+
+services/api/app/protocol_workflow/graph/runtime.py:354: GraphPlanBindingError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_start_race.py::test_competing_compiler_start_returns_first_pinned_run_without_call
+1 failed in 1.04s

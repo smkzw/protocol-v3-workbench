@@ -1,0 +1,20 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_role_views_require_explicit_assignments_and_keep_period_arm_and_native_dose _
+
+    def test_role_views_require_explicit_assignments_and_keep_period_arm_and_native_dose():
+>       from app.protocol_workflow.agent2.regimen_projection import project_regimen_roles
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.regimen_projection'
+
+tests/protocol_v3/test_regimen_role_projection.py:13: ModuleNotFoundError
+__ test_role_assignments_do_not_merge_switching_arms_or_relabel_by_drug_name ___
+
+    def test_role_assignments_do_not_merge_switching_arms_or_relabel_by_drug_name():
+>       from app.protocol_workflow.agent2.regimen_projection import project_regimen_roles
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.regimen_projection'
+
+tests/protocol_v3/test_regimen_role_projection.py:28: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_role_projection.py::test_role_views_require_explicit_assignments_and_keep_period_arm_and_native_dose
+FAILED tests/protocol_v3/test_regimen_role_projection.py::test_role_assignments_do_not_merge_switching_arms_or_relabel_by_drug_name
+2 failed in 0.31s

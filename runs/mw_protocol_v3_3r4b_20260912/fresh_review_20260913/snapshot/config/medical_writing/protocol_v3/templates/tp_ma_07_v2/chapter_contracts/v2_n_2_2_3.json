@@ -1,0 +1,149 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-2-2-3:v2",
+  "semantic_node_id": "v2_n_2_2_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-2-2-3:competitor-and-own-clinical",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-2-2-3:v2",
+    "chapter_contract_id": "contract:v2-n-2-2-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.comparator_summary",
+        "obligation": "required",
+        "rationale": "同类/竞品研究概述复用既有 picos.comparator_summary；来源为 @298（同类靶点/机制数据）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.own_product.clinical_evidence",
+        "obligation": "required",
+        "rationale": "本药既往临床研究结果由 @299 承载；与同类药物证据物理相邻但属于不同证据源，必须独立登记。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.own_product.clinical_study_context",
+        "obligation": "required",
+        "rationale": "本药临床结果必须匹配研究/来源上下文（研究阶段、设计与时间窗），仅有 IB 文件号不构成匹配的研究上下文。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "competitor_evidence_summary",
+        "obligation": "required",
+        "rationale": "同类药物证据总结声明（仅限竞品来源）。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "own_product_clinical_evidence",
+        "obligation": "required",
+        "rationale": "本药临床证据声明（仅限自有产品来源）。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "同类药物章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "competitor_full_protocol"
+        ],
+        "admission_claim_types": [
+          "competitor_evidence_summary"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "own_product_clinical_evidence"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "同类药物概述段与本药既往临床段必须分列；本药临床结果必须给出匹配的研究上下文，不得借用同类药物段落。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "证据源分离声明：@298 为同类药物数据，@299 为本药早期临床结果，两者物理相邻但不得混同。",
+      "本药临床结果必须带匹配研究上下文（研究阶段/设计/时间窗），不得仅用 IB 文件号。"
+    ],
+    "skeleton_risk_rules": [
+      "只有同类药物概述或只有竞品数据即失败；本药临床段缺失即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-2-2-3",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623318"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-2-2-3:evidence-source-separation",
+      "rule": "同类药物证据与本药临床证据必须分别标注来源；用竞品证据充当本药临床结论即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-2-2-3:primary",
+      "question": "同类药物研究概述是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "picos.comparator_summary"
+      ],
+      "linked_claim_types": [
+        "competitor_evidence_summary"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-2-2-3:evidence-source-separation"
+      ],
+      "risk_if_unmet": "同类药物研究概述缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.354" timestamp="2026-09-05T19:19:29.741295+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_superseded_result_migration" name="test_superseded_history_replay_stays_terminal_without_reactivating" time="0.007"><failure message="AssertionError: assert &lt;InboxStatus.RECEIVED: 'received'&gt; is &lt;InboxStatus.SUPERSEDED: 'superseded'&gt;&#10; +  where &lt;InboxStatus.RECEIVED: 'received'&gt; = InboxResult(inbox_result_id='ib-1-lk:old', project_id='proj:1r4:consolidation', logical_key='lk:old', result_sha256='a...RECEIVED: 'received'&gt;, received_at=datetime.datetime(2026, 1, 1, 0, 0, tzinfo=datetime.timezone.utc), consumed_at=None).status&#10; +  and   &lt;InboxStatus.SUPERSEDED: 'superseded'&gt; = InboxStatus.SUPERSEDED">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2888/test_superseded_history_replay0')
+
+    def test_superseded_history_replay_stays_terminal_without_reactivating(tmp_path):
+        path = tmp_path / "superseded.sqlite"
+        factory = build_unit_of_work_factory({"backend": "sqlite", "path": str(path)})
+        with factory() as uow:
+            original = uow.inbox_repository.record_result(_PROJ, "lk:old", _SHA_A, _T0)
+        # Synthetic historical state supported by the existing InboxStatus contract.
+        with sqlite3.connect(path) as conn:
+            conn.execute("UPDATE inbox_result SET status='superseded'")
+        history = _inbox_rows(path)
+        _enqueue(factory, "lk:old")
+        semantic = _CountingSemantic()
+        with factory() as uow:
+            replay = uow.inbox_repository.record_result(_PROJ, "lk:old", _SHA_A, _T1)
+&gt;           assert replay.status is InboxStatus.SUPERSEDED
+E           AssertionError: assert &lt;InboxStatus.RECEIVED: 'received'&gt; is &lt;InboxStatus.SUPERSEDED: 'superseded'&gt;
+E            +  where &lt;InboxStatus.RECEIVED: 'received'&gt; = InboxResult(inbox_result_id='ib-1-lk:old', project_id='proj:1r4:consolidation', logical_key='lk:old', result_sha256='a...RECEIVED: 'received'&gt;, received_at=datetime.datetime(2026, 1, 1, 0, 0, tzinfo=datetime.timezone.utc), consumed_at=None).status
+E            +  and   &lt;InboxStatus.SUPERSEDED: 'superseded'&gt; = InboxStatus.SUPERSEDED
+
+tests/protocol_v3/test_superseded_result_migration.py:26: AssertionError</failure></testcase></testsuite></testsuites>

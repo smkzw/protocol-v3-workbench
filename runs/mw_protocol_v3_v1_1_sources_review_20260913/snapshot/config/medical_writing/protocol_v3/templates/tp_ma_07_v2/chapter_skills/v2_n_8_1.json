@@ -1,0 +1,32 @@
+{
+  "skill_id": "skill:chapter:v2-n-8-1:cessation",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_8_1",
+  "chapter_contract_id": "contract:v2-n-8-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch4:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认设计、安全与分析事实），输出为 ChapterSkillOutput。分别类型化四类概念：个体暂时暂停、个体永久停药、参与者退出研究（8.2）、整体试验暂停/终止；整体层面必须给出设计特定决策逻辑（数据、阈值、决定方、报告路径与后续随访）；不得把整体停止标准转写为个体停止规则，也不得以『疗效已显示』等模板短语允许提前停止；模板示例规则仅为示例；试验参与者个体安全与试验整体决策必须分层；缺失事实进入待补清单而不是编造。",
+    "forbidden_behaviors": [
+      "编造证据来源或项目事实",
+      "把模板示例值当作项目事实",
+      "输出任何模型/供应商设置",
+      "复制模板或其他项目的示例值作为本项目事实"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：TP-MA-07 v2.0 零基 body-child 索引 499、500–511。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；合成夹具值不是真实项目批准。",
+    "模板示例停止规则仅为示例；暂停/终止标准与决策链须来自本项目设计、安全评估与分析合同。",
+    "本节点合同为 3R.3 batch4 逐节点合同，不构成临床、监管或 Word 原生验收。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-8-1:cessation:missing-obligation",
+    "skill:chapter:v2-n-8-1:cessation:unresolved-fact",
+    "skill:chapter:v2-n-8-1:cessation:wrong-source"
+  ]
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="0.062" timestamp="2026-09-06T01:26:19.646044+08:00" hostname="MacBook-Pro-4.local"><testcase classname="runs.mw_protocol_v3_3r1_registry_20260906.test_codex_semantic_obligations" name="test_safety_committee_is_not_efficacy_irc" time="0.000"><failure message="AssertionError: assert 'v2_n_14_7' in ['v2_n_9_4']">runs/mw_protocol_v3_3r1_registry_20260906/test_codex_semantic_obligations.py:15: in test_safety_committee_is_not_efficacy_irc
+    assert "v2_n_14_7" in targets
+E   AssertionError: assert 'v2_n_14_7' in ['v2_n_9_4']</failure></testcase><testcase classname="runs.mw_protocol_v3_3r1_registry_20260906.test_codex_semantic_obligations" name="test_conditional_content_is_not_retired_for_missing_heading" time="0.000"><failure message="AssertionError: study_design.pk_pd_sampling&#10;assert 'retired' != 'retired'">runs/mw_protocol_v3_3r1_registry_20260906/test_codex_semantic_obligations.py:28: in test_conditional_content_is_not_retired_for_missing_heading
+    assert entry["disposition"] != "retired", semantic
+E   AssertionError: study_design.pk_pd_sampling
+E   assert 'retired' != 'retired'</failure></testcase><testcase classname="runs.mw_protocol_v3_3r1_registry_20260906.test_codex_semantic_obligations" name="test_missing_compensation_facts_do_not_waive_section_obligation" time="0.000"><failure message="AssertionError: assert 'conditional_by_project' == 'required'&#10;  &#10;  - required&#10;  + conditional_by_project">runs/mw_protocol_v3_3r1_registry_20260906/test_codex_semantic_obligations.py:34: in test_missing_compensation_facts_do_not_waive_section_obligation
+    assert entry["default"] == "required"
+E   AssertionError: assert 'conditional_by_project' == 'required'
+E     
+E     - required
+E     + conditional_by_project</failure></testcase><testcase classname="runs.mw_protocol_v3_3r1_registry_20260906.test_codex_semantic_obligations" name="test_word_inventory_includes_footer_page_fields" time="0.038"><failure message="AssertionError: assert 0 &gt; 0&#10; +  where 0 = &lt;built-in method get of dict object at 0x109f66840&gt;('PAGE', 0)&#10; +    where &lt;built-in method get of dict object at 0x109f66840&gt; = {}.get">runs/mw_protocol_v3_3r1_registry_20260906/test_codex_semantic_obligations.py:42: in test_word_inventory_includes_footer_page_fields
+    assert footer.get("PAGE", 0) &gt; 0
+E   AssertionError: assert 0 &gt; 0
+E    +  where 0 = &lt;built-in method get of dict object at 0x109f66840&gt;('PAGE', 0)
+E    +    where &lt;built-in method get of dict object at 0x109f66840&gt; = {}.get</failure></testcase></testsuite></testsuites>

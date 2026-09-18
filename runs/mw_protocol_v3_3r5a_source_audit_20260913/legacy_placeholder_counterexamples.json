@@ -1,0 +1,39 @@
+{
+  "scope": "actual legacy detector direct method, synthetic text; not v3 UI or medical acceptance",
+  "source_sha256": "f82746893517a07bdbf3cd3d368f6fc2bfad2c41d1330c04ebff780117504e67",
+  "cases": [
+    {
+      "text": "未提供书面知情同意者不进入筛选。",
+      "case": "legitimate_exclusion",
+      "findings": [
+        {
+          "rule": "unresolved_draft_marker",
+          "matched": "未提供书面知情同意者不进入筛选",
+          "blocking": true
+        }
+      ]
+    },
+    {
+      "text": "数据将在生物统计人员确认后锁定。",
+      "case": "prospective_procedure",
+      "findings": [
+        {
+          "rule": "unresolved_draft_marker",
+          "matched": "将在生物统计人员确认后锁定",
+          "blocking": true
+        }
+      ]
+    },
+    {
+      "text": "样本量待医学经理确认后写入。",
+      "case": "draft_marker",
+      "findings": [
+        {
+          "rule": "unresolved_draft_marker",
+          "matched": "待医学经理确认",
+          "blocking": true
+        }
+      ]
+    }
+  ]
+}

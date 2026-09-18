@@ -1,0 +1,33 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx (4 tests | 1 failed) 98ms
+   × does not enable creation when the existing-study lookup failed 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx > does not enable creation when the existing-study lookup failed
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx:48:65
+     46|   render(<StudyContextWorkspace {...props} api={api}/>);
+     47|   await screen.findByText('读取失败');
+     48|   expect(screen.getByRole('button',{name:'开始本次方案写作'}).disabled).toBe(t…
+       |                                                                 ^
+     49|   expect(api.createResearchContext).not.toHaveBeenCalled();
+     50| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  16:31:07
+   Duration  489ms (transform 35ms, setup 0ms, import 79ms, tests 98ms, environment 247ms)
+

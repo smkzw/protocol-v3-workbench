@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.355" timestamp="2026-09-05T18:31:19.193346+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_study_event_reconstruction" name="test_genesis_event_preserves_facts_needed_for_independent_reconstruction" time="0.006"><failure message="KeyError: 'genesis_definition'">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2841/test_genesis_event_preserves_f0')
+
+    def test_genesis_event_preserves_facts_needed_for_independent_reconstruction(tmp_path):
+        factory = shared.make_factory(tmp_path / "reconstruction.sqlite")
+        service = shared.make_service(factory)
+        created = service.create_study_definition(shared.create_command(
+            project_id="proj:reconstruction", study_definition_id="sd:reconstruction",
+            idempotency_key="idem:reconstruction",
+        ))
+        with factory() as uow:
+            events = uow.event_stream_repository.read_events(
+                "proj:reconstruction", study_definition_stream_id("sd:reconstruction")
+            )
+        assert len(events) == 1
+&gt;       assert events[0].payload["genesis_definition"] == created.definition.model_dump(mode="json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'genesis_definition'
+
+tests/protocol_v3/test_study_event_reconstruction.py:19: KeyError</failure></testcase></testsuite></testsuites>

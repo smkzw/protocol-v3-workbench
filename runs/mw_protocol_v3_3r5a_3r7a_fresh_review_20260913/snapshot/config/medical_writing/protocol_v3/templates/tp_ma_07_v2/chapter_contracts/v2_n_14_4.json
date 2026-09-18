@@ -1,0 +1,65 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-4:v2",
+  "semantic_node_id": "v2_n_14_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-4",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-4:v2",
+    "chapter_contract_id": "contract:v2-n-14-4:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.investigator_conduct_and_delegation", "obligation": "required", "rationale": "研究者实施与委派责任必须绑定本项目实际安排，不得只保留通用职责句。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.investigator_supervision", "obligation": "required", "rationale": "对研究团队的监督安排必须有项目事实与授权边界。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.investigator_protocol_compliance", "obligation": "required", "rationale": "方案遵循义务必须逐项可追溯，不得以模板段落充当实际安排。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.investigator_records", "obligation": "required", "rationale": "研究记录与报告责任必须登记，不得默认为已完成。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.investigator_facilities_and_resources", "obligation": "required", "rationale": "设施与资源安排必须为实际项目事实；缺失走待补/建议解决。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "investigator_responsibility_matches_arrangements", "obligation": "required", "rationale": "研究者责任主张必须与实际安排一致，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "investigator_training_inferred_complete", "obligation": "forbidden", "rationale": "不得从职责表述推断已完成培训；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "investigator_protocol_acceptance_inferred_signed", "obligation": "forbidden", "rationale": "不得从职责表述推断方案接受已签署；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["investigator_responsibility_matches_arrangements"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_14 为 §14 结构容器（非载体）；本节绑定源窗口 901–909，研究者责任与 14.2 申办者、14.3 监查员责任保持独立归属。",
+      "研究者对试验参与者的照护与记录责任以项目确认事实为准，不得推断已完成培训。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准、已完成培训或已签署方案接受。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或通用研究者职责句而无监督/记录/设施事实时不算实质内容。",
+      "源窗口 901–909：意图性职责不得写成已完成培训或已签署接受。",
+      "结构检查不等于医学、质量或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-4",
+    "required_styles": ["3"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc48315557", "_Toc132623419"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-4:source-bound", "rule": "源窗口 901–909 的研究者责任必须逐项与项目实际安排对齐，不得复制通用段落。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-4:no-inference", "rule": "不得从职责表述推断培训已完成或方案接受已签署。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-4:boundary", "rule": "研究者、监查员与申办者责任必须分别登记；委托任务需要实际授权边界。"}
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-14-4:actual-arrangement", "question": "研究者实施、监督、记录与资源责任是否与实际安排一致且可追溯？", "linked_fact_paths": ["quality.investigator_conduct_and_delegation", "quality.investigator_supervision", "quality.investigator_records"], "linked_claim_types": ["investigator_responsibility_matches_arrangements"], "positive_qc_rule_ids": ["qc:v2-n-14-4:source-bound", "qc:v2-n-14-4:no-inference"], "risk_if_unmet": "未对齐的责任表述会把模板段落写成项目结论。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

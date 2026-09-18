@@ -1,0 +1,61 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_real_no_interim_needs_disposition_not_eleven_details_or_table ______
+
+    def test_real_no_interim_needs_disposition_not_eleven_details_or_table():
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from test_chapter_fact_binding import confirmed_study
+>       contract, declaration = interim_case()
+                                ^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def interim_case():
+        import json
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from app.protocol_workflow.registries.applicability import FactPredicate, RulePredicate
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_9.json").read_text())
+        rule = contract.conditional_applicability_rules[0]
+>       declaration = RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=(FactPredicate(fact_path="statistics.interim.applicable", expected=True),),
+            conditional_fact_paths=tuple(f.fact_path for f in contract.substantive_content.fact_requirements
+                                         if f.obligation.value == "required" and f.fact_path != "statistics.interim.applicable"),
+            conditional_claim_types=("interim_analysis_plan", "interim_final_analysis_impact"),
+            conditional_evidence_admission_types=("interim_analysis_plan", "interim_final_analysis_impact"),
+            conditional_object_kinds=("table",),
+            inactive_claim_requirements=({"claim_type": "interim_not_planned", "obligation": "required", "rationale": "Record the confirmed non-applicability disposition"},),
+            inactive_evidence_requirements=({"source_roles": ("project_primary",), "admission_claim_types": ("interim_not_planned",),
+                                             "allowed_locator_kinds": ("body", "table"), "require_context_window": True, "minimum_quality_score": 0.9},),
+        )
+E       pydantic_core._pydantic_core.ValidationError: 7 validation errors for RulePredicate
+E       source_contract_sha256
+E         Extra inputs are not permitted [type=extra_forbidden, input_value='6d57b2760aafd0214846a1c9...999573cdd5046e566a5da4e', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       conditional_fact_paths
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('statistics.interim.timi...im.canonical_reference'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       conditional_claim_types
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('interim_analysis_plan',..._final_analysis_impact'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       conditional_evidence_admission_types
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('interim_analysis_plan',..._final_analysis_impact'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       conditional_object_kinds
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('table',), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       inactive_claim_requirements
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=({'claim_type': 'interim_...cability disposition'},), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       inactive_evidence_requirements
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=({'source_roles': ('proje...m_quality_score': 0.9},), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:122: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_real_no_interim_needs_disposition_not_eleven_details_or_table
+1 failed, 20 deselected in 0.55s

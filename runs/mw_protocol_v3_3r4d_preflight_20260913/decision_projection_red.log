@@ -1,0 +1,14 @@
+..F                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_decision_graph_shows_applied_history_without_claiming_current_validity __
+tests/protocol_v3/integration/test_fact_impact_adoption.py:61: in test_decision_graph_shows_applied_history_without_claiming_current_validity
+    assert {row["decision_key"] for row in records} == {"decision:create", "decision:dose"}
+E   AssertionError: assert set() == {'decision:cr...ecision:dose'}
+E     
+E     Extra items in the right set:
+E     'decision:create'
+E     'decision:dose'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_decision_graph_shows_applied_history_without_claiming_current_validity
+1 failed, 2 passed in 0.62s

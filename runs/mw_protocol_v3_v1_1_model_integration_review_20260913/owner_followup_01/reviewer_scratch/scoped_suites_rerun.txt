@@ -1,0 +1,12 @@
+== d1_d4 scope: graph_model_contract + graph_runtime
+34 passed in 1.46s
+== d2 scope: graph_runtime_recovery + execution_reservations
+49 passed in 7.12s
+== dispatch_contract scope: harness_policy + durable_reservation_dispatch
+174 passed in 2.47s
+== response_persistence scope: zhipu_product_transport + zhipu_full_artifact_input + model_response_persistence
+34 passed in 0.44s
+== registry scope: registry_loading
+33 passed in 0.36s
+== integration scope: seed_execution_contract + seed_response_validation + seed_workflow_integration + model_response_persistence
+11 passed in 0.65s

@@ -1,0 +1,1 @@
+用户已授权废弃不影响科学性的阻断性旧阶段断言。旧测试将纳入all/排除any文字限定在chapter conditional规则内；现断言它们仍在原project_specific_elements，并新增强制主张required断言。两条条件仅重复无条件主张，不决定章节是否存在；纳排逻辑/参数/窗口/例外和其他风险条件原文均保留。所有fixture及expected不改，退休规则原文及文件before保留。

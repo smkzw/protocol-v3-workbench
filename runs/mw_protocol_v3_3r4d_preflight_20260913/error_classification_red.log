@@ -1,0 +1,18 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_________ test_absent_study_is_not_a_retryable_recommendation_conflict _________
+tests/protocol_v3/integration/test_fact_impact_adoption.py:21: in test_absent_study_is_not_a_retryable_recommendation_conflict
+    assert response.status_code == 404
+E   assert 409 == 404
+E    +  where 409 = <Response [409 Conflict]>.status_code
+______ test_missing_repository_is_configuration_failure_not_user_decision ______
+tests/protocol_v3/integration/test_fact_impact_adoption.py:38: in test_missing_repository_is_configuration_failure_not_user_decision
+    assert error.code.value == "MW-PRO-P1-SERVICE-CONFIGURATION_INCOMPLETE"
+E   AssertionError: assert 'MW-PRO-P1-DECISION-CAS' == 'MW-PRO-P1-SE...ON_INCOMPLETE'
+E     
+E     - MW-PRO-P1-SERVICE-CONFIGURATION_INCOMPLETE
+E     + MW-PRO-P1-DECISION-CAS
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_absent_study_is_not_a_retryable_recommendation_conflict
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_missing_repository_is_configuration_failure_not_user_decision
+2 failed in 0.64s

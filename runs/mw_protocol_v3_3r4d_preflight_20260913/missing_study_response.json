@@ -1,0 +1,14 @@
+{
+  "scope": "admitted synthetic project; absent study; mounted API and temporary isolated SQLite; no network listener/model",
+  "expected_status": 404,
+  "actual_status": 409,
+  "body": {
+    "detail": {
+      "message": "您查看的推荐已被更新，本次选择尚未应用。",
+      "responsible_area": "方案统筹",
+      "can_retry": true,
+      "next_step": "请查看最新推荐后重新确认。"
+    }
+  },
+  "database": "runs/mw_protocol_v3_3r4d_preflight_20260913/missing_study/wf_1r3.sqlite"
+}

@@ -1,0 +1,36 @@
+.......FFFF                                                              [100%]
+=================================== FAILURES ===================================
+___ test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts ___
+
+    def test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts():
+>       from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+E       ImportError: cannot import name 'read_regimen_response' from 'app.protocol_workflow.agent2.clinical_worker' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/clinical_worker.py)
+
+tests/protocol_v3/test_clinical_design_worker.py:117: ImportError
+_____ test_new_regimen_quote_must_exist_in_its_bound_original_source_unit ______
+
+    def test_new_regimen_quote_must_exist_in_its_bound_original_source_unit():
+>       from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+E       ImportError: cannot import name 'read_regimen_response' from 'app.protocol_workflow.agent2.clinical_worker' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/clinical_worker.py)
+
+tests/protocol_v3/test_clinical_design_worker.py:127: ImportError
+______ test_regimen_from_another_input_cannot_be_adopted_as_this_proposal ______
+
+    def test_regimen_from_another_input_cannot_be_adopted_as_this_proposal():
+>       from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+E       ImportError: cannot import name 'read_regimen_response' from 'app.protocol_workflow.agent2.clinical_worker' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/clinical_worker.py)
+
+tests/protocol_v3/test_clinical_design_worker.py:135: ImportError
+___ test_missing_regimen_is_information_gap_not_a_fabricated_complete_design ___
+
+    def test_missing_regimen_is_information_gap_not_a_fabricated_complete_design():
+>       from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+E       ImportError: cannot import name 'read_regimen_response' from 'app.protocol_workflow.agent2.clinical_worker' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/clinical_worker.py)
+
+tests/protocol_v3/test_clinical_design_worker.py:143: ImportError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_new_regimen_quote_must_exist_in_its_bound_original_source_unit
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_regimen_from_another_input_cannot_be_adopted_as_this_proposal
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_missing_regimen_is_information_gap_not_a_fabricated_complete_design
+4 failed, 7 passed in 0.33s

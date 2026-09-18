@@ -1,0 +1,1030 @@
+........................................................................ [ 29%]
+........................................................................ [ 58%]
+.................F...................................................... [ 88%]
+.................F......F.F.F                                            [100%]
+=================================== FAILURES ===================================
+_____ test_treatment_randomization_is_not_limited_to_day_one[False-False] ______
+
+randomized = False, on_day1 = False
+
+    @pytest.mark.parametrize("randomized,on_day1", [(False,False),(True,False),(True,True),(None,False)])
+    def test_treatment_randomization_is_not_limited_to_day_one(randomized,on_day1):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_7_2.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic treatment detail' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!='procedure.randomization_day_rules'}
+        facts.update({'diagram.randomized':randomized,'procedure.randomized_on_day1':on_day1})
+        rules=real_rule_catalog().rules
+        if randomized is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if randomized:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            assert caught.value.fact_paths==('procedure.randomization_day_rules',)
+            facts['procedure.randomization_day_rules']='Synthetic confirmed timing, not necessarily D1'
+>       assert bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules).resolved_facts==facts
+E       AssertionError: assert mappingproxy(...ment detail'}) == {'diagram.ran...': False, ...}
+E         
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_applicability.py:1262: AssertionError
+_________ test_visit_phase_facts_agree_with_schedule_and_safety_period _________
+
+    def test_visit_phase_facts_agree_with_schedule_and_safety_period():
+        screening = _contract("v2_n_7_1")
+        assert {
+            "procedure.screening_period_definition",
+            "procedure.baseline_assessments",
+            "procedure.screening_reassessment_rules",
+        } <= _required_facts(screening)
+        treatment = _contract("v2_n_7_2")
+        required = _required_facts(treatment)
+        assert {
+            "procedure.treatment_period_definition",
+            "procedure.dosing_start_rules",
+            "procedure.treatment_visit_procedures",
+            "procedure.blinded_treatment_handling",
+            "procedure.randomization_day_rules",
+        } <= required
+        assert "procedure.randomized_on_day1" in {
+            item.fact_path
+            for item in treatment.substantive_content.fact_requirements
+            if item.obligation.value == "optional"
+        }
+        rule = next(
+            r
+            for r in treatment.conditional_applicability_rules
+            if r.conditional_applicability_rule_id == "applicability:n-7-2:randomization"
+        )
+>       assert rule.triggering_fact_paths == ("procedure.randomized_on_day1",)
+E       AssertionError: assert ('diagram.randomized',) == ('procedure.r...zed_on_day1',)
+E         
+E         At index 0 diff: 'diagram.randomized' != 'procedure.randomized_on_day1'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_batch4.py:778: AssertionError
+_________ test_closed_vocabularies_cover_every_declared_path_and_claim _________
+
+registry_document = ChapterRegistryDocument(schema_version='protocol-v3-chapter-registry.v1', generated_for='TP-MA-07 v2 batch4 chapter co...=ChapterContentPayload(facts=(), claims=(), evidence=(), objects=()), supplied_passed=None, supplied_qc_verdict=None)))
+
+    def test_closed_vocabularies_cover_every_declared_path_and_claim(
+        registry_document,
+    ):
+        fact_vocabulary = set(registry_document.fact_vocabulary)
+        claim_vocabulary = set(registry_document.claim_vocabulary)
+        used_facts: set[str] = set()
+        used_claims: set[str] = set()
+        for entry in registry_document.chapters:
+            contract = entry.contract
+            substantive = contract.substantive_content
+            used_facts.update(item.fact_path for item in substantive.fact_requirements)
+            used_claims.update(
+                item.claim_type for item in substantive.claim_requirements
+            )
+            for rule in contract.conditional_applicability_rules:
+                used_facts.update(rule.triggering_fact_paths)
+                used_facts.update(rule.required_when_active_fact_paths)
+                used_claims.update(rule.required_when_active_claim_types)
+            for group in substantive.evidence_source_requirements:
+                used_claims.update(group.admission_claim_types)
+            for item in contract.ctq_items:
+                used_facts.update(item.linked_fact_paths)
+                used_claims.update(item.linked_claim_types)
+>       assert used_facts <= fact_vocabulary
+E       AssertionError: assert {'diagram.ran...gration', ...} <= {'discontinua...andling', ...}
+E         
+E         Extra items in the left set:
+E         'diagram.randomized'
+
+tests/protocol_v3/test_chapter_batch4.py:1002: AssertionError
+________________ test_partial_lint_is_clean_but_never_complete _________________
+
+registry_document = ChapterRegistryDocument(schema_version='protocol-v3-chapter-registry.v1', generated_for='TP-MA-07 v2 batch4 chapter co...=ChapterContentPayload(facts=(), claims=(), evidence=(), objects=()), supplied_passed=None, supplied_qc_verdict=None)))
+
+    def test_partial_lint_is_clean_but_never_complete(registry_document):
+        report = lint_registry(REAL_TEMPLATE_DIR, registry_document, require_complete=False)
+        assert report.mode == "partial"
+        assert report.status == "incomplete"
+>       assert report.errors() == ()
+E       AssertionError: assert (LintFinding(...vocabulary'),) == ()
+E         
+E         Left contains one more item: LintFinding(code='unknown_fact_path', severity='error', node_id='v2_n_7_2', location='chapters[v2_n_7_2].contract.fact_paths(diagram.randomized)', message='fact path is not a member of the registry fact vocabulary')
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_batch4.py:1029: AssertionError
+________ test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip _________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-423/test_assembly_cli_stdout_only_0')
+
+    def test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip(tmp_path):
+        inputs = [CONTRACTS_DIR, SKILLS_DIR, BATCH_PATH.parent]
+        before = {
+            path: sorted((p.name, p.stat().st_size) for p in path.iterdir())
+            for path in inputs
+        }
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ASSEMBLY_SCRIPT),
+                "--contracts-dir",
+                str(CONTRACTS_DIR),
+                "--skills-dir",
+                str(SKILLS_DIR),
+                "--batch",
+                str(BATCH_PATH),
+            ],
+            cwd=str(REPO_ROOT),
+            env=_cli_env(),
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        assert result.returncode == 0, result.stderr
+        payload = json.loads(result.stdout)
+        document = load_chapter_registry(payload)
+        assert [entry.node_id for entry in document.chapters] == sorted(EXPECTED_CARRIERS)
+        after = {
+            path: sorted((p.name, p.stat().st_size) for p in path.iterdir())
+            for path in inputs
+        }
+        assert before == after  # assembly performs no writes anywhere
+    
+        registry_file = tmp_path / "batch4_registry.json"
+        registry_file.write_text(result.stdout, encoding="utf-8")
+        lint_result = subprocess.run(
+            [
+                sys.executable,
+                "scripts/qc/protocol_v3/lint_chapter_registry.py",
+                "--registry",
+                str(registry_file),
+                "--template-dir",
+                str(REAL_TEMPLATE_DIR),
+                "--partial",
+                "--check-fixtures",
+            ],
+            cwd=str(REPO_ROOT),
+            env=_cli_env(),
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+>       assert lint_result.returncode == 0, lint_result.stdout + lint_result.stderr
+E       AssertionError: mode: partial
+E         status: incomplete
+E         coverage: expected=111 covered=16 leaf_union=110 cover=-
+E         missing carriers: v2_front_block, v2_n_10_1_1, v2_n_10_1_2, v2_n_10_1_3, v2_n_10_1_4, v2_n_10_1_5, v2_n_10_1_6, v2_n_10_2_1, v2_n_10_2_2, v2_n_10_2_3, v2_n_10_3_1, v2_n_10_3_2, v2_n_10_3_3, v2_n_10_4, v2_n_10_5, v2_n_10_6, v2_n_11_1, v2_n_11_2, v2_n_11_3, v2_n_11_4_1, v2_n_11_4_2, v2_n_11_4_3_1, v2_n_11_4_3_2, v2_n_11_4_4, v2_n_11_4_5, v2_n_11_4_6, v2_n_11_4_7, v2_n_11_4_8, v2_n_11_4_9, v2_n_12_1, v2_n_12_2, v2_n_12_3, v2_n_12_4, v2_n_12_5, v2_n_12_6, v2_n_12_7, v2_n_12_8, v2_n_12_9, v2_n_13_1, v2_n_13_2, v2_n_13_3, v2_n_13_4, v2_n_14_1, v2_n_14_2, v2_n_14_3, v2_n_14_4, v2_n_14_5, v2_n_14_6, v2_n_14_7, v2_n_15, v2_n_16, v2_n_16_x1, v2_n_16_x2, v2_n_16_x3, v2_n_1_1, v2_n_1_2, v2_n_1_3, v2_n_2_1, v2_n_2_2_1, v2_n_2_2_2_1, v2_n_2_2_3, v2_n_2_3, v2_n_3_1_1, v2_n_3_1_2_1, v2_n_3_1_2_2, v2_n_3_1_2_3, v2_n_3_1_2_4, v2_n_3_2_1, v2_n_3_2_2, v2_n_3_3_1, v2_n_3_3_2, v2_n_3_4_1, v2_n_3_4_2, v2_n_4_1, v2_n_4_2, v2_n_4_3, v2_n_4_4, v2_n_4_5, v2_n_5_1, v2_n_5_2, v2_n_5_3, v2_n_5_4, v2_n_5_5, v2_n_9_1, v2_n_9_2, v2_n_9_3, v2_n_9_4, v2_n_front_1, v2_n_front_2, v2_n_front_3, v2_n_front_4, v2_n_front_5, v2_n_front_6, v2_n_front_7, v2_n_front_8
+E         [ERROR] unknown_fact_path chapters[v2_n_7_2].contract.fact_paths(diagram.randomized): fact path is not a member of the registry fact vocabulary
+E         [INFO] partial_mode_not_full_acceptance lint.mode: partial batch validation only; the registry is incomplete and this report never represents full acceptance
+E         fixture fixture:batch4:v2-n-6-1-1:positive (contract:v2-n-6-1-1:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:identity: 研究药物身份、剂型、途径与剂量必须与既定产品权威一致；模板示例剂量仅为示例，不得作为项目事实。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:coherence: 暴露剂量与给药途径必须与给药方案及设计章节一致，试验参与者实际接受的产品信息不冲突。
+E           [DEFERRED] ctq:ctq:n-6-1-1:authority: 研究药物身份、剂型与剂量是否全部绑定本项目产品权威并标注来源？
+E           [DEFERRED] skeleton_risk_rule: 研究药物身份、剂型或剂量缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 研究药物身份/剂型/途径/剂量为项目既定事实的投影，不设第二可编辑产品存储。
+E         fixture fixture:batch4:v2-n-6-1-1:missing-control (contract:v2-n-6-1-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.product_authority): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:identity: 研究药物身份、剂型、途径与剂量必须与既定产品权威一致；模板示例剂量仅为示例，不得作为项目事实。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:coherence: 暴露剂量与给药途径必须与给药方案及设计章节一致，试验参与者实际接受的产品信息不冲突。
+E           [DEFERRED] ctq:ctq:n-6-1-1:authority: 研究药物身份、剂型与剂量是否全部绑定本项目产品权威并标注来源？
+E           [DEFERRED] skeleton_risk_rule: 研究药物身份、剂型或剂量缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 研究药物身份/剂型/途径/剂量为项目既定事实的投影，不设第二可编辑产品存储。
+E         fixture fixture:batch4:v2-n-6-1-1:wrong-source (contract:v2-n-6-1-1:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'intervention_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:identity: 研究药物身份、剂型、途径与剂量必须与既定产品权威一致；模板示例剂量仅为示例，不得作为项目事实。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:coherence: 暴露剂量与给药途径必须与给药方案及设计章节一致，试验参与者实际接受的产品信息不冲突。
+E           [DEFERRED] ctq:ctq:n-6-1-1:authority: 研究药物身份、剂型与剂量是否全部绑定本项目产品权威并标注来源？
+E           [DEFERRED] skeleton_risk_rule: 研究药物身份、剂型或剂量缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 研究药物身份/剂型/途径/剂量为项目既定事实的投影，不设第二可编辑产品存储。
+E         fixture fixture:batch4:v2-n-6-1-1:skeleton (contract:v2-n-6-1-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.product_identity): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.formulation): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.exposure_dose): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.route_of_administration): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.product_authority): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](intervention_description): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:drug_identity): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:formulation_strength): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:source_authority): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:identity: 研究药物身份、剂型、途径与剂量必须与既定产品权威一致；模板示例剂量仅为示例，不得作为项目事实。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-1:coherence: 暴露剂量与给药途径必须与给药方案及设计章节一致，试验参与者实际接受的产品信息不冲突。
+E           [DEFERRED] ctq:ctq:n-6-1-1:authority: 研究药物身份、剂型与剂量是否全部绑定本项目产品权威并标注来源？
+E           [DEFERRED] skeleton_risk_rule: 研究药物身份、剂型或剂量缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 研究药物身份/剂型/途径/剂量为项目既定事实的投影，不设第二可编辑产品存储。
+E         fixture fixture:batch4:v2-n-6-1-2:positive (contract:v2-n-6-1-2:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:thresholds: 剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:consistency: 剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:overdose: 药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。
+E           [DEFERRED] ctq:ctq:n-6-1-2:actions: 暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？
+E           [DEFERRED] ctq:ctq:n-6-1-2:cross-section: 给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？
+E           [DEFERRED] skeleton_risk_rule: 剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:dose-modification
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:escalation
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:reduction
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:restart
+E           [DEFERRED] project_specific_element_not_evaluated: 给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。
+E         fixture fixture:batch4:v2-n-6-1-2:missing-control (contract:v2-n-6-1-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[9](intervention.dose_consistency_with_design): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:thresholds: 剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:consistency: 剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:overdose: 药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。
+E           [DEFERRED] ctq:ctq:n-6-1-2:actions: 暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？
+E           [DEFERRED] ctq:ctq:n-6-1-2:cross-section: 给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？
+E           [DEFERRED] skeleton_risk_rule: 剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:dose-modification
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:escalation
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:reduction
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:restart
+E           [DEFERRED] project_specific_element_not_evaluated: 给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。
+E         fixture fixture:batch4:v2-n-6-1-2:wrong-source (contract:v2-n-6-1-2:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'dose_regimen_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:thresholds: 剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:consistency: 剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:overdose: 药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。
+E           [DEFERRED] ctq:ctq:n-6-1-2:actions: 暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？
+E           [DEFERRED] ctq:ctq:n-6-1-2:cross-section: 给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？
+E           [DEFERRED] skeleton_risk_rule: 剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:dose-modification
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:escalation
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:reduction
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:restart
+E           [DEFERRED] project_specific_element_not_evaluated: 给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。
+E         fixture fixture:batch4:v2-n-6-1-2:skeleton (contract:v2-n-6-1-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.dose_regimen): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.administration_instructions): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.dose_hold_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.dose_reduction_rules): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.restart_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[5](intervention.permanent_discontinuation_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[6](intervention.missed_dose_instructions): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[7](intervention.dose_escalation_or_dlt_logic): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[8](intervention.food_relationship_and_preparation): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[9](intervention.dose_consistency_with_design): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](dose_regimen_description): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:route): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:dose): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:interval): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:duration): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:thresholds: 剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:consistency: 剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:overdose: 药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。
+E           [DEFERRED] ctq:ctq:n-6-1-2:actions: 暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？
+E           [DEFERRED] ctq:ctq:n-6-1-2:cross-section: 给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？
+E           [DEFERRED] skeleton_risk_rule: 剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:dose-modification
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:escalation
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:reduction
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:restart
+E           [DEFERRED] project_specific_element_not_evaluated: 给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。
+E         fixture fixture:batch4:v2-n-6-1-2:conflicting-drug-facts (contract:v2-n-6-1-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[9](intervention.dose_consistency_with_design): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] forbidden_fact_present contract.fact_requirements[11](intervention.template_example_hold_threshold): forbidden fact path carries actual content
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:thresholds: 剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:consistency: 剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-1-2:overdose: 药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。
+E           [DEFERRED] ctq:ctq:n-6-1-2:actions: 暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？
+E           [DEFERRED] ctq:ctq:n-6-1-2:cross-section: 给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？
+E           [DEFERRED] skeleton_risk_rule: 剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:dose-modification
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:escalation
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:reduction
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-1-2:restart
+E           [DEFERRED] project_specific_element_not_evaluated: 给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。
+E         fixture fixture:batch4:v2-n-6-2-1:positive (contract:v2-n-6-2-1:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:responsibility: 责任方与记录要求必须项目化；仅引用通用 SOP 不留协议特定细节即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:traceability: 接收、清点、发放、回收与销毁记录必须可追溯到实际产品批次/数量。
+E           [DEFERRED] ctq:ctq:n-6-2-1:trace: 接收/清点/发放/回收/销毁是否都给出责任方与可追溯记录字段？
+E           [DEFERRED] skeleton_risk_rule: 接收/清点程序或责任方缺失即失败；仅通用 SOP 引用即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 接收/清点/发放/回收/销毁记录为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-1:missing-control (contract:v2-n-6-2-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.responsible_party): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:responsibility: 责任方与记录要求必须项目化；仅引用通用 SOP 不留协议特定细节即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:traceability: 接收、清点、发放、回收与销毁记录必须可追溯到实际产品批次/数量。
+E           [DEFERRED] ctq:ctq:n-6-2-1:trace: 接收/清点/发放/回收/销毁是否都给出责任方与可追溯记录字段？
+E           [DEFERRED] skeleton_risk_rule: 接收/清点程序或责任方缺失即失败；仅通用 SOP 引用即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 接收/清点/发放/回收/销毁记录为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-1:wrong-source (contract:v2-n-6-2-1:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'accountability_procedure'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:responsibility: 责任方与记录要求必须项目化；仅引用通用 SOP 不留协议特定细节即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:traceability: 接收、清点、发放、回收与销毁记录必须可追溯到实际产品批次/数量。
+E           [DEFERRED] ctq:ctq:n-6-2-1:trace: 接收/清点/发放/回收/销毁是否都给出责任方与可追溯记录字段？
+E           [DEFERRED] skeleton_risk_rule: 接收/清点程序或责任方缺失即失败；仅通用 SOP 引用即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 接收/清点/发放/回收/销毁记录为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-1:skeleton (contract:v2-n-6-2-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.receipt_and_inventory): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.accountability_records): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.dispensing_and_return): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.destruction_authorization): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.responsible_party): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](accountability_procedure): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:receipt_identity): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:accountability_record): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:destruction_record): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:responsibility: 责任方与记录要求必须项目化；仅引用通用 SOP 不留协议特定细节即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-1:traceability: 接收、清点、发放、回收与销毁记录必须可追溯到实际产品批次/数量。
+E           [DEFERRED] ctq:ctq:n-6-2-1:trace: 接收/清点/发放/回收/销毁是否都给出责任方与可追溯记录字段？
+E           [DEFERRED] skeleton_risk_rule: 接收/清点程序或责任方缺失即失败；仅通用 SOP 引用即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 接收/清点/发放/回收/销毁记录为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-2:positive (contract:v2-n-6-2-2:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:label: 包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:threshold: 不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。
+E           [DEFERRED] ctq:ctq:n-6-2-2:label: 包装形式与标签文本是否给出实际来源与版本，并登记核查状态？
+E           [DEFERRED] skeleton_risk_rule: 包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-2-2:label-text
+E           [DEFERRED] project_specific_element_not_evaluated: 包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。
+E         fixture fixture:batch4:v2-n-6-2-2:missing-control (contract:v2-n-6-2-2:v2): FAIL
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:label_binding): required cell is absent, null or blank
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:label: 包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:threshold: 不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。
+E           [DEFERRED] ctq:ctq:n-6-2-2:label: 包装形式与标签文本是否给出实际来源与版本，并登记核查状态？
+E           [DEFERRED] skeleton_risk_rule: 包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-2-2:label-text
+E           [DEFERRED] project_specific_element_not_evaluated: 包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。
+E         fixture fixture:batch4:v2-n-6-2-2:wrong-source (contract:v2-n-6-2-2:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'packaging_labeling_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:label: 包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:threshold: 不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。
+E           [DEFERRED] ctq:ctq:n-6-2-2:label: 包装形式与标签文本是否给出实际来源与版本，并登记核查状态？
+E           [DEFERRED] skeleton_risk_rule: 包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-2-2:label-text
+E           [DEFERRED] project_specific_element_not_evaluated: 包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。
+E         fixture fixture:batch4:v2-n-6-2-2:skeleton (contract:v2-n-6-2-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.packaging_and_labeling): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](packaging_labeling_description): required claim is absent or its statement is empty
+E           [ERROR] missing_required_claim contract.claim_requirements[1](regulatory_labeling_review): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[1]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:packaging): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:label_binding): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:label: 包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:threshold: 不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。
+E           [DEFERRED] ctq:ctq:n-6-2-2:label: 包装形式与标签文本是否给出实际来源与版本，并登记核查状态？
+E           [DEFERRED] skeleton_risk_rule: 包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-2-2:label-text
+E           [DEFERRED] project_specific_element_not_evaluated: 包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。
+E         fixture fixture:batch4:v2-n-6-2-2:copied-grade-threshold (contract:v2-n-6-2-2:v2): FAIL
+E           [ERROR] missing_required_claim contract.claim_requirements[1](regulatory_labeling_review): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[1]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:label: 包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-2:threshold: 不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。
+E           [DEFERRED] ctq:ctq:n-6-2-2:label: 包装形式与标签文本是否给出实际来源与版本，并登记核查状态？
+E           [DEFERRED] skeleton_risk_rule: 包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-2-2:label-text
+E           [DEFERRED] project_specific_element_not_evaluated: 包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。
+E         fixture fixture:batch4:v2-n-6-2-3:positive (contract:v2-n-6-2-3:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:units: 储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:agreement: 储存条件与稳定性处理必须与标签及产品权威一致。
+E           [DEFERRED] ctq:ctq:n-6-2-3:units: 储存条件是否给出实际数值范围与单位，并与标签一致？
+E           [DEFERRED] skeleton_risk_rule: 储存条件或单位缺失即失败；空单位模板文本即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 储存条件与稳定性处理为项目事实，须与标签一致。
+E         fixture fixture:batch4:v2-n-6-2-3:missing-control (contract:v2-n-6-2-3:v2): FAIL
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:storage_unit): required cell is absent, null or blank
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:units: 储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:agreement: 储存条件与稳定性处理必须与标签及产品权威一致。
+E           [DEFERRED] ctq:ctq:n-6-2-3:units: 储存条件是否给出实际数值范围与单位，并与标签一致？
+E           [DEFERRED] skeleton_risk_rule: 储存条件或单位缺失即失败；空单位模板文本即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 储存条件与稳定性处理为项目事实，须与标签一致。
+E         fixture fixture:batch4:v2-n-6-2-3:wrong-source (contract:v2-n-6-2-3:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'storage_handling_conditions'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:units: 储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:agreement: 储存条件与稳定性处理必须与标签及产品权威一致。
+E           [DEFERRED] ctq:ctq:n-6-2-3:units: 储存条件是否给出实际数值范围与单位，并与标签一致？
+E           [DEFERRED] skeleton_risk_rule: 储存条件或单位缺失即失败；空单位模板文本即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 储存条件与稳定性处理为项目事实，须与标签一致。
+E         fixture fixture:batch4:v2-n-6-2-3:skeleton (contract:v2-n-6-2-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.storage_conditions): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.storage_conditions.unit): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.stability_handling): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](storage_handling_conditions): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:storage_condition): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:storage_unit): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:units: 储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:agreement: 储存条件与稳定性处理必须与标签及产品权威一致。
+E           [DEFERRED] ctq:ctq:n-6-2-3:units: 储存条件是否给出实际数值范围与单位，并与标签一致？
+E           [DEFERRED] skeleton_risk_rule: 储存条件或单位缺失即失败；空单位模板文本即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 储存条件与稳定性处理为项目事实，须与标签一致。
+E         fixture fixture:batch4:v2-n-6-2-3:empty-storage-condition (contract:v2-n-6-2-3:v2): FAIL
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:storage_condition): required cell is absent, null or blank
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:units: 储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-3:agreement: 储存条件与稳定性处理必须与标签及产品权威一致。
+E           [DEFERRED] ctq:ctq:n-6-2-3:units: 储存条件是否给出实际数值范围与单位，并与标签一致？
+E           [DEFERRED] skeleton_risk_rule: 储存条件或单位缺失即失败；空单位模板文本即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 储存条件与稳定性处理为项目事实，须与标签一致。
+E         fixture fixture:batch4:v2-n-6-2-4:positive (contract:v2-n-6-2-4:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-4:conditions: 准备条件必须项目特定并给出责任方与记录要求；模板示例描述仅为示例。
+E           [DEFERRED] ctq:ctq:n-6-2-4:conditions: 配制条件、责任方与记录要求是否全部项目化？
+E           [DEFERRED] skeleton_risk_rule: 配制/准备条件或责任方缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 制备条件与责任方为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-4:missing-claim (contract:v2-n-6-2-4:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.preparation_responsible_party): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](preparation_procedure): required claim is absent or its statement is empty
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-4:conditions: 准备条件必须项目特定并给出责任方与记录要求；模板示例描述仅为示例。
+E           [DEFERRED] ctq:ctq:n-6-2-4:conditions: 配制条件、责任方与记录要求是否全部项目化？
+E           [DEFERRED] skeleton_risk_rule: 配制/准备条件或责任方缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 制备条件与责任方为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-4:wrong-source (contract:v2-n-6-2-4:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'preparation_procedure'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-4:conditions: 准备条件必须项目特定并给出责任方与记录要求；模板示例描述仅为示例。
+E           [DEFERRED] ctq:ctq:n-6-2-4:conditions: 配制条件、责任方与记录要求是否全部项目化？
+E           [DEFERRED] skeleton_risk_rule: 配制/准备条件或责任方缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 制备条件与责任方为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-2-4:skeleton (contract:v2-n-6-2-4:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.preparation_conditions): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.preparation_responsible_party): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](preparation_procedure): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-2-4:conditions: 准备条件必须项目特定并给出责任方与记录要求；模板示例描述仅为示例。
+E           [DEFERRED] ctq:ctq:n-6-2-4:conditions: 配制条件、责任方与记录要求是否全部项目化？
+E           [DEFERRED] skeleton_risk_rule: 配制/准备条件或责任方缺失即失败；仅模板示例描述即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 制备条件与责任方为项目操作事实。
+E         fixture fixture:batch4:v2-n-6-3:positive (contract:v2-n-6-3:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:denominator: 依从性测量必须给出分母定义与支持记录；分母省略即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:interval: 模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。
+E           [DEFERRED] ctq:ctq:n-6-3:denominator: 依从性分母、测量方法与支持记录是否一致给出？
+E           [DEFERRED] skeleton_risk_rule: 依从性测量方法或分母缺失即失败；仅模板示例区间即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 依从性测量/分母/记录来源为项目事实。
+E         fixture fixture:batch4:v2-n-6-3:missing-control (contract:v2-n-6-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.adherence_denominator): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:denominator: 依从性测量必须给出分母定义与支持记录；分母省略即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:interval: 模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。
+E           [DEFERRED] ctq:ctq:n-6-3:denominator: 依从性分母、测量方法与支持记录是否一致给出？
+E           [DEFERRED] skeleton_risk_rule: 依从性测量方法或分母缺失即失败；仅模板示例区间即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 依从性测量/分母/记录来源为项目事实。
+E         fixture fixture:batch4:v2-n-6-3:wrong-source (contract:v2-n-6-3:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'adherence_strategy'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:denominator: 依从性测量必须给出分母定义与支持记录；分母省略即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:interval: 模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。
+E           [DEFERRED] ctq:ctq:n-6-3:denominator: 依从性分母、测量方法与支持记录是否一致给出？
+E           [DEFERRED] skeleton_risk_rule: 依从性测量方法或分母缺失即失败；仅模板示例区间即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 依从性测量/分母/记录来源为项目事实。
+E         fixture fixture:batch4:v2-n-6-3:skeleton (contract:v2-n-6-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.adherence_measure): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.adherence_denominator): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.adherence_evidence_source): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.planned_hold_tracking): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](adherence_strategy): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:denominator: 依从性测量必须给出分母定义与支持记录；分母省略即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:interval: 模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。
+E           [DEFERRED] ctq:ctq:n-6-3:denominator: 依从性分母、测量方法与支持记录是否一致给出？
+E           [DEFERRED] skeleton_risk_rule: 依从性测量方法或分母缺失即失败；仅模板示例区间即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 依从性测量/分母/记录来源为项目事实。
+E         fixture fixture:batch4:v2-n-6-3:adherence-denominator-omitted (contract:v2-n-6-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.adherence_denominator): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:denominator: 依从性测量必须给出分母定义与支持记录；分母省略即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-3:interval: 模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。
+E           [DEFERRED] ctq:ctq:n-6-3:denominator: 依从性分母、测量方法与支持记录是否一致给出？
+E           [DEFERRED] skeleton_risk_rule: 依从性测量方法或分母缺失即失败；仅模板示例区间即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 依从性测量/分母/记录来源为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-1:positive (contract:v2-n-6-4-1:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:list: 禁用清单与时间窗必须项目特定；模板示例清单仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:record: 违反禁用规则的记录与处置必须明确，不得仅作禁止声明。
+E           [DEFERRED] ctq:ctq:n-6-4-1:window: 禁用清单与时间窗是否项目特定并给出记录/处置要求？
+E           [DEFERRED] skeleton_risk_rule: 禁用清单或时间窗缺失即失败；仅示例清单即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 禁用清单/时间窗/处置要求为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-1:missing-control (contract:v2-n-6-4-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.prohibited_window): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:list: 禁用清单与时间窗必须项目特定；模板示例清单仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:record: 违反禁用规则的记录与处置必须明确，不得仅作禁止声明。
+E           [DEFERRED] ctq:ctq:n-6-4-1:window: 禁用清单与时间窗是否项目特定并给出记录/处置要求？
+E           [DEFERRED] skeleton_risk_rule: 禁用清单或时间窗缺失即失败；仅示例清单即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 禁用清单/时间窗/处置要求为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-1:wrong-source (contract:v2-n-6-4-1:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'prohibited_treatment_rules'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:list: 禁用清单与时间窗必须项目特定；模板示例清单仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:record: 违反禁用规则的记录与处置必须明确，不得仅作禁止声明。
+E           [DEFERRED] ctq:ctq:n-6-4-1:window: 禁用清单与时间窗是否项目特定并给出记录/处置要求？
+E           [DEFERRED] skeleton_risk_rule: 禁用清单或时间窗缺失即失败；仅示例清单即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 禁用清单/时间窗/处置要求为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-1:skeleton (contract:v2-n-6-4-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.prohibited_treatments): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.prohibited_window): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](prohibited_treatment_rules): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:prohibited_item): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:list: 禁用清单与时间窗必须项目特定；模板示例清单仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-1:record: 违反禁用规则的记录与处置必须明确，不得仅作禁止声明。
+E           [DEFERRED] ctq:ctq:n-6-4-1:window: 禁用清单与时间窗是否项目特定并给出记录/处置要求？
+E           [DEFERRED] skeleton_risk_rule: 禁用清单或时间窗缺失即失败；仅示例清单即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 禁用清单/时间窗/处置要求为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-2:positive (contract:v2-n-6-4-2:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:split: 允许与禁止清单必须互补且不冲突；示例药物不得直接复制。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:background: 背景治疗规则必须项目特定，并说明与允许清单的关系。
+E           [DEFERRED] ctq:ctq:n-6-4-2:complement: 允许清单/时间安排与背景治疗是否与禁用清单互补且项目特定？
+E           [DEFERRED] skeleton_risk_rule: 允许清单或时间安排缺失即失败；仅示例药物即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-4-2:background
+E           [DEFERRED] project_specific_element_not_evaluated: 允许清单/时间安排/背景治疗规则为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-2:missing-claim (contract:v2-n-6-4-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.allowed_timing): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](allowed_treatment_rules): required claim is absent or its statement is empty
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:split: 允许与禁止清单必须互补且不冲突；示例药物不得直接复制。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:background: 背景治疗规则必须项目特定，并说明与允许清单的关系。
+E           [DEFERRED] ctq:ctq:n-6-4-2:complement: 允许清单/时间安排与背景治疗是否与禁用清单互补且项目特定？
+E           [DEFERRED] skeleton_risk_rule: 允许清单或时间安排缺失即失败；仅示例药物即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-4-2:background
+E           [DEFERRED] project_specific_element_not_evaluated: 允许清单/时间安排/背景治疗规则为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-2:wrong-source (contract:v2-n-6-4-2:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'allowed_treatment_rules'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:split: 允许与禁止清单必须互补且不冲突；示例药物不得直接复制。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:background: 背景治疗规则必须项目特定，并说明与允许清单的关系。
+E           [DEFERRED] ctq:ctq:n-6-4-2:complement: 允许清单/时间安排与背景治疗是否与禁用清单互补且项目特定？
+E           [DEFERRED] skeleton_risk_rule: 允许清单或时间安排缺失即失败；仅示例药物即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-4-2:background
+E           [DEFERRED] project_specific_element_not_evaluated: 允许清单/时间安排/背景治疗规则为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-2:skeleton (contract:v2-n-6-4-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.allowed_treatments): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.allowed_timing): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.background_therapy_rules): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](allowed_treatment_rules): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:allowed_item): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:split: 允许与禁止清单必须互补且不冲突；示例药物不得直接复制。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-2:background: 背景治疗规则必须项目特定，并说明与允许清单的关系。
+E           [DEFERRED] ctq:ctq:n-6-4-2:complement: 允许清单/时间安排与背景治疗是否与禁用清单互补且项目特定？
+E           [DEFERRED] skeleton_risk_rule: 允许清单或时间安排缺失即失败；仅示例药物即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-6-4-2:background
+E           [DEFERRED] project_specific_element_not_evaluated: 允许清单/时间安排/背景治疗规则为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-3:positive (contract:v2-n-6-4-3:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:estimand: 补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:timing: 补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。
+E           [DEFERRED] ctq:ctq:n-6-4-3:estimand: 补救治疗的处理方式是否与估计目标及分析策略一致？
+E           [DEFERRED] skeleton_risk_rule: 补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 补救策略、记录与估计目标处理方式为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-3:missing-control (contract:v2-n-6-4-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.rescue_estimand_linkage): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:estimand: 补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:timing: 补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。
+E           [DEFERRED] ctq:ctq:n-6-4-3:estimand: 补救治疗的处理方式是否与估计目标及分析策略一致？
+E           [DEFERRED] skeleton_risk_rule: 补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 补救策略、记录与估计目标处理方式为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-3:wrong-source (contract:v2-n-6-4-3:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'rescue_plan'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:estimand: 补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:timing: 补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。
+E           [DEFERRED] ctq:ctq:n-6-4-3:estimand: 补救治疗的处理方式是否与估计目标及分析策略一致？
+E           [DEFERRED] skeleton_risk_rule: 补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 补救策略、记录与估计目标处理方式为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-3:skeleton (contract:v2-n-6-4-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](intervention.rescue_permitted): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](intervention.rescue_timing): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](intervention.rescue_records): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.rescue_estimand_linkage): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](intervention.rescue_followup_handling): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](rescue_plan): required claim is absent or its statement is empty
+E           [ERROR] missing_required_claim contract.claim_requirements[1](rescue_estimand_alignment): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[1]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(intervention:cell:rescue_plan): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:estimand: 补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:timing: 补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。
+E           [DEFERRED] ctq:ctq:n-6-4-3:estimand: 补救治疗的处理方式是否与估计目标及分析策略一致？
+E           [DEFERRED] skeleton_risk_rule: 补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 补救策略、记录与估计目标处理方式为项目事实。
+E         fixture fixture:batch4:v2-n-6-4-3:rescue-estimand-inconsistent (contract:v2-n-6-4-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[3](intervention.rescue_estimand_linkage): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[1](rescue_estimand_alignment): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[1]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:estimand: 补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-6-4-3:timing: 补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。
+E           [DEFERRED] ctq:ctq:n-6-4-3:estimand: 补救治疗的处理方式是否与估计目标及分析策略一致？
+E           [DEFERRED] skeleton_risk_rule: 补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 补救策略、记录与估计目标处理方式为项目事实。
+E         fixture fixture:batch4:v2-n-7-1:positive (contract:v2-n-7-1:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:window: 筛选期起止必须带参考事件；模板示例窗口仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:soa: 基线评估必须与 SoA 一致，不得照抄示例访视。
+E           [DEFERRED] ctq:ctq:n-7-1:definition: 筛选期定义与基线评估是否与 SoA 一致并带参考事件？
+E           [DEFERRED] skeleton_risk_rule: 筛选期定义或基线评估缺失即失败；仅模板示例窗口即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 筛选期定义/基线评估/重新筛选规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-1:missing-control (contract:v2-n-7-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[1](procedure.baseline_assessments): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:window: 筛选期起止必须带参考事件；模板示例窗口仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:soa: 基线评估必须与 SoA 一致，不得照抄示例访视。
+E           [DEFERRED] ctq:ctq:n-7-1:definition: 筛选期定义与基线评估是否与 SoA 一致并带参考事件？
+E           [DEFERRED] skeleton_risk_rule: 筛选期定义或基线评估缺失即失败；仅模板示例窗口即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 筛选期定义/基线评估/重新筛选规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-1:wrong-source (contract:v2-n-7-1:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'visit_phase_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:window: 筛选期起止必须带参考事件；模板示例窗口仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:soa: 基线评估必须与 SoA 一致，不得照抄示例访视。
+E           [DEFERRED] ctq:ctq:n-7-1:definition: 筛选期定义与基线评估是否与 SoA 一致并带参考事件？
+E           [DEFERRED] skeleton_risk_rule: 筛选期定义或基线评估缺失即失败；仅模板示例窗口即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 筛选期定义/基线评估/重新筛选规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-1:skeleton (contract:v2-n-7-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](procedure.screening_period_definition): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](procedure.baseline_assessments): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](procedure.screening_reassessment_rules): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](visit_phase_description): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:window: 筛选期起止必须带参考事件；模板示例窗口仅为示例。
+E           [DEFERRED] positive_qc_rule:qc:n-7-1:soa: 基线评估必须与 SoA 一致，不得照抄示例访视。
+E           [DEFERRED] ctq:ctq:n-7-1:definition: 筛选期定义与基线评估是否与 SoA 一致并带参考事件？
+E           [DEFERRED] skeleton_risk_rule: 筛选期定义或基线评估缺失即失败；仅模板示例窗口即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 筛选期定义/基线评估/重新筛选规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-2:positive (contract:v2-n-7-2:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:example: D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例时间表不得照抄。
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:agreement: 治疗期程序必须与 SoA 单元格、安全评估时点及给药方案一致。
+E           [DEFERRED] ctq:ctq:n-7-2:phases: 治疗期定义与访视程序是否与 SoA 及给药方案一致？
+E           [DEFERRED] skeleton_risk_rule: 治疗期定义或访视程序缺失即失败；仅模板示例时间表即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-2:randomization
+E           [DEFERRED] project_specific_element_not_evaluated: 治疗期定义/给药起点/访视程序/盲态规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-2:missing-control (contract:v2-n-7-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[3](procedure.blinded_treatment_handling): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:example: D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例时间表不得照抄。
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:agreement: 治疗期程序必须与 SoA 单元格、安全评估时点及给药方案一致。
+E           [DEFERRED] ctq:ctq:n-7-2:phases: 治疗期定义与访视程序是否与 SoA 及给药方案一致？
+E           [DEFERRED] skeleton_risk_rule: 治疗期定义或访视程序缺失即失败；仅模板示例时间表即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-2:randomization
+E           [DEFERRED] project_specific_element_not_evaluated: 治疗期定义/给药起点/访视程序/盲态规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-2:wrong-source (contract:v2-n-7-2:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'visit_phase_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:example: D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例时间表不得照抄。
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:agreement: 治疗期程序必须与 SoA 单元格、安全评估时点及给药方案一致。
+E           [DEFERRED] ctq:ctq:n-7-2:phases: 治疗期定义与访视程序是否与 SoA 及给药方案一致？
+E           [DEFERRED] skeleton_risk_rule: 治疗期定义或访视程序缺失即失败；仅模板示例时间表即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-2:randomization
+E           [DEFERRED] project_specific_element_not_evaluated: 治疗期定义/给药起点/访视程序/盲态规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-2:skeleton (contract:v2-n-7-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](procedure.treatment_period_definition): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](procedure.dosing_start_rules): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](procedure.treatment_visit_procedures): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](procedure.blinded_treatment_handling): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](procedure.randomization_day_rules): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](visit_phase_description): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:example: D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例时间表不得照抄。
+E           [DEFERRED] positive_qc_rule:qc:n-7-2:agreement: 治疗期程序必须与 SoA 单元格、安全评估时点及给药方案一致。
+E           [DEFERRED] ctq:ctq:n-7-2:phases: 治疗期定义与访视程序是否与 SoA 及给药方案一致？
+E           [DEFERRED] skeleton_risk_rule: 治疗期定义或访视程序缺失即失败；仅模板示例时间表即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-2:randomization
+E           [DEFERRED] project_specific_element_not_evaluated: 治疗期定义/给药起点/访视程序/盲态规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-3:positive (contract:v2-n-7-3:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:units: 访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:phone: 电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:records: 计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。
+E           [DEFERRED] ctq:ctq:n-7-3:phone: 随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？
+E           [DEFERRED] skeleton_risk_rule: 随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-3:unscheduled-contact
+E           [DEFERRED] project_specific_element_not_evaluated: 随访期定义/窗口/电话访视规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-3:missing-claim (contract:v2-n-7-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[2](procedure.phone_visit_linkage): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](visit_phase_description): required claim is absent or its statement is empty
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:units: 访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:phone: 电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:records: 计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。
+E           [DEFERRED] ctq:ctq:n-7-3:phone: 随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？
+E           [DEFERRED] skeleton_risk_rule: 随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-3:unscheduled-contact
+E           [DEFERRED] project_specific_element_not_evaluated: 随访期定义/窗口/电话访视规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-3:wrong-source (contract:v2-n-7-3:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'visit_phase_description'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:units: 访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:phone: 电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:records: 计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。
+E           [DEFERRED] ctq:ctq:n-7-3:phone: 随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？
+E           [DEFERRED] skeleton_risk_rule: 随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-3:unscheduled-contact
+E           [DEFERRED] project_specific_element_not_evaluated: 随访期定义/窗口/电话访视规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-3:skeleton (contract:v2-n-7-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](procedure.followup_period_definition): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](procedure.followup_visit_windows): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](procedure.phone_visit_linkage): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](visit_phase_description): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:units: 访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:phone: 电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:records: 计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。
+E           [DEFERRED] ctq:ctq:n-7-3:phone: 随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？
+E           [DEFERRED] skeleton_risk_rule: 随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-3:unscheduled-contact
+E           [DEFERRED] project_specific_element_not_evaluated: 随访期定义/窗口/电话访视规则为项目事实。
+E         fixture fixture:batch4:v2-n-7-3:invented-approval-receipt (contract:v2-n-7-3:v2): FAIL
+E           [ERROR] missing_required_claim contract.claim_requirements[0](visit_phase_description): required claim is absent or its statement is empty
+E           [ERROR] forbidden_claim_present contract.claim_requirements[1](fabricated_approval): forbidden claim type carries an actual statement
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:units: 访视窗口必须带单位与参考事件；缺失单位或泛化日窗即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:phone: 电话联系按适用规则计入实际访视，并登记日期、方式、原因与适用评估。
+E           [DEFERRED] positive_qc_rule:qc:n-7-3:records: 计划外/电话访视记录不得虚构批准、同意或来源回执；来源回执必须真实可核。
+E           [DEFERRED] ctq:ctq:n-7-3:phone: 随访窗口与电话/计划外访视是否带单位、参考事件与记录要求？
+E           [DEFERRED] skeleton_risk_rule: 随访期定义或访视窗口缺失即失败；仅模板示例随访计划即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-7-3:unscheduled-contact
+E           [DEFERRED] project_specific_element_not_evaluated: 随访期定义/窗口/电话访视规则为项目事实。
+E         fixture fixture:batch4:v2-n-8-1:positive (contract:v2-n-8-1:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:levels: 个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:logic: 整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:safety: 暂停/终止标准必须与安全评估安排一致。
+E           [DEFERRED] ctq:ctq:n-8-1:levels: 个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？
+E           [DEFERRED] ctq:ctq:n-8-1:decision: 整体暂停/终止是否有设计特定决策链与决定方？
+E           [DEFERRED] skeleton_risk_rule: 个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:individual-hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:hold-to-stop
+E           [DEFERRED] project_specific_element_not_evaluated: 个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-1:missing-control (contract:v2-n-8-1:v2): FAIL
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(discontinuation:cell:trial_decision_authority): required cell is absent, null or blank
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:levels: 个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:logic: 整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:safety: 暂停/终止标准必须与安全评估安排一致。
+E           [DEFERRED] ctq:ctq:n-8-1:levels: 个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？
+E           [DEFERRED] ctq:ctq:n-8-1:decision: 整体暂停/终止是否有设计特定决策链与决定方？
+E           [DEFERRED] skeleton_risk_rule: 个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:individual-hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:hold-to-stop
+E           [DEFERRED] project_specific_element_not_evaluated: 个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-1:wrong-source (contract:v2-n-8-1:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'individual_cessation_rules'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:levels: 个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:logic: 整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:safety: 暂停/终止标准必须与安全评估安排一致。
+E           [DEFERRED] ctq:ctq:n-8-1:levels: 个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？
+E           [DEFERRED] ctq:ctq:n-8-1:decision: 整体暂停/终止是否有设计特定决策链与决定方？
+E           [DEFERRED] skeleton_risk_rule: 个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:individual-hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:hold-to-stop
+E           [DEFERRED] project_specific_element_not_evaluated: 个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-1:skeleton (contract:v2-n-8-1:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](discontinuation.individual_hold_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](discontinuation.personal_hold): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](discontinuation.permanent_stop_criteria.participant): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](discontinuation.permanent_stop_recording): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](discontinuation.trial_suspension_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[5](discontinuation.trial_termination_criteria): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[6](discontinuation.trial_stop_decision_logic): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[7](discontinuation.trial_stop_decision_authority): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[8](discontinuation.trial_stop_post_decision): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[9](discontinuation.safety_assessment_coherence): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](individual_cessation_rules): required claim is absent or its statement is empty
+E           [ERROR] missing_required_claim contract.claim_requirements[1](trial_level_stop_criteria): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[1]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(discontinuation:cell:individual_trigger): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(discontinuation:cell:trial_trigger): required cell is absent, null or blank
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(discontinuation:cell:trial_decision_authority): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:levels: 个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:logic: 整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:safety: 暂停/终止标准必须与安全评估安排一致。
+E           [DEFERRED] ctq:ctq:n-8-1:levels: 个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？
+E           [DEFERRED] ctq:ctq:n-8-1:decision: 整体暂停/终止是否有设计特定决策链与决定方？
+E           [DEFERRED] skeleton_risk_rule: 个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:individual-hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:hold-to-stop
+E           [DEFERRED] project_specific_element_not_evaluated: 个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-1:individual-equals-trial-stop (contract:v2-n-8-1:v2): FAIL
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(discontinuation:cell:trial_trigger): required cell is absent, null or blank
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:levels: 个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:logic: 整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。
+E           [DEFERRED] positive_qc_rule:qc:n-8-1:safety: 暂停/终止标准必须与安全评估安排一致。
+E           [DEFERRED] ctq:ctq:n-8-1:levels: 个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？
+E           [DEFERRED] ctq:ctq:n-8-1:decision: 整体暂停/终止是否有设计特定决策链与决定方？
+E           [DEFERRED] skeleton_risk_rule: 个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:individual-hold
+E           [DEFERRED] conditional_applicability_not_executed:applicability:n-8-1:hold-to-stop
+E           [DEFERRED] project_specific_element_not_evaluated: 个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-2:positive (contract:v2-n-8-2:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:consent: 停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:reason: 退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:data: 已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:replacement: 参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。
+E           [DEFERRED] ctq:ctq:n-8-2:consent: 退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？
+E           [DEFERRED] ctq:ctq:n-8-2:replacement: 参与者替换政策是否与样本量及分析合同一致？
+E           [DEFERRED] skeleton_risk_rule: 退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 退出处理/继续评估/数据保留/替换政策为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-2:missing-control (contract:v2-n-8-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[7](discontinuation.followup_after_withdrawal): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:consent: 停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:reason: 退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:data: 已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:replacement: 参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。
+E           [DEFERRED] ctq:ctq:n-8-2:consent: 退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？
+E           [DEFERRED] ctq:ctq:n-8-2:replacement: 参与者替换政策是否与样本量及分析合同一致？
+E           [DEFERRED] skeleton_risk_rule: 退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 退出处理/继续评估/数据保留/替换政策为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-2:wrong-source (contract:v2-n-8-2:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'withdrawal_handling'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:consent: 停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:reason: 退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:data: 已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:replacement: 参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。
+E           [DEFERRED] ctq:ctq:n-8-2:consent: 退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？
+E           [DEFERRED] ctq:ctq:n-8-2:replacement: 参与者替换政策是否与样本量及分析合同一致？
+E           [DEFERRED] skeleton_risk_rule: 退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 退出处理/继续评估/数据保留/替换政策为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-2:skeleton (contract:v2-n-8-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](discontinuation.continued_assessment_scope): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](discontinuation.continued_data_types): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](discontinuation.time_limits): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](discontinuation.existing_data_handling): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](discontinuation.basis_for_further_collection): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[5](discontinuation.withdrawal_reason_recording): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[6](discontinuation.withdrawal_scenarios): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[7](discontinuation.followup_after_withdrawal): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[8](discontinuation.data_retention_after_withdrawal): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[9](discontinuation.replacement_policy): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[10](discontinuation.disposition_schedule_integration): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](withdrawal_handling): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](paragraph): material occurrences 0 are below the required 2; ID-only shells do not count
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:consent: 停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:reason: 退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:data: 已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:replacement: 参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。
+E           [DEFERRED] ctq:ctq:n-8-2:consent: 退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？
+E           [DEFERRED] ctq:ctq:n-8-2:replacement: 参与者替换政策是否与样本量及分析合同一致？
+E           [DEFERRED] skeleton_risk_rule: 退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 退出处理/继续评估/数据保留/替换政策为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-2:followup-silent-last-dose (contract:v2-n-8-2:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[7](discontinuation.followup_after_withdrawal): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:consent: 停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:reason: 退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:data: 已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。
+E           [DEFERRED] positive_qc_rule:qc:n-8-2:replacement: 参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。
+E           [DEFERRED] ctq:ctq:n-8-2:consent: 退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？
+E           [DEFERRED] ctq:ctq:n-8-2:replacement: 参与者替换政策是否与样本量及分析合同一致？
+E           [DEFERRED] skeleton_risk_rule: 退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 退出处理/继续评估/数据保留/替换政策为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-3:positive (contract:v2-n-8-3:v2): PASS
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:attempts: 联系尝试程序与记录必须项目特定；『超过三次电话』仅为示例，不是普适最低次数。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:distinction: 单次漏访不足以判定失访；未联系上不等于撤回知情同意；联系方式必须符合参与者允许的安排。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:review: 失访判定必须经记录与复核分类，并明确责任方与批准要求。
+E           [DEFERRED] ctq:ctq:n-8-3:classification: 失访判定是否基于项目特定联系尝试、记录与复核分类？
+E           [DEFERRED] ctq:ctq:n-8-3:distinction: 失访、撤回同意与未联系上是否分别判定？
+E           [DEFERRED] skeleton_risk_rule: 联系尝试程序或判定流程缺失即失败；仅示例次数即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 失访联系、记录、复核与分类为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-3:missing-control (contract:v2-n-8-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[3](lost_to_followup.review_and_classification): required fact is absent, null or blank; key existence alone is insufficient
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:attempts: 联系尝试程序与记录必须项目特定；『超过三次电话』仅为示例，不是普适最低次数。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:distinction: 单次漏访不足以判定失访；未联系上不等于撤回知情同意；联系方式必须符合参与者允许的安排。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:review: 失访判定必须经记录与复核分类，并明确责任方与批准要求。
+E           [DEFERRED] ctq:ctq:n-8-3:classification: 失访判定是否基于项目特定联系尝试、记录与复核分类？
+E           [DEFERRED] ctq:ctq:n-8-3:distinction: 失访、撤回同意与未联系上是否分别判定？
+E           [DEFERRED] skeleton_risk_rule: 联系尝试程序或判定流程缺失即失败；仅示例次数即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 失访联系、记录、复核与分类为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-3:wrong-source (contract:v2-n-8-3:v2): FAIL
+E           [ERROR] wrong_source_role contract.evidence_source_requirements[0].supplied[0]: source role 'company_style_only' may not admit claim 'lost_to_followup_determination'
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:attempts: 联系尝试程序与记录必须项目特定；『超过三次电话』仅为示例，不是普适最低次数。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:distinction: 单次漏访不足以判定失访；未联系上不等于撤回知情同意；联系方式必须符合参与者允许的安排。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:review: 失访判定必须经记录与复核分类，并明确责任方与批准要求。
+E           [DEFERRED] ctq:ctq:n-8-3:classification: 失访判定是否基于项目特定联系尝试、记录与复核分类？
+E           [DEFERRED] ctq:ctq:n-8-3:distinction: 失访、撤回同意与未联系上是否分别判定？
+E           [DEFERRED] skeleton_risk_rule: 联系尝试程序或判定流程缺失即失败；仅示例次数即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 失访联系、记录、复核与分类为项目事实集合。
+E         fixture fixture:batch4:v2-n-8-3:skeleton (contract:v2-n-8-3:v2): FAIL
+E           [ERROR] missing_required_fact contract.fact_requirements[0](lost_to_followup.contact_attempt_procedure): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[1](lost_to_followup.participant_contact_restrictions): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[2](lost_to_followup.attempt_records): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[3](lost_to_followup.review_and_classification): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[4](lost_to_followup.role_and_approvals): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_fact contract.fact_requirements[5](lost_to_followup.consent_and_outcome_distinction): required fact is absent, null or blank; key existence alone is insufficient
+E           [ERROR] missing_required_claim contract.claim_requirements[0](lost_to_followup_determination): required claim is absent or its statement is empty
+E           [ERROR] unsatisfied_evidence_requirement contract.evidence_source_requirements[0]: no supplied evidence unit satisfies this evidence floor
+E           [ERROR] missing_structural_object contract.structural_object_obligations[0](table): material occurrences 0 are below the required 1; ID-only shells do not count
+E           [ERROR] missing_required_cell contract.structural_object_obligations[0](table).cell(followup:cell:contact_attempt_log): required cell is absent, null or blank
+E           [ERROR] skeleton_content content: no required fact value, claim statement or material object is present; title/skeleton-only output fails
+E           [DEFERRED] medical_and_qc_judgment_not_executed
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:attempts: 联系尝试程序与记录必须项目特定；『超过三次电话』仅为示例，不是普适最低次数。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:distinction: 单次漏访不足以判定失访；未联系上不等于撤回知情同意；联系方式必须符合参与者允许的安排。
+E           [DEFERRED] positive_qc_rule:qc:n-8-3:review: 失访判定必须经记录与复核分类，并明确责任方与批准要求。
+E           [DEFERRED] ctq:ctq:n-8-3:classification: 失访判定是否基于项目特定联系尝试、记录与复核分类？
+E           [DEFERRED] ctq:ctq:n-8-3:distinction: 失访、撤回同意与未联系上是否分别判定？
+E           [DEFERRED] skeleton_risk_rule: 联系尝试程序或判定流程缺失即失败；仅示例次数即失败。
+E           [DEFERRED] project_specific_element_not_evaluated: 失访联系、记录、复核与分类为项目事实集合。
+E         registry is INCOMPLETE; this report does not represent full acceptance and no missing chapter data was generated
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p... is INCOMPLETE; this report does not represent full acceptance and no missing chapter data was generated\n", stderr='').returncode
+
+tests/protocol_v3/test_chapter_batch4.py:1132: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_treatment_randomization_is_not_limited_to_day_one[False-False]
+FAILED tests/protocol_v3/test_chapter_batch4.py::test_visit_phase_facts_agree_with_schedule_and_safety_period
+FAILED tests/protocol_v3/test_chapter_batch4.py::test_closed_vocabularies_cover_every_declared_path_and_claim
+FAILED tests/protocol_v3/test_chapter_batch4.py::test_partial_lint_is_clean_but_never_complete
+FAILED tests/protocol_v3/test_chapter_batch4.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip
+5 failed, 240 passed in 5.29s

@@ -1,0 +1,182 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-2-3:v2",
+  "semantic_node_id": "v2_n_2_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-2-3:risk-benefit",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-2-3:v2",
+    "chapter_contract_id": "contract:v2-n-2-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.known_risks",
+        "obligation": "required",
+        "rationale": "已知风险必须项目化列出（@301-303）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.potential_risks",
+        "obligation": "required",
+        "rationale": "潜在风险必须与已知风险分列。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.anticipated_benefit",
+        "obligation": "required",
+        "rationale": "预期获益必须真实、具体，并与获益终点一致。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.uncertainty",
+        "obligation": "required",
+        "rationale": "风险/获益判断中的不确定性必须显式说明。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.mitigation",
+        "obligation": "required",
+        "rationale": "风险缓解措施必须可执行并与研究设计一致。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.risk.benefit_risk_assessment",
+        "obligation": "required",
+        "rationale": "必须给出实际的风险/获益判断，而非仅罗列风险与获益。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "risk_benefit_assessment",
+        "obligation": "required",
+        "rationale": "风险/获益判断声明（项目化结论）。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "risk_benefit_framework",
+        "obligation": "required",
+        "rationale": "风险/获益评估所依据的监管/伦理框架声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "compensation_as_benefit",
+        "obligation": "forbidden",
+        "rationale": "补偿/赔偿不构成治疗获益，禁止作为获益论据。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "risk_benefit_assessment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "risk_benefit_framework"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "已知/潜在风险段、获益段与判断段必须分列；风险与获益不得只并列不判断。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "风险/获益评估表必须逐行给出已知风险、潜在风险、预期获益与实际判断（不得只有表头）。",
+        "required_object_cells": [
+          "risk:cell:known",
+          "risk:cell:potential",
+          "risk:cell:anticipated_benefit",
+          "risk:cell:assessment"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "补偿/赔偿与治疗获益的边界：补偿不是治疗获益，禁止作为获益论据。",
+      "源 @306 处置：保留源文定位但标记为问题表述，不作为已批准项目理由复述。"
+    ],
+    "skeleton_risk_rules": [
+      "只有风险清单或只有获益描述即失败；仅有空表头即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-2-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc493519221",
+      "_Toc14880053",
+      "_Toc132623319",
+      "_Toc104637473"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-2-3:source-306-bounded",
+      "rule": "源 @306 属问题表述，不是已批准的项目理由：不得复述“风险大于信息价值”式一刀切正当化；风险/获益必须逐项给据。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-2-3:primary",
+      "question": "风险/获益评估是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "background.risk.known_risks"
+      ],
+      "linked_claim_types": [
+        "risk_benefit_assessment"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-2-3:source-306-bounded"
+      ],
+      "risk_if_unmet": "风险/获益评估缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

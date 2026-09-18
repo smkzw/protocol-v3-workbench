@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.0
+collected 2 items
+
+tests/protocol_v3/test_regimen_option_bundle.py FF                       [100%]
+
+=================================== FAILURES ===================================
+___ test_option_has_real_literal_evidence_but_no_invented_medical_admission ____
+
+    def test_option_has_real_literal_evidence_but_no_invented_medical_admission():
+>       from app.protocol_workflow.agent2.option_bundle import build_regimen_option_bundle
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.option_bundle'
+
+tests/protocol_v3/test_regimen_option_bundle.py:10: ModuleNotFoundError
+_____ test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction ______
+
+    def test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction():
+>       from app.protocol_workflow.agent2.option_bundle import build_regimen_option_bundle
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.option_bundle'
+
+tests/protocol_v3/test_regimen_option_bundle.py:27: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_option_bundle.py::test_option_has_real_literal_evidence_but_no_invented_medical_admission
+FAILED tests/protocol_v3/test_regimen_option_bundle.py::test_unsupported_quote_cannot_be_persisted_as_a_verified_extraction
+============================== 2 failed in 0.34s ===============================

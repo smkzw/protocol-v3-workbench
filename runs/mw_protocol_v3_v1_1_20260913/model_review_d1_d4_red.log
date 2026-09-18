@@ -1,0 +1,92 @@
+..F.F.......                                                             [100%]
+=================================== FAILURES ===================================
+_ test_model_contract_reaches_service_and_survives_reopen_without_second_call[True-True] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-607/test_model_contract_reaches_se2')
+provider_receipt = True, crash_after_result = True
+
+    @pytest.mark.parametrize('provider_receipt, crash_after_result', [(False, False), (True, False), (True, True)])
+    def test_model_contract_reaches_service_and_survives_reopen_without_second_call(tmp_path, provider_receipt, crash_after_result):
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'graph.sqlite')}
+        calls = []
+    
+        def model_contract(base):
+            return base.model_copy(update={
+                'harness': 'direct-api', 'provider': 'zhipu-coding-plan',
+                'model': 'glm-5.3-flash', 'reasoning_effort': ReasoningEffort.MAX,
+                'allowed_providers': ('zhipu-coding-plan',), 'allowed_regions': ('cn',),
+            })
+    
+        def service(request):
+            assert request.execution_contract.model == 'glm-5.3-flash'
+            assert request.execution_contract.reasoning_effort is ReasoningEffort.MAX
+            calls.append(request.execution_contract.model_dump(mode='json'))
+            payload = {'candidate': 'synthetic-only'}
+            if provider_receipt:
+                from app.protocol_workflow.graph.ports import ConfiguredNodeServiceResult
+                return ConfiguredNodeServiceResult(payload=payload, provider_session_id='completion-test')
+            return payload
+    
+        def runtime():
+            return GraphRuntime(
+                project_id=_PROJ, uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                services={'draft_node': service}, clock=_StepClock(),
+                execution_contract_factories={'draft_node': model_contract},
+            )
+    
+        plan = _probe_plan()
+        run_id = 'model-contract-test'
+        rt = runtime()
+        rt.start_run(plan, workflow_run_id=run_id, root_inputs=_root_inputs())
+        if crash_after_result:
+            append = rt._append_node_result
+    
+            def interrupted(*args, **kwargs):
+                append(*args, **kwargs)
+                raise SystemExit('interrupted after durable result')
+    
+            rt._append_node_result = interrupted
+            with pytest.raises(SystemExit):
+                rt.advance(run_id)
+        else:
+            rt.advance(run_id)
+        assert len(calls) == 1
+        results = [e for e in rt.read_events(run_id) if 'execution_contract' in e.payload]
+        assert len(results) == 1
+        assert results[0].payload['execution_contract'] == calls[0]
+        reopened = runtime()
+        reopened.load_run(plan, run_id)
+        reopened.advance(run_id)
+        assert len(calls) == 1
+        if provider_receipt:
+>           assert reopened.reservation_attempts(run_id, 'draft_node')[0].provider_session_id == 'completion-test'
+E           AssertionError: assert 'sess:res:998...6497299149768' == 'completion-test'
+E             
+E             - completion-test
+E             + sess:res:998a337ae886497299149768
+
+tests/protocol_v3/test_graph_model_contract.py:66: AssertionError
+__ test_compiled_request_contains_complete_output_schema_with_optional_fields __
+
+    def test_compiled_request_contains_complete_output_schema_with_optional_fields():
+        schema = prepare_seed_request('', ()).to_payload()['output_schema']
+        fields = schema['properties']['fields']
+        assert schema['required'] == ['fields']
+        assert fields.get('required', []) == []
+        assert len(fields['properties']) == 8
+        assert fields['additionalProperties'] is False
+        candidate = schema['$defs']['SeedCandidate']
+        assert 'raw' in candidate['required'] and 'basis' in candidate['required']
+        assert candidate['properties']['references']['items']['$ref'] == '#/$defs/_Reference'
+        assert 'locator' in schema['$defs']['_Reference']['required']
+        array = next(s for s in candidate['properties']['candidate']['anyOf'] if s['type'] == 'array')
+>       assert array['minItems'] == 1
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'minItems'
+
+tests/protocol_v3/test_research_seed_normalization.py:53: KeyError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_graph_model_contract.py::test_model_contract_reaches_service_and_survives_reopen_without_second_call[True-True]
+FAILED tests/protocol_v3/test_research_seed_normalization.py::test_compiled_request_contains_complete_output_schema_with_optional_fields
+2 failed, 10 passed in 0.66s

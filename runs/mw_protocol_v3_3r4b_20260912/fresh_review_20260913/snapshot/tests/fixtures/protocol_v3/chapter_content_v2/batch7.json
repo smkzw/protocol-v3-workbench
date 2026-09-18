@@ -1,0 +1,3658 @@
+{
+  "schema_version": "protocol-v3-chapter-batch.v1",
+  "generated_for": "TP-MA-07 v2 batch7 chapter contracts and fixtures (3R.3：数据管理与伦理；20260911)",
+  "authority": "Batch7 source-bound authoring contract; frozen template identity; synthetic fixture values are not project approval. 文本使用“试验参与者”术语。",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fact_vocabulary": [
+    "compensation.amount_unconfirmed",
+    "compensation.arrangement",
+    "compensation.inapplicable_claim",
+    "compensation.insurance_or_guarantee",
+    "compensation.missing_fact_resolution",
+    "compensation.responsible_contact",
+    "compensation.trial_related_injury_procedure",
+    "confidentiality.access_control",
+    "confidentiality.data_coding",
+    "confidentiality.invented_person_or_facility",
+    "confidentiality.recipients",
+    "confidentiality.retention_linkage",
+    "confidentiality.sample_coding",
+    "confidentiality.transfer_arrangements",
+    "confidentiality.universal_deidentification",
+    "consent.before_relevant_procedure",
+    "consent.capacity_or_representative",
+    "consent.new_information_handling",
+    "consent.procedure",
+    "consent.responsible_role",
+    "consent.version",
+    "consent.witness_if_applicable",
+    "consent.witness_universal_substitute",
+    "corrections.audit_trail",
+    "corrections.procedure",
+    "corrections.reason_record",
+    "corrections.review_approval",
+    "corrections.untracked_edit",
+    "data_governance.access_controls",
+    "data_governance.change_management",
+    "data_governance.completed_validation_assertion",
+    "data_governance.record_integrity",
+    "data_governance.system_roles",
+    "data_governance.validation_status",
+    "data_governance.vendor_name_unconfirmed",
+    "data_management.copied_source_record",
+    "data_management.correction_review_roles",
+    "data_management.data_capture_method",
+    "data_management.direct_ecrf_source",
+    "data_management.edc_vendor_as_project_fact",
+    "data_management.responsible_parties",
+    "data_management.review_query_owner",
+    "data_management.role_assignments",
+    "data_management.source_data_review_path",
+    "data_management.source_identification_method",
+    "data_management.source_identification_plan",
+    "data_management.template_company_name",
+    "data_management.validated_system_claim",
+    "data_quality.cleaning_review_record",
+    "data_quality.query_escalation",
+    "data_quality.query_issuance",
+    "data_quality.query_resolution",
+    "data_quality.template_query_deadline",
+    "ethics.approval_receipt_unverified",
+    "ethics.approval_status",
+    "ethics.before_procedure_confirmation",
+    "ethics.new_information_handling",
+    "ethics.prospective_review_procedure",
+    "ethics.responsible_role",
+    "ethics.version_control",
+    "future_use.applicable",
+    "future_use.consent",
+    "future_use.current_study_assay_separation",
+    "future_use.duration",
+    "future_use.genetic_testing",
+    "future_use.location",
+    "future_use.purpose",
+    "future_use.review_plan",
+    "future_use.universal_withdrawal_conclusion",
+    "lock_export.export_format",
+    "lock_export.export_receipt",
+    "lock_export.lock_authority",
+    "lock_export.lock_criteria",
+    "lock_export.template_export_format",
+    "publication.actual_agreements",
+    "publication.authorship_roles",
+    "publication.committee_permission_unconfirmed",
+    "publication.data_sharing_conditions",
+    "publication.disclosure_plan",
+    "publication.recipient_controls",
+    "publication.repository_name_unconfirmed",
+    "retention.all_records_owned_by_sponsor",
+    "retention.custody",
+    "retention.disposition",
+    "retention.duration",
+    "retention.optical_disc_default",
+    "retention.record_types",
+    "retention.storage_location",
+    "retention.trigger",
+    "retention.universal_five_year_rule"
+  ],
+  "claim_vocabulary": [
+    "compensation.fabricated_amount_or_coverage",
+    "compensation.provision",
+    "compensation.resolution_path",
+    "confidentiality.access_boundary",
+    "confidentiality.universal_anonymity",
+    "consent.prospective_process",
+    "corrections.traceability",
+    "corrections.unreviewed_change_accepted",
+    "data_governance.completed_validation_without_record",
+    "data_governance.computerized_system_governance",
+    "data_governance.validation_status_disclosure",
+    "data_management.data_capture_actual_arrangement",
+    "data_management.data_source_distinction",
+    "data_management.edc_always_exists",
+    "data_management.fabricated_vendor_validation",
+    "data_management.responsibility_assignment",
+    "data_management.review_and_correction_control",
+    "data_quality.query_resolution_control",
+    "data_quality.unreviewed_clean_data_claim",
+    "ethics.approval_obtained",
+    "ethics.approval_status",
+    "future_use.conflated_with_current_assay",
+    "future_use.review_required",
+    "future_use.separation",
+    "future_use_permission_from_ordinary_consent",
+    "lock_export.automatic_lock_claim",
+    "lock_export.reproducibility",
+    "publication.data_sharing_arrangement",
+    "publication.nonexistent_repository_claim",
+    "publication.repository_arrangement",
+    "retention.arrangement",
+    "retention.universal_legal_rule"
+  ],
+  "coverage_roles": {
+    "v2_n_12_1": "heading_leaf",
+    "v2_n_12_2": "heading_leaf",
+    "v2_n_12_3": "heading_leaf",
+    "v2_n_12_4": "heading_leaf",
+    "v2_n_12_5": "heading_leaf",
+    "v2_n_12_6": "heading_leaf",
+    "v2_n_12_7": "heading_leaf",
+    "v2_n_12_8": "heading_leaf",
+    "v2_n_12_9": "heading_leaf",
+    "v2_n_13_1": "heading_leaf",
+    "v2_n_13_2": "heading_leaf",
+    "v2_n_13_3": "heading_leaf",
+    "v2_n_13_4": "heading_leaf"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-1:positive",
+      "chapter_contract_id": "contract:v2-n-12-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.role_assignments",
+            "value": "合成项目事实：data_management.role_assignments"
+          },
+          {
+            "fact_path": "data_management.responsible_parties",
+            "value": "合成项目事实：data_management.responsible_parties"
+          },
+          {
+            "fact_path": "data_management.source_identification_plan",
+            "value": "合成项目事实：data_management.source_identification_plan"
+          },
+          {
+            "fact_path": "data_management.review_query_owner",
+            "value": "合成项目事实：data_management.review_query_owner"
+          },
+          {
+            "fact_path": "data_management.correction_review_roles",
+            "value": "合成项目事实：data_management.correction_review_roles"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.responsibility_assignment",
+            "statement": "合成项目主张：data_management.responsibility_assignment"
+          },
+          {
+            "claim_type": "data_management.review_and_correction_control",
+            "statement": "合成项目主张：data_management.review_and_correction_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.responsibility_assignment",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.review_and_correction_control",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据收集和管理职责",
+            "cells": [
+              {
+                "cell_id": "data:cell:role_owner",
+                "value": "合成表格值：data:cell:role_owner"
+              },
+              {
+                "cell_id": "data:cell:source_authority",
+                "value": "合成表格值：data:cell:source_authority"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.role_assignments",
+            "value": "合成项目事实：data_management.role_assignments"
+          },
+          {
+            "fact_path": "data_management.responsible_parties",
+            "value": "合成项目事实：data_management.responsible_parties"
+          },
+          {
+            "fact_path": "data_management.source_identification_plan",
+            "value": "合成项目事实：data_management.source_identification_plan"
+          },
+          {
+            "fact_path": "data_management.review_query_owner",
+            "value": "合成项目事实：data_management.review_query_owner"
+          },
+          {
+            "fact_path": "data_management.correction_review_roles",
+            "value": "合成项目事实：data_management.correction_review_roles"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.responsibility_assignment",
+            "statement": "合成项目主张：data_management.responsibility_assignment"
+          },
+          {
+            "claim_type": "data_management.review_and_correction_control",
+            "statement": "合成项目主张：data_management.review_and_correction_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.responsibility_assignment",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.review_and_correction_control",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据收集和管理职责",
+            "cells": [
+              {
+                "cell_id": "data:cell:role_owner",
+                "value": "合成表格值：data:cell:role_owner"
+              },
+              {
+                "cell_id": "data:cell:source_authority",
+                "value": "合成表格值：data:cell:source_authority"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.responsible_parties",
+            "value": "合成项目事实：data_management.responsible_parties"
+          },
+          {
+            "fact_path": "data_management.source_identification_plan",
+            "value": "合成项目事实：data_management.source_identification_plan"
+          },
+          {
+            "fact_path": "data_management.review_query_owner",
+            "value": "合成项目事实：data_management.review_query_owner"
+          },
+          {
+            "fact_path": "data_management.correction_review_roles",
+            "value": "合成项目事实：data_management.correction_review_roles"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.responsibility_assignment",
+            "statement": "合成项目主张：data_management.responsibility_assignment"
+          },
+          {
+            "claim_type": "data_management.review_and_correction_control",
+            "statement": "合成项目主张：data_management.review_and_correction_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.responsibility_assignment",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.review_and_correction_control",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据收集和管理职责",
+            "cells": [
+              {
+                "cell_id": "data:cell:role_owner",
+                "value": "合成表格值：data:cell:role_owner"
+              },
+              {
+                "cell_id": "data:cell:source_authority",
+                "value": "合成表格值：data:cell:source_authority"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-1:copied-company-name",
+      "chapter_contract_id": "contract:v2-n-12-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.role_assignments",
+            "value": "合成项目事实：data_management.role_assignments"
+          },
+          {
+            "fact_path": "data_management.responsible_parties",
+            "value": "合成项目事实：data_management.responsible_parties"
+          },
+          {
+            "fact_path": "data_management.source_identification_plan",
+            "value": "合成项目事实：data_management.source_identification_plan"
+          },
+          {
+            "fact_path": "data_management.review_query_owner",
+            "value": "合成项目事实：data_management.review_query_owner"
+          },
+          {
+            "fact_path": "data_management.correction_review_roles",
+            "value": "合成项目事实：data_management.correction_review_roles"
+          },
+          {
+            "fact_path": "data_management.template_company_name",
+            "value": "合成复制公司名称"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.responsibility_assignment",
+            "statement": "合成项目主张：data_management.responsibility_assignment"
+          },
+          {
+            "claim_type": "data_management.review_and_correction_control",
+            "statement": "合成项目主张：data_management.review_and_correction_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.responsibility_assignment",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.review_and_correction_control",
+            "locator_kind": "body",
+            "locator": "body:812-813",
+            "context": "合成项目证据上下文：数据收集和管理职责 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据收集和管理职责",
+            "cells": [
+              {
+                "cell_id": "data:cell:role_owner",
+                "value": "合成表格值：data:cell:role_owner"
+              },
+              {
+                "cell_id": "data:cell:source_authority",
+                "value": "合成表格值：data:cell:source_authority"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-2:positive",
+      "chapter_contract_id": "contract:v2-n-12-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.direct_ecrf_source",
+            "value": "合成项目事实：data_management.direct_ecrf_source"
+          },
+          {
+            "fact_path": "data_management.copied_source_record",
+            "value": "合成项目事实：data_management.copied_source_record"
+          },
+          {
+            "fact_path": "data_management.source_identification_method",
+            "value": "合成项目事实：data_management.source_identification_method"
+          },
+          {
+            "fact_path": "data_management.data_capture_method",
+            "value": "合成项目事实：data_management.data_capture_method"
+          },
+          {
+            "fact_path": "data_management.source_data_review_path",
+            "value": "合成项目事实：data_management.source_data_review_path"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.data_capture_actual_arrangement",
+            "statement": "合成项目主张：data_management.data_capture_actual_arrangement"
+          },
+          {
+            "claim_type": "data_management.data_source_distinction",
+            "statement": "合成项目主张：data_management.data_source_distinction"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.data_capture_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.data_source_distinction",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据采集与方式",
+            "cells": [
+              {
+                "cell_id": "data:cell:ecrf_source",
+                "value": "合成表格值：data:cell:ecrf_source"
+              },
+              {
+                "cell_id": "data:cell:copied_source",
+                "value": "合成表格值：data:cell:copied_source"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.direct_ecrf_source",
+            "value": "合成项目事实：data_management.direct_ecrf_source"
+          },
+          {
+            "fact_path": "data_management.copied_source_record",
+            "value": "合成项目事实：data_management.copied_source_record"
+          },
+          {
+            "fact_path": "data_management.source_identification_method",
+            "value": "合成项目事实：data_management.source_identification_method"
+          },
+          {
+            "fact_path": "data_management.data_capture_method",
+            "value": "合成项目事实：data_management.data_capture_method"
+          },
+          {
+            "fact_path": "data_management.source_data_review_path",
+            "value": "合成项目事实：data_management.source_data_review_path"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.data_capture_actual_arrangement",
+            "statement": "合成项目主张：data_management.data_capture_actual_arrangement"
+          },
+          {
+            "claim_type": "data_management.data_source_distinction",
+            "statement": "合成项目主张：data_management.data_source_distinction"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.data_capture_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_management.data_source_distinction",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据采集与方式",
+            "cells": [
+              {
+                "cell_id": "data:cell:ecrf_source",
+                "value": "合成表格值：data:cell:ecrf_source"
+              },
+              {
+                "cell_id": "data:cell:copied_source",
+                "value": "合成表格值：data:cell:copied_source"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_management.copied_source_record",
+            "value": "合成项目事实：data_management.copied_source_record"
+          },
+          {
+            "fact_path": "data_management.source_identification_method",
+            "value": "合成项目事实：data_management.source_identification_method"
+          },
+          {
+            "fact_path": "data_management.data_capture_method",
+            "value": "合成项目事实：data_management.data_capture_method"
+          },
+          {
+            "fact_path": "data_management.source_data_review_path",
+            "value": "合成项目事实：data_management.source_data_review_path"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_management.data_capture_actual_arrangement",
+            "statement": "合成项目主张：data_management.data_capture_actual_arrangement"
+          },
+          {
+            "claim_type": "data_management.data_source_distinction",
+            "statement": "合成项目主张：data_management.data_source_distinction"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.data_capture_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_management.data_source_distinction",
+            "locator_kind": "body",
+            "locator": "body:814-816",
+            "context": "合成项目证据上下文：数据采集与方式 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据采集与方式",
+            "cells": [
+              {
+                "cell_id": "data:cell:ecrf_source",
+                "value": "合成表格值：data:cell:ecrf_source"
+              },
+              {
+                "cell_id": "data:cell:copied_source",
+                "value": "合成表格值：data:cell:copied_source"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-3:positive",
+      "chapter_contract_id": "contract:v2-n-12-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_quality.query_issuance",
+            "value": "合成项目事实：data_quality.query_issuance"
+          },
+          {
+            "fact_path": "data_quality.query_resolution",
+            "value": "合成项目事实：data_quality.query_resolution"
+          },
+          {
+            "fact_path": "data_quality.cleaning_review_record",
+            "value": "合成项目事实：data_quality.cleaning_review_record"
+          },
+          {
+            "fact_path": "data_quality.query_escalation",
+            "value": "合成项目事实：data_quality.query_escalation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_quality.query_resolution_control",
+            "statement": "合成项目主张：data_quality.query_resolution_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_quality.query_resolution_control",
+            "locator_kind": "body",
+            "locator": "body:817-819",
+            "context": "合成项目证据上下文：数据清理与质疑解决 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据清理与质疑解决",
+            "cells": [
+              {
+                "cell_id": "data:cell:query_owner",
+                "value": "合成表格值：data:cell:query_owner"
+              },
+              {
+                "cell_id": "data:cell:query_resolution",
+                "value": "合成表格值：data:cell:query_resolution"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_quality.query_issuance",
+            "value": "合成项目事实：data_quality.query_issuance"
+          },
+          {
+            "fact_path": "data_quality.query_resolution",
+            "value": "合成项目事实：data_quality.query_resolution"
+          },
+          {
+            "fact_path": "data_quality.cleaning_review_record",
+            "value": "合成项目事实：data_quality.cleaning_review_record"
+          },
+          {
+            "fact_path": "data_quality.query_escalation",
+            "value": "合成项目事实：data_quality.query_escalation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_quality.query_resolution_control",
+            "statement": "合成项目主张：data_quality.query_resolution_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_quality.query_resolution_control",
+            "locator_kind": "body",
+            "locator": "body:817-819",
+            "context": "合成项目证据上下文：数据清理与质疑解决 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据清理与质疑解决",
+            "cells": [
+              {
+                "cell_id": "data:cell:query_owner",
+                "value": "合成表格值：data:cell:query_owner"
+              },
+              {
+                "cell_id": "data:cell:query_resolution",
+                "value": "合成表格值：data:cell:query_resolution"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_quality.query_resolution",
+            "value": "合成项目事实：data_quality.query_resolution"
+          },
+          {
+            "fact_path": "data_quality.cleaning_review_record",
+            "value": "合成项目事实：data_quality.cleaning_review_record"
+          },
+          {
+            "fact_path": "data_quality.query_escalation",
+            "value": "合成项目事实：data_quality.query_escalation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_quality.query_resolution_control",
+            "statement": "合成项目主张：data_quality.query_resolution_control"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_quality.query_resolution_control",
+            "locator_kind": "body",
+            "locator": "body:817-819",
+            "context": "合成项目证据上下文：数据清理与质疑解决 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据清理与质疑解决",
+            "cells": [
+              {
+                "cell_id": "data:cell:query_owner",
+                "value": "合成表格值：data:cell:query_owner"
+              },
+              {
+                "cell_id": "data:cell:query_resolution",
+                "value": "合成表格值：data:cell:query_resolution"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-4:positive",
+      "chapter_contract_id": "contract:v2-n-12-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "corrections.procedure",
+            "value": "合成项目事实：corrections.procedure"
+          },
+          {
+            "fact_path": "corrections.reason_record",
+            "value": "合成项目事实：corrections.reason_record"
+          },
+          {
+            "fact_path": "corrections.audit_trail",
+            "value": "合成项目事实：corrections.audit_trail"
+          },
+          {
+            "fact_path": "corrections.review_approval",
+            "value": "合成项目事实：corrections.review_approval"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "corrections.traceability",
+            "statement": "合成项目主张：corrections.traceability"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "corrections.traceability",
+            "locator_kind": "body",
+            "locator": "body:820-821",
+            "context": "合成项目证据上下文：数据的修改和审核 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据的修改和审核",
+            "cells": [
+              {
+                "cell_id": "data:cell:correction_reason",
+                "value": "合成表格值：data:cell:correction_reason"
+              },
+              {
+                "cell_id": "data:cell:review_signoff",
+                "value": "合成表格值：data:cell:review_signoff"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-4:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-4:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "corrections.procedure",
+            "value": "合成项目事实：corrections.procedure"
+          },
+          {
+            "fact_path": "corrections.reason_record",
+            "value": "合成项目事实：corrections.reason_record"
+          },
+          {
+            "fact_path": "corrections.audit_trail",
+            "value": "合成项目事实：corrections.audit_trail"
+          },
+          {
+            "fact_path": "corrections.review_approval",
+            "value": "合成项目事实：corrections.review_approval"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "corrections.traceability",
+            "statement": "合成项目主张：corrections.traceability"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "corrections.traceability",
+            "locator_kind": "body",
+            "locator": "body:820-821",
+            "context": "合成项目证据上下文：数据的修改和审核 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据的修改和审核",
+            "cells": [
+              {
+                "cell_id": "data:cell:correction_reason",
+                "value": "合成表格值：data:cell:correction_reason"
+              },
+              {
+                "cell_id": "data:cell:review_signoff",
+                "value": "合成表格值：data:cell:review_signoff"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-4:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-4:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-4:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "corrections.reason_record",
+            "value": "合成项目事实：corrections.reason_record"
+          },
+          {
+            "fact_path": "corrections.audit_trail",
+            "value": "合成项目事实：corrections.audit_trail"
+          },
+          {
+            "fact_path": "corrections.review_approval",
+            "value": "合成项目事实：corrections.review_approval"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "corrections.traceability",
+            "statement": "合成项目主张：corrections.traceability"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "corrections.traceability",
+            "locator_kind": "body",
+            "locator": "body:820-821",
+            "context": "合成项目证据上下文：数据的修改和审核 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据的修改和审核",
+            "cells": [
+              {
+                "cell_id": "data:cell:correction_reason",
+                "value": "合成表格值：data:cell:correction_reason"
+              },
+              {
+                "cell_id": "data:cell:review_signoff",
+                "value": "合成表格值：data:cell:review_signoff"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-5:positive",
+      "chapter_contract_id": "contract:v2-n-12-5:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lock_export.lock_criteria",
+            "value": "合成项目事实：lock_export.lock_criteria"
+          },
+          {
+            "fact_path": "lock_export.lock_authority",
+            "value": "合成项目事实：lock_export.lock_authority"
+          },
+          {
+            "fact_path": "lock_export.export_format",
+            "value": "合成项目事实：lock_export.export_format"
+          },
+          {
+            "fact_path": "lock_export.export_receipt",
+            "value": "合成项目事实：lock_export.export_receipt"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lock_export.reproducibility",
+            "statement": "合成项目主张：lock_export.reproducibility"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "lock_export.reproducibility",
+            "locator_kind": "body",
+            "locator": "body:822-825",
+            "context": "合成项目证据上下文：数据锁定及导出 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据锁定及导出",
+            "cells": [
+              {
+                "cell_id": "data:cell:lock_authority",
+                "value": "合成表格值：data:cell:lock_authority"
+              },
+              {
+                "cell_id": "data:cell:export_artifact",
+                "value": "合成表格值：data:cell:export_artifact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-5:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-5:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lock_export.lock_criteria",
+            "value": "合成项目事实：lock_export.lock_criteria"
+          },
+          {
+            "fact_path": "lock_export.lock_authority",
+            "value": "合成项目事实：lock_export.lock_authority"
+          },
+          {
+            "fact_path": "lock_export.export_format",
+            "value": "合成项目事实：lock_export.export_format"
+          },
+          {
+            "fact_path": "lock_export.export_receipt",
+            "value": "合成项目事实：lock_export.export_receipt"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lock_export.reproducibility",
+            "statement": "合成项目主张：lock_export.reproducibility"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "lock_export.reproducibility",
+            "locator_kind": "body",
+            "locator": "body:822-825",
+            "context": "合成项目证据上下文：数据锁定及导出 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据锁定及导出",
+            "cells": [
+              {
+                "cell_id": "data:cell:lock_authority",
+                "value": "合成表格值：data:cell:lock_authority"
+              },
+              {
+                "cell_id": "data:cell:export_artifact",
+                "value": "合成表格值：data:cell:export_artifact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-5:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-5:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-5:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-5:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lock_export.lock_authority",
+            "value": "合成项目事实：lock_export.lock_authority"
+          },
+          {
+            "fact_path": "lock_export.export_format",
+            "value": "合成项目事实：lock_export.export_format"
+          },
+          {
+            "fact_path": "lock_export.export_receipt",
+            "value": "合成项目事实：lock_export.export_receipt"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lock_export.reproducibility",
+            "statement": "合成项目主张：lock_export.reproducibility"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "lock_export.reproducibility",
+            "locator_kind": "body",
+            "locator": "body:822-825",
+            "context": "合成项目证据上下文：数据锁定及导出 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据锁定及导出",
+            "cells": [
+              {
+                "cell_id": "data:cell:lock_authority",
+                "value": "合成表格值：data:cell:lock_authority"
+              },
+              {
+                "cell_id": "data:cell:export_artifact",
+                "value": "合成表格值：data:cell:export_artifact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-6:positive",
+      "chapter_contract_id": "contract:v2-n-12-6:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_governance.system_roles",
+            "value": "合成项目事实：data_governance.system_roles"
+          },
+          {
+            "fact_path": "data_governance.access_controls",
+            "value": "合成项目事实：data_governance.access_controls"
+          },
+          {
+            "fact_path": "data_governance.validation_status",
+            "value": "合成项目事实：data_governance.validation_status"
+          },
+          {
+            "fact_path": "data_governance.record_integrity",
+            "value": "合成项目事实：data_governance.record_integrity"
+          },
+          {
+            "fact_path": "data_governance.change_management",
+            "value": "合成项目事实：data_governance.change_management"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_governance.computerized_system_governance",
+            "statement": "合成项目主张：data_governance.computerized_system_governance"
+          },
+          {
+            "claim_type": "data_governance.validation_status_disclosure",
+            "statement": "合成项目主张：data_governance.validation_status_disclosure"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_governance.computerized_system_governance",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_governance.validation_status_disclosure",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据治理与计算机化系统",
+            "cells": [
+              {
+                "cell_id": "data:cell:system_record",
+                "value": "合成表格值：data:cell:system_record"
+              },
+              {
+                "cell_id": "data:cell:governance_owner",
+                "value": "合成表格值：data:cell:governance_owner"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-6:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-6:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_governance.system_roles",
+            "value": "合成项目事实：data_governance.system_roles"
+          },
+          {
+            "fact_path": "data_governance.access_controls",
+            "value": "合成项目事实：data_governance.access_controls"
+          },
+          {
+            "fact_path": "data_governance.validation_status",
+            "value": "合成项目事实：data_governance.validation_status"
+          },
+          {
+            "fact_path": "data_governance.record_integrity",
+            "value": "合成项目事实：data_governance.record_integrity"
+          },
+          {
+            "fact_path": "data_governance.change_management",
+            "value": "合成项目事实：data_governance.change_management"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_governance.computerized_system_governance",
+            "statement": "合成项目主张：data_governance.computerized_system_governance"
+          },
+          {
+            "claim_type": "data_governance.validation_status_disclosure",
+            "statement": "合成项目主张：data_governance.validation_status_disclosure"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_governance.computerized_system_governance",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "data_governance.validation_status_disclosure",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据治理与计算机化系统",
+            "cells": [
+              {
+                "cell_id": "data:cell:system_record",
+                "value": "合成表格值：data:cell:system_record"
+              },
+              {
+                "cell_id": "data:cell:governance_owner",
+                "value": "合成表格值：data:cell:governance_owner"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-6:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-6:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-6:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-6:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "data_governance.access_controls",
+            "value": "合成项目事实：data_governance.access_controls"
+          },
+          {
+            "fact_path": "data_governance.validation_status",
+            "value": "合成项目事实：data_governance.validation_status"
+          },
+          {
+            "fact_path": "data_governance.record_integrity",
+            "value": "合成项目事实：data_governance.record_integrity"
+          },
+          {
+            "fact_path": "data_governance.change_management",
+            "value": "合成项目事实：data_governance.change_management"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "data_governance.computerized_system_governance",
+            "statement": "合成项目主张：data_governance.computerized_system_governance"
+          },
+          {
+            "claim_type": "data_governance.validation_status_disclosure",
+            "statement": "合成项目主张：data_governance.validation_status_disclosure"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_governance.computerized_system_governance",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "data_governance.validation_status_disclosure",
+            "locator_kind": "body",
+            "locator": "body:826-828",
+            "context": "合成项目证据上下文：数据治理与计算机化系统 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：数据治理与计算机化系统",
+            "cells": [
+              {
+                "cell_id": "data:cell:system_record",
+                "value": "合成表格值：data:cell:system_record"
+              },
+              {
+                "cell_id": "data:cell:governance_owner",
+                "value": "合成表格值：data:cell:governance_owner"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-7:positive",
+      "chapter_contract_id": "contract:v2-n-12-7:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "future_use.purpose",
+            "value": "合成项目事实：future_use.purpose"
+          },
+          {
+            "fact_path": "future_use.location",
+            "value": "合成项目事实：future_use.location"
+          },
+          {
+            "fact_path": "future_use.duration",
+            "value": "合成项目事实：future_use.duration"
+          },
+          {
+            "fact_path": "future_use.genetic_testing",
+            "value": "合成项目事实：future_use.genetic_testing"
+          },
+          {
+            "fact_path": "future_use.consent",
+            "value": "合成项目事实：future_use.consent"
+          },
+          {
+            "fact_path": "future_use.review_plan",
+            "value": "合成项目事实：future_use.review_plan"
+          },
+          {
+            "fact_path": "future_use.current_study_assay_separation",
+            "value": "合成项目事实：future_use.current_study_assay_separation"
+          },
+          {
+            "fact_path": "future_use.applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "future_use.separation",
+            "statement": "合成项目主张：future_use.separation"
+          },
+          {
+            "claim_type": "future_use.review_required",
+            "statement": "合成项目主张：future_use.review_required"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.separation",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.review_required",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：储备样本和数据的未来使用",
+            "cells": [
+              {
+                "cell_id": "future-use:cell:purpose",
+                "value": "合成表格值：future-use:cell:purpose"
+              },
+              {
+                "cell_id": "future-use:cell:location",
+                "value": "合成表格值：future-use:cell:location"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-7:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-7:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "future_use.purpose",
+            "value": "合成项目事实：future_use.purpose"
+          },
+          {
+            "fact_path": "future_use.location",
+            "value": "合成项目事实：future_use.location"
+          },
+          {
+            "fact_path": "future_use.duration",
+            "value": "合成项目事实：future_use.duration"
+          },
+          {
+            "fact_path": "future_use.genetic_testing",
+            "value": "合成项目事实：future_use.genetic_testing"
+          },
+          {
+            "fact_path": "future_use.consent",
+            "value": "合成项目事实：future_use.consent"
+          },
+          {
+            "fact_path": "future_use.review_plan",
+            "value": "合成项目事实：future_use.review_plan"
+          },
+          {
+            "fact_path": "future_use.current_study_assay_separation",
+            "value": "合成项目事实：future_use.current_study_assay_separation"
+          },
+          {
+            "fact_path": "future_use.applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "future_use.separation",
+            "statement": "合成项目主张：future_use.separation"
+          },
+          {
+            "claim_type": "future_use.review_required",
+            "statement": "合成项目主张：future_use.review_required"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "future_use.separation",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "future_use.review_required",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：储备样本和数据的未来使用",
+            "cells": [
+              {
+                "cell_id": "future-use:cell:purpose",
+                "value": "合成表格值：future-use:cell:purpose"
+              },
+              {
+                "cell_id": "future-use:cell:location",
+                "value": "合成表格值：future-use:cell:location"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-7:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-7:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-7:missing-claim",
+      "chapter_contract_id": "contract:v2-n-12-7:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "future_use.purpose",
+            "value": "合成项目事实：future_use.purpose"
+          },
+          {
+            "fact_path": "future_use.location",
+            "value": "合成项目事实：future_use.location"
+          },
+          {
+            "fact_path": "future_use.duration",
+            "value": "合成项目事实：future_use.duration"
+          },
+          {
+            "fact_path": "future_use.genetic_testing",
+            "value": "合成项目事实：future_use.genetic_testing"
+          },
+          {
+            "fact_path": "future_use.consent",
+            "value": "合成项目事实：future_use.consent"
+          },
+          {
+            "fact_path": "future_use.review_plan",
+            "value": "合成项目事实：future_use.review_plan"
+          },
+          {
+            "fact_path": "future_use.current_study_assay_separation",
+            "value": "合成项目事实：future_use.current_study_assay_separation"
+          },
+          {
+            "fact_path": "future_use.applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "future_use.review_required",
+            "statement": "合成项目主张：future_use.review_required"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.separation",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.review_required",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：储备样本和数据的未来使用",
+            "cells": [
+              {
+                "cell_id": "future-use:cell:purpose",
+                "value": "合成表格值：future-use:cell:purpose"
+              },
+              {
+                "cell_id": "future-use:cell:location",
+                "value": "合成表格值：future-use:cell:location"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-7:study-data-conflated-with-future-use",
+      "chapter_contract_id": "contract:v2-n-12-7:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "future_use.purpose",
+            "value": "合成项目事实：future_use.purpose"
+          },
+          {
+            "fact_path": "future_use.location",
+            "value": "合成项目事实：future_use.location"
+          },
+          {
+            "fact_path": "future_use.duration",
+            "value": "合成项目事实：future_use.duration"
+          },
+          {
+            "fact_path": "future_use.genetic_testing",
+            "value": "合成项目事实：future_use.genetic_testing"
+          },
+          {
+            "fact_path": "future_use.consent",
+            "value": "合成项目事实：future_use.consent"
+          },
+          {
+            "fact_path": "future_use.review_plan",
+            "value": "合成项目事实：future_use.review_plan"
+          },
+          {
+            "fact_path": "future_use.current_study_assay_separation",
+            "value": "合成项目事实：future_use.current_study_assay_separation"
+          },
+          {
+            "fact_path": "future_use.applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "future_use.review_required",
+            "statement": "合成项目主张：future_use.review_required"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.separation",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "future_use.review_required",
+            "locator_kind": "body",
+            "locator": "body:829-836",
+            "context": "合成项目证据上下文：储备样本和数据的未来使用 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：储备样本和数据的未来使用",
+            "cells": [
+              {
+                "cell_id": "future-use:cell:purpose",
+                "value": "合成表格值：future-use:cell:purpose"
+              },
+              {
+                "cell_id": "future-use:cell:location",
+                "value": "合成表格值：future-use:cell:location"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-8:positive",
+      "chapter_contract_id": "contract:v2-n-12-8:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "retention.trigger",
+            "value": "合成项目事实：retention.trigger"
+          },
+          {
+            "fact_path": "retention.duration",
+            "value": "合成项目事实：retention.duration"
+          },
+          {
+            "fact_path": "retention.custody",
+            "value": "合成项目事实：retention.custody"
+          },
+          {
+            "fact_path": "retention.disposition",
+            "value": "合成项目事实：retention.disposition"
+          },
+          {
+            "fact_path": "retention.record_types",
+            "value": "合成项目事实：retention.record_types"
+          },
+          {
+            "fact_path": "retention.storage_location",
+            "value": "合成项目事实：retention.storage_location"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "retention.arrangement",
+            "statement": "合成项目主张：retention.arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "retention.arrangement",
+            "locator_kind": "body",
+            "locator": "body:837-842",
+            "context": "合成项目证据上下文：研究记录的保存 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究记录的保存",
+            "cells": [
+              {
+                "cell_id": "retention:cell:custody",
+                "value": "合成表格值：retention:cell:custody"
+              },
+              {
+                "cell_id": "retention:cell:duration",
+                "value": "合成表格值：retention:cell:duration"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-8:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-8:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "retention.trigger",
+            "value": "合成项目事实：retention.trigger"
+          },
+          {
+            "fact_path": "retention.duration",
+            "value": "合成项目事实：retention.duration"
+          },
+          {
+            "fact_path": "retention.custody",
+            "value": "合成项目事实：retention.custody"
+          },
+          {
+            "fact_path": "retention.disposition",
+            "value": "合成项目事实：retention.disposition"
+          },
+          {
+            "fact_path": "retention.record_types",
+            "value": "合成项目事实：retention.record_types"
+          },
+          {
+            "fact_path": "retention.storage_location",
+            "value": "合成项目事实：retention.storage_location"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "retention.arrangement",
+            "statement": "合成项目主张：retention.arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "retention.arrangement",
+            "locator_kind": "body",
+            "locator": "body:837-842",
+            "context": "合成项目证据上下文：研究记录的保存 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究记录的保存",
+            "cells": [
+              {
+                "cell_id": "retention:cell:custody",
+                "value": "合成表格值：retention:cell:custody"
+              },
+              {
+                "cell_id": "retention:cell:duration",
+                "value": "合成表格值：retention:cell:duration"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-8:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-8:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-8:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-8:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "retention.duration",
+            "value": "合成项目事实：retention.duration"
+          },
+          {
+            "fact_path": "retention.custody",
+            "value": "合成项目事实：retention.custody"
+          },
+          {
+            "fact_path": "retention.disposition",
+            "value": "合成项目事实：retention.disposition"
+          },
+          {
+            "fact_path": "retention.record_types",
+            "value": "合成项目事实：retention.record_types"
+          },
+          {
+            "fact_path": "retention.storage_location",
+            "value": "合成项目事实：retention.storage_location"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "retention.arrangement",
+            "statement": "合成项目主张：retention.arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "retention.arrangement",
+            "locator_kind": "body",
+            "locator": "body:837-842",
+            "context": "合成项目证据上下文：研究记录的保存 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究记录的保存",
+            "cells": [
+              {
+                "cell_id": "retention:cell:custody",
+                "value": "合成表格值：retention:cell:custody"
+              },
+              {
+                "cell_id": "retention:cell:duration",
+                "value": "合成表格值：retention:cell:duration"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-8:blank-custody-period",
+      "chapter_contract_id": "contract:v2-n-12-8:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "retention.trigger",
+            "value": "合成项目事实：retention.trigger"
+          },
+          {
+            "fact_path": "retention.duration",
+            "value": ""
+          },
+          {
+            "fact_path": "retention.disposition",
+            "value": "合成项目事实：retention.disposition"
+          },
+          {
+            "fact_path": "retention.record_types",
+            "value": "合成项目事实：retention.record_types"
+          },
+          {
+            "fact_path": "retention.storage_location",
+            "value": "合成项目事实：retention.storage_location"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "retention.arrangement",
+            "statement": "合成项目主张：retention.arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "retention.arrangement",
+            "locator_kind": "body",
+            "locator": "body:837-842",
+            "context": "合成项目证据上下文：研究记录的保存 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究记录的保存",
+            "cells": [
+              {
+                "cell_id": "retention:cell:custody",
+                "value": "合成表格值：retention:cell:custody"
+              },
+              {
+                "cell_id": "retention:cell:duration",
+                "value": "合成表格值：retention:cell:duration"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-9:positive",
+      "chapter_contract_id": "contract:v2-n-12-9:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "publication.actual_agreements",
+            "value": "合成项目事实：publication.actual_agreements"
+          },
+          {
+            "fact_path": "publication.authorship_roles",
+            "value": "合成项目事实：publication.authorship_roles"
+          },
+          {
+            "fact_path": "publication.data_sharing_conditions",
+            "value": "合成项目事实：publication.data_sharing_conditions"
+          },
+          {
+            "fact_path": "publication.recipient_controls",
+            "value": "合成项目事实：publication.recipient_controls"
+          },
+          {
+            "fact_path": "publication.disclosure_plan",
+            "value": "合成项目事实：publication.disclosure_plan"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "publication.data_sharing_arrangement",
+            "statement": "合成项目主张：publication.data_sharing_arrangement"
+          },
+          {
+            "claim_type": "publication.repository_arrangement",
+            "statement": "合成项目主张：publication.repository_arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "publication.data_sharing_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "publication.repository_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究发表和数据共享政策",
+            "cells": [
+              {
+                "cell_id": "sharing:cell:agreement",
+                "value": "合成表格值：sharing:cell:agreement"
+              },
+              {
+                "cell_id": "sharing:cell:recipient",
+                "value": "合成表格值：sharing:cell:recipient"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-9:wrong-source",
+      "chapter_contract_id": "contract:v2-n-12-9:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "publication.actual_agreements",
+            "value": "合成项目事实：publication.actual_agreements"
+          },
+          {
+            "fact_path": "publication.authorship_roles",
+            "value": "合成项目事实：publication.authorship_roles"
+          },
+          {
+            "fact_path": "publication.data_sharing_conditions",
+            "value": "合成项目事实：publication.data_sharing_conditions"
+          },
+          {
+            "fact_path": "publication.recipient_controls",
+            "value": "合成项目事实：publication.recipient_controls"
+          },
+          {
+            "fact_path": "publication.disclosure_plan",
+            "value": "合成项目事实：publication.disclosure_plan"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "publication.data_sharing_arrangement",
+            "statement": "合成项目主张：publication.data_sharing_arrangement"
+          },
+          {
+            "claim_type": "publication.repository_arrangement",
+            "statement": "合成项目主张：publication.repository_arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "publication.data_sharing_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "publication.repository_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究发表和数据共享政策",
+            "cells": [
+              {
+                "cell_id": "sharing:cell:agreement",
+                "value": "合成表格值：sharing:cell:agreement"
+              },
+              {
+                "cell_id": "sharing:cell:recipient",
+                "value": "合成表格值：sharing:cell:recipient"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-9:skeleton",
+      "chapter_contract_id": "contract:v2-n-12-9:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-9:missing-control",
+      "chapter_contract_id": "contract:v2-n-12-9:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "publication.authorship_roles",
+            "value": "合成项目事实：publication.authorship_roles"
+          },
+          {
+            "fact_path": "publication.data_sharing_conditions",
+            "value": "合成项目事实：publication.data_sharing_conditions"
+          },
+          {
+            "fact_path": "publication.recipient_controls",
+            "value": "合成项目事实：publication.recipient_controls"
+          },
+          {
+            "fact_path": "publication.disclosure_plan",
+            "value": "合成项目事实：publication.disclosure_plan"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "publication.data_sharing_arrangement",
+            "statement": "合成项目主张：publication.data_sharing_arrangement"
+          },
+          {
+            "claim_type": "publication.repository_arrangement",
+            "statement": "合成项目主张：publication.repository_arrangement"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "publication.data_sharing_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "publication.repository_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究发表和数据共享政策",
+            "cells": [
+              {
+                "cell_id": "sharing:cell:agreement",
+                "value": "合成表格值：sharing:cell:agreement"
+              },
+              {
+                "cell_id": "sharing:cell:recipient",
+                "value": "合成表格值：sharing:cell:recipient"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-12-9:nonexistent-repository",
+      "chapter_contract_id": "contract:v2-n-12-9:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "publication.actual_agreements",
+            "value": "合成项目事实：publication.actual_agreements"
+          },
+          {
+            "fact_path": "publication.authorship_roles",
+            "value": "合成项目事实：publication.authorship_roles"
+          },
+          {
+            "fact_path": "publication.data_sharing_conditions",
+            "value": "合成项目事实：publication.data_sharing_conditions"
+          },
+          {
+            "fact_path": "publication.recipient_controls",
+            "value": "合成项目事实：publication.recipient_controls"
+          },
+          {
+            "fact_path": "publication.disclosure_plan",
+            "value": "合成项目事实：publication.disclosure_plan"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "publication.data_sharing_arrangement",
+            "statement": "合成项目主张：publication.data_sharing_arrangement"
+          },
+          {
+            "claim_type": "publication.repository_arrangement",
+            "statement": "合成项目主张：publication.repository_arrangement"
+          },
+          {
+            "claim_type": "publication.nonexistent_repository_claim",
+            "statement": "合成不存在的共享资源库"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "publication.data_sharing_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "publication.repository_arrangement",
+            "locator_kind": "body",
+            "locator": "body:843-849",
+            "context": "合成项目证据上下文：研究发表和数据共享政策 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：研究发表和数据共享政策",
+            "cells": [
+              {
+                "cell_id": "sharing:cell:agreement",
+                "value": "合成表格值：sharing:cell:agreement"
+              },
+              {
+                "cell_id": "sharing:cell:recipient",
+                "value": "合成表格值：sharing:cell:recipient"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-1:positive",
+      "chapter_contract_id": "contract:v2-n-13-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "ethics.prospective_review_procedure",
+            "value": "合成项目事实：ethics.prospective_review_procedure"
+          },
+          {
+            "fact_path": "ethics.approval_status",
+            "value": "合成项目事实：ethics.approval_status"
+          },
+          {
+            "fact_path": "ethics.responsible_role",
+            "value": "合成项目事实：ethics.responsible_role"
+          },
+          {
+            "fact_path": "ethics.version_control",
+            "value": "合成项目事实：ethics.version_control"
+          },
+          {
+            "fact_path": "ethics.new_information_handling",
+            "value": "合成项目事实：ethics.new_information_handling"
+          },
+          {
+            "fact_path": "ethics.before_procedure_confirmation",
+            "value": "合成项目事实：ethics.before_procedure_confirmation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "ethics.approval_status",
+            "statement": "合成项目主张：ethics.approval_status"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "ethics.approval_status",
+            "locator_kind": "body",
+            "locator": "body:852-853",
+            "context": "合成项目证据上下文：伦理规范 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：伦理规范",
+            "cells": [
+              {
+                "cell_id": "ethics:cell:review_status",
+                "value": "合成表格值：ethics:cell:review_status"
+              },
+              {
+                "cell_id": "ethics:cell:responsible_role",
+                "value": "合成表格值：ethics:cell:responsible_role"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-13-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "ethics.prospective_review_procedure",
+            "value": "合成项目事实：ethics.prospective_review_procedure"
+          },
+          {
+            "fact_path": "ethics.approval_status",
+            "value": "合成项目事实：ethics.approval_status"
+          },
+          {
+            "fact_path": "ethics.responsible_role",
+            "value": "合成项目事实：ethics.responsible_role"
+          },
+          {
+            "fact_path": "ethics.version_control",
+            "value": "合成项目事实：ethics.version_control"
+          },
+          {
+            "fact_path": "ethics.new_information_handling",
+            "value": "合成项目事实：ethics.new_information_handling"
+          },
+          {
+            "fact_path": "ethics.before_procedure_confirmation",
+            "value": "合成项目事实：ethics.before_procedure_confirmation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "ethics.approval_status",
+            "statement": "合成项目主张：ethics.approval_status"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "ethics.approval_status",
+            "locator_kind": "body",
+            "locator": "body:852-853",
+            "context": "合成项目证据上下文：伦理规范 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：伦理规范",
+            "cells": [
+              {
+                "cell_id": "ethics:cell:review_status",
+                "value": "合成表格值：ethics:cell:review_status"
+              },
+              {
+                "cell_id": "ethics:cell:responsible_role",
+                "value": "合成表格值：ethics:cell:responsible_role"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-13-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-13-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "ethics.approval_status",
+            "value": "合成项目事实：ethics.approval_status"
+          },
+          {
+            "fact_path": "ethics.responsible_role",
+            "value": "合成项目事实：ethics.responsible_role"
+          },
+          {
+            "fact_path": "ethics.version_control",
+            "value": "合成项目事实：ethics.version_control"
+          },
+          {
+            "fact_path": "ethics.new_information_handling",
+            "value": "合成项目事实：ethics.new_information_handling"
+          },
+          {
+            "fact_path": "ethics.before_procedure_confirmation",
+            "value": "合成项目事实：ethics.before_procedure_confirmation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "ethics.approval_status",
+            "statement": "合成项目主张：ethics.approval_status"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "ethics.approval_status",
+            "locator_kind": "body",
+            "locator": "body:852-853",
+            "context": "合成项目证据上下文：伦理规范 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：伦理规范",
+            "cells": [
+              {
+                "cell_id": "ethics:cell:review_status",
+                "value": "合成表格值：ethics:cell:review_status"
+              },
+              {
+                "cell_id": "ethics:cell:responsible_role",
+                "value": "合成表格值：ethics:cell:responsible_role"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-1:unsigned-plan-claimed-approved",
+      "chapter_contract_id": "contract:v2-n-13-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "ethics.prospective_review_procedure",
+            "value": "合成项目事实：ethics.prospective_review_procedure"
+          },
+          {
+            "fact_path": "ethics.approval_status",
+            "value": "合成项目事实：ethics.approval_status"
+          },
+          {
+            "fact_path": "ethics.responsible_role",
+            "value": "合成项目事实：ethics.responsible_role"
+          },
+          {
+            "fact_path": "ethics.version_control",
+            "value": "合成项目事实：ethics.version_control"
+          },
+          {
+            "fact_path": "ethics.new_information_handling",
+            "value": "合成项目事实：ethics.new_information_handling"
+          },
+          {
+            "fact_path": "ethics.before_procedure_confirmation",
+            "value": "合成项目事实：ethics.before_procedure_confirmation"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "ethics.approval_status",
+            "statement": "合成项目主张：ethics.approval_status"
+          },
+          {
+            "claim_type": "ethics.approval_obtained",
+            "statement": "合成未签署计划已获批准"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "ethics.approval_status",
+            "locator_kind": "body",
+            "locator": "body:852-853",
+            "context": "合成项目证据上下文：伦理规范 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：伦理规范",
+            "cells": [
+              {
+                "cell_id": "ethics:cell:review_status",
+                "value": "合成表格值：ethics:cell:review_status"
+              },
+              {
+                "cell_id": "ethics:cell:responsible_role",
+                "value": "合成表格值：ethics:cell:responsible_role"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-2:positive",
+      "chapter_contract_id": "contract:v2-n-13-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "consent.procedure",
+            "value": "合成项目事实：consent.procedure"
+          },
+          {
+            "fact_path": "consent.version",
+            "value": "合成项目事实：consent.version"
+          },
+          {
+            "fact_path": "consent.responsible_role",
+            "value": "合成项目事实：consent.responsible_role"
+          },
+          {
+            "fact_path": "consent.before_relevant_procedure",
+            "value": "合成项目事实：consent.before_relevant_procedure"
+          },
+          {
+            "fact_path": "consent.capacity_or_representative",
+            "value": "合成项目事实：consent.capacity_or_representative"
+          },
+          {
+            "fact_path": "consent.witness_if_applicable",
+            "value": "合成项目事实：consent.witness_if_applicable"
+          },
+          {
+            "fact_path": "consent.new_information_handling",
+            "value": "合成项目事实：consent.new_information_handling"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "consent.prospective_process",
+            "statement": "合成项目主张：consent.prospective_process"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "consent.prospective_process",
+            "locator_kind": "body",
+            "locator": "body:854-856",
+            "context": "合成项目证据上下文：知情同意 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：知情同意",
+            "cells": [
+              {
+                "cell_id": "consent:cell:version",
+                "value": "合成表格值：consent:cell:version"
+              },
+              {
+                "cell_id": "consent:cell:timing",
+                "value": "合成表格值：consent:cell:timing"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-13-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "consent.procedure",
+            "value": "合成项目事实：consent.procedure"
+          },
+          {
+            "fact_path": "consent.version",
+            "value": "合成项目事实：consent.version"
+          },
+          {
+            "fact_path": "consent.responsible_role",
+            "value": "合成项目事实：consent.responsible_role"
+          },
+          {
+            "fact_path": "consent.before_relevant_procedure",
+            "value": "合成项目事实：consent.before_relevant_procedure"
+          },
+          {
+            "fact_path": "consent.capacity_or_representative",
+            "value": "合成项目事实：consent.capacity_or_representative"
+          },
+          {
+            "fact_path": "consent.witness_if_applicable",
+            "value": "合成项目事实：consent.witness_if_applicable"
+          },
+          {
+            "fact_path": "consent.new_information_handling",
+            "value": "合成项目事实：consent.new_information_handling"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "consent.prospective_process",
+            "statement": "合成项目主张：consent.prospective_process"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "consent.prospective_process",
+            "locator_kind": "body",
+            "locator": "body:854-856",
+            "context": "合成项目证据上下文：知情同意 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：知情同意",
+            "cells": [
+              {
+                "cell_id": "consent:cell:version",
+                "value": "合成表格值：consent:cell:version"
+              },
+              {
+                "cell_id": "consent:cell:timing",
+                "value": "合成表格值：consent:cell:timing"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-13-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-13-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "consent.version",
+            "value": "合成项目事实：consent.version"
+          },
+          {
+            "fact_path": "consent.responsible_role",
+            "value": "合成项目事实：consent.responsible_role"
+          },
+          {
+            "fact_path": "consent.before_relevant_procedure",
+            "value": "合成项目事实：consent.before_relevant_procedure"
+          },
+          {
+            "fact_path": "consent.capacity_or_representative",
+            "value": "合成项目事实：consent.capacity_or_representative"
+          },
+          {
+            "fact_path": "consent.witness_if_applicable",
+            "value": "合成项目事实：consent.witness_if_applicable"
+          },
+          {
+            "fact_path": "consent.new_information_handling",
+            "value": "合成项目事实：consent.new_information_handling"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "consent.prospective_process",
+            "statement": "合成项目主张：consent.prospective_process"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "consent.prospective_process",
+            "locator_kind": "body",
+            "locator": "body:854-856",
+            "context": "合成项目证据上下文：知情同意 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：知情同意",
+            "cells": [
+              {
+                "cell_id": "consent:cell:version",
+                "value": "合成表格值：consent:cell:version"
+              },
+              {
+                "cell_id": "consent:cell:timing",
+                "value": "合成表格值：consent:cell:timing"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-2:future-use-from-ordinary-consent",
+      "chapter_contract_id": "contract:v2-n-13-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "consent.procedure",
+            "value": "合成项目事实：consent.procedure"
+          },
+          {
+            "fact_path": "consent.version",
+            "value": "合成项目事实：consent.version"
+          },
+          {
+            "fact_path": "consent.responsible_role",
+            "value": "合成项目事实：consent.responsible_role"
+          },
+          {
+            "fact_path": "consent.before_relevant_procedure",
+            "value": "合成项目事实：consent.before_relevant_procedure"
+          },
+          {
+            "fact_path": "consent.capacity_or_representative",
+            "value": "合成项目事实：consent.capacity_or_representative"
+          },
+          {
+            "fact_path": "consent.witness_if_applicable",
+            "value": "合成项目事实：consent.witness_if_applicable"
+          },
+          {
+            "fact_path": "consent.new_information_handling",
+            "value": "合成项目事实：consent.new_information_handling"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "consent.prospective_process",
+            "statement": "合成项目主张：consent.prospective_process"
+          },
+          {
+            "claim_type": "future_use_permission_from_ordinary_consent",
+            "statement": "合成普通试验同意自动许可未来使用"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "consent.prospective_process",
+            "locator_kind": "body",
+            "locator": "body:854-856",
+            "context": "合成项目证据上下文：知情同意 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：知情同意",
+            "cells": [
+              {
+                "cell_id": "consent:cell:version",
+                "value": "合成表格值：consent:cell:version"
+              },
+              {
+                "cell_id": "consent:cell:timing",
+                "value": "合成表格值：consent:cell:timing"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-3:positive",
+      "chapter_contract_id": "contract:v2-n-13-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "confidentiality.data_coding",
+            "value": "合成项目事实：confidentiality.data_coding"
+          },
+          {
+            "fact_path": "confidentiality.sample_coding",
+            "value": "合成项目事实：confidentiality.sample_coding"
+          },
+          {
+            "fact_path": "confidentiality.recipients",
+            "value": "合成项目事实：confidentiality.recipients"
+          },
+          {
+            "fact_path": "confidentiality.access_control",
+            "value": "合成项目事实：confidentiality.access_control"
+          },
+          {
+            "fact_path": "confidentiality.transfer_arrangements",
+            "value": "合成项目事实：confidentiality.transfer_arrangements"
+          },
+          {
+            "fact_path": "confidentiality.retention_linkage",
+            "value": "合成项目事实：confidentiality.retention_linkage"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "confidentiality.access_boundary",
+            "statement": "合成项目主张：confidentiality.access_boundary"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "confidentiality.access_boundary",
+            "locator_kind": "body",
+            "locator": "body:862-879",
+            "context": "合成项目证据上下文：保密和隐私 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：保密和隐私",
+            "cells": [
+              {
+                "cell_id": "privacy:cell:recipient",
+                "value": "合成表格值：privacy:cell:recipient"
+              },
+              {
+                "cell_id": "privacy:cell:transfer",
+                "value": "合成表格值：privacy:cell:transfer"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-13-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "confidentiality.data_coding",
+            "value": "合成项目事实：confidentiality.data_coding"
+          },
+          {
+            "fact_path": "confidentiality.sample_coding",
+            "value": "合成项目事实：confidentiality.sample_coding"
+          },
+          {
+            "fact_path": "confidentiality.recipients",
+            "value": "合成项目事实：confidentiality.recipients"
+          },
+          {
+            "fact_path": "confidentiality.access_control",
+            "value": "合成项目事实：confidentiality.access_control"
+          },
+          {
+            "fact_path": "confidentiality.transfer_arrangements",
+            "value": "合成项目事实：confidentiality.transfer_arrangements"
+          },
+          {
+            "fact_path": "confidentiality.retention_linkage",
+            "value": "合成项目事实：confidentiality.retention_linkage"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "confidentiality.access_boundary",
+            "statement": "合成项目主张：confidentiality.access_boundary"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "confidentiality.access_boundary",
+            "locator_kind": "body",
+            "locator": "body:862-879",
+            "context": "合成项目证据上下文：保密和隐私 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：保密和隐私",
+            "cells": [
+              {
+                "cell_id": "privacy:cell:recipient",
+                "value": "合成表格值：privacy:cell:recipient"
+              },
+              {
+                "cell_id": "privacy:cell:transfer",
+                "value": "合成表格值：privacy:cell:transfer"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-13-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-13-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "confidentiality.sample_coding",
+            "value": "合成项目事实：confidentiality.sample_coding"
+          },
+          {
+            "fact_path": "confidentiality.recipients",
+            "value": "合成项目事实：confidentiality.recipients"
+          },
+          {
+            "fact_path": "confidentiality.access_control",
+            "value": "合成项目事实：confidentiality.access_control"
+          },
+          {
+            "fact_path": "confidentiality.transfer_arrangements",
+            "value": "合成项目事实：confidentiality.transfer_arrangements"
+          },
+          {
+            "fact_path": "confidentiality.retention_linkage",
+            "value": "合成项目事实：confidentiality.retention_linkage"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "confidentiality.access_boundary",
+            "statement": "合成项目主张：confidentiality.access_boundary"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "confidentiality.access_boundary",
+            "locator_kind": "body",
+            "locator": "body:862-879",
+            "context": "合成项目证据上下文：保密和隐私 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：保密和隐私",
+            "cells": [
+              {
+                "cell_id": "privacy:cell:recipient",
+                "value": "合成表格值：privacy:cell:recipient"
+              },
+              {
+                "cell_id": "privacy:cell:transfer",
+                "value": "合成表格值：privacy:cell:transfer"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-4:positive",
+      "chapter_contract_id": "contract:v2-n-13-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "compensation.arrangement",
+            "value": "合成项目事实：compensation.arrangement"
+          },
+          {
+            "fact_path": "compensation.trial_related_injury_procedure",
+            "value": "合成项目事实：compensation.trial_related_injury_procedure"
+          },
+          {
+            "fact_path": "compensation.insurance_or_guarantee",
+            "value": "合成项目事实：compensation.insurance_or_guarantee"
+          },
+          {
+            "fact_path": "compensation.responsible_contact",
+            "value": "合成项目事实：compensation.responsible_contact"
+          },
+          {
+            "fact_path": "compensation.missing_fact_resolution",
+            "value": "合成项目事实：compensation.missing_fact_resolution"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "compensation.resolution_path",
+            "statement": "合成项目主张：compensation.resolution_path"
+          },
+          {
+            "claim_type": "compensation.provision",
+            "statement": "合成项目主张：compensation.provision"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.resolution_path",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.provision",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：试验参与者的补偿、赔偿与保险",
+            "cells": [
+              {
+                "cell_id": "compensation:cell:arrangement",
+                "value": "合成表格值：compensation:cell:arrangement"
+              },
+              {
+                "cell_id": "compensation:cell:contact",
+                "value": "合成表格值：compensation:cell:contact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": true,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-4:wrong-source",
+      "chapter_contract_id": "contract:v2-n-13-4:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "compensation.arrangement",
+            "value": "合成项目事实：compensation.arrangement"
+          },
+          {
+            "fact_path": "compensation.trial_related_injury_procedure",
+            "value": "合成项目事实：compensation.trial_related_injury_procedure"
+          },
+          {
+            "fact_path": "compensation.insurance_or_guarantee",
+            "value": "合成项目事实：compensation.insurance_or_guarantee"
+          },
+          {
+            "fact_path": "compensation.responsible_contact",
+            "value": "合成项目事实：compensation.responsible_contact"
+          },
+          {
+            "fact_path": "compensation.missing_fact_resolution",
+            "value": "合成项目事实：compensation.missing_fact_resolution"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "compensation.resolution_path",
+            "statement": "合成项目主张：compensation.resolution_path"
+          },
+          {
+            "claim_type": "compensation.provision",
+            "statement": "合成项目主张：compensation.provision"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "compensation.resolution_path",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "compensation.provision",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：试验参与者的补偿、赔偿与保险",
+            "cells": [
+              {
+                "cell_id": "compensation:cell:arrangement",
+                "value": "合成表格值：compensation:cell:arrangement"
+              },
+              {
+                "cell_id": "compensation:cell:contact",
+                "value": "合成表格值：compensation:cell:contact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-4:skeleton",
+      "chapter_contract_id": "contract:v2-n-13-4:v2",
+      "fixture_kind": "skeleton",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": null,
+            "cells": []
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-4:missing-control",
+      "chapter_contract_id": "contract:v2-n-13-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "compensation.trial_related_injury_procedure",
+            "value": "合成项目事实：compensation.trial_related_injury_procedure"
+          },
+          {
+            "fact_path": "compensation.insurance_or_guarantee",
+            "value": "合成项目事实：compensation.insurance_or_guarantee"
+          },
+          {
+            "fact_path": "compensation.responsible_contact",
+            "value": "合成项目事实：compensation.responsible_contact"
+          },
+          {
+            "fact_path": "compensation.missing_fact_resolution",
+            "value": "合成项目事实：compensation.missing_fact_resolution"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "compensation.resolution_path",
+            "statement": "合成项目主张：compensation.resolution_path"
+          },
+          {
+            "claim_type": "compensation.provision",
+            "statement": "合成项目主张：compensation.provision"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.resolution_path",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.provision",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：试验参与者的补偿、赔偿与保险",
+            "cells": [
+              {
+                "cell_id": "compensation:cell:arrangement",
+                "value": "合成表格值：compensation:cell:arrangement"
+              },
+              {
+                "cell_id": "compensation:cell:contact",
+                "value": "合成表格值：compensation:cell:contact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    },
+    {
+      "fixture_id": "fixture:batch7:v2-n-13-4:missing-compensation-arrangement",
+      "chapter_contract_id": "contract:v2-n-13-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "compensation.trial_related_injury_procedure",
+            "value": "合成项目事实：compensation.trial_related_injury_procedure"
+          },
+          {
+            "fact_path": "compensation.insurance_or_guarantee",
+            "value": "合成项目事实：compensation.insurance_or_guarantee"
+          },
+          {
+            "fact_path": "compensation.responsible_contact",
+            "value": "合成项目事实：compensation.responsible_contact"
+          },
+          {
+            "fact_path": "compensation.missing_fact_resolution",
+            "value": "合成项目事实：compensation.missing_fact_resolution"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "compensation.resolution_path",
+            "statement": "合成项目主张：compensation.resolution_path"
+          },
+          {
+            "claim_type": "compensation.provision",
+            "statement": "合成项目主张：compensation.provision"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.resolution_path",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "compensation.provision",
+            "locator_kind": "body",
+            "locator": "body:880-881",
+            "context": "合成项目证据上下文：试验参与者的补偿、赔偿与保险 的已确认安排。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "合成表格：试验参与者的补偿、赔偿与保险",
+            "cells": [
+              {
+                "cell_id": "compensation:cell:arrangement",
+                "value": "合成表格值：compensation:cell:arrangement"
+              },
+              {
+                "cell_id": "compensation:cell:contact",
+                "value": "合成表格值：compensation:cell:contact"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成测试值，未执行医学或质量判断"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.451" timestamp="2026-09-05T16:23:04.465750+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.test_runtime_directory_configuration.RuntimeDirectoryConfigurationTests" name="test_all_mutable_stores_follow_runtime_directory_override" time="2.404"><failure message="AssertionError: False is not true">self = &lt;tests.test_runtime_directory_configuration.RuntimeDirectoryConfigurationTests testMethod=test_all_mutable_stores_follow_runtime_directory_override&gt;
+
+        def test_all_mutable_stores_follow_runtime_directory_override(self):
+            with tempfile.TemporaryDirectory() as temp_dir:
+                runtime_dir = Path(temp_dir).resolve()
+                script = """
+    import json
+    import services.api.app.main as main
+    
+    print(json.dumps({
+        "runtime_dir": str(main.RUNTIME_DIR),
+        "sqlite": str(main.runtime_store.db_path),
+        "ai_runs": str(main.ai_task_runner.store.jsonl_path),
+        "source_registry": str(main.source_registry.store.jsonl_path),
+        "tfl": str(main.tfl_review_store.path),
+        "safety": str(main.safety_review_store.runtime_store.db_path),
+        "inbox": str(main.workbench_inbox_service.store.path),
+        "writing_reference_artifact_root": str(main._writing_reference_artifact_root),
+        "writing_reference_artifact_root_exists": main._writing_reference_artifact_root.is_dir(),
+        "ocr_gateway_configured": main._ocr_gateway is not None,
+    }, ensure_ascii=False))
+    """
+                env = os.environ.copy()
+                env["WORKBENCH_RUNTIME_DIR"] = str(runtime_dir)
+                env["PYTHONDONTWRITEBYTECODE"] = "1"
+                result = subprocess.run(
+                    [sys.executable, "-c", script],
+                    cwd=ROOT,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    timeout=90,
+                )
+                payload = json.loads(result.stdout.strip().splitlines()[-1])
+    
+                self.assertEqual(str(runtime_dir), payload.pop("runtime_dir"))
+                self.assertTrue(payload.pop("writing_reference_artifact_root_exists"))
+&gt;               self.assertTrue(payload.pop("ocr_gateway_configured"))
+E               AssertionError: False is not true
+
+tests/test_runtime_directory_configuration.py:52: AssertionError</failure></testcase></testsuite></testsuites>

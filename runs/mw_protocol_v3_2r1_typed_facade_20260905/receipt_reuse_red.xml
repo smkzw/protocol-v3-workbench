@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.457" timestamp="2026-09-06T00:15:22.707479+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_graph_receipt_atomicity" name="test_reused_receipt_checks_supplied_payload" time="0.024"><failure message="Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.graph.state.GraphRunError'&gt;">tests/protocol_v3/test_graph_receipt_atomicity.py:92: in test_reused_receipt_checks_supplied_payload
+    with pytest.raises(GraphRunError) as raised:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.graph.state.GraphRunError'&gt;</failure></testcase></testsuite></testsuites>

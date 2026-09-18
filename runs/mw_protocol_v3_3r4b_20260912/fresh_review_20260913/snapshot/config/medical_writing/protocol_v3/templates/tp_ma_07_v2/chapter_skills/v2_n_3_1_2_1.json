@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-1-2-1:estimand-population",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_1_2_1",
+  "chapter_contract_id": "contract:v2-n-3-1-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按目标人群属性合同给出可判定的目标人群定义，并显式说明其与随机后分析集的区别；不得以人群描述替代目标人群，也不得把人群描述事实路径当作汇总指标。",
+    "forbidden_behaviors": [
+      "把目标人群等同于随机后分析集或“至少一次给药”人群",
+      "把 picos.population_summary 当作估计目标汇总指标",
+      "输出“状况/疾病”等占位文字"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与属性所引用的已确认事实路径。",
+    "目标人群定义必须与第5章人群声明一致，冲突时进入审核队列。",
+    "属性声明不得新建第二可编辑事实存储。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-1-2-1:missing-obligation",
+    "skill:v2-n-3-1-2-1:unresolved-fact",
+    "skill:v2-n-3-1-2-1:unsupported-source-role"
+  ]
+}

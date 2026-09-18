@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-4-2:exploratory-endpoints",
+  "skill_version": "3.4.0",
+  "node_id": "v2_n_3_4_2",
+  "chapter_contract_id": "contract:v2-n-3-4-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按探索性终点合同给出终点、处置和分析意图，并明确解释范围。探索性分析不得直接表述为确证性有效；恰当的描述性/支持性分析可以保留，不能把其归为禁止内容。若拟转为确证性分析，回到假设家族、多重性计划及人审确认，不在本章自动升级。未开展时明确处置，不虚构终点。",
+    "forbidden_behaviors": [
+      "把探索性终点表述为确证性结论",
+      "只列终点名称而不给处置与分析意图",
+      "编造探索性终点"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与条件适用性规则命中情况。",
+    "探索性终点必须回链已确认事实路径。",
+    "分析意图必须对后续统计合同保持可见。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-4-2:missing-obligation",
+    "skill:v2-n-3-4-2:unresolved-fact",
+    "skill:v2-n-3-4-2:unsupported-source-role"
+  ]
+}

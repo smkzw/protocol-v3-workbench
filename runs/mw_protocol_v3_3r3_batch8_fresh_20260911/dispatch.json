@@ -1,0 +1,11 @@
+{
+  "dispatched_by": "zcode-takeover-20260911",
+  "harness": "codebuddy-cli",
+  "declared_route": "codebuddy/codebuddy-cli/deepseek-v4-flash:max",
+  "verifier_note": "deepseek-v4-flash vs producer deepseek-v4.1-flash: different model, same provider family — main owner accepts this pairing per batch1/batch3 precedent (independent static audit quality demonstrated); strictly non-GLM, non-OpenAI",
+  "prompt": "prompts/codebuddy_mw_protocol_v3_3r3_batch8_fresh_20260911.md",
+  "context": "context/mw_protocol_v3_3r3_batch8_fresh_review_20260911_context.md",
+  "permission_mode": "plan",
+  "max_turns": 220,
+  "started_at": "2026-09-11T23:02+08:00"
+}

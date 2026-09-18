@@ -1,0 +1,3641 @@
+{
+  "schema_version": "protocol-v3-chapter-batch.v1",
+  "generated_for": "TP-MA-07 v2 batch4 chapter contracts and fixtures (3R.3 batch4：第6–8章 研究干预/访视期/中止退出失访)",
+  "authority": "Codex-approved Plan v2 Task 3R.3 batch4；重用模板合同 + 显式合成夹具值，非项目批准，不含运行时激活；布尔触发事实采用裸true/false编码，合成标记由夹具值文本承载",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fact_vocabulary": [
+    "discontinuation.basis_for_further_collection",
+    "discontinuation.continued_assessment_scope",
+    "discontinuation.continued_data_types",
+    "discontinuation.data_retention_after_withdrawal",
+    "discontinuation.disposition_schedule_integration",
+    "discontinuation.existing_data_handling",
+    "discontinuation.followup_after_withdrawal",
+    "discontinuation.individual_hold_applicable",
+    "discontinuation.individual_hold_criteria",
+    "discontinuation.individual_hold_requires_permanent_stop",
+    "discontinuation.permanent_stop_criteria.participant",
+    "discontinuation.permanent_stop_recording",
+    "discontinuation.personal_hold",
+    "discontinuation.replacement_policy",
+    "discontinuation.safety_assessment_coherence",
+    "discontinuation.template_example_replacement_rule",
+    "discontinuation.template_example_stop_rule",
+    "discontinuation.time_limits",
+    "discontinuation.trial_stop_decision_authority",
+    "discontinuation.trial_stop_decision_logic",
+    "discontinuation.trial_stop_post_decision",
+    "discontinuation.trial_suspension_criteria",
+    "discontinuation.trial_termination_criteria",
+    "discontinuation.withdrawal_reason_recording",
+    "discontinuation.withdrawal_scenarios",
+    "intervention.accountability_records",
+    "intervention.adherence_denominator",
+    "intervention.adherence_evidence_source",
+    "intervention.adherence_measure",
+    "intervention.administration_instructions",
+    "intervention.allowed_timing",
+    "intervention.allowed_treatments",
+    "intervention.background_therapy_applicable",
+    "intervention.background_therapy_rules",
+    "intervention.destruction_authorization",
+    "intervention.dispensing_and_return",
+    "intervention.dose_consistency_with_design",
+    "intervention.dose_escalation_or_dlt_logic",
+    "intervention.dose_hold_criteria",
+    "intervention.dose_modification_required",
+    "intervention.dose_reduction_rules",
+    "intervention.dose_regimen",
+    "intervention.exposure_dose",
+    "intervention.food_relationship_and_preparation",
+    "intervention.formulation",
+    "intervention.label_text",
+    "intervention.missed_dose_instructions",
+    "intervention.packaging_and_labeling",
+    "intervention.permanent_discontinuation_criteria",
+    "intervention.planned_hold_tracking",
+    "intervention.preparation_conditions",
+    "intervention.preparation_responsible_party",
+    "intervention.product_authority",
+    "intervention.product_identity",
+    "intervention.prohibited_treatments",
+    "intervention.prohibited_window",
+    "intervention.receipt_and_inventory",
+    "intervention.regulatory_labeling_check",
+    "intervention.rescue_estimand_linkage",
+    "intervention.rescue_followup_handling",
+    "intervention.rescue_permitted",
+    "intervention.rescue_records",
+    "intervention.rescue_timing",
+    "intervention.responsible_party",
+    "intervention.restart_criteria",
+    "intervention.route_of_administration",
+    "intervention.stability_handling",
+    "intervention.storage_conditions",
+    "intervention.storage_conditions.unit",
+    "intervention.template_example_concomitant_drug",
+    "intervention.template_example_dose",
+    "intervention.template_example_hold_threshold",
+    "intervention.template_example_interval",
+    "intervention.template_example_label_text",
+    "intervention.template_example_preparation_text",
+    "intervention.template_example_prohibited_list",
+    "intervention.template_example_rescue_drug",
+    "intervention.template_example_sop_reference",
+    "intervention.template_example_storage_text",
+    "lost_to_followup.attempt_records",
+    "lost_to_followup.consent_and_outcome_distinction",
+    "lost_to_followup.contact_attempt_procedure",
+    "lost_to_followup.participant_contact_restrictions",
+    "lost_to_followup.review_and_classification",
+    "lost_to_followup.role_and_approvals",
+    "lost_to_followup.template_example_three_calls",
+    "procedure.baseline_assessments",
+    "procedure.blinded_treatment_handling",
+    "procedure.contact_visit_assessments",
+    "procedure.contact_visit_date",
+    "procedure.contact_visit_modality",
+    "procedure.contact_visit_reason",
+    "procedure.dosing_start_rules",
+    "procedure.followup_period_definition",
+    "procedure.followup_unscheduled_and_phone_visits",
+    "procedure.followup_visit_windows",
+    "procedure.phone_visit_linkage",
+    "procedure.randomization_day_rules",
+    "procedure.randomized_on_day1",
+    "procedure.screening_period_definition",
+    "procedure.screening_reassessment_rules",
+    "procedure.template_example_followup_plan",
+    "procedure.template_example_screening_window",
+    "procedure.template_example_visit_schedule",
+    "procedure.treatment_period_definition",
+    "procedure.treatment_visit_procedures"
+  ],
+  "claim_vocabulary": [
+    "accountability_procedure",
+    "adherence_strategy",
+    "allowed_treatment_rules",
+    "dose_regimen_description",
+    "fabricated_approval",
+    "followup_terminates_at_last_dose",
+    "individual_cessation_rules",
+    "individual_equals_trial_stop",
+    "intervention_description",
+    "lost_to_followup_determination",
+    "missed_visit_equals_lost_to_followup",
+    "packaging_labeling_description",
+    "preparation_procedure",
+    "prohibited_treatment_rules",
+    "regulatory_labeling_review",
+    "rescue_estimand_alignment",
+    "rescue_estimand_inconsistency",
+    "rescue_plan",
+    "silent_erase_prior_data",
+    "single_pivotal_trial_stop_rule",
+    "storage_handling_conditions",
+    "treatment_stop_equals_consent_withdrawal",
+    "trial_level_stop_criteria",
+    "unqualified_rescue_outcome_claim",
+    "unreached_equals_consent_withdrawal",
+    "visit_phase_description",
+    "withdrawal_handling",
+    "withdrawal_reason_compulsory"
+  ],
+  "coverage_roles": {
+    "v2_n_6_1_1": "heading_leaf",
+    "v2_n_6_1_2": "heading_leaf",
+    "v2_n_6_2_1": "heading_leaf",
+    "v2_n_6_2_2": "heading_leaf",
+    "v2_n_6_2_3": "heading_leaf",
+    "v2_n_6_2_4": "heading_leaf",
+    "v2_n_6_3": "heading_leaf",
+    "v2_n_6_4_1": "heading_leaf",
+    "v2_n_6_4_2": "heading_leaf",
+    "v2_n_6_4_3": "heading_leaf",
+    "v2_n_7_1": "heading_leaf",
+    "v2_n_7_2": "heading_leaf",
+    "v2_n_7_3": "heading_leaf",
+    "v2_n_8_1": "heading_leaf",
+    "v2_n_8_2": "heading_leaf",
+    "v2_n_8_3": "heading_leaf"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-1:positive",
+      "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.product_identity",
+            "value": "【合成夹具】intervention.product_identity 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.formulation",
+            "value": "【合成夹具】intervention.formulation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.exposure_dose",
+            "value": "【合成夹具】intervention.exposure_dose 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.route_of_administration",
+            "value": "【合成夹具】intervention.route_of_administration 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.product_authority",
+            "value": "【合成夹具】intervention.product_authority 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "intervention_description",
+            "statement": "【合成夹具】研究药物身份、剂型、途径与剂量必须来自本项目既定的产品权威事实。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "intervention_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[423、425–426]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究药物描述段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:drug_identity",
+                "value": "【合成夹具】intervention:cell:drug_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:formulation_strength",
+                "value": "【合成夹具】intervention:cell:formulation_strength 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:source_authority",
+                "value": "【合成夹具】intervention:cell:source_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.product_identity",
+            "value": "【合成夹具】intervention.product_identity 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.formulation",
+            "value": "【合成夹具】intervention.formulation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.exposure_dose",
+            "value": "【合成夹具】intervention.exposure_dose 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.route_of_administration",
+            "value": "【合成夹具】intervention.route_of_administration 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "intervention_description",
+            "statement": "【合成夹具】研究药物身份、剂型、途径与剂量必须来自本项目既定的产品权威事实。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "intervention_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[423、425–426]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究药物描述段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:drug_identity",
+                "value": "【合成夹具】intervention:cell:drug_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:formulation_strength",
+                "value": "【合成夹具】intervention:cell:formulation_strength 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:source_authority",
+                "value": "【合成夹具】intervention:cell:source_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.product_identity",
+            "value": "【合成夹具】intervention.product_identity 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.formulation",
+            "value": "【合成夹具】intervention.formulation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.exposure_dose",
+            "value": "【合成夹具】intervention.exposure_dose 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.route_of_administration",
+            "value": "【合成夹具】intervention.route_of_administration 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.product_authority",
+            "value": "【合成夹具】intervention.product_authority 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "intervention_description",
+            "statement": "【合成夹具】研究药物身份、剂型、途径与剂量必须来自本项目既定的产品权威事实。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "intervention_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：研究药物描述段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:drug_identity",
+                "value": "【合成夹具】intervention:cell:drug_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:formulation_strength",
+                "value": "【合成夹具】intervention:cell:formulation_strength 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:source_authority",
+                "value": "【合成夹具】intervention:cell:source_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-2:positive",
+      "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.dose_regimen",
+            "value": "【合成夹具】intervention.dose_regimen 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.administration_instructions",
+            "value": "【合成夹具】intervention.administration_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_hold_criteria",
+            "value": "【合成夹具】intervention.dose_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_reduction_rules",
+            "value": "【合成夹具】intervention.dose_reduction_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.restart_criteria",
+            "value": "【合成夹具】intervention.restart_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.permanent_discontinuation_criteria",
+            "value": "【合成夹具】intervention.permanent_discontinuation_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.missed_dose_instructions",
+            "value": "【合成夹具】intervention.missed_dose_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_escalation_or_dlt_logic",
+            "value": "【合成夹具】intervention.dose_escalation_or_dlt_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.food_relationship_and_preparation",
+            "value": "【合成夹具】intervention.food_relationship_and_preparation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_consistency_with_design",
+            "value": "【合成夹具】intervention.dose_consistency_with_design 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_modification_required",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "dose_regimen_description",
+            "statement": "【合成夹具】剂量、间隔、途径、暂停/降低/恢复与永久停药条件必须为项目特定且彼此一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "dose_regimen_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[427、428–432]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究药物给药方案段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:route",
+                "value": "【合成夹具】intervention:cell:route 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:dose",
+                "value": "【合成夹具】intervention:cell:dose 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:interval",
+                "value": "【合成夹具】intervention:cell:interval 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:duration",
+                "value": "【合成夹具】intervention:cell:duration 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.dose_regimen",
+            "value": "【合成夹具】intervention.dose_regimen 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.administration_instructions",
+            "value": "【合成夹具】intervention.administration_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_hold_criteria",
+            "value": "【合成夹具】intervention.dose_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_reduction_rules",
+            "value": "【合成夹具】intervention.dose_reduction_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.restart_criteria",
+            "value": "【合成夹具】intervention.restart_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.permanent_discontinuation_criteria",
+            "value": "【合成夹具】intervention.permanent_discontinuation_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.missed_dose_instructions",
+            "value": "【合成夹具】intervention.missed_dose_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_escalation_or_dlt_logic",
+            "value": "【合成夹具】intervention.dose_escalation_or_dlt_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.food_relationship_and_preparation",
+            "value": "【合成夹具】intervention.food_relationship_and_preparation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_modification_required",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "dose_regimen_description",
+            "statement": "【合成夹具】剂量、间隔、途径、暂停/降低/恢复与永久停药条件必须为项目特定且彼此一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "dose_regimen_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[427、428–432]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究药物给药方案段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:route",
+                "value": "【合成夹具】intervention:cell:route 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:dose",
+                "value": "【合成夹具】intervention:cell:dose 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:interval",
+                "value": "【合成夹具】intervention:cell:interval 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:duration",
+                "value": "【合成夹具】intervention:cell:duration 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.dose_regimen",
+            "value": "【合成夹具】intervention.dose_regimen 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.administration_instructions",
+            "value": "【合成夹具】intervention.administration_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_hold_criteria",
+            "value": "【合成夹具】intervention.dose_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_reduction_rules",
+            "value": "【合成夹具】intervention.dose_reduction_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.restart_criteria",
+            "value": "【合成夹具】intervention.restart_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.permanent_discontinuation_criteria",
+            "value": "【合成夹具】intervention.permanent_discontinuation_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.missed_dose_instructions",
+            "value": "【合成夹具】intervention.missed_dose_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_escalation_or_dlt_logic",
+            "value": "【合成夹具】intervention.dose_escalation_or_dlt_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.food_relationship_and_preparation",
+            "value": "【合成夹具】intervention.food_relationship_and_preparation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_consistency_with_design",
+            "value": "【合成夹具】intervention.dose_consistency_with_design 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_modification_required",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "dose_regimen_description",
+            "statement": "【合成夹具】剂量、间隔、途径、暂停/降低/恢复与永久停药条件必须为项目特定且彼此一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "dose_regimen_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：研究药物给药方案段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:route",
+                "value": "【合成夹具】intervention:cell:route 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:dose",
+                "value": "【合成夹具】intervention:cell:dose 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:interval",
+                "value": "【合成夹具】intervention:cell:interval 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:duration",
+                "value": "【合成夹具】intervention:cell:duration 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-1-2:conflicting-drug-facts",
+      "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.dose_regimen",
+            "value": "【合成夹具】intervention.dose_regimen 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.administration_instructions",
+            "value": "【合成夹具】intervention.administration_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_hold_criteria",
+            "value": "【合成夹具】intervention.dose_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_reduction_rules",
+            "value": "【合成夹具】intervention.dose_reduction_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.restart_criteria",
+            "value": "【合成夹具】intervention.restart_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.permanent_discontinuation_criteria",
+            "value": "【合成夹具】intervention.permanent_discontinuation_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.missed_dose_instructions",
+            "value": "【合成夹具】intervention.missed_dose_instructions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_escalation_or_dlt_logic",
+            "value": "【合成夹具】intervention.dose_escalation_or_dlt_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.food_relationship_and_preparation",
+            "value": "【合成夹具】intervention.food_relationship_and_preparation 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dose_modification_required",
+            "value": "true"
+          },
+          {
+            "fact_path": "intervention.template_example_hold_threshold",
+            "value": "【合成夹具】与之冲突的示例停药阈值（非项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "dose_regimen_description",
+            "statement": "【合成夹具】剂量、间隔、途径、暂停/降低/恢复与永久停药条件必须为项目特定且彼此一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "dose_regimen_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[427、428–432]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究药物给药方案段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:route",
+                "value": "【合成夹具】intervention:cell:route 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:dose",
+                "value": "【合成夹具】intervention:cell:dose 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:interval",
+                "value": "【合成夹具】intervention:cell:interval 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:duration",
+                "value": "【合成夹具】intervention:cell:duration 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-1:positive",
+      "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.receipt_and_inventory",
+            "value": "【合成夹具】intervention.receipt_and_inventory 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.accountability_records",
+            "value": "【合成夹具】intervention.accountability_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dispensing_and_return",
+            "value": "【合成夹具】intervention.dispensing_and_return 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.destruction_authorization",
+            "value": "【合成夹具】intervention.destruction_authorization 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.responsible_party",
+            "value": "【合成夹具】intervention.responsible_party 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "accountability_procedure",
+            "statement": "【合成夹具】接收、清点、发放、回收与销毁必须给出责任方与记录要求，并保持可追溯。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "accountability_procedure",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[435、436–439]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：药物接收和清点段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:receipt_identity",
+                "value": "【合成夹具】intervention:cell:receipt_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:accountability_record",
+                "value": "【合成夹具】intervention:cell:accountability_record 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:destruction_record",
+                "value": "【合成夹具】intervention:cell:destruction_record 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.receipt_and_inventory",
+            "value": "【合成夹具】intervention.receipt_and_inventory 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.accountability_records",
+            "value": "【合成夹具】intervention.accountability_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dispensing_and_return",
+            "value": "【合成夹具】intervention.dispensing_and_return 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.destruction_authorization",
+            "value": "【合成夹具】intervention.destruction_authorization 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "accountability_procedure",
+            "statement": "【合成夹具】接收、清点、发放、回收与销毁必须给出责任方与记录要求，并保持可追溯。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "accountability_procedure",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[435、436–439]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：药物接收和清点段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:receipt_identity",
+                "value": "【合成夹具】intervention:cell:receipt_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:accountability_record",
+                "value": "【合成夹具】intervention:cell:accountability_record 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:destruction_record",
+                "value": "【合成夹具】intervention:cell:destruction_record 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.receipt_and_inventory",
+            "value": "【合成夹具】intervention.receipt_and_inventory 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.accountability_records",
+            "value": "【合成夹具】intervention.accountability_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.dispensing_and_return",
+            "value": "【合成夹具】intervention.dispensing_and_return 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.destruction_authorization",
+            "value": "【合成夹具】intervention.destruction_authorization 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.responsible_party",
+            "value": "【合成夹具】intervention.responsible_party 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "accountability_procedure",
+            "statement": "【合成夹具】接收、清点、发放、回收与销毁必须给出责任方与记录要求，并保持可追溯。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "accountability_procedure",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：药物接收和清点段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:receipt_identity",
+                "value": "【合成夹具】intervention:cell:receipt_identity 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:accountability_record",
+                "value": "【合成夹具】intervention:cell:accountability_record 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:destruction_record",
+                "value": "【合成夹具】intervention:cell:destruction_record 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-2:positive",
+      "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.packaging_and_labeling",
+            "value": "【合成夹具】intervention.packaging_and_labeling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "packaging_labeling_description",
+            "statement": "【合成夹具】包装与标签内容必须与实际产品包装一致并给出标签文本来源。（测试声明）"
+          },
+          {
+            "claim_type": "regulatory_labeling_review",
+            "statement": "【合成夹具】标签文本须经适用的监管/操作核查；本节不断言普遍标签法规。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "packaging_labeling_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "regulatory_labeling_review",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:packaging",
+                "value": "【合成夹具】intervention:cell:packaging 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:label_binding",
+                "value": "【合成夹具】intervention:cell:label_binding 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.packaging_and_labeling",
+            "value": "【合成夹具】intervention.packaging_and_labeling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "packaging_labeling_description",
+            "statement": "【合成夹具】包装与标签内容必须与实际产品包装一致并给出标签文本来源。（测试声明）"
+          },
+          {
+            "claim_type": "regulatory_labeling_review",
+            "statement": "【合成夹具】标签文本须经适用的监管/操作核查；本节不断言普遍标签法规。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "packaging_labeling_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "regulatory_labeling_review",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:packaging",
+                "value": "【合成夹具】intervention:cell:packaging 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:label_binding",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.packaging_and_labeling",
+            "value": "【合成夹具】intervention.packaging_and_labeling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "packaging_labeling_description",
+            "statement": "【合成夹具】包装与标签内容必须与实际产品包装一致并给出标签文本来源。（测试声明）"
+          },
+          {
+            "claim_type": "regulatory_labeling_review",
+            "statement": "【合成夹具】标签文本须经适用的监管/操作核查；本节不断言普遍标签法规。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "packaging_labeling_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "regulatory_labeling_review",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:packaging",
+                "value": "【合成夹具】intervention:cell:packaging 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:label_binding",
+                "value": "【合成夹具】intervention:cell:label_binding 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-2:copied-grade-threshold",
+      "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.packaging_and_labeling",
+            "value": "【合成夹具】intervention.packaging_and_labeling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "packaging_labeling_description",
+            "statement": "【合成夹具】包装与标签内容必须与实际产品包装一致并给出标签文本来源。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "packaging_labeling_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[440、441–461]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：剂型、外观、包装和标签段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:packaging",
+                "value": "【合成夹具】intervention:cell:packaging 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:label_binding",
+                "value": "【合成夹具】intervention:cell:label_binding 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-3:positive",
+      "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.storage_conditions",
+            "value": "【合成夹具】intervention.storage_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.storage_conditions.unit",
+            "value": "【合成夹具】intervention.storage_conditions.unit 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.stability_handling",
+            "value": "【合成夹具】intervention.stability_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "storage_handling_conditions",
+            "statement": "【合成夹具】储存条件与稳定性处理必须给出真实单位与条件，并与标签一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "storage_handling_conditions",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[462、463]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：产品储存和稳定性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:storage_condition",
+                "value": "【合成夹具】intervention:cell:storage_condition 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:storage_unit",
+                "value": "【合成夹具】intervention:cell:storage_unit 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.storage_conditions",
+            "value": "【合成夹具】intervention.storage_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.storage_conditions.unit",
+            "value": "【合成夹具】intervention.storage_conditions.unit 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.stability_handling",
+            "value": "【合成夹具】intervention.stability_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "storage_handling_conditions",
+            "statement": "【合成夹具】储存条件与稳定性处理必须给出真实单位与条件，并与标签一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "storage_handling_conditions",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[462、463]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：产品储存和稳定性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:storage_condition",
+                "value": "【合成夹具】intervention:cell:storage_condition 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:storage_unit",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.storage_conditions",
+            "value": "【合成夹具】intervention.storage_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.storage_conditions.unit",
+            "value": "【合成夹具】intervention.storage_conditions.unit 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.stability_handling",
+            "value": "【合成夹具】intervention.stability_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "storage_handling_conditions",
+            "statement": "【合成夹具】储存条件与稳定性处理必须给出真实单位与条件，并与标签一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "storage_handling_conditions",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：产品储存和稳定性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:storage_condition",
+                "value": "【合成夹具】intervention:cell:storage_condition 合成单元格值"
+              },
+              {
+                "cell_id": "intervention:cell:storage_unit",
+                "value": "【合成夹具】intervention:cell:storage_unit 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-3:empty-storage-condition",
+      "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.storage_conditions",
+            "value": "【合成夹具】intervention.storage_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.storage_conditions.unit",
+            "value": "【合成夹具】intervention.storage_conditions.unit 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.stability_handling",
+            "value": "【合成夹具】intervention.stability_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "storage_handling_conditions",
+            "statement": "【合成夹具】储存条件与稳定性处理必须给出真实单位与条件，并与标签一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "storage_handling_conditions",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[462、463]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：产品储存和稳定性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:storage_condition",
+                "value": ""
+              },
+              {
+                "cell_id": "intervention:cell:storage_unit",
+                "value": "【合成夹具】intervention:cell:storage_unit 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-4:positive",
+      "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.preparation_conditions",
+            "value": "【合成夹具】intervention.preparation_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.preparation_responsible_party",
+            "value": "【合成夹具】intervention.preparation_responsible_party 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "preparation_procedure",
+            "statement": "【合成夹具】配制/准备步骤必须给出项目特定条件、责任方与记录要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "preparation_procedure",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[464、465]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：准备段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】准备段必须承载项目特定配制条件、责任方与记录要求。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-4:missing-claim",
+      "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.preparation_conditions",
+            "value": "【合成夹具】intervention.preparation_conditions 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "preparation_procedure",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[464、465]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：准备段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】准备段必须承载项目特定配制条件、责任方与记录要求。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-4:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.preparation_conditions",
+            "value": "【合成夹具】intervention.preparation_conditions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.preparation_responsible_party",
+            "value": "【合成夹具】intervention.preparation_responsible_party 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "preparation_procedure",
+            "statement": "【合成夹具】配制/准备步骤必须给出项目特定条件、责任方与记录要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "preparation_procedure",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：准备段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】准备段必须承载项目特定配制条件、责任方与记录要求。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-2-4:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-3:positive",
+      "chapter_contract_id": "contract:v2-n-6-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.adherence_measure",
+            "value": "【合成夹具】intervention.adherence_measure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_denominator",
+            "value": "【合成夹具】intervention.adherence_denominator 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_evidence_source",
+            "value": "【合成夹具】intervention.adherence_evidence_source 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.planned_hold_tracking",
+            "value": "【合成夹具】intervention.planned_hold_tracking 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "adherence_strategy",
+            "statement": "【合成夹具】依从性测量、分母与支持记录必须一致，并与计划性暂停及评估安排衔接。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "adherence_strategy",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[466、467–469]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预的依从性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】依从性段必须承载测量方法、分母定义、支持记录与计划性暂停/评估时点。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.adherence_measure",
+            "value": "【合成夹具】intervention.adherence_measure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_evidence_source",
+            "value": "【合成夹具】intervention.adherence_evidence_source 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.planned_hold_tracking",
+            "value": "【合成夹具】intervention.planned_hold_tracking 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "adherence_strategy",
+            "statement": "【合成夹具】依从性测量、分母与支持记录必须一致，并与计划性暂停及评估安排衔接。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "adherence_strategy",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[466、467–469]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预的依从性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】依从性段必须承载测量方法、分母定义、支持记录与计划性暂停/评估时点。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.adherence_measure",
+            "value": "【合成夹具】intervention.adherence_measure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_denominator",
+            "value": "【合成夹具】intervention.adherence_denominator 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_evidence_source",
+            "value": "【合成夹具】intervention.adherence_evidence_source 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.planned_hold_tracking",
+            "value": "【合成夹具】intervention.planned_hold_tracking 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "adherence_strategy",
+            "statement": "【合成夹具】依从性测量、分母与支持记录必须一致，并与计划性暂停及评估安排衔接。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "adherence_strategy",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：研究干预的依从性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】依从性段必须承载测量方法、分母定义、支持记录与计划性暂停/评估时点。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-3:adherence-denominator-omitted",
+      "chapter_contract_id": "contract:v2-n-6-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.adherence_measure",
+            "value": "【合成夹具】intervention.adherence_measure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.adherence_evidence_source",
+            "value": "【合成夹具】intervention.adherence_evidence_source 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.planned_hold_tracking",
+            "value": "【合成夹具】intervention.planned_hold_tracking 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "adherence_strategy",
+            "statement": "【合成夹具】依从性测量、分母与支持记录必须一致，并与计划性暂停及评估安排衔接。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "adherence_strategy",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[466、467–469]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预的依从性段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】依从性段必须承载测量方法、分母定义、支持记录与计划性暂停/评估时点。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-1:positive",
+      "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.prohibited_treatments",
+            "value": "【合成夹具】intervention.prohibited_treatments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.prohibited_window",
+            "value": "【合成夹具】intervention.prohibited_window 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "prohibited_treatment_rules",
+            "statement": "【合成夹具】禁止清单与时间窗必须项目特定，并给出记录与处置要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "prohibited_treatment_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[476、477]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：禁止使用的食物、药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:prohibited_item",
+                "value": "【合成夹具】intervention:cell:prohibited_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.prohibited_treatments",
+            "value": "【合成夹具】intervention.prohibited_treatments 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "prohibited_treatment_rules",
+            "statement": "【合成夹具】禁止清单与时间窗必须项目特定，并给出记录与处置要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "prohibited_treatment_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[476、477]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：禁止使用的食物、药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:prohibited_item",
+                "value": "【合成夹具】intervention:cell:prohibited_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.prohibited_treatments",
+            "value": "【合成夹具】intervention.prohibited_treatments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.prohibited_window",
+            "value": "【合成夹具】intervention.prohibited_window 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "prohibited_treatment_rules",
+            "statement": "【合成夹具】禁止清单与时间窗必须项目特定，并给出记录与处置要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "prohibited_treatment_rules",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：禁止使用的食物、药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:prohibited_item",
+                "value": "【合成夹具】intervention:cell:prohibited_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-2:positive",
+      "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.allowed_treatments",
+            "value": "【合成夹具】intervention.allowed_treatments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.allowed_timing",
+            "value": "【合成夹具】intervention.allowed_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_rules",
+            "value": "【合成夹具】intervention.background_therapy_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "allowed_treatment_rules",
+            "statement": "【合成夹具】允许清单、时间安排与背景治疗必须项目特定，并与禁用清单互补。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "allowed_treatment_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[478、479–480]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：允许使用的药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:allowed_item",
+                "value": "【合成夹具】intervention:cell:allowed_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-2:missing-claim",
+      "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.allowed_treatments",
+            "value": "【合成夹具】intervention.allowed_treatments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_rules",
+            "value": "【合成夹具】intervention.background_therapy_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "allowed_treatment_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[478、479–480]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：允许使用的药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:allowed_item",
+                "value": "【合成夹具】intervention:cell:allowed_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.allowed_treatments",
+            "value": "【合成夹具】intervention.allowed_treatments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.allowed_timing",
+            "value": "【合成夹具】intervention.allowed_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_rules",
+            "value": "【合成夹具】intervention.background_therapy_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.background_therapy_applicable",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "allowed_treatment_rules",
+            "statement": "【合成夹具】允许清单、时间安排与背景治疗必须项目特定，并与禁用清单互补。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "allowed_treatment_rules",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：允许使用的药物和治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:allowed_item",
+                "value": "【合成夹具】intervention:cell:allowed_item 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-4-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-3:positive",
+      "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.rescue_permitted",
+            "value": "【合成夹具】intervention.rescue_permitted 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_timing",
+            "value": "【合成夹具】intervention.rescue_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_records",
+            "value": "【合成夹具】intervention.rescue_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_estimand_linkage",
+            "value": "【合成夹具】intervention.rescue_estimand_linkage 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_followup_handling",
+            "value": "【合成夹具】intervention.rescue_followup_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "rescue_plan",
+            "statement": "【合成夹具】补救治疗的允许条件、时点、记录与随访衔接必须项目特定。（测试声明）"
+          },
+          {
+            "claim_type": "rescue_estimand_alignment",
+            "statement": "【合成夹具】补救治疗策略必须与估计目标及分析策略一致，并说明其处理方式。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_plan",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_estimand_alignment",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:rescue_plan",
+                "value": "【合成夹具】intervention:cell:rescue_plan 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.rescue_permitted",
+            "value": "【合成夹具】intervention.rescue_permitted 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_timing",
+            "value": "【合成夹具】intervention.rescue_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_records",
+            "value": "【合成夹具】intervention.rescue_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_followup_handling",
+            "value": "【合成夹具】intervention.rescue_followup_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "rescue_plan",
+            "statement": "【合成夹具】补救治疗的允许条件、时点、记录与随访衔接必须项目特定。（测试声明）"
+          },
+          {
+            "claim_type": "rescue_estimand_alignment",
+            "statement": "【合成夹具】补救治疗策略必须与估计目标及分析策略一致，并说明其处理方式。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_plan",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_estimand_alignment",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:rescue_plan",
+                "value": "【合成夹具】intervention:cell:rescue_plan 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.rescue_permitted",
+            "value": "【合成夹具】intervention.rescue_permitted 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_timing",
+            "value": "【合成夹具】intervention.rescue_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_records",
+            "value": "【合成夹具】intervention.rescue_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_estimand_linkage",
+            "value": "【合成夹具】intervention.rescue_estimand_linkage 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_followup_handling",
+            "value": "【合成夹具】intervention.rescue_followup_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "rescue_plan",
+            "statement": "【合成夹具】补救治疗的允许条件、时点、记录与随访衔接必须项目特定。（测试声明）"
+          },
+          {
+            "claim_type": "rescue_estimand_alignment",
+            "statement": "【合成夹具】补救治疗策略必须与估计目标及分析策略一致，并说明其处理方式。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "rescue_plan",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_estimand_alignment",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:rescue_plan",
+                "value": "【合成夹具】intervention:cell:rescue_plan 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-6-4-3:rescue-estimand-inconsistent",
+      "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "intervention.rescue_permitted",
+            "value": "【合成夹具】intervention.rescue_permitted 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_timing",
+            "value": "【合成夹具】intervention.rescue_timing 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_records",
+            "value": "【合成夹具】intervention.rescue_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "intervention.rescue_followup_handling",
+            "value": "【合成夹具】intervention.rescue_followup_handling 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "rescue_plan",
+            "statement": "【合成夹具】补救治疗的允许条件、时点、记录与随访衔接必须项目特定。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "rescue_plan",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[481、482–483]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：补救治疗段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "intervention:cell:rescue_plan",
+                "value": "【合成夹具】intervention:cell:rescue_plan 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-1:positive",
+      "chapter_contract_id": "contract:v2-n-7-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.screening_period_definition",
+            "value": "【合成夹具】procedure.screening_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.baseline_assessments",
+            "value": "【合成夹具】procedure.baseline_assessments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.screening_reassessment_rules",
+            "value": "【合成夹具】procedure.screening_reassessment_rules 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】筛选期定义与基线评估必须与 SoA、给药与安全随访安排一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[485、486]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：筛选期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】筛选期段必须承载筛选期定义、基线评估组合与重新筛选规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-7-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.screening_period_definition",
+            "value": "【合成夹具】procedure.screening_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.screening_reassessment_rules",
+            "value": "【合成夹具】procedure.screening_reassessment_rules 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】筛选期定义与基线评估必须与 SoA、给药与安全随访安排一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[485、486]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：筛选期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】筛选期段必须承载筛选期定义、基线评估组合与重新筛选规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-7-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.screening_period_definition",
+            "value": "【合成夹具】procedure.screening_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.baseline_assessments",
+            "value": "【合成夹具】procedure.baseline_assessments 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.screening_reassessment_rules",
+            "value": "【合成夹具】procedure.screening_reassessment_rules 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】筛选期定义与基线评估必须与 SoA、给药与安全随访安排一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：筛选期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】筛选期段必须承载筛选期定义、基线评估组合与重新筛选规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-7-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-2:positive",
+      "chapter_contract_id": "contract:v2-n-7-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.treatment_period_definition",
+            "value": "【合成夹具】procedure.treatment_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.dosing_start_rules",
+            "value": "【合成夹具】procedure.dosing_start_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.treatment_visit_procedures",
+            "value": "【合成夹具】procedure.treatment_visit_procedures 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.blinded_treatment_handling",
+            "value": "【合成夹具】procedure.blinded_treatment_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomization_day_rules",
+            "value": "【合成夹具】procedure.randomization_day_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomized_on_day1",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】治疗期定义、给药起点与访视程序必须与 SoA、给药方案及安全评估一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[488、489]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：治疗期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】治疗期段必须承载治疗期定义、给药起点、访视程序与盲态处理规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-7-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.treatment_period_definition",
+            "value": "【合成夹具】procedure.treatment_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.dosing_start_rules",
+            "value": "【合成夹具】procedure.dosing_start_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.treatment_visit_procedures",
+            "value": "【合成夹具】procedure.treatment_visit_procedures 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomization_day_rules",
+            "value": "【合成夹具】procedure.randomization_day_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomized_on_day1",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】治疗期定义、给药起点与访视程序必须与 SoA、给药方案及安全评估一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[488、489]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：治疗期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】治疗期段必须承载治疗期定义、给药起点、访视程序与盲态处理规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-7-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.treatment_period_definition",
+            "value": "【合成夹具】procedure.treatment_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.dosing_start_rules",
+            "value": "【合成夹具】procedure.dosing_start_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.treatment_visit_procedures",
+            "value": "【合成夹具】procedure.treatment_visit_procedures 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.blinded_treatment_handling",
+            "value": "【合成夹具】procedure.blinded_treatment_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomization_day_rules",
+            "value": "【合成夹具】procedure.randomization_day_rules 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.randomized_on_day1",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】治疗期定义、给药起点与访视程序必须与 SoA、给药方案及安全评估一致。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：治疗期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】治疗期段必须承载治疗期定义、给药起点、访视程序与盲态处理规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-7-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-3:positive",
+      "chapter_contract_id": "contract:v2-n-7-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.followup_period_definition",
+            "value": "【合成夹具】procedure.followup_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_visit_windows",
+            "value": "【合成夹具】procedure.followup_visit_windows 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.phone_visit_linkage",
+            "value": "【合成夹具】procedure.phone_visit_linkage 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】随访期定义、访视窗口与计划外/电话访视必须带单位、参考事件与记录要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[491、492–493]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：随访期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】随访段必须承载随访期定义、访视窗口（含单位与参考事件）与计划外/电话访视规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-3:missing-claim",
+      "chapter_contract_id": "contract:v2-n-7-3:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.followup_period_definition",
+            "value": "【合成夹具】procedure.followup_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_visit_windows",
+            "value": "【合成夹具】procedure.followup_visit_windows 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+            "value": "true"
+          }
+        ],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[491、492–493]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：随访期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】随访段必须承载随访期定义、访视窗口（含单位与参考事件）与计划外/电话访视规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-7-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.followup_period_definition",
+            "value": "【合成夹具】procedure.followup_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_visit_windows",
+            "value": "【合成夹具】procedure.followup_visit_windows 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.phone_visit_linkage",
+            "value": "【合成夹具】procedure.phone_visit_linkage 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "visit_phase_description",
+            "statement": "【合成夹具】随访期定义、访视窗口与计划外/电话访视必须带单位、参考事件与记录要求。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：随访期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】随访段必须承载随访期定义、访视窗口（含单位与参考事件）与计划外/电话访视规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-7-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-7-3:invented-approval-receipt",
+      "chapter_contract_id": "contract:v2-n-7-3:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "procedure.followup_period_definition",
+            "value": "【合成夹具】procedure.followup_period_definition 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_visit_windows",
+            "value": "【合成夹具】procedure.followup_visit_windows 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.phone_visit_linkage",
+            "value": "【合成夹具】procedure.phone_visit_linkage 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "fabricated_approval",
+            "statement": "【合成夹具】合成的批准/同意回执（不存在的批准，测试用）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "visit_phase_description",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[491、492–493]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：随访期段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "【合成夹具】随访段必须承载随访期定义、访视窗口（含单位与参考事件）与计划外/电话访视规则。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-1:positive",
+      "chapter_contract_id": "contract:v2-n-8-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.individual_hold_criteria",
+            "value": "【合成夹具】discontinuation.individual_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.personal_hold",
+            "value": "【合成夹具】discontinuation.personal_hold 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_criteria.participant",
+            "value": "【合成夹具】discontinuation.permanent_stop_criteria.participant 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_recording",
+            "value": "【合成夹具】discontinuation.permanent_stop_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_suspension_criteria",
+            "value": "【合成夹具】discontinuation.trial_suspension_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_termination_criteria",
+            "value": "【合成夹具】discontinuation.trial_termination_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_logic",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_authority",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_authority 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_post_decision",
+            "value": "【合成夹具】discontinuation.trial_stop_post_decision 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.safety_assessment_coherence",
+            "value": "【合成夹具】discontinuation.safety_assessment_coherence 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "individual_cessation_rules",
+            "statement": "【合成夹具】个体暂时暂停与个体永久停药必须各自给出项目特定标准与记录要求。（测试声明）"
+          },
+          {
+            "claim_type": "trial_level_stop_criteria",
+            "statement": "【合成夹具】整体试验暂停/终止必须给出设计特定决策逻辑、决定方与依据，且不转写为个体停止规则。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "individual_cessation_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "trial_level_stop_criteria",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "discontinuation:cell:individual_trigger",
+                "value": "【合成夹具】discontinuation:cell:individual_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_trigger",
+                "value": "【合成夹具】discontinuation:cell:trial_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_decision_authority",
+                "value": "【合成夹具】discontinuation:cell:trial_decision_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-8-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.individual_hold_criteria",
+            "value": "【合成夹具】discontinuation.individual_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.personal_hold",
+            "value": "【合成夹具】discontinuation.personal_hold 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_criteria.participant",
+            "value": "【合成夹具】discontinuation.permanent_stop_criteria.participant 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_recording",
+            "value": "【合成夹具】discontinuation.permanent_stop_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_suspension_criteria",
+            "value": "【合成夹具】discontinuation.trial_suspension_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_termination_criteria",
+            "value": "【合成夹具】discontinuation.trial_termination_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_logic",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_authority",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_authority 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_post_decision",
+            "value": "【合成夹具】discontinuation.trial_stop_post_decision 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.safety_assessment_coherence",
+            "value": "【合成夹具】discontinuation.safety_assessment_coherence 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "individual_cessation_rules",
+            "statement": "【合成夹具】个体暂时暂停与个体永久停药必须各自给出项目特定标准与记录要求。（测试声明）"
+          },
+          {
+            "claim_type": "trial_level_stop_criteria",
+            "statement": "【合成夹具】整体试验暂停/终止必须给出设计特定决策逻辑、决定方与依据，且不转写为个体停止规则。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "individual_cessation_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "trial_level_stop_criteria",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "discontinuation:cell:individual_trigger",
+                "value": "【合成夹具】discontinuation:cell:individual_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_trigger",
+                "value": "【合成夹具】discontinuation:cell:trial_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_decision_authority",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-8-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.individual_hold_criteria",
+            "value": "【合成夹具】discontinuation.individual_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.personal_hold",
+            "value": "【合成夹具】discontinuation.personal_hold 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_criteria.participant",
+            "value": "【合成夹具】discontinuation.permanent_stop_criteria.participant 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_recording",
+            "value": "【合成夹具】discontinuation.permanent_stop_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_suspension_criteria",
+            "value": "【合成夹具】discontinuation.trial_suspension_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_termination_criteria",
+            "value": "【合成夹具】discontinuation.trial_termination_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_logic",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_authority",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_authority 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_post_decision",
+            "value": "【合成夹具】discontinuation.trial_stop_post_decision 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.safety_assessment_coherence",
+            "value": "【合成夹具】discontinuation.safety_assessment_coherence 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "individual_cessation_rules",
+            "statement": "【合成夹具】个体暂时暂停与个体永久停药必须各自给出项目特定标准与记录要求。（测试声明）"
+          },
+          {
+            "claim_type": "trial_level_stop_criteria",
+            "statement": "【合成夹具】整体试验暂停/终止必须给出设计特定决策逻辑、决定方与依据，且不转写为个体停止规则。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "individual_cessation_rules",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "trial_level_stop_criteria",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "discontinuation:cell:individual_trigger",
+                "value": "【合成夹具】discontinuation:cell:individual_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_trigger",
+                "value": "【合成夹具】discontinuation:cell:trial_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_decision_authority",
+                "value": "【合成夹具】discontinuation:cell:trial_decision_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-8-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-1:individual-equals-trial-stop",
+      "chapter_contract_id": "contract:v2-n-8-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.individual_hold_criteria",
+            "value": "【合成夹具】discontinuation.individual_hold_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.personal_hold",
+            "value": "【合成夹具】discontinuation.personal_hold 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_criteria.participant",
+            "value": "【合成夹具】discontinuation.permanent_stop_criteria.participant 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.permanent_stop_recording",
+            "value": "【合成夹具】discontinuation.permanent_stop_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_suspension_criteria",
+            "value": "【合成夹具】discontinuation.trial_suspension_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_termination_criteria",
+            "value": "【合成夹具】discontinuation.trial_termination_criteria 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_logic",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_logic 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_decision_authority",
+            "value": "【合成夹具】discontinuation.trial_stop_decision_authority 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.trial_stop_post_decision",
+            "value": "【合成夹具】discontinuation.trial_stop_post_decision 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.safety_assessment_coherence",
+            "value": "【合成夹具】discontinuation.safety_assessment_coherence 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+            "value": "true"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "individual_cessation_rules",
+            "statement": "【合成夹具】个体暂时暂停与个体永久停药必须各自给出项目特定标准与记录要求。（测试声明）"
+          },
+          {
+            "claim_type": "trial_level_stop_criteria",
+            "statement": "【合成夹具】整体试验暂停/终止必须给出设计特定决策逻辑、决定方与依据，且不转写为个体停止规则。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "individual_cessation_rules",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "trial_level_stop_criteria",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[499、500–511]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：研究干预中止/终止段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "discontinuation:cell:individual_trigger",
+                "value": "【合成夹具】discontinuation:cell:individual_trigger 合成单元格值"
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_trigger",
+                "value": null
+              },
+              {
+                "cell_id": "discontinuation:cell:trial_decision_authority",
+                "value": "【合成夹具】discontinuation:cell:trial_decision_authority 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-2:positive",
+      "chapter_contract_id": "contract:v2-n-8-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.continued_assessment_scope",
+            "value": "【合成夹具】discontinuation.continued_assessment_scope 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.continued_data_types",
+            "value": "【合成夹具】discontinuation.continued_data_types 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.time_limits",
+            "value": "【合成夹具】discontinuation.time_limits 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.existing_data_handling",
+            "value": "【合成夹具】discontinuation.existing_data_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.basis_for_further_collection",
+            "value": "【合成夹具】discontinuation.basis_for_further_collection 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_reason_recording",
+            "value": "【合成夹具】discontinuation.withdrawal_reason_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_scenarios",
+            "value": "【合成夹具】discontinuation.withdrawal_scenarios 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.followup_after_withdrawal",
+            "value": "【合成夹具】discontinuation.followup_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.data_retention_after_withdrawal",
+            "value": "【合成夹具】discontinuation.data_retention_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.replacement_policy",
+            "value": "【合成夹具】discontinuation.replacement_policy 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.disposition_schedule_integration",
+            "value": "【合成夹具】discontinuation.disposition_schedule_integration 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "withdrawal_handling",
+            "statement": "【合成夹具】退出处理必须区分治疗停止与同意撤回，说明继续评估、已收集数据保留、随访与替换政策。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "withdrawal_handling",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[512、513–537]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：试验参与者中止/退出研究段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "【合成夹具】退出段必须承载继续评估范围/数据/时限、已收集数据处理、场景化退出处理、随访与替换政策。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-8-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.continued_assessment_scope",
+            "value": "【合成夹具】discontinuation.continued_assessment_scope 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.continued_data_types",
+            "value": "【合成夹具】discontinuation.continued_data_types 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.time_limits",
+            "value": "【合成夹具】discontinuation.time_limits 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.existing_data_handling",
+            "value": "【合成夹具】discontinuation.existing_data_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.basis_for_further_collection",
+            "value": "【合成夹具】discontinuation.basis_for_further_collection 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_reason_recording",
+            "value": "【合成夹具】discontinuation.withdrawal_reason_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_scenarios",
+            "value": "【合成夹具】discontinuation.withdrawal_scenarios 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.data_retention_after_withdrawal",
+            "value": "【合成夹具】discontinuation.data_retention_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.replacement_policy",
+            "value": "【合成夹具】discontinuation.replacement_policy 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.disposition_schedule_integration",
+            "value": "【合成夹具】discontinuation.disposition_schedule_integration 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "withdrawal_handling",
+            "statement": "【合成夹具】退出处理必须区分治疗停止与同意撤回，说明继续评估、已收集数据保留、随访与替换政策。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "withdrawal_handling",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[512、513–537]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：试验参与者中止/退出研究段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "【合成夹具】退出段必须承载继续评估范围/数据/时限、已收集数据处理、场景化退出处理、随访与替换政策。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-8-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.continued_assessment_scope",
+            "value": "【合成夹具】discontinuation.continued_assessment_scope 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.continued_data_types",
+            "value": "【合成夹具】discontinuation.continued_data_types 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.time_limits",
+            "value": "【合成夹具】discontinuation.time_limits 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.existing_data_handling",
+            "value": "【合成夹具】discontinuation.existing_data_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.basis_for_further_collection",
+            "value": "【合成夹具】discontinuation.basis_for_further_collection 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_reason_recording",
+            "value": "【合成夹具】discontinuation.withdrawal_reason_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_scenarios",
+            "value": "【合成夹具】discontinuation.withdrawal_scenarios 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.followup_after_withdrawal",
+            "value": "【合成夹具】discontinuation.followup_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.data_retention_after_withdrawal",
+            "value": "【合成夹具】discontinuation.data_retention_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.replacement_policy",
+            "value": "【合成夹具】discontinuation.replacement_policy 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.disposition_schedule_integration",
+            "value": "【合成夹具】discontinuation.disposition_schedule_integration 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "withdrawal_handling",
+            "statement": "【合成夹具】退出处理必须区分治疗停止与同意撤回，说明继续评估、已收集数据保留、随访与替换政策。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "withdrawal_handling",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：试验参与者中止/退出研究段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "【合成夹具】退出段必须承载继续评估范围/数据/时限、已收集数据处理、场景化退出处理、随访与替换政策。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-8-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-2:followup-silent-last-dose",
+      "chapter_contract_id": "contract:v2-n-8-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "discontinuation.continued_assessment_scope",
+            "value": "【合成夹具】discontinuation.continued_assessment_scope 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.continued_data_types",
+            "value": "【合成夹具】discontinuation.continued_data_types 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.time_limits",
+            "value": "【合成夹具】discontinuation.time_limits 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.existing_data_handling",
+            "value": "【合成夹具】discontinuation.existing_data_handling 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.basis_for_further_collection",
+            "value": "【合成夹具】discontinuation.basis_for_further_collection 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_reason_recording",
+            "value": "【合成夹具】discontinuation.withdrawal_reason_recording 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.withdrawal_scenarios",
+            "value": "【合成夹具】discontinuation.withdrawal_scenarios 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.data_retention_after_withdrawal",
+            "value": "【合成夹具】discontinuation.data_retention_after_withdrawal 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.replacement_policy",
+            "value": "【合成夹具】discontinuation.replacement_policy 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "discontinuation.disposition_schedule_integration",
+            "value": "【合成夹具】discontinuation.disposition_schedule_integration 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "withdrawal_handling",
+            "statement": "【合成夹具】退出处理必须区分治疗停止与同意撤回，说明继续评估、已收集数据保留、随访与替换政策。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "withdrawal_handling",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[512、513–537]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：试验参与者中止/退出研究段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "【合成夹具】退出段必须承载继续评估范围/数据/时限、已收集数据处理、场景化退出处理、随访与替换政策。（合成承载文本，非真实项目内容）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-3:positive",
+      "chapter_contract_id": "contract:v2-n-8-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lost_to_followup.contact_attempt_procedure",
+            "value": "【合成夹具】lost_to_followup.contact_attempt_procedure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.participant_contact_restrictions",
+            "value": "【合成夹具】lost_to_followup.participant_contact_restrictions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.attempt_records",
+            "value": "【合成夹具】lost_to_followup.attempt_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.review_and_classification",
+            "value": "【合成夹具】lost_to_followup.review_and_classification 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.role_and_approvals",
+            "value": "【合成夹具】lost_to_followup.role_and_approvals 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.consent_and_outcome_distinction",
+            "value": "【合成夹具】lost_to_followup.consent_and_outcome_distinction 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lost_to_followup_determination",
+            "statement": "【合成夹具】失访判定必须基于项目特定联系尝试、记录与复核分类。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "lost_to_followup_determination",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[538、539–546]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：失访段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "followup:cell:contact_attempt_log",
+                "value": "【合成夹具】followup:cell:contact_attempt_log 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-8-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lost_to_followup.contact_attempt_procedure",
+            "value": "【合成夹具】lost_to_followup.contact_attempt_procedure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.participant_contact_restrictions",
+            "value": "【合成夹具】lost_to_followup.participant_contact_restrictions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.attempt_records",
+            "value": "【合成夹具】lost_to_followup.attempt_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.role_and_approvals",
+            "value": "【合成夹具】lost_to_followup.role_and_approvals 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.consent_and_outcome_distinction",
+            "value": "【合成夹具】lost_to_followup.consent_and_outcome_distinction 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lost_to_followup_determination",
+            "statement": "【合成夹具】失访判定必须基于项目特定联系尝试、记录与复核分类。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "lost_to_followup_determination",
+            "locator_kind": "body",
+            "locator": "【合成夹具】来源登记：TP-MA-07 v2.0 body[538、539–546]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "【合成夹具】上下文窗口：失访段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "followup:cell:contact_attempt_log",
+                "value": "【合成夹具】followup:cell:contact_attempt_log 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-8-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "lost_to_followup.contact_attempt_procedure",
+            "value": "【合成夹具】lost_to_followup.contact_attempt_procedure 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.participant_contact_restrictions",
+            "value": "【合成夹具】lost_to_followup.participant_contact_restrictions 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.attempt_records",
+            "value": "【合成夹具】lost_to_followup.attempt_records 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.review_and_classification",
+            "value": "【合成夹具】lost_to_followup.review_and_classification 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.role_and_approvals",
+            "value": "【合成夹具】lost_to_followup.role_and_approvals 的合成示例值（非真实项目事实）"
+          },
+          {
+            "fact_path": "lost_to_followup.consent_and_outcome_distinction",
+            "value": "【合成夹具】lost_to_followup.consent_and_outcome_distinction 的合成示例值（非真实项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "lost_to_followup_determination",
+            "statement": "【合成夹具】失访判定必须基于项目特定联系尝试、记录与复核分类。（测试声明）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "lost_to_followup_determination",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "【合成夹具】上下文窗口：失访段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "followup:cell:contact_attempt_log",
+                "value": "【合成夹具】followup:cell:contact_attempt_log 合成单元格值"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch4:v2-n-8-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-8-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    }
+  ]
+}

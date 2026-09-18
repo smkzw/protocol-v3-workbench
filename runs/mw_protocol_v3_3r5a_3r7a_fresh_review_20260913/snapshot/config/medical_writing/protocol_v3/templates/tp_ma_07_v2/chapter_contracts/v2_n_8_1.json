@@ -1,0 +1,303 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-8-1:v2",
+  "semantic_node_id": "v2_n_8_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-8-1:cessation",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-8-1:v2",
+    "chapter_contract_id": "contract:v2-n-8-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.individual_hold_criteria",
+        "obligation": "required",
+        "rationale": "个体暂时暂停的触发、期限与恢复条件必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.personal_hold",
+        "obligation": "required",
+        "rationale": "个体暂停的执行与记录要求必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.permanent_stop_criteria.participant",
+        "obligation": "required",
+        "rationale": "个体永久停药标准必须项目特定，并与暂停分层。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.permanent_stop_recording",
+        "obligation": "required",
+        "rationale": "个体永久停药的记录与通知要求必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.trial_suspension_criteria",
+        "obligation": "required",
+        "rationale": "整体试验暂停条件必须与个体标准分层区分。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.trial_termination_criteria",
+        "obligation": "required",
+        "rationale": "整体试验终止条件必须与个体标准分层区分。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.trial_stop_decision_logic",
+        "obligation": "required",
+        "rationale": "整体暂停/终止必须给出设计特定的形式化决策逻辑与数据依据。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.trial_stop_decision_authority",
+        "obligation": "required",
+        "rationale": "整体暂停/终止的决定方与报告路径必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.trial_stop_post_decision",
+        "obligation": "required",
+        "rationale": "整体暂停/终止后的试验参与者处理与随访安排必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.safety_assessment_coherence",
+        "obligation": "required",
+        "rationale": "暂停/终止标准必须与安全评估安排一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.individual_hold_applicable",
+        "obligation": "optional",
+        "rationale": "确认设计包含个体暂时暂停路径。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+        "obligation": "optional",
+        "rationale": "确认个体暂停后是否可能转为永久停药。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.template_example_stop_rule",
+        "obligation": "forbidden",
+        "rationale": "模板示例停止规则不得作为本项目暂停/终止标准。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "individual_cessation_rules",
+        "obligation": "required",
+        "rationale": "个体暂时暂停与个体永久停药必须各自给出项目特定标准与记录要求。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "trial_level_stop_criteria",
+        "obligation": "required",
+        "rationale": "整体试验暂停/终止必须给出设计特定决策逻辑、决定方与依据，且不转写为个体停止规则。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "individual_equals_trial_stop",
+        "obligation": "forbidden",
+        "rationale": "不得把个体停药标准等同于整体试验暂停/终止。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "single_pivotal_trial_stop_rule",
+        "obligation": "forbidden",
+        "rationale": "不得以『疗效已显示』等模板短语允许任意提前停止；需设计特定决策链。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "individual_cessation_rules"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "trial_level_stop_criteria"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "中止/终止段必须分层承载个体暂停、个体永久停药与整体暂停/终止，并给出形式化决策逻辑与决定方。",
+        "required_object_cells": [
+          "discontinuation:cell:individual_trigger",
+          "discontinuation:cell:trial_trigger",
+          "discontinuation:cell:trial_decision_authority"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "个体/整体两层停止标准、决策逻辑与决定方为项目事实集合。"
+    ],
+    "skeleton_risk_rules": [
+      "个体与整体层面的中止/终止标准缺失或混淆即失败；仅模板示例规则即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-8-1",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623362"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-1:levels",
+      "rule": "个体层面（暂停/永久停药）与整体层面（试验暂停/终止）必须分别类型化；把个体停药等同于整体停止即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-1:logic",
+      "rule": "整体暂停/终止必须给出设计特定的形式化决策逻辑（数据、阈值与决定方）；『疗效已显示』模板短语不构成允许提前停止的依据，也不得出具疗效结论；必须给出可复核的决策链。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-1:safety",
+      "rule": "暂停/终止标准必须与安全评估安排一致。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-8-1:individual-hold",
+      "triggering_fact_paths": [
+        "discontinuation.individual_hold_applicable"
+      ],
+      "condition": "确认设计包含个体暂时暂停路径",
+      "rationale": "存在个体暂停路径时，暂停触发条件与执行记录要求必须完整给出。",
+      "required_when_active_fact_paths": [
+        "discontinuation.individual_hold_criteria",
+        "discontinuation.personal_hold"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-8-1:hold-to-stop",
+      "triggering_fact_paths": [
+        "discontinuation.individual_hold_requires_permanent_stop"
+      ],
+      "condition": "确认个体暂停可能转为永久停药",
+      "rationale": "存在暂停转永久停药路径时，永久停药标准与记录必须完整给出。",
+      "required_when_active_fact_paths": [
+        "discontinuation.permanent_stop_criteria.participant",
+        "discontinuation.permanent_stop_recording"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-6-1-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_8_1:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-1-2:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_1:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_1:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-1:levels",
+      "question": "个体暂停、个体永久停药与整体暂停/终止是否分层类型化且互不转写？",
+      "linked_fact_paths": [
+        "discontinuation.personal_hold",
+        "discontinuation.trial_termination_criteria"
+      ],
+      "linked_claim_types": [
+        "trial_level_stop_criteria"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-1:levels"
+      ],
+      "risk_if_unmet": "混淆个体与整体停止会同时破坏试验参与者安全与试验完整性。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-1:decision",
+      "question": "整体暂停/终止是否有设计特定决策链与决定方？",
+      "linked_fact_paths": [
+        "discontinuation.trial_stop_decision_logic",
+        "discontinuation.trial_stop_decision_authority"
+      ],
+      "linked_claim_types": [
+        "trial_level_stop_criteria"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-1:logic"
+      ],
+      "risk_if_unmet": "缺少决策链会使提前停止不可复核。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,322 @@
+{
+  "status": "partial_not_accepted_ruleset",
+  "rules": [
+    {
+      "rule_id": "applicability:n-10-1-1:oncology-progression",
+      "source_rule_sha256": "79a1984f3654218bd69fef2cc3e9e5bf28019771f2421832a2d51c554e488d98",
+      "predicates": [
+        {
+          "fact_path": "ae.oncology_progression_exception_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "conditional:v2-n-11-1:interim-adjustment",
+      "source_rule_sha256": "2c50669a216607f80fbe49054aeafa7cef562780c98e7eec3c1fa1f0b02aad31",
+      "predicates": [
+        {
+          "fact_path": "statistics.sample_size.interim_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-14-1:risk-plan",
+      "source_rule_sha256": "364b9f7b922fcc770273ec4737ff30e3c9857772670ede745c33c5bbd1475f1c",
+      "predicates": [
+        {
+          "fact_path": "quality.risk_management_plan_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-14-3:remote-monitoring",
+      "source_rule_sha256": "5d501c3e3a50b35dcd7ada37e73561a4eecb706bff6d6a00a72d65af15a6d2d2",
+      "predicates": [
+        {
+          "fact_path": "quality.remote_monitoring_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-14-7:oversight-charter",
+      "source_rule_sha256": "fea62f73457010bc20aea3943ee20f394fc8aadf582d32cfe48c40c5d1673685",
+      "predicates": [
+        {
+          "fact_path": "quality.oversight_charter_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-15:foreign-style",
+      "source_rule_sha256": "9edf879ae38077d70f1741a17b29043da7e4aa626bdd3bb5bdc9a34327c09a3d",
+      "predicates": [
+        {
+          "fact_path": "references.foreign_sources_present",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:v2-n-16-x1:assessment",
+      "source_rule_sha256": "04b765548b5acac0eab723934d85accd13121e2ebb3312c337b23eaacf15679e",
+      "predicates": [
+        {
+          "fact_path": "appendix.ecog_assessment_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:v2-n-16-x2:assessment",
+      "source_rule_sha256": "4229a96efdf48303d689ec84255ade7863595079d85ec125412a5fafc73bb1b6",
+      "predicates": [
+        {
+          "fact_path": "appendix.nyha_assessment_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-9-3:immunogenicity",
+      "source_rule_sha256": "8c70732b387185006f60d20f08a54ae2322bdd54525ed94c12c13c78027bab64",
+      "predicates": [
+        {
+          "fact_path": "exploratory.immunogenicity_applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    },
+    {
+      "rule_id": "applicability:n-9-4:irc",
+      "source_rule_sha256": "043e175385075a3672d27ebb7f9ede84b90aee4f80425c70c922bea9d6654eb6",
+      "predicates": [
+        {
+          "fact_path": "irc.applicable",
+          "members": [],
+          "expected": true
+        }
+      ],
+      "mode": "all"
+    }
+  ],
+  "unresolved_rules": [
+    {
+      "node_id": "v2_n_11_4_6",
+      "rule_id": "conditional:v2-n-11-4-6:pk",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_11_4_6",
+      "rule_id": "conditional:v2-n-11-4-6:pd",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_11_4_6",
+      "rule_id": "conditional:v2-n-11-4-6:er",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_11_4_8",
+      "rule_id": "conditional:v2-n-11-4-8:no-adjustment",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_11_4_9",
+      "rule_id": "conditional:v2-n-11-4-9:interim",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_12_7",
+      "rule_id": "applicability:v2-n-12-7:future-use",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_1_2",
+      "rule_id": "applicability:n-1-2:escalation",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_1_2",
+      "rule_id": "applicability:n-1-2:allocation",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_1_3",
+      "rule_id": "applicability:n-1-3:pk-sampling",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_1_1",
+      "rule_id": "applicability:n-3-1-1:rescue-strategy",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_1_2_3",
+      "rule_id": "applicability:n-3-1-2-3:background-rescue",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_1_2_4",
+      "rule_id": "applicability:n-3-1-2-4:strategy-crosscheck",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_3_1",
+      "rule_id": "applicability:n-3-3-1:injection-reaction",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_4_1",
+      "rule_id": "applicability:n-3-4-1:analysis-commitment",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_3_4_2",
+      "rule_id": "applicability:n-3-4-2:non-confirmatory",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_4_1",
+      "rule_id": "applicability:v2_n_4_1:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_4_2",
+      "rule_id": "applicability:v2_n_4_2:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_4_3",
+      "rule_id": "applicability:v2_n_4_3:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_4_4",
+      "rule_id": "applicability:v2_n_4_4:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_4_5",
+      "rule_id": "applicability:v2_n_4_5:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_1",
+      "rule_id": "applicability:v2_n_5_1:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_2",
+      "rule_id": "applicability:v2_n_5_2:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_2",
+      "rule_id": "applicability:n-5-2:contraception-exclusion-reference",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_3",
+      "rule_id": "applicability:v2_n_5_3:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_4",
+      "rule_id": "applicability:v2_n_5_4:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_5_5",
+      "rule_id": "applicability:v2_n_5_5:active",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_6_1_2",
+      "rule_id": "applicability:n-6-1-2:dose-modification",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_6_1_2",
+      "rule_id": "applicability:n-6-1-2:escalation",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_6_2_2",
+      "rule_id": "applicability:n-6-2-2:label-text",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_6_4_2",
+      "rule_id": "applicability:n-6-4-2:background",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_7_2",
+      "rule_id": "applicability:n-7-2:randomization",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_7_3",
+      "rule_id": "applicability:n-7-3:unscheduled-contact",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_8_1",
+      "rule_id": "applicability:n-8-1:individual-hold",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_8_1",
+      "rule_id": "applicability:n-8-1:hold-to-stop",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_9_2",
+      "rule_id": "applicability:n-9-2:central-lab",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_front_1",
+      "rule_id": "applicability:front-1:amendment",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_front_3",
+      "rule_id": "applicability:front-3:additional-signatory",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_front_4",
+      "rule_id": "applicability:front-4:service-parties",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    },
+    {
+      "node_id": "v2_n_front_8",
+      "rule_id": "applicability:front-8:figures-present",
+      "reason": "predicate schema/source semantics await explicit adjudication; not inferred from identifier"
+    }
+  ]
+}

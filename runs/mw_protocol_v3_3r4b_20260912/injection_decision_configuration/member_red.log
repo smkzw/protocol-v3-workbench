@@ -1,0 +1,100 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_structured_decision_requires_native_boolean_and_nonblank_reason[value0] _
+
+value = {'applicable': False}
+
+    @pytest.mark.parametrize("value", [{"applicable": False}, {"applicable": True, "reason": "   "}, {"applicable": 0, "reason": "x"}, {"applicable": "false", "reason": "x"}])
+    def test_structured_decision_requires_native_boolean_and_nonblank_reason(value):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, FactBindingError, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:315: ValidationError
+_ test_structured_decision_requires_native_boolean_and_nonblank_reason[value1] _
+
+value = {'applicable': True, 'reason': '   '}
+
+    @pytest.mark.parametrize("value", [{"applicable": False}, {"applicable": True, "reason": "   "}, {"applicable": 0, "reason": "x"}, {"applicable": "false", "reason": "x"}])
+    def test_structured_decision_requires_native_boolean_and_nonblank_reason(value):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, FactBindingError, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:315: ValidationError
+_ test_structured_decision_requires_native_boolean_and_nonblank_reason[value2] _
+
+value = {'applicable': 0, 'reason': 'x'}
+
+    @pytest.mark.parametrize("value", [{"applicable": False}, {"applicable": True, "reason": "   "}, {"applicable": 0, "reason": "x"}, {"applicable": "false", "reason": "x"}])
+    def test_structured_decision_requires_native_boolean_and_nonblank_reason(value):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, FactBindingError, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:315: ValidationError
+_ test_structured_decision_requires_native_boolean_and_nonblank_reason[value3] _
+
+value = {'applicable': 'false', 'reason': 'x'}
+
+    @pytest.mark.parametrize("value", [{"applicable": False}, {"applicable": True, "reason": "   "}, {"applicable": 0, "reason": "x"}, {"applicable": "false", "reason": "x"}])
+    def test_structured_decision_requires_native_boolean_and_nonblank_reason(value):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, FactBindingError, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:315: ValidationError
+_______ test_structured_decision_preserves_short_reason_and_false[False] _______
+
+flag = False
+
+    @pytest.mark.parametrize("flag", [False, True])
+    def test_structured_decision_preserves_short_reason_and_false(flag):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:323: ValidationError
+_______ test_structured_decision_preserves_short_reason_and_false[True] ________
+
+flag = True
+
+    @pytest.mark.parametrize("flag", [False, True])
+    def test_structured_decision_preserves_short_reason_and_false(flag):
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, _typed_value
+>       binding = FactBinding(fact_path="test.decision", canonical_path="test.decision", value_type="object", source_refs=("test:decision",), required_members={"applicable": "boolean", "reason": "string"})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       required_members
+E         Extra inputs are not permitted [type=extra_forbidden, input_value={'applicable': 'boolean', 'reason': 'string'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:323: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_requires_native_boolean_and_nonblank_reason[value0]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_requires_native_boolean_and_nonblank_reason[value1]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_requires_native_boolean_and_nonblank_reason[value2]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_requires_native_boolean_and_nonblank_reason[value3]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_preserves_short_reason_and_false[False]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_structured_decision_preserves_short_reason_and_false[True]
+6 failed, 45 deselected in 0.41s

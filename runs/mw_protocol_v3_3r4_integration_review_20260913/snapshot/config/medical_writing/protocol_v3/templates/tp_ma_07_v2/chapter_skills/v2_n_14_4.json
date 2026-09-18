@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-14-4",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_14_4",
+  "chapter_contract_id": "contract:v2-n-14-4:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-14-4:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 对研究者的要求 的 ChapterSkillOutput。仅写入与实际安排一致的研究者实施与委派、监督、方案遵循、记录与设施资源责任；研究者对试验参与者的照护与记录责任以项目事实为准，缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "从职责表述推断培训已完成或方案接受已签署",
+      "把通用研究者职责段落写成项目实际安排",
+      "把缺失事实写成不适用或已验证",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：对研究者的要求，零基 body-child 索引 901–909；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=3 与 bookmarks=['_Toc48315557', '_Toc132623419']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、质量或审批释放；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-14-4:missing-obligation",
+    "skill:chapter:v2-n-14-4:unresolved-fact",
+    "skill:chapter:v2-n-14-4:wrong-source"
+  ]
+}

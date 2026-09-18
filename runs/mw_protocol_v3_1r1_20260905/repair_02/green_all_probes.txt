@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0 -- /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 8 items
+
+runs/mw_protocol_v3_1r1_codex_20260905/test_acceptance_probes.py::test_product_route_rejects_volatile_sqlite_memory_path PASSED [ 12%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_acceptance_probes.py::test_foreign_version_table_is_rejected_without_mutation[0] PASSED [ 25%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_acceptance_probes.py::test_foreign_version_table_is_rejected_without_mutation[1] PASSED [ 37%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_acceptance_probes.py::test_unentered_scope_cannot_persist_a_rolled_back_mutation PASSED [ 50%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_acceptance_probes.py::test_sql_write_failure_caught_inside_uow_does_not_commit_half_batch PASSED [ 62%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_projection_atomicity_probes.py::test_caught_projection_insert_failure_preserves_previous_projection[decision] PASSED [ 75%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_projection_atomicity_probes.py::test_caught_projection_insert_failure_preserves_previous_projection[coverage] PASSED [ 87%]
+runs/mw_protocol_v3_1r1_codex_20260905/test_schema_constraint_probe.py::test_same_names_without_product_constraints_are_rejected PASSED [100%]
+
+============================== 8 passed in 0.35s ===============================

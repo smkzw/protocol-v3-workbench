@@ -1,0 +1,65 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-16:v2",
+  "semantic_node_id": "v2_n_16",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-16",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-16:v2",
+    "chapter_contract_id": "contract:v2-n-16:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.applicable_attachment_index", "obligation": "required", "rationale": "附录容器必须汇总实际适用的附件索引，而不是复制模板全部附件。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.inclusion_decision_basis", "obligation": "required", "rationale": "每项附录的收录决定必须有项目依据；缺失走待补，不得默认全收。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "appendix.container_aggregation_scope", "obligation": "required", "rationale": "标题级容器必须声明其汇总范围，并保留大纲叶子（x1/x2/x3）各自的覆盖义务。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix_aggregates_actual_applicable_attachments", "obligation": "required", "rationale": "容器主张必须描述实际适用附件，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "container_preserves_outlined_leaf_obligations", "obligation": "required", "rationale": "容器不得替代或吸收大纲叶子的独立义务。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "appendix_placeholder_or_template_example_included_as_final", "obligation": "forbidden", "rationale": "占位或模板示例附件不得作为最终附录内容；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "container_replaces_outlined_leaf_obligations", "obligation": "forbidden", "rationale": "容器替代大纲叶子义务属于禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["appendix_aggregates_actual_applicable_attachments"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 appendix.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_16 是 heading-only 标题级容器（heading_only_aggregation），其汇总义务与大纲叶子 v2_n_16_x1/x2/x3 的独立覆盖义务分开登记、不得互相替代。",
+      "本节绑定源窗口 970–972；容器只汇总实际适用附件，不自动收录模板全部附件。",
+      "附录涉及试验参与者信息与样本附件时只汇总实际适用附件，不自动收录。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或最终附录内容。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“附录”标题或占位索引而无实际适用附件与收录依据时不算实质内容。",
+      "源窗口 970–972：模板示例附件不得作为最终内容；容器不得吞并大纲叶子义务。",
+      "结构检查不等于附件适用性、医学或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-16",
+    "required_styles": ["2"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc132623424"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16:actual-attachments", "rule": "附录容器必须汇总实际适用附件并给出收录依据；不得默认收录模板全部附件。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16:leaf-preservation", "rule": "容器义务不得替代 v2_n_16_x1/x2/x3 各自的独立覆盖义务。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-16:no-placeholder", "rule": "占位或模板示例附件不得作为最终内容；缺失走待补/建议解决。"}
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-16:aggregation", "question": "附录容器是否只汇总实际适用附件、保留大纲叶子义务并给出逐项收录依据？", "linked_fact_paths": ["appendix.applicable_attachment_index", "appendix.inclusion_decision_basis", "appendix.container_aggregation_scope"], "linked_claim_types": ["appendix_aggregates_actual_applicable_attachments"], "positive_qc_rule_ids": ["qc:v2-n-16:actual-attachments", "qc:v2-n-16:leaf-preservation"], "risk_if_unmet": "容器吞并叶子义务会掩盖附录缺失或不适用的判断。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

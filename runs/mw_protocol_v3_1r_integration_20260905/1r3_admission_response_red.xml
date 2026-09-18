@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.515" timestamp="2026-09-05T18:13:29.768925+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_unknown_operation_requests_reconciliation_before_retry" time="0.001" /><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_storage_unavailable_before_operation_has_actionable_response" time="0.000"><failure message="app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: database unavailable">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x108d63470&gt;
+
+    def test_storage_unavailable_before_operation_has_actionable_response(monkeypatch):
+        def unavailable(config, project_id):
+            raise SqliteStorageConfigurationError("database unavailable")
+    
+        monkeypatch.setattr(
+            "app.protocol_workflow.api.composition.is_project_admitted", unavailable
+        )
+        with pytest.raises(HTTPException) as caught:
+&gt;           _make_admission_dependency({})("synthetic-study")
+
+tests/protocol_v3/test_unknown_operation_response.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/api/composition.py:208: in _admission_gate
+    if not is_project_admitted(config, project_id):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = {}, project_id = 'synthetic-study'
+
+    def unavailable(config, project_id):
+&gt;       raise SqliteStorageConfigurationError("database unavailable")
+E       app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: database unavailable
+
+tests/protocol_v3/test_unknown_operation_response.py:28: SqliteStorageConfigurationError</failure></testcase></testsuite></testsuites>

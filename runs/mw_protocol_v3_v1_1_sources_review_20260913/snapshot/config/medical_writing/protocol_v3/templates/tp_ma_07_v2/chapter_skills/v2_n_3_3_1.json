@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-3-1:safety-objectives",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_3_1",
+  "chapter_contract_id": "contract:v2-n-3-3-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按安全性目的章节合同给出本药实际风险为依据的安全性目的、对应终点与观察期，并显式判定注射反应适用性；仅当适用时才输出注射反应定义与声明，并命中条件适用性规则。",
+    "forbidden_behaviors": [
+      "把注射反应当作所有给药途径的必填内容",
+      "用通用安全性套话替代实际风险",
+      "输出营销性安全性表述"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与条件适用性规则命中情况。",
+    "安全性目的必须回链已确认风险与终点事实。",
+    "观察期定义必须与研究设计一致。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-3-1:missing-obligation",
+    "skill:v2-n-3-3-1:unresolved-fact",
+    "skill:v2-n-3-3-1:unsupported-source-role"
+  ]
+}

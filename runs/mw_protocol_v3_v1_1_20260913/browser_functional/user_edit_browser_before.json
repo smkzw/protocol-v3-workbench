@@ -1,0 +1,304 @@
+{
+  "study": {
+    "definition": {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "canonical_state": "confirmed",
+      "study_definition_id": "study:v3:21a20263b69422f2dde33817a2f1a6ba",
+      "project_id": "project-context-browser-fixture",
+      "revision": 3,
+      "previous_revision_sha256": "375eb2e7f2e476e9d60af8f9d8b3f25400b32aa62a5cbb8f243b04790cdb2d52",
+      "normalized_seed_id": "research-intake:ac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee",
+      "normalized_seed_sha256": "9336ef14824c038ed8c1c5e4137d0bdd730128775cbe622d2e73dc85537f66b0",
+      "facts": {
+        "framing.indication": "合成症状",
+        "framing.investigational_product": "试验药X",
+        "framing.study_phase": "Ⅱ期",
+        "framing.target_mechanism": "合成靶点",
+        "intervention.dose_regimen": {
+          "arms": [
+            {
+              "id": "arm-active",
+              "label": "试验组"
+            },
+            {
+              "id": "arm-control",
+              "label": "原对照组"
+            }
+          ],
+          "periods": [
+            {
+              "id": "period-first",
+              "label": "首期",
+              "timing": "第0至4周"
+            },
+            {
+              "id": "period-next",
+              "label": "继续期",
+              "timing": "第4至8周"
+            }
+          ],
+          "schedules": [
+            {
+              "arm_id": "arm-active",
+              "period_id": "period-first",
+              "steps": [
+                {
+                  "frequency": "一次",
+                  "kind": "loading",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 200
+                      },
+                      "name": "试验药X",
+                      "volume": {
+                        "unit": "mL",
+                        "value": 2
+                      }
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "本期首次"
+                },
+                {
+                  "frequency": "每2周一次",
+                  "kind": "maintenance",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 100
+                      },
+                      "name": "试验药X",
+                      "volume": null
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "首次之后"
+                }
+              ]
+            },
+            {
+              "arm_id": "arm-control",
+              "period_id": "period-first",
+              "steps": [
+                {
+                  "frequency": "一次",
+                  "kind": "loading",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 200
+                      },
+                      "name": "试验药X",
+                      "volume": {
+                        "unit": "mL",
+                        "value": 2
+                      }
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "本期首次"
+                },
+                {
+                  "frequency": "每2周一次",
+                  "kind": "maintenance",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 100
+                      },
+                      "name": "试验药X",
+                      "volume": null
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "首次之后"
+                }
+              ]
+            },
+            {
+              "arm_id": "arm-active",
+              "period_id": "period-next",
+              "steps": [
+                {
+                  "frequency": "一次",
+                  "kind": "loading",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 200
+                      },
+                      "name": "试验药X",
+                      "volume": {
+                        "unit": "mL",
+                        "value": 2
+                      }
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "本期首次"
+                },
+                {
+                  "frequency": "每2周一次",
+                  "kind": "maintenance",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 100
+                      },
+                      "name": "试验药X",
+                      "volume": null
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "首次之后"
+                }
+              ]
+            },
+            {
+              "arm_id": "arm-control",
+              "period_id": "period-next",
+              "steps": [
+                {
+                  "frequency": "一次",
+                  "kind": "loading",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 200
+                      },
+                      "name": "试验药X",
+                      "volume": {
+                        "unit": "mL",
+                        "value": 2
+                      }
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "本期首次"
+                },
+                {
+                  "frequency": "每2周一次",
+                  "kind": "maintenance",
+                  "products": [
+                    {
+                      "dose": {
+                        "unit": "mg",
+                        "value": 100
+                      },
+                      "name": "试验药X",
+                      "volume": null
+                    }
+                  ],
+                  "references": [
+                    {
+                      "locator": "word/document.xml/body/0:p",
+                      "quote": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。",
+                      "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+                    }
+                  ],
+                  "route": "皮下注射",
+                  "timing": "首次之后"
+                }
+              ]
+            }
+          ]
+        },
+        "research.input_context": {
+          "schema_version": "research-input-context.v1",
+          "seed_proposal_sha256": "9336ef14824c038ed8c1c5e4137d0bdd730128775cbe622d2e73dc85537f66b0",
+          "source_artifacts": [
+            {
+              "content_sha256": "1371eef9893b397e0bdc22d9f07f5afff11a89b8e6b506060c32caf544b5131a",
+              "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+            }
+          ],
+          "source_intake_sha256": "c603ea817bc017bd01114991470a81172f511b744677b5d00986f85658fed186",
+          "user_brief": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。"
+        },
+        "research.regimen_producer": {
+          "input_sha256": "6293bbee07a5add7179d2449a0fe2c35956aa3a249ca17f0c6ffd3c87b0cc91f",
+          "output_sha256": "f33c47947d1484d316b7ea70428b925c2a94945b10002f52622d8141e7d2f928",
+          "source_context": {
+            "schema_version": "research-input-context.v1",
+            "seed_proposal_sha256": "9336ef14824c038ed8c1c5e4137d0bdd730128775cbe622d2e73dc85537f66b0",
+            "source_artifacts": [
+              {
+                "content_sha256": "1371eef9893b397e0bdc22d9f07f5afff11a89b8e6b506060c32caf544b5131a",
+                "source_artifact_id": "source-f8b9463bdd313610a765c8c3b1895a80dd7cfc7ebb997cc7066ed6c1287651a0"
+              }
+            ],
+            "source_intake_sha256": "c603ea817bc017bd01114991470a81172f511b744677b5d00986f85658fed186",
+            "user_brief": "这是完全虚构的工程验收研究，不用于临床。试验药X，合成靶点，合成症状，Ⅱ期，成人，原对照组，皮下注射。试验组与原对照组在首期第0至4周及继续期第4至8周均按以下合成规则给药：本期首次200 mg 2 mL，随后100 mg每2周一次。"
+          },
+          "workflow_run_id": "regimen-design:2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952"
+        }
+      },
+      "decision_record_ids": [
+        "research-request-decision:e09ccd15a7e25cee0382dd5c1de599e1acf4f940e1cf6ab6ed37557ef107c54c",
+        "regimen-decision:4f540ea1866037ca5bdb560ce6aaf6eb5a9527e4e1effe7342c80b2850100c76",
+        "research-intent-decision:87fe900ede4baf9e6705ac39965c31a2b54b182080dbc8dcde2e573cba931df8"
+      ],
+      "updated_at": "2026-09-13T11:16:06.630862Z"
+    },
+    "revision": 3,
+    "revision_sha256": "87f20d2bd5b32a381bd999352e6dad38bb1d2b2c6a2a28811f420ab6de64de3c"
+  },
+  "sqlite_dump_sha256": "5a40bc33eb67e565e6927b63eebc1b50bbb68cf937464645e142272fc84b0552"
+}

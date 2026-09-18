@@ -1,0 +1,312 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+  "semantic_node_id": "v2_n_6_1_2",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-1-2:regimen",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-1-2:v2",
+    "chapter_contract_id": "contract:v2-n-6-1-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_regimen",
+        "obligation": "required",
+        "rationale": "给药方案必须给出实际剂量与给药间隔，并带单位。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.administration_instructions",
+        "obligation": "required",
+        "rationale": "给药操作指令（稀释/输注时长/口服条件等）必须是项目特定的，不得为泛化描述。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_hold_criteria",
+        "obligation": "required",
+        "rationale": "给药暂停必须给出产品特定触发条件，不得复制模板示例等级阈值。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_reduction_rules",
+        "obligation": "required",
+        "rationale": "剂量降低必须给出产品特定的幅度与步进规则。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.restart_criteria",
+        "obligation": "required",
+        "rationale": "恢复给药必须给出产品特定的再开始条件与观察要求。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.permanent_discontinuation_criteria",
+        "obligation": "required",
+        "rationale": "个体永久停药必须给出产品特定标准，并与个体中止章节分层一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.missed_dose_instructions",
+        "obligation": "required",
+        "rationale": "漏服/漏给药必须给出补偿或跳过指令及记录要求。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_escalation_or_dlt_logic",
+        "obligation": "required",
+        "rationale": "仅在设计包含剂量递增/DLT 时适用的递增与 DLT 定义逻辑。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.food_relationship_and_preparation",
+        "obligation": "required",
+        "rationale": "与食物关系及配制条件必须项目特定并带条件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_consistency_with_design",
+        "obligation": "required",
+        "rationale": "本节剂量表达必须与设计章节及 SoA 的剂量/时间点一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dose_modification_required",
+        "obligation": "optional",
+        "rationale": "确认设计包含剂量调整/暂停/恢复路径。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_hold_threshold",
+        "obligation": "forbidden",
+        "rationale": "模板示例等级阈值（如 2 级暂停/1 级重启）不得作为普适规则。"
+      },
+      {
+        "fact_path": "intervention.dose_modification_features",
+        "obligation": "optional",
+        "rationale": "结构化对象hold/reduction/restart分别为原生布尔；未知成员不当false。"
+      },
+      {
+        "fact_path": "intervention.dose_escalation_or_dlt_applicable",
+        "obligation": "optional",
+        "rationale": "结构化原生布尔适用性，区分是否存在递增或DLT安排与其说明文字。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "dose_regimen_description",
+        "obligation": "required",
+        "rationale": "剂量、间隔、途径、暂停/降低/恢复与永久停药条件必须为项目特定且彼此一致。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "dose_regimen_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "给药方案段必须承载实际剂量/间隔、给药操作指令与暂停-降低-恢复-永久停药四个独立动作的项目特定条件；模板示例阈值仅为示例。",
+        "required_object_cells": [
+          "intervention:cell:route",
+          "intervention:cell:dose",
+          "intervention:cell:interval",
+          "intervention:cell:duration"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "给药方案动作分层（暂停/降低/恢复/永久停药/漏给药）为项目特定事实集合。"
+    ],
+    "skeleton_risk_rules": [
+      "剂量、间隔或暂停/恢复条件缺失即失败；仅复制模板示例等级阈值即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-1-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Ref89853429",
+      "_Ref89853431",
+      "_Ref89853439",
+      "_Toc132623347"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-1-2:thresholds",
+      "rule": "剂量暂停、降低、恢复与永久停药必须各有项目特定触发条件（各自动作条件独立）；模板示例等级阈值仅为示例，不是普适规则，也不得替代支持证据。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-1-2:consistency",
+      "rule": "剂量、间隔与给药条件必须与设计章节及 SoA 一致；跨节剂量/方案事实冲突即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-1-2:overdose",
+      "rule": "药物过量与给药错误的处理必须在本节项目化并保留记录要求，不得仅以 SOP 引用替代。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:dose-modification",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required"
+      ],
+      "condition": "确认设计包含剂量调整/暂停/恢复路径",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_modification_features"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:escalation",
+      "triggering_fact_paths": [
+        "intervention.dose_escalation_or_dlt_applicable"
+      ],
+      "condition": "确认设计包含剂量递增或 DLT 定义",
+      "rationale": "设计包含递增/DLT 时，递增与 DLT 定义逻辑必须作为项目事实给出。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_escalation_or_dlt_logic"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:hold",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_hold_criteria"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:reduction",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.dose_reduction_rules"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-1-2:restart",
+      "triggering_fact_paths": [
+        "intervention.dose_modification_required",
+        "intervention.dose_modification_features"
+      ],
+      "condition": "项目确认该剂量动作适用",
+      "rationale": "按结构化hold/reduction/restart原生布尔成员分别确定实际剂量动作；永久停药标准独立保留。",
+      "required_when_active_fact_paths": [
+        "intervention.restart_criteria"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-6-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_6_1_2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_1_2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_1_2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-1-2:actions",
+      "question": "暂停、降低、恢复、永久停药与漏给药是否各自给出项目特定条件并彼此不冲突？",
+      "linked_fact_paths": [
+        "intervention.dose_hold_criteria",
+        "intervention.restart_criteria"
+      ],
+      "linked_claim_types": [
+        "dose_regimen_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-1-2:thresholds"
+      ],
+      "risk_if_unmet": "复制示例阈值会让试验参与者暴露于未经支持的安全决策。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-1-2:cross-section",
+      "question": "给药方案的剂量与间隔是否与设计章节及 SoA 表达一致？",
+      "linked_fact_paths": [
+        "intervention.dose_consistency_with_design",
+        "intervention.dose_regimen"
+      ],
+      "linked_claim_types": [
+        "dose_regimen_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-1-2:consistency"
+      ],
+      "risk_if_unmet": "剂量跨节冲突会直接误导执行与审评。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,5197 @@
+{
+  "schema_version": "protocol-v3-chapter-registry.v1",
+  "generated_for": "TP-MA-07 v2 batch1 chapter contracts and fixtures (3R.3 batch1：封面/前置件/汇总/流程图/SOA；20260908 修复轮)",
+  "authority": "Codex-approved Plan v2 Task 3R.3 batch1；重用模板合同 + 显式合成夹具值，非项目批准，不含运行时激活",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fact_vocabulary": [
+    "contact.competitor_directory",
+    "contact.principal_investigator",
+    "contact.service_parties",
+    "contact.service_parties_applicable",
+    "contact.sponsor_representative",
+    "diagram.allocation_ratio",
+    "diagram.escalation_design",
+    "diagram.escalation_transition",
+    "diagram.phase_arm_structure",
+    "diagram.randomized",
+    "diagram.source_example_values",
+    "diagram.supporting_asset_ref",
+    "diagram.template_example_timeline",
+    "diagram.visit_timepoints",
+    "document_control.amendment_exists",
+    "document_control.applicable_parties",
+    "document_control.change_rationale",
+    "document_control.confidentiality_statement",
+    "document_control.header_footer_metadata",
+    "document_control.initial_version_treatment",
+    "document_control.protocol_id",
+    "document_control.version_date",
+    "document_control.version_history",
+    "figure_index.caption_inventory",
+    "figure_index.has_figures",
+    "figure_index.stale_figure_refs",
+    "framing.document_title",
+    "framing.protocol_id",
+    "framing.study_phase",
+    "framing.version",
+    "glossary.term_count",
+    "glossary.unused_template_terms",
+    "glossary.used_terms_source",
+    "provenance.template.version",
+    "signature.additional_signatory_applicable",
+    "signature.additional_signatory_identity",
+    "signature.completed_receipt",
+    "signature.investigator.institution",
+    "signature.investigator.protocol_identity",
+    "signature.sponsor.protocol_identity",
+    "signature.sponsor.representative",
+    "soa.assessment_cells",
+    "soa.contact_visits",
+    "soa.early_exit_assessment",
+    "soa.footnote_bindings",
+    "soa.pk_sampling_present",
+    "soa.pk_timing_units",
+    "soa.safety_followup",
+    "soa.template_example_scales",
+    "soa.visit_window_definitions",
+    "synopsis.comparator_drug",
+    "synopsis.design",
+    "synopsis.interventions",
+    "synopsis.investigational_drug",
+    "synopsis.overall_duration",
+    "synopsis.participation_duration",
+    "synopsis.population_eligibility",
+    "synopsis.principal_investigator",
+    "synopsis.registration_classification",
+    "synopsis.sample_size",
+    "synopsis.sponsor",
+    "synopsis.statistical_methods",
+    "synopsis.template_example_values",
+    "synopsis.trial_institutions",
+    "table_index.cached_static_list",
+    "table_index.caption_inventory",
+    "template.placeholder_tokens",
+    "toc.cached_static_text",
+    "toc.heading_hierarchy_source"
+  ],
+  "claim_vocabulary": [
+    "confidentiality_binding",
+    "contact_directory",
+    "design_description",
+    "diagram_transition",
+    "document_control_identity",
+    "estimand_linkage",
+    "fabricated_approval",
+    "figure_index_record",
+    "glossary_expansion",
+    "investigator_commitment",
+    "marketing_claim",
+    "soa_cell_mapping",
+    "sponsor_commitment",
+    "study_objective",
+    "synopsis_fact_row",
+    "synthetic_signature",
+    "table_index_record",
+    "toc_navigation",
+    "version_history_record"
+  ],
+  "chapters": [
+    {
+      "node_id": "v2_front_block",
+      "coverage_role": "cover",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-front-block:v2",
+        "semantic_node_id": "v2_front_block",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-block",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-front-block:v2",
+          "chapter_contract_id": "contract:v2-front-block:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.protocol_id",
+              "obligation": "required",
+              "rationale": "封面方案编号复用既有 framing.protocol_id 绑定；不设独立可编辑方案编号。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.document_title",
+              "obligation": "required",
+              "rationale": "封面标题复用既有 framing.document_title 绑定，排除模板示例标题。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.version",
+              "obligation": "required",
+              "rationale": "方案版本复用既有 framing.version 绑定；版本与日期分开承载，不得合并为丢失版本独立性的无结构字符串。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.version_date",
+              "obligation": "required",
+              "rationale": "版本日期为结构化独立事实，与 framing.version 分离承载。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.applicable_parties",
+              "obligation": "required",
+              "rationale": "封面必须列出实际适用当事方；适用方为项目元数据，需要显式来源，不得虚构。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.confidentiality_statement",
+              "obligation": "required",
+              "rationale": "保密声明必须绑定本项目申办方，不得沿用其他项目归属。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.header_footer_metadata",
+              "obligation": "required",
+              "rationale": "页眉/页脚元数据行必须按模板实际字段保留并项目化。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "provenance.template.version",
+              "obligation": "required",
+              "rationale": "封面必须记录已接受模板版本身份。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "template.placeholder_tokens",
+              "obligation": "forbidden",
+              "rationale": "源0–13 的说明段与 XXXXXX 等模板示例标记不得保留在封面承载区。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "document_control_identity",
+              "obligation": "required",
+              "rationale": "封面身份行必须声明编号/标题/版本/日期与文档控制事实一致。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "confidentiality_binding",
+              "obligation": "required",
+              "rationale": "保密声明必须显式绑定本项目申办方。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "marketing_claim",
+              "obligation": "forbidden",
+              "rationale": "封面与协议正文禁止营销性表述。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "document_control_identity"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "confidentiality_binding"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 3,
+              "project_specific_specification": "封面承载区必须逐行承载项目方案编号、版本/日期、实际适用方与申办方保密声明；测试值为显式合成示例。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "TP-MA-07 v2.0 封面项目字段（编号/标题/版本日期/适用方/保密声明）",
+            "身份/版本元数据归属：复用既有 framing.* 绑定与结构化版本日期；封面元数据为项目 provenance，不新增第二事实存储。"
+          ],
+          "skeleton_risk_rules": [
+            "封面缺少任一身份字段或保密声明即失败；仅模板占位文本即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-block",
+          "required_styles": [
+            "25",
+            "17",
+            "16"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-block:identity",
+            "rule": "封面方案编号/标题/版本/日期必须与文档控制 provenance 一致，不得复制其他项目或模板占位标题。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-block:parties",
+            "rule": "适用方与保密声明必须是本项目实际适用方；不得虚构签署、日期或项目批准。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-block:identity",
+            "question": "封面方案编号、版本与适用方是否全部来自本项目已确认文档控制事实？",
+            "linked_fact_paths": [
+              "framing.protocol_id",
+              "document_control.applicable_parties"
+            ],
+            "linked_claim_types": [
+              "document_control_identity"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-block:identity"
+            ],
+            "risk_if_unmet": "错挂其他项目方案编号将使整份文档不可用。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-block",
+          "skill_version": "3.3.0",
+          "node_id": "v2_front_block",
+          "chapter_contract_id": "contract:v2-front-block:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认文档控制事实），输出为 ChapterSkillOutput。封面身份复用既有 framing.protocol_id / framing.document_title / framing.version 绑定，版本与日期分别以结构化事实承载（不合并为丢失版本独立性的无结构字符串）；逐项给出实际适用方、申办方保密声明与页眉/页脚元数据行；排除源0–13说明段与 XXXXXX 示例标记；缺失事实进入待补清单而不是编造。",
+            "forbidden_behaviors": [
+              "编造证据来源或项目事实",
+              "保留源0–13说明段或 XXXXXX 示例标记",
+              "虚构签署、日期或项目批准",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：TP-MA-07 v2.0 零基 body-child 索引 23、25、28–36、40–42（无标题前置块承载区）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID取自模板 style_properties：25=Title，17=header，16=footer。",
+            "身份/版本元数据复用既有 framing.protocol_id / framing.document_title / framing.version 绑定；版本日期为结构化独立事实，不设独立可编辑方案编号字段。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-block:missing-obligation",
+            "skill:chapter:front-block:unresolved-fact",
+            "skill:chapter:front-block:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_1_1",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-1-1:v2",
+        "semantic_node_id": "v2_n_1_1",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:n-1-1:summary-table",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-1-1:v2",
+          "chapter_contract_id": "contract:v2-n-1-1:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.protocol_id",
+              "obligation": "required",
+              "rationale": "汇总表方案编号行复用既有 framing.protocol_id 绑定，与封面/文档控制同源。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.document_title",
+              "obligation": "required",
+              "rationale": "汇总表标题行复用既有 framing.document_title 绑定。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.version",
+              "obligation": "required",
+              "rationale": "汇总表版本行复用既有 framing.version 绑定；版本与日期分开承载。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.version_date",
+              "obligation": "required",
+              "rationale": "汇总表版本/日期行的日期部分为结构化独立事实，与 framing.version 分离。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "framing.study_phase",
+              "obligation": "required",
+              "rationale": "汇总表期别行复用既有 framing.study_phase 绑定，与正文一致。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.registration_classification",
+              "obligation": "required",
+              "rationale": "登记分类为药物注册申请分类行，必须与正文一致；它不是临床试验注册记录的证明，不得据此断言已在任何注册机构登记；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.sponsor",
+              "obligation": "required",
+              "rationale": "汇总表申办者行必须与文档控制一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.principal_investigator",
+              "obligation": "required",
+              "rationale": "汇总表主要研究者行必须与联系表一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.trial_institutions",
+              "obligation": "required",
+              "rationale": "汇总表试验机构行必须与实际机构清单一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.design",
+              "obligation": "required",
+              "rationale": "汇总表设计行必须给出与正文一致的规范设计描述；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.population_eligibility",
+              "obligation": "required",
+              "rationale": "汇总表人群/入选行必须与正文入选标准一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.investigational_drug",
+              "obligation": "required",
+              "rationale": "汇总表研究药物行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.comparator_drug",
+              "obligation": "required",
+              "rationale": "汇总表对照药行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.interventions",
+              "obligation": "required",
+              "rationale": "汇总表干预行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.sample_size",
+              "obligation": "required",
+              "rationale": "汇总表样本量行必须与统计学章节一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.statistical_methods",
+              "obligation": "required",
+              "rationale": "汇总表统计分析行必须与统计学章节一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.overall_duration",
+              "obligation": "required",
+              "rationale": "汇总表总体试验周期行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.participation_duration",
+              "obligation": "required",
+              "rationale": "汇总表个体参与时长行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "synopsis.template_example_values",
+              "obligation": "forbidden",
+              "rationale": "模板示例剂量/疾病/统计假设不得作为项目事实填入汇总表。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "synopsis_fact_row",
+              "obligation": "required",
+              "rationale": "每个汇总行必须声明其值来自既定项目事实而非第二事实存储。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "study_objective",
+              "obligation": "required",
+              "rationale": "嵌套表必须按多目的分别给出目的行，不合并为单句。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "estimand_linkage",
+              "obligation": "required",
+              "rationale": "嵌套表必须分别链接估计目标/终点/分析策略，并使用已记录的 E9(R1)/M11 适用性处置。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "marketing_claim",
+              "obligation": "forbidden",
+              "rationale": "汇总表禁止营销性表述。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "synopsis_fact_row"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "study_objective"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "estimand_linkage"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "汇总表（模板 table[242]：2列×17行+嵌套表）必须保留全部17行选择器：编号、标题、版本/日期、期别、注册分类、申办者、主要研究者、试验机构、目的/估计目标/终点、设计、人群、药物、干预、样本量、统计分析、总体周期、参与者访视时长；行值为正文既定事实（framing.* 复用与 synopsis.* 派生）的投影单元格，不是第二事实存储。",
+              "required_object_cells": [
+                "synopsis:cell:protocol_id",
+                "synopsis:cell:title",
+                "synopsis:cell:version_date",
+                "synopsis:cell:study_phase",
+                "synopsis:cell:registration_classification",
+                "synopsis:cell:sponsor",
+                "synopsis:cell:principal_investigator",
+                "synopsis:cell:trial_institutions",
+                "synopsis:cell:objective_estimand_endpoint",
+                "synopsis:cell:design",
+                "synopsis:cell:population_eligibility",
+                "synopsis:cell:drug",
+                "synopsis:cell:interventions",
+                "synopsis:cell:sample_size",
+                "synopsis:cell:statistical_methods",
+                "synopsis:cell:overall_duration",
+                "synopsis:cell:participation_duration"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "17个汇总选择器行与嵌套目的/估计目标映射",
+            "元数据归属声明：编号/标题/版本/期别复用既有 framing.* 绑定；其余汇总行为 synopsis.* 派生投影，无独立可编辑副本。"
+          ],
+          "skeleton_risk_rules": [
+            "汇总表缺失、仅表头或行值与正文冲突即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:n-1-1",
+          "required_styles": [
+            "3",
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-1:row-identity",
+            "rule": "汇总表17行选择器必须与正文既定事实一致；剂量、样本量或入选标准与正文冲突即为失败。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-1:estimand-linkage",
+            "rule": "目的/估计目标/终点必须分别链接，使用已记录的 E9(R1)/M11 适用性处置，不采用『仅关键性』一刀切规则。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-1:registration",
+            "rule": "登记分类是药物注册申请分类，必须与正文一致；它不是临床试验注册记录的证明。实际注册一致性属于适用注册的入选资格记录及其来源/版本，无记录时不得虚构或断言已登记。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:n-1-1:consistency",
+            "question": "汇总行的设计、人群、剂量与样本量是否全部与正文既定事实一致？",
+            "linked_fact_paths": [
+              "synopsis.sample_size",
+              "synopsis.design"
+            ],
+            "linked_claim_types": [
+              "study_objective"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:n-1-1:row-identity"
+            ],
+            "risk_if_unmet": "汇总与正文冲突会直接误导审评。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:n-1-1:summary-table",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_1_1",
+          "chapter_contract_id": "contract:v2-n-1-1:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（正文既定项目事实），输出为 ChapterSkillOutput。汇总表17行选择器全部保留并与正文一致：编号/标题/版本/期别复用 framing.protocol_id / framing.document_title / framing.version / framing.study_phase 绑定，版本与日期分开承载；嵌套表分别映射多个目的/估计目标/终点；登记分类是药物注册申请分类，不是注册记录证明；实际注册一致性属于适用注册的入选资格记录，无记录不得虚构；不得从模板示例复制剂量、疾病或统计值。",
+            "forbidden_behaviors": [
+              "剂量/样本量/入选标准与正文冲突",
+              "复制模板示例值作为项目事实",
+              "把多目的压平成单句",
+              "营销性表述",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 240–243 与 table[242]（2列×17行汇总表+1张嵌套表）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：3=heading 2，1=Normal。",
+            "汇总行值归属：framing.* 复用既有绑定；其余为 synopsis.* 派生投影，不设第二可编辑事实存储；注册分类不得呈现为注册记录证明。"
+          ],
+          "error_codes": [
+            "skill:chapter:n-1-1:summary-table:missing-obligation",
+            "skill:chapter:n-1-1:summary-table:unresolved-fact",
+            "skill:chapter:n-1-1:summary-table:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_1_2",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-1-2:v2",
+        "semantic_node_id": "v2_n_1_2",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:n-1-2:design-diagram",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-1-2:v2",
+          "chapter_contract_id": "contract:v2-n-1-2:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.phase_arm_structure",
+              "obligation": "required",
+              "rationale": "流程图必须呈现与正文一致的相位与臂结构。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.allocation_ratio",
+              "obligation": "optional",
+              "rationale": "分配比例仅在确认设计实际随机化时必需（条件规则升级）；单臂非随机设计不得虚构分配比例。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.visit_timepoints",
+              "obligation": "required",
+              "rationale": "流程图访视时间点必须与 SOA 一致。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.escalation_design",
+              "obligation": "optional",
+              "rationale": "确认设计是否实际包含剂量升级。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.escalation_transition",
+              "obligation": "optional",
+              "rationale": "含升级设计的升级路径图示义务，仅在实际适用时必需。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.template_example_timeline",
+              "obligation": "forbidden",
+              "rationale": "模板帕金森/滴定示例时间线或无依据升级路径不得插入无关设计。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.randomized",
+              "obligation": "optional",
+              "rationale": "确认设计是否实际随机化；为真时触发分配比例条件义务。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.supporting_asset_ref",
+              "obligation": "optional",
+              "rationale": "引用矢量示例素材时必须记录素材身份与 sha256；素材仅作风格参考，不提供项目事实。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "diagram.source_example_values",
+              "obligation": "forbidden",
+              "rationale": "示例图中的 1:1/区块随机化/IWRS/安慰剂/12周/每周4次访视/4周随访/n=XX 占位不得自动成为项目事实。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "design_description",
+              "obligation": "required",
+              "rationale": "流程图必须附带与正文一致的设计描述声明。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "diagram_transition",
+              "obligation": "required",
+              "rationale": "流程图阶段转换必须声明与 SOA 一致。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "design_description"
+              ],
+              "allowed_locator_kinds": [
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "diagram_transition"
+              ],
+              "allowed_locator_kinds": [
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "figure",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "研究流程图必须呈现相位/臂/分配/时间点与转换；引用的矢量素材仅可参考风格，不得提供项目事实。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "与 SOA 一致的研究流程图（相位/臂/分配/时间点/转换）"
+          ],
+          "skeleton_risk_rules": [
+            "缺少流程图对象或仅模板示例时间线即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:n-1-2",
+          "required_styles": [
+            "3",
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-2:soa-agreement",
+            "rule": "流程图相位/臂/分配/时间点与转换必须与 SOA 一致；所有适用臂的早退/停药/退出转换必须按已确认事实逐一建模，不得照抄示例图只画右臂早退且不连随访的做法；早期退出与干预停药的区别按实际方案保留。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-2:escalation-only-if-applicable",
+            "rule": "升级图示仅在确认设计实际包含升级时适用；矢量素材仅参考风格。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-2:asset-style-only",
+            "rule": "引用矢量素材仅限风格参考，必须记录素材身份与 sha256（示例素材 /Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg，sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c）；示例取值不得自动成为项目事实。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-2:omission-disposition",
+            "rule": "source[246] 允许适合的极简设计省略流程图；省略必须有记录在案的适用性处置，不得静默放弃默认的流程图推荐；是否省略属项目判断，本合同不断言其结论。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:n-1-2:escalation",
+            "triggering_fact_paths": [
+              "diagram.escalation_design"
+            ],
+            "condition": "确认设计实际包含剂量升级",
+            "rationale": "source[250] 升级图示义务仅在实际含升级的设计中适用。",
+            "required_when_active_fact_paths": [
+              "diagram.escalation_transition"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:n-1-2:allocation",
+            "triggering_fact_paths": [
+              "diagram.randomized"
+            ],
+            "condition": "确认设计实际随机化",
+            "rationale": "分配比例义务仅在随机化设计下适用；单臂非随机设计必须能通过。",
+            "required_when_active_fact_paths": [
+              "diagram.allocation_ratio"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [
+          "contract:v2-n-1-3:v2"
+        ],
+        "dependency_repair_policy": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "dependency_repair_policy_id": "repair:v2-n-1-2:soa-policy",
+          "dependency_ids": [
+            "contract:v2-n-1-3:v2"
+          ],
+          "downstream_impact": "SOA 访视/窗口修订后，研究流程图必须同步复核相位/臂/分配与时间点一致性。",
+          "repair_owner": "ai",
+          "max_repair_attempts": 2,
+          "repair_steps": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "repair_step_id": "repair:v2-n-1-2:step-1",
+              "sequence": 1,
+              "action": "重读 SOA 差异并重算流程图时间点与转换。",
+              "owner": "ai"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "repair_step_id": "repair:v2-n-1-2:step-2",
+              "sequence": 2,
+              "action": "复核升级/退出路径与 SOA 早期终止评估一致后重新提交。",
+              "owner": "ai"
+            }
+          ]
+        },
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:n-1-2:soa-agreement",
+            "question": "流程图时间点与转换是否与 SOA 完全一致？",
+            "linked_fact_paths": [
+              "diagram.visit_timepoints"
+            ],
+            "linked_claim_types": [
+              "diagram_transition"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:n-1-2:soa-agreement"
+            ],
+            "risk_if_unmet": "图与SOA不一致会误导研究与执行。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:n-1-2:design-diagram",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_1_2",
+          "chapter_contract_id": "contract:v2-n-1-2:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认设计与 SOA 事实），输出为 ChapterSkillOutput。生成呈现相位/臂与访视时间点、与 SOA 一致的研究流程图说明；分配比例仅在确认随机化时给出（diagram.randomized 触发条件义务），单臂非随机设计不得虚构分配比例；所有适用臂的早退/停药/退出转换按已确认事实逐一建模，保留早期退出与干预停药的区别；引用矢量素材仅限风格参考并记录身份与 sha256；示例图中的 1:1/IWRS/安慰剂/12周等取值不得自动成为项目事实；极简设计省略流程图须有记录在案的适用性处置，不静默放弃默认推荐。",
+            "forbidden_behaviors": [
+              "插入模板帕金森/滴定示例时间线",
+              "无依据的升级路径",
+              "图与 SOA 不一致",
+              "输出任何模型/供应商设置",
+              "非随机设计虚构分配比例",
+              "照抄示例图仅右臂早退的转换拓扑",
+              "示例取值（1:1/IWRS/安慰剂/12周/n=XX）自动成为项目事实"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 245–258（研究流程图示区段；source[246] 允许极简设计省略，source[250] 升级图示仅在实际含升级时适用）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：3=heading 2，1=Normal。",
+            "矢量示例素材（仅风格参考，非模板权威/项目数据/渲染验收）：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg",
+            "素材 sha256：c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c（design-v1.3 核对值；示例状态，非项目事实）。"
+          ],
+          "error_codes": [
+            "skill:chapter:n-1-2:design-diagram:missing-obligation",
+            "skill:chapter:n-1-2:design-diagram:unresolved-fact",
+            "skill:chapter:n-1-2:design-diagram:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_1_3",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-1-3:v2",
+        "semantic_node_id": "v2_n_1_3",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:n-1-3:soa",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-1-3:v2",
+          "chapter_contract_id": "contract:v2-n-1-3:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.visit_window_definitions",
+              "obligation": "required",
+              "rationale": "访视与窗口必须带单位与参考事件；电话联系计入实际访视。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.assessment_cells",
+              "obligation": "required",
+              "rationale": "必需评估单元格按内容与适用访视身份核查，而非仅显示 X。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.footnote_bindings",
+              "obligation": "required",
+              "rationale": "脚注必须解析到既有程序/访视，不得悬空。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.early_exit_assessment",
+              "obligation": "required",
+              "rationale": "早期终止评估必须与停药/退出规则一致。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.safety_followup",
+              "obligation": "required",
+              "rationale": "安全随访必须与停药/退出规则一致。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.contact_visits",
+              "obligation": "required",
+              "rationale": "适用的电话联系人访视必须作为实际访视呈现。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.pk_sampling_present",
+              "obligation": "optional",
+              "rationale": "确认是否存在 PK 采血，触发 PK 时间单位条件义务。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.pk_timing_units",
+              "obligation": "optional",
+              "rationale": "PK 采样存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "soa.template_example_scales",
+              "obligation": "forbidden",
+              "rationale": "模板示例疾病量表、实验室面板或样本处理（source[265]）不得作为项目事实。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "soa_cell_mapping",
+              "obligation": "required",
+              "rationale": "SOA 单元格必须声明与访视/窗口/脚注/退出评估的类型化链接。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "soa_cell_mapping"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "schedule_of_activities",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "SOA 表（模板 table[265]：6列×33行）呈现访视/窗口、必需评估、脚注、早期终止与安全随访，位于横向 Word 节。",
+              "required_object_cells": [
+                "soa:header:visit_window",
+                "soa:cell:assessment_identity",
+                "soa:cell:footnote_binding",
+                "soa:cell:early_exit",
+                "soa:cell:safety_followup"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "类型化 SOA 单元格与脚注/窗口/退出评估链接"
+          ],
+          "skeleton_risk_rules": [
+            "SOA 单元格 ID 存在但值为空、窗口缺失或脚注悬空即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:n-1-3",
+          "required_styles": [
+            "3",
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-3:cells",
+            "rule": "必需评估单元格按内容与适用访视身份核查，而非仅显示 X；脚注必须解析到既有程序/访视。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-3:exit-followup",
+            "rule": "早期终止评估与安全随访必须与停药/退出规则一致；错误退出访视脚注即为失败。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:n-1-3:landscape",
+            "rule": "SOA 位于横向 Word 节（sections[ordinal 6]）；原生横向/页眉/域刷新属7R义务，本合同不断言其成功。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:n-1-3:pk-sampling",
+            "triggering_fact_paths": [
+              "soa.pk_sampling_present"
+            ],
+            "condition": "确认存在 PK 采血",
+            "rationale": "PK 采血存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。",
+            "required_when_active_fact_paths": [
+              "soa.pk_timing_units"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:n-1-3:exit",
+            "question": "早期终止评估与安全随访是否与停药/退出规则一致？",
+            "linked_fact_paths": [
+              "soa.early_exit_assessment",
+              "soa.safety_followup"
+            ],
+            "linked_claim_types": [
+              "soa_cell_mapping"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:n-1-3:exit-followup"
+            ],
+            "risk_if_unmet": "早期退出/随访与规则不一致会造成试验参与者安全流程缺口。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:n-1-3:soa",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_1_3",
+          "chapter_contract_id": "contract:v2-n-1-3:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认访视/程序事实），输出为 ChapterSkillOutput。生成结构化 SOA：访视与窗口带单位与参考事件、必需评估单元格按内容与访视身份核查、脚注解析到既有程序、早期终止评估与安全随访与停药/退出规则一致、电话联系计为实际访视；PK 窗口不得渲染为泛化日窗；模板示例量表/面板/样本处理一律不得作为项目事实。",
+            "forbidden_behaviors": [
+              "单元格ID存在但值为空",
+              "错误退出访视脚注",
+              "无关疾病量表或实验室面板",
+              "PK 窗口渲染为泛化日窗",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 259–265 与 table[265]（6列×33行 SOA；横向节=sections[ordinal 6]，sectPr 止于 body-child 266）；source[265] 为示例，非项目事实。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：3=heading 2，1=Normal；横向节/页眉/域刷新为7R原生义务。"
+          ],
+          "error_codes": [
+            "skill:chapter:n-1-3:soa:missing-obligation",
+            "skill:chapter:n-1-3:soa:unresolved-fact",
+            "skill:chapter:n-1-3:soa:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_1",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-1:v2",
+        "semantic_node_id": "v2_n_front_1",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-1:version-history",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-1:v2",
+          "chapter_contract_id": "contract:v2-n-front-1:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.version_history",
+              "obligation": "required",
+              "rationale": "版本/日期/变更/依据表必须绑定真实修订历史。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.version_date",
+              "obligation": "required",
+              "rationale": "当前版本日期必须与封面及文档控制一致。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.initial_version_treatment",
+              "obligation": "required",
+              "rationale": "初始版本处理必须显式说明，不得含糊。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.change_rationale",
+              "obligation": "optional",
+              "rationale": "无修订历史时可由初始版本处理说明代替。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "document_control.amendment_exists",
+              "obligation": "optional",
+              "rationale": "存在已确认修订时触发变更依据条件义务。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "version_history_record",
+              "obligation": "required",
+              "rationale": "版本表必须声明其行与真实修订历史一致。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "fabricated_approval",
+              "obligation": "forbidden",
+              "rationale": "不得虚构修订批准记录或已完成审批回执。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "version_history_record"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "修订历史表（模板 table[46]：4列×5行）逐行给出版本号、版本日期、变更摘要与变更依据。",
+              "required_object_cells": [
+                "version:cell:version_no",
+                "version:cell:version_date",
+                "version:cell:change_summary",
+                "version:cell:change_rationale"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "TP-MA-07 v2.0 修订历史表项目化"
+          ],
+          "skeleton_risk_rules": [
+            "版本表缺失或仅有表头/空白单元格即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-1",
+          "required_styles": [
+            "2"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-1:history-source",
+            "rule": "版本/日期/变更/依据必须回链真实修订历史；初始版本必须显式说明初始版本处理。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-1:no-invented-amendments",
+            "rule": "不得新增未发生的修订行，也不得在已有修订时保留空白表壳。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:front-1:amendment",
+            "triggering_fact_paths": [
+              "document_control.amendment_exists"
+            ],
+            "condition": "存在已确认修订历史",
+            "rationale": "存在修订时变更依据必须逐行给出，初始版本才可省略。",
+            "required_when_active_fact_paths": [
+              "document_control.change_rationale"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-1:history",
+            "question": "版本/日期/变更/依据各单元格是否全部来自真实修订历史？",
+            "linked_fact_paths": [
+              "document_control.version_history"
+            ],
+            "linked_claim_types": [
+              "version_history_record"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-1:history-source"
+            ],
+            "risk_if_unmet": "版本表挂错来源会使方案版本追溯失效。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-1:version-history",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_1",
+          "chapter_contract_id": "contract:v2-n-front-1:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认修订历史事实），输出为 ChapterSkillOutput。生成版本/日期/变更/依据四列表格内容，绑定真实修订历史；初始版本必须显式说明初始版本处理；存在修订时逐行给出变更依据；不得虚构修订行或审批回执。",
+            "forbidden_behaviors": [
+              "以模板默认版本行冒充项目修订历史",
+              "虚构修订批准记录或回执",
+              "空白变更表壳",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 44–46 与 table[46]（4列×5行修订历史表）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1（模板 node_tree front_1 节点实际样式）。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-1:version-history:missing-obligation",
+            "skill:chapter:front-1:version-history:unresolved-fact",
+            "skill:chapter:front-1:version-history:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_2",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-2:v2",
+        "semantic_node_id": "v2_n_front_2",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-2:investigator-commitment",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-2:v2",
+          "chapter_contract_id": "contract:v2-n-front-2:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.investigator.protocol_identity",
+              "obligation": "required",
+              "rationale": "研究者承诺必须绑定同一方案编号/版本/日期。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.investigator.institution",
+              "obligation": "required",
+              "rationale": "承诺页必须写明实际研究机构。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.completed_receipt",
+              "obligation": "forbidden",
+              "rationale": "不得预填已签署回执或合成签名/日期；未签署签名行是刻意的 Word 签署控件。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "investigator_commitment",
+              "obligation": "required",
+              "rationale": "研究者承诺段必须声明已阅读并理解同一现行方案。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "synthetic_signature",
+              "obligation": "forbidden",
+              "rationale": "不得输出已完成签署状态、合成签名或<姓名>/<日期>占位回填。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "investigator_commitment"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 2,
+              "project_specific_specification": "研究者承诺段与签名/日期控件段；签名与日期控件保持未签署状态。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "研究者承诺与未签署签名/日期控件（现行方案元数据绑定）"
+          ],
+          "skeleton_risk_rules": [
+            "承诺段缺失或仅剩签名控件壳即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-2",
+          "required_styles": [
+            "2",
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-2:binding",
+            "rule": "研究者承诺必须绑定同一方案编号/版本/日期与实际机构。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-2:unsigned",
+            "rule": "签名与日期控件必须保持未签署控件状态；文档就绪不等于已完成签署。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-2:binding",
+            "question": "承诺页绑定的方案身份与机构是否为同一现行值？",
+            "linked_fact_paths": [
+              "signature.investigator.protocol_identity",
+              "signature.investigator.institution"
+            ],
+            "linked_claim_types": [
+              "investigator_commitment"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-2:binding"
+            ],
+            "risk_if_unmet": "承诺挂错版本或机构将使签署页无效。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-2:investigator-commitment",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_2",
+          "chapter_contract_id": "contract:v2-n-front-2:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认方案身份与机构事实），输出为 ChapterSkillOutput。生成与现行方案编号/版本/日期及实际机构一致的研究者承诺段与签名/日期控件段；签名与日期控件保持未签署空白控件状态；不得引用过期修订或替换机构。",
+            "forbidden_behaviors": [
+              "引用过期方案修订",
+              "替换或虚构研究机构",
+              "生成合成签名/日期或已签署回执",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 49、51、54、56、58（研究者承诺与签署控件段）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1，1=Normal。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-2:investigator-commitment:missing-obligation",
+            "skill:chapter:front-2:investigator-commitment:unresolved-fact",
+            "skill:chapter:front-2:investigator-commitment:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_3",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-3:v2",
+        "semantic_node_id": "v2_n_front_3",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-3:sponsor-commitment",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-3:v2",
+          "chapter_contract_id": "contract:v2-n-front-3:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.sponsor.protocol_identity",
+              "obligation": "required",
+              "rationale": "申办方承诺必须绑定同一现行方案元数据。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.sponsor.representative",
+              "obligation": "required",
+              "rationale": "申办方授权代表签署控件必须使用现行真实代表信息，姓名控件保持未签署状态。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.additional_signatory_applicable",
+              "obligation": "optional",
+              "rationale": "存在其他适用签署方时触发附加签署页义务。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.additional_signatory_identity",
+              "obligation": "optional",
+              "rationale": "附加签署方的身份事实，仅在适用时必需。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "signature.completed_receipt",
+              "obligation": "forbidden",
+              "rationale": "不得复制已签署日期或虚构签收回执。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "sponsor_commitment",
+              "obligation": "required",
+              "rationale": "申办方承诺段必须声明对同一现行方案的承诺。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "synthetic_signature",
+              "obligation": "forbidden",
+              "rationale": "不得输出已完成签署状态或合成签名/日期。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "sponsor_commitment"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 2,
+              "project_specific_specification": "申办方承诺段与代表签署控件段；附加签署页仅在适用时出现。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "申办方承诺与代表签署控件（现行元数据绑定）"
+          ],
+          "skeleton_risk_rules": [
+            "承诺段或代表签署控件缺失即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-3",
+          "required_styles": [
+            "2",
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-3:binding",
+            "rule": "申办方承诺与代表签署控件必须使用同一现行方案元数据，不得沿用旧申办方信息。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-3:no-copied-date",
+            "rule": "不得复制已签署日期或虚构签收；签署状态属于内部信息。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:front-3:additional-signatory",
+            "triggering_fact_paths": [
+              "signature.additional_signatory_applicable"
+            ],
+            "condition": "存在申办方代表以外的适用签署方",
+            "rationale": "仅在实际适用时提供附加签署页并给出其身份。",
+            "required_when_active_fact_paths": [
+              "signature.additional_signatory_identity"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-3:binding",
+            "question": "申办方承诺与代表签署控件是否使用同一现行方案元数据？",
+            "linked_fact_paths": [
+              "signature.sponsor.protocol_identity",
+              "signature.sponsor.representative"
+            ],
+            "linked_claim_types": [
+              "sponsor_commitment"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-3:binding"
+            ],
+            "risk_if_unmet": "旧版申办方元数据会使签署控件失效。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-3:sponsor-commitment",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_3",
+          "chapter_contract_id": "contract:v2-n-front-3:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认申办方元数据事实），输出为 ChapterSkillOutput。生成与现行方案身份一致的申办方承诺段与授权代表签署控件段；仅在确认适用时附加签署页；不得复制签署日期、虚构签收或保留旧申办方信息。",
+            "forbidden_behaviors": [
+              "沿用旧申办方或旧版元数据",
+              "复制已签署日期或虚构签收",
+              "生成合成签名",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 66、67、70、72、74、77（申办方承诺与代表签署控件段）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1，1=Normal。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-3:sponsor-commitment:missing-obligation",
+            "skill:chapter:front-3:sponsor-commitment:unresolved-fact",
+            "skill:chapter:front-3:sponsor-commitment:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_4",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-4:v2",
+        "semantic_node_id": "v2_n_front_4",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-4:contact-directory",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-4:v2",
+          "chapter_contract_id": "contract:v2-n-front-4:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "contact.sponsor_representative",
+              "obligation": "required",
+              "rationale": "申办方/代表联系表必须给出真实角色与地址。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "contact.principal_investigator",
+              "obligation": "required",
+              "rationale": "主要研究者联系表必须给出真实角色与地址。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "contact.service_parties",
+              "obligation": "optional",
+              "rationale": "服务方（监查/CRO等）联系信息，仅在适用时必需。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "contact.service_parties_applicable",
+              "obligation": "optional",
+              "rationale": "触发服务方联系表条件义务。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "contact.competitor_directory",
+              "obligation": "forbidden",
+              "rationale": "竞品或模板的联系信息目录不得借用；联系信息只能是本项目真实当事方。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "contact_directory",
+              "obligation": "required",
+              "rationale": "联系目录必须声明其角色/地址单元格与真实联系信息一致。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "contact_directory"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 2,
+              "project_specific_specification": "申办方与研究者联系表（模板 table[89]/[91]/[93] 中的适用表）为无条件义务，各自保留真实角色与地址单元格；服务方联系表仅在实际适用时出现，其角色/地址义务由条件规则与 QC 承载，不得输出占位 N/A 单元格。",
+              "required_object_cells": [
+                "contact:cell:sponsor.role",
+                "contact:cell:sponsor.address",
+                "contact:cell:investigator.role",
+                "contact:cell:investigator.address"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "申办方/研究者/服务方三张联系表的角色与地址单元格"
+          ],
+          "skeleton_risk_rules": [
+            "联系表缺失或角色/地址单元格空白即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-4",
+          "required_styles": [
+            "2",
+            "28"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-4:roles",
+            "rule": "联系表必须承载真实角色与地址单元格义务（表89/91/93），缺失即为失败。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-4:no-competitor",
+            "rule": "不得借用竞品或模板的联系信息。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-4:service-cells",
+            "rule": "确认存在服务方（如中心实验室/监查/CRO）时，服务方联系表必须给出真实角色与地址值；不适用时整表省略，不得保留占位 N/A 单元格；单元格级核查属夹具与文档验证。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:front-4:service-parties",
+            "triggering_fact_paths": [
+              "contact.service_parties_applicable"
+            ],
+            "condition": "项目实际使用服务方（如中心实验室/交互式响应系统）",
+            "rationale": "服务方联系表仅在实际适用时必需。",
+            "required_when_active_fact_paths": [
+              "contact.service_parties"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-4:roles",
+            "question": "各联系表的角色与地址单元格是否全部填充且来自真实联系信息？",
+            "linked_fact_paths": [
+              "contact.principal_investigator"
+            ],
+            "linked_claim_types": [
+              "contact_directory"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-4:roles"
+            ],
+            "risk_if_unmet": "联系表角色/地址缺失会阻断沟通与监查安排。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-4:contact-directory",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_4",
+          "chapter_contract_id": "contract:v2-n-front-4:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认联系事实），输出为 ChapterSkillOutput。申办方与研究者联系表为无条件义务，各自给出真实角色与地址单元格；服务方联系表仅在实际适用时生成并给出真实角色/地址值，不适用时整表省略；禁止输出占位 N/A 单元格或借用竞品/模板联系信息。",
+            "forbidden_behaviors": [
+              "借用竞品联系信息",
+              "角色/地址单元格留空",
+              "虚构联系方",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 84、87–93 与三张联系表 table[89]（2列×3行）、table[91]（4列×6行）、table[93]（3列×5行）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1；28=Table Grid（表格样式原生核对属7R义务）。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-4:contact-directory:missing-obligation",
+            "skill:chapter:front-4:contact-directory:unresolved-fact",
+            "skill:chapter:front-4:contact-directory:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_5",
+      "coverage_role": "outline_only_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-5:v2",
+        "semantic_node_id": "v2_n_front_5",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-5:glossary",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-5:v2",
+          "chapter_contract_id": "contract:v2-n-front-5:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "glossary.term_count",
+              "obligation": "required",
+              "rationale": "缩略语表必须记录正文实际使用缩写的数量 provenance。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "glossary.used_terms_source",
+              "obligation": "required",
+              "rationale": "每个词条的全称必须有来源回链并保留正确的医学区分。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "glossary.unused_template_terms",
+              "obligation": "forbidden",
+              "rationale": "未在正文使用的模板缩写不得保留；不得保留源拼写错误或相互冲突的全称。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "glossary_expansion",
+              "obligation": "required",
+              "rationale": "缩略语表必须声明缩写/来源全称/中文含义三列与正文实际使用一致。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "glossary_expansion"
+              ],
+              "allowed_locator_kinds": [
+                "table",
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "缩略语表（模板 table[96]：3列）必须保留缩写/来源全称/中文含义三列表头，并且至少承载一条正文实际使用缩写的真实词条单元格；全部已用术语的逐条覆盖属医学/术语判断，由 QC 延后核查。",
+              "required_object_cells": [
+                "glossary:header:abbreviation",
+                "glossary:header:full_name",
+                "glossary:header:chinese_meaning",
+                "glossary:entry:1.abbreviation",
+                "glossary:entry:1.full_name",
+                "glossary:entry:1.chinese_meaning"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "仅收正文实际使用缩写的三列缩略语表"
+          ],
+          "skeleton_risk_rules": [
+            "缩略语表仅有表头或缺失任一表头单元格即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-5",
+          "required_styles": [
+            "1"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-5:used-only",
+            "rule": "缩略语表必须只收正文实际使用的缩写，并给出有来源的全称与中文含义，保留正确的医学区分。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-5:expand-3r7",
+            "rule": "表内容随3R.7术语义务扩展；本合同不预设最终词条集，也不在夹具中断言词条医学正确性。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-5:used-only",
+            "question": "缩略语表是否只含正文实际使用且来源可回链的词条？",
+            "linked_fact_paths": [
+              "glossary.used_terms_source"
+            ],
+            "linked_claim_types": [
+              "glossary_expansion"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-5:used-only"
+            ],
+            "risk_if_unmet": "未用模板缩写残留会误导读者并破坏术语一致性。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-5:glossary",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_5",
+          "chapter_contract_id": "contract:v2-n-front-5:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（已确认术语使用事实），输出为 ChapterSkillOutput。缩略语表除三列表头外，必须为正文实际使用的缩写给出真实词条单元格（缩写/来源全称/中文含义）；未使用的模板缩写、源拼写错误与冲突全称一律剔除；全部已用术语的逐条覆盖属延后医学/术语判断；词条数 provenance 必须记录。",
+            "forbidden_behaviors": [
+              "保留未使用的模板缩写",
+              "保留源拼写错误或冲突全称",
+              "虚构词条来源",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 94–96 与 table[96]（3列×50行缩略语表；Normal 本地大纲节点，无标题样式）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：1=Normal（该节点无标题样式，属 Normal 本地大纲）。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-5:glossary:missing-obligation",
+            "skill:chapter:front-5:glossary:unresolved-fact",
+            "skill:chapter:front-5:glossary:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_6",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-6:v2",
+        "semantic_node_id": "v2_n_front_6",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-6:toc",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-6:v2",
+          "chapter_contract_id": "contract:v2-n-front-6:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "toc.heading_hierarchy_source",
+              "obligation": "required",
+              "rationale": "目录必须声明其来源为实际标题层级与书签。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "toc.cached_static_text",
+              "obligation": "forbidden",
+              "rationale": "不得把缓存的目录标签/页码当作内容来源；目标与页码必须随文档原生域更新。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "toc_navigation",
+              "obligation": "required",
+              "rationale": "目录必须声明可经原生域更新指向现行标题目标。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "toc_navigation"
+              ],
+              "allowed_locator_kinds": [
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "TOC 域段落（toc 1..9 样式）；原生域更新为7R义务，本合同不断言其已成功。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "由实际标题层级与书签生成的目录域"
+          ],
+          "skeleton_risk_rules": [
+            "目录缺少域段落或仅缓存文本即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-6",
+          "required_styles": [
+            "2",
+            "18"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-6:native-field",
+            "rule": "目录必须由实际标题层级与书签生成，目标与页码随文档更新（TOC/PAGEREF 域）。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-6:no-cache",
+            "rule": "缓存的标签/页码或缺失目标即为失败。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-6:native-field",
+            "question": "目录是否由实际标题层级生成且目标可解析？",
+            "linked_fact_paths": [
+              "toc.heading_hierarchy_source"
+            ],
+            "linked_claim_types": [
+              "toc_navigation"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-6:native-field"
+            ],
+            "risk_if_unmet": "缓存目录会指向失效目标并破坏导航。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-6:toc",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_6",
+          "chapter_contract_id": "contract:v2-n-front-6:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（实际标题层级与书签清单），输出为 ChapterSkillOutput。生成由实际标题层级与书签构成的目录域内容；不得复制缓存的标签或页码；缺失目标视为失败；原生域更新由7R任务核对，不在本技能内断言。",
+            "forbidden_behaviors": [
+              "复制缓存页码或标签",
+              "保留缺失目标的目录项",
+              "虚构标题条目",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 99–231（目录域区段；模板 field_inventory：TOC×2、PAGEREF×134、HYPERLINK×136）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1，18=toc 1；toc 2..9 与书签原生核对属7R义务。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-6:toc:missing-obligation",
+            "skill:chapter:front-6:toc:unresolved-fact",
+            "skill:chapter:front-6:toc:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_7",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-7:v2",
+        "semantic_node_id": "v2_n_front_7",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-7:table-index",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-7:v2",
+          "chapter_contract_id": "contract:v2-n-front-7:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "table_index.caption_inventory",
+              "obligation": "required",
+              "rationale": "表索引必须来自实际表格题注清单并保持有序表格身份。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "table_index.cached_static_list",
+              "obligation": "forbidden",
+              "rationale": "旧 AE/SAE-only 缓存清单不得作为表索引来源；索引必须来自当前实际题注。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "table_index_record",
+              "obligation": "required",
+              "rationale": "表索引必须声明覆盖全部实际题注（含估计目标/SOA 表），而非旧 AE/SAE-only 缓存清单。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "table_index_record"
+              ],
+              "allowed_locator_kinds": [
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "表索引域段落（table of figures 样式）；SEQ 题注域原生刷新为7R义务。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "来自实际题注与有序表格身份的表索引"
+          ],
+          "skeleton_risk_rules": [
+            "表索引缺少域段落或缺失实际题注清单即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-7",
+          "required_styles": [
+            "2",
+            "21"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-7:captions",
+            "rule": "表索引必须来自实际表格题注并保持有序表格身份。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-7:complete",
+            "rule": "索引遗漏估计目标/SOA 表或沿用旧 AE/SAE-only 缓存清单即为失败。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-7:captions",
+            "question": "表索引是否覆盖全部实际题注且次序与表格身份一致？",
+            "linked_fact_paths": [
+              "table_index.caption_inventory"
+            ],
+            "linked_claim_types": [
+              "table_index_record"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-7:captions"
+            ],
+            "risk_if_unmet": "表索引遗漏会破坏表格可检索性。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-7:table-index",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_7",
+          "chapter_contract_id": "contract:v2-n-front-7:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（实际表格题注与身份清单），输出为 ChapterSkillOutput。生成覆盖全部实际题注（含估计目标/SOA 表）的有序表索引域内容；不得沿用旧 AE/SAE-only 缓存清单；SEQ 域刷新由7R任务核对。",
+            "forbidden_behaviors": [
+              "遗漏估计目标/SOA 表",
+              "沿用旧 AE/SAE-only 缓存清单",
+              "虚构表格题注",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 232–234（表索引域段；模板 style 21=table of figures、SEQ 题注域×9、顶层表格×17）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1，21=table of figures。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-7:table-index:missing-obligation",
+            "skill:chapter:front-7:table-index:unresolved-fact",
+            "skill:chapter:front-7:table-index:wrong-source"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_8",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-8:v2",
+        "semantic_node_id": "v2_n_front_8",
+        "contract_version": "3.3.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-8:figure-index",
+        "chapter_skill_version": "3.3.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-8:v2",
+          "chapter_contract_id": "contract:v2-n-front-8:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "figure_index.has_figures",
+              "obligation": "optional",
+              "rationale": "文档是否实际包含图，由正文题注清单决定。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "figure_index.caption_inventory",
+              "obligation": "optional",
+              "rationale": "存在图时必须给出实际图题注清单。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "figure_index.stale_figure_refs",
+              "obligation": "forbidden",
+              "rationale": "指向已删除或其他图的编号不得出现；图索引必须与正文实际图身份一致。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "figure_index_record",
+              "obligation": "required",
+              "rationale": "图索引必须给出实际图题注条目，或在无图时显式声明无图适用性。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "project_primary"
+              ],
+              "admission_claim_types": [
+                "figure_index_record"
+              ],
+              "allowed_locator_kinds": [
+                "body"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.9
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "图索引域段落或显式无图适用性声明段；SEQ 域刷新为7R义务。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "图索引条目或显式无图适用性声明"
+          ],
+          "skeleton_risk_rules": [
+            "既无图索引条目也无无图适用性声明即失败。"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-8",
+          "required_styles": [
+            "2",
+            "21"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-8:captions",
+            "rule": "图索引必须来自实际图题注/身份，编号与正文一致。"
+          },
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-8:applicability",
+            "rule": "无图时必须显式声明无图适用性，不得指向已删除或其他图的编号。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:front-8:figures-present",
+            "triggering_fact_paths": [
+              "figure_index.has_figures"
+            ],
+            "condition": "正文实际包含图",
+            "rationale": "存在图时必须给出实际图题注清单。",
+            "required_when_active_fact_paths": [
+              "figure_index.caption_inventory"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": []
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:front-8:applicability",
+            "question": "图索引条目或无图适用性声明是否与正文实际图身份一致？",
+            "linked_fact_paths": [],
+            "linked_claim_types": [
+              "figure_index_record"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:front-8:applicability"
+            ],
+            "risk_if_unmet": "失效图索引会误导审阅。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-8:figure-index",
+          "skill_version": "3.3.0",
+          "node_id": "v2_n_front_8",
+          "chapter_contract_id": "contract:v2-n-front-8:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+            "instructions": "输入为 ChapterSkillInput（实际图题注清单），输出为 ChapterSkillOutput。生成来自实际图题注的图索引域内容；文档无图时必须显式声明无图适用性；不得指向已删除或其他图的编号；SEQ 域刷新由7R任务核对。",
+            "forbidden_behaviors": [
+              "指向已删除或其他图的编号",
+              "无图时不作显式适用性声明",
+              "虚构图题注",
+              "输出任何模型/供应商设置"
+            ]
+          },
+          "provenance_requirements": [
+            "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+            "源定位：零基 body-child 索引 236（图索引域段；模板 SEQ 题注域×9）。 索引为零基 body-child 计数，非段落序号。",
+            "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+            "Word 规则依据：样式ID：2=heading 1，21=table of figures（图表索引共用样式）。"
+          ],
+          "error_codes": [
+            "skill:chapter:front-8:figure-index:missing-obligation",
+            "skill:chapter:front-8:figure-index:unresolved-fact",
+            "skill:chapter:front-8:figure-index:wrong-source"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "fixture:batch1:v2-front-block:positive",
+      "chapter_contract_id": "contract:v2-front-block:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成示例方案编号，非真实项目）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成测试方案标题（显式合成示例，非真实项目标题）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（独立版本事实，非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成示例 2026-01-01（结构化日期，非真实项目日期）"
+          },
+          {
+            "fact_path": "document_control.applicable_parties",
+            "value": "合成申办方A／合成组长单位B（非真实当事方）"
+          },
+          {
+            "fact_path": "document_control.confidentiality_statement",
+            "value": "合成保密声明：本文件含合成申办方机密信息，仅限合成适用方使用（测试文本）"
+          },
+          {
+            "fact_path": "document_control.header_footer_metadata",
+            "value": "合成页眉/页脚元数据行（测试占位，非真实）"
+          },
+          {
+            "fact_path": "provenance.template.version",
+            "value": "TP-MA-07 v2.0 20260905（已接受模板身份）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "document_control_identity",
+            "statement": "合成声明：封面编号/标题/版本/日期与文档控制事实一致（测试）。"
+          },
+          {
+            "claim_type": "confidentiality_binding",
+            "statement": "合成声明：保密义务绑定本合成项目申办方（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "document_control_identity",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[23,25,28-36,40-42]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：封面身份行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "confidentiality_binding",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[28-36]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：保密声明行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 3,
+            "text": "合成封面承载段：编号/版本/日期/适用方/保密声明行（测试值，非真实项目批准）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-front-block:missing-control",
+      "chapter_contract_id": "contract:v2-front-block:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成示例方案编号，非真实项目）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成测试方案标题（显式合成示例，非真实项目标题）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（独立版本事实，非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成示例 2026-01-01（结构化日期，非真实项目日期）"
+          },
+          {
+            "fact_path": "document_control.applicable_parties",
+            "value": "合成申办方A／合成组长单位B（非真实当事方）"
+          },
+          {
+            "fact_path": "provenance.template.version",
+            "value": "TP-MA-07 v2.0 20260905（已接受模板身份）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "document_control_identity",
+            "statement": "合成声明：封面编号/标题/版本/日期与文档控制事实一致（测试）。"
+          },
+          {
+            "claim_type": "confidentiality_binding",
+            "statement": "合成声明：保密义务绑定本合成项目申办方（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "document_control_identity",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[23,25,28-36,40-42]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：封面身份行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "confidentiality_binding",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[28-36]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：保密声明行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 3,
+            "text": "合成封面承载段：编号/版本/日期/适用方/保密声明行（测试值，非真实项目批准）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-front-block:wrong-source",
+      "chapter_contract_id": "contract:v2-front-block:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成示例方案编号，非真实项目）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成测试方案标题（显式合成示例，非真实项目标题）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（独立版本事实，非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成示例 2026-01-01（结构化日期，非真实项目日期）"
+          },
+          {
+            "fact_path": "document_control.applicable_parties",
+            "value": "合成申办方A／合成组长单位B（非真实当事方）"
+          },
+          {
+            "fact_path": "document_control.confidentiality_statement",
+            "value": "合成保密声明：本文件含合成申办方机密信息，仅限合成适用方使用（测试文本）"
+          },
+          {
+            "fact_path": "document_control.header_footer_metadata",
+            "value": "合成页眉/页脚元数据行（测试占位，非真实）"
+          },
+          {
+            "fact_path": "provenance.template.version",
+            "value": "TP-MA-07 v2.0 20260905（已接受模板身份）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "document_control_identity",
+            "statement": "合成声明：封面编号/标题/版本/日期与文档控制事实一致（测试）。"
+          },
+          {
+            "claim_type": "confidentiality_binding",
+            "statement": "合成声明：保密义务绑定本合成项目申办方（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "document_control_identity",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：封面身份行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "confidentiality_binding",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[28-36]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：保密声明行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 3,
+            "text": "合成封面承载段：编号/版本/日期/适用方/保密声明行（测试值，非真实项目批准）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-front-block:skeleton",
+      "chapter_contract_id": "contract:v2-front-block:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-1:positive",
+      "chapter_contract_id": "contract:v2-n-front-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "document_control.version_history",
+            "value": "合成修订历史 v1.0→v2.0（合成示例行，非真实修订）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成示例 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "document_control.initial_version_treatment",
+            "value": "合成示例：初始版本行显式标注“首次发布”（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "version_history_record",
+            "statement": "合成声明：版本/日期/变更/依据表与真实修订历史一致（合成示例）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "version_history_record",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[46]（4列×5行修订表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：修订历史表行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "version:cell:version_no",
+                "value": "合成 v2.0"
+              },
+              {
+                "cell_id": "version:cell:version_date",
+                "value": "合成 2026-01-01"
+              },
+              {
+                "cell_id": "version:cell:change_summary",
+                "value": "合成变更摘要"
+              },
+              {
+                "cell_id": "version:cell:change_rationale",
+                "value": "合成变更依据"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "document_control.version_history",
+            "value": "合成修订历史 v1.0→v2.0（合成示例行，非真实修订）"
+          },
+          {
+            "fact_path": "document_control.initial_version_treatment",
+            "value": "合成示例：初始版本行显式标注“首次发布”（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "version_history_record",
+            "statement": "合成声明：版本/日期/变更/依据表与真实修订历史一致（合成示例）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "version_history_record",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[46]（4列×5行修订表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：修订历史表行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "version:cell:version_no",
+                "value": "合成 v2.0"
+              },
+              {
+                "cell_id": "version:cell:version_date",
+                "value": "合成 2026-01-01"
+              },
+              {
+                "cell_id": "version:cell:change_summary",
+                "value": "合成变更摘要"
+              },
+              {
+                "cell_id": "version:cell:change_rationale",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "document_control.version_history",
+            "value": "合成修订历史 v1.0→v2.0（合成示例行，非真实修订）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成示例 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "document_control.initial_version_treatment",
+            "value": "合成示例：初始版本行显式标注“首次发布”（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "version_history_record",
+            "statement": "合成声明：版本/日期/变更/依据表与真实修订历史一致（合成示例）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "version_history_record",
+            "locator_kind": "table",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：修订历史表行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "version:cell:version_no",
+                "value": "合成 v2.0"
+              },
+              {
+                "cell_id": "version:cell:version_date",
+                "value": "合成 2026-01-01"
+              },
+              {
+                "cell_id": "version:cell:change_summary",
+                "value": "合成变更摘要"
+              },
+              {
+                "cell_id": "version:cell:change_rationale",
+                "value": "合成变更依据"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-2:positive",
+      "chapter_contract_id": "contract:v2-n-front-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.investigator.protocol_identity",
+            "value": "合成承诺绑定 SYN-PROTOCOL-001 v2.0 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "signature.investigator.institution",
+            "value": "合成示例机构（非真实机构）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_commitment",
+            "statement": "合成承诺声明：研究者已阅读并理解该合成方案（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_commitment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[49,51,54,56,58]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究者承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成承诺段与未签署签名/日期控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.investigator.protocol_identity",
+            "value": "合成承诺绑定 SYN-PROTOCOL-001 v2.0 2026-01-01（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_commitment",
+            "statement": "合成承诺声明：研究者已阅读并理解该合成方案（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_commitment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[49,51,54,56,58]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究者承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成承诺段与未签署签名/日期控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.investigator.protocol_identity",
+            "value": "合成承诺绑定 SYN-PROTOCOL-001 v2.0 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "signature.investigator.institution",
+            "value": "合成示例机构（非真实机构）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_commitment",
+            "statement": "合成承诺声明：研究者已阅读并理解该合成方案（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "investigator_commitment",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：研究者承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成承诺段与未签署签名/日期控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-3:positive",
+      "chapter_contract_id": "contract:v2-n-front-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.sponsor.protocol_identity",
+            "value": "合成申办方承诺绑定 SYN-PROTOCOL-001 v2.0（非真实）"
+          },
+          {
+            "fact_path": "signature.sponsor.representative",
+            "value": "合成申办方授权代表（姓名控件留空，非真实人员）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_commitment",
+            "statement": "合成承诺声明：申办方对同一现行合成方案作出承诺（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_commitment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[66,67,70,72,74,77]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：申办方承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成申办方承诺段与代表签署控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.sponsor.protocol_identity",
+            "value": "合成申办方承诺绑定 SYN-PROTOCOL-001 v2.0（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_commitment",
+            "statement": "合成承诺声明：申办方对同一现行合成方案作出承诺（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_commitment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[66,67,70,72,74,77]（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：申办方承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成申办方承诺段与代表签署控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "signature.sponsor.protocol_identity",
+            "value": "合成申办方承诺绑定 SYN-PROTOCOL-001 v2.0（非真实）"
+          },
+          {
+            "fact_path": "signature.sponsor.representative",
+            "value": "合成申办方授权代表（姓名控件留空，非真实人员）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_commitment",
+            "statement": "合成承诺声明：申办方对同一现行合成方案作出承诺（未签署，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "sponsor_commitment",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：申办方承诺段（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "合成申办方承诺段与代表签署控件段（控件保持空白，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-4:positive",
+      "chapter_contract_id": "contract:v2-n-front-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "contact.sponsor_representative",
+            "value": "合成申办方联系人/监查员（非真实）"
+          },
+          {
+            "fact_path": "contact.principal_investigator",
+            "value": "合成主要研究者联系信息（非真实）"
+          },
+          {
+            "fact_path": "contact.service_parties_applicable",
+            "value": "true（合成示例：存在服务方）"
+          },
+          {
+            "fact_path": "contact.service_parties",
+            "value": "合成服务方联系信息（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "contact_directory",
+            "statement": "合成声明：联系表的角色/地址单元格与真实联系信息一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "contact_directory",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[89,91,93]（联系表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：联系表角色与地址单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 3,
+            "cells": [
+              {
+                "cell_id": "contact:cell:sponsor.role",
+                "value": "合成角色：申办方联系人"
+              },
+              {
+                "cell_id": "contact:cell:sponsor.address",
+                "value": "合成地址：申办方地址"
+              },
+              {
+                "cell_id": "contact:cell:investigator.role",
+                "value": "合成角色：主要研究者"
+              },
+              {
+                "cell_id": "contact:cell:investigator.address",
+                "value": "合成地址：机构地址"
+              },
+              {
+                "cell_id": "contact:cell:service.role",
+                "value": "合成角色：服务方联系人"
+              },
+              {
+                "cell_id": "contact:cell:service.address",
+                "value": "合成地址：服务方地址"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-4:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "contact.sponsor_representative",
+            "value": "合成申办方联系人/监查员（非真实）"
+          },
+          {
+            "fact_path": "contact.service_parties_applicable",
+            "value": "true（合成示例：存在服务方）"
+          },
+          {
+            "fact_path": "contact.service_parties",
+            "value": "合成服务方联系信息（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "contact_directory",
+            "statement": "合成声明：联系表的角色/地址单元格与真实联系信息一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "contact_directory",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[89,91,93]（联系表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：联系表角色与地址单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 3,
+            "cells": [
+              {
+                "cell_id": "contact:cell:sponsor.role",
+                "value": null
+              },
+              {
+                "cell_id": "contact:cell:sponsor.address",
+                "value": null
+              },
+              {
+                "cell_id": "contact:cell:investigator.role",
+                "value": null
+              },
+              {
+                "cell_id": "contact:cell:investigator.address",
+                "value": null
+              },
+              {
+                "cell_id": "contact:cell:service.role",
+                "value": null
+              },
+              {
+                "cell_id": "contact:cell:service.address",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-4:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-4:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "contact.sponsor_representative",
+            "value": "合成申办方联系人/监查员（非真实）"
+          },
+          {
+            "fact_path": "contact.principal_investigator",
+            "value": "合成主要研究者联系信息（非真实）"
+          },
+          {
+            "fact_path": "contact.service_parties_applicable",
+            "value": "true（合成示例：存在服务方）"
+          },
+          {
+            "fact_path": "contact.service_parties",
+            "value": "合成服务方联系信息（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "contact_directory",
+            "statement": "合成声明：联系表的角色/地址单元格与真实联系信息一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "contact_directory",
+            "locator_kind": "table",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：联系表角色与地址单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 3,
+            "cells": [
+              {
+                "cell_id": "contact:cell:sponsor.role",
+                "value": "合成角色：申办方联系人"
+              },
+              {
+                "cell_id": "contact:cell:sponsor.address",
+                "value": "合成地址：申办方地址"
+              },
+              {
+                "cell_id": "contact:cell:investigator.role",
+                "value": "合成角色：主要研究者"
+              },
+              {
+                "cell_id": "contact:cell:investigator.address",
+                "value": "合成地址：机构地址"
+              },
+              {
+                "cell_id": "contact:cell:service.role",
+                "value": "合成角色：服务方联系人"
+              },
+              {
+                "cell_id": "contact:cell:service.address",
+                "value": "合成地址：服务方地址"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-4:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-4:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-5:positive",
+      "chapter_contract_id": "contract:v2-n-front-5:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "glossary.term_count",
+            "value": "合成示例：12 个正文实际使用缩写（非真实计数）"
+          },
+          {
+            "fact_path": "glossary.used_terms_source",
+            "value": "合成示例：词条全称回链正文使用位置（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "glossary_expansion",
+            "statement": "合成声明：缩写/来源全称/中文含义三列与正文实际使用一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "glossary_expansion",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[96]（3列缩略语表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：缩略语表表头与词条（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "glossary:header:abbreviation",
+                "value": "缩写（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:full_name",
+                "value": "来源全称（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:chinese_meaning",
+                "value": "中文含义（合成表头）"
+              },
+              {
+                "cell_id": "glossary:entry:1.abbreviation",
+                "value": "合成缩写1"
+              },
+              {
+                "cell_id": "glossary:entry:1.full_name",
+                "value": "合成来源全称1"
+              },
+              {
+                "cell_id": "glossary:entry:1.chinese_meaning",
+                "value": "合成中文含义1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-5:missing-claim",
+      "chapter_contract_id": "contract:v2-n-front-5:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "glossary.term_count",
+            "value": "合成示例：12 个正文实际使用缩写（非真实计数）"
+          },
+          {
+            "fact_path": "glossary.used_terms_source",
+            "value": "合成示例：词条全称回链正文使用位置（非真实）"
+          }
+        ],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "glossary_expansion",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[96]（3列缩略语表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：缩略语表表头与词条（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "glossary:header:abbreviation",
+                "value": "缩写（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:full_name",
+                "value": "来源全称（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:chinese_meaning",
+                "value": "中文含义（合成表头）"
+              },
+              {
+                "cell_id": "glossary:entry:1.abbreviation",
+                "value": "合成缩写1"
+              },
+              {
+                "cell_id": "glossary:entry:1.full_name",
+                "value": "合成来源全称1"
+              },
+              {
+                "cell_id": "glossary:entry:1.chinese_meaning",
+                "value": "合成中文含义1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-5:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-5:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "glossary.term_count",
+            "value": "合成示例：12 个正文实际使用缩写（非真实计数）"
+          },
+          {
+            "fact_path": "glossary.used_terms_source",
+            "value": "合成示例：词条全称回链正文使用位置（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "glossary_expansion",
+            "statement": "合成声明：缩写/来源全称/中文含义三列与正文实际使用一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "glossary_expansion",
+            "locator_kind": "table",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：缩略语表表头与词条（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "glossary:header:abbreviation",
+                "value": "缩写（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:full_name",
+                "value": "来源全称（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:chinese_meaning",
+                "value": "中文含义（合成表头）"
+              },
+              {
+                "cell_id": "glossary:entry:1.abbreviation",
+                "value": "合成缩写1"
+              },
+              {
+                "cell_id": "glossary:entry:1.full_name",
+                "value": "合成来源全称1"
+              },
+              {
+                "cell_id": "glossary:entry:1.chinese_meaning",
+                "value": "合成中文含义1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-5:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-5:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-6:positive",
+      "chapter_contract_id": "contract:v2-n-front-6:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "toc.heading_hierarchy_source",
+            "value": "合成示例：目录由实际标题层级与书签生成（域刷新为7R义务，非真实清单）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "toc_navigation",
+            "statement": "合成声明：目录可经原生域更新指向现行标题目标（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "toc_navigation",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[99-231]（目录域区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：目录域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成 TOC 域段落（合成条目，非缓存页码，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-6:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-6:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [],
+        "claims": [
+          {
+            "claim_type": "toc_navigation",
+            "statement": "合成声明：目录可经原生域更新指向现行标题目标（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "toc_navigation",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[99-231]（目录域区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：目录域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成 TOC 域段落（合成条目，非缓存页码，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-6:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-6:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "toc.heading_hierarchy_source",
+            "value": "合成示例：目录由实际标题层级与书签生成（域刷新为7R义务，非真实清单）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "toc_navigation",
+            "statement": "合成声明：目录可经原生域更新指向现行标题目标（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "toc_navigation",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：目录域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成 TOC 域段落（合成条目，非缓存页码，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-6:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-6:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-7:positive",
+      "chapter_contract_id": "contract:v2-n-front-7:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "table_index.caption_inventory",
+            "value": "合成示例：全部表格题注清单（含估计目标/SOA表，非真实清单）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "table_index_record",
+            "statement": "合成声明：表索引覆盖全部实际题注（含估计目标/SOA 表）（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "table_index_record",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[232-234]（表索引域段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：表索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成表索引域段落（合成有序条目，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-7:missing-control",
+      "chapter_contract_id": "contract:v2-n-front-7:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [],
+        "claims": [
+          {
+            "claim_type": "table_index_record",
+            "statement": "合成声明：表索引覆盖全部实际题注（含估计目标/SOA 表）（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "table_index_record",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[232-234]（表索引域段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：表索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": []
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-7:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-7:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "table_index.caption_inventory",
+            "value": "合成示例：全部表格题注清单（含估计目标/SOA表，非真实清单）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "table_index_record",
+            "statement": "合成声明：表索引覆盖全部实际题注（含估计目标/SOA 表）（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "table_index_record",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：表索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成表索引域段落（合成有序条目，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-7:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-7:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-8:positive",
+      "chapter_contract_id": "contract:v2-n-front-8:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [],
+        "claims": [
+          {
+            "claim_type": "figure_index_record",
+            "statement": "合成声明：图索引条目或显式无图适用性声明与正文图身份一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "figure_index_record",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[236]（图索引域段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：图索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成图索引域段落（合成条目，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-8:missing-claim",
+      "chapter_contract_id": "contract:v2-n-front-8:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "figure_index_record",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[236]（图索引域段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：图索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成图索引域段落（合成条目，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-8:wrong-source",
+      "chapter_contract_id": "contract:v2-n-front-8:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [],
+        "claims": [
+          {
+            "claim_type": "figure_index_record",
+            "statement": "合成声明：图索引条目或显式无图适用性声明与正文图身份一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "figure_index_record",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：图索引域段落（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 1,
+            "text": "合成图索引域段落（合成条目，测试）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-8:skeleton",
+      "chapter_contract_id": "contract:v2-n-front-8:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-1:positive",
+      "chapter_contract_id": "contract:v2-n-1-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成，非真实）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成方案标题（非真实）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "framing.study_phase",
+            "value": "合成示例：III期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.registration_classification",
+            "value": "合成注册申请分类占位（非注册记录证明，非真实）"
+          },
+          {
+            "fact_path": "synopsis.sponsor",
+            "value": "合成申办方（非真实）"
+          },
+          {
+            "fact_path": "synopsis.principal_investigator",
+            "value": "合成主要研究者（非真实）"
+          },
+          {
+            "fact_path": "synopsis.trial_institutions",
+            "value": "合成机构列表（非真实）"
+          },
+          {
+            "fact_path": "synopsis.design",
+            "value": "合成设计描述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.population_eligibility",
+            "value": "合成入选/排除概要（非真实）"
+          },
+          {
+            "fact_path": "synopsis.investigational_drug",
+            "value": "合成研究药物（非真实）"
+          },
+          {
+            "fact_path": "synopsis.comparator_drug",
+            "value": "合成对照药（非真实）"
+          },
+          {
+            "fact_path": "synopsis.interventions",
+            "value": "合成干预概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.sample_size",
+            "value": "合成示例 N=120（非真实）"
+          },
+          {
+            "fact_path": "synopsis.statistical_methods",
+            "value": "合成统计方法概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.overall_duration",
+            "value": "合成总周期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.participation_duration",
+            "value": "合成个体参与时长（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "synopsis_fact_row",
+            "statement": "合成声明：各汇总行值来自既定项目事实（测试）。"
+          },
+          {
+            "claim_type": "study_objective",
+            "statement": "合成主要目的声明（多目的分别链接，测试）。"
+          },
+          {
+            "claim_type": "estimand_linkage",
+            "statement": "合成估计目标/终点分别链接声明（E9(R1)/M11 处置回链，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "synopsis_fact_row",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242]（2列×17行汇总表+嵌套表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：汇总表选择器行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_objective",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套目的行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "estimand_linkage",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套估计目标/终点行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "synopsis:cell:protocol_id",
+                "value": "SYN-PROTOCOL-001（合成）"
+              },
+              {
+                "cell_id": "synopsis:cell:title",
+                "value": "合成方案标题"
+              },
+              {
+                "cell_id": "synopsis:cell:version_date",
+                "value": "合成 v2.0 2026-01-01"
+              },
+              {
+                "cell_id": "synopsis:cell:study_phase",
+                "value": "合成 III期"
+              },
+              {
+                "cell_id": "synopsis:cell:registration_classification",
+                "value": "合成注册申请分类（非注册证明）"
+              },
+              {
+                "cell_id": "synopsis:cell:sponsor",
+                "value": "合成申办方"
+              },
+              {
+                "cell_id": "synopsis:cell:principal_investigator",
+                "value": "合成主要研究者"
+              },
+              {
+                "cell_id": "synopsis:cell:trial_institutions",
+                "value": "合成机构列表"
+              },
+              {
+                "cell_id": "synopsis:cell:objective_estimand_endpoint",
+                "value": "合成目的→估计目标→终点映射行"
+              },
+              {
+                "cell_id": "synopsis:cell:design",
+                "value": "合成设计"
+              },
+              {
+                "cell_id": "synopsis:cell:population_eligibility",
+                "value": "合成人群"
+              },
+              {
+                "cell_id": "synopsis:cell:drug",
+                "value": "合成研究药物/对照药"
+              },
+              {
+                "cell_id": "synopsis:cell:interventions",
+                "value": "合成干预"
+              },
+              {
+                "cell_id": "synopsis:cell:sample_size",
+                "value": "合成 N=120"
+              },
+              {
+                "cell_id": "synopsis:cell:statistical_methods",
+                "value": "合成统计方法"
+              },
+              {
+                "cell_id": "synopsis:cell:overall_duration",
+                "value": "合成总周期"
+              },
+              {
+                "cell_id": "synopsis:cell:participation_duration",
+                "value": "合成参与者访视时长"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-1:missing-claim",
+      "chapter_contract_id": "contract:v2-n-1-1:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成，非真实）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成方案标题（非真实）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "framing.study_phase",
+            "value": "合成示例：III期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.registration_classification",
+            "value": "合成注册申请分类占位（非注册记录证明，非真实）"
+          },
+          {
+            "fact_path": "synopsis.sponsor",
+            "value": "合成申办方（非真实）"
+          },
+          {
+            "fact_path": "synopsis.principal_investigator",
+            "value": "合成主要研究者（非真实）"
+          },
+          {
+            "fact_path": "synopsis.trial_institutions",
+            "value": "合成机构列表（非真实）"
+          },
+          {
+            "fact_path": "synopsis.design",
+            "value": "合成设计描述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.population_eligibility",
+            "value": "合成入选/排除概要（非真实）"
+          },
+          {
+            "fact_path": "synopsis.investigational_drug",
+            "value": "合成研究药物（非真实）"
+          },
+          {
+            "fact_path": "synopsis.comparator_drug",
+            "value": "合成对照药（非真实）"
+          },
+          {
+            "fact_path": "synopsis.interventions",
+            "value": "合成干预概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.sample_size",
+            "value": "合成示例 N=120（非真实）"
+          },
+          {
+            "fact_path": "synopsis.statistical_methods",
+            "value": "合成统计方法概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.overall_duration",
+            "value": "合成总周期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.participation_duration",
+            "value": "合成个体参与时长（非真实）"
+          }
+        ],
+        "claims": [],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "synopsis_fact_row",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242]（2列×17行汇总表+嵌套表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：汇总表选择器行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_objective",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套目的行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "estimand_linkage",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套估计目标/终点行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "synopsis:cell:protocol_id",
+                "value": "SYN-PROTOCOL-001（合成）"
+              },
+              {
+                "cell_id": "synopsis:cell:title",
+                "value": "合成方案标题"
+              },
+              {
+                "cell_id": "synopsis:cell:version_date",
+                "value": "合成 v2.0 2026-01-01"
+              },
+              {
+                "cell_id": "synopsis:cell:study_phase",
+                "value": "合成 III期"
+              },
+              {
+                "cell_id": "synopsis:cell:registration_classification",
+                "value": "合成注册申请分类（非注册证明）"
+              },
+              {
+                "cell_id": "synopsis:cell:sponsor",
+                "value": "合成申办方"
+              },
+              {
+                "cell_id": "synopsis:cell:principal_investigator",
+                "value": "合成主要研究者"
+              },
+              {
+                "cell_id": "synopsis:cell:trial_institutions",
+                "value": "合成机构列表"
+              },
+              {
+                "cell_id": "synopsis:cell:objective_estimand_endpoint",
+                "value": "合成目的→估计目标→终点映射行"
+              },
+              {
+                "cell_id": "synopsis:cell:design",
+                "value": "合成设计"
+              },
+              {
+                "cell_id": "synopsis:cell:population_eligibility",
+                "value": "合成人群"
+              },
+              {
+                "cell_id": "synopsis:cell:drug",
+                "value": "合成研究药物/对照药"
+              },
+              {
+                "cell_id": "synopsis:cell:interventions",
+                "value": "合成干预"
+              },
+              {
+                "cell_id": "synopsis:cell:sample_size",
+                "value": "合成 N=120"
+              },
+              {
+                "cell_id": "synopsis:cell:statistical_methods",
+                "value": "合成统计方法"
+              },
+              {
+                "cell_id": "synopsis:cell:overall_duration",
+                "value": "合成总周期"
+              },
+              {
+                "cell_id": "synopsis:cell:participation_duration",
+                "value": "合成参与者访视时长"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-1-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "framing.protocol_id",
+            "value": "SYN-PROTOCOL-001（合成，非真实）"
+          },
+          {
+            "fact_path": "framing.document_title",
+            "value": "合成方案标题（非真实）"
+          },
+          {
+            "fact_path": "framing.version",
+            "value": "合成 v2.0（非真实）"
+          },
+          {
+            "fact_path": "document_control.version_date",
+            "value": "合成 2026-01-01（非真实）"
+          },
+          {
+            "fact_path": "framing.study_phase",
+            "value": "合成示例：III期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.registration_classification",
+            "value": "合成注册申请分类占位（非注册记录证明，非真实）"
+          },
+          {
+            "fact_path": "synopsis.sponsor",
+            "value": "合成申办方（非真实）"
+          },
+          {
+            "fact_path": "synopsis.principal_investigator",
+            "value": "合成主要研究者（非真实）"
+          },
+          {
+            "fact_path": "synopsis.trial_institutions",
+            "value": "合成机构列表（非真实）"
+          },
+          {
+            "fact_path": "synopsis.design",
+            "value": "合成设计描述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.population_eligibility",
+            "value": "合成入选/排除概要（非真实）"
+          },
+          {
+            "fact_path": "synopsis.investigational_drug",
+            "value": "合成研究药物（非真实）"
+          },
+          {
+            "fact_path": "synopsis.comparator_drug",
+            "value": "合成对照药（非真实）"
+          },
+          {
+            "fact_path": "synopsis.interventions",
+            "value": "合成干预概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.sample_size",
+            "value": "合成示例 N=120（非真实）"
+          },
+          {
+            "fact_path": "synopsis.statistical_methods",
+            "value": "合成统计方法概述（非真实）"
+          },
+          {
+            "fact_path": "synopsis.overall_duration",
+            "value": "合成总周期（非真实）"
+          },
+          {
+            "fact_path": "synopsis.participation_duration",
+            "value": "合成个体参与时长（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "synopsis_fact_row",
+            "statement": "合成声明：各汇总行值来自既定项目事实（测试）。"
+          },
+          {
+            "claim_type": "study_objective",
+            "statement": "合成主要目的声明（多目的分别链接，测试）。"
+          },
+          {
+            "claim_type": "estimand_linkage",
+            "statement": "合成估计目标/终点分别链接声明（E9(R1)/M11 处置回链，测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "synopsis_fact_row",
+            "locator_kind": "table",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：汇总表选择器行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_objective",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套目的行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "estimand_linkage",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[242] 嵌套表（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：嵌套估计目标/终点行（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "synopsis:cell:protocol_id",
+                "value": "SYN-PROTOCOL-001（合成）"
+              },
+              {
+                "cell_id": "synopsis:cell:title",
+                "value": "合成方案标题"
+              },
+              {
+                "cell_id": "synopsis:cell:version_date",
+                "value": "合成 v2.0 2026-01-01"
+              },
+              {
+                "cell_id": "synopsis:cell:study_phase",
+                "value": "合成 III期"
+              },
+              {
+                "cell_id": "synopsis:cell:registration_classification",
+                "value": "合成注册申请分类（非注册证明）"
+              },
+              {
+                "cell_id": "synopsis:cell:sponsor",
+                "value": "合成申办方"
+              },
+              {
+                "cell_id": "synopsis:cell:principal_investigator",
+                "value": "合成主要研究者"
+              },
+              {
+                "cell_id": "synopsis:cell:trial_institutions",
+                "value": "合成机构列表"
+              },
+              {
+                "cell_id": "synopsis:cell:objective_estimand_endpoint",
+                "value": "合成目的→估计目标→终点映射行"
+              },
+              {
+                "cell_id": "synopsis:cell:design",
+                "value": "合成设计"
+              },
+              {
+                "cell_id": "synopsis:cell:population_eligibility",
+                "value": "合成人群"
+              },
+              {
+                "cell_id": "synopsis:cell:drug",
+                "value": "合成研究药物/对照药"
+              },
+              {
+                "cell_id": "synopsis:cell:interventions",
+                "value": "合成干预"
+              },
+              {
+                "cell_id": "synopsis:cell:sample_size",
+                "value": "合成 N=120"
+              },
+              {
+                "cell_id": "synopsis:cell:statistical_methods",
+                "value": "合成统计方法"
+              },
+              {
+                "cell_id": "synopsis:cell:overall_duration",
+                "value": "合成总周期"
+              },
+              {
+                "cell_id": "synopsis:cell:participation_duration",
+                "value": "合成参与者访视时长"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-1-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:positive",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "diagram.phase_arm_structure",
+            "value": "合成相位/臂结构（非真实）"
+          },
+          {
+            "fact_path": "diagram.visit_timepoints",
+            "value": "合成访视时间点（与SOA一致的占位，非真实）"
+          },
+          {
+            "fact_path": "diagram.supporting_asset_ref",
+            "value": "风格素材：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg；sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c（仅风格参考，非项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "design_description",
+            "statement": "合成设计描述声明：与正文一致（测试）。"
+          },
+          {
+            "claim_type": "diagram_transition",
+            "statement": "合成声明：流程图阶段转换与 SOA 一致；各适用臂早退/停药/退出转换逐一建模（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "design_description",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究流程图（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "diagram_transition",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：流程图转换与 SOA 一致性（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "figure",
+            "occurrences": 1,
+            "text": "合成研究流程图（相位/臂/时间点/各臂退出转换——显式合成示例）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "diagram.phase_arm_structure",
+            "value": "合成相位/臂结构（非真实）"
+          },
+          {
+            "fact_path": "diagram.supporting_asset_ref",
+            "value": "风格素材：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg；sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c（仅风格参考，非项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "design_description",
+            "statement": "合成设计描述声明：与正文一致（测试）。"
+          },
+          {
+            "claim_type": "diagram_transition",
+            "statement": "合成声明：流程图阶段转换与 SOA 一致；各适用臂早退/停药/退出转换逐一建模（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "design_description",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究流程图（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "diagram_transition",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：流程图转换与 SOA 一致性（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "figure",
+            "occurrences": 1,
+            "text": "合成研究流程图（相位/臂/时间点/各臂退出转换——显式合成示例）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "diagram.phase_arm_structure",
+            "value": "合成相位/臂结构（非真实）"
+          },
+          {
+            "fact_path": "diagram.visit_timepoints",
+            "value": "合成访视时间点（与SOA一致的占位，非真实）"
+          },
+          {
+            "fact_path": "diagram.supporting_asset_ref",
+            "value": "风格素材：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg；sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c（仅风格参考，非项目事实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "design_description",
+            "statement": "合成设计描述声明：与正文一致（测试）。"
+          },
+          {
+            "claim_type": "diagram_transition",
+            "statement": "合成声明：流程图阶段转换与 SOA 一致；各适用臂早退/停药/退出转换逐一建模（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "design_description",
+            "locator_kind": "body",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：研究流程图（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "diagram_transition",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：流程图转换与 SOA 一致性（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "figure",
+            "occurrences": 1,
+            "text": "合成研究流程图（相位/臂/时间点/各臂退出转换——显式合成示例）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-3:positive",
+      "chapter_contract_id": "contract:v2-n-1-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "soa.visit_window_definitions",
+            "value": "合成访视/窗口定义（带单位与参考事件占位，非真实）"
+          },
+          {
+            "fact_path": "soa.assessment_cells",
+            "value": "合成必需评估单元格（按内容与访视身份核查占位，非真实）"
+          },
+          {
+            "fact_path": "soa.footnote_bindings",
+            "value": "合成脚注绑定（解析到既有程序/访视，测试）"
+          },
+          {
+            "fact_path": "soa.early_exit_assessment",
+            "value": "合成早期终止评估（与停药规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.safety_followup",
+            "value": "合成安全随访（与退出规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.contact_visits",
+            "value": "合成电话联系人访视（计为实际访视占位，非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "soa_cell_mapping",
+            "statement": "合成声明：SOA单元格与访视/窗口/脚注/退出评估类型化链接（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "soa_cell_mapping",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[265]（6列×33行SOA；横向节）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：SOA 类型化单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "schedule_of_activities",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "soa:header:visit_window",
+                "value": "合成访视窗口（单位/参考事件占位）"
+              },
+              {
+                "cell_id": "soa:cell:assessment_identity",
+                "value": "合成评估单元格（按访视身份）"
+              },
+              {
+                "cell_id": "soa:cell:footnote_binding",
+                "value": "合成脚注（解析到既有程序）"
+              },
+              {
+                "cell_id": "soa:cell:early_exit",
+                "value": "合成早期终止评估（与停药规则一致）"
+              },
+              {
+                "cell_id": "soa:cell:safety_followup",
+                "value": "合成安全随访（与退出规则一致）"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-1-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "soa.visit_window_definitions",
+            "value": "合成访视/窗口定义（带单位与参考事件占位，非真实）"
+          },
+          {
+            "fact_path": "soa.assessment_cells",
+            "value": "合成必需评估单元格（按内容与访视身份核查占位，非真实）"
+          },
+          {
+            "fact_path": "soa.footnote_bindings",
+            "value": "合成脚注绑定（解析到既有程序/访视，测试）"
+          },
+          {
+            "fact_path": "soa.early_exit_assessment",
+            "value": "合成早期终止评估（与停药规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.safety_followup",
+            "value": "合成安全随访（与退出规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.contact_visits",
+            "value": "合成电话联系人访视（计为实际访视占位，非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "soa_cell_mapping",
+            "statement": "合成声明：SOA单元格与访视/窗口/脚注/退出评估类型化链接（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "soa_cell_mapping",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[265]（6列×33行SOA；横向节）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：SOA 类型化单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "schedule_of_activities",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "soa:header:visit_window",
+                "value": null
+              },
+              {
+                "cell_id": "soa:cell:assessment_identity",
+                "value": null
+              },
+              {
+                "cell_id": "soa:cell:footnote_binding",
+                "value": null
+              },
+              {
+                "cell_id": "soa:cell:early_exit",
+                "value": null
+              },
+              {
+                "cell_id": "soa:cell:safety_followup",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-1-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "soa.visit_window_definitions",
+            "value": "合成访视/窗口定义（带单位与参考事件占位，非真实）"
+          },
+          {
+            "fact_path": "soa.assessment_cells",
+            "value": "合成必需评估单元格（按内容与访视身份核查占位，非真实）"
+          },
+          {
+            "fact_path": "soa.footnote_bindings",
+            "value": "合成脚注绑定（解析到既有程序/访视，测试）"
+          },
+          {
+            "fact_path": "soa.early_exit_assessment",
+            "value": "合成早期终止评估（与停药规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.safety_followup",
+            "value": "合成安全随访（与退出规则一致的占位，非真实）"
+          },
+          {
+            "fact_path": "soa.contact_visits",
+            "value": "合成电话联系人访视（计为实际访视占位，非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "soa_cell_mapping",
+            "statement": "合成声明：SOA单元格与访视/窗口/脚注/退出评估类型化链接（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "soa_cell_mapping",
+            "locator_kind": "table",
+            "locator": "公司模板默认内容（风格来源，禁止作为项目事实；测试用错误来源）。",
+            "context": "合成上下文窗口：SOA 类型化单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "schedule_of_activities",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "soa:header:visit_window",
+                "value": "合成访视窗口（单位/参考事件占位）"
+              },
+              {
+                "cell_id": "soa:cell:assessment_identity",
+                "value": "合成评估单元格（按访视身份）"
+              },
+              {
+                "cell_id": "soa:cell:footnote_binding",
+                "value": "合成脚注（解析到既有程序）"
+              },
+              {
+                "cell_id": "soa:cell:early_exit",
+                "value": "合成早期终止评估（与停药规则一致）"
+              },
+              {
+                "cell_id": "soa:cell:safety_followup",
+                "value": "合成安全随访（与退出规则一致）"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-1-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {}
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-4:positive-no-service",
+      "chapter_contract_id": "contract:v2-n-front-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "contact.sponsor_representative",
+            "value": "合成申办方联系人/监查员（非真实）"
+          },
+          {
+            "fact_path": "contact.principal_investigator",
+            "value": "合成主要研究者联系信息（非真实）"
+          },
+          {
+            "fact_path": "contact.service_parties_applicable",
+            "value": "false（合成示例：无外部服务方）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "contact_directory",
+            "statement": "合成声明：联系表的角色/地址单元格与真实联系信息一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "contact_directory",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[89,91,93]（联系表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：联系表角色与地址单元格（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 2,
+            "cells": [
+              {
+                "cell_id": "contact:cell:sponsor.role",
+                "value": "合成角色：申办方联系人"
+              },
+              {
+                "cell_id": "contact:cell:sponsor.address",
+                "value": "合成地址：申办方地址"
+              },
+              {
+                "cell_id": "contact:cell:investigator.role",
+                "value": "合成角色：主要研究者"
+              },
+              {
+                "cell_id": "contact:cell:investigator.address",
+                "value": "合成地址：机构地址"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-front-5:missing-control-empty-entry",
+      "chapter_contract_id": "contract:v2-n-front-5:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "glossary.term_count",
+            "value": "合成示例：12 个正文实际使用缩写（非真实计数）"
+          },
+          {
+            "fact_path": "glossary.used_terms_source",
+            "value": "合成示例：词条全称回链正文使用位置（非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "glossary_expansion",
+            "statement": "合成声明：缩写/来源全称/中文含义三列与正文实际使用一致（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "glossary_expansion",
+            "locator_kind": "table",
+            "locator": "合成来源登记：TP-MA-07 v2.0 table[96]（3列缩略语表）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：缩略语表表头与词条（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "cells": [
+              {
+                "cell_id": "glossary:header:abbreviation",
+                "value": "缩写（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:full_name",
+                "value": "来源全称（合成表头）"
+              },
+              {
+                "cell_id": "glossary:header:chinese_meaning",
+                "value": "中文含义（合成表头）"
+              },
+              {
+                "cell_id": "glossary:entry:1.abbreviation",
+                "value": null
+              },
+              {
+                "cell_id": "glossary:entry:1.full_name",
+                "value": null
+              },
+              {
+                "cell_id": "glossary:entry:1.chinese_meaning",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:positive-randomized",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "diagram.phase_arm_structure",
+            "value": "合成相位/臂结构（非真实）"
+          },
+          {
+            "fact_path": "diagram.visit_timepoints",
+            "value": "合成访视时间点（与SOA一致的占位，非真实）"
+          },
+          {
+            "fact_path": "diagram.randomized",
+            "value": "true（合成示例：随机化设计）"
+          },
+          {
+            "fact_path": "diagram.allocation_ratio",
+            "value": "合成 1:1（随机化设计的分配比例，非真实）"
+          },
+          {
+            "fact_path": "diagram.supporting_asset_ref",
+            "value": "风格素材：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg；sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "design_description",
+            "statement": "合成设计描述声明：与正文一致（测试）。"
+          },
+          {
+            "claim_type": "diagram_transition",
+            "statement": "合成声明：流程图阶段转换与 SOA 一致；各适用臂早退/停药/退出转换逐一建模（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "design_description",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究流程图（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "diagram_transition",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：流程图转换与 SOA 一致性（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "figure",
+            "occurrences": 1,
+            "text": "合成研究流程图（相位/臂/时间点/各臂退出转换——显式合成示例）。"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "fixture:batch1:v2-n-1-2:positive-single-arm",
+      "chapter_contract_id": "contract:v2-n-1-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "diagram.phase_arm_structure",
+            "value": "合成相位/臂结构（非真实）"
+          },
+          {
+            "fact_path": "diagram.visit_timepoints",
+            "value": "合成访视时间点（与SOA一致的占位，非真实）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "design_description",
+            "statement": "合成设计描述声明：与正文一致（测试）。"
+          },
+          {
+            "claim_type": "diagram_transition",
+            "statement": "合成声明：流程图阶段转换与 SOA 一致；各适用臂早退/停药/退出转换逐一建模（测试）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "design_description",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：研究流程图（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "diagram_transition",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[245-258]（图示区段）（零基 body-child 索引；测试夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：流程图转换与 SOA 一致性（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "figure",
+            "occurrences": 1,
+            "text": "合成单臂非随机研究流程图（无分配比例节点；显式合成示例）。"
+          }
+        ]
+      }
+    }
+  ]
+}

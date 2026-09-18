@@ -1,0 +1,98 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-6:v2",
+  "semantic_node_id": "v2_n_front_6",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-6:toc",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-6:v2",
+    "chapter_contract_id": "contract:v2-n-front-6:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "toc.heading_hierarchy_source",
+        "obligation": "required",
+        "rationale": "目录必须声明其来源为实际标题层级与书签。"
+      },
+      {
+        "fact_path": "toc.cached_static_text",
+        "obligation": "forbidden",
+        "rationale": "不得把缓存的目录标签/页码当作内容来源；目标与页码必须随文档原生域更新。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "toc_navigation",
+        "obligation": "required",
+        "rationale": "目录必须声明可经原生域更新指向现行标题目标。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "toc_navigation"
+        ],
+        "allowed_locator_kinds": [
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "TOC 域段落（toc 1..9 样式）；原生域更新为7R义务，本合同不断言其已成功。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "由实际标题层级与书签生成的目录域"
+    ],
+    "skeleton_risk_rules": [
+      "目录缺少域段落或仅缓存文本即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-6",
+    "required_styles": [
+      "2",
+      "18"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-6:native-field",
+      "rule": "目录必须由实际标题层级与书签生成，目标与页码随文档更新（TOC/PAGEREF 域）。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-6:no-cache",
+      "rule": "缓存的标签/页码或缺失目标即为失败。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-6:native-field",
+      "question": "目录是否由实际标题层级生成且目标可解析？",
+      "linked_fact_paths": [
+        "toc.heading_hierarchy_source"
+      ],
+      "linked_claim_types": [
+        "toc_navigation"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-6:native-field"
+      ],
+      "risk_if_unmet": "缓存目录会指向失效目标并破坏导航。"
+    }
+  ]
+}

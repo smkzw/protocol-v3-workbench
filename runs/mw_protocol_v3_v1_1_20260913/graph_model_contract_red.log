@@ -1,0 +1,52 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_model_contract_reaches_service_and_survives_reopen_without_second_call __
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-601/test_model_contract_reaches_se0')
+
+    def test_model_contract_reaches_service_and_survives_reopen_without_second_call(tmp_path):
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'graph.sqlite')}
+        calls = []
+    
+        def model_contract(base):
+            return base.model_copy(update={
+                'harness': 'direct-api', 'provider': 'zhipu-coding-plan',
+                'model': 'glm-5.3-flash', 'reasoning_effort': ReasoningEffort.MAX,
+                'allowed_providers': ('zhipu-coding-plan',), 'allowed_regions': ('cn',),
+            })
+    
+        def service(request):
+            assert request.execution_contract.model == 'glm-5.3-flash'
+            assert request.execution_contract.reasoning_effort is ReasoningEffort.MAX
+            calls.append(request.execution_contract.model_dump(mode='json'))
+            return {'candidate': 'synthetic-only'}
+    
+        def runtime():
+            return GraphRuntime(
+                project_id=_PROJ, uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                services={'draft_node': service}, clock=_StepClock(),
+                execution_contract_factories={'draft_node': model_contract},
+            )
+    
+        plan = _probe_plan()
+        run_id = 'model-contract-test'
+>       rt = runtime()
+             ^^^^^^^^^
+
+tests/protocol_v3/test_graph_model_contract.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def runtime():
+>       return GraphRuntime(
+            project_id=_PROJ, uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),
+            services={'draft_node': service}, clock=_StepClock(),
+            execution_contract_factories={'draft_node': model_contract},
+        )
+E       TypeError: GraphRuntime.__init__() got an unexpected keyword argument 'execution_contract_factories'
+
+tests/protocol_v3/test_graph_model_contract.py:28: TypeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_graph_model_contract.py::test_model_contract_reaches_service_and_survives_reopen_without_second_call
+1 failed in 0.37s

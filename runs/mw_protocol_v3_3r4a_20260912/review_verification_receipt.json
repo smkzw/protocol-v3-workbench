@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-09-12T16:01:50.519521+00:00",
+  "cwd": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313",
+  "command": [
+    "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/protocol_v3",
+    "--ignore=tests/protocol_v3/test_chapter_applicability.py",
+    "-q",
+    "--junitxml=/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r4a_20260912/review_verification.xml"
+  ],
+  "env": {
+    "PATH": "/Users/smkzw/.local/bin:/opt/homebrew/bin:/usr/bin:/bin",
+    "HOME": "/Users/smkzw",
+    "TMPDIR": "/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/",
+    "LANG": "en_US.UTF-8",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONPATH": "tests/protocol_v3:services/api:packages:."
+  },
+  "before": {
+    "packages/contracts/workbench_contracts/protocol_v3.py": "cbcf8085e009992cd220741465a7c4ba49cee8ebc860a35560de16559ad552b9",
+    "services/api/app/protocol_workflow/registries/chapters.py": "f4558cfc8176aeeb33a333ad784361efd966e1b07ef310e35842c3dd4bc41168",
+    "services/api/app/protocol_workflow/registries/fact_bindings.py": "94290d2d8d1067fa2bc34badc6741d7956a7bf7d37c2fcbb061f670c70724848",
+    "tests/protocol_v3/test_chapter_fact_binding.py": "3ed83e53f663994a745b56f0f9f041d52489cb41a048b4017ce0ab1a21fadec4",
+    "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json": "182868631f69ef9a0d41039e3306c2ca9afef558f7d993403ac93d6cc7020250"
+  },
+  "scope_exclusion": "15 B predicate tests are intentionally red, module not implemented; not claimed green or accepted",
+  "finished_at": "2026-09-12T16:03:29.872298+00:00",
+  "returncode": 0,
+  "after": {
+    "packages/contracts/workbench_contracts/protocol_v3.py": "cbcf8085e009992cd220741465a7c4ba49cee8ebc860a35560de16559ad552b9",
+    "services/api/app/protocol_workflow/registries/chapters.py": "f4558cfc8176aeeb33a333ad784361efd966e1b07ef310e35842c3dd4bc41168",
+    "services/api/app/protocol_workflow/registries/fact_bindings.py": "94290d2d8d1067fa2bc34badc6741d7956a7bf7d37c2fcbb061f670c70724848",
+    "tests/protocol_v3/test_chapter_fact_binding.py": "3ed83e53f663994a745b56f0f9f041d52489cb41a048b4017ce0ab1a21fadec4",
+    "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json": "182868631f69ef9a0d41039e3306c2ca9afef558f7d993403ac93d6cc7020250"
+  }
+}

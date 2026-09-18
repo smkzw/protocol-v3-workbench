@@ -1,0 +1,173 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-2-1:v2",
+  "semantic_node_id": "v2_n_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-2-1:study-rationale",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.indication",
+        "obligation": "required",
+        "rationale": "实际适应症复用既有 framing.indication 绑定；通用疾病介绍或注册关键词不得替代实际适应症。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.clinical_problem",
+        "obligation": "required",
+        "rationale": "临床问题必须写明本适应症当前的疾病负担与治疗困境。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.standard_of_care",
+        "obligation": "required",
+        "rationale": "当前标准治疗（SOC）必须项目化、可核查。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.unmet_need",
+        "obligation": "required",
+        "rationale": "未满足的临床需求必须具体到本适应症人群，而非泛化描述。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.rationale_uncertainty",
+        "obligation": "required",
+        "rationale": "必须说明本研究拟解决的、现有证据无法回答的不确定性；这是本条与通用疾病介绍的区别所在。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.target_mechanism",
+        "obligation": "optional",
+        "rationale": "仅在已确认靶点/机制事实存在时引用，不设第二可编辑事实存储。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "framing.intrinsic_objectives",
+        "obligation": "optional",
+        "rationale": "仅在立项内在目的已确认时引用。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "disease_background_summary",
+        "obligation": "allowed",
+        "rationale": "疾病背景与治疗现状摘要本身不构成确证性声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "study_rationale",
+        "obligation": "required",
+        "rationale": "理论依据必须给出本研究可解决既有不确定性的理由。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "背景章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "disease_background_summary"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "study_rationale"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "实际适应症→临床问题→SOC→未满足需求→研究不确定性必须分段落逐项给出；不得合并为一句通用介绍，也不得用注册关键词充数。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "五段式立项依据映射：实际适应症/临床问题/SOC/未满足需求/证据缺口",
+      "本研究的证据缺口声明为项目化内容，不得复用模板示例文字。"
+    ],
+    "skeleton_risk_rules": [
+      "只有通用疾病介绍、注册关键词或模板示例文字即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-2-1",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623312"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-2-1:five-part-rationale",
+      "rule": "背景必须逐项给出实际适应症、临床问题、标准治疗、未满足需求与本研究的证据缺口；缺项即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-2-1:primary",
+      "question": "研究理论依据是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "framing.indication"
+      ],
+      "linked_claim_types": [
+        "study_rationale"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-2-1:five-part-rationale"
+      ],
+      "risk_if_unmet": "研究理论依据缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

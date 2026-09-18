@@ -1,0 +1,203 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-2-2-2-1:v2",
+  "semantic_node_id": "v2_n_2_2_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-2-2-2-1:pharmacodynamics-tox-pk",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-2-2-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-2-2-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "nonclinical.pharmacodynamics",
+        "obligation": "required",
+        "rationale": "药效学（PD）结论必须独立给出，不得用其他非临床段落替代。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "nonclinical.pharmacokinetics",
+        "obligation": "required",
+        "rationale": "药代（PK）结论必须独立给出；@288-294 为药效学研究标题下未标题的 PK 段落。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "nonclinical.toxicology",
+        "obligation": "required",
+        "rationale": "毒理学结论必须独立给出；来源同样为无标题段落，标题叶计数不代表内容闭合。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "nonclinical.general_pharmacology",
+        "obligation": "required",
+        "rationale": "一般药理学结论必须独立给出，不得与 PD/PK/毒理合并。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "background.clinical_pharmacology_context",
+        "obligation": "required",
+        "rationale": "临床药理学背景（相应剂量/暴露与人用经验关联）必须给出，保留父级 2.2 叙事而非仅计数叶子。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "nonclinical_pd_evidence",
+        "obligation": "required",
+        "rationale": "药效学证据声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "nonclinical_pk_evidence",
+        "obligation": "required",
+        "rationale": "药代动力学证据声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "nonclinical_toxicology_evidence",
+        "obligation": "required",
+        "rationale": "毒理学证据声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "nonclinical_general_pharmacology_evidence",
+        "obligation": "required",
+        "rationale": "一般药理学证据声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "非临床章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "nonclinical_pd_evidence"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "nonclinical_pk_evidence"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "nonclinical_toxicology_evidence"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "nonclinical_general_pharmacology_evidence"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.85
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 4,
+        "project_specific_specification": "药效学、毒理学、药代动力学与一般药理学必须各自成段；四个独立义务不可由一段药效学文字统一满足（对应源 @288-294 的无标题段落）。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "无标题义务保真：源 @288-294 位于药效学研究标题下但无独立标题，四个语义义务在本合同内保留。",
+      "四组独立证据下限：PD/PK/毒理/一般药理学各自一组，任一组单一符合声明即可满足该组。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“药效学研究”标题或仅一段 PD 文字即失败；四个语义义务缺一即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-2-2-2-1",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-2-2-2-1:four-separate-obligations",
+      "rule": "PD、PK、毒理与一般药理学必须分别给出并各自附证据；合并成一段或仅给 PD 即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-2-2-2-1:primary",
+      "question": "药效学研究是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "nonclinical.pharmacodynamics"
+      ],
+      "linked_claim_types": [
+        "nonclinical_pd_evidence"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-2-2-2-1:four-separate-obligations"
+      ],
+      "risk_if_unmet": "药效学研究缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

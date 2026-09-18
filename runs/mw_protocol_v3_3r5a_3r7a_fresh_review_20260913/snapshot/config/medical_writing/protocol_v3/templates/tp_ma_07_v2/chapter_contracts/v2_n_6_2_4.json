@@ -1,0 +1,149 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+  "semantic_node_id": "v2_n_6_2_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-2-4:preparation",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-2-4:v2",
+    "chapter_contract_id": "contract:v2-n-6-2-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.preparation_conditions",
+        "obligation": "required",
+        "rationale": "配制/准备条件（稀释液、时限、容器、环境）必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.preparation_responsible_party",
+        "obligation": "required",
+        "rationale": "准备步骤的责任方与记录要求必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_preparation_text",
+        "obligation": "forbidden",
+        "rationale": "模板示例准备描述不得作为本项目配制条件。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "preparation_procedure",
+        "obligation": "required",
+        "rationale": "配制/准备步骤必须给出项目特定条件、责任方与记录要求。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "preparation_procedure"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "准备段必须承载项目特定配制条件、责任方与记录要求。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "制备条件与责任方为项目操作事实。"
+    ],
+    "skeleton_risk_rules": [
+      "配制/准备条件或责任方缺失即失败；仅模板示例描述即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-2-4",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623352"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-4:conditions",
+      "rule": "准备条件必须项目特定并给出责任方与记录要求；模板示例描述仅为示例。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-6-2-3:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_6_2_4:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-2-3:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_2_4:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_2_4:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-2-4:conditions",
+      "question": "配制条件、责任方与记录要求是否全部项目化？",
+      "linked_fact_paths": [
+        "intervention.preparation_conditions"
+      ],
+      "linked_claim_types": [
+        "preparation_procedure"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-2-4:conditions"
+      ],
+      "risk_if_unmet": "配制条件缺失会造成剂量与无菌风险。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

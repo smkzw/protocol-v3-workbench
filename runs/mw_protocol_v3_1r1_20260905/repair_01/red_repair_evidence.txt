@@ -1,0 +1,15 @@
+........................................................................ [ 59%]
+..................................F.FFF.FFFFFF.F.                        [100%]
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestPreEntryMutationRejection::test_mutators_rejected_before_entry_leave_zero_durable_changes
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestSqlFailureAtomicity::test_event_batch_sql_failure_persists_nothing
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestSqlFailureAtomicity::test_read_model_replace_sql_failure_keeps_previous_projection
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestVolatilePathRejection::test_memory_path_rejected_before_io
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_fake_version_zero_is_rejected_untouched
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_fake_version_one_is_rejected_untouched
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_duplicate_history_is_rejected
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_zero_prefixed_history_is_rejected
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_missing_owned_column_is_rejected
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestForeignSchemaAdoption::test_unrelated_table_besides_owned_schema_is_rejected
+FAILED tests/protocol_v3/test_sqlite_product_storage.py::TestTimestampSerialization::test_naive_datetime_rejected_not_reinterpreted
+11 failed, 110 passed in 1.62s

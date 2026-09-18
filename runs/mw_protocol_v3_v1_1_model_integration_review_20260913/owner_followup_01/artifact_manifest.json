@@ -1,0 +1,73 @@
+{
+  "scope": "seed graph receipt, persistence, validator and one correction candidate",
+  "files": [
+    {
+      "path": "services/api/app/protocol_workflow/graph/runtime.py",
+      "sha256": "b5e5fd889a7c314e8a8868d9b680c57f9a41d0a244523a500953bc4e4cd8e9df"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/graph/ports.py",
+      "sha256": "d1c902e2913fc251ed9ace4e59367b7a96b96361e25e3bc3c96f2e702099d6d9"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/adapters/zhipu_api.py",
+      "sha256": "f4448e5b317302b821aa107b1f767d97ad37d8884d62577fd1e41813d86c0bf6"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/model_response.py",
+      "sha256": "b1cc54d2505d9e86d86fa7a0f60d1e68c89298075139023b11935949e65e095c"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/artifact_messages.py",
+      "sha256": "d900e0c72eabef39502688b0ab1cea8eaec615228e77c6409b47f58c5e635d25"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/agent1/research_seed.py",
+      "sha256": "215716b62afd219ebd3ca5f0b427bf1002b137a03d572a78fb2922ad713a6a89"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/agent1/seed_contract.py",
+      "sha256": "7bca18cd42499b2d409bfab120905a7c23234d9ac1c63a28c06166294916d135"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/agent1/seed_validation.py",
+      "sha256": "d9bb442e79c4b552c91fe5d1b43179ffdaa1fb52a8a59a10ce2a3e48b3042be8"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/agent1/seed_workflow.py",
+      "sha256": "8b859ecd2f9ae15b215b3d53fa9534ed974807b3035055371220a0caf3086e70"
+    },
+    {
+      "path": "config/medical_writing/protocol_v3/skill_registry.json",
+      "sha256": "bb02a46a3eb421ebfd9bebdb8189f4f412d6fc57f9b10f18572712685313408e"
+    },
+    {
+      "path": "config/medical_writing/protocol_v3/role_registry.json",
+      "sha256": "ca3e668cefc16997c622fe858969fd14829030a0bebce60437e7210c85201aa6"
+    },
+    {
+      "path": "tests/protocol_v3/test_graph_model_contract.py",
+      "sha256": "57094d5c16dfd2874a70397112aee18474ec970528a9342b1a20b43c796443f2"
+    },
+    {
+      "path": "tests/protocol_v3/test_research_seed_normalization.py",
+      "sha256": "2fc1df50262b0b91c70d88f4266558f7dc125c7452fd7b1d7004c1c9092788fd"
+    },
+    {
+      "path": "tests/protocol_v3/test_model_response_persistence.py",
+      "sha256": "2da1715df8b152cd476d4f7bf6f9070c805bd609e582dc691dc8a1e005647335"
+    },
+    {
+      "path": "tests/protocol_v3/test_seed_execution_contract.py",
+      "sha256": "f15d6e3f53ef2ae3a5b7cb24efa6e1e1f8efb09b1ed6674d421145bd17f1208e"
+    },
+    {
+      "path": "tests/protocol_v3/test_seed_response_validation.py",
+      "sha256": "912e00c284c29849574b90379c284c87f05b311a658008cb03328626aa4750c2"
+    },
+    {
+      "path": "tests/protocol_v3/test_seed_workflow_integration.py",
+      "sha256": "54497c3380cd505c57db3aabb11b6b2b8360261074de3bf379165b2c38353e5f"
+    }
+  ]
+}

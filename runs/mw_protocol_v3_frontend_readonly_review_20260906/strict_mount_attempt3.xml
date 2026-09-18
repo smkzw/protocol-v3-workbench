@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="2" failures="1" errors="0" time="1.086777834">
+    <testsuite name="intake_mount.test.jsx" timestamp="2026-09-05T18:30:45.109Z" hostname="MacBook-Pro-4.local" tests="2" failures="1" errors="0" skipped="0" time="1.086777834">
+        <testcase classname="intake_mount.test.jsx" name="successful upload reaches review, StrictMode=false" time="0.069812667">
+        </testcase>
+        <testcase classname="intake_mount.test.jsx" name="successful upload reaches review, StrictMode=true" time="1.016466833">
+            <failure message="expected null not to be null
+
+Ignored nodes: comments, script, style
+[36m&lt;html&gt;[39m
+  [36m&lt;head /&gt;[39m
+  [36m&lt;body&gt;[39m
+    [36m&lt;div&gt;[39m
+      [36m&lt;section[39m
+        [33mclass[39m=[32m&quot;file-first-synopsis-intake&quot;[39m
+      [36m&gt;[39m
+        [36m&lt;div[39m
+          [33mclass[39m=[32m&quot;file-first-dropzone&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;input[39m
+            [33maccept[39m=[32m&quot;.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;[39m
+            [33mdisabled[39m=[32m&quot;&quot;[39m
+            [33mtype[39m=[32m&quot;file&quot;[39m
+          [36m/&gt;[39m
+          [36m&lt;svg[39m
+            [33maria-hidden[39m=[32m&quot;true&quot;[39m
+            [33mclass[39m=[32m&quot;lucide lucide-file-text&quot;[39m
+            [33mfill[39m=[32m&quot;none&quot;[39m
+            [33mheight[39m=[32m&quot;26&quot;[39m
+            [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+            [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+            [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+            [33mstroke-width[39m=[32m&quot;2&quot;[39m
+            [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+            [33mwidth[39m=[32m&quot;26&quot;[39m
+            [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z&quot;[39m
+            [36m/&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M14 2v5a1 1 0 0 0 1 1h5&quot;[39m
+            [36m/&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M10 9H8&quot;[39m
+            [36m/&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M16 13H8&quot;[39m
+            [36m/&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M16 17H8&quot;[39m
+            [36m/&gt;[39m
+          [36m&lt;/svg&gt;[39m
+          [36m&lt;div&gt;[39m
+            [36m&lt;strong&gt;[39m
+              [0mtest.docx[0m
+            [36m&lt;/strong&gt;[39m
+            [36m&lt;span&gt;[39m
+              [0m1 KB · PDF / DOCX[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/div&gt;[39m
+        [36m&lt;/div&gt;[39m
+        [36m&lt;div[39m
+          [33maria-live[39m=[32m&quot;polite&quot;[39m
+          [33mclass[39m=[32m&quot;file-first-progress&quot;[39m
+        [36m&gt;[39m
+          [36m&lt;svg[39m
+            [33maria-hidden[39m=[32m&quot;true&quot;[39m
+            [33mclass[39m=[32m&quot;lucide lucide-loader-circle spin&quot;[39m
+            [33mfill[39m=[32m&quot;none&quot;[39m
+            [33mheight[39m=[32m&quot;18&quot;[39m
+            [33mstroke[39m=[32m&quot;currentColor&quot;[39m
+            [33mstroke-linecap[39m=[32m&quot;round&quot;[39m
+            [33mstroke-linejoin[39m=[32m&quot;round&quot;[39m
+            [33mstroke-width[39m=[32m&quot;2&quot;[39m
+            [33mviewBox[39m=[32m&quot;0 0 24 24&quot;[39m
+            [33mwidth[39m=[32m&quot;18&quot;[39m
+            [33mxmlns[39m=[32m&quot;http://www.w3.org/2000/svg&quot;[39m
+          [36m&gt;[39m
+            [36m&lt;path[39m
+              [33md[39m=[32m&quot;M21 12a9 9 0 1 1-6.219-8.56&quot;[39m
+            [36m/&gt;[39m
+          [36m&lt;/svg&gt;[39m
+          [36m&lt;div&gt;[39m
+            [36m&lt;strong&gt;[39m
+              [0m准备导入[0m
+            [36m&lt;/strong&gt;[39m
+            [36m&lt;span&gt;[39m
+              [0m正在准备文档内容[0m
+            [36m&lt;/span&gt;[39m
+          [36m&lt;/div&gt;[39m
+        [36m&lt;/div&gt;[39m
+      [36m&lt;/section&gt;[39m
+    [36m&lt;/div&gt;[39m
+  [36m&lt;/body&gt;[39m
+[36m&lt;/html&gt;[39m" type="AssertionError">
+AssertionError: expected null not to be null
+
+Ignored nodes: comments, script, style
+&lt;html&gt;
+  &lt;head /&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+      &lt;section
+        class=&quot;file-first-synopsis-intake&quot;
+      &gt;
+        &lt;div
+          class=&quot;file-first-dropzone&quot;
+        &gt;
+          &lt;input
+            accept=&quot;.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;
+            disabled=&quot;&quot;
+            type=&quot;file&quot;
+          /&gt;
+          &lt;svg
+            aria-hidden=&quot;true&quot;
+            class=&quot;lucide lucide-file-text&quot;
+            fill=&quot;none&quot;
+            height=&quot;26&quot;
+            stroke=&quot;currentColor&quot;
+            stroke-linecap=&quot;round&quot;
+            stroke-linejoin=&quot;round&quot;
+            stroke-width=&quot;2&quot;
+            viewBox=&quot;0 0 24 24&quot;
+            width=&quot;26&quot;
+            xmlns=&quot;http://www.w3.org/2000/svg&quot;
+          &gt;
+            &lt;path
+              d=&quot;M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z&quot;
+            /&gt;
+            &lt;path
+              d=&quot;M14 2v5a1 1 0 0 0 1 1h5&quot;
+            /&gt;
+            &lt;path
+              d=&quot;M10 9H8&quot;
+            /&gt;
+            &lt;path
+              d=&quot;M16 13H8&quot;
+            /&gt;
+            &lt;path
+              d=&quot;M16 17H8&quot;
+            /&gt;
+          &lt;/svg&gt;
+          &lt;div&gt;
+            &lt;strong&gt;
+              test.docx
+            &lt;/strong&gt;
+            &lt;span&gt;
+              1 KB · PDF / DOCX
+            &lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div
+          aria-live=&quot;polite&quot;
+          class=&quot;file-first-progress&quot;
+        &gt;
+          &lt;svg
+            aria-hidden=&quot;true&quot;
+            class=&quot;lucide lucide-loader-circle spin&quot;
+            fill=&quot;none&quot;
+            height=&quot;18&quot;
+            stroke=&quot;currentColor&quot;
+            stroke-linecap=&quot;round&quot;
+            stroke-linejoin=&quot;round&quot;
+            stroke-width=&quot;2&quot;
+            viewBox=&quot;0 0 24 24&quot;
+            width=&quot;18&quot;
+            xmlns=&quot;http://www.w3.org/2000/svg&quot;
+          &gt;
+            &lt;path
+              d=&quot;M21 12a9 9 0 1 1-6.219-8.56&quot;
+            /&gt;
+          &lt;/svg&gt;
+          &lt;div&gt;
+            &lt;strong&gt;
+              准备导入
+            &lt;/strong&gt;
+            &lt;span&gt;
+              正在准备文档内容
+            &lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+ ❯ intake_mount.test.jsx:27:73
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../frontend/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../frontend/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../frontend/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

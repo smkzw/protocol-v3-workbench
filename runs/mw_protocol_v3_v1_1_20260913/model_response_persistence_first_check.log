@@ -1,0 +1,120 @@
+FF................................                                       [100%]
+=================================== FAILURES ===================================
+_ test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[{"fields":{}}] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-613/test_response_bytes_and_work_r0')
+content = '{"fields":{}}'
+
+    @pytest.mark.parametrize('content', ['{"fields":{}}', '这次返回的不是JSON。'])
+    def test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store(tmp_path, content):
+        from app.protocol_workflow.runtime.model_response import persist_model_response, read_model_response
+        root = str(tmp_path / 'artifacts')
+        key = 'research-seed/project-a/reservation-one'
+        store = LocalArtifactStore(root)
+        sink = partial(persist_model_response, store, key, created_at=datetime.now(timezone.utc))
+        adapter = build_zhipu_api_adapter(
+            credential_resolver=_resolver(), receipt_sink=sink,
+            http_opener=_FakeOpener([_FakeResponse(_completion_body(content=content))]),
+        )
+        request = _glm_request()
+>       receipt = adapter.dispatch(request)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_model_response_persistence.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/runtime/adapters/direct_api.py:190: in dispatch
+    return DispatchReceipt(
+<string>:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DispatchReceipt(provider_session_id='chatcmpl-test-1', output_sha256='f35cd02cd97b67077a86f78eb15ec16044957e3420ff5787...-seed/project-a/reservation-one@1', output_schema_ref='https://protocol-v3.local/schemas/chapter-draft-output.v1.json')
+
+    def __post_init__(self) -> None:
+        for name in ("provider_session_id", "observed_provider", "observed_model"):
+            value = getattr(self, name)
+            if not value or not value.strip():
+                raise HarnessPolicyError(f"DispatchReceipt.{name} must be non-empty")
+        sha = self.output_sha256.strip().lower()
+        if not re.fullmatch(r"[0-9a-f]{64}", sha):
+            raise HarnessPolicyError(
+                f"output_sha256 must be a 64-char hex digest: {self.output_sha256!r}"
+            )
+        object.__setattr__(self, "output_sha256", sha)
+        # The output artifact ref must be a valid logical ref (same rule as
+        # input artifacts) so the receipt carries typed artifact proof, not
+        # just a bare hash.
+        oar = self.output_artifact_ref.strip()
+        if not oar:
+            raise HarnessPolicyError(
+                "DispatchReceipt.output_artifact_ref must be non-empty"
+            )
+        if not _ARTIFACT_REF_RE.fullmatch(oar) or _PATH_ESCAPE_RE.search(oar):
+>           raise HarnessPolicyError(
+                f"DispatchReceipt.output_artifact_ref must be a closed logical id: "
+                f"{self.output_artifact_ref!r}"
+            )
+E           app.protocol_workflow.runtime.harness.HarnessPolicyError: DispatchReceipt.output_artifact_ref must be a closed logical id: 'research-seed/project-a/reservation-one@1'
+
+services/api/app/protocol_workflow/runtime/harness.py:404: HarnessPolicyError
+_ test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[\u8fd9\u6b21\u8fd4\u56de\u7684\u4e0d\u662fJSON\u3002] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-613/test_response_bytes_and_work_r1')
+content = '这次返回的不是JSON。'
+
+    @pytest.mark.parametrize('content', ['{"fields":{}}', '这次返回的不是JSON。'])
+    def test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store(tmp_path, content):
+        from app.protocol_workflow.runtime.model_response import persist_model_response, read_model_response
+        root = str(tmp_path / 'artifacts')
+        key = 'research-seed/project-a/reservation-one'
+        store = LocalArtifactStore(root)
+        sink = partial(persist_model_response, store, key, created_at=datetime.now(timezone.utc))
+        adapter = build_zhipu_api_adapter(
+            credential_resolver=_resolver(), receipt_sink=sink,
+            http_opener=_FakeOpener([_FakeResponse(_completion_body(content=content))]),
+        )
+        request = _glm_request()
+>       receipt = adapter.dispatch(request)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_model_response_persistence.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/runtime/adapters/direct_api.py:190: in dispatch
+    return DispatchReceipt(
+<string>:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DispatchReceipt(provider_session_id='chatcmpl-test-1', output_sha256='bce2bb53e5ff46692a9e03eee29f0d546975f8ada0135cf1...-seed/project-a/reservation-one@1', output_schema_ref='https://protocol-v3.local/schemas/chapter-draft-output.v1.json')
+
+    def __post_init__(self) -> None:
+        for name in ("provider_session_id", "observed_provider", "observed_model"):
+            value = getattr(self, name)
+            if not value or not value.strip():
+                raise HarnessPolicyError(f"DispatchReceipt.{name} must be non-empty")
+        sha = self.output_sha256.strip().lower()
+        if not re.fullmatch(r"[0-9a-f]{64}", sha):
+            raise HarnessPolicyError(
+                f"output_sha256 must be a 64-char hex digest: {self.output_sha256!r}"
+            )
+        object.__setattr__(self, "output_sha256", sha)
+        # The output artifact ref must be a valid logical ref (same rule as
+        # input artifacts) so the receipt carries typed artifact proof, not
+        # just a bare hash.
+        oar = self.output_artifact_ref.strip()
+        if not oar:
+            raise HarnessPolicyError(
+                "DispatchReceipt.output_artifact_ref must be non-empty"
+            )
+        if not _ARTIFACT_REF_RE.fullmatch(oar) or _PATH_ESCAPE_RE.search(oar):
+>           raise HarnessPolicyError(
+                f"DispatchReceipt.output_artifact_ref must be a closed logical id: "
+                f"{self.output_artifact_ref!r}"
+            )
+E           app.protocol_workflow.runtime.harness.HarnessPolicyError: DispatchReceipt.output_artifact_ref must be a closed logical id: 'research-seed/project-a/reservation-one@1'
+
+services/api/app/protocol_workflow/runtime/harness.py:404: HarnessPolicyError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_model_response_persistence.py::test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[{"fields":{}}]
+FAILED tests/protocol_v3/test_model_response_persistence.py::test_response_bytes_and_work_receipt_can_be_recovered_after_reopening_store[\u8fd9\u6b21\u8fd4\u56de\u7684\u4e0d\u662fJSON\u3002]
+2 failed, 32 passed in 0.46s

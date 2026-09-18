@@ -1,0 +1,23 @@
+........................................................................ [ 40%]
+........................................................................ [ 81%]
+..............F.................                                         [100%]
+=================================== FAILURES ===================================
+_______ test_contracts_reuse_shared_fact_paths_and_declare_typed_detail ________
+
+    def test_contracts_reuse_shared_fact_paths_and_declare_typed_detail():
+        payload = _assembled()
+        for entry in payload["chapters"]:
+            node_id = entry["node_id"]
+            facts = {
+                item["fact_path"]: item
+                for item in entry["contract"]["substantive_content"]["fact_requirements"]
+            }
+            assert REQUIRED_EXISTING_FACTS[node_id] in facts
+>           assert all("typed" in item["rationale"] or "结构化" in item["rationale"] for item in facts.values())
+E           assert False
+E            +  where False = all(<generator object test_contracts_reuse_shared_fact_paths_and_declare_typed_detail.<locals>.<genexpr> at 0x10b1ed080>)
+
+tests/protocol_v3/test_chapter_batch3.py:141: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_batch3.py::test_contracts_reuse_shared_fact_paths_and_declare_typed_detail
+1 failed, 175 passed in 4.43s

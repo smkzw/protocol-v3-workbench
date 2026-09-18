@@ -1,0 +1,20 @@
+=== RED evidence: product tests fail (module not yet implemented) ===
+FAILED tests/protocol_v3/test_graph_runtime.py::TestReservationDiscipline::test_completed_reservation_is_reused_without_new_dispatch
+FAILED tests/protocol_v3/test_graph_runtime.py::TestReservationDiscipline::test_unknown_outcome_never_auto_redispatches
+FAILED tests/protocol_v3/test_graph_runtime.py::TestReservationDiscipline::test_explicit_retry_appends_attempt_and_requires_decision_identity
+FAILED tests/protocol_v3/test_graph_runtime.py::TestReservationDiscipline::test_blocked_running_row_from_crash_requires_explicit_resolution
+22 failed in 0.36s
+
+=== RED evidence: recovery tests ===
+FAILED tests/protocol_v3/test_graph_runtime_recovery.py::TestProcessKillRecovery::test_kill_after_node_reuses_durable_result
+FAILED tests/protocol_v3/test_graph_runtime_recovery.py::TestProcessKillRecovery::test_kill_inside_dispatch_blocks_and_never_auto_redispatches
+FAILED tests/protocol_v3/test_graph_runtime_recovery.py::TestProcessKillRecovery::test_duplicate_resume_across_processes_creates_no_second_lineage
+FAILED tests/protocol_v3/test_graph_runtime_recovery.py::TestConcurrentDecision::test_exactly_one_concurrent_decision_wins
+5 failed in 2.48s
+
+=== RED evidence: facade tests ===
+E   ModuleNotFoundError: No module named 'pocs.protocol_v3.orchestrator.typed_facade'
+=========================== short test summary info ============================
+ERROR pocs/protocol_v3/orchestrator/tests/test_typed_facade.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.10s

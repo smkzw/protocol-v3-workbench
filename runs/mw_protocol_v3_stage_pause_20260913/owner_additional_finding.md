@@ -1,0 +1,3 @@
+# Owner source finding after followup01 dispatch
+
+protocolWorkspaceApi.mjs request() intentionally strips rawDetail.code and retains exactly four display fields. Newly added ManuscriptWorkspace reason.detail.code branch will therefore be unreachable through the real client. Frozen source cannot be changed during active followup01. After terminal: retain display detail filtering and introduce one narrowly typed internal recoveryKind on ProtocolWorkspaceApiError only for /manuscript-draft/save HTTP409 + exact raw error code, then consume recoveryKind in UI. Do not match Chinese display text or expose arbitrary raw audit payload. Need same-session narrow followup after source correction. No tests run.

@@ -1,0 +1,17 @@
+...................................................F                     [100%]
+=================================== FAILURES ===================================
+_ test_explicit_legacy_alias_reads_old_only_but_never_hides_conflicting_values _
+
+    def test_explicit_legacy_alias_reads_old_only_but_never_hides_conflicting_values():
+        from app.protocol_workflow.registries.fact_bindings import FactBinding, bind_chapter_input, FactBindingError, affected_chapter_fact_paths
+>       binding = FactBinding(fact_path='picos.objective.primary', canonical_path='study.objective',
+            legacy_canonical_paths=('legacy.objective',), value_type='json', source_refs=('test:declared-legacy',))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactBinding
+E       legacy_canonical_paths
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('legacy.objective',), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_fact_binding.py:341: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_explicit_legacy_alias_reads_old_only_but_never_hides_conflicting_values
+1 failed, 51 passed in 0.91s

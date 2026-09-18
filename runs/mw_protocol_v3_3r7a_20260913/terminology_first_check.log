@@ -1,0 +1,189 @@
+FFFF.F                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_authored_text_suggests_preferred_term_at_each_actual_location ______
+
+    def test_authored_text_suggests_preferred_term_at_each_actual_location():
+        from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+        units = [TextUnit(text='受试者接受评估。', locator=location, role=role)
+                 for role, location in [('body', 'b1'), ('table_cell', 't1:r0:c1'), ('header', 'h1'), ('footer', 'f1')]]
+>       findings = scan_text_units(units)
+                   ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_terminology_library.py:6: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/terminology/library.py:30: in scan_text_units
+    rules = library if library is not None else load_library()
+                                                ^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/terminology/library.py:26: in load_library
+    return json.loads(source.read_text())
+                      ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json'
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: FileNotFoundError
+________ test_quoted_titles_keep_original_terms_but_need_source_locator ________
+
+    def test_quoted_titles_keep_original_terms_but_need_source_locator():
+        from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+>       assert scan_text_units([TextUnit(text='受试者保护指南', locator='ref1', role='reference_title', source_locator='source.docx:para:9')]) == ()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_terminology_library.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/terminology/library.py:30: in scan_text_units
+    rules = library if library is not None else load_library()
+                                                ^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/terminology/library.py:26: in load_library
+    return json.loads(source.read_text())
+                      ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json'
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak _
+
+    def test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak():
+        from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+>       assert scan_text_units([TextUnit(text='', locator='sig1', role='signature_control')]) == ()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_terminology_library.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/terminology/library.py:30: in scan_text_units
+    rules = library if library is not None else load_library()
+                                                ^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/terminology/library.py:26: in load_library
+    return json.loads(source.read_text())
+                      ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json'
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: FileNotFoundError
+____________ test_format_warning_never_rewrites_quantities_or_codes ____________
+
+    def test_format_warning_never_rewrites_quantities_or_codes():
+        from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+        text = '方案ABC-2026-01，版本1.2，2026年；剂量10ｍｇ，比例5％。'
+>       findings = scan_text_units([TextUnit(text=text, locator='b1')])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_terminology_library.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/terminology/library.py:30: in scan_text_units
+    rules = library if library is not None else load_library()
+                                                ^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/terminology/library.py:26: in load_library
+    return json.loads(source.read_text())
+                      ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json'
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions __
+
+    def test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions():
+        from services.api.app.protocol_workflow.terminology.library import load_library
+>       library = load_library()
+                  ^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_terminology_library.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/terminology/library.py:26: in load_library
+    return json.loads(source.read_text())
+                      ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/config/medical_writing/protocol_v3/terminology.json'
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_terminology_library.py::test_authored_text_suggests_preferred_term_at_each_actual_location
+FAILED tests/protocol_v3/test_terminology_library.py::test_quoted_titles_keep_original_terms_but_need_source_locator
+FAILED tests/protocol_v3/test_terminology_library.py::test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak
+FAILED tests/protocol_v3/test_terminology_library.py::test_format_warning_never_rewrites_quantities_or_codes
+FAILED tests/protocol_v3/test_terminology_library.py::test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions
+5 failed, 1 passed in 0.35s

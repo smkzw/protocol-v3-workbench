@@ -1,0 +1,165 @@
+{
+ "results": [
+  {
+   "name": "S1.1 exact replay after successor revision: replayed & zero-write",
+   "ok": true,
+   "note": "status=200 body={\"project_id\":\"proj:1r3:api:admitted\",\"study_definition_id\":\"sd:1r3:api:1\",\"definition\":{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"confirmed\",\"study_definition_id\":\"sd:1r3:api:1"
+  },
+  {
+   "name": "S1.2 same CAS triple without adoption intent rejected",
+   "ok": true,
+   "note": "status=409 body={\"detail\":{\"message\":\"您查看的推荐已被更新，本次选择尚未应用。\",\"responsible_area\":\"方案统筹\",\"can_retry\":true,\"next_step\":\"请查看最新推荐后重新确认。\"}}"
+  },
+  {
+   "name": "S1.3 same CAS triple with changed retirement intent rejected",
+   "ok": true,
+   "note": "status=409 body={\"detail\":{\"message\":\"您查看的推荐已被更新，本次选择尚未应用。\",\"responsible_area\":\"方案统筹\",\"can_retry\":true,\"next_step\":\"请查看最新推荐后重新确认。\"}}"
+  },
+  {
+   "name": "S1.4 same idempotency key with new decision rejected zero-effect",
+   "ok": true,
+   "note": "status=409 counts={'aggregate_revision': 3, 'event_stream': 3, 'outbox_message': 0}"
+  },
+  {
+   "name": "S1.5 GET endpoints are logically zero-write",
+   "ok": true,
+   "note": "counts={'aggregate_revision': 3, 'event_stream': 3, 'outbox_message': 0}"
+  },
+  {
+   "name": "S1.6 replay classifies without loading the current template",
+   "ok": true,
+   "note": "status=200 loader_calls=0"
+  },
+  {
+   "name": "S2.1 literal dotted fact_path stays literal (no split)",
+   "ok": true,
+   "note": "hash=e6f0d9acb1f0"
+  },
+  {
+   "name": "S2.2 false/0/'false'/null/missing hash-distinct in input binding",
+   "ok": true,
+   "note": "distinct=5"
+  },
+  {
+   "name": "S2.3 current_input_validity: False stable, 0/null/missing stale",
+   "ok": true,
+   "note": "{'same False': 'current', '0 instead': 'stale', 'null instead': 'stale', 'missing': 'stale', 'unrelated only': 'current'}"
+  },
+  {
+   "name": "S2.4 literal_fact_diff: False->0 is a change, equal value is not",
+   "ok": true,
+   "note": "diff=('x',)"
+  },
+  {
+   "name": "S2.5 boolean binding: 'false' and 0 rejected, native False adopted",
+   "ok": true,
+   "note": "str=409 zero=409 native=200"
+  },
+  {
+   "name": "S2.6 null write rejected as not-a-delete (fresh path)",
+   "ok": true,
+   "note": "status=409"
+  },
+  {
+   "name": "S2.7 alias migration keeps both keys until explicit retirement",
+   "ok": true,
+   "note": "sponsor='申办方甲' alias='申办方甲'"
+  },
+  {
+   "name": "S3.1 flag flip blocked by unwritten stale controlled params (full-result check)",
+   "ok": true,
+   "note": "status=409"
+  },
+  {
+   "name": "S3.2 one-shot flip+retire succeeds and removes both params",
+   "ok": true,
+   "note": "status=200 facts={'statistics.sample_size.interim_applicable': False, 'statistics.sample_size.interim_adjustment': None, 'statistics.sample_size.interim_alpha_adjustment': None}"
+  },
+  {
+   "name": "S3.3 history keeps retired interim parameters at the old revision",
+   "ok": true,
+   "note": "prev_adj={'method': 'alpha'}"
+  },
+  {
+   "name": "S3.4 shared active owner blocks retirement (pk/pd applicable)",
+   "ok": true,
+   "note": "status=409"
+  },
+  {
+   "name": "S3.5 unknown co-owner blocks retirement (unknown is not inactive)",
+   "ok": true,
+   "note": "status=409"
+  },
+  {
+   "name": "S3.6a material value under an all-inactive condition is blocked",
+   "ok": true,
+   "note": "status=409"
+  },
+  {
+   "name": "S3.6b one-shot all-owners-off flip+retire resolves",
+   "ok": true,
+   "note": "status=200"
+  },
+  {
+   "name": "S4.1 A{x}B{x,y}C{y}: change x -> A reopen, B candidate, C untouched",
+   "ok": true,
+   "note": "entries={'A': 'confirmed_reopen', 'B': 'candidate_check', 'D': 'confirmed_reopen'}"
+  },
+  {
+   "name": "S4.2 change x+y -> C reopens on y only (no x label leaks to C)",
+   "ok": true,
+   "note": "C=AffectedChapterPlan(contract_id='C', reason=<ImpactReason.DIRECT_FACT_USE: 'direct_fact_use'>, confirmation='confirmed_reopen', via_fact_paths=('y',), via_contract_ids=(), rule_plans=())"
+  },
+  {
+   "name": "S4.3 no value change -> empty plan",
+   "ok": true,
+   "note": "entries=0"
+  },
+  {
+   "name": "S4.4 scheduling fan-out reaches D only; E stays out (no label fabrication)",
+   "ok": true,
+   "note": "entries=['A', 'B', 'D']"
+  },
+  {
+   "name": "S4.5 real template sponsor plan: entries typed, reopen/candidate disjoint",
+   "ok": true,
+   "note": "entries=1 reopen=1 candidate=0 reasons=['direct_fact_use']"
+  },
+  {
+   "name": "S4.6 unmapped fixture fact change is tracked, not fabricated as impact",
+   "ok": true,
+   "note": "unmapped=('picos.intervention.dose',) entries=0"
+  },
+  {
+   "name": "S5.1 post-CAS event-append failure leaves zero durable effect",
+   "ok": true,
+   "note": "exc=RuntimeError agg 1->1 events 1->1"
+  },
+  {
+   "name": "S5.2 concurrent CAS: exactly one winner, one conflict, +1 event",
+   "ok": true,
+   "note": "outcomes=[('R', 'ok', 2), ('L', 'error', 'MW-PRO-P1-REVISION-STALE')] events=2"
+  },
+  {
+   "name": "S5.3 adoption events rebuild the committed revision from scratch",
+   "ok": true,
+   "note": "events=2 quarantined=False"
+  },
+  {
+   "name": "S5.4 tampered fact_updates with stale intent hash fails the ledger rebuild",
+   "ok": true,
+   "note": "code=MW-PRO-P1-CHECKPOINT-CHECKPOINT_EVENT_MISMATCH"
+  },
+  {
+   "name": "S5.5 tampered result revision hash quarantines the rebuild",
+   "ok": true,
+   "note": "tamper_visible=True quarantined=True"
+  },
+  {
+   "name": "S5.6 five CAS hash branches distinct; tuple/list serialization stable",
+   "ok": true,
+   "note": "distinct=5 operation=template_fact_adoption.v1"
+  }
+ ],
+ "tmp": "/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/mw3r4_review_sjhojxb1"
+}

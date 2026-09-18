@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="20" skipped="0" tests="20" time="1.015" timestamp="2026-09-11T21:46:32.371963+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_batch3_assembles_exactly_ten_source_carriers" time="0.001"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:91: in test_batch3_assembles_exactly_ten_source_carriers
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_batch3_contracts_and_skills_preserve_source_identity" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:100: in test_batch3_contracts_and_skills_preserve_source_identity
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_contracts_reuse_shared_fact_paths_and_declare_typed_detail" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:124: in test_contracts_reuse_shared_fact_paths_and_declare_typed_detail
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_parent_population_framing_is_carried_by_inclusion_and_referenced_by_exclusion" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:148: in test_parent_population_framing_is_carried_by_inclusion_and_referenced_by_exclusion
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_4_1]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_4_2]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_4_3]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_4_4]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_4_5]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_5_1]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_5_2]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_5_3]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_5_4]" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_each_carrier_has_four_exercised_fixture_families[v2_n_5_5]" time="0.001"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:166: in test_each_carrier_has_four_exercised_fixture_families
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_source_specific_negative_fixtures_are_material_and_fail_for_expected_family" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:179: in test_source_specific_negative_fixtures_are_material_and_fail_for_expected_family
+    fixtures = _fixture_map()
+               ^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:87: in _fixture_map
+    return {fixture.fixture_id: fixture for fixture in _document().fixtures}
+                                                       ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_population_predicates_are_typed_and_not_inverse_duplicates" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:199: in test_population_predicates_are_typed_and_not_inverse_duplicates
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_design_high_risk_choices_are_decisions_not_defaults" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:214: in test_design_high_risk_choices_are_decisions_not_defaults
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_completion_and_overall_end_are_distinct_and_screening_is_distinct" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:226: in test_completion_and_overall_end_are_distinct_and_screening_is_distinct
+    payload = _assembled()
+              ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_partial_lint_is_incomplete_and_full_lint_is_not_claimed" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:244: in test_partial_lint_is_incomplete_and_full_lint_is_not_claimed
+    document = _document()
+               ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase><testcase classname="tests.protocol_v3.test_chapter_batch3" name="test_fixture_checker_ignores_supplied_truth_flags" time="0.000"><failure message="scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'">scripts/qc/protocol_v3/assemble_chapter_registry.py:67: in _read_json
+    data = json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_chapter_batch3.py:254: in test_fixture_checker_ignores_supplied_truth_flags
+    document = _document()
+               ^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:83: in _document
+    return load_chapter_registry(_assembled())
+                                 ^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_batch3.py:79: in _assembled
+    return assemble_registry(CONTRACT_DIR, SKILL_DIR, BATCH_PATH)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:120: in assemble_registry
+    batch = _load_batch_document(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:78: in _load_batch_document
+    batch = _read_json(batch_path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:69: in _read_json
+    raise AssemblyInputError(f"cannot read {path}: {exc}") from exc
+E   scripts.qc.protocol_v3.assemble_chapter_registry.AssemblyInputError: cannot read /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/fixtures/protocol_v3/chapter_content_v2/batch3.json'</failure></testcase></testsuite></testsuites>

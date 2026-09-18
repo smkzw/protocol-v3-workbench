@@ -1,0 +1,33 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ tests/ProtocolSourceSelectionRecovery.test.jsx (1 test | 1 failed) 106ms
+   × keeps an explicitly excluded source excluded after reopening the project 105ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/ProtocolSourceSelectionRecovery.test.jsx > keeps an explicitly excluded source excluded after reopening the project
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/ProtocolSourceSelectionRecovery.test.jsx:14:88
+     12|   fireEvent.click(checkbox); expect(checkbox.checked).toBe(false);
+     13|   view.unmount(); render(<ProtocolIntakeWorkspace projectId="selection…
+     14|   expect((await screen.findByRole("checkbox",{name:"纳入后续写作：reference.d…
+       |                                                                                        ^
+     15| });
+     16|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  12:52:51
+   Duration  625ms (transform 52ms, setup 0ms, import 143ms, tests 106ms, environment 302ms)
+

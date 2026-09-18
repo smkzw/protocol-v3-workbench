@@ -1,0 +1,167 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+____ test_immunogenicity_applicability_requires_only_active_strategy[False] ____
+
+flag = False
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_immunogenicity_applicability_requires_only_active_strategy(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_9_3.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        facts = {item.fact_path: 'Synthetic other analysis arrangement' for item in c.substantive_content.fact_requirements
+                 if item.obligation.value == 'required'}
+        facts['exploratory.immunogenicity_applicable'] = flag
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+        elif flag is False:
+>           assert bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules).resolved_facts == facts
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:808: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ent',), risk_if_unmet='免疫原性缺失会使安全性结论不完整。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-9-3:immunogenicity
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+____ test_immunogenicity_applicability_requires_only_active_strategy[True] _____
+
+flag = True
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_immunogenicity_applicability_requires_only_active_strategy(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_9_3.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        facts = {item.fact_path: 'Synthetic other analysis arrangement' for item in c.substantive_content.fact_requirements
+                 if item.obligation.value == 'required'}
+        facts['exploratory.immunogenicity_applicable'] = flag
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+        elif flag is False:
+            assert bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules).resolved_facts == facts
+            facts['exploratory.immunogenicity'] = 'Stale testing strategy'
+            with pytest.raises(ApplicabilityResolutionError, match='inactive_conditional_fact_present'):
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+        else:
+            with pytest.raises(FactBindingError, match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:814: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...icable': True}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ent',), risk_if_unmet='免疫原性缺失会使安全性结论不完整。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-9-3:immunogenicity
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+____ test_immunogenicity_applicability_requires_only_active_strategy[None] _____
+
+flag = None
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_immunogenicity_applicability_requires_only_active_strategy(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_9_3.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        facts = {item.fact_path: 'Synthetic other analysis arrangement' for item in c.substantive_content.fact_requirements
+                 if item.obligation.value == 'required'}
+        facts['exploratory.immunogenicity_applicable'] = flag
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:806: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...icable': None}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ent',), risk_if_unmet='免疫原性缺失会使安全性结论不完整。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-9-3:immunogenicity
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+flag = None
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_immunogenicity_applicability_requires_only_active_strategy(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_9_3.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        facts = {item.fact_path: 'Synthetic other analysis arrangement' for item in c.substantive_content.fact_requirements
+                 if item.obligation.value == 'required'}
+        facts['exploratory.immunogenicity_applicable'] = flag
+        rules = real_rule_catalog().rules
+        if flag is None:
+>           with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:n-9-3:immunogenicity'
+
+tests/protocol_v3/test_chapter_applicability.py:805: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_immunogenicity_applicability_requires_only_active_strategy[False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_immunogenicity_applicability_requires_only_active_strategy[True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_immunogenicity_applicability_requires_only_active_strategy[None]
+3 failed, 96 deselected in 0.92s

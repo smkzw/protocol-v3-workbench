@@ -1,0 +1,24 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_selected_sources_use_exact_bytes_and_stable_selection_order _______
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-661/test_selected_sources_use_exac0')
+
+    def test_selected_sources_use_exact_bytes_and_stable_selection_order(tmp_path):
+>       from app.protocol_workflow.agent1.seed_coordinator import prepare_current_seed
+E       ImportError: cannot import name 'prepare_current_seed' from 'app.protocol_workflow.agent1.seed_coordinator' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent1/seed_coordinator.py)
+
+tests/protocol_v3/test_seed_source_selection.py:8: ImportError
+_________ test_stale_selection_is_not_silently_replaced_by_new_source __________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-661/test_stale_selection_is_not_si0')
+
+    def test_stale_selection_is_not_silently_replaced_by_new_source(tmp_path):
+>       from app.protocol_workflow.agent1.seed_coordinator import prepare_current_seed
+E       ImportError: cannot import name 'prepare_current_seed' from 'app.protocol_workflow.agent1.seed_coordinator' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent1/seed_coordinator.py)
+
+tests/protocol_v3/test_seed_source_selection.py:22: ImportError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_source_selection.py::test_selected_sources_use_exact_bytes_and_stable_selection_order
+FAILED tests/protocol_v3/test_seed_source_selection.py::test_stale_selection_is_not_silently_replaced_by_new_source
+2 failed in 0.45s

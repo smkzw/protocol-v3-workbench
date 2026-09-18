@@ -1,0 +1,14 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_restored_success_skips_probe_but_still_sends_actual_generation ______
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-650/test_restored_success_skips_pr0')
+
+    def test_restored_success_skips_probe_but_still_sends_actual_generation(tmp_path):
+>       from app.protocol_workflow.runtime.restored_probe import RestoredZhipuProbePolicy
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.runtime.restored_probe'
+
+tests/protocol_v3/test_restored_product_probe.py:9: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_restored_product_probe.py::test_restored_success_skips_probe_but_still_sends_actual_generation
+1 failed in 0.44s

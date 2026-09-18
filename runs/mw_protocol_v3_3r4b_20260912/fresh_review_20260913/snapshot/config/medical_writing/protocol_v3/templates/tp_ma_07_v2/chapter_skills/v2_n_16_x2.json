@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-16-x2",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_16_x2",
+  "chapter_contract_id": "contract:v2-n-16-x2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-16-x2:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 附录 2 纽约心脏学会（NYHA）心功能分级 的 ChapterSkillOutput。先写入实际适用性决定记录；仅当评估适用（裸 true）时才写入对照适当来源核对过的版本、来源与复现分级内容，并包含分级表格。NYHA 分级涉及试验参与者心功能评估，不得自动收录模板示例表格，缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "在没有实际评估决定的情况下收录 NYHA 附录",
+      "未对照适当来源核对版本与内容即复现示例表格",
+      "把缺失适用性记录写成不适用或已核对",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：附录 2 纽约心脏学会（NYHA）心功能分级，caption 标题零基 body-child 索引 977 与其自有表格 978（2列×5行）；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 caption style_id=8 与 bookmarks=['_Toc132623426']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、分级适用性或审批释放；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-16-x2:missing-obligation",
+    "skill:chapter:v2-n-16-x2:unresolved-fact",
+    "skill:chapter:v2-n-16-x2:wrong-source"
+  ]
+}

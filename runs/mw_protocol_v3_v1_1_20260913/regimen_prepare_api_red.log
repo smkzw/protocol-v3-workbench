@@ -1,0 +1,50 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_design_uses_pinned_intake_and_reopens_without_product_regeneration[True] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-772/test_design_uses_pinned_intake1')
+study_bound = True
+
+    @pytest.mark.parametrize("study_bound", [False, True])
+    def test_design_uses_pinned_intake_and_reopens_without_product_regeneration(tmp_path, study_bound):
+        from app.protocol_workflow.agent2.product import create_product_regimen_factory
+        db = tmp_path / "product.db"
+        shared.admit(db,PROJECT)
+        storage = {"backend":"sqlite","path":str(db)}
+        prior = ROOT.parents[2] / "runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json"
+        opener = _FakeOpener([_FakeResponse(_completion_body(content='{"fields":{}}')),
+            _FakeResponse(_completion_body(content='{"coverage":[],"regimen":null,"questions":["拟采用哪份给药依据？"]}'))])
+        keys=[]
+        def credentials():
+            keys.append("memory-only")
+            return "synthetic-only"
+        kwargs = dict(storage_config=storage,prior_probe_receipt=prior,max_input_bytes=100000,credential_resolver=credentials,http_opener=opener)
+        seeds = create_product_seed_factory(**kwargs)
+        designs = create_product_regimen_factory(**kwargs)
+        def client():
+            app=FastAPI()
+            mount_protocol_workflow_router(app,ProtocolWorkflowMountConfig(enabled=True,db_path=db),
+                                           seed_coordinator_factory=seeds,regimen_coordinator_factory=designs)
+            return TestClient(app)
+        endpoint = BASE.removesuffix("/sources")
+        with client() as c:
+            source=upload(c,build_docx(paragraph_xml("完整原资料不能丢失"))).json()["current"]["source"]
+            seed=c.post(endpoint+"/research-intake",json={"user_brief":"准备设计", "source_artifact_ids":[source["source_artifact_id"]]})
+            assert seed.status_code == 202
+            assert opener.calls == 1
+            body={"seed_run_id":seed.json()["workflow_run_id"]}
+            if study_bound:
+                created = c.post(endpoint+'/design/regimen/study-context', json={**body,
+                    'operation_id':'context:design:test','actor_id':'user:test','decided_at':'2026-09-13T10:00:00Z'})
+                assert created.status_code == 200, created.text
+                study_id = created.json()['study_definition_id']
+                prepared_intent = c.post(endpoint+'/design/regimen/prepare', json={**body, 'study_definition_id':study_id})
+>               assert prepared_intent.status_code == 200, prepared_intent.text
+E               AssertionError: {"detail":"Method Not Allowed"}
+E               assert 405 == 200
+E                +  where 405 = <Response [405 Method Not Allowed]>.status_code
+
+tests/protocol_v3/integration/test_regimen_design_api.py:48: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_regimen_design_api.py::test_design_uses_pinned_intake_and_reopens_without_product_regeneration[True]
+1 failed, 1 passed in 0.79s

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="5" time="0.427" timestamp="2026-09-05T15:28:11.418350+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_table-False]" time="0.005"><failure message="app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'project_allowlist' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo0/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database">tests/protocol_v3/test_sqlite_product_storage.py:1187: in test_owned_v1_migrates_and_reopens_without_losing_rows
+    upgraded = build_unit_of_work_factory(config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:2177: in build_unit_of_work_factory
+    _bootstrap(store_config)
+services/api/app/protocol_workflow/storage/sqlite.py:771: in _bootstrap
+    if _preflight_owned_database(config) == 0:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:732: in _preflight_owned_database
+    raise SqliteStorageConfigurationError(
+E   app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'project_allowlist' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo0/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database</failure></testcase><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_table-True]" time="0.008" /><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_column-False]" time="0.003"><failure message="app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo2/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database">tests/protocol_v3/test_sqlite_product_storage.py:1187: in test_owned_v1_migrates_and_reopens_without_losing_rows
+    upgraded = build_unit_of_work_factory(config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:2177: in build_unit_of_work_factory
+    _bootstrap(store_config)
+services/api/app/protocol_workflow/storage/sqlite.py:771: in _bootstrap
+    if _preflight_owned_database(config) == 0:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:732: in _preflight_owned_database
+    raise SqliteStorageConfigurationError(
+E   app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo2/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database</failure></testcase><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_column-True]" time="0.007"><failure message="app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo3/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database">tests/protocol_v3/test_sqlite_product_storage.py:1191: in test_owned_v1_migrates_and_reopens_without_losing_rows
+    upgraded = build_unit_of_work_factory(config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:2177: in build_unit_of_work_factory
+    _bootstrap(store_config)
+services/api/app/protocol_workflow/storage/sqlite.py:771: in _bootstrap
+    if _preflight_owned_database(config) == 0:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/storage/sqlite.py:732: in _preflight_owned_database
+    raise SqliteStorageConfigurationError(
+E   app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2655/test_owned_v1_migrates_and_reo3/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database</failure></testcase><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_caught_claim_failure_rolls_back_entire_claim_only" time="0.003"><failure message="AssertionError: assert ('dispatched'...timezone.utc)) == ('pending', 0, None)&#10;  &#10;  At index 0 diff: 'dispatched' != 'pending'&#10;  Use -v to get more diff">tests/protocol_v3/test_sqlite_product_storage.py:1220: in test_caught_claim_failure_rolls_back_entire_claim_only
+    assert (message.status.value, message.attempt, message.dispatched_at) == ("pending", 0, None)
+E   AssertionError: assert ('dispatched'...timezone.utc)) == ('pending', 0, None)
+E     
+E     At index 0 diff: 'dispatched' != 'pending'
+E     Use -v to get more diff</failure></testcase></testsuite></testsuites>

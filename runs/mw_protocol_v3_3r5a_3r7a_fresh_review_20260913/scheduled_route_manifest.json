@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "policy": "live-route-manifest-v1",
+  "timezone": "Asia/Shanghai",
+  "peak_start": "12:00",
+  "peak_end": "19:00",
+  "days": "all",
+  "packet_period": "off_peak",
+  "packet_evaluated_at": "2026-09-13T07:15:57.041020+08:00",
+  "variants": {
+    "peak": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "primary": {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-6-astra",
+          "effort": "low"
+        }
+      ]
+    },
+    "off_peak": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3",
+      "effort": "max",
+      "primary": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "grok",
+          "provider": "grok-build",
+          "model": "grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ]
+    }
+  }
+}

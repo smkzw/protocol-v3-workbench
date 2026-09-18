@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="0.359" timestamp="2026-09-05T20:18:12.158006+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_same_provider_login_binding_order_and_readonly_database" time="0.004" /><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_bound_pool_respects_active_block_and_expiry" time="0.002" /><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_missing_store_is_not_created" time="0.000" /><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_all_blocked_does_not_substitute_static_or_other_provider" time="0.001" /><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_explicit_environment_reference_resolves_in_memory" time="0.001" /><testcase classname="tests.protocol_v3.test_omp_credential_binding" name="test_empty_resolved_binding_reports_unavailable_before_dispatch" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.runtime.omp_credentials.OmpCredentialError'&gt;">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2954/test_empty_resolved_binding_re0')
+
+    def test_empty_resolved_binding_reports_unavailable_before_dispatch(tmp_path):
+        path = _database(tmp_path, [(1, "zhipu-coding-plan", "SYNTHETIC_KEY", "login", None)])
+&gt;       with pytest.raises(OmpCredentialError, match="omp_credentials_unavailable"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.runtime.omp_credentials.OmpCredentialError'&gt;
+
+tests/protocol_v3/test_omp_credential_binding.py:72: Failed</failure></testcase></testsuite></testsuites>

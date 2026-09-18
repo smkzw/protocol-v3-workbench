@@ -1,0 +1,15 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_explicit_fact_revision_requires_a_confirmed_user_decision ________
+tests/protocol_v3/test_study_definition_reducer.py:1020: in test_explicit_fact_revision_requires_a_confirmed_user_decision
+    decision = _decision(snapshot_sha256=_snapshot_for(current), canonical_state="proposed")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_study_definition_reducer.py:113: in _decision
+    return DecisionRecord(**payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for DecisionRecord
+E     Value error, DecisionRecord must capture a resolved decision [type=value_error, input_value={'decision_record_id': 'd...ical_state': 'proposed'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_study_definition_reducer.py::test_explicit_fact_revision_requires_a_confirmed_user_decision
+1 failed in 0.31s

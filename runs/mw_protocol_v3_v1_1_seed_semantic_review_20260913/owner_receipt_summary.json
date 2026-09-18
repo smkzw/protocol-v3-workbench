@@ -1,0 +1,34 @@
+{
+  "receipt": {
+    "idempotency_key": "research-seed.generate.v1",
+    "input_artifacts": [
+      {
+        "ref": "research-intake",
+        "sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c"
+      }
+    ],
+    "logical_call_id": "call:research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799:seed-generate",
+    "node_execution_contract_id": "nec:research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799:seed-generate",
+    "observed_model": "glm-5.3-flash",
+    "observed_provider": "zhipu-coding-plan",
+    "output_schema_ref": "https://protocol-v3.local/schemas/research-seed-proposal-output.v1.json",
+    "output_sha256": "ee7e91b031327cf027b4bfad92c9e37f9e1af0aed628069cd9f95a5c639cb224",
+    "prompt_sha256": "6380f2467fa938612902b173cb3e5f45175cd5014dabf6212e9bd22804f5b3d3",
+    "provider_session_id": "20260913130014e523058838824b8a",
+    "requested_reasoning_effort": "max"
+  },
+  "status": "ready_for_review",
+  "correction_run_id": null,
+  "candidates_per_field": {
+    "anticipated_dose": 4,
+    "clinical_phase": 1,
+    "comparator": 4,
+    "dosage_form_and_route": 3,
+    "indication": 2,
+    "populations": 6,
+    "research_drug": 1,
+    "target_or_mechanism": 3
+  },
+  "canonical": {},
+  "raw_response_chars": 15867
+}

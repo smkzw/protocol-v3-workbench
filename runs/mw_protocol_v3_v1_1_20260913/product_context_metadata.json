@@ -1,0 +1,24 @@
+{
+  "status": "installed_catalog_declaration_not_live_maximum_probe",
+  "catalog_path": "/Users/smkzw/.bun/install/global/node_modules/@oh-my-pi/pi-catalog/src/models.json",
+  "catalog_sha256": "84e82577b9b99849776dd54e89e4aa2d2f89c4945b7d11d35363fc9faa6481c1",
+  "models": [
+    {
+      "id": "glm-5.3-flash",
+      "provider": "zhipu-coding-plan",
+      "contextWindow": 1000000,
+      "maxTokens": 131072,
+      "reasoning": true,
+      "input": [
+        "text",
+        "image"
+      ]
+    }
+  ],
+  "product_probe_reused": "runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json",
+  "new_product_calls": 0,
+  "official_model_card": "https://huggingface.co/zai-org/GLM-5.3-Flash",
+  "official_card_limit": "benchmark contexts are not a guarantee of coding endpoint limit",
+  "official_doc_open": "docs.z.ai and docs.bigmodel.cn model guide URLs non-retryable tool error; no alternative access used for those URLs",
+  "custom_omp_models_provider_override": false
+}

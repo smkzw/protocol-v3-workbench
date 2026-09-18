@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.715" timestamp="2026-09-05T17:53:07.212294+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_protocol_v3_1r2_mount" name="test_real_main_isolated_entrypoint[default-off]" time="2.253"><failure message="AssertionError: real-main child failed rc=1&#10;  STDOUT:&#10;  warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.&#10;  &#10;  STDERR:&#10;  Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 16, in &lt;module&gt;&#10;  AssertionError: [('durable-mw-sweeper', '&lt;function DurableJobWorker._start_sweeper.&lt;locals&gt;.sweep_loop at 0x10ee47560&gt;')]&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...rror: [(\'durable-mw-sweeper\', \'&lt;function DurableJobWorker._start_sweeper.&lt;locals&gt;.sweep_loop at 0x10ee47560&gt;\')]\n').returncode">tests/protocol_v3/test_protocol_v3_1r2_mount.py:774: in test_real_main_isolated_entrypoint
+    assert completed.returncode == 0, (
+E   AssertionError: real-main child failed rc=1
+E     STDOUT:
+E     warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+E     
+E     STDERR:
+E     Traceback (most recent call last):
+E       File "&lt;string&gt;", line 16, in &lt;module&gt;
+E     AssertionError: [('durable-mw-sweeper', '&lt;function DurableJobWorker._start_sweeper.&lt;locals&gt;.sweep_loop at 0x10ee47560&gt;')]
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...rror: [(\'durable-mw-sweeper\', \'&lt;function DurableJobWorker._start_sweeper.&lt;locals&gt;.sweep_loop at 0x10ee47560&gt;\')]\n').returncode</failure></testcase></testsuite></testsuites>

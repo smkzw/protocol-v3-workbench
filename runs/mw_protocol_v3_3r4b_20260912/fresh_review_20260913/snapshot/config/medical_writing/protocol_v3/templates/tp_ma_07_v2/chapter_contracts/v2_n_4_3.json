@@ -1,0 +1,207 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-4-3:v2",
+  "semantic_node_id": "v2_n_4_3",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-4-3:dose-selection",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-4-3:v2",
+    "chapter_contract_id": "contract:v2-n-4-3:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "framing.structured_design",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.investigational_route",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.selected_regimen",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.starting_dose",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.maximum_dose",
+        "obligation": "required",
+        "rationale": "源body-child357明确要求计划最大给药量与给药方案依据；结构化项目事实，固定剂量也说明其计划上限，不要求虚构剂量递增。不从药名推算数值，需与已确认方案一致。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.comparator_route",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.comparator_regimen",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.population_link",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.intervention_dose_regimen.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "dose_regimen_rationale",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "comparator_regimen_match",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "dose_safety_margin",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "dose_regimen_rationale"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "dose_safety_margin"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "competitor_full_protocol"
+        ],
+        "admission_claim_types": [
+          "comparator_regimen_match"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "dose:investigational-route",
+          "dose:investigational-regimen",
+          "dose:comparator-route",
+          "dose:comparator-regimen",
+          "dose:starting",
+          "dose:maximum"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "剂量依据必须覆盖实际研究药物与对照药的给药途径/方案及适用的人群联系；起始/最大剂量按项目确认，不能以同药名或模板示例替代。"
+    ],
+    "skeleton_risk_rules": [
+      "只有药物名称、空剂量栏或没有方案证据即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_4_3",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623336"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_4_3:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_4_3:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_4_3:closure",
+      "question": "v2_n_4_3 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "framing.structured_design",
+        "picos.intervention_dose_regimen"
+      ],
+      "linked_claim_types": [
+        "dose_regimen_rationale",
+        "comparator_regimen_match"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_4_3:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,325 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx (6 tests | 1 failed) 749ms
+   × refreshes changed source choices without discarding the writing brief 127ms
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx (21 tests | 2 failed) 1385ms
+   × does not start preparation while selected files have not been saved 58ms
+   × retains a long pasted writing brief without an undeclared text cap 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx > refreshes changed source choices without discarding the writing brief
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "更新资料列表"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"pvi-workspace"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"pvi-heading"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"pvs-head"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvi-eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvs-sub"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvs-hint"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "准备研究资料":
+  [36m<h2 />[39m
+
+  Name "资料来源":
+  [36m<h3[39m
+    [33mclass[39m=[32m"pvs-title"[39m
+    [33mid[39m=[32m"_r_8_-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<fieldset[39m
+    [33mclass[39m=[32m"pvi-inputs"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "资料来源":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"_r_8_-title"[39m
+    [33mclass[39m=[32m"pvs-intake"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "写作说明（可选）":
+  [36m<textarea[39m
+    [33mid[39m=[32m"_r_8_-brief"[39m
+    [33mmaxlength[39m=[32m"500"[39m
+    [33mplaceholder[39m=[32m"补充本次写作的意图或注意事项，可留空。"[39m
+    [33mrows[39m=[32m"2"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"pvs-prepare"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "准备写作材料":
+  [36m<button[39m
+    [33mclass[39m=[32m"pvs-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  alert:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"pvi-message"[39m
+    [33mrole[39m=[32m"alert"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"pvi-workspace"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"pvi-heading"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"pvi-eyebrow"[39m
+        [36m>[39m
+          [0m研究方案 · 准备资料[0m
+        [36m</p>[39m
+        [36m<h2>[39m
+          [0m准备研究资料[0m
+        [36m</h2>[39m
+        [36m<p>[39m
+          [0m添加已有方案、研究者手册或参考资料，整理研究信息和需要补充的内容。[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"pvi-inputs"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"_r_8_-title"[39m
+          [33mclass[39m=[32m"pvs-intake"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"pvs-head"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"pvs-title"[39m
+              [33mid[39m=[32m"_r_8_-title"[39m
+            [36m>[39m
+              [0m资料来源[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"pvs-sub"[39m
+            [36m>[39m
+              [0m保存Word原文与资料分类，供后续写作使用；医学内容的确认在后续步骤完成。[0m
+            [36m</p>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-add-row"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"pvs-add"[39m
+              [33mfor[39m=[32m"_r_8_-file"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-plus-corner"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 19h6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M17 16v6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m添加DOCX文件[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33maccept[39m=[32m".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"[39m
+              [33maria-label[39m=[32m"选择要添加的DOCX文件"[39m
+              [33mclass[39m=[32m"pvs-file-input"[39m
+              [33mid[39m=[32m"_r_8_-file"[39m
+              [33mmultiple[39m=[32m""[39m
+              [33mtype[39m=[32m"file"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-brief"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"_r_8_-brief"[39m
+            [36m>[39m
+              [0m写作说明（可选）[0m
+            [36m</label>[39m
+            [36m<textarea[39m
+              [33mid[39m=[32m"_r_8_-brief"[39m
+              [33mmaxlength[39m=[32m"500"[39m
+              [33mplaceholder[39m=[32m"补充本次写作的意图或注意事项，可留空。"[39m
+              [33mrows[39m=[32m"2"[39m
+            [36m>[39m
+              [0m仍要保留的说明[0m
+            [36m</textarea>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"pvs-hint"[39m
+          [36m>[39m
+            [0m还没有已保存的资料。[0m
+          [36m</p>[39m
+          [36m<footer[39m
+            [33mclass[39m=[32m"pvs-prepare"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"pvs-primary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m准备写作材料[0m
+            [36m</button>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"pvs-hint"[39m
+            [36m>[39m
+              [0m将使用已勾选的 [0m
+              [0m0[0m
+              [0m 份资料。[0m
+            [36m</span>[39m
+          [36m</footer>[39m
+        [36m</section>[39m
+      [36m</fieldset>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"pvi-message"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [36m<p>[39m
+          [0m资料已有变化。[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx:92:26
+     90|   fireEvent.click(screen.getByRole("button", { name: "准备写作材料" }));
+     91|   await screen.findByText("资料已有变化。");
+     92|   fireEvent.click(screen.getByRole("button", { name: "更新资料列表" }));
+       |                          ^
+     93|   await waitFor(() => expect(client.listSources).toHaveBeenCalledTimes…
+     94|   expect(screen.getByLabelText("写作说明（可选）").value).toBe("仍要保留的说明");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx > does not start preparation while selected files have not been saved
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx:584:28
+    582|   fireEvent.change(screen.getByLabelText(/选择要添加的DOCX文件/), { target: { …
+    583|   const prepare = screen.getByRole("button", { name: "准备写作材料" });
+    584|   expect(prepare.disabled).toBe(true);
+       |                            ^
+    585|   fireEvent.click(prepare);
+    586|   expect(onPrepare).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx > retains a long pasted writing brief without an undeclared text cap
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx:593:74
+    591|   render(<ProtocolSourceIntake projectId="p1" api={createFakeApi()} on…
+    592|   const textarea = screen.getByLabelText("写作说明（可选）");
+    593|   expect(textarea.maxLength === -1 || textarea.maxLength >= text.lengt…
+       |                                                                          ^
+    594|   fireEvent.change(textarea, { target: { value: text } });
+    595|   expect(onBriefChange).toHaveBeenCalledWith(text);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 24 passed (27)
+   Start at  12:17:08
+   Duration  2.81s (transform 225ms, setup 0ms, import 805ms, tests 2.13s, environment 1.77s)
+

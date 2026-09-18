@@ -1,0 +1,18 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_nested_table_retains_structure_between_cell_paragraphs __________
+
+    def test_nested_table_retains_structure_between_cell_paragraphs():
+        from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+        payload = build_docx('<w:tbl><w:tr><w:tc>' + paragraph_xml('格内前文')
+                             + table_xml([['嵌套项目', '嵌套值']]) + paragraph_xml('格内后文') + '</w:tc></w:tr></w:tbl>')
+        result = parse_docx(payload)
+        cell = result.blocks[0].rows[0][0]
+>       assert [b.kind for b in cell.blocks] == ['paragraph', 'table', 'paragraph']
+                                ^^^^^^^^^^^
+E       AttributeError: 'DocxCell' object has no attribute 'blocks'
+
+tests/protocol_v3/test_agent1_docx_parse.py:58: AttributeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_nested_table_retains_structure_between_cell_paragraphs
+1 failed, 8 deselected in 0.31s

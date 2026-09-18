@@ -1,0 +1,14 @@
+{
+  "dispatched_by": "zcode-takeover-20260911",
+  "harness": "grok-cli",
+  "declared_route": "codebuddy/codebuddy-cli/deepseek-v4-flash:max",
+  "verifier_isolation": "non-OpenAI family reviewer for pi/openai-codex/gpt-5.6-luna-produced artifact",
+  "probe": "PROBE_OK grok-4.6 (2026-09-11 23:28)",
+  "prompt": "prompts/codebuddy_mw_protocol_v3_3r3_batch3_fresh_20260911.md",
+  "context": "context/mw_protocol_v3_3r3_batch3_fresh_review_20260911_context.md",
+  "permission_mode": "plan",
+  "max_turns": 160,
+  "started_at": "2026-09-11T23:32+08:00",
+  "fallback_from": "grok/grok-4.6 (two cancelled runs, truncated output; harness-side)",
+  "restarted_at": "2026-09-12T00:15+08:00"
+}

@@ -1,0 +1,22 @@
+{
+  "source_changed_during_regression": [],
+  "junit_suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "1946",
+      "time": "118.291",
+      "timestamp": "2026-09-13T00:55:38.817295+08:00",
+      "hostname": "MacBook-Pro-4.local"
+    }
+  ],
+  "scope": "tests/protocol_v3 all current modules; no real product models/browser/Word",
+  "source_hashes": {
+    "services/api/app/protocol_workflow/registries/applicability.py": "c89ace12acd4e31848dd8a47abdac714708a6f49c2e076cc0399144f27e6cdd3",
+    "tests/protocol_v3/test_chapter_applicability.py": "09788370d9aaff9d2a8d2631d143a1782d3ba8b981f0eb0d57e028ea1ab010eb",
+    "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json": "9ca410d8da87e983f244200b01573d7a1d353d060944b5248af486f0a457d576",
+    "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/applicability_rules.json": "5ad3baefdb511f8afa00258066fb213f7277df2f1d7e64131df4796711cd047c"
+  }
+}

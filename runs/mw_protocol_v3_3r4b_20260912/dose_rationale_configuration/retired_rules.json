@@ -1,0 +1,14 @@
+[
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_4_3:active",
+    "triggering_fact_paths": [
+      "picos.intervention_dose_regimen"
+    ],
+    "condition": "当项目存在多剂量或剂量范围时，必须给出起始/最大剂量及安全性依据。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "dose_regimen_rationale"
+    ]
+  }
+]

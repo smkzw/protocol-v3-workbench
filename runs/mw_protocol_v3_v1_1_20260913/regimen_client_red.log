@@ -1,0 +1,57 @@
+TAP version 13
+# Subtest: regimen design uses the stored seed and preserves lookup versus execution
+not ok 1 - regimen design uses the stored seed and preserves lookup versus execution
+  ---
+  duration_ms: 0.367583
+  type: 'test'
+  location: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs:5:1'
+  failureType: 'testCodeFailure'
+  error: 'api.startRegimenDesign is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/smkzw/Documents/%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs:12:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: metadata correction changes descriptors without uploading file bytes
+ok 2 - metadata correction changes descriptors without uploading file bytes
+  ---
+  duration_ms: 0.76975
+  type: 'test'
+  ...
+# Subtest: source upload preserves bytes and lets the browser provide multipart boundary
+ok 3 - source upload preserves bytes and lets the browser provide multipart boundary
+  ---
+  duration_ms: 7.544917
+  type: 'test'
+  ...
+# Subtest: source conflict retains the server's actionable explanation
+ok 4 - source conflict retains the server's actionable explanation
+  ---
+  duration_ms: 0.210334
+  type: 'test'
+  ...
+# Subtest: parse and original download use the selected immutable source
+ok 5 - parse and original download use the selected immutable source
+  ---
+  duration_ms: 0.129459
+  type: 'test'
+  ...
+# Subtest: research intake carries selected identities and reads the same durable job
+ok 6 - research intake carries selected identities and reads the same durable job
+  ---
+  duration_ms: 0.1825
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44.023333

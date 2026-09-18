@@ -1,0 +1,28 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__ test_original_design_request_is_reused_with_no_blind_timeout_retry[False] ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-723/test_original_design_request_i0')
+timeout = False
+
+    @pytest.mark.parametrize("timeout", [False, True])
+    def test_original_design_request_is_reused_with_no_blind_timeout_retry(tmp_path, timeout):
+>       from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.coordinator'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:20: ModuleNotFoundError
+___ test_original_design_request_is_reused_with_no_blind_timeout_retry[True] ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-723/test_original_design_request_i1')
+timeout = True
+
+    @pytest.mark.parametrize("timeout", [False, True])
+    def test_original_design_request_is_reused_with_no_blind_timeout_retry(tmp_path, timeout):
+>       from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.coordinator'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:20: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_original_design_request_is_reused_with_no_blind_timeout_retry[False]
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_original_design_request_is_reused_with_no_blind_timeout_retry[True]
+2 failed in 0.33s

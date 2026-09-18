@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_workflow_error_survives_generator_context_cleanup ____________
+tests/protocol_v3/test_error_codes.py:233: in test_workflow_error_survives_generator_context_cleanup
+    raise error
+E   services.api.app.protocol_workflow.errors.ProtocolWorkflowError: 已发现的竞品方案仍有文件未完整获取。
+
+During handling of the above exception, another exception occurred:
+tests/protocol_v3/test_error_codes.py:232: in test_workflow_error_survives_generator_context_cleanup
+    with transaction():
+         ^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_error_codes.py::test_workflow_error_survives_generator_context_cleanup
+1 failed in 0.06s

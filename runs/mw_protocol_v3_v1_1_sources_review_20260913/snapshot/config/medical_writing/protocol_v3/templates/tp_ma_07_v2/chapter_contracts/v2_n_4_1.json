@@ -1,0 +1,269 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-4-1:v2",
+  "semantic_node_id": "v2_n_4_1",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-4-1:overall-design",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-4-1:v2",
+    "chapter_contract_id": "contract:v2-n-4-1:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "framing.structured_design",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.hypothesis",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.phase",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.design_type",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.arms",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.duration",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.allocation",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.masking",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.centers",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.stratification",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.interim_analysis",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.substudy",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.structured_design.features",
+        "obligation": "optional",
+        "rationale": "结构化已确认设计状态；期中复用统计章节同一布尔，features成员stratification/substudy独立明确，不以非空文字推断。"
+      },
+      {
+        "fact_path": "statistics.interim.applicable",
+        "obligation": "optional",
+        "rationale": "结构化已确认设计状态；期中复用统计章节同一布尔，features成员stratification/substudy独立明确，不以非空文字推断。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "design_description",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "design_hypothesis",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "design_feature_applicability",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "design_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.92
+      },
+      {
+        "source_roles": [
+          "competitor_full_protocol"
+        ],
+        "admission_claim_types": [
+          "design_hypothesis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "design_feature_applicability"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 3,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "design:hypothesis",
+          "design:phase",
+          "design:type",
+          "design:arms",
+          "design:duration",
+          "design:allocation",
+          "design:masking",
+          "design:centers"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "总体设计必须逐项给出实际假设、期别、设计类型、组别、周期、分配、盲法、中心及适用的分层/中期/亚组特征；分配比等高风险选择由项目人工决定。",
+      "framing.structured_design 是既有共享事实绑定；不得建立章节本地副本。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题、模板短语或未填写设计字段即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_4_1",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623334"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_4_1:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_4_1:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:interim",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable"
+      ],
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.interim_analysis"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:stratification",
+      "triggering_fact_paths": [
+        "framing.structured_design.features"
+      ],
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.stratification"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_4_1:substudy",
+      "triggering_fact_paths": [
+        "framing.structured_design.features"
+      ],
+      "condition": "已确认存在相应期中分析、分层或子研究设计",
+      "rationale": "源351–353分别说明如有期中、分层、子研究需提供详情；基础设计描述与假设始终保留。",
+      "required_when_active_fact_paths": [
+        "framing.structured_design.substudy"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_4_1:closure",
+      "question": "v2_n_4_1 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "framing.structured_design",
+        "framing.structured_design.hypothesis"
+      ],
+      "linked_claim_types": [
+        "design_description",
+        "design_hypothesis"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_4_1:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

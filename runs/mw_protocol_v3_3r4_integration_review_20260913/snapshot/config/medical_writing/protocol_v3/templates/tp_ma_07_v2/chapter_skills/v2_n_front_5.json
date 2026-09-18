@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:front-5:glossary",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_front_5",
+  "chapter_contract_id": "contract:v2-n-front-5:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认术语使用事实），输出为 ChapterSkillOutput。缩略语表除三列表头外，必须为正文实际使用的缩写给出真实词条单元格（缩写/来源全称/中文含义）；未使用的模板缩写、源拼写错误与冲突全称一律剔除；全部已用术语的逐条覆盖属延后医学/术语判断；词条数 provenance 必须记录。",
+    "forbidden_behaviors": [
+      "保留未使用的模板缩写",
+      "保留源拼写错误或冲突全称",
+      "虚构词条来源",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 94–96 与 table[96]（3列×50行缩略语表；Normal 本地大纲节点，无标题样式）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：1=Normal（该节点无标题样式，属 Normal 本地大纲）。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-5:glossary:missing-obligation",
+    "skill:chapter:front-5:glossary:unresolved-fact",
+    "skill:chapter:front-5:glossary:wrong-source"
+  ]
+}

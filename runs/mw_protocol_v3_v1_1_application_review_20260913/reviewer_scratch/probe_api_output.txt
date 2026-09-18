@@ -1,0 +1,16 @@
+[PASS] H1 POST acknowledges 202 with running status :: {"workflow_run_id":"research-seed:5c1383fee670be24573cdd4b2fa933738d8fe7308206d596bad37c2b14c029ed","correction_run_id":null,"status":"running","validation":null}
+[PASS] H2 GET reaches terminal proposal state :: {"workflow_run_id":"research-seed:5c1383fee670be24573cdd4b2fa933738d8fe7308206d596bad37c2b14c029ed","correction_run_id":null,"status":"needs_information","validation":{"errors":[],"proposal":{"canonic
+[PASS] H3 identical re-POST reuses the same run without a new call :: calls=2
+[PASS] H4 GET with correction-run id handled without 500 :: status=404 body={"detail":{"message":"没有找到本次资料整理记录。","next_step":"请返回本项目的资料页面查看。"}}
+[PASS] H5 unknown run id maps to 404 Chinese envelope :: {"detail":{"message":"没有找到本次资料整理记录。","next_step":"请返回本项目的资料页面查看。"}}
+[PASS] H6 extra field rejected with 422 :: {"detail":{"message":"请求内容与当前工作台要求不符，本次操作未执行。","responsible_area":"工作台处理","can_retry":false,"next_step":"请核对请求内容后重新提交。"}}
+[PASS] H7 wrong field type rejected with 422 :: {"detail":{"message":"请求内容与当前工作台要求不符，本次操作未执行。","responsible_area":"工作台处理","can_retry":false,"next_step":"请核对请求内容后重新提交。"}}
+[PASS] H8 stale selection maps to 409 without any dispatch :: calls=2 {"detail":{"message":"所选资料已有变化，本次尚未开始整理。","next_step":"请刷新资料列表后重新选择；已保存的资料和写作说明仍可使用。"}}
+[PASS] H9 brief-only intake accepted (202) :: {"workflow_run_id":"research-seed:25417d68ea9e278722dca3a7b124810356fc9b753d858436819c2f9121b6b974","correction_run_id":null,"status":"running","validation":nul
+[PASS] H4b precondition: correction run exists
+[FAIL] H4b GET with existing correction-run id handled without 500 :: status=500 body=Internal Server Error
+[PASS] H10 unadmitted project GET -> 404 stable envelope :: {"detail":"Not Found"}
+[PASS] H11 unadmitted request does not create the database file :: db_exists=False
+
+== 12/13 checks passed ==
+FAILED: ['H4b GET with existing correction-run id handled without 500']

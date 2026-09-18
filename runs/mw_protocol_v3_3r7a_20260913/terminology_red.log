@@ -1,0 +1,52 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_authored_text_suggests_preferred_term_at_each_actual_location ______
+
+    def test_authored_text_suggests_preferred_term_at_each_actual_location():
+>       from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:6: ModuleNotFoundError
+________ test_quoted_titles_keep_original_terms_but_need_source_locator ________
+
+    def test_quoted_titles_keep_original_terms_but_need_source_locator():
+>       from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:16: ModuleNotFoundError
+_ test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak _
+
+    def test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak():
+>       from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:22: ModuleNotFoundError
+____________ test_format_warning_never_rewrites_quantities_or_codes ____________
+
+    def test_format_warning_never_rewrites_quantities_or_codes():
+>       from services.api.app.protocol_workflow.terminology.library import TextUnit, scan_text_units
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:30: ModuleNotFoundError
+___ test_abbreviation_inventory_uses_observed_words_not_all_declared_entries ___
+
+    def test_abbreviation_inventory_uses_observed_words_not_all_declared_entries():
+>       from services.api.app.protocol_workflow.terminology.library import TextUnit, abbreviation_inventory
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:38: ModuleNotFoundError
+_ test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions __
+
+    def test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions():
+>       from services.api.app.protocol_workflow.terminology.library import load_library
+E       ModuleNotFoundError: No module named 'services.api.app.protocol_workflow.terminology'
+
+tests/protocol_v3/test_terminology_library.py:51: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_terminology_library.py::test_authored_text_suggests_preferred_term_at_each_actual_location
+FAILED tests/protocol_v3/test_terminology_library.py::test_quoted_titles_keep_original_terms_but_need_source_locator
+FAILED tests/protocol_v3/test_terminology_library.py::test_signature_is_not_a_license_for_draft_text_and_template_notes_cannot_leak
+FAILED tests/protocol_v3/test_terminology_library.py::test_format_warning_never_rewrites_quantities_or_codes
+FAILED tests/protocol_v3/test_terminology_library.py::test_abbreviation_inventory_uses_observed_words_not_all_declared_entries
+FAILED tests/protocol_v3/test_terminology_library.py::test_rules_do_not_claim_text_scan_proves_upright_font_or_medical_expansions
+6 failed in 0.05s

@@ -1,0 +1,78 @@
+{
+  "scope": "direct existing consumers; synthetic text; no full workflow/medical acceptance",
+  "source_hashes": {
+    "services/api/app/medical_writing_content_quality.py": "f82746893517a07bdbf3cd3d368f6fc2bfad2c41d1330c04ebff780117504e67",
+    "services/api/app/ai_task_runner.py": "c2cb77a80860b2b85df46d51b57172246cf101b9371f79d14c17e05f37439761",
+    "services/api/app/medical_writing_full_draft.py": "ce23eecb7bb190257a1e07a69bf853b9ebae2ae852ec0476b5c968ae1a21b2ee"
+  },
+  "cases": [
+    {
+      "case": "consent_rule",
+      "text": "未提供书面知情同意者不进入筛选。",
+      "expected_draft_marker": false,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 未提供书面知情同意者不进入筛选"
+      ]
+    },
+    {
+      "case": "database_rule",
+      "text": "数据将在生物统计人员确认后锁定。",
+      "expected_draft_marker": false,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 将在生物统计人员确认后锁定"
+      ]
+    },
+    {
+      "case": "draft_sample",
+      "text": "样本量待医学经理确认后写入。",
+      "expected_draft_marker": true,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 待医学经理确认"
+      ]
+    },
+    {
+      "case": "draft_missing",
+      "text": "主要终点的具体数值未提供。",
+      "expected_draft_marker": true,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 未提供"
+      ]
+    },
+    {
+      "case": "draft_future",
+      "text": "筛选期时长将在本方案正式文本中规定。",
+      "expected_draft_marker": true,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 将在本方案正式文本中规定"
+      ]
+    },
+    {
+      "case": "followup",
+      "text": "试验参与者待随访期间记录相关信息。",
+      "expected_draft_marker": false,
+      "detector_unresolved": false,
+      "generation_validator_unresolved": false,
+      "generation_errors": []
+    },
+    {
+      "case": "joint_negative_and_draft",
+      "text": "未提供书面知情同意者不进入筛选；样本量待医学经理确认后写入。",
+      "expected_draft_marker": true,
+      "detector_unresolved": true,
+      "generation_validator_unresolved": true,
+      "generation_errors": [
+        "full_draft.sections[0].proposal_text contains unresolved drafting markers: 待医学经理确认, 未提供书面知情同意者不进入筛选"
+      ]
+    }
+  ]
+}

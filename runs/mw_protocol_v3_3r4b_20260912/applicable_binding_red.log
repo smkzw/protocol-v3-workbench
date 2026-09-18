@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_no_interim_can_reach_actual_skill_input_without_inactive_parameters ___
+
+    def test_no_interim_can_reach_actual_skill_input_without_inactive_parameters():
+>       from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+E       ImportError: cannot import name 'bind_applicable_input' from 'app.protocol_workflow.registries.applicability' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py)
+
+tests/protocol_v3/test_chapter_applicability.py:187: ImportError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_no_interim_can_reach_actual_skill_input_without_inactive_parameters
+1 failed, 24 deselected in 0.48s

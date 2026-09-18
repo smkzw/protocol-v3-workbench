@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="0.390" timestamp="2026-09-05T15:27:43.933845+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_table]" time="0.010" /><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_owned_v1_migrates_and_reopens_without_losing_rows[add_column]" time="0.005"><failure message="app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2654/test_owned_v1_migrates_and_reo1/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database">self = &lt;test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity object at 0x10c926600&gt;
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2654/test_owned_v1_migrates_and_reo1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10c969070&gt;
+change = 'add_column'
+
+    @pytest.mark.parametrize("change", ["add_table", "add_column"])
+    def test_owned_v1_migrates_and_reopens_without_losing_rows(
+        self, tmp_path, monkeypatch, change
+    ):
+        import app.protocol_workflow.storage.sqlite as adapter
+        from packages.contracts.workbench_contracts.protocol_v3 import SideEffectKind
+    
+        path = tmp_path / "upgrade.sqlite"
+        config = {"backend": "sqlite", "path": path}
+        factory = build_unit_of_work_factory(config)
+        with factory() as uow:
+            before = uow.outbox_repository.enqueue(
+                "proj:upgrade", "run:1", SideEffectKind.EXPORT, "lk:1",
+                "1" * 64, datetime(2026, 1, 1, tzinfo=timezone.utc),
+            )
+        build_unit_of_work_factory(config)  # warm any preflight cache as v1
+        if change == "add_table":
+            statement = "CREATE TABLE project_allowlist (project_id TEXT NOT NULL PRIMARY KEY)"
+            fingerprint = {"project_allowlist": ("project_id",)}
+        else:
+            statement = "ALTER TABLE outbox_message ADD COLUMN migration_note TEXT"
+            old_columns = adapter._MIGRATIONS[0][3]["outbox_message"]
+            fingerprint = {"outbox_message": (*old_columns, "migration_note")}
+        monkeypatch.setattr(adapter, "_MIGRATIONS", adapter._MIGRATIONS + (
+            (2, "synthetic migration", (statement,), fingerprint),
+        ))
+        monkeypatch.setattr(adapter, "SCHEMA_VERSION_LATEST", 2)
+    
+        upgraded = build_unit_of_work_factory(config)
+        for _ in range(2):
+            with upgraded() as uow:
+                assert uow.outbox_repository.find_by_logical_key("proj:upgrade", "lk:1") == before
+&gt;           upgraded = build_unit_of_work_factory(config)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_sqlite_product_storage.py:1186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/storage/sqlite.py:2177: in build_unit_of_work_factory
+    _bootstrap(store_config)
+services/api/app/protocol_workflow/storage/sqlite.py:771: in _bootstrap
+    if _preflight_owned_database(config) == 0:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = _StoreConfig(path=PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2654/test_owned_v1_migrates_and_reo1/upgrade.sqlite'), busy_timeout_ms=5000, synchronous='FULL')
+
+    def _preflight_owned_database(config: _StoreConfig) -&gt; int:
+        """Verify on a READ-ONLY connection that the existing database is a
+        product-owned database with a complete, known migration history and the
+        exact owned schema; return the current schema version (0 = fresh/empty).
+    
+        Any foreign, malformed, structurally incompatible or future database is
+        rejected here WITHOUT ever opening a read-write connection, so rejection
+        cannot mutate or checkpoint the file.
+        """
+        path = config.path
+        try:
+            ro = _open_readonly(path)
+        except sqlite3.OperationalError as exc:
+            raise SqliteStorageConfigurationError(
+                f"existing database {str(path)!r} cannot be opened read-only for "
+                "verification; refusing to touch it"
+            ) from exc
+        try:
+            try:
+                tables = _user_table_names(ro)
+            except sqlite3.DatabaseError as exc:
+                raise SqliteStorageConfigurationError(
+                    f"target file {str(path)!r} is not a usable SQLite database; "
+                    "it was left untouched"
+                ) from exc
+            if not tables:
+                return 0  # empty file: fresh bootstrap
+            if "schema_version" not in tables:
+                raise SqliteStorageConfigurationError(
+                    f"target database {str(path)!r} exists but does not carry the "
+                    "product schema (no schema_version table); refusing to adopt "
+                    "or rename a foreign/legacy database"
+                )
+            try:
+                rows = [
+                    r[0]
+                    for r in ro.execute(
+                        "SELECT version FROM schema_version ORDER BY rowid"
+                    ).fetchall()
+                ]
+            except sqlite3.DatabaseError as exc:
+                raise SqliteStorageConfigurationError(
+                    f"schema_version table in {str(path)!r} is unreadable or "
+                    "incompatible; refusing to touch the database"
+                ) from exc
+            version = _validate_migration_history(rows)
+            expected_tables: Dict[str, Tuple[str, ...]] = {
+                "schema_version": _OWNED_SCHEMA_VERSION_COLUMNS
+            }
+            applied = set(rows)
+            for mig_version, _description, _statements, fingerprint in _MIGRATIONS:
+                if mig_version in applied:
+                    expected_tables.update(fingerprint)
+            if tables != set(expected_tables):
+                missing = sorted(set(expected_tables) - tables)
+                extra = sorted(tables - set(expected_tables))
+                raise SqliteStorageConfigurationError(
+                    f"database {str(path)!r} is not a compatible product schema: "
+                    f"missing owned tables {missing}, unrelated/unknown tables "
+                    f"{extra}; refusing to adopt or rewrite it"
+                )
+            for table, columns in expected_tables.items():
+                info = ro.execute(f"PRAGMA table_info({table})").fetchall()
+                actual_columns = {r[1] for r in info}
+                if actual_columns != set(columns):
+                    raise SqliteStorageConfigurationError(
+                        f"owned table {table!r} in {str(path)!r} has an "
+                        f"incompatible structure {sorted(actual_columns)!r}; "
+                        "refusing to touch the database"
+                    )
+            # Names alone are not the owned schema: a same-name/same-column
+            # rewrite (e.g. CREATE TABLE ... AS SELECT) silently loses PRIMARY
+            # KEY, UNIQUE and NOT NULL semantics.  Compare the full constraint
+            # structure against a fingerprint derived from the migration DDL.
+            reference = _reference_schema_fingerprint()
+            for table in sorted(reference):
+                expected_column_signature, expected_unique_signature = reference[table]
+                if _column_signature(ro, table) != expected_column_signature:
+&gt;                   raise SqliteStorageConfigurationError(
+                        f"owned table {table!r} in {str(path)!r} does not carry "
+                        "the product column semantics (declared type, NOT NULL, "
+                        "DEFAULT or PRIMARY KEY ordinal differ); refusing to "
+                        "touch the database"
+                    )
+E                   app.protocol_workflow.storage.sqlite.SqliteStorageConfigurationError: owned table 'outbox_message' in '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2654/test_owned_v1_migrates_and_reo1/upgrade.sqlite' does not carry the product column semantics (declared type, NOT NULL, DEFAULT or PRIMARY KEY ordinal differ); refusing to touch the database
+
+services/api/app/protocol_workflow/storage/sqlite.py:732: SqliteStorageConfigurationError</failure></testcase><testcase classname="tests.protocol_v3.test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity" name="test_caught_claim_failure_rolls_back_entire_claim_only" time="0.003"><failure message="AssertionError: assert ('dispatched'...timezone.utc)) == ('pending', 0, None)&#10;  &#10;  At index 0 diff: 'dispatched' != 'pending'&#10;  Use -v to get more diff">self = &lt;test_sqlite_product_storage.TestForwardMigrationAndClaimAtomicity object at 0x10c926960&gt;
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2654/test_caught_claim_failure_roll0')
+
+    def test_caught_claim_failure_rolls_back_entire_claim_only(self, tmp_path):
+        from packages.contracts.workbench_contracts.protocol_v3 import SideEffectKind
+    
+        path = tmp_path / "claim.sqlite"
+        factory = build_unit_of_work_factory({"backend": "sqlite", "path": path})
+        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        with factory() as uow:
+            for index in (1, 2, 3):
+                uow.outbox_repository.enqueue(
+                    "proj:claim", "run:1", SideEffectKind.EXPORT, f"lk:{index}",
+                    str(index) * 64, now + timedelta(seconds=index),
+                )
+        with sqlite3.connect(path) as conn:
+            conn.execute("CREATE TRIGGER fail_second_claim BEFORE UPDATE ON outbox_message "
+                         "WHEN OLD.logical_key='lk:2' BEGIN SELECT RAISE(FAIL, 'claim failure'); END")
+        with factory() as uow:
+            unrelated = uow.outbox_repository.enqueue(
+                "proj:other", "run:other", SideEffectKind.EXPORT, "lk:other", "4" * 64, now,
+            )
+            with pytest.raises(sqlite3.IntegrityError, match="claim failure"):
+                uow.outbox_repository.claim_pending("proj:claim", limit=3, claimed_at=now)
+        with factory() as check:
+            for index in (1, 2, 3):
+                message = check.outbox_repository.find_by_logical_key("proj:claim", f"lk:{index}")
+&gt;               assert (message.status.value, message.attempt, message.dispatched_at) == ("pending", 0, None)
+E               AssertionError: assert ('dispatched'...timezone.utc)) == ('pending', 0, None)
+E                 
+E                 At index 0 diff: 'dispatched' != 'pending'
+E                 Use -v to get more diff
+
+tests/protocol_v3/test_sqlite_product_storage.py:1215: AssertionError</failure></testcase></testsuite></testsuites>

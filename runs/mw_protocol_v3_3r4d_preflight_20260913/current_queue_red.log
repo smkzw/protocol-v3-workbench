@@ -1,0 +1,13 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_current_decisions_track_their_bound_inputs_not_the_whole_revision ____
+tests/protocol_v3/integration/test_fact_impact_adoption.py:151: in test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+    assert {r["decision_key"] for r in queue.json()["requests"]} == {"decision:dose"}
+E   AssertionError: assert set() == {'decision:dose'}
+E     
+E     Extra items in the right set:
+E     'decision:dose'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+1 failed in 0.61s

@@ -1,0 +1,612 @@
+{
+  "workflow_run_id": "research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799",
+  "correction_run_id": null,
+  "status": "ready_for_review",
+  "validation": {
+    "errors": [],
+    "proposal": {
+      "canonical": {},
+      "fields": {
+        "anticipated_dose": [
+          {
+            "basis": "source",
+            "candidate": "MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）（双盲治疗期试验组，W0-W24）",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "试验组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）；",
+            "reason": "正文5.6给药方案逐字记载双盲治疗期试验组剂量：600 mg负荷后300 mg维持，两个剂量水平均完整保留；摘要给药方案表与研究流程表一致。图2研究流程图因视觉核对未完成未采信。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/446:p",
+                "quote": "试验组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/16:p",
+                "quote": "试验组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/14:tr/2:tc/8:p",
+                "quote": "试验组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "安慰剂皮下注射给药，Q4W，共6次，首次给药0 mg（4.0 ml），之后每次给药0 mg（2.0 ml）（双盲治疗期安慰剂组，W0-W24）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "安慰剂组：安慰剂皮下注射给药，Q4W，共6次，首次给药0 mg（4.0 ml），之后每次给药0 mg（2.0 ml）。",
+            "reason": "正文5.6逐字记载双盲治疗期安慰剂臂给药；摘要表格该处体积写法存在“4.0ml/4.0mL”格式差异（见第二条引用），数值0 mg一致，按原文保留差异。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/447:p",
+                "quote": "安慰剂组：安慰剂皮下注射给药，Q4W，共6次，首次给药0 mg（4.0 ml），之后每次给药0 mg（2.0 ml）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/17:p",
+                "quote": "安慰剂组：安慰剂皮下注射给药，Q4W，共6次，首次给药0 mg（4.0ml），之后每次给药0 mg（2.0 ml）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "于第24周接受MG-K10 300 mg（2.0 ml）及安慰剂0 mg（2.0 ml）皮下注射，后续接受MG-K10皮下注射给药，Q4W，共6次（继续治疗期试验组，W24-W48）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "试验组：于第24周接受MG-K10 300 mg（2.0 ml）及安慰剂0 mg（2.0 ml）皮下注射，后续接受MG-K10皮下注射给药，Q4W，共6次；",
+            "reason": "继续治疗期试验组维持300 mg Q4W并以安慰剂补足体积维持盲态；数值与用药事实未改动。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/449:p",
+                "quote": "试验组：于第24周接受MG-K10 300 mg（2.0 ml）及安慰剂0 mg（2.0 ml）皮下注射，后续接受MG-K10皮下注射给药，Q4W，共6次；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/19:p",
+                "quote": "试验组：于第24周接受MG-K10 300 mg（2.0 ml）及安慰剂0 mg（2.0 ml）皮下注射，后续接受MG-K10皮下注射给药，Q4W，共6次；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）（继续治疗期原安慰剂组交叉给药，W24-W48）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "安慰剂组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）。",
+            "reason": "继续治疗期原安慰剂组交叉接受MG-K10（600 mg负荷后300 mg维持），属该参考方案既载给药设计；全部剂量候选已保留。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/450:p",
+                "quote": "安慰剂组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/20:p",
+                "quote": "安慰剂组：MG-K10皮下注射给药，Q4W，共6次，首次给药600 mg（4.0 ml），之后每次给药300 mg（2.0 ml）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "clinical_phase": [
+          {
+            "basis": "source",
+            "candidate": "III期",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "研究阶段：Ⅲ期",
+            "reason": "封面信息栏作“Ⅲ期”，摘要“研究分期”栏与总体设计作“III期”，为同一期别的写法差异；候选统一为“III期”，未改变期别事实。仅为历史参考方案的期别，不代表新研究期别确认。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/12:p",
+                "quote": "研究阶段：Ⅲ期",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/6:tr/2:tc/1:p",
+                "quote": "III期",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/299:p",
+                "quote": "本研究为一项多中心、随机、双盲、安慰剂对照的III期临床试验，旨在评价MG-K10人源化单抗注射液在第二代H1抗组胺药控制不佳的CSU试验参与者中的有效性和安全性。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "comparator": [
+          {
+            "basis": "source",
+            "candidate": "安慰剂对照；多中心、随机、双盲设计",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "本研究为一项多中心、随机、双盲、安慰剂对照的III期临床试验，旨在评价MG-K10人源化单抗注射液在第二代H1抗组胺药控制不佳的CSU试验参与者中的有效性和安全性。",
+            "reason": "总体设计与摘要研究设计逐字一致，方案名称亦含“随机、双盲、安慰剂对照”；注意安慰剂对照仅存在于双盲治疗期（W0-W24），继续治疗期原安慰剂组交叉转用MG-K10（见继续治疗期剂量候选）。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/299:p",
+                "quote": "本研究为一项多中心、随机、双盲、安慰剂对照的III期临床试验，旨在评价MG-K10人源化单抗注射液在第二代H1抗组胺药控制不佳的CSU试验参与者中的有效性和安全性。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/2:p",
+                "quote": "本研究为一项多中心、随机、双盲、安慰剂对照的III期临床试验，旨在评价MG-K10人源化单抗注射液在第二代H1抗组胺药控制不佳的CSU试验参与者中的有效性和安全性。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/8:p",
+                "quote": "一项评价MG-K10人源化单抗注射液在慢性自发性荨麻疹受试者中的有效性和安全性的随机、双盲、安慰剂对照III期临床研究",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "试验组与安慰剂组按1:1随机分配",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。",
+            "reason": "正文总体设计以全角冒号、摘要研究设计以半角冒号记载1:1分组比例，数值一致。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/303:p",
+                "quote": "筛选合格的试验参与者将进入双盲治疗期，按照1：1比例随机分配至试验组或对照组。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+                "quote": "筛选合格的试验参与者将进入双盲治疗期，按照1:1比例随机分配至试验组或对照组。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "安慰剂对照基础上的背景治疗：两组均持续使用第二代H1抗组胺药",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。",
+            "reason": "合并用药章节明确第二代H1抗组胺药为两组共同背景治疗，即安慰剂加载于稳定抗组胺背景之上，属对照方式的组成部分。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/482:p",
+                "quote": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/19:tr/2:tc/8:p",
+                "quote": "研究期间，试验参与者需同时使用第二代H1抗组胺药（如西替利嗪、氯雷他定等）作为背景治疗，筛选期至双盲治疗期应保持剂量稳定，经研究者判断，允许因不良事件降低剂量或更换其他第二代H1抗组胺药。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "随机分层因素：既往抗IgE单抗使用史、基线血管性水肿（是/否）",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。",
+            "reason": "随机分层细节见于总体设计与摘要研究设计，属对照比较设计的支撑参数；正文与摘要一致。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/303:p",
+                "quote": "试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+                "quote": "试验参与者的随机分层因素包括既往是否使用过抗IgE单克隆抗体（是，否）、基线是否存在血管性水肿（是，否）。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "dosage_form_and_route": [
+          {
+            "basis": "source",
+            "candidate": "注射液",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "剂型：注射液；",
+            "reason": "正文5.1与方案摘要给药方案表均逐字记载剂型为注射液。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/406:p",
+                "quote": "剂型：注射液；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/4:p",
+                "quote": "剂型：注射液；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "300 mg（2.0 ml）/支（预充式注射器）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "规格：300 mg（2.0 ml）/支（预充式注射器）；",
+            "reason": "正文与摘要逐字一致，说明制剂规格与包装形式；数值与单位未作任何改动。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/405:p",
+                "quote": "规格：300 mg（2.0 ml）/支（预充式注射器）；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/18:tr/2:tc/3:p",
+                "quote": "规格：300 mg（2.0 ml）/支（预充式注射器）；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "皮下注射",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。",
+            "reason": "总体设计正文与摘要研究设计表均明确给药途径为皮下注射（给药方案各条目亦均写明皮下注射给药）。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/303:p",
+                "quote": "试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/13:tr/2:tc/4:p",
+                "quote": "试验参与者将接受试验药物MG-K10或安慰剂皮下注射给药，共持续24周。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "indication": [
+          {
+            "basis": "source",
+            "candidate": "慢性自发性荨麻疹（CSU）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "一项评价MG-K10人源化单抗注射液在慢性自发性荨麻疹受试者中的有效性和安全性的随机、双盲、安慰剂对照III期临床研究",
+            "reason": "方案名称限定该参考研究适应症为慢性自发性荨麻疹；临床前结论亦称支持开展CSU患者III期研究。公司管线中列出的其他计划适应症（哮喘、AD等）未纳入本候选。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/8:p",
+                "quote": "一项评价MG-K10人源化单抗注射液在慢性自发性荨麻疹受试者中的有效性和安全性的随机、双盲、安慰剂对照III期临床研究",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/215:p",
+                "quote": "综上所述，MG-K10显示了高质量特性和优异的临床前有效性、安全性，支持开展CSU患者的Ⅲ期临床研究。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "第二代H1抗组胺药控制不佳的慢性自发性荨麻疹（CSU）",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "评价MG-K10治疗第二代H1抗组胺药控制不佳的CSU的有效性；",
+            "reason": "研究目的与摘要逐字将人群限定为第二代H1抗组胺药控制不佳的CSU，较方案名称提供更精确的适应症边界；两个候选并存供下游选择，均为该参考方案既载表述。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/260:p",
+                "quote": "评价MG-K10治疗第二代H1抗组胺药控制不佳的CSU的有效性；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/11:tr/2:tc/2:p",
+                "quote": "评价MG-K10治疗第二代H1抗组胺药控制不佳的CSU的有效性；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "populations": [
+          {
+            "basis": "source",
+            "candidate": "第二代H1抗组胺药控制不佳的慢性自发性荨麻疹（CSU）患者",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "第二代H1抗组胺药控制不佳的慢性自发性荨麻疹（Chronic Spontaneous Urticaria，CSU）患者",
+            "reason": "摘要“受试人群”栏逐字给出目标人群定义。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/135:tbl/7:tr/2:tc/1:p",
+                "quote": "第二代H1抗组胺药控制不佳的慢性自发性荨麻疹（Chronic Spontaneous Urticaria，CSU）患者",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "年龄≥12周岁且≤75周岁，男女均可，体重≥30kg",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "在签署知情同意书时，年龄须 ≥ 12周岁且 ≤ 75周岁，男女均可，体重≥ 30kg；",
+            "reason": "摘要入选标准与正文4.1一致给出年龄、性别、体重限定；两处空格写法略有差异，引用均逐字，数值未改动。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/135:tbl/15:tr/2:tc/3:p",
+                "quote": "在签署知情同意书时，年龄须 ≥ 12周岁且 ≤ 75周岁，男女均可，体重≥ 30kg；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/320:p",
+                "quote": "在签署知情同意书时，年龄须≥12周岁且≤ 75周岁，男女均可，体重≥30kg；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "随机前7天UAS7≥16分且ISS7≥8分；随机化前至少一次研究者评估UAS≥4分",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "随机前7天：UAS7评分 ≥ 16分（评分范围0~42分），ISS7评分 ≥ 8分（评分范围0~21分），随机化前至少一次经研究者评估UAS≥4分；",
+            "reason": "疾病活动度入选阈值，摘要与正文4.1一致。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/135:tbl/15:tr/2:tc/7:p",
+                "quote": "随机前7天：UAS7评分 ≥ 16分（评分范围0~42分），ISS7评分 ≥ 8分（评分范围0~21分），随机化前至少一次经研究者评估UAS≥4分；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/324:p",
+                "quote": "随机前7天：UAS7评分≥ 16分（评分范围0~42分），ISS7 评分≥ 8分（评分范围0~21分），随机化前至少一次经研究者评估UAS≥4分；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "筛选时确诊CSU≥6个月",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "筛选时确诊CSU ≥ 6个月；",
+            "reason": "病程入选条件，摘要入选标准逐字。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/135:tbl/15:tr/2:tc/5:p",
+                "quote": "筛选时确诊CSU ≥ 6个月；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "预计纳入226例试验参与者（试验组和对照组各113例）",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "综上，本研究预计纳入226例试验参与者（试验组和对照组各113例），可同时满足提供80%以上的检验效能，分别在主要终点及两个关键次要终点上检验出两组间的差异。",
+            "reason": "样本量及分组见于摘要样本量栏与正文3.4；因八个字段无独立样本量位置，暂存于研究人群候选，数值未改动。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/135:tbl/9:tr/2:tc/4:p",
+                "quote": "综上，本研究预计纳入226例试验参与者（试验组和对照组各113例），可同时满足提供80%以上的检验效能，分别在主要终点及两个关键次要终点上检验出两组间的差异。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/315:p",
+                "quote": "本研究共预计纳入226例CSU患者，1:1的比例随机分配至试验组或对照组。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "12岁及以上青少年与成人慢性荨麻疹患者同期纳入",
+            "canonical": null,
+            "confidence": 0.8,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "本研究拟同时纳入12岁及以上青少年慢性荨麻疹患者。",
+            "reason": "剂量选择依据章节明确该参考研究拟纳入青少年，并以暴露量比较论证青少年剂量可参考成人；属方案设计意图表述，且涉及其他适应症研究的比较仅作参考。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/312:p",
+                "quote": "本研究拟同时纳入12岁及以上青少年慢性荨麻疹患者。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/313:p",
+                "quote": "因此认为青少年使用首次给药600mg，后续300mg Q4W的剂量是安全可接受的。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "research_drug": [
+          {
+            "basis": "source",
+            "candidate": "MG-K10人源化单抗注射液",
+            "canonical": null,
+            "confidence": 0.95,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "研究药物：MG-K10人源化单抗注射液",
+            "reason": "封面信息栏逐字载明研究药物名称，方案摘要试验药物栏与正文5.1试验用药品信息一致（摘要另注明简称MG-K10）。本候选仅为既有公司历史参考方案（V1.3，company_style_only）的资料整理，不构成新研究的确认事实。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/11:p",
+                "quote": "研究药物：MG-K10人源化单抗注射液",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/135:tbl/8:tr/2:tc/1:p",
+                "quote": "MG-K10人源化单抗注射液（以下简称MG-K10）",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/404:p",
+                "quote": "名称：MG-K10人源化单抗注射液；",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ],
+        "target_or_mechanism": [
+          {
+            "basis": "source",
+            "candidate": "人IL-4Rα；阻断IL-4/IL-13与IL-4Rα结合，抑制JAK/STAT6通路活化，降低血清IgE",
+            "canonical": null,
+            "confidence": 0.9,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "能够特异性识别人IL-4Rα，与IL-4Rα结合后能高效阻断IL-4和IL-13与IL-4Rα的结合，抑制下游JAK激酶、IRS蛋白、PI3-K激酶和STAT家族转录因子、STAT6信号通路的活化，降低血清免疫球蛋白E水平，拮抗炎症反应的发生，有助于治疗CSU。",
+            "reason": "正文1.2.1药物简介逐字给出靶点与下游机制；3.3剂量选择依据的临床前药效学描述一致。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/176:p",
+                "quote": "能够特异性识别人IL-4Rα，与IL-4Rα结合后能高效阻断IL-4和IL-13与IL-4Rα的结合，抑制下游JAK激酶、IRS蛋白、PI3-K激酶和STAT家族转录因子、STAT6信号通路的活化，降低血清免疫球蛋白E水平，拮抗炎症反应的发生，有助于治疗CSU。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/308:p",
+                "quote": "MG-K10临床前药效学研究表明，MG-K10的生物学活性与同靶点药物度普利尤单抗相当，可高效阻断IL-4/IL-13与IL-4Rα受体的结合，阻断IL-4和IL-13结合到细胞表面受体引起的STAT6通路活化，抑制IL-4或IL-13刺激PBMC释放TARC/CCL17，抑制肥大细胞脱颗粒。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "抗IL-4受体（IL-4Rα）人源化重组IgG4单克隆抗体",
+            "canonical": null,
+            "confidence": 0.85,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "是一种创新型抗IL-4受体抗体药物分子，采用DNA重组技术在中国仓鼠卵巢细胞系（Chinese Hamster Ovary，CHO）中高效表达的重组IgG4单克隆抗体",
+            "reason": "药物类别与分子型式描述见于药物简介同句；药物名称中的“人源化单抗”与此一致。适用前提：表述来自历史参考方案正文。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/176:p",
+                "quote": "是一种创新型抗IL-4受体抗体药物分子，采用DNA重组技术在中国仓鼠卵巢细胞系（Chinese Hamster Ovary，CHO）中高效表达的重组IgG4单克隆抗体",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          },
+          {
+            "basis": "source",
+            "candidate": "Fc段经延长半衰期突变（增强FcRn结合）",
+            "canonical": null,
+            "confidence": 0.8,
+            "confidence_basis": "model_estimate_not_medical_admission",
+            "raw": "MG-K10的Fc经过了延长半衰期的突变。",
+            "reason": "药物简介与剂量选择依据均记载该分子设计特征及FcRn亲和力数据；其中与度普利尤单抗的比较属背景参考信息，非本研究确认的对照事实。",
+            "references": [
+              {
+                "locator": "word/document.xml/body/189:p",
+                "quote": "MG-K10的Fc经过了延长半衰期的突变。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              },
+              {
+                "locator": "word/document.xml/body/308:p",
+                "quote": "此外，抗体的半衰期延长主要通过增强与细胞表面的FcRn的结合而实现[8]，MG-K10的Fc经过了延长半衰期的突变。",
+                "source_artifact_id": "source-d4bdb1a9af6c3583a9a6a59f7e2a31709b86501f8958340cf64dc6c49a1405a0"
+              }
+            ],
+            "requires_confirmation": true,
+            "source_support": "reference_only"
+          }
+        ]
+      },
+      "input_sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c",
+      "missing_fields": [],
+      "status": "ready_for_review",
+      "user_brief": "本次仅为工程验收中的既有公司方案资料整理。所附MG-K10-CSU-001全文是历史参考资料，不是新项目已确认事实。请从实际正文和表格提取该参考研究的药物、剂型途径、拟用剂量、机制、适应症、期别、人群和对照的候选信息并引用精确原文；如资料不支持则保持缺失，不以推荐填补。本次不创建、不批准任何新研究设计。"
+    },
+    "raw_response": {
+      "artifact_ref": "seed-response:ca9867fe372f165257a1fb4e30805cb2693ddba9dc0ecabc658a4e8e076bafce:revision:1",
+      "idempotency_key": "research-seed.generate.v1",
+      "input_artifacts": [
+        {
+          "ref": "research-intake",
+          "sha256": "e4729313273cbf40ce65b6c0bb33477a9a24c4de32ebe106219da3e774f1768c"
+        }
+      ],
+      "logical_call_id": "call:research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799:seed-generate",
+      "node_execution_contract_id": "nec:research-intake:5794359d7bf86bb0bc4cec5c35965f6c3f79ac462b02d24e95133a27c3050799:seed-generate",
+      "observed_model": "glm-5.3-flash",
+      "observed_provider": "zhipu-coding-plan",
+      "output_schema_ref": "https://protocol-v3.local/schemas/research-seed-proposal-output.v1.json",
+      "output_sha256": "ee7e91b031327cf027b4bfad92c9e37f9e1af0aed628069cd9f95a5c639cb224",
+      "prompt_sha256": "6380f2467fa938612902b173cb3e5f45175cd5014dabf6212e9bd22804f5b3d3",
+      "provider_session_id": "20260913130014e523058838824b8a",
+      "requested_reasoning_effort": "max"
+    },
+    "status": "ready_for_review",
+    "valid": true
+  },
+  "can_resume": false
+}

@@ -1,0 +1,21 @@
+........................................................................ [ 51%]
+...................................................................F.    [100%]
+=================================== FAILURES ===================================
+______________ test_partial_lint_is_clean_and_reports_incomplete _______________
+
+document = ChapterRegistryDocument(schema_version='protocol-v3-chapter-registry.v1', generated_for='TP-MA-07 v2 batch6 chapter co...nce', value='合成示例：interim:cell:canonical-reference 已填写（非项目数据）'))),)), supplied_passed=None, supplied_qc_verdict=None)))
+
+    def test_partial_lint_is_clean_and_reports_incomplete(document):
+        report = lint_registry(TEMPLATE_DIR, document, require_complete=False)
+        assert report.mode == "partial"
+        assert report.status == "incomplete"
+>       assert report.errors() == ()
+E       AssertionError: assert (LintFinding(...ct version'),) == ()
+E         
+E         Left contains one more item: LintFinding(code='skill_version_mismatch', severity='error', node_id='v2_n_11_1', location='chapters[v2_n_11_1].contract.chapter_skill_version', message='companion skill version differs from the declared contract version')
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_batch6.py:204: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_batch6.py::test_partial_lint_is_clean_and_reports_incomplete
+1 failed, 140 passed in 3.18s

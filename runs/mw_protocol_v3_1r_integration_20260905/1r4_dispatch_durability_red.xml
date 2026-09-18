@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.347" timestamp="2026-09-05T19:21:54.150498+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_sqlite_reservation_lifecycle" name="test_sqlite_unknown_recovery_restart_and_completed_reuse" time="0.008" /><testcase classname="tests.protocol_v3.test_sqlite_reservation_lifecycle" name="test_sqlite_claim_is_durable_before_physical_dispatch" time="0.002"><failure message="AssertionError: assert [None] == [('running', 1)]&#10;  &#10;  At index 0 diff: None != ('running', 1)&#10;  Use -v to get more diff">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2894/test_sqlite_claim_is_durable_b0')
+
+    def test_sqlite_claim_is_durable_before_physical_dispatch(tmp_path):
+        path = tmp_path / "before-dispatch.sqlite"
+        factory = build_unit_of_work_factory({"backend": "sqlite", "path": str(path)})
+        observed = []
+    
+        def observe_from_independent_connection(reservation):
+            with sqlite3.connect(path) as conn:
+                observed.append(conn.execute(
+                    "SELECT status, transport_attempts FROM execution_reservation "
+                    "WHERE execution_reservation_id=?",
+                    (reservation.execution_reservation_id,),
+                ).fetchone())
+    
+        with factory() as uow:
+            ReservationCoordinator(uow.reservation_repository).reserve_or_reuse(
+                project_id=_PROJ, node_contract=_node_contract(), input_payload=_payload_a(),
+                now=_T0, transport=_FakeTransport(on_dispatch=observe_from_independent_connection),
+            )
+&gt;       assert observed == [("running", 1)]
+E       AssertionError: assert [None] == [('running', 1)]
+E         
+E         At index 0 diff: None != ('running', 1)
+E         Use -v to get more diff
+
+tests/protocol_v3/test_sqlite_reservation_lifecycle.py:73: AssertionError</failure></testcase></testsuite></testsuites>

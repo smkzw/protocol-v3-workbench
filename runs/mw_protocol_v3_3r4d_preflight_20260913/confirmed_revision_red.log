@@ -1,0 +1,10 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+__ test_explicit_confirmed_fact_revision_and_historical_replay_keep_successor __
+tests/protocol_v3/integration/test_fact_impact_adoption.py:82: in test_explicit_confirmed_fact_revision_and_historical_replay_keep_successor
+    assert revised.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_explicit_confirmed_fact_revision_and_historical_replay_keep_successor
+1 failed, 3 passed in 0.65s

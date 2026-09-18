@@ -1,0 +1,32 @@
+{
+  "skill_id": "skill:chapter:n-1-3:soa",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_1_3",
+  "chapter_contract_id": "contract:v2-n-1-3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认访视/程序事实），输出为 ChapterSkillOutput。生成结构化 SOA：访视与窗口带单位与参考事件、必需评估单元格按内容与访视身份核查、脚注解析到既有程序、早期终止评估与安全随访与停药/退出规则一致、电话联系计为实际访视；PK 窗口不得渲染为泛化日窗；模板示例量表/面板/样本处理一律不得作为项目事实。",
+    "forbidden_behaviors": [
+      "单元格ID存在但值为空",
+      "错误退出访视脚注",
+      "无关疾病量表或实验室面板",
+      "PK 窗口渲染为泛化日窗",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 259–265 与 table[265]（6列×33行 SOA；横向节=sections[ordinal 6]，sectPr 止于 body-child 266）；source[265] 为示例，非项目事实。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：3=heading 2，1=Normal；横向节/页眉/域刷新为7R原生义务。"
+  ],
+  "error_codes": [
+    "skill:chapter:n-1-3:soa:missing-obligation",
+    "skill:chapter:n-1-3:soa:unresolved-fact",
+    "skill:chapter:n-1-3:soa:wrong-source"
+  ]
+}

@@ -1,0 +1,170 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[False] _
+
+modify = False
+
+    @pytest.mark.parametrize('modify',[False,True,None])
+    def test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments(modify):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_6_1_2.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        conditional = {'intervention.dose_hold_criteria','intervention.dose_reduction_rules','intervention.restart_criteria','intervention.dose_escalation_or_dlt_logic'}
+        facts={f.fact_path:'Synthetic dose arrangement' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in conditional}
+        facts.update({'intervention.dose_modification_required':modify,'intervention.dose_escalation_or_dlt_applicable':False})
+        rules=real_rule_catalog().rules
+        if modify is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if modify:
+            facts['intervention.dose_modification_features']={'hold':False,'reduction':True,'restart':False}
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            assert caught.value.fact_paths==('intervention.dose_reduction_rules',)
+            facts['intervention.dose_reduction_rules']='Synthetic confirmed reduction scheme'
+>       assert bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules).resolved_facts==facts
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:1151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ncy',), risk_if_unmet='剂量跨节冲突会直接误导执行与审评。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:dose-modification; conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:escalation
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[True] _
+
+modify = True
+
+    @pytest.mark.parametrize('modify',[False,True,None])
+    def test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments(modify):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_6_1_2.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        conditional = {'intervention.dose_hold_criteria','intervention.dose_reduction_rules','intervention.restart_criteria','intervention.dose_escalation_or_dlt_logic'}
+        facts={f.fact_path:'Synthetic dose arrangement' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in conditional}
+        facts.update({'intervention.dose_modification_required':modify,'intervention.dose_escalation_or_dlt_applicable':False})
+        rules=real_rule_catalog().rules
+        if modify is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if modify:
+            facts['intervention.dose_modification_features']={'hold':False,'reduction':True,'restart':False}
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...tart': False}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ncy',), risk_if_unmet='剂量跨节冲突会直接误导执行与审评。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:dose-modification; conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:escalation
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[None] _
+
+modify = None
+
+    @pytest.mark.parametrize('modify',[False,True,None])
+    def test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments(modify):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_6_1_2.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        conditional = {'intervention.dose_hold_criteria','intervention.dose_reduction_rules','intervention.restart_criteria','intervention.dose_escalation_or_dlt_logic'}
+        facts={f.fact_path:'Synthetic dose arrangement' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in conditional}
+        facts.update({'intervention.dose_modification_required':modify,'intervention.dose_escalation_or_dlt_applicable':False})
+        rules=real_rule_catalog().rules
+        if modify is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...ncy',), risk_if_unmet='剂量跨节冲突会直接误导执行与审评。')), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:dose-modification; conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:escalation
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+modify = None
+
+    @pytest.mark.parametrize('modify',[False,True,None])
+    def test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments(modify):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_6_1_2.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / 'fact_bindings.json').read_text()).bindings
+        conditional = {'intervention.dose_hold_criteria','intervention.dose_reduction_rules','intervention.restart_criteria','intervention.dose_escalation_or_dlt_logic'}
+        facts={f.fact_path:'Synthetic dose arrangement' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in conditional}
+        facts.update({'intervention.dose_modification_required':modify,'intervention.dose_escalation_or_dlt_applicable':False})
+        rules=real_rule_catalog().rules
+        if modify is None:
+>           with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:dose-modification; conditional_predicate_missing:conditional_rule:applicability:n-6-1-2:escalation'
+
+tests/protocol_v3/test_chapter_applicability.py:1142: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_dose_actions_do_not_release_permanent_stop_or_force_all_adjustments[None]
+3 failed, 136 deselected in 0.55s

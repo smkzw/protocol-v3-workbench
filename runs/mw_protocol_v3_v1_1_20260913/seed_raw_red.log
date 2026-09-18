@@ -1,0 +1,16 @@
+....F...                                                                 [100%]
+=================================== FAILURES ===================================
+_________ test_source_raw_cannot_be_invented_beside_a_valid_reference __________
+
+    def test_source_raw_cannot_be_invented_beside_a_valid_reference():
+        request = prepare_seed_request('', (source(),))
+        output = answer(request)
+        output['fields']['anticipated_dose'][0]['raw'] = '900 mg剂量'
+>       with pytest.raises(ValueError, match='seed_source_raw_not_found'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/protocol_v3/test_research_seed_normalization.py:68: Failed
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_research_seed_normalization.py::test_source_raw_cannot_be_invented_beside_a_valid_reference
+1 failed, 7 passed in 0.31s

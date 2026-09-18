@@ -1,0 +1,110 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-2:v2",
+  "semantic_node_id": "v2_n_front_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-2:investigator-commitment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-2:v2",
+    "chapter_contract_id": "contract:v2-n-front-2:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "signature.investigator.protocol_identity",
+        "obligation": "required",
+        "rationale": "研究者承诺必须绑定同一方案编号/版本/日期。"
+      },
+      {
+        "fact_path": "signature.investigator.institution",
+        "obligation": "required",
+        "rationale": "承诺页必须写明实际研究机构。"
+      },
+      {
+        "fact_path": "signature.completed_receipt",
+        "obligation": "forbidden",
+        "rationale": "不得预填已签署回执或合成签名/日期；未签署签名行是刻意的 Word 签署控件。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "investigator_commitment",
+        "obligation": "required",
+        "rationale": "研究者承诺段必须声明已阅读并理解同一现行方案。"
+      },
+      {
+        "claim_type": "synthetic_signature",
+        "obligation": "forbidden",
+        "rationale": "不得输出已完成签署状态、合成签名或<姓名>/<日期>占位回填。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "investigator_commitment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "研究者承诺段与签名/日期控件段；签名与日期控件保持未签署状态。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "研究者承诺与未签署签名/日期控件（现行方案元数据绑定）"
+    ],
+    "skeleton_risk_rules": [
+      "承诺段缺失或仅剩签名控件壳即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-2",
+    "required_styles": [
+      "2",
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-2:binding",
+      "rule": "研究者承诺必须绑定同一方案编号/版本/日期与实际机构。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-2:unsigned",
+      "rule": "签名与日期控件必须保持未签署控件状态；文档就绪不等于已完成签署。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-2:binding",
+      "question": "承诺页绑定的方案身份与机构是否为同一现行值？",
+      "linked_fact_paths": [
+        "signature.investigator.protocol_identity",
+        "signature.investigator.institution"
+      ],
+      "linked_claim_types": [
+        "investigator_commitment"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-2:binding"
+      ],
+      "risk_if_unmet": "承诺挂错版本或机构将使签署页无效。"
+    }
+  ]
+}

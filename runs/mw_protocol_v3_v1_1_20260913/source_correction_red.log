@@ -1,0 +1,92 @@
+.......FFF                                                               [100%]
+=================================== FAILURES ===================================
+______ test_explicit_metadata_correction_retains_original_and_same_bytes _______
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-597/test_explicit_metadata_correct0')
+
+    def test_explicit_metadata_correction_retains_original_and_same_bytes(tmp_path):
+        svc = service(tmp_path)
+        original = adopt(svc)
+>       corrected = correct(svc, original.source)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+svc = <app.protocol_workflow.agent1.source_identity.SourceIdentityService object at 0x10a411ac0>
+record = StoredSource(source=SourceArtifact(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIR...ezone.utc)), storage_key='source-1ec6506b540cd7a08d3d92849fb24e9158e8e9042b34bca4f2251a1f2a96cf10', storage_revision=1)
+kwargs = {}
+args = {'changed_at': datetime.datetime(2026, 9, 13, 1, 0, tzinfo=datetime.timezone.utc), 'jurisdiction': 'CN', 'project_id': 'project-1', 'source_artifact_id': 'source-ed1002bd33e24e660bfcaa7fa9f76036798e2dad00a9f224969409fff12f64e3', ...}
+
+    def correct(svc, record, **kwargs):
+        args = dict(project_id='project-1', source_artifact_id=record.source.source_artifact_id,
+                    source_role='competitor_full_protocol', source_version='1.3', jurisdiction='CN',
+                    changed_at=datetime(2026, 9, 13, 1, tzinfo=timezone.utc))
+        args.update(kwargs)
+>       return svc.correct_metadata(**args)
+               ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SourceIdentityService' object has no attribute 'correct_metadata'
+
+tests/protocol_v3/test_source_identity_product.py:118: AttributeError
+_________ test_replaying_metadata_correction_keeps_later_file_revision _________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-597/test_replaying_metadata_correc0')
+
+    def test_replaying_metadata_correction_keeps_later_file_revision(tmp_path):
+        svc = service(tmp_path)
+        original = adopt(svc)
+>       corrected = correct(svc, original.source)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+svc = <app.protocol_workflow.agent1.source_identity.SourceIdentityService object at 0x10a3eb860>
+record = StoredSource(source=SourceArtifact(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIR...ezone.utc)), storage_key='source-1ec6506b540cd7a08d3d92849fb24e9158e8e9042b34bca4f2251a1f2a96cf10', storage_revision=1)
+kwargs = {}
+args = {'changed_at': datetime.datetime(2026, 9, 13, 1, 0, tzinfo=datetime.timezone.utc), 'jurisdiction': 'CN', 'project_id': 'project-1', 'source_artifact_id': 'source-ed1002bd33e24e660bfcaa7fa9f76036798e2dad00a9f224969409fff12f64e3', ...}
+
+    def correct(svc, record, **kwargs):
+        args = dict(project_id='project-1', source_artifact_id=record.source.source_artifact_id,
+                    source_role='competitor_full_protocol', source_version='1.3', jurisdiction='CN',
+                    changed_at=datetime(2026, 9, 13, 1, tzinfo=timezone.utc))
+        args.update(kwargs)
+>       return svc.correct_metadata(**args)
+               ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SourceIdentityService' object has no attribute 'correct_metadata'
+
+tests/protocol_v3/test_source_identity_product.py:118: AttributeError
+______________ test_stale_metadata_edit_cannot_change_a_successor ______________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-597/test_stale_metadata_edit_canno0')
+
+    def test_stale_metadata_edit_cannot_change_a_successor(tmp_path):
+        svc = service(tmp_path)
+        original = adopt(svc)
+        latest = adopt(svc, b'new file', source_version='2.0')
+        with pytest.raises(ValueError, match='source_revision_conflict'):
+>           correct(svc, original.source)
+
+tests/protocol_v3/test_source_identity_product.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+svc = <app.protocol_workflow.agent1.source_identity.SourceIdentityService object at 0x109336660>
+record = StoredSource(source=SourceArtifact(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIR...ezone.utc)), storage_key='source-1ec6506b540cd7a08d3d92849fb24e9158e8e9042b34bca4f2251a1f2a96cf10', storage_revision=1)
+kwargs = {}
+args = {'changed_at': datetime.datetime(2026, 9, 13, 1, 0, tzinfo=datetime.timezone.utc), 'jurisdiction': 'CN', 'project_id': 'project-1', 'source_artifact_id': 'source-ed1002bd33e24e660bfcaa7fa9f76036798e2dad00a9f224969409fff12f64e3', ...}
+
+    def correct(svc, record, **kwargs):
+        args = dict(project_id='project-1', source_artifact_id=record.source.source_artifact_id,
+                    source_role='competitor_full_protocol', source_version='1.3', jurisdiction='CN',
+                    changed_at=datetime(2026, 9, 13, 1, tzinfo=timezone.utc))
+        args.update(kwargs)
+>       return svc.correct_metadata(**args)
+               ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SourceIdentityService' object has no attribute 'correct_metadata'
+
+tests/protocol_v3/test_source_identity_product.py:118: AttributeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_source_identity_product.py::test_explicit_metadata_correction_retains_original_and_same_bytes
+FAILED tests/protocol_v3/test_source_identity_product.py::test_replaying_metadata_correction_keeps_later_file_revision
+FAILED tests/protocol_v3/test_source_identity_product.py::test_stale_metadata_edit_cannot_change_a_successor
+3 failed, 7 passed in 0.40s

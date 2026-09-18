@@ -1,0 +1,732 @@
+ M AGENTS.md
+ M config/medical_writing/protocol_v3/role_registry.json
+ M config/medical_writing/protocol_v3/skill_registry.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_6.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_9.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_14_7.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_2_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_2_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_4_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_4_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_5.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_5.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_6_1_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_7_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_7_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_9_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_9_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_11_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_11_4_6.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_11_4_9.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_14_7.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_3_1_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_3_1_2_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_3_1_2_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_3_4_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_3_4_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_4_1.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_4_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_4_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_4_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_4_5.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_5_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_5_3.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_5_4.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_5_5.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_6_1_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_7_2.json
+ M config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_7_3.json
+ M frontend/src/App.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/protocolWorkspaceApi.mjs
+ M packages/contracts/workbench_contracts/protocol_v3.py
+ M scripts/qc/protocol_v3/apply_repository_hygiene.py
+ M scripts/qc/protocol_v3/build_frozen_authority_manifest.py
+ M services/api/app/ai_task_runner.py
+ M services/api/app/main.py
+ M services/api/app/medical_writing_competitor_triage.py
+ M services/api/app/medical_writing_content_quality.py
+ M services/api/app/medical_writing_full_draft.py
+ M services/api/app/medical_writing_template_upgrade.py
+ M services/api/app/protocol_workflow/agent5/coordinator.py
+ M services/api/app/protocol_workflow/agent5/run_manifest.py
+ M services/api/app/protocol_workflow/api/__init__.py
+ M services/api/app/protocol_workflow/api/router.py
+ M services/api/app/protocol_workflow/api/schemas.py
+ M services/api/app/protocol_workflow/application/__init__.py
+ M services/api/app/protocol_workflow/application/commands.py
+ M services/api/app/protocol_workflow/application/queries.py
+ M services/api/app/protocol_workflow/application/service.py
+ M services/api/app/protocol_workflow/canonical/document.py
+ M services/api/app/protocol_workflow/canonical/study_definition.py
+ M services/api/app/protocol_workflow/errors.py
+ M services/api/app/protocol_workflow/ports/repositories.py
+ M services/api/app/protocol_workflow/registries/chapters.py
+ M services/api/app/protocol_workflow/runtime/harness.py
+ M services/api/app/protocol_workflow/runtime/reservations.py
+ M services/api/app/protocol_workflow/storage/memory.py
+ M services/api/app/protocol_workflow/storage/selected.py
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch2.json
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch3.json
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch4.json
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch5.json
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch6.json
+ M tests/fixtures/protocol_v3/chapter_content_v2/batch8.json
+ M tests/fixtures/protocol_v3/mutable_source_baseline.json
+ M tests/protocol_v3/test_application_service.py
+ M tests/protocol_v3/test_chapter_batch2.py
+ M tests/protocol_v3/test_chapter_batch3.py
+ M tests/protocol_v3/test_chapter_batch4.py
+ M tests/protocol_v3/test_chapter_batch8.py
+ M tests/protocol_v3/test_error_codes.py
+ M tests/protocol_v3/test_frozen_authority_manifest.py
+ M tests/protocol_v3/test_protocol_v3_api_contract.py
+ M tests/protocol_v3/test_registry_loading.py
+ M tests/protocol_v3/test_repository_hygiene_mutator.py
+ M tests/protocol_v3/test_study_definition_reducer.py
+ M tests/test_ai_route_freeze.py
+ M tests/test_contracts.py
+ M tests/test_document_pipeline_round8.py
+ M tests/test_medical_writing_chapter_projection.py
+ M tests/test_medical_writing_direct_ai_policy.py
+ M tests/test_medical_writing_durable_job_integration.py
+ M tests/test_medical_writing_dynamic_section_matrix.py
+ M tests/test_medical_writing_study_binding_backend.py
+ M tests/test_medical_writing_study_consistency.py
+ M tests/test_medical_writing_template_upgrade.py
+ M tests/test_runtime_directory_configuration.py
+?? .agents/
+?? .codex/
+?? .gitattributes
+?? .trellis/
+?? conference/
+?? config/medical_writing/protocol_v3/authority_amendment_20260905.json
+?? config/medical_writing/protocol_v3/qc/
+?? config/medical_writing/protocol_v3/role_registry.deepseek.json
+?? config/medical_writing/protocol_v3/schemas/
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/applicability_rules.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_1_1.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_1_2.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_1_3.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_1_5.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_1_6.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_2_1.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_2_2.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_2_3.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_3_1.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_3_2.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_3_3.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_4.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_5.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_10_6.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_9_1.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_9_2.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_9_3.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_9_4.json
+?? config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json
+?? config/medical_writing/protocol_v3/terminology.json
+?? context/mw_protocol_v3_1r1_constraints_gate_20260905_execution_context.md
+?? context/mw_protocol_v3_1r1_constraints_gate_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r1_constraints_repair_20260905_context.md
+?? context/mw_protocol_v3_1r1_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r1_fresh_20260905_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r1_sqlite_20260905_execution_context.md
+?? context/mw_protocol_v3_1r1_sqlite_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r2_functional_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r2_functional_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r2_mount_20260905_execution_context.md
+?? context/mw_protocol_v3_1r2_mount_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r3_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r3_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r3_integration_20260905_execution_context.md
+?? context/mw_protocol_v3_1r3_integration_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r4_contract_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r4_contract_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r4_durable_dispatch_20260905_execution_context.md
+?? context/mw_protocol_v3_1r4_durable_dispatch_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r4_durable_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r4_durable_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r4_result_storage_20260905_context.md
+?? context/mw_protocol_v3_1r4_storage_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r4_storage_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_1r4_storage_impl_20260905_execution_context.md
+?? context/mw_protocol_v3_1r4_storage_impl_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r6_glm_transport_20260905_execution_context.md
+?? context/mw_protocol_v3_1r6_glm_transport_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_1r6_transport_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_1r6_transport_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_2r1_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_2r1_fresh_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_2r1_typed_facade_20260905_execution_context.md
+?? context/mw_protocol_v3_2r1_typed_facade_20260905_execution_route_manifest.json
+?? context/mw_protocol_v3_3r1_fresh_20260906_conference_context.md
+?? context/mw_protocol_v3_3r1_fresh_20260906_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_3r1_registry_20260906_execution_context.md
+?? context/mw_protocol_v3_3r1_registry_20260906_execution_route_manifest.json
+?? context/mw_protocol_v3_3r2_contracts_20260906_context.md
+?? context/mw_protocol_v3_3r2_contracts_20260906_execution_context.md
+?? context/mw_protocol_v3_3r2_contracts_20260906_execution_route_manifest.json
+?? context/mw_protocol_v3_3r2_fresh_20260906_conference_context.md
+?? context/mw_protocol_v3_3r2_fresh_20260906_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_3r3_batch1_20260906_context.md
+?? context/mw_protocol_v3_3r3_batch1_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch1_repair_20260908.md
+?? context/mw_protocol_v3_3r3_batch2_20260908_context.md
+?? context/mw_protocol_v3_3r3_batch2_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch2_resume_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch3_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch3_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch4_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch4_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch5_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch5_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch6_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch6_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch7_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch7_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch8_20260911_context.md
+?? context/mw_protocol_v3_3r3_batch8_fresh_review_20260911_context.md
+?? context/mw_protocol_v3_3r3_core_fresh_20260906_conference_context.md
+?? context/mw_protocol_v3_3r3_core_fresh_20260906_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_3r3_registry_core_20260906_execution_context.md
+?? context/mw_protocol_v3_3r3_registry_core_20260906_execution_route_manifest.json
+?? context/mw_protocol_v3_3r4_dependency_graph_20260912_context.md
+?? context/mw_protocol_v3_3r4_fresh_review_20260912_context.md
+?? context/mw_protocol_v3_3r4a_fact_inventory_20260912_execution_context.md
+?? context/mw_protocol_v3_3r4a_fact_inventory_20260912_execution_route_manifest.json
+?? context/mw_protocol_v3_3r4a_review_20260912_conference_context.md
+?? context/mw_protocol_v3_3r4a_review_20260912_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_3r4b_condition_matrix_20260913_execution_context.md
+?? context/mw_protocol_v3_3r4b_condition_matrix_20260913_execution_route_manifest.json
+?? context/mw_protocol_v3_chapter_chain_review_20260913_conference_context.md
+?? context/mw_protocol_v3_chapter_chain_review_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_confirmation_dependencies_20260913_conference_context.md
+?? context/mw_protocol_v3_confirmation_dependencies_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_engineering_crossreview_20260905_conference_context.md
+?? context/mw_protocol_v3_engineering_crossreview_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_full_review_20260912_execution_context.md
+?? context/mw_protocol_v3_full_review_20260912_execution_route_manifest.json
+?? context/mw_protocol_v3_hr_fresh_20260905_conference_context.md
+?? context/mw_protocol_v3_hr_fresh_20260905_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_kangzhe_skin_20260913_execution_context.md
+?? context/mw_protocol_v3_kangzhe_skin_20260913_execution_route_manifest.json
+?? context/mw_protocol_v3_manuscript_inputs_review_20260913_conference_context.md
+?? context/mw_protocol_v3_manuscript_inputs_review_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_ordered_draft_20260913_execution_context.md
+?? context/mw_protocol_v3_ordered_draft_20260913_execution_route_manifest.json
+?? context/mw_protocol_v3_p1r_legacy_disposition_20260905_conference_context.md
+?? context/mw_protocol_v3_p1r_legacy_disposition_20260905_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_regimen_adoption_review_20260913_conference_context.md
+?? context/mw_protocol_v3_regimen_adoption_review_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_regimen_card_ui_20260913_execution_context.md
+?? context/mw_protocol_v3_regimen_card_ui_20260913_execution_route_manifest.json
+?? context/mw_protocol_v3_replan_review_20260912_conference_context.md
+?? context/mw_protocol_v3_replan_review_20260912_general_single_object_route_manifest.json
+?? context/mw_protocol_v3_research_context_review_20260913_conference_context.md
+?? context/mw_protocol_v3_research_context_review_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_review_phaseR_20260905_context.md
+?? context/mw_protocol_v3_stage_close_20260913_conference_context.md
+?? context/mw_protocol_v3_stage_close_20260913_evidence_single_object_route_manifest.json
+?? context/mw_protocol_v3_userflow_review_20260905_conference_context.md
+?? context/mw_protocol_v3_userflow_review_20260905_general_single_object_route_manifest.json
+?? frontend/src/features/medical-writing/protocol-workbench/ChapterDraftPreview.css
+?? frontend/src/features/medical-writing/protocol-workbench/ChapterDraftPreview.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.css
+?? frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.css
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.css
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenProposalCard.css
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenProposalCard.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ResearchInformationCard.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/StudyContextWorkspace.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx
+?? frontend/src/features/medical-writing/protocol-workbench/assets/
+?? frontend/src/features/medical-writing/protocol-workbench/kangzheProtocol.css
+?? frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs
+?? frontend/src/features/medical-writing/protocol-workbench/sourceRoleLabels.mjs
+?? frontend/tests/ProtocolSourceSelectionRecovery.test.jsx
+?? frontend/tests/fixtures/
+?? frontend/tests/protocol-chapter-preview.html
+?? frontend/tests/protocol-chapter-preview.jsx
+?? frontend/tests/protocol-intake-functional.html
+?? frontend/tests/protocol-intake-functional.jsx
+?? handoff/
+?? metrics/mw_protocol_v3_1r1_constraints_gate_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r1_constraints_repair_20260905_metrics.md
+?? metrics/mw_protocol_v3_1r1_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r1_sqlite_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r2_functional_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r2_mount_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r3_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r3_integration_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r4_contract_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r4_durable_dispatch_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r4_durable_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r4_result_storage_20260905_metrics.md
+?? metrics/mw_protocol_v3_1r4_storage_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_1r4_storage_impl_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r6_glm_transport_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_1r6_transport_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_2r1_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_2r1_typed_facade_20260905_execution_metrics.md
+?? metrics/mw_protocol_v3_3r1_fresh_20260906_conference_metrics.md
+?? metrics/mw_protocol_v3_3r1_registry_20260906_execution_metrics.md
+?? metrics/mw_protocol_v3_3r2_contracts_20260906_execution_metrics.md
+?? metrics/mw_protocol_v3_3r2_contracts_20260906_metrics.md
+?? metrics/mw_protocol_v3_3r2_fresh_20260906_conference_metrics.md
+?? metrics/mw_protocol_v3_3r3_batch1_20260906_metrics.md
+?? metrics/mw_protocol_v3_3r3_batch2_20260908_metrics.md
+?? metrics/mw_protocol_v3_3r3_core_fresh_20260906_conference_metrics.md
+?? metrics/mw_protocol_v3_3r3_registry_core_20260906_execution_metrics.md
+?? metrics/mw_protocol_v3_3r4a_fact_inventory_20260912_execution_metrics.md
+?? metrics/mw_protocol_v3_3r4a_review_20260912_conference_metrics.md
+?? metrics/mw_protocol_v3_3r4b_condition_matrix_20260913_execution_metrics.md
+?? metrics/mw_protocol_v3_chapter_chain_review_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_confirmation_dependencies_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_engineering_crossreview_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_full_review_20260912_execution_metrics.md
+?? metrics/mw_protocol_v3_hr_fresh_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_kangzhe_skin_20260913_execution_metrics.md
+?? metrics/mw_protocol_v3_manuscript_inputs_review_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_ordered_draft_20260913_execution_metrics.md
+?? metrics/mw_protocol_v3_p1r_legacy_disposition_20260905_conference_metrics.md
+?? metrics/mw_protocol_v3_regimen_adoption_review_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_regimen_card_ui_20260913_execution_metrics.md
+?? metrics/mw_protocol_v3_replan_review_20260912_conference_metrics.md
+?? metrics/mw_protocol_v3_research_context_review_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_review_phaseR_20260905_metrics.md
+?? metrics/mw_protocol_v3_stage_close_20260913_conference_metrics.md
+?? metrics/mw_protocol_v3_userflow_review_20260905_conference_metrics.md
+?? plans/codex_execution_mw_protocol_v3_1r1_constraints_gate_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r1_sqlite_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r2_mount_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r3_integration_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r4_durable_dispatch_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r4_storage_impl_20260905.md
+?? plans/codex_execution_mw_protocol_v3_1r6_glm_transport_20260905.md
+?? plans/codex_execution_mw_protocol_v3_2r1_typed_facade_20260905.md
+?? plans/codex_execution_mw_protocol_v3_3r1_registry_20260906.md
+?? plans/codex_execution_mw_protocol_v3_3r2_contracts_20260906.md
+?? plans/codex_execution_mw_protocol_v3_3r3_registry_core_20260906.md
+?? plans/codex_execution_mw_protocol_v3_3r4a_fact_inventory_20260912.md
+?? plans/codex_execution_mw_protocol_v3_3r4b_condition_matrix_20260913.md
+?? plans/codex_execution_mw_protocol_v3_full_review_20260912.md
+?? plans/codex_execution_mw_protocol_v3_kangzhe_skin_20260913.md
+?? plans/codex_execution_mw_protocol_v3_ordered_draft_20260913.md
+?? plans/codex_execution_mw_protocol_v3_regimen_card_ui_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_1r1_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r2_functional_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r3_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r4_contract_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r4_durable_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r4_storage_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_1r6_transport_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_2r1_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_3r1_fresh_20260906.md
+?? plans/codex_main_venue_mw_protocol_v3_3r2_fresh_20260906.md
+?? plans/codex_main_venue_mw_protocol_v3_3r3_core_fresh_20260906.md
+?? plans/codex_main_venue_mw_protocol_v3_3r4a_review_20260912.md
+?? plans/codex_main_venue_mw_protocol_v3_chapter_chain_review_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_confirmation_dependencies_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_engineering_crossreview_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_hr_fresh_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_manuscript_inputs_review_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_p1r_legacy_disposition_20260905.md
+?? plans/codex_main_venue_mw_protocol_v3_regimen_adoption_review_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_replan_review_20260912.md
+?? plans/codex_main_venue_mw_protocol_v3_research_context_review_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_stage_close_20260913.md
+?? plans/codex_main_venue_mw_protocol_v3_userflow_review_20260905.md
+?? plans/mw_protocol_v3_design_v1.4_20260912.md
+?? plans/mw_protocol_v3_execution_tracking_20260905.md
+?? plans/mw_protocol_v3_goal_prompt_20260912.txt
+?? plans/mw_protocol_v3_goal_prompt_20260913.txt
+?? plans/mw_protocol_v3_implementation_plan_v3_20260912.md
+?? plans/mw_protocol_v3_next_stage_20260913.md
+?? plans/mw_protocol_v3_review_amendment_20260905.md
+?? pocs/protocol_v3/orchestrator/tests/test_typed_facade.py
+?? pocs/protocol_v3/orchestrator/typed_facade.py
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch1_fresh_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch2_resume_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch3_fresh_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch4_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch5_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch6_fresh_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch8_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r3_batch8_fresh_20260911.md
+?? prompts/codebuddy_mw_protocol_v3_3r4_depgraph_20260912.md
+?? prompts/codex_mw_protocol_v3_review_phaseR_20260905.md
+?? prompts/conference/mw_protocol_v3_1r1_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r2_functional_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r3_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r4_contract_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r4_durable_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r4_storage_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_1r6_transport_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_2r1_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_3r1_fresh_20260906/
+?? prompts/conference/mw_protocol_v3_3r2_fresh_20260906/
+?? prompts/conference/mw_protocol_v3_3r3_core_fresh_20260906/
+?? prompts/conference/mw_protocol_v3_3r4a_review_20260912/
+?? prompts/conference/mw_protocol_v3_chapter_chain_review_20260913/
+?? prompts/conference/mw_protocol_v3_confirmation_dependencies_20260913/
+?? prompts/conference/mw_protocol_v3_engineering_crossreview_20260905/
+?? prompts/conference/mw_protocol_v3_hr_fresh_20260905/
+?? prompts/conference/mw_protocol_v3_manuscript_inputs_review_20260913/
+?? prompts/conference/mw_protocol_v3_p1r_legacy_disposition_20260905/
+?? prompts/conference/mw_protocol_v3_regimen_adoption_review_20260913/
+?? prompts/conference/mw_protocol_v3_replan_review_20260912/
+?? prompts/conference/mw_protocol_v3_research_context_review_20260913/
+?? prompts/conference/mw_protocol_v3_stage_close_20260913/
+?? prompts/conference/mw_protocol_v3_userflow_review_20260905/
+?? prompts/execution/mw_protocol_v3_1r1_constraints_gate_20260905/
+?? prompts/execution/mw_protocol_v3_1r1_sqlite_20260905/
+?? prompts/execution/mw_protocol_v3_1r2_mount_20260905/
+?? prompts/execution/mw_protocol_v3_1r3_integration_20260905/
+?? prompts/execution/mw_protocol_v3_1r4_durable_dispatch_20260905/
+?? prompts/execution/mw_protocol_v3_1r4_storage_impl_20260905/
+?? prompts/execution/mw_protocol_v3_1r6_glm_transport_20260905/
+?? prompts/execution/mw_protocol_v3_2r1_typed_facade_20260905/
+?? prompts/execution/mw_protocol_v3_3r1_registry_20260906/
+?? prompts/execution/mw_protocol_v3_3r2_contracts_20260906/
+?? prompts/execution/mw_protocol_v3_3r3_registry_core_20260906/
+?? prompts/execution/mw_protocol_v3_3r4a_fact_inventory_20260912/
+?? prompts/execution/mw_protocol_v3_3r4b_condition_matrix_20260913/
+?? prompts/execution/mw_protocol_v3_full_review_20260912/
+?? prompts/execution/mw_protocol_v3_kangzhe_skin_20260913/
+?? prompts/execution/mw_protocol_v3_ordered_draft_20260913/
+?? prompts/execution/mw_protocol_v3_regimen_card_ui_20260913/
+?? prompts/grok_mw_protocol_v3_3r3_batch3_fresh_20260911.md
+?? prompts/omp_mw_protocol_v3_3r3_batch3_20260911.md
+?? prompts/omp_mw_protocol_v3_3r3_batch6_20260911.md
+?? prompts/omp_mw_protocol_v3_3r3_batch7_20260911.md
+?? prompts/pi_mw_protocol_v3_1r4_result_storage_20260905.md
+?? prompts/zcode_mw_protocol_v3_1r1_constraints_repair_20260905.md
+?? prompts/zcode_mw_protocol_v3_3r2_contracts_20260906.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch1_20260906.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch1_repair_20260908.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch2_20260908.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch2_fresh_20260911.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch4_fresh_20260911.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch5_fresh_20260911.md
+?? prompts/zcode_mw_protocol_v3_3r3_batch7_fresh_20260911.md
+?? prompts/zcode_mw_protocol_v3_3r4_fresh_20260912.md
+?? reviews/codex_conference_mw_protocol_v3_1r1_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r2_functional_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r3_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r4_contract_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r4_durable_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r4_storage_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_1r6_transport_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_2r1_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_3r1_fresh_20260906_review.md
+?? reviews/codex_conference_mw_protocol_v3_3r2_fresh_20260906_review.md
+?? reviews/codex_conference_mw_protocol_v3_3r3_core_fresh_20260906_review.md
+?? reviews/codex_conference_mw_protocol_v3_3r4a_review_20260912_review.md
+?? reviews/codex_conference_mw_protocol_v3_chapter_chain_review_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_confirmation_dependencies_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_engineering_crossreview_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_hr_fresh_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_manuscript_inputs_review_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_p1r_legacy_disposition_20260905_review.md
+?? reviews/codex_conference_mw_protocol_v3_regimen_adoption_review_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_replan_review_20260912_review.md
+?? reviews/codex_conference_mw_protocol_v3_research_context_review_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_stage_close_20260913_review.md
+?? reviews/codex_conference_mw_protocol_v3_userflow_review_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r1_constraints_gate_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r1_sqlite_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r2_mount_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r3_integration_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r4_durable_dispatch_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r4_storage_impl_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_1r6_glm_transport_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_2r1_typed_facade_20260905_review.md
+?? reviews/codex_execution_mw_protocol_v3_3r1_registry_20260906_review.md
+?? reviews/codex_execution_mw_protocol_v3_3r2_contracts_20260906_review.md
+?? reviews/codex_execution_mw_protocol_v3_3r3_registry_core_20260906_review.md
+?? reviews/codex_execution_mw_protocol_v3_3r4a_fact_inventory_20260912_review.md
+?? reviews/codex_execution_mw_protocol_v3_3r4b_condition_matrix_20260913_review.md
+?? reviews/codex_execution_mw_protocol_v3_full_review_20260912_review.md
+?? reviews/codex_execution_mw_protocol_v3_kangzhe_skin_20260913_review.md
+?? reviews/codex_execution_mw_protocol_v3_ordered_draft_20260913_review.md
+?? reviews/codex_execution_mw_protocol_v3_regimen_card_ui_20260913_review.md
+?? reviews/codex_mw_protocol_v3_1r1_constraints_repair_20260905_review.md
+?? reviews/codex_mw_protocol_v3_1r1_storage_gate_20260905.md
+?? reviews/codex_mw_protocol_v3_1r4_result_storage_20260905_review.md
+?? reviews/codex_mw_protocol_v3_3r2_contracts_20260906_review.md
+?? reviews/codex_mw_protocol_v3_3r3_batch1_20260906_review.md
+?? reviews/codex_mw_protocol_v3_3r3_batch2_20260908_review.md
+?? reviews/codex_mw_protocol_v3_3r4_acceptance_20260913.md
+?? reviews/codex_mw_protocol_v3_3r4b_acceptance_20260913.md
+?? reviews/codex_mw_protocol_v3_3r4c_integration_readiness_20260913.md
+?? reviews/codex_mw_protocol_v3_3r5a_3r7a_acceptance_20260913.md
+?? reviews/codex_mw_protocol_v3_3r7a_scoped_review_20260913.md
+?? reviews/codex_mw_protocol_v3_review_phaseR_20260905_review.md
+?? reviews/codex_mw_protocol_v3_v1_1_application_scoped_review_20260913.md
+?? reviews/codex_mw_protocol_v3_v1_1_seed_semantic_adjudication_20260913.md
+?? reviews/mw_protocol_v3_2r1_acceptance_20260906.md
+?? reviews/mw_protocol_v3_2r1_codex_findings_20260905.md
+?? reviews/mw_protocol_v3_3r1_acceptance_20260906.md
+?? reviews/mw_protocol_v3_3r1_codex_source_checks_20260906.md
+?? reviews/mw_protocol_v3_3r2_acceptance_20260906.md
+?? reviews/mw_protocol_v3_3r3_additional_m11_anchors_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch1_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch2_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch3_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch4_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch5_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch6_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch7_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch8_content_spec_20260906.md
+?? reviews/mw_protocol_v3_3r3_batch_coverage_reconciliation_20260906.md
+?? reviews/mw_protocol_v3_3r3_core_acceptance_20260906.md
+?? reviews/mw_protocol_v3_3r3_diagram_reference_check_20260906.md
+?? reviews/mw_protocol_v3_3r3_source_preparation_20260906.md
+?? reviews/mw_protocol_v3_3r4_dependency_preparation_20260906.md
+?? reviews/mw_protocol_v3_3r5a_source_preflight_20260913.md
+?? reviews/mw_protocol_v3_component_map_20260912.md
+?? reviews/mw_protocol_v3_engineering_review_20260905.md
+?? reviews/mw_protocol_v3_frontend_readonly_findings_20260906.md
+?? reviews/mw_protocol_v3_full_review_20260912.md
+?? reviews/mw_protocol_v3_gcp2026_source_check_20260908.md
+?? reviews/mw_protocol_v3_legacy_collection_disposition_20260905.md
+?? reviews/mw_protocol_v3_registration_field_check_20260908.md
+?? reviews/mw_protocol_v3_takeover_review_20260911.md
+?? reviews/mw_protocol_v3_tp_ma07_v2_readonly_preflight_20260905.md
+?? runs/MW_PROTOCOL_V3_1R1_NO_LOSS_DECISION_WAIT_20260905_1540.md
+?? runs/MW_PROTOCOL_V3_3R3_NO_LOSS_PAUSE_20260908_0934.md
+?? runs/MW_PROTOCOL_V3_3R4_NO_LOSS_PAUSE_20260912_2322.md
+?? runs/MW_PROTOCOL_V3_TAKEOVER_RESUME_20260911_2114.md
+?? runs/conference/mw_protocol_v3_1r1_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r2_functional_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r3_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r4_contract_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r4_durable_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r4_storage_fresh_20260905/
+?? runs/conference/mw_protocol_v3_1r6_transport_fresh_20260905/
+?? runs/conference/mw_protocol_v3_2r1_fresh_20260905/
+?? runs/conference/mw_protocol_v3_3r1_fresh_20260906/
+?? runs/conference/mw_protocol_v3_3r2_fresh_20260906/
+?? runs/conference/mw_protocol_v3_3r3_core_fresh_20260906/
+?? runs/conference/mw_protocol_v3_3r4a_review_20260912/
+?? runs/conference/mw_protocol_v3_chapter_chain_review_20260913/
+?? runs/conference/mw_protocol_v3_confirmation_dependencies_20260913/
+?? runs/conference/mw_protocol_v3_engineering_crossreview_20260905/
+?? runs/conference/mw_protocol_v3_hr_fresh_20260905/
+?? runs/conference/mw_protocol_v3_manuscript_inputs_review_20260913/
+?? runs/conference/mw_protocol_v3_p1r_legacy_disposition_20260905/
+?? runs/conference/mw_protocol_v3_regimen_adoption_review_20260913/
+?? runs/conference/mw_protocol_v3_replan_review_20260912/
+?? runs/conference/mw_protocol_v3_research_context_review_20260913/
+?? runs/conference/mw_protocol_v3_stage_close_20260913/
+?? runs/conference/mw_protocol_v3_userflow_review_20260905/
+?? runs/execution/mw_protocol_v3_1r1_constraints_gate_20260905/
+?? runs/execution/mw_protocol_v3_1r1_sqlite_20260905/
+?? runs/execution/mw_protocol_v3_1r2_mount_20260905/
+?? runs/execution/mw_protocol_v3_1r3_integration_20260905/
+?? runs/execution/mw_protocol_v3_1r4_durable_dispatch_20260905/
+?? runs/execution/mw_protocol_v3_1r4_storage_impl_20260905/
+?? runs/execution/mw_protocol_v3_1r6_glm_transport_20260905/
+?? runs/execution/mw_protocol_v3_2r1_typed_facade_20260905/
+?? runs/execution/mw_protocol_v3_3r1_registry_20260906/
+?? runs/execution/mw_protocol_v3_3r2_contracts_20260906/
+?? runs/execution/mw_protocol_v3_3r3_registry_core_20260906/
+?? runs/execution/mw_protocol_v3_3r4a_fact_inventory_20260912/
+?? runs/execution/mw_protocol_v3_3r4b_condition_matrix_20260913/
+?? runs/execution/mw_protocol_v3_3r4c_fact_impact_20260913/
+?? runs/execution/mw_protocol_v3_3r4d_template_adoption_20260913/
+?? runs/execution/mw_protocol_v3_3r5a_r03_20260913/
+?? runs/execution/mw_protocol_v3_full_review_20260912/
+?? runs/execution/mw_protocol_v3_kangzhe_skin_20260913/
+?? runs/execution/mw_protocol_v3_ordered_draft_20260913/
+?? runs/execution/mw_protocol_v3_regimen_card_ui_20260913/
+?? runs/execution/mw_protocol_v3_v1_1_source_ui_20260913/
+?? runs/mw_protocol_v3_1r1_20260905/
+?? runs/mw_protocol_v3_1r1_codex_20260905/
+?? runs/mw_protocol_v3_1r1_fresh_20260905/
+?? runs/mw_protocol_v3_1r2_20260905/
+?? runs/mw_protocol_v3_1r3_20260905/
+?? runs/mw_protocol_v3_1r4_contract_fresh_20260905/
+?? runs/mw_protocol_v3_1r4_durable_dispatch_20260905/
+?? runs/mw_protocol_v3_1r4_storage_fresh_20260905/
+?? runs/mw_protocol_v3_1r6_glm_transport_20260905/
+?? runs/mw_protocol_v3_1r_integration_20260905/
+?? runs/mw_protocol_v3_2r1_fresh_20260905/
+?? runs/mw_protocol_v3_2r1_typed_facade_20260905/
+?? runs/mw_protocol_v3_3r1_registry_20260906/
+?? runs/mw_protocol_v3_3r2_contracts_20260906/
+?? runs/mw_protocol_v3_3r3_batch1_20260906/
+?? runs/mw_protocol_v3_3r3_batch1_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch1_repair_20260908/
+?? runs/mw_protocol_v3_3r3_batch2_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch2_resume_20260911/
+?? runs/mw_protocol_v3_3r3_batch3_20260911/
+?? runs/mw_protocol_v3_3r3_batch3_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch4_20260911/
+?? runs/mw_protocol_v3_3r3_batch4_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch5_20260911/
+?? runs/mw_protocol_v3_3r3_batch5_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch6_20260911/
+?? runs/mw_protocol_v3_3r3_batch6_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch7_20260911/
+?? runs/mw_protocol_v3_3r3_batch7_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_batch8_20260911/
+?? runs/mw_protocol_v3_3r3_batch8_fresh_20260911/
+?? runs/mw_protocol_v3_3r3_registry_core_20260906/
+?? runs/mw_protocol_v3_3r4_20260912/
+?? runs/mw_protocol_v3_3r4_fresh_20260912/
+?? runs/mw_protocol_v3_3r4_integration_review_20260913/
+?? runs/mw_protocol_v3_3r4a_20260912/
+?? runs/mw_protocol_v3_3r4b_20260912/
+?? runs/mw_protocol_v3_3r4d_preflight_20260913/
+?? runs/mw_protocol_v3_3r5a_3r7a_fresh_review_20260913/
+?? runs/mw_protocol_v3_3r5a_source_audit_20260913/
+?? runs/mw_protocol_v3_3r7a_20260913/
+?? runs/mw_protocol_v3_frontend_readonly_review_20260906/
+?? runs/mw_protocol_v3_full_review_20260912/
+?? runs/mw_protocol_v3_no_loss_pause_20260908/
+?? runs/mw_protocol_v3_p1r_legacy_disposition_20260905/
+?? runs/mw_protocol_v3_phaseR_20260905/
+?? runs/mw_protocol_v3_phaseR_r1_20260905.md
+?? runs/mw_protocol_v3_phaseR_r2_semantic_disposition_20260905.md
+?? runs/mw_protocol_v3_regulatory_source_check_20260908/
+?? runs/mw_protocol_v3_review_continuation_20260905_1435.md
+?? runs/mw_protocol_v3_stage_pause_20260913/
+?? runs/mw_protocol_v3_userflow_review_20260905/
+?? runs/mw_protocol_v3_v1_1_20260913/
+?? runs/mw_protocol_v3_v1_1_application_review_20260913/
+?? runs/mw_protocol_v3_v1_1_model_integration_review_20260913/
+?? runs/mw_protocol_v3_v1_1_seed_semantic_review_20260913/
+?? runs/mw_protocol_v3_v1_1_sources_review_20260913/
+?? runs/mw_protocol_v3_v1_visual_draft_20260913/
+?? runs/zcode_mw_protocol_v3_3r3_batch1_20260906.md
+?? runs/zcode_mw_protocol_v3_3r3_batch1_20260906_stdout.txt
+?? scripts/qc/protocol_v3/authority_locator_amendment.py
+?? scripts/qc/protocol_v3/export_fact_resolution_registration.py
+?? scripts/qc/protocol_v3/extract_r03_criteria.py
+?? scripts/qc/protocol_v3/extract_word_source_objects.py
+?? scripts/qc/protocol_v3/reconcile_source_drift.py
+?? services/api/app/protocol_workflow/agent1/
+?? services/api/app/protocol_workflow/agent2/
+?? services/api/app/protocol_workflow/agent3/
+?? services/api/app/protocol_workflow/api/chapter_drafts.py
+?? services/api/app/protocol_workflow/api/composition.py
+?? services/api/app/protocol_workflow/api/design.py
+?? services/api/app/protocol_workflow/api/manuscript_drafts.py
+?? services/api/app/protocol_workflow/api/manuscript_sources.py
+?? services/api/app/protocol_workflow/api/research_intake.py
+?? services/api/app/protocol_workflow/api/sources.py
+?? services/api/app/protocol_workflow/application/adoption.py
+?? services/api/app/protocol_workflow/application/manuscript_documents.py
+?? services/api/app/protocol_workflow/application/reconstruction.py
+?? services/api/app/protocol_workflow/application/research_context.py
+?? services/api/app/protocol_workflow/canonical/decision_inputs.py
+?? services/api/app/protocol_workflow/graph/
+?? services/api/app/protocol_workflow/qc/
+?? services/api/app/protocol_workflow/registries/applicability.py
+?? services/api/app/protocol_workflow/registries/dependency_graph.py
+?? services/api/app/protocol_workflow/registries/fact_bindings.py
+?? services/api/app/protocol_workflow/registries/ordered_draft.py
+?? services/api/app/protocol_workflow/registries/template_runtime.py
+?? services/api/app/protocol_workflow/runtime/adapters/zhipu_api.py
+?? services/api/app/protocol_workflow/runtime/artifact_messages.py
+?? services/api/app/protocol_workflow/runtime/model_response.py
+?? services/api/app/protocol_workflow/runtime/omp_credentials.py
+?? services/api/app/protocol_workflow/runtime/product_profiles.py
+?? services/api/app/protocol_workflow/runtime/proposal_correction.py
+?? services/api/app/protocol_workflow/runtime/restored_probe.py
+?? services/api/app/protocol_workflow/storage/sqlite.py
+?? services/api/app/protocol_workflow/terminology/
+?? tests/fixtures/protocol_v3/mutable_source_baseline_20260809.json
+?? tests/protocol_v3/integration/
+?? tests/protocol_v3/test_agent1_docx_parse.py
+?? tests/protocol_v3/test_artifact_message_resolution.py
+?? tests/protocol_v3/test_authority_locator_amendment.py
+?? tests/protocol_v3/test_chapter_applicability.py
+?? tests/protocol_v3/test_chapter_draft_request.py
+?? tests/protocol_v3/test_chapter_draft_workflow.py
+?? tests/protocol_v3/test_chapter_fact_binding.py
+?? tests/protocol_v3/test_chapter_product_factory.py
+?? tests/protocol_v3/test_chapter_source_material.py
+?? tests/protocol_v3/test_chapter_source_preparation.py
+?? tests/protocol_v3/test_clinical_design_worker.py
+?? tests/protocol_v3/test_commit_acknowledgement_loss.py
+?? tests/protocol_v3/test_compact_dependency_contract.py
+?? tests/protocol_v3/test_current_study_inventory.py
+?? tests/protocol_v3/test_current_template_runtime.py
+?? tests/protocol_v3/test_decision_input_binding.py
+?? tests/protocol_v3/test_dependency_graph.py
+?? tests/protocol_v3/test_design_candidate_coverage.py
+?? tests/protocol_v3/test_draft_marker_context.py
+?? tests/protocol_v3/test_durable_reservation_dispatch.py
+?? tests/protocol_v3/test_fact_labeled_impact.py
+?? tests/protocol_v3/test_graph_completion_single_event.py
+?? tests/protocol_v3/test_graph_model_contract.py
+?? tests/protocol_v3/test_graph_receipt_atomicity.py
+?? tests/protocol_v3/test_graph_runtime.py
+?? tests/protocol_v3/test_graph_runtime_recovery.py
+?? tests/protocol_v3/test_manuscript_chapter_plan.py
+?? tests/protocol_v3/test_manuscript_draft_request.py
+?? tests/protocol_v3/test_model_response_persistence.py
+?? tests/protocol_v3/test_omp_credential_binding.py
+?? tests/protocol_v3/test_ordered_chapter_draft.py
+?? tests/protocol_v3/test_persisted_chapter_preparation.py
+?? tests/protocol_v3/test_pinned_chapter_sources.py
+?? tests/protocol_v3/test_product_profiles.py
+?? tests/protocol_v3/test_protocol_v3_1r2_mount.py
+?? tests/protocol_v3/test_r03_criteria_registry.py
+?? tests/protocol_v3/test_regimen_adoption_command.py
+?? tests/protocol_v3/test_regimen_confirmed_study_input.py
+?? tests/protocol_v3/test_regimen_coordinator_integration.py
+?? tests/protocol_v3/test_regimen_input_context.py
+?? tests/protocol_v3/test_regimen_option_bundle.py
+?? tests/protocol_v3/test_regimen_role_projection.py
+?? tests/protocol_v3/test_regimen_workflow_integration.py
+?? tests/protocol_v3/test_repository_backends.py
+?? tests/protocol_v3/test_research_context_creation.py
+?? tests/protocol_v3/test_research_intent_adoption.py
+?? tests/protocol_v3/test_research_seed_normalization.py
+?? tests/protocol_v3/test_reservation_result_projection.py
+?? tests/protocol_v3/test_restored_product_probe.py
+?? tests/protocol_v3/test_result_storage_consolidation.py
+?? tests/protocol_v3/test_seed_coordinator_integration.py
+?? tests/protocol_v3/test_seed_execution_contract.py
+?? tests/protocol_v3/test_seed_product_factory.py
+?? tests/protocol_v3/test_seed_response_validation.py
+?? tests/protocol_v3/test_seed_source_selection.py
+?? tests/protocol_v3/test_seed_start_race.py
+?? tests/protocol_v3/test_seed_workflow_integration.py
+?? tests/protocol_v3/test_source_drift_reconciliation.py
+?? tests/protocol_v3/test_source_identity_product.py
+?? tests/protocol_v3/test_sqlite_product_storage.py
+?? tests/protocol_v3/test_sqlite_reservation_lifecycle.py
+?? tests/protocol_v3/test_study_event_reconstruction.py
+?? tests/protocol_v3/test_superseded_result_migration.py
+?? tests/protocol_v3/test_terminology_library.py
+?? tests/protocol_v3/test_tp_ma_07_v2_registry.py
+?? tests/protocol_v3/test_unknown_operation_response.py
+?? tests/protocol_v3/test_word_source_objects.py
+?? tests/protocol_v3/test_zhipu_full_artifact_input.py
+?? tests/protocol_v3/test_zhipu_product_transport.py
+?? tests/test_medical_writing_translation_readiness_projection.py

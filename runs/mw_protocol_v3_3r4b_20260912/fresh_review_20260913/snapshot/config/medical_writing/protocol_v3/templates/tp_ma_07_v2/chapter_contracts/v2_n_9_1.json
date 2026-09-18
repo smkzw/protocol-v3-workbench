@@ -1,0 +1,247 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-9-1:v2",
+  "semantic_node_id": "v2_n_9_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-9-1:efficacy-assessment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-9-1:v2",
+    "chapter_contract_id": "contract:v2-n-9-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "evaluation.framework_scope",
+        "obligation": "required",
+        "rationale": "继承声明：父节点 v2_n_9（body[547..548]）无独立内容叶，其章首评估框架义务由本叶承载（为 3R.3 batch5 声明式扩展，非映射既定分配；不新增子节点）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_objectives",
+        "obligation": "required",
+        "rationale": "疗效评估必须回链 batch2 已确认的主要目的，不得另建可编辑存储。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_endpoint",
+        "obligation": "required",
+        "rationale": "主要终点必须直接复用 batch2 已确认的主要终点事实（引用，不复制）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.primary_endpoint_measurement",
+        "obligation": "required",
+        "rationale": "主要终点的测量方法、派生规则与评估工具必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.primary_estimand_link",
+        "obligation": "required",
+        "rationale": "主要终点必须显式回链主要估计目标（目标人群/变量/伴发事件/群体汇总）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.assessment_instrument_or_scale",
+        "obligation": "required",
+        "rationale": "必须给出命名量表/仪器及其版本，不得以“按 SoA”替代。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.evaluator_role_and_training",
+        "obligation": "required",
+        "rationale": "必须给出评估者角色与培训/资质要求。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.assessment_timing_reference",
+        "obligation": "required",
+        "rationale": "评估时点必须绑定实际 SoA（batch1 v2_n_1_3），不得另建冲突时间表。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.secondary_endpoint_definitions",
+        "obligation": "optional",
+        "rationale": "次要终点定义仅在本节正文评估义务下引用。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.secondary_endpoint_measurements",
+        "obligation": "optional",
+        "rationale": "次要终点测量方法仅在项目存在相应终点时要求。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "efficacy.template_example_endpoint_definition",
+        "obligation": "forbidden",
+        "rationale": "模板示例终点定义不得作为项目终点。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "efficacy_endpoint_definition",
+        "obligation": "required",
+        "rationale": "必须声明疗效终点的定义与测量口径。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "endpoint_objective_estimand_traceability",
+        "obligation": "required",
+        "rationale": "必须声明终点向目的与估计目标的可追溯链接。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "untraceable_endpoint",
+        "obligation": "forbidden",
+        "rationale": "不得出现无法回链目的/估计目标的终点表述。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "协议正文禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "efficacy_endpoint_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "endpoint_objective_estimand_traceability"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须分别书写主要/次要终点的测量方法、量表版本与评估者角色。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "终点映射表必须逐行给出目的/终点/估计目标。",
+        "required_object_cells": [
+          "efficacy:cell:objective",
+          "efficacy:cell:endpoint",
+          "efficacy:cell:estimand"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "继承声明：父节点 v2_n_9（body[547..548]）无独立内容叶，其章首评估框架义务由 v2_n_9_1 承载（3R.3 batch5 声明式扩展）。",
+      "疗效评估为项目事实集合（终点/测量/量表/评估者/时点）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅有标题、“按 SoA”句或终点名称列表即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-9-1",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623366"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-1:trace",
+      "rule": "疗效终点必须可回链已确认的研究目的与估计目标；出现无法追溯目的/估计目标的终点即失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-1:measure",
+      "rule": "终点测量方法、命名量表/仪器版本、评估者角色与培训必须项目化书写，不得以“按 SoA”或通用模板句替代。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-1:soa",
+      "rule": "评估时点与窗口必须与已接受 SoA（v2_n_1_3）一致，不得新建与之冲突的时间表。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-1:trace",
+      "question": "疗效终点是否一一对应已确认目的与估计目标？",
+      "linked_fact_paths": [
+        "efficacy.primary_estimand_link",
+        "picos.primary_endpoint"
+      ],
+      "linked_claim_types": [
+        "endpoint_objective_estimand_traceability"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-1:trace"
+      ],
+      "risk_if_unmet": "终点与目的/估计目标脱节会使疗效章整体不可用。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-1:measure",
+      "question": "终点测量方法与量表版本是否项目化且与 SoA 一致？",
+      "linked_fact_paths": [
+        "efficacy.assessment_instrument_or_scale",
+        "efficacy.assessment_timing_reference"
+      ],
+      "linked_claim_types": [
+        "efficacy_endpoint_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-1:measure",
+        "qc:n-9-1:soa"
+      ],
+      "risk_if_unmet": "缺少测量口径会使终点不可重复。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

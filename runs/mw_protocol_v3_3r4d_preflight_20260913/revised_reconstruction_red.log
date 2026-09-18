@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_current_decisions_track_their_bound_inputs_not_the_whole_revision ____
+tests/protocol_v3/integration/test_fact_impact_adoption.py:156: in test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+    assert not outcome.is_quarantined
+E   assert not True
+E    +  where True = <app.protocol_workflow.events.models.ReplayOutcome object at 0x10c82a920>.is_quarantined
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+1 failed in 0.59s

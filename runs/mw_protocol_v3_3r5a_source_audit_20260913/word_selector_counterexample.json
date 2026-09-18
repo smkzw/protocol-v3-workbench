@@ -1,0 +1,26 @@
+{
+  "scope": "pure existing PoC selector counterexample; no Word invocation or product changes",
+  "missing_required_bookmark": "lost",
+  "broken_reference": "REF lost",
+  "returned_bookmark_checks": [
+    {
+      "bookmark_id": "kept",
+      "expected_target": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_target": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "exists": true,
+      "target_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "returned_cross_reference_checks": [
+    {
+      "reference_id": "xref-0001",
+      "field_code": "REF kept",
+      "target_bookmark": "kept",
+      "rendered_text": "1",
+      "resolved": true,
+      "page_number": 1
+    }
+  ],
+  "omits_missing_bookmark": true,
+  "omits_broken_reference": true
+}

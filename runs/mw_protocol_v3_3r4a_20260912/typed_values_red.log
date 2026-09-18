@@ -1,0 +1,146 @@
+FFFFFFFFFFFF...FF                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_skill_input_preserves_json_type_through_reopen[False] __________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+__________ test_skill_input_preserves_json_type_through_reopen[True] ___________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+____________ test_skill_input_preserves_json_type_through_reopen[0] ____________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+___________ test_skill_input_preserves_json_type_through_reopen[0.5] ___________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+_________ test_skill_input_preserves_json_type_through_reopen[value4] __________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+_________ test_skill_input_preserves_json_type_through_reopen[value5] __________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+__________ test_skill_input_preserves_json_type_through_reopen[false] __________
+tests/protocol_v3/test_chapter_fact_binding.py:35: in test_skill_input_preserves_json_type_through_reopen
+    data = json.loads(make_input(value).model_dump_json())
+                      ^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+_ test_typed_fact_survives_output_and_is_present_to_structural_checker[False] __
+tests/protocol_v3/test_chapter_fact_binding.py:47: in test_typed_fact_survives_output_and_is_present_to_structural_checker
+    content = ChapterContentPayload.model_validate(payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E   facts.0.value
+E     Input should be a valid string [type=string_type, input_value=False, input_type=bool]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+___ test_typed_fact_survives_output_and_is_present_to_structural_checker[0] ____
+tests/protocol_v3/test_chapter_fact_binding.py:47: in test_typed_fact_survives_output_and_is_present_to_structural_checker
+    content = ChapterContentPayload.model_validate(payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E   facts.0.value
+E     Input should be a valid string [type=string_type, input_value=0, input_type=int]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+__ test_typed_fact_survives_output_and_is_present_to_structural_checker[0.5] ___
+tests/protocol_v3/test_chapter_fact_binding.py:47: in test_typed_fact_survives_output_and_is_present_to_structural_checker
+    content = ChapterContentPayload.model_validate(payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E   facts.0.value
+E     Input should be a valid string [type=string_type, input_value=0.5, input_type=float]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+_ test_typed_fact_survives_output_and_is_present_to_structural_checker[value3] _
+tests/protocol_v3/test_chapter_fact_binding.py:47: in test_typed_fact_survives_output_and_is_present_to_structural_checker
+    content = ChapterContentPayload.model_validate(payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E   facts.0.value
+E     Input should be a valid string [type=string_type, input_value=[0], input_type=list]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+_ test_typed_fact_survives_output_and_is_present_to_structural_checker[value4] _
+tests/protocol_v3/test_chapter_fact_binding.py:47: in test_typed_fact_survives_output_and_is_present_to_structural_checker
+    content = ChapterContentPayload.model_validate(payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ChapterContentPayload
+E   facts.0.value
+E     Input should be a valid string [type=string_type, input_value={'applicable': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+__________ test_frozen_input_cannot_be_changed_through_nested_values ___________
+tests/protocol_v3/test_chapter_fact_binding.py:61: in test_frozen_input_cannot_be_changed_through_nested_values
+    skill_input = make_input(original)
+                  ^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_chapter_fact_binding.py:29: in make_input
+    word_rules=WordFormattingRules(word_formatting_rules_id="word:typed-facts"),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for WordFormattingRules
+E     Value error, word formatting rules are vacuous [type=value_error, input_value={'word_formatting_rules_id': 'word:typed-facts'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error
+__________ test_frozen_output_fact_cannot_be_changed_after_validation __________
+tests/protocol_v3/test_chapter_fact_binding.py:69: in test_frozen_output_fact_cannot_be_changed_after_validation
+    fact = ContentFact(fact_path="study.value", value={"values": [False, 0]})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ContentFact
+E   value
+E     Input should be a valid string [type=string_type, input_value={'values': [False, 0]}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/string_type
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[False]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[True]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[0]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[0.5]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[value4]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[value5]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_skill_input_preserves_json_type_through_reopen[false]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_typed_fact_survives_output_and_is_present_to_structural_checker[False]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_typed_fact_survives_output_and_is_present_to_structural_checker[0]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_typed_fact_survives_output_and_is_present_to_structural_checker[0.5]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_typed_fact_survives_output_and_is_present_to_structural_checker[value3]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_typed_fact_survives_output_and_is_present_to_structural_checker[value4]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_frozen_input_cannot_be_changed_through_nested_values
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_frozen_output_fact_cannot_be_changed_after_validation
+14 failed, 3 passed in 1.62s

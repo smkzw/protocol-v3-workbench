@@ -1,0 +1,114 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-8:v2",
+  "semantic_node_id": "v2_n_front_8",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-8:figure-index",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-8:v2",
+    "chapter_contract_id": "contract:v2-n-front-8:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "figure_index.has_figures",
+        "obligation": "optional",
+        "rationale": "文档是否实际包含图，由正文题注清单决定。"
+      },
+      {
+        "fact_path": "figure_index.caption_inventory",
+        "obligation": "optional",
+        "rationale": "存在图时必须给出实际图题注清单。"
+      },
+      {
+        "fact_path": "figure_index.stale_figure_refs",
+        "obligation": "forbidden",
+        "rationale": "指向已删除或其他图的编号不得出现；图索引必须与正文实际图身份一致。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "figure_index_record",
+        "obligation": "required",
+        "rationale": "图索引必须给出实际图题注条目，或在无图时显式声明无图适用性。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "figure_index_record"
+        ],
+        "allowed_locator_kinds": [
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "图索引域段落或显式无图适用性声明段；SEQ 域刷新为7R义务。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "图索引条目或显式无图适用性声明"
+    ],
+    "skeleton_risk_rules": [
+      "既无图索引条目也无无图适用性声明即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-8",
+    "required_styles": [
+      "2",
+      "21"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-8:captions",
+      "rule": "图索引必须来自实际图题注/身份，编号与正文一致。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-8:applicability",
+      "rule": "无图时必须显式声明无图适用性，不得指向已删除或其他图的编号。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:front-8:figures-present",
+      "triggering_fact_paths": [
+        "figure_index.has_figures"
+      ],
+      "condition": "正文实际包含图",
+      "rationale": "存在图时必须给出实际图题注清单。",
+      "required_when_active_fact_paths": [
+        "figure_index.caption_inventory"
+      ]
+    }
+  ],
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-8:applicability",
+      "question": "图索引条目或无图适用性声明是否与正文实际图身份一致？",
+      "linked_fact_paths": [],
+      "linked_claim_types": [
+        "figure_index_record"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-8:applicability"
+      ],
+      "risk_if_unmet": "失效图索引会误导审阅。"
+    }
+  ]
+}

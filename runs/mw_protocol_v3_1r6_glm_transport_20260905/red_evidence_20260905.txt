@@ -1,0 +1,42 @@
+
+==================================== ERRORS ====================================
+_________ ERROR collecting tests/protocol_v3/test_product_profiles.py __________
+ImportError while importing test module '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_product_profiles.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_product_profiles.py:15: in <module>
+    from app.protocol_workflow.runtime.product_profiles import (
+E   ModuleNotFoundError: No module named 'app.protocol_workflow.runtime.product_profiles'
+______ ERROR collecting tests/protocol_v3/test_zhipu_product_transport.py ______
+ImportError while importing test module '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_zhipu_product_transport.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_zhipu_product_transport.py:23: in <module>
+    from app.protocol_workflow.runtime.adapters.zhipu_api import (
+E   ModuleNotFoundError: No module named 'app.protocol_workflow.runtime.adapters.zhipu_api'
+=========================== short test summary info ============================
+ERROR tests/protocol_v3/test_product_profiles.py
+ERROR tests/protocol_v3/test_zhipu_product_transport.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 0.46s
+        document = load_role_registry(ROLE_REGISTRY_PATH)
+        by_kind = {role.role_kind: role for role in document.roles}
+    
+>       assert by_kind["llm"].target_profile.provider == "zhipu-coding-plan"
+E       AssertionError: assert 'deepseek' == 'zhipu-coding-plan'
+E         
+E         - zhipu-coding-plan
+E         + deepseek
+
+tests/protocol_v3/test_registry_loading.py:105: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_registry_loading.py::test_role_thinking_and_effort_discipline[llm-True-max]
+FAILED tests/protocol_v3/test_registry_loading.py::test_role_thinking_and_effort_discipline[ocr_translation_support-True-max]
+FAILED tests/protocol_v3/test_registry_loading.py::test_role_registry_records_exact_credential_free_target_profile
+3 failed, 30 passed in 0.36s

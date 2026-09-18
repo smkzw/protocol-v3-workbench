@@ -1,0 +1,16 @@
+{
+  "scope": "synthetic confirmed study, new decision/key and current base revision; existing endpoint only",
+  "initial_state": "confirmed",
+  "response_status": 409,
+  "response": {
+    "detail": {
+      "message": "您查看的推荐已被更新，本次选择尚未应用。",
+      "responsible_area": "方案统筹",
+      "can_retry": true,
+      "next_step": "请查看最新推荐后重新确认。"
+    }
+  },
+  "revision_after": 1,
+  "dose_after": "10 mg 每日一次",
+  "interpretation": "Existing adoption forbids changing confirmed facts. D requires an explicit versioned revision path preserving this old protection and prior events; do not weaken it globally."
+}

@@ -1,0 +1,74 @@
+.FF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_real_exploratory_pk_does_not_require_confirmatory_link[True-missing_required_fact] _
+
+confirmatory = True, expected_error = 'missing_required_fact'
+
+    @pytest.mark.parametrize("confirmatory,expected_error", [
+        (False, None), (True, "missing_required_fact"),
+        (None, "conditional_applicability_unresolved"),
+    ])
+    def test_real_exploratory_pk_does_not_require_confirmatory_link(confirmatory, expected_error):
+        from app.protocol_workflow.registries.applicability import (
+            FactPredicate, RulePredicate, bind_applicable_input, ApplicabilityResolutionError,
+        )
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_6.json").read_text())
+        declarations = tuple(RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=tuple(FactPredicate(fact_path=path, expected=True) for path in rule.triggering_fact_paths),
+        ) for rule in contract.conditional_applicability_rules)
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        facts = {f.fact_path: "synthetic confirmed analysis" for f in contract.substantive_content.fact_requirements
+                 if f.obligation.value == "required"}
+        facts.update({f"statistics.pk_pd_er.{kind}_applicable": kind == "pk" for kind in ("pk", "pd", "er")})
+        facts["statistics.pk_pd_er.pk_confirmatory"] = confirmatory
+        # Inactive PD/E-R do not require a made-up purpose decision.
+        if expected_error:
+>           with pytest.raises((FactBindingError, ApplicabilityResolutionError), match=expected_error):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE any of (<class 'app.protocol_workflow.registries.fact_bindings.FactBindingError'>, <class 'app.protocol_workflow.registries.applicability.ApplicabilityResolutionError'>)
+
+tests/protocol_v3/test_chapter_applicability.py:383: Failed
+_ test_real_exploratory_pk_does_not_require_confirmatory_link[None-conditional_applicability_unresolved] _
+
+confirmatory = None, expected_error = 'conditional_applicability_unresolved'
+
+    @pytest.mark.parametrize("confirmatory,expected_error", [
+        (False, None), (True, "missing_required_fact"),
+        (None, "conditional_applicability_unresolved"),
+    ])
+    def test_real_exploratory_pk_does_not_require_confirmatory_link(confirmatory, expected_error):
+        from app.protocol_workflow.registries.applicability import (
+            FactPredicate, RulePredicate, bind_applicable_input, ApplicabilityResolutionError,
+        )
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_6.json").read_text())
+        declarations = tuple(RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=tuple(FactPredicate(fact_path=path, expected=True) for path in rule.triggering_fact_paths),
+        ) for rule in contract.conditional_applicability_rules)
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+        facts = {f.fact_path: "synthetic confirmed analysis" for f in contract.substantive_content.fact_requirements
+                 if f.obligation.value == "required"}
+        facts.update({f"statistics.pk_pd_er.{kind}_applicable": kind == "pk" for kind in ("pk", "pd", "er")})
+        facts["statistics.pk_pd_er.pk_confirmatory"] = confirmatory
+        # Inactive PD/E-R do not require a made-up purpose decision.
+        if expected_error:
+>           with pytest.raises((FactBindingError, ApplicabilityResolutionError), match=expected_error):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE any of (<class 'app.protocol_workflow.registries.fact_bindings.FactBindingError'>, <class 'app.protocol_workflow.registries.applicability.ApplicabilityResolutionError'>)
+
+tests/protocol_v3/test_chapter_applicability.py:383: Failed
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_real_exploratory_pk_does_not_require_confirmatory_link[True-missing_required_fact]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_real_exploratory_pk_does_not_require_confirmatory_link[None-conditional_applicability_unresolved]
+2 failed, 1 passed, 36 deselected in 0.57s

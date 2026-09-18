@@ -1,0 +1,56 @@
+........................................................................ [ 41%]
+...................................F.................................... [ 83%]
+.............................                                            [100%]
+=================================== FAILURES ===================================
+_ test_inclusion_chapter_has_required_content_without_patient_eligibility_switch _
+
+    def test_inclusion_chapter_has_required_content_without_patient_eligibility_switch():
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / 'chapter_contracts/v2_n_5_1.json').read_text())
+>       result = evaluate_applicable_content(c, ChapterContentPayload(), study=confirmed_study({}),
+                                                                               ^^^^^^^^^^^^^^^^^^^
+                                            rules=real_rule_catalog().rules, subject_id='test:inclusion-content-obligation')
+
+tests/protocol_v3/test_chapter_applicability.py:915: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_chapter_fact_binding.py:98: in confirmed_study
+    return _study_definition(facts=facts, canonical_state="confirmed", **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+overrides = {'canonical_state': 'confirmed', 'facts': {}}
+payload = {'canonical_state': 'confirmed', 'decision_record_ids': (), 'facts': {}, 'normalized_seed_id': 'seed:uc301:normalized', ...}
+
+    def _study_definition(**overrides) -> StudyDefinitionV3:
+        payload = {
+            "study_definition_id": "study:def:uc301",
+            "project_id": "project:uc301",
+            "revision": 1,
+            "normalized_seed_id": "seed:uc301:normalized",
+            "normalized_seed_sha256": SHA_A,
+            "facts": {
+                "picos.population.indication": "中重度活动性溃疡性结肠炎",
+                "picos.intervention.dose": "10 mg 或 20 mg，每日一次",
+            },
+            "decision_record_ids": (),
+            "updated_at": NOW,
+            "canonical_state": "proposed",
+        }
+        payload.update(overrides)
+        if payload["revision"] > 1 and "previous_revision_sha256" not in payload:
+            payload["previous_revision_sha256"] = SHA_B
+>       return StudyDefinitionV3(**payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for StudyDefinitionV3
+E       facts
+E         Dictionary should have at least 1 item after validation, not 0 [type=too_short, input_value={}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/too_short
+
+tests/protocol_v3/test_study_definition_reducer.py:84: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_inclusion_chapter_has_required_content_without_patient_eligibility_switch
+1 failed, 172 passed in 4.38s

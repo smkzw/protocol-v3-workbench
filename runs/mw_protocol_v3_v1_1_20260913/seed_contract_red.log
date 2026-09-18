@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_seed_contract_uses_registered_seed_skill_and_keeps_graph_work_identity __
+
+    def test_seed_contract_uses_registered_seed_skill_and_keeps_graph_work_identity():
+>       from app.protocol_workflow.agent1.seed_contract import seed_execution_contract
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_contract'
+
+tests/protocol_v3/test_seed_execution_contract.py:11: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_execution_contract.py::test_seed_contract_uses_registered_seed_skill_and_keeps_graph_work_identity
+1 failed in 0.41s

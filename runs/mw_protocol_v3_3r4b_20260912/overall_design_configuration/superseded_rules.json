@@ -1,0 +1,14 @@
+[
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_4_1:active",
+    "triggering_fact_paths": [
+      "framing.structured_design"
+    ],
+    "condition": "所有设计特征均以实际项目适用性为条件；模板不提供默认分配比或分层方案。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "design_description"
+    ]
+  }
+]

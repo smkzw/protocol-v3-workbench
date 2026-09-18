@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.366" timestamp="2026-09-05T18:33:14.541997+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_study_event_reconstruction" name="test_genesis_event_preserves_facts_needed_for_independent_reconstruction" time="0.007" /><testcase classname="tests.protocol_v3.test_study_event_reconstruction" name="test_rebuild_from_events_after_fact_change_matches_saved_revision" time="0.005"><failure message="RuntimeError: outcome is successful, not quarantined">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2847/test_rebuild_from_events_after0')
+
+    def test_rebuild_from_events_after_fact_change_matches_saved_revision(tmp_path):
+        from app.protocol_workflow.application.reconstruction import reconstruct_study
+    
+        factory = shared.make_factory(tmp_path / "fold.sqlite")
+        service = shared.make_service(factory)
+        created = service.create_study_definition(shared.create_command(
+            project_id="proj:fold", study_definition_id="sd:fold", idempotency_key="idem:fold:1",
+        ))
+        changed = service.apply_decision(shared.apply_command(
+            project_id="proj:fold", study_definition_id="sd:fold", idempotency_key="idem:fold:2",
+            expected_revision=1, snapshot_sha256=created.revision_sha256,
+            decision_record_id="decision:fold:2", fact_updates=dict(shared.NEW_FACT),
+        ))
+        with factory() as uow:
+            events = uow.event_stream_repository.read_events("proj:fold", study_definition_stream_id("sd:fold"))
+        outcome = reconstruct_study(events)
+&gt;       assert outcome.quarantine is None
+               ^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_study_event_reconstruction.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.protocol_workflow.events.models.ReplayOutcome object at 0x1081d2b90&gt;
+
+    @property
+    def quarantine(self) -&gt; QuarantineReplayResult:
+        if self._quarantine is None:
+&gt;           raise RuntimeError("outcome is successful, not quarantined")
+E           RuntimeError: outcome is successful, not quarantined
+
+services/api/app/protocol_workflow/events/models.py:816: RuntimeError</failure></testcase></testsuite></testsuites>

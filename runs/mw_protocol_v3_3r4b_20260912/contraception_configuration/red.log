@@ -1,0 +1,340 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_contraception_shared_decision_controls_only_specific_obligations[False-v2_n_5_2-population.exclusion.contraception_criterion_ref] _
+
+node = 'v2_n_5_2', detail = 'population.exclusion.contraception_criterion_ref'
+flag = False
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            assert caught.value.fact_paths==(detail,)
+            facts[detail]='Synthetic project-specific criterion reference or justified duration'
+>       assert bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules).resolved_facts==facts
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:1715: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...icos.exclusion_modules.registry_source_version'), consistency_rules=('必须记录实际注册库身份、来源版本和核对日期；不得把无来源的登记条目当作项目排除依据。',)),))
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-5-2:contraception-exclusion-reference
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_contraception_shared_decision_controls_only_specific_obligations[False-v2_n_5_3-population.lifestyle.contraception_duration] _
+
+node = 'v2_n_5_3', detail = 'population.lifestyle.contraception_duration'
+flag = False
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            assert caught.value.fact_paths==(detail,)
+            facts[detail]='Synthetic project-specific criterion reference or justified duration'
+>       assert bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules).resolved_facts==facts
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:1715: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_5_3:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_contraception_shared_decision_controls_only_specific_obligations[True-v2_n_5_2-population.exclusion.contraception_criterion_ref] _
+
+node = 'v2_n_5_2', detail = 'population.exclusion.contraception_criterion_ref'
+flag = True
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1712: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...icos.exclusion_modules.registry_source_version'), consistency_rules=('必须记录实际注册库身份、来源版本和核对日期；不得把无来源的登记条目当作项目排除依据。',)),))
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-5-2:contraception-exclusion-reference
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_contraception_shared_decision_controls_only_specific_obligations[True-v2_n_5_3-population.lifestyle.contraception_duration] _
+
+node = 'v2_n_5_3', detail = 'population.lifestyle.contraception_duration'
+flag = True
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1712: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_5_3:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+_ test_contraception_shared_decision_controls_only_specific_obligations[None-v2_n_5_2-population.exclusion.contraception_criterion_ref] _
+
+node = 'v2_n_5_2', detail = 'population.exclusion.contraception_criterion_ref'
+flag = None
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1708: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...icos.exclusion_modules.registry_source_version'), consistency_rules=('必须记录实际注册库身份、来源版本和核对日期；不得把无来源的登记条目当作项目排除依据。',)),))
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-5-2:contraception-exclusion-reference
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+node = 'v2_n_5_2', detail = 'population.exclusion.contraception_criterion_ref'
+flag = None
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+>           with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:n-5-2:contraception-exclusion-reference'
+
+tests/protocol_v3/test_chapter_applicability.py:1707: AssertionError
+_ test_contraception_shared_decision_controls_only_specific_obligations[None-v2_n_5_3-population.lifestyle.contraception_duration] _
+
+node = 'v2_n_5_3', detail = 'population.lifestyle.contraception_duration'
+flag = None
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1708: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...son': '项目判断'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_5_3:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+node = 'v2_n_5_3', detail = 'population.lifestyle.contraception_duration'
+flag = None
+
+    @pytest.mark.parametrize('node,detail',[('v2_n_5_2','population.exclusion.contraception_criterion_ref'),('v2_n_5_3','population.lifestyle.contraception_duration')])
+    @pytest.mark.parametrize('flag',[False,True,None])
+    def test_contraception_shared_decision_controls_only_specific_obligations(node,detail,flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/f'chapter_contracts/{node}.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts={f.fact_path:'Synthetic project eligibility/lifestyle fact' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path!=detail}
+        facts['picos.risk.pregnancy_contraception']={'applicable':flag,'reason':'项目判断'}
+        rules=real_rule_catalog().rules
+        if flag is None:
+>           with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:v2_n_5_3:active'
+
+tests/protocol_v3/test_chapter_applicability.py:1707: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[False-v2_n_5_2-population.exclusion.contraception_criterion_ref]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[False-v2_n_5_3-population.lifestyle.contraception_duration]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[True-v2_n_5_2-population.exclusion.contraception_criterion_ref]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[True-v2_n_5_3-population.lifestyle.contraception_duration]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[None-v2_n_5_2-population.exclusion.contraception_criterion_ref]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_contraception_shared_decision_controls_only_specific_obligations[None-v2_n_5_3-population.lifestyle.contraception_duration]
+6 failed, 224 deselected in 0.66s

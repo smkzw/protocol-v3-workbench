@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-2-2-2-1:pharmacodynamics-tox-pk",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_2_2_2_1",
+  "chapter_contract_id": "contract:v2-n-2-2-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按药效学研究章节合同分别满足药效学、药代动力学、毒理学、一般药理学四个语义义务与临床药理学背景；每类均需独立段落与独立证据，不得相互替代。",
+    "forbidden_behaviors": [
+      "用一段药效学文字同时充当 PD/PK/毒理/一般药理学",
+      "把无标题段落视为不存在",
+      "编造非临床数据"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与每类非临床证据的定位/上下文。",
+    "无标题来源段落必须保留其 body 定位，不因标题叶计数而丢弃。",
+    "非临床结论不得外推为临床结论。"
+  ],
+  "error_codes": [
+    "skill:v2-n-2-2-2-1:missing-obligation",
+    "skill:v2-n-2-2-2-1:unresolved-fact",
+    "skill:v2-n-2-2-2-1:unsupported-source-role"
+  ]
+}

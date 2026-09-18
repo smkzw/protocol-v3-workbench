@@ -1,0 +1,130 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+  "semantic_node_id": "v2_n_6_4_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-4-1:prohibited-treatment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-4-1:v2",
+    "chapter_contract_id": "contract:v2-n-6-4-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.prohibited_treatments",
+        "obligation": "required",
+        "rationale": "禁止使用的食物/药物/治疗清单必须项目特定并给出依据。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.prohibited_window",
+        "obligation": "required",
+        "rationale": "禁止使用的时间窗必须带参考事件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_prohibited_list",
+        "obligation": "forbidden",
+        "rationale": "模板示例禁用清单不得作为本项目禁用清单。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "prohibited_treatment_rules",
+        "obligation": "required",
+        "rationale": "禁止清单与时间窗必须项目特定，并给出记录与处置要求。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "prohibited_treatment_rules"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "禁用段必须承载项目特定禁用清单、时间窗与记录/处置要求。",
+        "required_object_cells": [
+          "intervention:cell:prohibited_item"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "禁用清单/时间窗/处置要求为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "禁用清单或时间窗缺失即失败；仅示例清单即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-4-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623355"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-1:list",
+      "rule": "禁用清单与时间窗必须项目特定；模板示例清单仅为示例。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-1:record",
+      "rule": "违反禁用规则的记录与处置必须明确，不得仅作禁止声明。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-4-1:window",
+      "question": "禁用清单与时间窗是否项目特定并给出记录/处置要求？",
+      "linked_fact_paths": [
+        "intervention.prohibited_treatments",
+        "intervention.prohibited_window"
+      ],
+      "linked_claim_types": [
+        "prohibited_treatment_rules"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-4-1:list"
+      ],
+      "risk_if_unmet": "禁用规则不具体会使方案偏离与安全事件不可核。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

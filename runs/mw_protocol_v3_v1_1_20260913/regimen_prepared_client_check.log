@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: regimen design uses the stored seed and preserves lookup versus execution
+ok 1 - regimen design uses the stored seed and preserves lookup versus execution
+  ---
+  duration_ms: 1.195792
+  type: 'test'
+  ...
+# Subtest: metadata correction changes descriptors without uploading file bytes
+ok 2 - metadata correction changes descriptors without uploading file bytes
+  ---
+  duration_ms: 0.14025
+  type: 'test'
+  ...
+# Subtest: source upload preserves bytes and lets the browser provide multipart boundary
+ok 3 - source upload preserves bytes and lets the browser provide multipart boundary
+  ---
+  duration_ms: 7.375333
+  type: 'test'
+  ...
+# Subtest: source conflict retains the server's actionable explanation
+ok 4 - source conflict retains the server's actionable explanation
+  ---
+  duration_ms: 0.269334
+  type: 'test'
+  ...
+# Subtest: parse and original download use the selected immutable source
+ok 5 - parse and original download use the selected immutable source
+  ---
+  duration_ms: 0.086167
+  type: 'test'
+  ...
+# Subtest: research intake carries selected identities and reads the same durable job
+ok 6 - research intake carries selected identities and reads the same durable job
+  ---
+  duration_ms: 0.187875
+  type: 'test'
+  ...
+# Subtest: research context lists selected inputs and recovers original writes
+ok 7 - research context lists selected inputs and recovers original writes
+  ---
+  duration_ms: 0.132292
+  type: 'test'
+  ...
+# Subtest: study-bound design transports the same prepared identity for start and recovery
+ok 8 - study-bound design transports the same prepared identity for start and recovery
+  ---
+  duration_ms: 0.095917
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 45.7065

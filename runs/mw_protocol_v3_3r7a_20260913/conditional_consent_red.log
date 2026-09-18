@@ -1,0 +1,70 @@
+..FF............                                                         [100%]
+=================================== FAILURES ===================================
+_ test_draft_markers_match_actual_writing_instruction_in_both_consumers[\u82e5\u53d7\u8bd5\u8005\u672a\u63d0\u4f9b\u4e66\u9762\u77e5\u60c5\u540c\u610f\u4e66\uff0c\u5219\u4e0d\u8fdb\u5165\u7b5b\u9009\u3002-False] _
+
+text = '若受试者未提供书面知情同意书，则不进入筛选。', expected = False
+
+    @pytest.mark.parametrize('text,expected', [
+        ('未提供书面知情同意者不进入筛选。', False),
+        ('未提供书面知情同意的人员不得参加本研究。', False),
+        ('若受试者未提供书面知情同意书，则不进入筛选。', False),
+        ('如试验参与者未提供书面知情同意，则不得入组。', False),
+        ('若受试者未提供书面知情同意书，则不进入筛选；样本量待医学经理确认后写入。', True),
+        ('若受试者未提供书面知情同意书，则待医学经理确认后写入。', True),
+        ('数据将在生物统计人员确认后锁定。', False),
+        ('数据库由生物统计人员确认后锁定。', False),
+        ('样本量待医学经理确认后写入。', True),
+        ('主要终点的具体数值未提供。', True),
+        ('筛选期时长将在本方案正式文本中规定。', True),
+        ('试验参与者待随访期间记录相关信息。', False),
+        ('未提供书面知情同意者不进入筛选；样本量待医学经理确认后写入。', True),
+        ('数据将在生物统计人员确认后锁定；主要终点尚待医学经理明确。', True),
+    ])
+    def test_draft_markers_match_actual_writing_instruction_in_both_consumers(text, expected):
+        findings = MedicalWritingContentQualityDetector()._scan_text(
+            document=SimpleNamespace(project_id='probe', document_id='probe', version='V1'),
+            section=SimpleNamespace(section_id='sec', heading='研究设计'),
+            block={'block_id': 'b'}, text=text, location_kind='paragraph',
+            source_locator='synthetic:b', content_revision=0,
+        )
+>       assert any(f.rule_code == 'unresolved_draft_marker' for f in findings) == expected
+E       assert True == False
+E        +  where True = any(<generator object test_draft_markers_match_actual_writing_instruction_in_both_consumers.<locals>.<genexpr> at 0x10a716740>)
+
+tests/protocol_v3/test_draft_marker_context.py:33: AssertionError
+_ test_draft_markers_match_actual_writing_instruction_in_both_consumers[\u5982\u8bd5\u9a8c\u53c2\u4e0e\u8005\u672a\u63d0\u4f9b\u4e66\u9762\u77e5\u60c5\u540c\u610f\uff0c\u5219\u4e0d\u5f97\u5165\u7ec4\u3002-False] _
+
+text = '如试验参与者未提供书面知情同意，则不得入组。', expected = False
+
+    @pytest.mark.parametrize('text,expected', [
+        ('未提供书面知情同意者不进入筛选。', False),
+        ('未提供书面知情同意的人员不得参加本研究。', False),
+        ('若受试者未提供书面知情同意书，则不进入筛选。', False),
+        ('如试验参与者未提供书面知情同意，则不得入组。', False),
+        ('若受试者未提供书面知情同意书，则不进入筛选；样本量待医学经理确认后写入。', True),
+        ('若受试者未提供书面知情同意书，则待医学经理确认后写入。', True),
+        ('数据将在生物统计人员确认后锁定。', False),
+        ('数据库由生物统计人员确认后锁定。', False),
+        ('样本量待医学经理确认后写入。', True),
+        ('主要终点的具体数值未提供。', True),
+        ('筛选期时长将在本方案正式文本中规定。', True),
+        ('试验参与者待随访期间记录相关信息。', False),
+        ('未提供书面知情同意者不进入筛选；样本量待医学经理确认后写入。', True),
+        ('数据将在生物统计人员确认后锁定；主要终点尚待医学经理明确。', True),
+    ])
+    def test_draft_markers_match_actual_writing_instruction_in_both_consumers(text, expected):
+        findings = MedicalWritingContentQualityDetector()._scan_text(
+            document=SimpleNamespace(project_id='probe', document_id='probe', version='V1'),
+            section=SimpleNamespace(section_id='sec', heading='研究设计'),
+            block={'block_id': 'b'}, text=text, location_kind='paragraph',
+            source_locator='synthetic:b', content_revision=0,
+        )
+>       assert any(f.rule_code == 'unresolved_draft_marker' for f in findings) == expected
+E       assert True == False
+E        +  where True = any(<generator object test_draft_markers_match_actual_writing_instruction_in_both_consumers.<locals>.<genexpr> at 0x10a7176b0>)
+
+tests/protocol_v3/test_draft_marker_context.py:33: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_draft_marker_context.py::test_draft_markers_match_actual_writing_instruction_in_both_consumers[\u82e5\u53d7\u8bd5\u8005\u672a\u63d0\u4f9b\u4e66\u9762\u77e5\u60c5\u540c\u610f\u4e66\uff0c\u5219\u4e0d\u8fdb\u5165\u7b5b\u9009\u3002-False]
+FAILED tests/protocol_v3/test_draft_marker_context.py::test_draft_markers_match_actual_writing_instruction_in_both_consumers[\u5982\u8bd5\u9a8c\u53c2\u4e0e\u8005\u672a\u63d0\u4f9b\u4e66\u9762\u77e5\u60c5\u540c\u610f\uff0c\u5219\u4e0d\u5f97\u5165\u7ec4\u3002-False]
+2 failed, 14 passed in 0.48s

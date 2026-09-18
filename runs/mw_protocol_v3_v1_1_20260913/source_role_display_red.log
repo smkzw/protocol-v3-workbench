@@ -1,0 +1,35 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx (8 tests | 1 failed) 249ms
+   × distinguishes reference suggestions and exposes their exact source quotes 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx > distinguishes reference suggestions and exposes their exact source quotes
+AssertionError: expected <p></p> to be null
+
+- Expected:
+null
+
++ Received:
+<p>
+  仅来自参考方案（company_style_only）
+</p>
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx:122:52
+    120|   await screen.findByText("参考研究药物");
+    121|   expect(screen.getByText("参考资料中的信息")).toBeTruthy();
+    122|   expect(screen.queryByText(/company_style_only/)).toBeNull();
+       |                                                    ^
+    123|   expect(screen.getByText(/仅来自参考方案（公司历史方案或模板（仅供参考））/)).toBeTruthy();
+    124|   expect(screen.getByText("原文药物名称")).toBeTruthy();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:19:10
+   Duration  1.07s (transform 58ms, setup 0ms, import 192ms, tests 249ms, environment 541ms)
+

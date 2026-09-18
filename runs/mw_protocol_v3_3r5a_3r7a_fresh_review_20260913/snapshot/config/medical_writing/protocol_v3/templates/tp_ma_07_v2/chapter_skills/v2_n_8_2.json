@@ -1,0 +1,32 @@
+{
+  "skill_id": "skill:chapter:v2-n-8-2:withdrawal",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_8_2",
+  "chapter_contract_id": "contract:v2-n-8-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch4:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认设计、分析、伦理与随访事实），输出为 ChapterSkillOutput。逐情景处理退出：记录退出原因可被请求但不得强制；妊娠/疾病进展/不依从分别处理；说明停用研究干预后的继续评估范围、数据类型与时间限制、已收集数据保留、随访安排与参与者替换政策（与样本量/分析合同一致）；停用不等于撤回同意，不得在末次给药处静默终止随访；模板示例替换规则仅为示例；试验参与者权益与数据完整性不得被静默牺牲；缺失事实进入待补清单而不是编造。",
+    "forbidden_behaviors": [
+      "编造证据来源或项目事实",
+      "把模板示例值当作项目事实",
+      "输出任何模型/供应商设置",
+      "复制模板或其他项目的示例值作为本项目事实"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：TP-MA-07 v2.0 零基 body-child 索引 512、513–537。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；合成夹具值不是真实项目批准。",
+    "模板示例替换规则仅为示例；退出处理、数据保留与替换政策须来自本项目设计、分析、伦理与随访合同。",
+    "本节点合同为 3R.3 batch4 逐节点合同，不构成临床、监管或 Word 原生验收。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-8-2:withdrawal:missing-obligation",
+    "skill:chapter:v2-n-8-2:withdrawal:unresolved-fact",
+    "skill:chapter:v2-n-8-2:withdrawal:wrong-source"
+  ]
+}

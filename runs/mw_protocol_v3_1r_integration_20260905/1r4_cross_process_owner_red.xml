@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.854" timestamp="2026-09-05T19:51:42.948574+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_durable_reservation_dispatch" name="test_separate_process_caller_preserves_live_reserved_owner" time="0.467"><failure message="Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.ports.repositories.UnknownOutcomeConflictError'&gt;">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2937/test_separate_process_caller_p0')
+
+    def test_separate_process_caller_preserves_live_reserved_owner(tmp_path):
+        db_path = tmp_path / "cross-process.sqlite"
+        factory = _repository_factory(db_path)
+        context = multiprocessing.get_context("spawn")
+        entered, release = context.Event(), context.Event()
+        result = context.Queue()
+        owner = context.Process(
+            target=_separate_process_owner, args=(db_path, entered, release, result),
+        )
+        owner.start()
+        try:
+            assert entered.wait(30)
+            contract = _node_contract()
+            with factory() as repository:
+                shell = repository.find_by_logical_call(
+                    _PROJ, contract.logical_call_id, contract.idempotency_key,
+                )
+                assert shell.status is ReservationStatus.RESERVED
+                transport = _CountingTransport(_FakeTransport())
+&gt;               with pytest.raises(UnknownOutcomeConflictError):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               Failed: DID NOT RAISE &lt;class 'app.protocol_workflow.ports.repositories.UnknownOutcomeConflictError'&gt;
+
+tests/protocol_v3/test_durable_reservation_dispatch.py:385: Failed</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-4-1:exploratory-objectives",
+  "skill_version": "3.4.0",
+  "node_id": "v2_n_3_4_1",
+  "chapter_contract_id": "contract:v2-n-3-4-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:exploratory-flags:3.4.0",
+    "instructions": "按探索性目的章节合同给出探索性目的与开展/不开展处置，并逐项判定 PopPK、暴露-效应、免疫原性与生物标志物的适用性；只有适用性成立的分析才输出承诺声明。 使用明确适用性事实逐类判断群体PK、E-R、免疫原性、生物标志物；不得从分析文字是否非空推断，不将一般PK适用性等同群体PK。",
+    "forbidden_behaviors": [
+      "把示例分析整包当作项目承诺",
+      "对不开展的探索性分析留空",
+      "输出营销性表述"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与条件适用性规则命中情况。",
+    "不适用的探索性分析必须保留显式处置记录。",
+    "探索性结论不得表述为确证性结论。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-4-1:missing-obligation",
+    "skill:v2-n-3-4-1:unresolved-fact",
+    "skill:v2-n-3-4-1:unsupported-source-role"
+  ]
+}

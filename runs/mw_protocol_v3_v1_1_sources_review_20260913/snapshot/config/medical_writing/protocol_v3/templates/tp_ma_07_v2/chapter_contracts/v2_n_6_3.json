@@ -1,0 +1,167 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-3:v2",
+  "semantic_node_id": "v2_n_6_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-3:adherence",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-3:v2",
+    "chapter_contract_id": "contract:v2-n-6-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.adherence_measure",
+        "obligation": "required",
+        "rationale": "依从性测量方法必须项目特定（计数/日志/评估方式）。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.adherence_denominator",
+        "obligation": "required",
+        "rationale": "依从性必须给出分母（计划量/应接受量）定义，不得省略。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.adherence_evidence_source",
+        "obligation": "required",
+        "rationale": "所选测量的支持记录（清点记录/日志/给药记录）必须给出。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.planned_hold_tracking",
+        "obligation": "required",
+        "rationale": "计划性暂停与评估时点必须登记并纳入依从性记录。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_interval",
+        "obligation": "forbidden",
+        "rationale": "模板示例 80–120% 区间不得作为无条件正常范围。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "adherence_strategy",
+        "obligation": "required",
+        "rationale": "依从性测量、分母与支持记录必须一致，并与计划性暂停及评估安排衔接。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "adherence_strategy"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "依从性段必须承载测量方法、分母定义、支持记录与计划性暂停/评估时点。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "依从性测量/分母/记录来源为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "依从性测量方法或分母缺失即失败；仅模板示例区间即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623353"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-3:denominator",
+      "rule": "依从性测量必须给出分母定义与支持记录；分母省略即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-3:interval",
+      "rule": "模板示例 80–120% 区间仅为示例，不是无条件正常范围，也不得替代项目特定判定。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-6-1-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_6_3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-1-2:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-3:denominator",
+      "question": "依从性分母、测量方法与支持记录是否一致给出？",
+      "linked_fact_paths": [
+        "intervention.adherence_denominator",
+        "intervention.adherence_evidence_source"
+      ],
+      "linked_claim_types": [
+        "adherence_strategy"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-3:denominator"
+      ],
+      "risk_if_unmet": "分母缺失会使依从性结论不可核。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

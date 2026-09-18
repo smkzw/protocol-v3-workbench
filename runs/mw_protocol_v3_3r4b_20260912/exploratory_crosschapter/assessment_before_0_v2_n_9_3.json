@@ -1,0 +1,248 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-9-3:v2",
+  "semantic_node_id": "v2_n_9_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-9-3:population-pk-pd",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-9-3:v2",
+    "chapter_contract_id": "contract:v2-n-9-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.population_pk",
+        "obligation": "required",
+        "rationale": "群体药代动力学分析必须作为独立条件分析（复用 batch2 已确认事实）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.exposure_response",
+        "obligation": "required",
+        "rationale": "暴露-效应分析必须独立于 PK 分析（复用 batch2 已确认事实）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pk.pd_analysis_requirements",
+        "obligation": "required",
+        "rationale": "分析方法、模型假设与数据要求必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pk.linked_endpoints",
+        "obligation": "required",
+        "rationale": "必须给出与 PK/PD/E-R 关联的终点/参数，未回链即失败。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pk.sampling_schedule",
+        "obligation": "required",
+        "rationale": "采样时点、单位与参考事件必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.immunogenicity_applicable",
+        "obligation": "required",
+        "rationale": "免疫原性适用性必须由项目事实判定（裸 true/false）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.immunogenicity",
+        "obligation": "optional",
+        "rationale": "免疫原性检测策略必须绑定各自终点、样本、时点与分析要求。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.biomarker",
+        "obligation": "optional",
+        "rationale": "生物标志物分析仅在项目声明时要求。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pk.template_example_sampling",
+        "obligation": "forbidden",
+        "rationale": "模板示例采样安排不得作为项目采样计划。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "population_pk_analysis",
+        "obligation": "required",
+        "rationale": "必须声明群体 PK 分析的独立性与适用范围。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exposure_response_analysis",
+        "obligation": "required",
+        "rationale": "必须声明暴露-效应分析的独立性与目的。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "immunogenicity_strategy",
+        "obligation": "qualified",
+        "rationale": "免疫原性策略仅在适用性成立时声明。",
+        "qualifying_conditions": [
+          "产品免疫原性风险成立且已确认检测策略时"
+        ]
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pk_pd_endpoint_unlinked",
+        "obligation": "forbidden",
+        "rationale": "不得出现未回链适用终点的 PK/PD/E-R 分析声明。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "协议正文禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "population_pk_analysis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exposure_response_analysis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须分别书写群体 PK、PD/E-R 与免疫原性的终点、样本、时点与分析要求。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "PK/PD/E-R 与免疫原性为项目事实集合（终点/样本/时点/分析方法）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅罗列分析名称或“标本+特殊检测”而无终点/时点/分析要求即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-9-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623368",
+      "_Toc2847630",
+      "_Toc3995568",
+      "_Toc535699431"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-3:independent",
+      "rule": "群体 PK、PD/E-R 与免疫原性必须作为各自独立的条件分析，绑定各自终点、样本、时点与分析要求；不得只以“标本+特殊检测”替代免疫原性策略。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-3:linked",
+      "rule": "PK/PD/E-R 必须回链适用终点与采样时点/单位/参考事件，未回链即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-3:immunogenicity",
+      "triggering_fact_paths": [
+        "exploratory.immunogenicity_applicable"
+      ],
+      "condition": "产品免疫原性风险成立且项目已确认检测策略",
+      "rationale": "免疫原性义务仅在适用性成立时生效。",
+      "required_when_active_fact_paths": [
+        "exploratory.immunogenicity"
+      ],
+      "required_when_active_claim_types": [
+        "immunogenicity_strategy"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-3:linked",
+      "question": "PK/PD/E-R 是否各自回链适用终点与采样计划？",
+      "linked_fact_paths": [
+        "pk.linked_endpoints",
+        "pk.sampling_schedule"
+      ],
+      "linked_claim_types": [
+        "population_pk_analysis",
+        "exposure_response_analysis"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-3:linked"
+      ],
+      "risk_if_unmet": "未回链的分析无法支撑任何结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-3:immunogenicity",
+      "question": "免疫原性适用时是否给出独立检测与分析策略？",
+      "linked_fact_paths": [
+        "exploratory.immunogenicity",
+        "exploratory.immunogenicity_applicable"
+      ],
+      "linked_claim_types": [
+        "immunogenicity_strategy"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-3:independent"
+      ],
+      "risk_if_unmet": "免疫原性缺失会使安全性结论不完整。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

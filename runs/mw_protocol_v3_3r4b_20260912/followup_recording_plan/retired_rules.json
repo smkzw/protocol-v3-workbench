@@ -1,0 +1,17 @@
+[
+  {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "conditional_applicability_rule_id": "applicability:n-7-3:unscheduled-contact",
+    "triggering_fact_paths": [
+      "procedure.followup_unscheduled_and_phone_visits"
+    ],
+    "condition": "确认存在计划外访视或电话联系访视",
+    "rationale": "存在计划外/电话访视时，日期、方式、原因与适用评估必须作为项目事实登记。",
+    "required_when_active_fact_paths": [
+      "procedure.contact_visit_date",
+      "procedure.contact_visit_modality",
+      "procedure.contact_visit_reason",
+      "procedure.contact_visit_assessments"
+    ]
+  }
+]

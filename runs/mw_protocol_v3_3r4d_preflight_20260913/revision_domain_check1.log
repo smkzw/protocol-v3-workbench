@@ -1,0 +1,10 @@
+...............................................F.                        [100%]
+=================================== FAILURES ===================================
+____ test_explicit_fact_revision_does_not_edit_frozen_definition[updates1] _____
+tests/protocol_v3/test_study_definition_reducer.py:997: in test_explicit_fact_revision_does_not_edit_frozen_definition
+    with pytest.raises(FrozenFactOverwriteError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'services.api.app.protocol_workflow.canonical.study_definition.FrozenFactOverwriteError'>
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_study_definition_reducer.py::test_explicit_fact_revision_does_not_edit_frozen_definition[updates1]
+1 failed, 48 passed in 0.32s

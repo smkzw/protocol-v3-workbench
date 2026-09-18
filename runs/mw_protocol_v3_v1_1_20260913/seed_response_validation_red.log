@@ -1,0 +1,54 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_content_failure_keeps_raw_receipt_and_requests_structure_correction[\u4e0d\u662fJSON-seed_invalid_json] _
+
+content = '不是JSON', code = 'seed_invalid_json'
+
+    @pytest.mark.parametrize('content, code', [
+        ('不是JSON', 'seed_invalid_json'), ('[]', 'seed_output_object_required'),
+        ('{"fields":{"invented":[]}}', 'seed_fields_invalid'),
+    ])
+    def test_content_failure_keeps_raw_receipt_and_requests_structure_correction(content, code):
+>       from app.protocol_workflow.agent1.seed_validation import validate_seed_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_validation'
+
+tests/protocol_v3/test_seed_response_validation.py:20: ModuleNotFoundError
+_ test_content_failure_keeps_raw_receipt_and_requests_structure_correction[[]-seed_output_object_required] _
+
+content = '[]', code = 'seed_output_object_required'
+
+    @pytest.mark.parametrize('content, code', [
+        ('不是JSON', 'seed_invalid_json'), ('[]', 'seed_output_object_required'),
+        ('{"fields":{"invented":[]}}', 'seed_fields_invalid'),
+    ])
+    def test_content_failure_keeps_raw_receipt_and_requests_structure_correction(content, code):
+>       from app.protocol_workflow.agent1.seed_validation import validate_seed_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_validation'
+
+tests/protocol_v3/test_seed_response_validation.py:20: ModuleNotFoundError
+_ test_content_failure_keeps_raw_receipt_and_requests_structure_correction[{"fields":{"invented":[]}}-seed_fields_invalid] _
+
+content = '{"fields":{"invented":[]}}', code = 'seed_fields_invalid'
+
+    @pytest.mark.parametrize('content, code', [
+        ('不是JSON', 'seed_invalid_json'), ('[]', 'seed_output_object_required'),
+        ('{"fields":{"invented":[]}}', 'seed_fields_invalid'),
+    ])
+    def test_content_failure_keeps_raw_receipt_and_requests_structure_correction(content, code):
+>       from app.protocol_workflow.agent1.seed_validation import validate_seed_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_validation'
+
+tests/protocol_v3/test_seed_response_validation.py:20: ModuleNotFoundError
+_ test_missing_information_is_valid_sparse_output_and_does_not_trigger_regeneration _
+
+    def test_missing_information_is_valid_sparse_output_and_does_not_trigger_regeneration():
+>       from app.protocol_workflow.agent1.seed_validation import validate_seed_response
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_validation'
+
+tests/protocol_v3/test_seed_response_validation.py:31: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_response_validation.py::test_content_failure_keeps_raw_receipt_and_requests_structure_correction[\u4e0d\u662fJSON-seed_invalid_json]
+FAILED tests/protocol_v3/test_seed_response_validation.py::test_content_failure_keeps_raw_receipt_and_requests_structure_correction[[]-seed_output_object_required]
+FAILED tests/protocol_v3/test_seed_response_validation.py::test_content_failure_keeps_raw_receipt_and_requests_structure_correction[{"fields":{"invented":[]}}-seed_fields_invalid]
+FAILED tests/protocol_v3/test_seed_response_validation.py::test_missing_information_is_valid_sparse_output_and_does_not_trigger_regeneration
+4 failed in 0.32s

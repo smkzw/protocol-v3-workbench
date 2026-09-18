@@ -1,0 +1,215 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-8-3:v2",
+  "semantic_node_id": "v2_n_8_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-8-3:lost-to-followup",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-8-3:v2",
+    "chapter_contract_id": "contract:v2-n-8-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.contact_attempt_procedure",
+        "obligation": "required",
+        "rationale": "失访联系尝试程序（次数、间隔、方式）必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.participant_contact_restrictions",
+        "obligation": "required",
+        "rationale": "联系方式必须符合参与者允许的安排。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.attempt_records",
+        "obligation": "required",
+        "rationale": "联系尝试记录要求必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.review_and_classification",
+        "obligation": "required",
+        "rationale": "失访判定与复核流程必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.role_and_approvals",
+        "obligation": "required",
+        "rationale": "失访判定的责任方与批准要求必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.consent_and_outcome_distinction",
+        "obligation": "required",
+        "rationale": "失访、撤回同意与未联系上必须分别判定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "lost_to_followup.template_example_three_calls",
+        "obligation": "forbidden",
+        "rationale": "『超过三次电话』示例不得作为普适最低次数。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "lost_to_followup_determination",
+        "obligation": "required",
+        "rationale": "失访判定必须基于项目特定联系尝试、记录与复核分类。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "missed_visit_equals_lost_to_followup",
+        "obligation": "forbidden",
+        "rationale": "单次漏访不足以判定失访。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "unreached_equals_consent_withdrawal",
+        "obligation": "forbidden",
+        "rationale": "未联系上不等于撤回知情同意。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "lost_to_followup_determination"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "失访段必须承载联系尝试程序、记录、复核分类与责任方。",
+        "required_object_cells": [
+          "followup:cell:contact_attempt_log"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "失访联系、记录、复核与分类为项目事实集合。"
+    ],
+    "skeleton_risk_rules": [
+      "联系尝试程序或判定流程缺失即失败；仅示例次数即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-8-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623364"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-3:attempts",
+      "rule": "联系尝试程序与记录必须项目特定；『超过三次电话』仅为示例，不是普适最低次数。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-3:distinction",
+      "rule": "单次漏访不足以判定失访；未联系上不等于撤回知情同意；联系方式必须符合参与者允许的安排。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-3:review",
+      "rule": "失访判定必须经记录与复核分类，并明确责任方与批准要求。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-8-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_8_3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-8-2:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-3:classification",
+      "question": "失访判定是否基于项目特定联系尝试、记录与复核分类？",
+      "linked_fact_paths": [
+        "lost_to_followup.contact_attempt_procedure",
+        "lost_to_followup.review_and_classification"
+      ],
+      "linked_claim_types": [
+        "lost_to_followup_determination"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-3:attempts"
+      ],
+      "risk_if_unmet": "不充分尝试或误判会损失随访数据并影响参与者权益。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-3:distinction",
+      "question": "失访、撤回同意与未联系上是否分别判定？",
+      "linked_fact_paths": [
+        "lost_to_followup.consent_and_outcome_distinction"
+      ],
+      "linked_claim_types": [
+        "lost_to_followup_determination"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-3:distinction"
+      ],
+      "risk_if_unmet": "把未联系上当作撤回同意会错误终止参与者随访。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

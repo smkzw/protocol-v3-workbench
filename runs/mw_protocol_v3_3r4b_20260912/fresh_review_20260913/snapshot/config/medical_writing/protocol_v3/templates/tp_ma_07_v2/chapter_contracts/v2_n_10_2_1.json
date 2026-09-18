@@ -1,0 +1,234 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-2-1:v2",
+  "semantic_node_id": "v2_n_10_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-2-1:sae-definition",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-10-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae.definition",
+        "obligation": "required",
+        "rationale": "SAE 定义必须项目化且与 AE 定义分开。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae.seriousness_criteria",
+        "obligation": "required",
+        "rationale": "严重性判定标准（死亡、住院、先天异常等）必须逐项类型化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae.seriousness_criteria_version_binding",
+        "obligation": "required",
+        "rationale": "严重性定义版本与适用依据必须绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae.severity_seriousness_distinctness",
+        "obligation": "required",
+        "rationale": "严重性（seriousness）与严重程度（severity）必须明确区分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae.template_example_criteria",
+        "obligation": "forbidden",
+        "rationale": "模板示例严重性标准不得作为项目标准。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sae_definition",
+        "obligation": "required",
+        "rationale": "必须声明 SAE 定义与与 AE 的边界。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sae_seriousness_criteria_statement",
+        "obligation": "required",
+        "rationale": "必须声明逐项严重性标准与版本绑定。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "seriousness_equals_severity",
+        "obligation": "forbidden",
+        "rationale": "不得以严重性替代严重程度或反之。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sae_classified_from_severity",
+        "obligation": "forbidden",
+        "rationale": "不得仅由严重程度分级判定 SAE。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sae_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline",
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sae_seriousness_criteria_statement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须逐项给出严重性判定标准及其版本绑定。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "严重性标准表必须逐项给出标准、定义与版本绑定。",
+        "required_object_cells": [
+          "sae:cell:criterion",
+          "sae:cell:definition",
+          "sae:cell:version_binding"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "继承声明：父节点 v2_n_10_2 无独立正文段落，其区域义务由 v2_n_10_2_1 至 v2_n_10_2_3 叶子分别承载（3R.3 batch5 声明式对账；未新增子节点）。",
+      "SAE 定义为项目事实集合（定义/严重性标准/版本绑定/与严重程度区分）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“严重不良事件按 CTCAE 3 级以上”等混用句即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-2-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623379",
+      "_Toc48315531",
+      "_Toc90487626"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-2-1:criteria",
+      "rule": "严重性判定标准必须按现行定义逐项类型化（死亡、住院、先天异常等），并给出适用版本绑定；不得以严重程度分级替代严重性判定。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-2-1:distinct",
+      "rule": "严重程度（severity）与严重性（seriousness）必须区分，不得由严重程度单独判定 SAE。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-2-1:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-1:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-1:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-2-1:criteria",
+      "question": "严重性标准是否逐项类型化并绑定版本？",
+      "linked_fact_paths": [
+        "sae.seriousness_criteria",
+        "sae.seriousness_criteria_version_binding"
+      ],
+      "linked_claim_types": [
+        "sae_seriousness_criteria_statement"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-2-1:criteria"
+      ],
+      "risk_if_unmet": "标准缺失或未绑定会使 SAE 识别不一致。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-2-1:distinct",
+      "question": "严重性与严重程度是否分别判定？",
+      "linked_fact_paths": [
+        "sae.severity_seriousness_distinctness"
+      ],
+      "linked_claim_types": [
+        "sae_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-2-1:distinct"
+      ],
+      "risk_if_unmet": "以分级代替严重性会造成 SAE 漏报。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

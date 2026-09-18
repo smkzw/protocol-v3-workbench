@@ -1,0 +1,161 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-front-block:v2",
+  "semantic_node_id": "v2_front_block",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-block",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-front-block:v2",
+    "chapter_contract_id": "contract:v2-front-block:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "framing.protocol_id",
+        "obligation": "required",
+        "rationale": "封面方案编号复用既有 framing.protocol_id 绑定；不设独立可编辑方案编号。"
+      },
+      {
+        "fact_path": "framing.document_title",
+        "obligation": "required",
+        "rationale": "封面标题复用既有 framing.document_title 绑定，排除模板示例标题。"
+      },
+      {
+        "fact_path": "framing.version",
+        "obligation": "required",
+        "rationale": "方案版本复用既有 framing.version 绑定；版本与日期分开承载，不得合并为丢失版本独立性的无结构字符串。"
+      },
+      {
+        "fact_path": "document_control.version_date",
+        "obligation": "required",
+        "rationale": "版本日期为结构化独立事实，与 framing.version 分离承载。"
+      },
+      {
+        "fact_path": "document_control.applicable_parties",
+        "obligation": "required",
+        "rationale": "封面必须列出实际适用当事方；适用方为项目元数据，需要显式来源，不得虚构。"
+      },
+      {
+        "fact_path": "document_control.confidentiality_statement",
+        "obligation": "required",
+        "rationale": "保密声明必须绑定本项目申办方，不得沿用其他项目归属。"
+      },
+      {
+        "fact_path": "document_control.header_footer_metadata",
+        "obligation": "required",
+        "rationale": "页眉/页脚元数据行必须按模板实际字段保留并项目化。"
+      },
+      {
+        "fact_path": "provenance.template.version",
+        "obligation": "required",
+        "rationale": "封面必须记录已接受模板版本身份。"
+      },
+      {
+        "fact_path": "template.placeholder_tokens",
+        "obligation": "forbidden",
+        "rationale": "源0–13 的说明段与 XXXXXX 等模板示例标记不得保留在封面承载区。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "document_control_identity",
+        "obligation": "required",
+        "rationale": "封面身份行必须声明编号/标题/版本/日期与文档控制事实一致。"
+      },
+      {
+        "claim_type": "confidentiality_binding",
+        "obligation": "required",
+        "rationale": "保密声明必须显式绑定本项目申办方。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "封面与协议正文禁止营销性表述。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "document_control_identity"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "confidentiality_binding"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 3,
+        "project_specific_specification": "封面承载区必须逐行承载项目方案编号、版本/日期、实际适用方与申办方保密声明；测试值为显式合成示例。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "TP-MA-07 v2.0 封面项目字段（编号/标题/版本日期/适用方/保密声明）",
+      "身份/版本元数据归属：复用既有 framing.* 绑定与结构化版本日期；封面元数据为项目 provenance，不新增第二事实存储。"
+    ],
+    "skeleton_risk_rules": [
+      "封面缺少任一身份字段或保密声明即失败；仅模板占位文本即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-block",
+    "required_styles": [
+      "25",
+      "17",
+      "16"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-block:identity",
+      "rule": "封面方案编号/标题/版本/日期必须与文档控制 provenance 一致，不得复制其他项目或模板占位标题。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-block:parties",
+      "rule": "适用方与保密声明必须是本项目实际适用方；不得虚构签署、日期或项目批准。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-block:identity",
+      "question": "封面方案编号、版本与适用方是否全部来自本项目已确认文档控制事实？",
+      "linked_fact_paths": [
+        "framing.protocol_id",
+        "document_control.applicable_parties"
+      ],
+      "linked_claim_types": [
+        "document_control_identity"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-block:identity"
+      ],
+      "risk_if_unmet": "错挂其他项目方案编号将使整份文档不可用。"
+    }
+  ]
+}

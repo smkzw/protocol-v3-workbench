@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_complete_regimen_is_one_fact_and_exact_replay_has_no_new_effect _____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-719/test_complete_regimen_is_one_f0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10903a180>
+
+    def test_complete_regimen_is_one_fact_and_exact_replay_has_no_new_effect(tmp_path, monkeypatch):
+>       from app.protocol_workflow.agent2.study_definition import propose_regimen_fact_updates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.study_definition'
+
+tests/protocol_v3/integration/test_regimen_fact_adoption.py:8: ModuleNotFoundError
+=============================== warnings summary ===============================
+../../../../../../Library/Python/3.12/lib/python/site-packages/fastapi/testclient.py:1
+  /Users/smkzw/Library/Python/3.12/lib/python/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_regimen_fact_adoption.py::test_complete_regimen_is_one_fact_and_exact_replay_has_no_new_effect
+1 failed, 1 warning in 0.47s

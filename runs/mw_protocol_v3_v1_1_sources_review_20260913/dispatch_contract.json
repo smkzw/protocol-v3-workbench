@@ -1,0 +1,13 @@
+{
+  "logical_work_key": "mw_protocol_v3_v1_1_sources_review_20260913_v1",
+  "status": "runner_started_pending_result",
+  "mode": "conference",
+  "role_id": "C03",
+  "route_manifest_sha256": "ef297ff3b5ba162df178fef9180e9cb1dcb3c13223db52a49d00bca3ab7a2be7",
+  "source_manifest_sha256": "54cbc0aa2c179b32ccb07352e217924ad2c332e729331c5a5efffd582859b902",
+  "timeout_seconds": 7200,
+  "guard_limitation": "known C01 peak import issue; existing route_policy+runner complete C03 chain; no audit pass claimed",
+  "preparation_note": "first local generator assumed dict rather than route-chain list; failed before writing packet or dispatch; corrected using observed schema",
+  "allowed_write_root": "runs/mw_protocol_v3_v1_1_sources_review_20260913/reviewer_scratch",
+  "unified_exec_session_id": 81462
+}

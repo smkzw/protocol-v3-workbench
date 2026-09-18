@@ -1,0 +1,15 @@
+[
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_5_5:active",
+    "triggering_fact_paths": [
+      "picos.population_summary"
+    ],
+    "condition": "当补偿或伦理审查适用时，激活对应范围、计划和记录义务；不得生成完成审批收据。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "recruitment_plan",
+      "retention_plan"
+    ]
+  }
+]

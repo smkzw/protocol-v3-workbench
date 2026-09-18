@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="0">
+    <testsuite name="intake_mount.test.jsx" timestamp="2026-09-05T18:30:28.799Z" hostname="MacBook-Pro-4.local" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="intake_mount.test.jsx" name="intake_mount.test.jsx" time="0">
+            <failure message="Failed to resolve import &quot;react/jsx-dev-runtime&quot; from &quot;runs/mw_protocol_v3_frontend_readonly_review_20260906/intake_mount.test.jsx&quot;. Does the file exist?" type="Error">
+Error: Failed to resolve import &quot;react/jsx-dev-runtime&quot; from &quot;runs/mw_protocol_v3_frontend_readonly_review_20260906/intake_mount.test.jsx&quot;. Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_frontend_readonly_review_20260906/intake_mount.test.jsx:21:22
+  1  |  import { jsxDEV } from &quot;react/jsx-dev-runtime&quot;;
+     |                          ^
+  2  |  import React, { StrictMode } from &quot;../../frontend/node_modules/react/index.js&quot;;
+  3  |  import { afterEach, expect, it, vi } from &quot;../../frontend/node_modules/vitest/dist/index.js&quot;;
+ ❯ TransformPluginContext._formatLog ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:42553:41
+ ❯ TransformPluginContext.error ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:42550:16
+ ❯ normalizeUrl ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:40529:23
+ ❯ ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:40648:37
+ ❯ TransformPluginContext.transform ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:40575:7
+ ❯ EnvironmentPluginContainer.transform ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:42348:18
+ ❯ loadAndTransform ../../../../../../../%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:35740:27
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

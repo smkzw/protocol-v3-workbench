@@ -1,0 +1,53 @@
+{
+  "scope": "model receipt and validation integration review",
+  "files": [
+    {
+      "path": "services/api/app/protocol_workflow/graph/runtime.py",
+      "sha256": "bce9139743a44ff72bba65c30c756ccd253c1d85a8988132c6115e8260dd23c1"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/graph/ports.py",
+      "sha256": "d1c902e2913fc251ed9ace4e59367b7a96b96361e25e3bc3c96f2e702099d6d9"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/reservations.py",
+      "sha256": "76c0bc4339e05c7814a903bfb9123538cf45cd0640df8a2157393600ac7d1d90"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/storage/sqlite.py",
+      "sha256": "4cf276f9c5196442fb03d14b3175d3643dc2b12528f6323c91e1378e2dd5baf3"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/harness.py",
+      "sha256": "263aae74e1813781579881fb9993bc801bce610e11a7a83019ad326e6a20b44f"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/adapters/zhipu_api.py",
+      "sha256": "75de3c937538dbdce7f1aa6534e370cab06c5cf285755c9125782140952887fd"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/adapters/direct_api.py",
+      "sha256": "5bf7344259ccd62c05d78a1839326cbd862fa74ac7cf7028f4bccb589dd56761"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/runtime/artifact_messages.py",
+      "sha256": "d900e0c72eabef39502688b0ab1cea8eaec615228e77c6409b47f58c5e635d25"
+    },
+    {
+      "path": "services/api/app/protocol_workflow/agent1/research_seed.py",
+      "sha256": "ddc8812144938e673487b0a555e2c7bcc29fef0bd1c6c413d580123ea12f4f6e"
+    },
+    {
+      "path": "tests/protocol_v3/test_graph_model_contract.py",
+      "sha256": "eaae86c6edc873cb48bfc8466d4d5320a1a5c78884dabe1de17643b06e840673"
+    },
+    {
+      "path": "tests/protocol_v3/test_zhipu_full_artifact_input.py",
+      "sha256": "7215611327ed9933f91b2864639f4465eefb457adcc34e2dd857ad8a17f9e2b8"
+    },
+    {
+      "path": ".trellis/tasks/09-13-protocol-v3-v1-1/design.md",
+      "sha256": "fef156d8015e2ac140e9b4d74ad4ad29e752a50b74eefee440615bd3dbd960ee"
+    }
+  ]
+}

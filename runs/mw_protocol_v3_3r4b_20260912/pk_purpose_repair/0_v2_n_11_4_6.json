@@ -1,0 +1,319 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-4-6:v2",
+  "semantic_node_id": "v2_n_11_4_6",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-4-6:exploratory-pk-pd-er",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-4-6:v2",
+    "chapter_contract_id": "contract:v2-n-11-4-6:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.exploratory_analysis.endpoints",
+        "obligation": "required",
+        "rationale": "必须定义探索性终点和数据边界。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.exploratory_analysis.methods",
+        "obligation": "required",
+        "rationale": "必须声明探索性分析方法及其数据要求。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.exploratory_analysis.data_definition",
+        "obligation": "required",
+        "rationale": "必须声明探索性分析数据来源、时间点和缺失处理。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.pk_applicable",
+        "obligation": "required",
+        "rationale": "必须显式声明 PK 分析是否适用。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.pd_applicable",
+        "obligation": "required",
+        "rationale": "必须显式声明 PD 分析是否适用。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.er_applicable",
+        "obligation": "required",
+        "rationale": "必须显式声明暴露-效应分析是否适用。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+        "obligation": "required",
+        "rationale": "适用 PK/PD/ER 必须链接相关终点和估计目标。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.sampling_schedule",
+        "obligation": "required",
+        "rationale": "适用 PK/PD/ER 必须定义采样/暴露时间窗。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.model_assumptions",
+        "obligation": "required",
+        "rationale": "适用 PK/PD/ER 必须声明模型假设和证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.pk_pd_er.confirmatory_analysis_link",
+        "obligation": "optional",
+        "rationale": "确证性 PK/PD/ER 必须链接主要或次要分析合同，不得改称探索性。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exploratory_analysis_method",
+        "obligation": "required",
+        "rationale": "探索性分析必须声明项目实际终点、方法和解释边界。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pk_pd_er_analysis",
+        "obligation": "required",
+        "rationale": "适用 PK/PD/ER 必须分别声明终点、采样、模型及确证性链接。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exploratory_interpretation",
+        "obligation": "required",
+        "rationale": "探索性结果不得被提升为确证性结论。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "claim_type": "confirmatory_relabeling_forbidden",
+        "obligation": "forbidden",
+        "rationale": "确证性 PK/PD/暴露-反应分析不得改标为探索性以规避与主要/次要分析合同的链接义务（reconciliation 文档强制；fresh复核D2修复）。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exploratory_analysis_method"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "pk_pd_er_analysis"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exploratory_interpretation"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "探索性终点的统计分析必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“探索性终点的统计分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "继承 v2_n_11_4 父体 body-child @783 的 PK/PD/暴露-效应条件义务；探索性用途由本载体承载，确证性 PK/PD/ER 必须链接主要或次要分析合同，绝不得仅改称探索性。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "探索性终点的统计分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-4-6",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623399"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-6:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-6:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-6:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:pk",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.pk_applicable"
+      ],
+      "condition": "已确认 PK 分析适用于本项目",
+      "rationale": "PK 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "required_when_active_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:pd",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.pd_applicable"
+      ],
+      "condition": "已确认 PD 分析适用于本项目",
+      "rationale": "PD 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "required_when_active_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-6:er",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.er_applicable"
+      ],
+      "condition": "已确认暴露-效应分析适用于本项目",
+      "rationale": "暴露-效应义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+      "required_when_active_fact_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.sampling_schedule",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.confirmatory_analysis_link"
+      ],
+      "required_when_active_claim_types": [
+        "pk_pd_er_analysis"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-11-4-3-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:v2_n_11_4_6:dependency-drift",
+    "dependency_ids": [
+      "contract:v2-n-11-4-3-1:v2"
+    ],
+    "downstream_impact": "上游终点、估计目标、分析集或设计变更会使本节点统计结论失效，必须停止沿用旧草稿。",
+    "repair_owner": "user",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_6:recompute",
+        "sequence": 1,
+        "action": "重新读取已确认的上游事实并重算本节点统计承载。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_6:confirm",
+        "sequence": 2,
+        "action": "由用户核对差异、证据来源与可复算输入后确认或退回。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-4-6:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 797、798；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.exploratory_analysis.endpoints"
+      ],
+      "linked_claim_types": [
+        "exploratory_analysis_method"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-4-6:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

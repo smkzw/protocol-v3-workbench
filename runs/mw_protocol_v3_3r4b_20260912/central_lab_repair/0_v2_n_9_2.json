@@ -1,0 +1,288 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-9-2:v2",
+  "semantic_node_id": "v2_n_9_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-9-2:safety-assessments",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-9-2:v2",
+    "chapter_contract_id": "contract:v2-n-9-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.monitoring_assessments",
+        "obligation": "required",
+        "rationale": "安全性监测项目集合（实验室/生命体征/心电图/其他评估）必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.lab_panel_definition",
+        "obligation": "required",
+        "rationale": "实验室面板定义必须项目化；模板实验室面板仅为示例。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.lab_units_and_reference_ranges",
+        "obligation": "required",
+        "rationale": "每个实验室参数必须带单位与参考范围，缺单位数值不计入合格内容。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.assessment_windows",
+        "obligation": "required",
+        "rationale": "评估窗口必须与已接受 SoA（batch1 v2_n_1_3）一致。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.repeat_confirmation_rules",
+        "obligation": "required",
+        "rationale": "重复/确认规则（如实验室异常复测与临床意义判定）必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.specimen_types_and_handling",
+        "obligation": "required",
+        "rationale": "标本类型/体积/采集与处理要求必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.special_assay_purposes",
+        "obligation": "required",
+        "rationale": "特殊检测的目的必须明确，不得只列检测项目。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.future_use_specimen_distinction",
+        "obligation": "required",
+        "rationale": "未来使用标本与本研究必需标本必须区分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.assessment_restrictions",
+        "obligation": "required",
+        "rationale": "评估相关限制（合并用药/操作/酒精/烟草等）必须给出范围、时点与设计或产品风险依据。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.monitoring_schedule",
+        "obligation": "required",
+        "rationale": "监测计划必须项目化（空计划即失败）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "safety.template_example_lab_panel",
+        "obligation": "forbidden",
+        "rationale": "模板实验室面板示例不得作为项目面板。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "safety_assessment_plan",
+        "obligation": "required",
+        "rationale": "必须声明安全性与其他评估的实施口径（单位/参考范围/窗口/重复规则）。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "specimen_handling_statement",
+        "obligation": "required",
+        "rationale": "必须声明标本类型/体积/处理与特殊检测目的，并区分未来使用标本。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "comparator_evidence_equals_own_product",
+        "obligation": "forbidden",
+        "rationale": "竞品证据不得替代本品安全性结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "blanket_restriction_without_rationale",
+        "obligation": "forbidden",
+        "rationale": "不得写成无依据的一刀切禁止。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "lab_value_without_unit_or_range",
+        "obligation": "forbidden",
+        "rationale": "不得输出无单位/参考范围的实验室数值结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "协议正文禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "safety_assessment_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "specimen_handling_statement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须分别书写实验室/生命体征/心电图及其他评估的单位、参考范围与重复规则。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "监测计划表必须逐行给出参数、单位、参考范围与窗口。",
+        "required_object_cells": [
+          "safety:cell:parameter",
+          "safety:cell:unit",
+          "safety:cell:reference_range",
+          "safety:cell:window"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "安全性与其他评估为项目事实集合（面板/单位/参考范围/窗口/标本/限制）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅有检测项名称清单、无单位参考范围或无监测计划即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-9-2",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623367"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-2:units",
+      "rule": "实验室参数必须给出单位与参考范围；缺少单位或参考范围的数值一律不计入合格内容。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-2:windows",
+      "rule": "评估窗口与重复/确认规则必须与 SoA 一致并项目化。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-2:specimen",
+      "rule": "标本类型/体积/处理与特殊检测目的必须明确；未来使用标本与本研究必需标本必须区分。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-2:restriction",
+      "rule": "评估相关限制（合并用药/操作/酒精/烟草等）必须给出范围、时点与设计或产品风险依据，不得写成无依据的一刀切禁止。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-2:comparator",
+      "rule": "本品安全性结论必须由本项目事实与来源支撑，竞品证据不得替代本品安全性结论。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-2:central-lab",
+      "triggering_fact_paths": [
+        "safety.central_lab_applicable"
+      ],
+      "condition": "项目使用中央实验室且已确认适用",
+      "rationale": "中央实验室适用时才升级为必需义务。",
+      "required_when_active_fact_paths": [
+        "safety.lab_units_and_reference_ranges",
+        "safety.special_assay_purposes"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-2:units",
+      "question": "实验室与其他评估是否带单位与参考范围，并与 SoA 一致？",
+      "linked_fact_paths": [
+        "safety.lab_units_and_reference_ranges",
+        "safety.assessment_windows"
+      ],
+      "linked_claim_types": [
+        "safety_assessment_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-2:units",
+        "qc:n-9-2:windows"
+      ],
+      "risk_if_unmet": "缺单位/参考范围会使安全性数据不可判读。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-2:specimen",
+      "question": "标本与特殊检测目的是否明确，未来使用标本是否区分？",
+      "linked_fact_paths": [
+        "safety.specimen_types_and_handling",
+        "safety.future_use_specimen_distinction"
+      ],
+      "linked_claim_types": [
+        "specimen_handling_statement"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-2:specimen"
+      ],
+      "risk_if_unmet": "标本处理与目的不明会使检测结果不可用。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

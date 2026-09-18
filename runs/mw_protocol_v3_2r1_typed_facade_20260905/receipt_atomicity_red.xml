@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.496" timestamp="2026-09-06T00:13:31.416101+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_graph_receipt_atomicity" name="test_overlapping_receipts_commit_one_result[False]" time="0.026"><failure message="app.protocol_workflow.ports.repositories.RepositoryStateTransitionError: project=proj-graph-rt aggregate=res:663bbf15c4d84c298a063d33 detail=illegal state transition 'completed' -&gt; 'completed'">tests/protocol_v3/test_graph_receipt_atomicity.py:42: in test_overlapping_receipts_commit_one_result
+    outcomes = list(pool.map(recover, (0, 1)))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_graph_receipt_atomicity.py:33: in recover
+    runtime.resolve_unknown_with_receipt(
+services/api/app/protocol_workflow/graph/runtime.py:705: in resolve_unknown_with_receipt
+    coordinator.recover_unknown(
+services/api/app/protocol_workflow/runtime/reservations.py:392: in recover_unknown
+    return self._repository.transition(
+services/api/app/protocol_workflow/storage/sqlite.py:2155: in transition
+    result = self._commit_operation(
+services/api/app/protocol_workflow/storage/sqlite.py:2112: in _commit_operation
+    result = operation(
+services/api/app/protocol_workflow/storage/sqlite.py:2156: in &lt;lambda&gt;
+    lambda repo: repo.transition(
+services/api/app/protocol_workflow/storage/sqlite.py:1895: in transition
+    raise RepositoryStateTransitionError(
+E   app.protocol_workflow.ports.repositories.RepositoryStateTransitionError: project=proj-graph-rt aggregate=res:663bbf15c4d84c298a063d33 detail=illegal state transition 'completed' -&gt; 'completed'</failure></testcase><testcase classname="tests.protocol_v3.test_graph_receipt_atomicity" name="test_overlapping_receipts_commit_one_result[True]" time="0.025"><failure message="app.protocol_workflow.ports.repositories.RepositoryStateTransitionError: project=proj-graph-rt aggregate=res:ce8a98c19dcf4b098300e3bf detail=illegal state transition 'completed' -&gt; 'completed'">tests/protocol_v3/test_graph_receipt_atomicity.py:42: in test_overlapping_receipts_commit_one_result
+    outcomes = list(pool.map(recover, (0, 1)))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_graph_receipt_atomicity.py:33: in recover
+    runtime.resolve_unknown_with_receipt(
+services/api/app/protocol_workflow/graph/runtime.py:705: in resolve_unknown_with_receipt
+    coordinator.recover_unknown(
+services/api/app/protocol_workflow/runtime/reservations.py:392: in recover_unknown
+    return self._repository.transition(
+services/api/app/protocol_workflow/storage/sqlite.py:2155: in transition
+    result = self._commit_operation(
+services/api/app/protocol_workflow/storage/sqlite.py:2112: in _commit_operation
+    result = operation(
+services/api/app/protocol_workflow/storage/sqlite.py:2156: in &lt;lambda&gt;
+    lambda repo: repo.transition(
+services/api/app/protocol_workflow/storage/sqlite.py:1895: in transition
+    raise RepositoryStateTransitionError(
+E   app.protocol_workflow.ports.repositories.RepositoryStateTransitionError: project=proj-graph-rt aggregate=res:ce8a98c19dcf4b098300e3bf detail=illegal state transition 'completed' -&gt; 'completed'</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,22 @@
+................F                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_active_interim_rejects_opposite_disposition_in_output __________
+
+    def test_active_interim_rejects_opposite_disposition_in_output():
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ContentClaim
+        contract, _ = interim_case()
+        study, content = actual_interim_output_case((False, False, False, False))
+        content = content.model_copy(update={'claims': content.claims + (
+            ContentClaim(claim_type='interim_not_planned', statement='本研究不计划开展期中分析。'),)})
+        result = evaluate_applicable_content(contract, content, study=study,
+                                            rules=real_rule_catalog().rules, subject_id='test:opposite-interim-disposition')
+>       assert 'inactive_disposition_claim_present' in result.error_codes()
+E       AssertionError: assert 'inactive_disposition_claim_present' in ()
+E        +  where () = error_codes()
+E        +    where error_codes = FixtureCheckResult(subject_id='test:opposite-interim-disposition', chapter_contract_id='contract:v2-n-11-4-9:v2', pass....* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。'), ignored_supplied_verdict=False).error_codes
+
+tests/protocol_v3/test_chapter_applicability.py:646: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_active_interim_rejects_opposite_disposition_in_output
+1 failed, 16 passed, 68 deselected in 1.18s

@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-2-1:secondary-objectives",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_2_1",
+  "chapter_contract_id": "contract:v2-n-3-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按次要目的章节合同逐条给出次要目的并映射到已定义次要终点，同时登记确证性多重性意图与探索性意图；不得输出编号占位或仅标题。",
+    "forbidden_behaviors": [
+      "用“次要目的1/2/3”编号占位充当内容",
+      "给出未定义终点的次要目的",
+      "隐藏多重性意图"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与每条目的对应的终点事实路径。",
+    "多重性意图必须回链已确认统计策略事实（如存在）。",
+    "示例文本不得作为项目次要目的输出。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-2-1:missing-obligation",
+    "skill:v2-n-3-2-1:unresolved-fact",
+    "skill:v2-n-3-2-1:unsupported-source-role"
+  ]
+}

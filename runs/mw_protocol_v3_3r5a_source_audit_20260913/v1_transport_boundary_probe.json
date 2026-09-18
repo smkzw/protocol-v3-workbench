@@ -1,0 +1,17 @@
+{
+  "scope": "injected fake HTTP only; no network, real credentials or model",
+  "transport_success": true,
+  "stored_output": [
+    "This is not chapter JSON."
+  ],
+  "declared_output_schema_ref": "https://protocol-v3.local/schemas/chapter-draft-output.v1.json",
+  "messages": [
+    {
+      "role": "user",
+      "content": "[seed | sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc]"
+    }
+  ],
+  "response_format_sent": false,
+  "message_contains_output_schema_ref": false,
+  "explanation": "Transport receipt proves delivery/identity, not chapter parsing or quality. Application must compile resolved instructions/schema/evidence and validate the actual output before adoption."
+}

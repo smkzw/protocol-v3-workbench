@@ -1,0 +1,19 @@
+{
+  "changed": [
+    "test.fact.x"
+  ],
+  "expected_affected": [
+    "contract:v2-n-1-1:v2",
+    "contract:v2-n-1-2:v2"
+  ],
+  "actual_affected": [
+    "contract:v2-n-1-1:v2",
+    "contract:v2-n-1-2:v2",
+    "contract:v2-n-1-3:v2"
+  ],
+  "unexpected": [
+    "contract:v2-n-1-3:v2"
+  ],
+  "status": "reproduced",
+  "scope": "read-only current-code counterexample; no repair or acceptance"
+}

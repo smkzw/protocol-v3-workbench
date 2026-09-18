@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-15",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_15",
+  "chapter_contract_id": "contract:v2-n-15:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-15:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 参考文献 的 ChapterSkillOutput。书目必须由实际使用来源生成，逐条给出完整书目元数据（作者/题名/出版/年份/DOI或URL/访问日期）并保证每条正文引用可解析；试验参与者相关文献同样如此。中文与外文格式遵循适用的已批准模板样式，缺失元数据进入待补，模板示例引用不是研究书目。",
+    "forbidden_behaviors": [
+      "把模板示例引用、示例 URL 或从未引用的文献列入研究书目",
+      "保留无目标的正文引用或只给编号不给条目",
+      "把缺失元数据写成已验证或已访问",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：参考文献，零基 body-child 索引 926–969；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=68 与 bookmarks=['_Toc12381560', '_Toc132623423', '_Toc14377338']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是文献真实性、可访问性或医学判断；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-15:missing-obligation",
+    "skill:chapter:v2-n-15:unresolved-fact",
+    "skill:chapter:v2-n-15:wrong-source"
+  ]
+}

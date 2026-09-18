@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-1-1:primary-objective",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_3_1_1",
+  "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按主要目的章节合同给出具体临床问题、治疗比较与主要终点映射，并在主要估计目标五属性齐备时给出链接声明；停药/补救治疗策略只在设计确认且完成高风险确认时才输出，且必须命中对应的条件适用性规则。",
+    "forbidden_behaviors": [
+      "把源示例的停药/补救治疗策略当作项目默认",
+      "把“评价疗效”当作临床问题",
+      "在未确认设计与高风险确认时输出补救策略声明"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与条件适用性规则命中情况。",
+    "主要目的与主要终点必须回链已确认事实路径，不设第二事实存储。",
+    "限定声明的限定条件必须随声明一并输出。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-1-1:missing-obligation",
+    "skill:v2-n-3-1-1:unresolved-fact",
+    "skill:v2-n-3-1-1:unsupported-source-role"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "scope": "source XML classification, not clinical truth of cited references",
+  "cases": [
+    {
+      "file": "CMS-D008Ⅰ期方案-v1.0-20251212-clean.docx",
+      "body_child_index": 1089,
+      "sdt_tag": "EndNote.ReferenceList",
+      "role": "bibliography",
+      "paragraph_count": 13,
+      "actual_legacy_behavior": "top-level control skipped; references not extracted"
+    },
+    {
+      "file": "玛仕度肽肥胖二期-SupplementaryInformation-Protocol.docx",
+      "body_child_index": 593,
+      "docPartGallery": "Table of Contents",
+      "role": "derived_toc",
+      "actual_legacy_behavior": "top-level control skipped; not missing clinical body"
+    }
+  ]
+}

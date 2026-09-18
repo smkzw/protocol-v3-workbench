@@ -1,0 +1,210 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+  "semantic_node_id": "v2_n_6_4_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-4-3:rescue-treatment",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-4-3:v2",
+    "chapter_contract_id": "contract:v2-n-6-4-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.rescue_permitted",
+        "obligation": "required",
+        "rationale": "补救治疗是否允许及其条件必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.rescue_timing",
+        "obligation": "required",
+        "rationale": "补救治疗的启动时点与顺序必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.rescue_records",
+        "obligation": "required",
+        "rationale": "补救治疗记录必须明确并纳入分析。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.rescue_estimand_linkage",
+        "obligation": "required",
+        "rationale": "补救治疗的处理必须与估计目标和分析策略一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.rescue_followup_handling",
+        "obligation": "required",
+        "rationale": "补救治疗与继续随访/事件处理的衔接必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_rescue_drug",
+        "obligation": "forbidden",
+        "rationale": "模板示例补救药物不得作为本项目补救治疗。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "rescue_plan",
+        "obligation": "required",
+        "rationale": "补救治疗的允许条件、时点、记录与随访衔接必须项目特定。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "rescue_estimand_alignment",
+        "obligation": "required",
+        "rationale": "补救治疗策略必须与估计目标及分析策略一致，并说明其处理方式。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "rescue_estimand_inconsistency",
+        "obligation": "forbidden",
+        "rationale": "与估计目标/分析策略不一致的补救处理描述不得作为合同内容。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "unqualified_rescue_outcome_claim",
+        "obligation": "forbidden",
+        "rationale": "不得以补救治疗推断非劣/优效等未经分析的结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "rescue_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "rescue_estimand_alignment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "补救段必须承载允许条件、启动时点、记录、随访衔接与估计目标一致性声明。",
+        "required_object_cells": [
+          "intervention:cell:rescue_plan"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "补救策略、记录与估计目标处理方式为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "补救条件、时点或估计目标一致性声明缺失即失败；仅示例药物即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-4-3",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc9900002"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-3:estimand",
+      "rule": "补救策略必须与估计目标和分析策略一致；把补救当作未处理或据此推断非劣/优效即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-4-3:timing",
+      "rule": "补救启动时点、记录与继续随访衔接必须项目特定，不得与事件处理策略冲突。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-6-1-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_6_4_3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-1-2:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_4_3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_4_3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-4-3:estimand",
+      "question": "补救治疗的处理方式是否与估计目标及分析策略一致？",
+      "linked_fact_paths": [
+        "intervention.rescue_estimand_linkage"
+      ],
+      "linked_claim_types": [
+        "rescue_estimand_alignment"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-4-3:estimand"
+      ],
+      "risk_if_unmet": "补救与估计目标不一致会使主要分析结论不可解释。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

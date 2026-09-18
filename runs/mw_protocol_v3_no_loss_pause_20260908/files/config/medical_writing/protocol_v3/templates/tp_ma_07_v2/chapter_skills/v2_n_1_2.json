@@ -1,0 +1,36 @@
+{
+  "skill_id": "skill:chapter:n-1-2:design-diagram",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_1_2",
+  "chapter_contract_id": "contract:v2-n-1-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认设计与 SOA 事实），输出为 ChapterSkillOutput。生成呈现相位/臂与访视时间点、与 SOA 一致的研究流程图说明；分配比例仅在确认随机化时给出（diagram.randomized 触发条件义务），单臂非随机设计不得虚构分配比例；所有适用臂的早退/停药/退出转换按已确认事实逐一建模，保留早期退出与干预停药的区别；引用矢量素材仅限风格参考并记录身份与 sha256；示例图中的 1:1/IWRS/安慰剂/12周等取值不得自动成为项目事实；极简设计省略流程图须有记录在案的适用性处置，不静默放弃默认推荐。",
+    "forbidden_behaviors": [
+      "插入模板帕金森/滴定示例时间线",
+      "无依据的升级路径",
+      "图与 SOA 不一致",
+      "输出任何模型/供应商设置",
+      "非随机设计虚构分配比例",
+      "照抄示例图仅右臂早退的转换拓扑",
+      "示例取值（1:1/IWRS/安慰剂/12周/n=XX）自动成为项目事实"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 245–258（研究流程图示区段；source[246] 允许极简设计省略，source[250] 升级图示仅在实际含升级时适用）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：3=heading 2，1=Normal。",
+    "矢量示例素材（仅风格参考，非模板权威/项目数据/渲染验收）：/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg",
+    "素材 sha256：c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c（design-v1.3 核对值；示例状态，非项目事实）。"
+  ],
+  "error_codes": [
+    "skill:chapter:n-1-2:design-diagram:missing-obligation",
+    "skill:chapter:n-1-2:design-diagram:unresolved-fact",
+    "skill:chapter:n-1-2:design-diagram:wrong-source"
+  ]
+}

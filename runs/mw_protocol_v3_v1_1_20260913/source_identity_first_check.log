@@ -1,0 +1,401 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+________________ test_restart_retains_exact_bytes_and_identity _________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-581/test_restart_retains_exact_byt0')
+
+    def test_restart_retains_exact_bytes_and_identity(tmp_path):
+>       first = adopt(service(tmp_path))
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:124: in adopt
+    event = EventEnvelopeBuilder().build(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.events.models.EventEnvelopeBuilder object at 0x108a719c0>
+
+    def build(
+        self,
+        *,
+        domain_event_id: str,
+        stream_id: str,
+        sequence: int,
+        event_type: str,
+        payload_schema_version: str,
+        upcaster_id: str,
+        actor_type: ActorType,
+        actor_id: str,
+        action: str,
+        reason: str,
+        payload: Mapping[str, JsonValue],
+        migrated_payload_sha256: Optional[str] = None,
+        emitted_at: datetime,
+        previous_event_sha256: Optional[str] = None,
+    ) -> DomainEvent:
+        """Construct a :class:`DomainEvent` with canonical hashes filled in.
+    
+        The first event in a stream has ``sequence == 1`` and
+        ``previous_event_sha256 is None``; subsequent events require both.
+        The model's own ``validate_event_chain_identity`` validator enforces
+        this invariant at construction.
+        """
+    
+        payload_sha = compute_payload_sha256(payload)
+        # Build once to compute the envelope hash, then construct the final
+        # event.  We reuse _canonical_event_fields so that the hash is
+        # identical to what verify_event_integrity will recompute.
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            DomainEvent as _DE,
+        )
+    
+>       event = _DE(
+            domain_event_id=domain_event_id,
+            stream_id=stream_id,
+            sequence=sequence,
+            event_type=event_type,
+            payload_schema_version=payload_schema_version,
+            upcaster_id=upcaster_id,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            payload=dict(payload),
+            payload_sha256=payload_sha,
+            migrated_payload_sha256=migrated_payload_sha256,
+            previous_event_sha256=previous_event_sha256,
+            event_sha256="0" * 64,  # placeholder, recomputed below
+            emitted_at=emitted_at,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for DomainEvent
+E       event_type
+E         String should match pattern '^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$' [type=string_pattern_mismatch, input_value='SourceIdentityAdopted', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch
+
+services/api/app/protocol_workflow/events/models.py:289: ValidationError
+______________ test_old_content_replay_does_not_replace_successor ______________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-581/test_old_content_replay_does_n0')
+
+    def test_old_content_replay_does_not_replace_successor(tmp_path):
+        svc = service(tmp_path)
+>       first = adopt(svc)
+                ^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:124: in adopt
+    event = EventEnvelopeBuilder().build(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.events.models.EventEnvelopeBuilder object at 0x10a507080>
+
+    def build(
+        self,
+        *,
+        domain_event_id: str,
+        stream_id: str,
+        sequence: int,
+        event_type: str,
+        payload_schema_version: str,
+        upcaster_id: str,
+        actor_type: ActorType,
+        actor_id: str,
+        action: str,
+        reason: str,
+        payload: Mapping[str, JsonValue],
+        migrated_payload_sha256: Optional[str] = None,
+        emitted_at: datetime,
+        previous_event_sha256: Optional[str] = None,
+    ) -> DomainEvent:
+        """Construct a :class:`DomainEvent` with canonical hashes filled in.
+    
+        The first event in a stream has ``sequence == 1`` and
+        ``previous_event_sha256 is None``; subsequent events require both.
+        The model's own ``validate_event_chain_identity`` validator enforces
+        this invariant at construction.
+        """
+    
+        payload_sha = compute_payload_sha256(payload)
+        # Build once to compute the envelope hash, then construct the final
+        # event.  We reuse _canonical_event_fields so that the hash is
+        # identical to what verify_event_integrity will recompute.
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            DomainEvent as _DE,
+        )
+    
+>       event = _DE(
+            domain_event_id=domain_event_id,
+            stream_id=stream_id,
+            sequence=sequence,
+            event_type=event_type,
+            payload_schema_version=payload_schema_version,
+            upcaster_id=upcaster_id,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            payload=dict(payload),
+            payload_sha256=payload_sha,
+            migrated_payload_sha256=migrated_payload_sha256,
+            previous_event_sha256=previous_event_sha256,
+            event_sha256="0" * 64,  # placeholder, recomputed below
+            emitted_at=emitted_at,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for DomainEvent
+E       event_type
+E         String should match pattern '^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$' [type=string_pattern_mismatch, input_value='SourceIdentityAdopted', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch
+
+services/api/app/protocol_workflow/events/models.py:289: ValidationError
+________ test_same_bytes_different_role_cannot_relabel_previous_source _________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-581/test_same_bytes_different_role0')
+
+    def test_same_bytes_different_role_cannot_relabel_previous_source(tmp_path):
+        svc = service(tmp_path)
+>       first = adopt(svc)
+                ^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:124: in adopt
+    event = EventEnvelopeBuilder().build(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.events.models.EventEnvelopeBuilder object at 0x10a6e4300>
+
+    def build(
+        self,
+        *,
+        domain_event_id: str,
+        stream_id: str,
+        sequence: int,
+        event_type: str,
+        payload_schema_version: str,
+        upcaster_id: str,
+        actor_type: ActorType,
+        actor_id: str,
+        action: str,
+        reason: str,
+        payload: Mapping[str, JsonValue],
+        migrated_payload_sha256: Optional[str] = None,
+        emitted_at: datetime,
+        previous_event_sha256: Optional[str] = None,
+    ) -> DomainEvent:
+        """Construct a :class:`DomainEvent` with canonical hashes filled in.
+    
+        The first event in a stream has ``sequence == 1`` and
+        ``previous_event_sha256 is None``; subsequent events require both.
+        The model's own ``validate_event_chain_identity`` validator enforces
+        this invariant at construction.
+        """
+    
+        payload_sha = compute_payload_sha256(payload)
+        # Build once to compute the envelope hash, then construct the final
+        # event.  We reuse _canonical_event_fields so that the hash is
+        # identical to what verify_event_integrity will recompute.
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            DomainEvent as _DE,
+        )
+    
+>       event = _DE(
+            domain_event_id=domain_event_id,
+            stream_id=stream_id,
+            sequence=sequence,
+            event_type=event_type,
+            payload_schema_version=payload_schema_version,
+            upcaster_id=upcaster_id,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            payload=dict(payload),
+            payload_sha256=payload_sha,
+            migrated_payload_sha256=migrated_payload_sha256,
+            previous_event_sha256=previous_event_sha256,
+            event_sha256="0" * 64,  # placeholder, recomputed below
+            emitted_at=emitted_at,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for DomainEvent
+E       event_type
+E         String should match pattern '^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$' [type=string_pattern_mismatch, input_value='SourceIdentityAdopted', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch
+
+services/api/app/protocol_workflow/events/models.py:289: ValidationError
+_______________ test_same_bytes_keep_distinct_project_provenance _______________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-581/test_same_bytes_keep_distinct_0')
+
+    def test_same_bytes_keep_distinct_project_provenance(tmp_path):
+        svc = service(tmp_path)
+>       one = adopt(svc)
+              ^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:124: in adopt
+    event = EventEnvelopeBuilder().build(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.events.models.EventEnvelopeBuilder object at 0x10a506340>
+
+    def build(
+        self,
+        *,
+        domain_event_id: str,
+        stream_id: str,
+        sequence: int,
+        event_type: str,
+        payload_schema_version: str,
+        upcaster_id: str,
+        actor_type: ActorType,
+        actor_id: str,
+        action: str,
+        reason: str,
+        payload: Mapping[str, JsonValue],
+        migrated_payload_sha256: Optional[str] = None,
+        emitted_at: datetime,
+        previous_event_sha256: Optional[str] = None,
+    ) -> DomainEvent:
+        """Construct a :class:`DomainEvent` with canonical hashes filled in.
+    
+        The first event in a stream has ``sequence == 1`` and
+        ``previous_event_sha256 is None``; subsequent events require both.
+        The model's own ``validate_event_chain_identity`` validator enforces
+        this invariant at construction.
+        """
+    
+        payload_sha = compute_payload_sha256(payload)
+        # Build once to compute the envelope hash, then construct the final
+        # event.  We reuse _canonical_event_fields so that the hash is
+        # identical to what verify_event_integrity will recompute.
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            DomainEvent as _DE,
+        )
+    
+>       event = _DE(
+            domain_event_id=domain_event_id,
+            stream_id=stream_id,
+            sequence=sequence,
+            event_type=event_type,
+            payload_schema_version=payload_schema_version,
+            upcaster_id=upcaster_id,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            payload=dict(payload),
+            payload_sha256=payload_sha,
+            migrated_payload_sha256=migrated_payload_sha256,
+            previous_event_sha256=previous_event_sha256,
+            event_sha256="0" * 64,  # placeholder, recomputed below
+            emitted_at=emitted_at,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for DomainEvent
+E       event_type
+E         String should match pattern '^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$' [type=string_pattern_mismatch, input_value='SourceIdentityAdopted', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch
+
+services/api/app/protocol_workflow/events/models.py:289: ValidationError
+___________ test_failed_canonical_commit_does_not_adopt_staged_files ___________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-581/test_failed_canonical_commit_d0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10943e6f0>
+
+    def test_failed_canonical_commit_does_not_adopt_staged_files(tmp_path, monkeypatch):
+        from app.protocol_workflow.storage.sqlite import SqliteUnitOfWork
+    
+        svc = service(tmp_path)
+>       first = adopt(svc)
+                ^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:124: in adopt
+    event = EventEnvelopeBuilder().build(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.events.models.EventEnvelopeBuilder object at 0x10a6f0700>
+
+    def build(
+        self,
+        *,
+        domain_event_id: str,
+        stream_id: str,
+        sequence: int,
+        event_type: str,
+        payload_schema_version: str,
+        upcaster_id: str,
+        actor_type: ActorType,
+        actor_id: str,
+        action: str,
+        reason: str,
+        payload: Mapping[str, JsonValue],
+        migrated_payload_sha256: Optional[str] = None,
+        emitted_at: datetime,
+        previous_event_sha256: Optional[str] = None,
+    ) -> DomainEvent:
+        """Construct a :class:`DomainEvent` with canonical hashes filled in.
+    
+        The first event in a stream has ``sequence == 1`` and
+        ``previous_event_sha256 is None``; subsequent events require both.
+        The model's own ``validate_event_chain_identity`` validator enforces
+        this invariant at construction.
+        """
+    
+        payload_sha = compute_payload_sha256(payload)
+        # Build once to compute the envelope hash, then construct the final
+        # event.  We reuse _canonical_event_fields so that the hash is
+        # identical to what verify_event_integrity will recompute.
+        from packages.contracts.workbench_contracts.protocol_v3 import (
+            DomainEvent as _DE,
+        )
+    
+>       event = _DE(
+            domain_event_id=domain_event_id,
+            stream_id=stream_id,
+            sequence=sequence,
+            event_type=event_type,
+            payload_schema_version=payload_schema_version,
+            upcaster_id=upcaster_id,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            payload=dict(payload),
+            payload_sha256=payload_sha,
+            migrated_payload_sha256=migrated_payload_sha256,
+            previous_event_sha256=previous_event_sha256,
+            event_sha256="0" * 64,  # placeholder, recomputed below
+            emitted_at=emitted_at,
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for DomainEvent
+E       event_type
+E         String should match pattern '^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$' [type=string_pattern_mismatch, input_value='SourceIdentityAdopted', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch
+
+services/api/app/protocol_workflow/events/models.py:289: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_source_identity_product.py::test_restart_retains_exact_bytes_and_identity
+FAILED tests/protocol_v3/test_source_identity_product.py::test_old_content_replay_does_not_replace_successor
+FAILED tests/protocol_v3/test_source_identity_product.py::test_same_bytes_different_role_cannot_relabel_previous_source
+FAILED tests/protocol_v3/test_source_identity_product.py::test_same_bytes_keep_distinct_project_provenance
+FAILED tests/protocol_v3/test_source_identity_product.py::test_failed_canonical_commit_does_not_adopt_staged_files
+5 failed in 0.38s

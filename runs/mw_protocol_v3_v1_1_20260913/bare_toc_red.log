@@ -1,0 +1,43 @@
+FF.........                                                              [100%]
+=================================== FAILURES ===================================
+____ test_bare_toc_field_range_with_split_instruction_is_derived_until_end _____
+
+    def test_bare_toc_field_range_with_split_instruction_is_derived_until_end():
+        from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+    
+        start = ('<w:p><w:r><w:fldChar w:fldCharType="begin"/></w:r>'
+                 '<w:r><w:instrText>TO</w:instrText></w:r>'
+                 '<w:r><w:instrText>C \\h \\c "Table"</w:instrText></w:r>'
+                 '<w:r><w:fldChar w:fldCharType="separate"/></w:r></w:p>')
+        nested = ('<w:p><w:r><w:t>表2 试验剂量</w:t></w:r>'
+                  '<w:r><w:fldChar w:fldCharType="begin"/></w:r>'
+                  '<w:r><w:instrText>PAGEREF _RefDose \\h</w:instrText></w:r>'
+                  '<w:r><w:fldChar w:fldCharType="separate"/></w:r>'
+                  '<w:r><w:t>21</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>')
+        end = '<w:p><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>'
+        result = parse_docx(build_docx(paragraph_xml('目录前正文') + start + paragraph_xml('表1 研究设计 20')
+                                       + nested + end + paragraph_xml('目录后真实研究设计')))
+>       assert [b.role for b in result.blocks] == ['body', 'derived_toc', 'derived_toc', 'body']
+E       AssertionError: assert ['body', 'bod...body', 'body'] == ['body', 'der..._toc', 'body']
+E         
+E         At index 1 diff: 'body' != 'derived_toc'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_agent1_docx_parse.py:25: AssertionError
+__________________ test_simple_toc_field_is_not_body_evidence __________________
+
+    def test_simple_toc_field_is_not_body_evidence():
+        from services.api.app.protocol_workflow.agent1.docx_parse import parse_docx
+    
+        xml = '<w:p><w:fldSimple w:instr="TOC \\c Figure"><w:r><w:t>图1 流程</w:t></w:r></w:fldSimple></w:p>'
+>       assert parse_docx(build_docx(xml)).blocks[0].role == 'derived_toc'
+E       AssertionError: assert 'body' == 'derived_toc'
+E         
+E         - derived_toc
+E         + body
+
+tests/protocol_v3/test_agent1_docx_parse.py:33: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_bare_toc_field_range_with_split_instruction_is_derived_until_end
+FAILED tests/protocol_v3/test_agent1_docx_parse.py::test_simple_toc_field_is_not_body_evidence
+2 failed, 9 passed in 0.48s

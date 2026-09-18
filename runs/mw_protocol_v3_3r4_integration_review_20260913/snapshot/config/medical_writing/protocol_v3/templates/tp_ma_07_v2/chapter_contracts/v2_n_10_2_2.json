@@ -1,0 +1,208 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-2-2:v2",
+  "semantic_node_id": "v2_n_10_2_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-2-2:sae-reporting",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-2-2:v2",
+    "chapter_contract_id": "contract:v2-n-10-2-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_reporting.investigator_recipient",
+        "obligation": "required",
+        "rationale": "研究者 SAE 报告对象必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_reporting.investigator_clock",
+        "obligation": "required",
+        "rationale": "研究者 SAE 报告时限必须自首次获知起算，并与申办者加速报告时限分开。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_reporting.first_awareness_reference",
+        "obligation": "required",
+        "rationale": "首次获知定义与起算点必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_reporting.investigator_record",
+        "obligation": "required",
+        "rationale": "研究者报告记录要求必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_reporting.template_example_signed_form_day_zero",
+        "obligation": "forbidden",
+        "rationale": "以签署有效报告为第 0 天仅为模板示例，不得作为项目规则。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "investigator_sae_reporting",
+        "obligation": "required",
+        "rationale": "必须声明研究者报告对象、时限与记录。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "investigator_reporting_standard",
+        "obligation": "required",
+        "rationale": "必须声明研究者报告依据的当前规定。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "signed_form_delays_reporting",
+        "obligation": "forbidden",
+        "rationale": "签署/受理表不得推迟基于首次获知事实的报告。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "single_clock_for_all_reporters",
+        "obligation": "forbidden",
+        "rationale": "不得把单一报告时钟复制到研究者与申办者两侧。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "investigator_sae_reporting"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline",
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "investigator_reporting_standard"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明研究者报告对象、自首次获知起算的时限与记录要求。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "研究者 SAE 报告为项目事实集合（对象/时限/起算点/记录）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“研究者及时报告 SAE”通用句，或以签署日为第 0 天即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-2-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623380",
+      "_Toc46411096",
+      "_Toc48315532",
+      "_Toc90487627"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-2-2:clock",
+      "rule": "研究者 SAE 报告时限必须自首次获知起算；签署或受理表不得推迟首次获知报告。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-2-2:recipient",
+      "rule": "研究者报告对象与记录要求必须明确；研究者时限不得复制给申办者加速报告义务。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-2-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-2-2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-2-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-2-2:clock",
+      "question": "研究者报告时钟是否独立于签署表单与申办者时钟？",
+      "linked_fact_paths": [
+        "sae_reporting.investigator_clock",
+        "sae_reporting.first_awareness_reference"
+      ],
+      "linked_claim_types": [
+        "investigator_sae_reporting"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-2-2:clock"
+      ],
+      "risk_if_unmet": "以签署为起算会推迟报告并违反时限义务。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

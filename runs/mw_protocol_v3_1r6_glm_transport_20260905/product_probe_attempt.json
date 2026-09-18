@@ -1,0 +1,17 @@
+{
+  "logical_work_key": "protocol-v3:1r6:glm-5.3-flash:max:initial-connectivity:20260905",
+  "status": "succeeded",
+  "physical_calls": 1,
+  "observed_model": "glm-5.3-flash",
+  "response_id": "20260905204513dd949ba3c4514e37",
+  "effective_reasoning_effort": "not_reported_by_server",
+  "wire_validation": "exactly one choice, finish_reason stop, nonblank content, matching model",
+  "launch_note": "Initial process creation failed due to mistyped workdir before Python launch (zero calls). Corrected workdir launched exactly one probe; terminal success.",
+  "maximum_physical_calls": 1,
+  "provider": "zhipu-coding-plan",
+  "requested_model": "glm-5.3-flash",
+  "requested_reasoning_effort": "max",
+  "payload": "ping",
+  "recovery": "Inspect terminal receipt; pending without receipt means unknown outcome, never automatic redispatch.",
+  "offline_review": "general_single_object_round2: 244 passed, defects closed"
+}

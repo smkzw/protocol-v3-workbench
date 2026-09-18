@@ -1,0 +1,133 @@
+{
+  "authoritative_counts": {
+    "direct_body_paragraphs": 940,
+    "excluded_blank_outlined": 4,
+    "heading_style_leaves": 106,
+    "heading_style_nodes": 135,
+    "outlined_leaves": 109,
+    "outlined_nodes": 139,
+    "recursive_tables": 18,
+    "sections": 8,
+    "top_level_tables": 17,
+    "tracked_changes": 0
+  },
+  "candidate_findings": [
+    {
+      "claim_ref": "计划 v2 Task 3R.1 所述“已实现投影的约 76 v1 叶”",
+      "id": "projection_claim_76_not_accepted",
+      "observation": "以 AST 实测，legacy 模块显式投影路径（_CHAPTER_BODY_FACT_PATHS 与 section_seeds 分支）覆盖的 v1 叶子数以 projection_reconciliation 实际输出为准；标题相似不构成投影证据，76 的说法不作为对账基线。",
+      "status": "unverified_candidate_finding"
+    },
+    {
+      "claim_ref": "冻结计划 Task 3.1 的 v1 语义计数 124/110",
+      "id": "legacy_counts_differ_from_frozen_plan_identity",
+      "observation": "当前源码实际为 _COMPANY_CHAPTERS 124 行/103 叶，_company_nodes 含 6 个前置节点合计 130 节点/109 叶；映射按实际源码身份对账，不回填历史计数。",
+      "status": "observed_source_fact"
+    },
+    {
+      "claim_ref": "v1 registry JSON",
+      "id": "no_v1_json_registry_exists",
+      "observation": "仓库中不存在独立 v1 JSON registry；v1 身份唯一来源为 services/api/app/medical_writing_protocol_template.py，本任务不以臆造 JSON 充当 v1。",
+      "status": "observed_source_fact"
+    },
+    {
+      "claim_ref": "Ⅰ期模板权威（TP-MA-05/06、T02-00 修订版或待提供清洁版）",
+      "id": "phase1_authority_deferred_to_3r6",
+      "observation": "本候选仅面向 TP-MA-07 v2（Ⅱ/Ⅲ期）；7 个 phase:1 v1 叶显式登记为 nonapplicable_phase1 并保留历史身份，Ⅰ期权威选择留待 Task 3R.6。",
+      "status": "user_decision_pending"
+    },
+    {
+      "claim_ref": "106 叶 = 全部内容义务",
+      "id": "unheaded_content_not_covered_by_leaf_count",
+      "observation": "源文档存在无标题内容义务（临床前概述下毒理学/药代/一般药理段落、主要估计目标尾部第五属性段落、示例段落、无标题前置块）；标题叶计数不等于内容闭合，逐叶合同须读取 content_paragraph_indexes。",
+      "status": "observed_source_fact"
+    }
+  ],
+  "candidate_status": "candidate_not_current",
+  "conditional_registrations": {
+    "ethics_compensation_insurance": {
+      "default": "conditional_by_project",
+      "reason": "13.4 试验参与者的补偿、赔偿与保险登记为条件节点：金额与保险安排属项目事实，模板仅承载章节义务；未确认项目事实时正文保持占位而非编造。",
+      "source_basis": "v2 源标题 13.4；v1 对应节点 ethics.insurance（11.5 保险与赔偿）。"
+    },
+    "financial_disclosure": {
+      "default": "not_applicable",
+      "reason": "TP-MA-07 v2 清洁版正文未承载财务披露标题节点（源结构抽取 0 处匹配）；默认不适用。若项目要求财务披露，须由项目事实显式开启并给出承载位置。",
+      "source_basis": "extract_tp_ma_07_v2_registry.py 对源 document.xml 全文文本的结构化扫描；未发现财务披露标题或章名。"
+    },
+    "management_structure": {
+      "carrying_v2_node_ids": [
+        "v2_n_14_2",
+        "v2_n_14_3",
+        "v2_n_14_4"
+      ],
+      "declaration": "管理结构义务由 v2 多节点联合承载：14.2 对申办者的要求、14.3 申办者或其代表委派的监查员职责、14.4 对研究者的要求；对应 v1 12.5 关键角色和研究管理的显式拆分。",
+      "source_basis": "v1_to_v2_mapping.json forward_mapping study_management.roles（split）。"
+    }
+  },
+  "count_scope_notes": [
+    "135/106 为标题样式树口径；139/109 为含 Normal/caption 本地大纲的大纲树口径；两者分列。",
+    "17 为 body 顶层表格数，18 为 document.xml 递归表格数；嵌套表随宿主表登记不另计。",
+    "试验参与者计数按直接正文段落、顶层表格、全文档 w:t 三个口径分列。",
+    "空白大纲段落不计入节点，但保留定位记录。"
+  ],
+  "extraction_algorithm": [
+    "sha256 门禁：源 DOCX 哈希必须等于冻结值，否则显式报错停止。",
+    "styles.xml 解析样式大纲级别（含 basedOn 继承）；document.xml 仅读 body 直接子元素。",
+    "标题树 = 非空正文段落且样式名为 heading/标题（排除字符样式）且有效大纲级别 0-8。",
+    "大纲树 = 非空正文段落且（样式继承或段落本地 outlineLvl）有效级别 0-8；Normal/caption 本地大纲节点（缩略语表、附录 1-3）因此保留。",
+    "叶子判定 = 紧邻下一标题级别 <= 当前级别或为末节点（与 2026-09-05 只读预检一致）。",
+    "章节号 = 标题 1 1. 样式起按层级推导；前置件 = 首个编号章之前的 0 级大纲节点。",
+    "正文段落归属最近前置大纲节点；表格单独登记并归属最近前置大纲节点。",
+    "试验参与者/受试者计数按直接正文段落、顶层表格、全文档 w:t 三个口径分列。",
+    "legacy 模块仅经 AST 读取 _COMPANY_CHAPTERS/_CONDITIONAL_PREFIXES/_CHAPTER_BODY_FACT_PATHS/_company_nodes/section_seeds/_node_kind，绝不 import。"
+  ],
+  "legacy_projection_reconciliation": {
+    "detail_ref": "v1_to_v2_mapping.json projection_reconciliation.leaves",
+    "explicit_projection_leaf_count": 35,
+    "no_explicit_projection_leaf_count": 74
+  },
+  "legacy_source": {
+    "access": "ast_only_never_imported",
+    "identity_note": "company 权威元数据指向历史 D017/D001/MG-K10 方案；本候选按当前源码实际身份（124 行/103 叶 + 6 前置 = 130/109）对账。",
+    "module_path": "services/api/app/medical_writing_protocol_template.py",
+    "module_sha256": "ee94cd4c2f73b8abae3478e3d8f4a3302f9732107cc9f5732df17038aefb2ad3"
+  },
+  "mapping_summary": {
+    "legacy_leaf_dispositions": {
+      "mapped_to_v2": 70,
+      "merged": 7,
+      "nonapplicable_phase1": 7,
+      "retired": 10,
+      "split": 15
+    },
+    "legacy_leaf_total": 109,
+    "new_in_v2_leaf_count": 16,
+    "reverse_entry_total": 110
+  },
+  "promotion_requirements": [
+    "Codex 对源内容、legacy 投影义务与候选映射的独立语义复核；",
+    "独立新评审人的源覆盖复核；",
+    "映射 partial 条目与 candidate_findings 逐条处置；",
+    "以上全部通过前，本 registry 不得进入 current 或产品运行时。"
+  ],
+  "schema_version": "tp-ma-07-v2-template-registry-v1",
+  "source": {
+    "access": "zip_xml_read_only_never_written",
+    "path": "/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07 临床试验方案（2期或3期）_清洁版_v2.0_20260905.docx",
+    "sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756"
+  },
+  "template_id": "tp_ma_07_v2",
+  "terminology": {
+    "受试者": {
+      "all_document_text": 0,
+      "direct_body_paragraphs": 0,
+      "top_level_tables": 0
+    },
+    "试验参与者": {
+      "all_document_text": 240,
+      "direct_body_paragraphs": 218,
+      "top_level_tables": 22
+    }
+  }
+}

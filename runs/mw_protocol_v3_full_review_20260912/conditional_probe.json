@@ -1,0 +1,337 @@
+{
+  "input_type_results": {
+    "boolean_false": {
+      "accepted": false,
+      "error_types": [
+        "string_type"
+      ]
+    },
+    "boolean_true": {
+      "accepted": false,
+      "error_types": [
+        "string_type"
+      ]
+    },
+    "string_false": {
+      "accepted": true
+    },
+    "number": {
+      "accepted": false,
+      "error_types": [
+        "string_type"
+      ]
+    },
+    "structured_value": {
+      "accepted": false,
+      "error_types": [
+        "string_type"
+      ]
+    }
+  },
+  "no_interim_check": {
+    "subject_id": "review:no-interim",
+    "chapter_contract_id": "contract:v2-n-11-4-9:v2",
+    "passed": false,
+    "findings": [
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[1](statistics.interim.timing)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[2](statistics.interim.information_fraction)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[3](statistics.interim.purpose)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[4](statistics.interim.rules)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[5](statistics.interim.decision_responsibility)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[6](statistics.interim.final_analysis_impact)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[7](statistics.interim.efficacy_alpha_spending)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[8](statistics.interim.safety_review_alpha_separation)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[9](statistics.interim.idmc_responsibilities)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[10](statistics.interim.endpoint_irc_responsibilities)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_fact",
+        "severity": "error",
+        "location": "contract.fact_requirements[11](statistics.interim.canonical_reference)",
+        "message": "required fact is absent, null or blank; key existence alone is insufficient"
+      },
+      {
+        "code": "missing_required_claim",
+        "severity": "error",
+        "location": "contract.claim_requirements[1](interim_final_analysis_impact)",
+        "message": "required claim is absent or its statement is empty"
+      },
+      {
+        "code": "unsatisfied_evidence_requirement",
+        "severity": "error",
+        "location": "contract.evidence_source_requirements[0]",
+        "message": "no supplied evidence unit satisfies this evidence floor"
+      },
+      {
+        "code": "unsatisfied_evidence_requirement",
+        "severity": "error",
+        "location": "contract.evidence_source_requirements[1]",
+        "message": "no supplied evidence unit satisfies this evidence floor"
+      },
+      {
+        "code": "missing_structural_object",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table)",
+        "message": "material occurrences 0 are below the required 1; ID-only shells do not count"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:timing)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:information-fraction)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:purpose)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:rules)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:decision)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:final-impact)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:efficacy-alpha)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:safety-separation)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:idmc)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:irc)",
+        "message": "required cell is absent, null or blank"
+      },
+      {
+        "code": "missing_required_cell",
+        "severity": "error",
+        "location": "contract.structural_object_obligations[0](table).cell(interim:cell:canonical-reference)",
+        "message": "required cell is absent, null or blank"
+      }
+    ],
+    "deferred_qc_obligations": [
+      "medical_and_qc_judgment_not_executed",
+      "positive_qc_rule:qc:v2-n-11-4-9:source: 源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "positive_qc_rule:qc:v2-n-11-4-9:consistency: 统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "positive_qc_rule:qc:v2-n-11-4-9:reproducibility: 统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "ctq:ctq:v2-n-11-4-9:consistency: 该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "skeleton_risk_rule: 期中分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "conditional_applicability_not_executed:conditional:v2-n-11-4-9:interim",
+      "project_specific_element_not_evaluated: 本节点承载“期中分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "project_specific_element_not_evaluated: 统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "project_specific_element_not_evaluated: 父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "project_specific_element_not_evaluated: 源文过时引用“第14.6节”必须解析为本模板已接受的规范目标（数据监查委员会 v2_n_13_x 载体族或项目确认的现行 IDMC 章节身份），正文与引用字段不得回写“14.6”过时条号（fresh复核D5修复）。",
+      "project_specific_element_not_evaluated: 本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "ignored_supplied_verdict": false
+  },
+  "conditional_vs_unconditional_overlap": [
+    {
+      "node": "v2_n_3_1_2_3",
+      "rule": "applicability:n-3-1-2-3:background-rescue",
+      "unconditionally_required_active_paths": [
+        "estimand.primary.rescue_treatment_handling"
+      ]
+    },
+    {
+      "node": "v2_n_6_1_2",
+      "rule": "applicability:n-6-1-2:dose-modification",
+      "unconditionally_required_active_paths": [
+        "intervention.dose_hold_criteria",
+        "intervention.dose_reduction_rules",
+        "intervention.permanent_discontinuation_criteria",
+        "intervention.restart_criteria"
+      ]
+    },
+    {
+      "node": "v2_n_6_1_2",
+      "rule": "applicability:n-6-1-2:escalation",
+      "unconditionally_required_active_paths": [
+        "intervention.dose_escalation_or_dlt_logic"
+      ]
+    },
+    {
+      "node": "v2_n_6_4_2",
+      "rule": "applicability:n-6-4-2:background",
+      "unconditionally_required_active_paths": [
+        "intervention.background_therapy_rules"
+      ]
+    },
+    {
+      "node": "v2_n_7_2",
+      "rule": "applicability:n-7-2:randomization",
+      "unconditionally_required_active_paths": [
+        "procedure.randomization_day_rules"
+      ]
+    },
+    {
+      "node": "v2_n_8_1",
+      "rule": "applicability:n-8-1:individual-hold",
+      "unconditionally_required_active_paths": [
+        "discontinuation.individual_hold_criteria",
+        "discontinuation.personal_hold"
+      ]
+    },
+    {
+      "node": "v2_n_8_1",
+      "rule": "applicability:n-8-1:hold-to-stop",
+      "unconditionally_required_active_paths": [
+        "discontinuation.permanent_stop_criteria.participant",
+        "discontinuation.permanent_stop_recording"
+      ]
+    },
+    {
+      "node": "v2_n_9_2",
+      "rule": "applicability:n-9-2:central-lab",
+      "unconditionally_required_active_paths": [
+        "safety.lab_units_and_reference_ranges",
+        "safety.special_assay_purposes"
+      ]
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "rule": "conditional:v2-n-11-4-6:pk",
+      "unconditionally_required_active_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.sampling_schedule"
+      ]
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "rule": "conditional:v2-n-11-4-6:pd",
+      "unconditionally_required_active_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.sampling_schedule"
+      ]
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "rule": "conditional:v2-n-11-4-6:er",
+      "unconditionally_required_active_paths": [
+        "statistics.pk_pd_er.endpoint_linkage",
+        "statistics.pk_pd_er.model_assumptions",
+        "statistics.pk_pd_er.sampling_schedule"
+      ]
+    },
+    {
+      "node": "v2_n_11_4_8",
+      "rule": "conditional:v2-n-11-4-8:no-adjustment",
+      "unconditionally_required_active_paths": [
+        "statistics.multiplicity.applicability_disposition"
+      ]
+    },
+    {
+      "node": "v2_n_11_4_9",
+      "rule": "conditional:v2-n-11-4-9:interim",
+      "unconditionally_required_active_paths": [
+        "statistics.interim.decision_responsibility",
+        "statistics.interim.efficacy_alpha_spending",
+        "statistics.interim.endpoint_irc_responsibilities",
+        "statistics.interim.final_analysis_impact",
+        "statistics.interim.idmc_responsibilities",
+        "statistics.interim.information_fraction",
+        "statistics.interim.purpose",
+        "statistics.interim.rules",
+        "statistics.interim.safety_review_alpha_separation",
+        "statistics.interim.timing"
+      ]
+    },
+    {
+      "node": "v2_n_12_7",
+      "rule": "applicability:v2-n-12-7:future-use",
+      "unconditionally_required_active_paths": [
+        "future_use.consent",
+        "future_use.current_study_assay_separation",
+        "future_use.duration",
+        "future_use.genetic_testing",
+        "future_use.location",
+        "future_use.purpose",
+        "future_use.review_plan"
+      ]
+    }
+  ],
+  "note": "Overlaps are review candidates, not all automatic clinical defects. The no-interim case is concrete; no exemption is executed by current checker."
+}

@@ -1,0 +1,244 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-1-3:v2",
+  "semantic_node_id": "v2_n_10_1_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-1-3:ae-causality",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-1-3:v2",
+    "chapter_contract_id": "contract:v2-n-10-1-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.five_level_terminology",
+        "obligation": "required",
+        "rationale": "必须保留用户批准的五分法术语（肯定有关/很可能有关/可能有关/可能无关/肯定无关），不得折叠为二分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.judgment_method",
+        "obligation": "required",
+        "rationale": "判定方法、判定依据与逐级标准必须给出。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.reportability_algorithm",
+        "obligation": "required",
+        "rationale": "加速报告判定算法必须独立于统计 ADR 分组，并单独说明可能无关的处置。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.current_authority_basis",
+        "obligation": "required",
+        "rationale": "必须给出当前生效的法规/指南依据；征求意见稿不得当作现行法律。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.template_example_binary_mapping",
+        "obligation": "forbidden",
+        "rationale": "模板示例二分映射不得用作加速报告算法。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "causality.template_example_draft_guidance_quote",
+        "obligation": "forbidden",
+        "rationale": "草案/征求意见稿引文不得作为现行依据。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "causality_five_level_assessment",
+        "obligation": "required",
+        "rationale": "必须声明五分法逐级判定结果与依据。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "causality_reportability_algorithm",
+        "obligation": "required",
+        "rationale": "必须声明独立于统计分组的加速报告判定算法。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "causality_collapsed_to_binary",
+        "obligation": "forbidden",
+        "rationale": "不得把五分法折叠为“有关/无关”二分。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "adr_mapping_equals_expedited_reporting",
+        "obligation": "forbidden",
+        "rationale": "统计 ADR 分组不得静默充当加速报告算法。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "causality_five_level_assessment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "regulatory_or_guideline",
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "causality_reportability_algorithm"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须逐级给出五分法术语、判定依据与加速报告处置。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "五分法表必须逐级给出级别、定义与判定依据。",
+        "required_object_cells": [
+          "causality:cell:level",
+          "causality:cell:definition",
+          "causality:cell:basis"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "相关性判断为项目事实集合（五分法/判定方法/报告算法/现行依据）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“有关/无关”二分结论或直接引用草案文本即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-1-3",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623374",
+      "_Toc48315525",
+      "_Toc90487620"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-3:five-level",
+      "rule": "相关性判断必须保留用户批准的五分法术语与逐级判定依据，不得折叠为“有关/无关”二分。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-3:algorithm",
+      "rule": "统计 ADR 分组不得静默充当加速报告判定算法；“可能无关”的加速报告处置必须单独说明。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-3:authority",
+      "rule": "引用依据必须是当前生效的法规/指南；征求意见稿或草案文本不得当作现行法律。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-1-3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-3:five-level",
+      "question": "五分法术语与逐级依据是否完整保留？",
+      "linked_fact_paths": [
+        "causality.five_level_terminology",
+        "causality.judgment_method"
+      ],
+      "linked_claim_types": [
+        "causality_five_level_assessment"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-3:five-level"
+      ],
+      "risk_if_unmet": "二分化会丢失判定依据与监管可追溯性。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-3:algorithm",
+      "question": "加速报告算法是否与统计 ADR 分组分离？",
+      "linked_fact_paths": [
+        "causality.reportability_algorithm"
+      ],
+      "linked_claim_types": [
+        "causality_reportability_algorithm"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-3:algorithm"
+      ],
+      "risk_if_unmet": "分组直接充当报告算法会造成漏报/误报。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

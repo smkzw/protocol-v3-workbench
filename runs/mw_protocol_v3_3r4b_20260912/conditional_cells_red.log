@@ -1,0 +1,94 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+______ test_conditional_table_cells_do_not_remove_the_whole_table[False] _______
+
+flag = False
+
+    @pytest.mark.parametrize("flag", [False, True, None])
+    def test_conditional_table_cells_do_not_remove_the_whole_table(flag):
+        from app.protocol_workflow.registries.applicability import FactPredicate, RulePredicate, evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from test_all_chapter_contracts import _objectives_contract, _objectives_positive_content
+        from test_chapter_fact_binding import confirmed_study
+        c = _objectives_contract(conditional_applicability_rules=({
+            "conditional_applicability_rule_id": "condition:table-detail", "triggering_fact_paths": ("test.table_detail",),
+            "condition": "Synthetic optional table detail", "rationale": "Keep base table while varying one cell",
+            "required_when_active_fact_paths": ("picos.objective.primary",),
+        },))
+        cell = "test:conditional-table-detail"
+        objects = tuple(o.model_copy(update={"required_object_cells": o.required_object_cells + (cell,)})
+                        if o.object_kind.value == "table" else o for o in c.substantive_content.structural_object_obligations)
+        c = c.model_copy(update={"substantive_content": c.substantive_content.model_copy(update={"structural_object_obligations": objects})})
+        rule = c.conditional_applicability_rules[0]
+>       declaration = RulePredicate(rule_id=rule.conditional_applicability_rule_id, source_rule_sha256=rule.material_sha256(),
+                                    source_contract_sha256=c.material_sha256(), predicates=(FactPredicate(fact_path="test.table_detail", expected=True),),
+                                    conditional_object_cells=(cell,))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for RulePredicate
+E       conditional_object_cells
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('test:conditional-table-detail',), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:554: ValidationError
+_______ test_conditional_table_cells_do_not_remove_the_whole_table[True] _______
+
+flag = True
+
+    @pytest.mark.parametrize("flag", [False, True, None])
+    def test_conditional_table_cells_do_not_remove_the_whole_table(flag):
+        from app.protocol_workflow.registries.applicability import FactPredicate, RulePredicate, evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from test_all_chapter_contracts import _objectives_contract, _objectives_positive_content
+        from test_chapter_fact_binding import confirmed_study
+        c = _objectives_contract(conditional_applicability_rules=({
+            "conditional_applicability_rule_id": "condition:table-detail", "triggering_fact_paths": ("test.table_detail",),
+            "condition": "Synthetic optional table detail", "rationale": "Keep base table while varying one cell",
+            "required_when_active_fact_paths": ("picos.objective.primary",),
+        },))
+        cell = "test:conditional-table-detail"
+        objects = tuple(o.model_copy(update={"required_object_cells": o.required_object_cells + (cell,)})
+                        if o.object_kind.value == "table" else o for o in c.substantive_content.structural_object_obligations)
+        c = c.model_copy(update={"substantive_content": c.substantive_content.model_copy(update={"structural_object_obligations": objects})})
+        rule = c.conditional_applicability_rules[0]
+>       declaration = RulePredicate(rule_id=rule.conditional_applicability_rule_id, source_rule_sha256=rule.material_sha256(),
+                                    source_contract_sha256=c.material_sha256(), predicates=(FactPredicate(fact_path="test.table_detail", expected=True),),
+                                    conditional_object_cells=(cell,))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for RulePredicate
+E       conditional_object_cells
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('test:conditional-table-detail',), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:554: ValidationError
+_______ test_conditional_table_cells_do_not_remove_the_whole_table[None] _______
+
+flag = None
+
+    @pytest.mark.parametrize("flag", [False, True, None])
+    def test_conditional_table_cells_do_not_remove_the_whole_table(flag):
+        from app.protocol_workflow.registries.applicability import FactPredicate, RulePredicate, evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from test_all_chapter_contracts import _objectives_contract, _objectives_positive_content
+        from test_chapter_fact_binding import confirmed_study
+        c = _objectives_contract(conditional_applicability_rules=({
+            "conditional_applicability_rule_id": "condition:table-detail", "triggering_fact_paths": ("test.table_detail",),
+            "condition": "Synthetic optional table detail", "rationale": "Keep base table while varying one cell",
+            "required_when_active_fact_paths": ("picos.objective.primary",),
+        },))
+        cell = "test:conditional-table-detail"
+        objects = tuple(o.model_copy(update={"required_object_cells": o.required_object_cells + (cell,)})
+                        if o.object_kind.value == "table" else o for o in c.substantive_content.structural_object_obligations)
+        c = c.model_copy(update={"substantive_content": c.substantive_content.model_copy(update={"structural_object_obligations": objects})})
+        rule = c.conditional_applicability_rules[0]
+>       declaration = RulePredicate(rule_id=rule.conditional_applicability_rule_id, source_rule_sha256=rule.material_sha256(),
+                                    source_contract_sha256=c.material_sha256(), predicates=(FactPredicate(fact_path="test.table_detail", expected=True),),
+                                    conditional_object_cells=(cell,))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for RulePredicate
+E       conditional_object_cells
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('test:conditional-table-detail',), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:554: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_conditional_table_cells_do_not_remove_the_whole_table[False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_conditional_table_cells_do_not_remove_the_whole_table[True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_conditional_table_cells_do_not_remove_the_whole_table[None]
+3 failed, 64 deselected in 0.97s

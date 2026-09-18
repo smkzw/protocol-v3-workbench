@@ -1,0 +1,147 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_______ test_fact_text_is_not_normalized_by_transport[  first\nsecond  ] _______
+
+value = '  first\nsecond  '
+
+    @pytest.mark.parametrize("value", ["  first\nsecond  ", {"text": "  first\nsecond  "}, ["  first  ", "\nsecond\n"]])
+    def test_fact_text_is_not_normalized_by_transport(value):
+        from app.protocol_workflow.registries.fact_bindings import bind_chapter_input
+        study = confirmed_study({"study.objective": value})
+>       assert json.loads(study.model_dump_json())["facts"]["study.objective"] == value
+E       AssertionError: assert 'first\nsecond' == '  first\nsecond  '
+E         
+E         -   first
+E         ? --
+E         + first
+E         - second  
+E         ?       --
+E         + second
+
+tests/protocol_v3/test_chapter_fact_binding.py:247: AssertionError
+____________ test_fact_text_is_not_normalized_by_transport[value1] _____________
+
+value = {'text': '  first\nsecond  '}
+
+    @pytest.mark.parametrize("value", ["  first\nsecond  ", {"text": "  first\nsecond  "}, ["  first  ", "\nsecond\n"]])
+    def test_fact_text_is_not_normalized_by_transport(value):
+        from app.protocol_workflow.registries.fact_bindings import bind_chapter_input
+        study = confirmed_study({"study.objective": value})
+>       assert json.loads(study.model_dump_json())["facts"]["study.objective"] == value
+E       AssertionError: assert {'text': 'first\nsecond'} == {'text': '  first\nsecond  '}
+E         
+E         Differing items:
+E         {'text': 'first\nsecond'} != {'text': '  first\nsecond  '}
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_fact_binding.py:247: AssertionError
+____________ test_fact_text_is_not_normalized_by_transport[value2] _____________
+
+value = ['  first  ', '\nsecond\n']
+
+    @pytest.mark.parametrize("value", ["  first\nsecond  ", {"text": "  first\nsecond  "}, ["  first  ", "\nsecond\n"]])
+    def test_fact_text_is_not_normalized_by_transport(value):
+        from app.protocol_workflow.registries.fact_bindings import bind_chapter_input
+        study = confirmed_study({"study.objective": value})
+>       assert json.loads(study.model_dump_json())["facts"]["study.objective"] == value
+E       AssertionError: assert ['first', 'second'] == ['  first  ', '\nsecond\n']
+E         
+E         At index 0 diff: 'first' != '  first  '
+E         Use -v to get more diff
+
+tests/protocol_v3/test_chapter_fact_binding.py:247: AssertionError
+_______________ test_nonfinite_output_is_reported_as_fact_error ________________
+
+    def test_nonfinite_output_is_reported_as_fact_error():
+        from app.protocol_workflow.registries.fact_bindings import bind_chapter_input, validate_output_facts, FactBindingError
+        from app.protocol_workflow.registries.chapters import ChapterSkillOutput
+        study = confirmed_study({"study.objective": 1})
+        bound = bind_chapter_input(study, _objectives_contract(), bindings_for_objective())
+        output = ChapterSkillOutput(chapter_contract_id=bound.chapter_contract_id, node_id=bound.node_id,
+                                   facts=(ContentFact(fact_path="picos.objective.primary", value=float("nan")),))
+        with pytest.raises(FactBindingError, match="output_fact_mismatch"):
+>           validate_output_facts(bound, output, study, contract=_objectives_contract(), bindings=bindings_for_objective())
+
+tests/protocol_v3/test_chapter_fact_binding.py:262: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/fact_bindings.py:308: in validate_output_facts
+    or _json(fact.value) != _json(expected.resolved_facts[fact.fact_path])
+       ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/registries/fact_bindings.py:70: in _json
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.encoder.JSONEncoder object at 0x10a54fd70>, o = nan
+_one_shot = True
+
+    def iterencode(self, o, _one_shot=False):
+        """Encode the given object and yield each string
+        representation as available.
+    
+        For example::
+    
+            for chunk in JSONEncoder().iterencode(bigobject):
+                mysocket.write(chunk)
+    
+        """
+        if self.check_circular:
+            markers = {}
+        else:
+            markers = None
+        if self.ensure_ascii:
+            _encoder = encode_basestring_ascii
+        else:
+            _encoder = encode_basestring
+    
+        def floatstr(o, allow_nan=self.allow_nan,
+                _repr=float.__repr__, _inf=INFINITY, _neginf=-INFINITY):
+            # Check for specials.  Note that this type of test is processor
+            # and/or platform-specific, so do tests which don't depend on the
+            # internals.
+    
+            if o != o:
+                text = 'NaN'
+            elif o == _inf:
+                text = 'Infinity'
+            elif o == _neginf:
+                text = '-Infinity'
+            else:
+                return _repr(o)
+    
+            if not allow_nan:
+                raise ValueError(
+                    "Out of range float values are not JSON compliant: " +
+                    repr(o))
+    
+            return text
+    
+    
+        if (_one_shot and c_make_encoder is not None
+                and self.indent is None):
+            _iterencode = c_make_encoder(
+                markers, self.default, _encoder, self.indent,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, self.allow_nan)
+        else:
+            _iterencode = _make_iterencode(
+                markers, self.default, _encoder, self.indent, floatstr,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, _one_shot)
+>       return _iterencode(o, 0)
+               ^^^^^^^^^^^^^^^^^
+E       ValueError: Out of range float values are not JSON compliant: nan
+
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py:258: ValueError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_fact_text_is_not_normalized_by_transport[  first\nsecond  ]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_fact_text_is_not_normalized_by_transport[value1]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_fact_text_is_not_normalized_by_transport[value2]
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_nonfinite_output_is_reported_as_fact_error
+4 failed, 37 deselected in 0.88s

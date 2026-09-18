@@ -1,0 +1,16 @@
+....F                                                                    [100%]
+=================================== FAILURES ===================================
+________________ test_native_quantity_number_type_is_preserved _________________
+
+    def test_native_quantity_number_type_is_preserved():
+        value = RegimenProposal.model_validate(regimen())
+>       assert type(value.schedules[0].steps[0].products[0].dose.value) is int
+E       AssertionError: assert <class 'float'> is int
+E        +  where <class 'float'> = type(200.0)
+E        +    where 200.0 = RegimenQuantity(value=200.0, unit='mg').value
+E        +      where RegimenQuantity(value=200.0, unit='mg') = RegimenProduct(name='试验药X', dose=RegimenQuantity(value=200.0, unit='mg'), volume=RegimenQuantity(value=2.0, unit='mL')).dose
+
+tests/protocol_v3/test_clinical_design_worker.py:62: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_native_quantity_number_type_is_preserved
+1 failed, 4 passed in 0.30s

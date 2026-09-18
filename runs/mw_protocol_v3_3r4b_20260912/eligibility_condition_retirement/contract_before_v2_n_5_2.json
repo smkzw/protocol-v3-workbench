@@ -1,0 +1,250 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-5-2:v2",
+  "semantic_node_id": "v2_n_5_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-5-2:exclusion-criteria",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-5-2:v2",
+    "chapter_contract_id": "contract:v2-n-5-2:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "picos.exclusion_modules",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.logic",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.criteria",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.parameters",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.windows",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.exceptions",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.registry_identity",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.registry_source_version",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "framing.population_intent",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.population_summary",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "exclusion_predicate",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "eligibility_rationale",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "registry_consistency",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exclusion_predicate"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "eligibility_rationale"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "registry_only"
+        ],
+        "admission_claim_types": [
+          "registry_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 3,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "exclusion:logic",
+          "exclusion:criteria",
+          "exclusion:parameters",
+          "exclusion:windows",
+          "exclusion:exceptions",
+          "exclusion:registry-source"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "排除标准引用由纳入载体和父章 v2_n_5 承载的人群 framing，但不复制纳入标准的逆命题；排除标准是 any-applicable-criterion 谓词，必须保留布尔逻辑、单位、阈值、窗口和例外。",
+      "每个限制需有项目/人群相关理由，不能因源文未列某人口群体而自动推导排除。",
+      "当项目确认妊娠/避孕风险适用时，排除载体必须引用纳入载体登记的 picos.risk.pregnancy_contraception 形成相应排除标准（引用，不复制逆命题，不设通用期限）；该条件义务仅在风险确认后触发（fresh复核D2修复：原避孕保留义务未达排除载体）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“任一不符合即排除”空话、逆向复制纳入标准或缺少参数/窗口/例外即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_5_2",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623341"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_2:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_2:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_5_2:active",
+      "triggering_fact_paths": [
+        "picos.exclusion_modules"
+      ],
+      "condition": "any-applicable-criterion predicate 生效时，必须逐项给出适用排除条件及理由。",
+      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+      "required_when_active_fact_paths": [],
+      "required_when_active_claim_types": [
+        "exclusion_predicate"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:n-5-2:contraception-exclusion-reference",
+      "triggering_fact_paths": [
+        "picos.risk.pregnancy_contraception"
+      ],
+      "condition": "项目确认妊娠/避孕风险适用",
+      "rationale": "避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。",
+      "required_when_active_fact_paths": [
+        "population.exclusion.contraception_criterion_ref"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_5_2:closure",
+      "question": "v2_n_5_2 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "picos.exclusion_modules",
+        "picos.exclusion_modules.logic"
+      ],
+      "linked_claim_types": [
+        "exclusion_predicate",
+        "eligibility_rationale"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_5_2:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "registry_consistency_obligation_id": "registry:v2-n-5-2:eligibility",
+      "registry_name": "适用临床试验注册库（项目实例指定）",
+      "eligibility_fact_paths": [
+        "picos.exclusion_modules.registry_identity",
+        "picos.exclusion_modules.registry_source_version"
+      ],
+      "consistency_rules": [
+        "必须记录实际注册库身份、来源版本和核对日期；不得把无来源的登记条目当作项目排除依据。"
+      ]
+    }
+  ]
+}

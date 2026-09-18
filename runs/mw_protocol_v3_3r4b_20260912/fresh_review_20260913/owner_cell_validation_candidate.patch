@@ -1,0 +1,20 @@
+--- a/services/api/app/protocol_workflow/registries/applicability.py
++++ b/services/api/app/protocol_workflow/registries/applicability.py
+@@ -144,6 +144,17 @@
+         if (declaration.source_rule_sha256 != source.material_sha256()
+                 or declaration.source_contract_sha256 != contract.material_sha256()):
+             raise ValueError("applicability rule source changed")
++        declared_cells = {
++            cell
++            for obligation in contract.substantive_content.structural_object_obligations
++            for cell in obligation.required_object_cells
++        }
++        unknown_cells = set(declaration.conditional_object_cells) - declared_cells
++        if unknown_cells:
++            raise ValueError(
++                f"applicability cell target missing: {declaration.rule_id}: "
++                f"{sorted(unknown_cells)}"
++            )
+     return catalog
+ 
+ 

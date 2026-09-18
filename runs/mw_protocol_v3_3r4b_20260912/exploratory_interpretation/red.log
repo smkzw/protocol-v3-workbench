@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_exploratory_interpretation_limit_is_not_optional_prose __________
+
+    def test_exploratory_interpretation_limit_is_not_optional_prose():
+        import json
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload,evaluate_chapter_content
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_3_4_2.json').read_text())
+        p=REAL_TEMPLATE_DIR.parents[4]/'tests/fixtures/protocol_v3/chapter_content_v2/batch2.json'
+        raw=next(f['content'] for f in json.loads(p.read_text())['fixtures'] if f['chapter_contract_id']==c.chapter_contract_id and f['fixture_kind']=='positive')
+        raw['claims']=[x for x in raw['claims'] if x['claim_type']!='exploratory_non_confirmatory']
+        result=evaluate_chapter_content(c,ChapterContentPayload.model_validate(raw),subject_id='test:exploratory-limit')
+>       assert 'missing_required_claim' in result.error_codes()
+E       AssertionError: assert 'missing_required_claim' in ()
+E        +  where () = error_codes()
+E        +    where error_codes = FixtureCheckResult(subject_id='test:exploratory-limit', chapter_contract_id='contract:v2-n-3-4-2:v2', passed=True, fin...nfirmatory', 'project_specific_element_not_evaluated: 分析意图可见：确证性/探索性意图必须对后续统计合同保持可见。'), ignored_supplied_verdict=False).error_codes
+
+tests/protocol_v3/test_chapter_applicability.py:1643: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_exploratory_interpretation_limit_is_not_optional_prose
+1 failed, 219 deselected in 0.47s

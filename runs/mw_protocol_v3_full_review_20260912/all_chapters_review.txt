@@ -1,0 +1,444 @@
+v2_front_block 封面
+facts: framing.protocol_id, framing.document_title, framing.version, document_control.version_date, document_control.applicable_parties, document_control.confidentiality_statement, document_control.header_footer_metadata, provenance.template.version
+claims: document_control_identity, confidentiality_binding
+prompt: 输入为 ChapterSkillInput（已确认文档控制事实），输出为 ChapterSkillOutput。封面身份复用既有 framing.protocol_id / framing.document_title / framing.version 绑定，版本与日期分别以结构化事实承载（不合并为丢失版本独立性的无结构字符串）；逐项给出实际适用方、申办方保密声明与页眉/页脚元数据行；排除源0–13说明段与 XXXXXX 示例标记；缺失事实进入待补清单而不是编造。
+v2_n_1_1 概要
+facts: framing.protocol_id, framing.document_title, framing.version, document_control.version_date, framing.study_phase, synopsis.registration_classification, synopsis.sponsor, synopsis.principal_investigator, synopsis.trial_institutions, synopsis.design, synopsis.population_eligibility, synopsis.investigational_drug, synopsis.comparator_drug, synopsis.interventions, synopsis.sample_size, synopsis.statistical_methods, synopsis.overall_duration, synopsis.participation_duration
+claims: synopsis_fact_row, study_objective, estimand_linkage
+prompt: 输入为 ChapterSkillInput（正文既定项目事实），输出为 ChapterSkillOutput。汇总表17行选择器全部保留并与正文一致：编号/标题/版本/期别复用 framing.protocol_id / framing.document_title / framing.version / framing.study_phase 绑定，版本与日期分开承载；嵌套表分别映射多个目的/估计目标/终点；登记分类是药物注册申请分类，不是注册记录证明；实际注册一致性属于适用注册的入选资格记录，无记录不得虚构；不得从模板示例复制剂量、疾病或统计值。
+v2_n_1_2 研究流程图
+facts: diagram.phase_arm_structure, diagram.visit_timepoints
+claims: design_description, diagram_transition
+prompt: 输入为 ChapterSkillInput（已确认设计与 SOA 事实），输出为 ChapterSkillOutput。生成呈现相位/臂与访视时间点、与 SOA 一致的研究流程图说明；分配比例仅在确认随机化时给出（diagram.randomized 触发条件义务），单臂非随机设计不得虚构分配比例；所有适用臂的早退/停药/退出转换按已确认事实逐一建模，保留早期退出与干预停药的区别；引用矢量素材仅限风格参考并记录身份与 sha256；示例图中的 1:1/IWRS/安慰剂/12周等取值不得自动成为项目事实；极简设计省略流程图须有记录在案的适用性处置，不静默放弃默认推荐。
+v2_n_1_3 研究流程表（SOA）
+facts: soa.visit_window_definitions, soa.assessment_cells, soa.footnote_bindings, soa.early_exit_assessment, soa.safety_followup, soa.contact_visits
+claims: soa_cell_mapping
+prompt: 输入为 ChapterSkillInput（已确认访视/程序事实），输出为 ChapterSkillOutput。生成结构化 SOA：访视与窗口带单位与参考事件、必需评估单元格按内容与访视身份核查、脚注解析到既有程序、早期终止评估与安全随访与停药/退出规则一致、电话联系计为实际访视；PK 窗口不得渲染为泛化日窗；模板示例量表/面板/样本处理一律不得作为项目事实。
+v2_n_front_1 方案修订历史记录
+facts: document_control.version_history, document_control.version_date, document_control.initial_version_treatment
+claims: version_history_record
+prompt: 输入为 ChapterSkillInput（已确认修订历史事实），输出为 ChapterSkillOutput。生成版本/日期/变更/依据四列表格内容，绑定真实修订历史；初始版本必须显式说明初始版本处理；存在修订时逐行给出变更依据；不得虚构修订行或审批回执。
+v2_n_front_2 主要研究者签字页
+facts: signature.investigator.protocol_identity, signature.investigator.institution
+claims: investigator_commitment
+prompt: 输入为 ChapterSkillInput（已确认方案身份与机构事实），输出为 ChapterSkillOutput。生成与现行方案编号/版本/日期及实际机构一致的研究者承诺段与签名/日期控件段；签名与日期控件保持未签署空白控件状态；不得引用过期修订或替换机构。
+v2_n_front_3 申办者签字页
+facts: signature.sponsor.protocol_identity, signature.sponsor.representative
+claims: sponsor_commitment
+prompt: 输入为 ChapterSkillInput（已确认申办方元数据事实），输出为 ChapterSkillOutput。生成与现行方案身份一致的申办方承诺段与授权代表签署控件段；仅在确认适用时附加签署页；不得复制签署日期、虚构签收或保留旧申办方信息。
+v2_n_front_4 临床试验相关单位联系方式
+facts: contact.sponsor_representative, contact.principal_investigator
+claims: contact_directory
+prompt: 输入为 ChapterSkillInput（已确认联系事实），输出为 ChapterSkillOutput。申办方与研究者联系表为无条件义务，各自给出真实角色与地址单元格；服务方联系表仅在实际适用时生成并给出真实角色/地址值，不适用时整表省略；禁止输出占位 N/A 单元格或借用竞品/模板联系信息。
+v2_n_front_5 缩略语表
+facts: glossary.term_count, glossary.used_terms_source
+claims: glossary_expansion
+prompt: 输入为 ChapterSkillInput（已确认术语使用事实），输出为 ChapterSkillOutput。缩略语表除三列表头外，必须为正文实际使用的缩写给出真实词条单元格（缩写/来源全称/中文含义）；未使用的模板缩写、源拼写错误与冲突全称一律剔除；全部已用术语的逐条覆盖属延后医学/术语判断；词条数 provenance 必须记录。
+v2_n_front_6 目 录
+facts: toc.heading_hierarchy_source
+claims: toc_navigation
+prompt: 输入为 ChapterSkillInput（实际标题层级与书签清单），输出为 ChapterSkillOutput。生成由实际标题层级与书签构成的目录域内容；不得复制缓存的标签或页码；缺失目标视为失败；原生域更新由7R任务核对，不在本技能内断言。
+v2_n_front_7 表目录
+facts: table_index.caption_inventory
+claims: table_index_record
+prompt: 输入为 ChapterSkillInput（实际表格题注与身份清单），输出为 ChapterSkillOutput。生成覆盖全部实际题注（含估计目标/SOA 表）的有序表索引域内容；不得沿用旧 AE/SAE-only 缓存清单；SEQ 域刷新由7R任务核对。
+v2_n_front_8 图目录
+facts: 
+claims: figure_index_record
+prompt: 输入为 ChapterSkillInput（实际图题注清单），输出为 ChapterSkillOutput。生成来自实际图题注的图索引域内容；文档无图时必须显式声明无图适用性；不得指向已删除或其他图的编号；SEQ 域刷新由7R任务核对。
+v2_n_2_1 研究理论依据
+facts: framing.indication, background.clinical_problem, background.standard_of_care, background.unmet_need, background.rationale_uncertainty
+claims: study_rationale
+prompt: 按研究理论依据章节合同逐条满足事实、声明、证据与结构义务：实际适应症、临床问题、标准治疗、未满足需求、本研究的证据缺口必须分别给出；证据必须来自已声明来源角色与上下文窗口，不得编造。
+v2_n_2_2_1 研究药物
+facts: framing.investigational_product, framing.product_profile, background.product.structure_applicability, background.product.authority_identity, background.product.mechanism
+claims: product_identity, mechanism_statement
+prompt: 按研究药物章节合同逐条满足：产品身份、剂型/规格/理化性质、化学结构适用性结论、当前产品权威版本定位，以及继承自 background.mechanism 的作用机制义务。机制义务是声明的实质补充，必须在输出中标注来源为继承合同而非源文 @284。
+v2_n_2_2_2_1 药效学研究
+facts: nonclinical.pharmacodynamics, nonclinical.pharmacokinetics, nonclinical.toxicology, nonclinical.general_pharmacology, background.clinical_pharmacology_context
+claims: nonclinical_pd_evidence, nonclinical_pk_evidence, nonclinical_toxicology_evidence, nonclinical_general_pharmacology_evidence
+prompt: 按药效学研究章节合同分别满足药效学、药代动力学、毒理学、一般药理学四个语义义务与临床药理学背景；每类均需独立段落与独立证据，不得相互替代。
+v2_n_2_2_3 同类药物研究概述
+facts: picos.comparator_summary, background.own_product.clinical_evidence, background.own_product.clinical_study_context
+claims: competitor_evidence_summary, own_product_clinical_evidence
+prompt: 按同类药物研究概述章节合同分别满足同类药物证据与本药既往临床证据两个独立义务：两组证据来源角色不同，各自需要符合的声明；本药临床结果必须带匹配的研究上下文。
+v2_n_2_3 风险/获益评估
+facts: background.risk.known_risks, background.risk.potential_risks, background.risk.anticipated_benefit, background.risk.uncertainty, background.risk.mitigation, background.risk.benefit_risk_assessment
+claims: risk_benefit_assessment, risk_benefit_framework
+prompt: 按风险/获益评估章节合同逐项给出已知风险、潜在风险、预期获益、不确定性、缓解措施与实际判断，并附风险/获益评估表；补偿不得计入获益，源 @306 的一刀切表述不得复述。
+v2_n_3_1_1 主要目的
+facts: picos.primary_objectives, picos.primary_clinical_question, picos.primary_comparison, picos.primary_endpoint
+claims: study_objective, primary_endpoint_definition
+prompt: 按主要目的章节合同给出具体临床问题、治疗比较与主要终点映射，并在主要估计目标五属性齐备时给出链接声明；停药/补救治疗策略只在设计确认且完成高风险确认时才输出，且必须命中对应的条件适用性规则。
+v2_n_3_1_2_1 目标人群：有“状况/疾病”的试验参与者。更多细节见第5章节-研究人群。
+facts: estimand.primary.population, estimand.primary.analysis_set_distinction
+claims: estimand_population_attribute
+prompt: 按目标人群属性合同给出可判定的目标人群定义，并显式说明其与随机后分析集的区别；不得以人群描述替代目标人群，也不得把人群描述事实路径当作汇总指标。
+v2_n_3_1_2_2 研究变量：即研究终点。
+facts: estimand.primary.variable, estimand.primary.variable_measurement, estimand.primary.variable_aggregation, estimand.primary.variable_timepoint_window
+claims: estimand_variable_attribute
+prompt: 按研究变量属性合同给出变量定义、测量方式、聚合方式与时间点/窗口，并以表格逐行承载三要素；仅给标签或方法名不满足义务。
+v2_n_3_1_2_3 治疗效应：随机分配的治疗，伴有或不伴有“补救治疗或背景治疗改变”。关于研究治疗和伴随治疗包括补救治疗的更多细节见第6章节-研究干预。
+facts: estimand.primary.treatment_condition, estimand.primary.background_treatment, estimand.primary.rescue_treatment_handling, estimand.primary.treatment_effect_label_clarification
+claims: estimand_treatment_condition_attribute
+prompt: 按治疗效应属性合同给出随机分配的治疗条件、背景治疗与补救/背景改变处理，并澄清源标签“治疗效应”的确切含义；存在背景治疗时必须命中条件适用性规则并给出跨合同一致性声明。
+v2_n_3_1_2_4 伴发事件：伴发事件及处理策略见表 1。
+facts: estimand.primary.intercurrent_events, estimand.primary.ice_strategy, estimand.primary.ice_rationale, estimand.primary.population_summary_measure
+claims: estimand_ice_attribute, estimand_population_summary_attribute
+prompt: 按伴发事件属性合同逐事件给出定义、选定策略与理由，并以表 1 逐行承载；同时独立给出群体层面汇总指标定义（源 @323，属于本载体而非新建标题），澄清其与人群描述事实路径的区别；涉及补救治疗时命中跨合同核对规则。
+v2_n_3_2_1 次要目的
+facts: picos.secondary_objectives, picos.secondary_objective_endpoint_map, picos.secondary_multiplicity_intent
+claims: secondary_objective
+prompt: 按次要目的章节合同逐条给出次要目的并映射到已定义次要终点，同时登记确证性多重性意图与探索性意图；不得输出编号占位或仅标题。
+v2_n_3_2_2 次要终点
+facts: picos.key_secondary_endpoints, picos.other_secondary_endpoints, picos.secondary_endpoint_definitions
+claims: secondary_endpoint_definition
+prompt: 按次要终点章节合同分别给出关键次要终点与其他次要终点，并为每个终点给出测量与时点定义；不得仅列名称。
+v2_n_3_3_1 安全性目的
+facts: safety.safety_objectives, picos.safety_endpoints, safety.observation_period, safety.injection_reaction_applicability
+claims: safety_objective
+prompt: 按安全性目的章节合同给出本药实际风险为依据的安全性目的、对应终点与观察期，并显式判定注射反应适用性；仅当适用时才输出注射反应定义与声明，并命中条件适用性规则。
+v2_n_3_3_2 安全性终点
+facts: safety.endpoint_definitions, safety.observation_period, picos.aesi_definitions
+claims: safety_endpoint_definition
+prompt: 按安全性终点章节合同给出评估定义、观察期与 AESI 定义，并逐行承载于安全性终点表；不得仅列终点名称。
+v2_n_3_4_1 探索性目的
+facts: picos.exploratory_objectives, exploratory.disposition
+claims: exploratory_objective, exploratory_disposition
+prompt: 按探索性目的章节合同给出探索性目的与开展/不开展处置，并逐项判定 PopPK、暴露-效应、免疫原性与生物标志物的适用性；只有适用性成立的分析才输出承诺声明。
+v2_n_3_4_2 探索性终点
+facts: picos.exploratory_endpoints, exploratory.endpoint_disposition
+claims: exploratory_endpoint, exploratory_endpoint_disposition
+prompt: 按探索性终点章节合同逐条给出探索性终点与处置声明，并以分析意图列标注探索性/支持性；不开展或仅支持性时必须命中非确证性声明规则。
+v2_n_4_1 总体设计
+facts: framing.structured_design, framing.structured_design.hypothesis, framing.structured_design.phase, framing.structured_design.design_type, framing.structured_design.arms, framing.structured_design.duration, framing.structured_design.allocation, framing.structured_design.masking, framing.structured_design.centers
+claims: design_description, design_hypothesis, design_feature_applicability
+prompt: 输入为已确认项目事实，按 v2_n_4_1 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_4_2 研究设计的依据
+facts: framing.structured_design, framing.structured_design.comparator_type, framing.structured_design.comparator_rationale, framing.structured_design.hypothesis, framing.structured_design.hypothesis_rationale, framing.structured_design.clinical_context, framing.structured_design.evidence_floor
+claims: design_rationale, design_hypothesis, control_choice_decision
+prompt: 输入为已确认项目事实，按 v2_n_4_2 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_4_3 剂量选择依据
+facts: framing.structured_design, picos.intervention_dose_regimen, picos.intervention_dose_regimen.investigational_route, picos.intervention_dose_regimen.selected_regimen, picos.intervention_dose_regimen.starting_dose, picos.intervention_dose_regimen.comparator_route, picos.intervention_dose_regimen.comparator_regimen, picos.intervention_dose_regimen.population_link
+claims: dose_regimen_rationale, comparator_regimen_match, dose_safety_margin
+prompt: 输入为已确认项目事实，按 v2_n_4_3 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_4_4 研究结束的定义
+facts: picos.study_epochs, picos.study_epochs.completion_definition, picos.study_epochs.completion_assessment, picos.study_epochs.follow_up_definition, picos.study_epochs.follow_up_window, picos.study_epochs.overall_end_definition, picos.study_epochs.overall_end_trigger, picos.study_epochs.post_treatment_assessment
+claims: participant_completion_definition, study_follow_up_definition, overall_study_end_definition
+prompt: 输入为已确认项目事实，按 v2_n_4_4 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_4_5 随机化和盲法
+facts: framing.structured_design, framing.structured_design.randomization_procedure, framing.structured_design.allocation_ratio, framing.structured_design.allocation_roles, framing.structured_design.masking_procedure, framing.structured_design.masking_maintenance, framing.structured_design.unblinded_personnel, framing.structured_design.emergency_unblinding, framing.structured_design.accidental_unblinding, framing.structured_design.unblinding_records
+claims: allocation_procedure, masking_procedure, unblinding_procedure, design_feature_applicability
+prompt: 输入为已确认项目事实，按 v2_n_4_5 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_5_1 入选标准
+facts: framing.population_intent, picos.population_summary, picos.inclusion_modules, picos.inclusion_modules.population_target, picos.inclusion_modules.logic, picos.inclusion_modules.criteria, picos.inclusion_modules.parameters, picos.inclusion_modules.windows, picos.inclusion_modules.exceptions, picos.inclusion_modules.registry_identity, picos.inclusion_modules.registry_source_version
+claims: population_target, inclusion_predicate, eligibility_rationale, registry_consistency
+prompt: 输入为已确认项目事实，按 v2_n_5_1 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_5_2 排除标准
+facts: picos.exclusion_modules, picos.exclusion_modules.logic, picos.exclusion_modules.criteria, picos.exclusion_modules.parameters, picos.exclusion_modules.windows, picos.exclusion_modules.exceptions, picos.exclusion_modules.registry_identity, picos.exclusion_modules.registry_source_version
+claims: exclusion_predicate, eligibility_rationale, registry_consistency
+prompt: 输入为已确认项目事实，按 v2_n_5_2 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_5_3 生活方式注意事项
+facts: population.lifestyle.constraints, population.lifestyle.scope, population.lifestyle.timing, population.lifestyle.exceptions, population.lifestyle.contraception_duration
+claims: lifestyle_restriction
+prompt: 输入为已确认项目事实，按 v2_n_5_3 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_5_4 筛选失败
+facts: picos.inclusion_modules, population.screen_failure.definition, population.screen_failure.permitted_reasons, population.screen_failure.timing, population.screen_failure.records, population.rescreening.definition, population.rescreening.permitted_reasons, population.rescreening.timing, population.rescreening.records, population.screen_failure.randomization_status
+claims: screen_failure_record, rescreening_eligibility, participation_status_distinction
+prompt: 输入为已确认项目事实，按 v2_n_5_4 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_5_5 试验参与者招募与保留
+facts: picos.population_summary, population.recruitment.target, population.recruitment.channels, population.recruitment.feasibility, population.recruitment.materials_review, population.recruitment.contact_measures, population.recruitment.visit_measures, population.retention.strategy, population.retention.follow_up, population.recruitment.ethics_review_plan
+claims: recruitment_plan, retention_plan
+prompt: 输入为已确认项目事实，按 v2_n_5_5 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。
+v2_n_6_1_1 研究药物描述
+facts: intervention.product_identity, intervention.formulation, intervention.exposure_dose, intervention.route_of_administration, intervention.product_authority
+claims: intervention_description
+prompt: 输入为 ChapterSkillInput（已确认产品与给药事实），输出为 ChapterSkillOutput。按实际干预/对照逐项给出研究药物身份、剂型/规格、给药途径与暴露剂量，并为剂量、间隔、途径登记类型化事实；模板示例剂量/给药描述仅为示例，绝不作为项目事实；缺失事实进入待补清单而不是编造；试验参与者的实际接受信息必须与设计章节一致。
+v2_n_6_1_2 研究药物给药方案
+facts: intervention.dose_regimen, intervention.administration_instructions, intervention.dose_hold_criteria, intervention.dose_reduction_rules, intervention.restart_criteria, intervention.permanent_discontinuation_criteria, intervention.missed_dose_instructions, intervention.dose_escalation_or_dlt_logic, intervention.food_relationship_and_preparation, intervention.dose_consistency_with_design
+claims: dose_regimen_description
+prompt: 输入为 ChapterSkillInput（已确认剂量与给药事实），输出为 ChapterSkillOutput。给出实际剂量/间隔/途径与给药操作指令；暂停、剂量降低、恢复、个体永久停药与漏给药各自给出项目特定触发条件与记录要求；模板示例等级阈值（如 2 级暂停、1 级重启）仅为示例，绝不作普适规则；剂量表达必须与设计章节及 SoA 一致；缺失事实进入待补清单而不是编造；试验参与者安全相关动作不得省略。
+v2_n_6_2_1 药物接收和清点
+facts: intervention.receipt_and_inventory, intervention.accountability_records, intervention.dispensing_and_return, intervention.destruction_authorization, intervention.responsible_party
+claims: accountability_procedure
+prompt: 输入为 ChapterSkillInput（已确认操作事实），输出为 ChapterSkillOutput。逐项给出接收与清点步骤、责任方、发放与回收条件、销毁/退回授权与记录字段，并保留可追溯性；通用 SOP 引用不得替代协议特定细节；试验用药品管理记录不得为空壳；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_2_2 剂型、外观、包装和标签
+facts: intervention.packaging_and_labeling
+claims: packaging_labeling_description, regulatory_labeling_review
+prompt: 输入为 ChapterSkillInput（已确认包装与标签事实），输出为 ChapterSkillOutput。给出实际包装形式、标签文本及其版本与来源，并登记监管/操作核查状态；模板示例标签文本仅为示例，绝不作为项目内容；不得复制其他项目等级阈值；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_2_3 产品储存和稳定性
+facts: intervention.storage_conditions, intervention.storage_conditions.unit, intervention.stability_handling
+claims: storage_handling_conditions
+prompt: 输入为 ChapterSkillInput（已确认储存事实），输出为 ChapterSkillOutput。给出实际储存条件数值与单位、适用范围与稳定性/在用期处理时限；空单位或模板示例文本即失败；条件必须与标签一致；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_2_4 准备
+facts: intervention.preparation_conditions, intervention.preparation_responsible_party
+claims: preparation_procedure
+prompt: 输入为 ChapterSkillInput（已确认操作事实），输出为 ChapterSkillOutput。给出项目特定的配制/准备条件（稀释液、时限、容器、环境）、责任方与记录要求；模板示例描述仅在项目实际适用时作为示例引用，绝不作为项目条件；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_3 研究干预的依从性
+facts: intervention.adherence_measure, intervention.adherence_denominator, intervention.adherence_evidence_source, intervention.planned_hold_tracking
+claims: adherence_strategy
+prompt: 输入为 ChapterSkillInput（已确认给药与记录事实），输出为 ChapterSkillOutput。给出依从性测量方法、分母定义与支持记录来源，并把计划性暂停与评估时点纳入记录；模板示例 80–120% 区间仅为示例，不是无条件正常范围；试验参与者的实际接受量与记录须一致；缺失事实进入待补清单而不是编造。
+v2_n_6_4_1 禁止使用的食物、药物和治疗
+facts: intervention.prohibited_treatments, intervention.prohibited_window
+claims: prohibited_treatment_rules
+prompt: 输入为 ChapterSkillInput（已确认合并治疗规则），输出为 ChapterSkillOutput。给出项目特定的禁止食物/药物/治疗清单、禁止时间窗（带参考事件）以及违规记录与处置要求；不得复制其他项目（如对乙酰氨基酚或润肤剂）的示例清单；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_4_2 允许使用的药物和治疗
+facts: intervention.allowed_treatments, intervention.allowed_timing, intervention.background_therapy_rules
+claims: allowed_treatment_rules
+prompt: 输入为 ChapterSkillInput（已确认合并治疗规则），输出为 ChapterSkillOutput。给出项目特定的允许治疗清单、时间安排与必须使用的背景治疗规则，并与禁用清单互补；模板示例药物仅为示例；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_6_4_3 补救治疗
+facts: intervention.rescue_permitted, intervention.rescue_timing, intervention.rescue_records, intervention.rescue_estimand_linkage, intervention.rescue_followup_handling
+claims: rescue_plan, rescue_estimand_alignment
+prompt: 输入为 ChapterSkillInput（已确认设计与分析事实），输出为 ChapterSkillOutput。给出补救治疗的允许条件、启动时点与顺序、记录字段、与继续随访/事件处理的衔接，并声明其与估计目标及分析策略的一致性；不得用补救治疗推断未经分析的非劣/优效结论；模板示例药物仅为示例；缺失事实进入待补清单而不是编造。试验参与者安全与试验数据完整性必须保持可追溯。
+v2_n_7_1 筛选期
+facts: procedure.screening_period_definition, procedure.baseline_assessments, procedure.screening_reassessment_rules
+claims: visit_phase_description
+prompt: 输入为 ChapterSkillInput（已确认访视与 SoA 事实），输出为 ChapterSkillOutput。给出筛选期起止参考事件与允许时长、基线评估组合与筛选失败/重新筛选规则，并与 SoA、给药及安全随访安排一致；模板示例访视仅为示例；试验参与者的实际访视安排不得照抄模板；缺失事实进入待补清单而不是编造。
+v2_n_7_2 治疗期
+facts: procedure.treatment_period_definition, procedure.dosing_start_rules, procedure.treatment_visit_procedures, procedure.blinded_treatment_handling, procedure.randomization_day_rules
+claims: visit_phase_description
+prompt: 输入为 ChapterSkillInput（已确认设计、给药与 SoA 事实），输出为 ChapterSkillOutput。给出治疗期定义、给药起点规则、治疗期访视程序与盲态处理规则，并与 SoA、给药方案及安全评估一致；D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例访视时间表不得照抄；试验参与者实际安排不得虚构；缺失事实进入待补清单而不是编造。
+v2_n_7_3 随访期
+facts: procedure.followup_period_definition, procedure.followup_visit_windows, procedure.phone_visit_linkage
+claims: visit_phase_description
+prompt: 输入为 ChapterSkillInput（已确认访视与 SoA 事实），输出为 ChapterSkillOutput。给出随访期定义、带单位与参考事件的访视窗口，以及计划外/电话访视的日期、方式、原因与适用评估规则（电话联系按适用规则计入实际访视）；不得虚构批准、同意或来源回执；模板示例随访计划仅为示例；试验参与者实际随访安排须项目特定；缺失事实进入待补清单而不是编造。
+v2_n_8_1 研究干预中止/终止
+facts: discontinuation.individual_hold_criteria, discontinuation.personal_hold, discontinuation.permanent_stop_criteria.participant, discontinuation.permanent_stop_recording, discontinuation.trial_suspension_criteria, discontinuation.trial_termination_criteria, discontinuation.trial_stop_decision_logic, discontinuation.trial_stop_decision_authority, discontinuation.trial_stop_post_decision, discontinuation.safety_assessment_coherence
+claims: individual_cessation_rules, trial_level_stop_criteria
+prompt: 输入为 ChapterSkillInput（已确认设计、安全与分析事实），输出为 ChapterSkillOutput。分别类型化四类概念：个体暂时暂停、个体永久停药、参与者退出研究（8.2）、整体试验暂停/终止；整体层面必须给出设计特定决策逻辑（数据、阈值、决定方、报告路径与后续随访）；不得把整体停止标准转写为个体停止规则，也不得以『疗效已显示』等模板短语允许提前停止；模板示例规则仅为示例；试验参与者个体安全与试验整体决策必须分层；缺失事实进入待补清单而不是编造。
+v2_n_8_2 试验参与者中止/退出研究
+facts: discontinuation.continued_assessment_scope, discontinuation.continued_data_types, discontinuation.time_limits, discontinuation.existing_data_handling, discontinuation.basis_for_further_collection, discontinuation.withdrawal_reason_recording, discontinuation.withdrawal_scenarios, discontinuation.followup_after_withdrawal, discontinuation.data_retention_after_withdrawal, discontinuation.replacement_policy, discontinuation.disposition_schedule_integration
+claims: withdrawal_handling
+prompt: 输入为 ChapterSkillInput（已确认设计、分析、伦理与随访事实），输出为 ChapterSkillOutput。逐情景处理退出：记录退出原因可被请求但不得强制；妊娠/疾病进展/不依从分别处理；说明停用研究干预后的继续评估范围、数据类型与时间限制、已收集数据保留、随访安排与参与者替换政策（与样本量/分析合同一致）；停用不等于撤回同意，不得在末次给药处静默终止随访；模板示例替换规则仅为示例；试验参与者权益与数据完整性不得被静默牺牲；缺失事实进入待补清单而不是编造。
+v2_n_8_3 失访
+facts: lost_to_followup.contact_attempt_procedure, lost_to_followup.participant_contact_restrictions, lost_to_followup.attempt_records, lost_to_followup.review_and_classification, lost_to_followup.role_and_approvals, lost_to_followup.consent_and_outcome_distinction
+claims: lost_to_followup_determination
+prompt: 输入为 ChapterSkillInput（已确认联系安排与随访事实），输出为 ChapterSkillOutput。给出项目特定的联系尝试程序（次数、间隔、方式）、记录要求、复核分类流程与责任方；联系方式必须符合参与者允许的安排；『超过三次电话』仅为示例而非普适最低次数；单次漏访不足以判定失访；未联系上不等于撤回知情同意；试验参与者后续随访不得静默放弃；缺失事实进入待补清单而不是编造。
+v2_n_10_1_1 不良事件的定义
+facts: ae.chapter_scope_framing, ae.definition, ae.temporal_window_definition, ae.teaee_derivation, ae.pre_existing_condition_handling, ae.ae_term_binding, ae.oncology_progression_exception_applicable
+claims: ae_definition, teaee_derivation
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。分别书写 AE 定义、收集间隔、TEAE 派生、基线既存状况与术语编码绑定；肿瘤进展例外仅在适用性 true 时使用且不得复制到无关适应症；承载章首框架义务；缺失事实进入待补清单而不编造。
+v2_n_10_1_2 不良事件的严重程度
+facts: ae.severity_scale_version, ae.severity_grading_definition, ae.severity_seriousness_distinctness
+claims: ae_severity_grading, severity_scale_standard
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。给出项目确认的分级量表版本及适用依据、各级定义，并明确区分严重程度与严重性；不得硬编码模板示例版本，不得由分级直接判定 SAE；缺失事实进入待补清单。
+v2_n_10_1_3 不良事件与试验用药品相关性的判断
+facts: causality.five_level_terminology, causality.judgment_method, causality.reportability_algorithm, causality.current_authority_basis
+claims: causality_five_level_assessment, causality_reportability_algorithm
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。保留五分法术语与逐级判定依据，单独给出加速报告判定算法与“可能无关”处置；统计 ADR 分组不得充当报告算法，草案文本不得作为现行依据；缺失事实进入待补清单。
+v2_n_10_1_4 不良事件的收集
+facts: ae.collection_period_definition, ae.collection_period_start_reference, ae.consent_history_distinction, ae.collection_stop_reference, ae.ae_collection_not_teaee_classification
+claims: ae_collection_scope
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。明确收集期起止与参考事件，区分同意后随访收集与给药前病史性回顾，并与 TEAE 归类分开；三十天、五个半衰期与新抗肿瘤治疗仅为模板示例；缺失事实进入待补清单。
+v2_n_10_1_5 不良事件的记录
+facts: ae.recording_requirements, ae.separate_times, ae.report_time_selection_rule, ae.terminology_boundary
+claims: ae_recording_requirement
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。逐字段给出 AE 记录要求，分别保留发生、采样/评估、获知与报告时间，并与治疗/结局分开；不得为便利替换临床日期；缺失事实进入待补清单。
+v2_n_10_1_6 不良事件的随访
+facts: ae.followup_scope, ae.followup_duration_or_end, ae.ongoing_event_handling
+claims: ae_followup_plan
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。明确 AE 随访范围、持续时间或终止条件、持续事件的临床处理；仅有非空事件标签不满足义务；缺失事实进入待补清单而不编造。
+v2_n_10_2_1 严重不良事件的定义
+facts: sae.definition, sae.seriousness_criteria, sae.seriousness_criteria_version_binding, sae.severity_seriousness_distinctness
+claims: sae_definition, sae_seriousness_criteria_statement
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。逐项给出严重性判定标准及其版本绑定，明确与 AE 定义及严重程度的区分；不得由分级单独判定 SAE；缺失事实进入待补清单而不编造。
+v2_n_10_2_2 严重不良事件的报告
+facts: sae_reporting.investigator_recipient, sae_reporting.investigator_clock, sae_reporting.first_awareness_reference, sae_reporting.investigator_record
+claims: investigator_sae_reporting, investigator_reporting_standard
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。明确研究者 SAE 报告对象、记录与自首次获知起算的时限；签署/受理表不得推迟报告，研究者时限不得复制给申办者；缺失事实进入待补清单。
+v2_n_10_2_3 严重不良事件的随访
+facts: sae_followup.scope, sae_followup.new_information_reporting, sae_followup.outcome_documentation
+claims: sae_followup_plan
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。明确 SAE 随访范围、新/变更信息的报告义务与结局记录；缺失事实进入待补清单而不编造。
+v2_n_10_3_1 可疑非预期严重不良反应的定义
+facts: susar.chapter_area_framing, susar.definition, susar.expectedness_reference, susar.reportability_criteria
+claims: susar_definition, susar_reportability_criteria
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。给出 SUSAR 定义、预期性参照版本与逐项报告标准，并与 SAE、因果性判断分开；缺失事实进入待补清单。
+v2_n_10_3_2 可疑非预期严重不良反应的报告
+facts: susar_reporting.sponsor_recipient, susar_reporting.sponsor_clock, susar_reporting.sponsor_followup_clock, susar_reporting.authority_and_ethics_communications, susar_reporting.awareness_reference
+claims: sponsor_expedited_reporting, sponsor_reporting_standard
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。分别列出申办者加速报告对象、首次与跟进报告时限、监管/伦理/机构沟通；不得复制研究者时钟，不得用 ADR 分组充当判定算法，不得以签署作为起算前提；缺失事实进入待补清单。
+v2_n_10_3_3 快速报告的随访
+facts: susar_followup.new_information_clock, susar_followup.recipients, susar_followup.documentation, susar_followup.causality_disagreement_retention
+claims: susar_followup_reporting
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。给出新/变更信息的独立报告时限、报告对象与记录要求，并保留研究者与申办者的相关性分歧记录；缺失事实进入待补清单。
+v2_n_10_4 其他潜在的严重安全性风险信息的报告
+facts: other_ssi.signal_definition, other_ssi.reporting_criteria, other_ssi.recipient_and_clock, other_ssi.review_responsibility
+claims: other_ssi_reporting
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。明确其他潜在严重安全性风险信息的信号定义、报告标准、报告对象/时限与审核职责；不得编造医学或审批回执；缺失事实进入待补清单。
+v2_n_10_5 特殊关注不良事件
+facts: aesi.definition, picos.aesi_definitions, aesi.thresholds, aesi.monitoring_and_reporting
+claims: aesi_definition, aesi_reporting_plan
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。按产品风险选择 AESI、给出阈值与监测/报告动作，并复用已确认的 AESI 定义事实；模板示例清单不得作为本项目清单；缺失事实进入待补清单。
+v2_n_10_6 妊娠
+facts: pregnancy.testing_requirements, pregnancy.prevention_requirements, pregnancy.exposure_reporting, pregnancy.partner_consent, pregnancy.outcome_followup, pregnancy.abnormal_outcome_reporting, pregnancy.withdrawal_arrangement, pregnancy.continued_collection_arrangement
+claims: pregnancy_handling
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。分别给出妊娠检测、预防、暴露报告、伴侣知情同意、结局随访与异常结局事件报告；妊娠不自动等于 SAE，因妊娠停药不等于自动全面退出，后续随访与收集按项目安排继续；三/六个月仅为示例；缺失事实进入待补清单。
+v2_n_9_1 疗效评估
+facts: evaluation.framework_scope, picos.primary_objectives, picos.primary_endpoint, efficacy.primary_endpoint_measurement, efficacy.primary_estimand_link, efficacy.assessment_instrument_or_scale, efficacy.evaluator_role_and_training, efficacy.assessment_timing_reference
+claims: efficacy_endpoint_definition, endpoint_objective_estimand_traceability
+prompt: 输入为 ChapterSkillInput（已确认的目的/终点/估计目标事实），输出为 ChapterSkillOutput。逐终点给出测量方法、命名量表/仪器版本、评估者角色与培训、与 SoA 一致的时点/窗口，并回链目的与估计目标；不得以“按 SoA”替代测量口径，不得出现无法追溯的终点；缺失事实进入待补清单而不编造。
+v2_n_9_2 安全性和其他评估
+facts: safety.monitoring_assessments, safety.lab_panel_definition, safety.lab_units_and_reference_ranges, safety.assessment_windows, safety.repeat_confirmation_rules, safety.specimen_types_and_handling, safety.special_assay_purposes, safety.future_use_specimen_distinction, safety.assessment_restrictions, safety.monitoring_schedule
+claims: safety_assessment_plan, specimen_handling_statement
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。逐评估给出监测项目、单位与参考范围、窗口与重复/确认规则、标本类型/体积/处理与特殊检测目的；区分未来使用标本与本研究必需标本；评估相关限制必须给出范围、时点与设计/产品风险依据；本品安全性结论不得用竞品证据替代；缺失事实进入待补清单而不编造。
+v2_n_9_3 群体药动学药效学评估
+facts: exploratory.population_pk, exploratory.exposure_response, pk.pd_analysis_requirements, pk.linked_endpoints, pk.sampling_schedule, exploratory.immunogenicity_applicable
+claims: population_pk_analysis, exposure_response_analysis
+prompt: 输入为 ChapterSkillInput（已确认的 PK/PD/E-R/免疫原性事实），输出为 ChapterSkillOutput。将群体 PK、暴露-效应与免疫原性作为独立条件分析分别书写；各自给出适用终点/参数、样本、采样时点与单位、分析方法与模型假设；免疫原性仅在适用性事实为 true 时升级为必需；模板示例采样不得作为项目计划；缺失事实进入待补清单而不编造。
+v2_n_9_4 独立评审委员会
+facts: irc.applicable
+claims: irc_applicability_decision
+prompt: 输入为 ChapterSkillInput，输出为 ChapterSkillOutput。先判定 IRC 适用性（裸 true/false 事实）；仅在适用时给出章程与独立性、评审范围与终点、裁定方法与工具版本、角色与利益冲突管理；不得与安全性/数据监查委员会混同，RECIST 1.1 等仅为示例；缺失事实进入待补清单。
+v2_n_11_1 样本量估算
+facts: picos.primary_endpoint, framing.structured_design.hypothesis, statistics.sample_size.test_model, statistics.sample_size.sidedness, statistics.sample_size.alpha, statistics.sample_size.power, statistics.sample_size.assumptions, statistics.sample_size.assumption_evidence, framing.structured_design.allocation_ratio, statistics.sample_size.attrition, statistics.sample_size.method, statistics.sample_size.software_version, statistics.sample_size.reproducible_result, statistics.sample_size.soa_alignment, statistics.sample_size.dose_alignment
+claims: sample_size_specification, sample_size_reproducibility, sample_size_decision_provenance, sample_size_cross_contract_consistency
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“样本量估算”逐项承载源义务：不得因 SAP 稍后制定而省略终点、估计目标、主要方法或样本量参数；记录假设证据、分配/脱落、软件版本和可复算结果。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_2 分析集
+facts: statistics.analysis_sets.randomized, statistics.analysis_sets.treated, statistics.analysis_sets.available_assessments, statistics.analysis_sets.inclusion_rules, statistics.analysis_sets.grouping_rules, statistics.analysis_sets.handling_rules, statistics.analysis_sets.rescue_treated_handling
+claims: analysis_set_definition, analysis_set_distinction, analysis_set_handling, analysis_set_cross_contract_consistency
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“分析集”逐项承载源义务：严格区分随机集、治疗集和可评价集，逐项给出纳入、分组、暴露、补救治疗和缺失处理。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_3 一般分析考虑
+facts: statistics.descriptive.variable_types, statistics.descriptive.summary_conventions, statistics.descriptive.missing_denominator_rules, statistics.descriptive.missing_outcome_handling, statistics.descriptive.intercurrent_event_distinction, statistics.sap.status, statistics.sap.timing, statistics.sap.revision_linkage, statistics.sap.analysis_unblinding_alignment
+claims: general_statistical_principles, sap_status_timing_revision, descriptive_missing_rules
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“一般分析考虑”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_1 人口学及基线情况汇总
+facts: statistics.demographics.baseline_variables, statistics.demographics.variable_types, statistics.demographics.summary_methods, statistics.demographics.data_definition
+claims: demographics_baseline_analysis
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“人口学及基线情况汇总”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_2 依从性和合并用药分析
+facts: statistics.adherence.definition, statistics.adherence.denominator, statistics.adherence.measurement_method, statistics.concomitant_treatment.definition, statistics.concomitant_treatment.timing, statistics.adherence.data_definition
+claims: adherence_concomitant_analysis
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“依从性和合并用药分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_3_1 主要估计目标的主要分析
+facts: estimand.primary.population, estimand.primary.variable, estimand.primary.treatment_condition, estimand.primary.intercurrent_events, estimand.primary.ice_strategy, statistics.primary_analysis.method, statistics.primary_analysis.analysis_set, statistics.primary_analysis.missing_data, statistics.primary_analysis.effect_measure, statistics.primary_analysis.estimand_linkage, statistics.primary_analysis.dose_consistency, statistics.primary_analysis.soa_consistency, picos.primary_endpoint
+claims: primary_analysis_method, primary_endpoint_analysis, estimand_linkage, primary_analysis_cross_contract_consistency
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“主要估计目标的主要分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_3_2 主要估计目标的敏感性分析
+facts: statistics.sensitivity_analysis.method, statistics.sensitivity_analysis.assumption, statistics.sensitivity_analysis.estimand_alignment, statistics.sensitivity_analysis.missing_data_handling, statistics.sensitivity_analysis.result_interpretation, statistics.sensitivity_analysis.primary_method_link
+claims: sensitivity_analysis_definition, sensitivity_estimand_alignment, sensitivity_analysis_cross_contract_consistency
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“主要估计目标的敏感性分析”逐项承载源义务：敏感性分析必须与同一估计目标和目标假设对齐；ANCOVA、MMRM、tipping-point 仅为可能方法，不能用方法名替代一致性证据。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_4 次要终点的统计分析
+facts: statistics.secondary_analysis.endpoint_definitions, statistics.secondary_analysis.methods, statistics.secondary_analysis.data_definition, statistics.secondary_analysis.analysis_set, statistics.secondary_analysis.missing_data
+claims: secondary_analysis_method, secondary_endpoint_analysis
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“次要终点的统计分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_5 安全性分析
+facts: statistics.safety_analysis.endpoints, statistics.safety_analysis.population, statistics.safety_analysis.observation_period, statistics.safety_analysis.summary_methods, statistics.safety_analysis.data_definition
+claims: safety_analysis_method, safety_endpoint_analysis
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“安全性分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_6 探索性终点的统计分析
+facts: statistics.exploratory_analysis.endpoints, statistics.exploratory_analysis.methods, statistics.exploratory_analysis.data_definition, statistics.pk_pd_er.pk_applicable, statistics.pk_pd_er.pd_applicable, statistics.pk_pd_er.er_applicable, statistics.pk_pd_er.endpoint_linkage, statistics.pk_pd_er.sampling_schedule, statistics.pk_pd_er.model_assumptions
+claims: exploratory_analysis_method, pk_pd_er_analysis, exploratory_interpretation
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“探索性终点的统计分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_7 亚组分析
+facts: statistics.subgroup_analysis.factors, statistics.subgroup_analysis.methods, statistics.subgroup_analysis.interaction_or_heterogeneity, statistics.subgroup_analysis.data_definition, statistics.subgroup_analysis.interpretation
+claims: subgroup_analysis_method, subgroup_interpretation
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“亚组分析”逐项承载源义务：为每个实际变量、方法、数据定义、时点、缺失规则和解释边界给出项目特异内容。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_8 多重性问题考量
+facts: statistics.multiplicity.confirmatory_family, statistics.multiplicity.ordering, statistics.multiplicity.alpha_allocation, statistics.multiplicity.dependencies, statistics.multiplicity.procedure, statistics.multiplicity.applicability_disposition
+claims: multiplicity_procedure, multiplicity_family_binding
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“多重性问题考量”逐项承载源义务：绑定实际确证性家族、顺序、alpha 分配和依赖；Holm/Hochberg 等名称不能替代选定程序或无需调整的适用性处置。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_11_4_9 期中分析
+facts: statistics.interim.applicable, statistics.interim.timing, statistics.interim.information_fraction, statistics.interim.purpose, statistics.interim.rules, statistics.interim.decision_responsibility, statistics.interim.final_analysis_impact, statistics.interim.efficacy_alpha_spending, statistics.interim.safety_review_alpha_separation, statistics.interim.idmc_responsibilities, statistics.interim.endpoint_irc_responsibilities, statistics.interim.canonical_reference
+claims: interim_analysis_plan, interim_final_analysis_impact
+prompt: 输入为 ChapterSkillInput（已确认的项目统计事实），输出为 ChapterSkillOutput。围绕“期中分析”逐项承载源义务：声明适用性、时点/信息量、目的、规则、责任、最终影响与 alpha；安全审查不自动消耗疗效 alpha，并区分 IDMC 与终点 IRC。 缺失事实进入待补清单而不是编造；试验参与者数据必须可追溯。
+v2_n_12_1 数据收集和管理职责
+facts: data_management.role_assignments, data_management.responsible_parties, data_management.source_identification_plan, data_management.review_query_owner, data_management.correction_review_roles
+claims: data_management.responsibility_assignment, data_management.review_and_correction_control
+prompt: 输入为已确认项目事实，输出为 数据收集和管理职责 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_2 数据采集与方式
+facts: data_management.direct_ecrf_source, data_management.copied_source_record, data_management.source_identification_method, data_management.data_capture_method, data_management.source_data_review_path
+claims: data_management.data_capture_actual_arrangement, data_management.data_source_distinction
+prompt: 输入为已确认项目事实，输出为 数据采集与方式 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_3 数据清理与质疑解决
+facts: data_quality.query_issuance, data_quality.query_resolution, data_quality.cleaning_review_record, data_quality.query_escalation
+claims: data_quality.query_resolution_control
+prompt: 输入为已确认项目事实，输出为 数据清理与质疑解决 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_4 数据的修改和审核
+facts: corrections.procedure, corrections.reason_record, corrections.audit_trail, corrections.review_approval
+claims: corrections.traceability
+prompt: 输入为已确认项目事实，输出为 数据的修改和审核 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_5 数据锁定及导出
+facts: lock_export.lock_criteria, lock_export.lock_authority, lock_export.export_format, lock_export.export_receipt
+claims: lock_export.reproducibility
+prompt: 输入为已确认项目事实，输出为 数据锁定及导出 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_6 数据治理与计算机化系统
+facts: data_governance.system_roles, data_governance.access_controls, data_governance.validation_status, data_governance.record_integrity, data_governance.change_management
+claims: data_governance.computerized_system_governance, data_governance.validation_status_disclosure
+prompt: 输入为已确认项目事实，输出为 数据治理与计算机化系统 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_7 储备样本和数据的未来使用
+facts: future_use.purpose, future_use.location, future_use.duration, future_use.genetic_testing, future_use.consent, future_use.review_plan, future_use.current_study_assay_separation
+claims: future_use.separation, future_use.review_required
+prompt: 输入为已确认项目事实，输出为 储备样本和数据的未来使用 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_8 研究记录的保存
+facts: retention.trigger, retention.duration, retention.custody, retention.disposition, retention.record_types, retention.storage_location
+claims: retention.arrangement
+prompt: 输入为已确认项目事实，输出为 研究记录的保存 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_12_9 研究发表和数据共享政策
+facts: publication.actual_agreements, publication.authorship_roles, publication.data_sharing_conditions, publication.recipient_controls, publication.disclosure_plan
+claims: publication.data_sharing_arrangement, publication.repository_arrangement
+prompt: 输入为已确认项目事实，输出为 研究发表和数据共享政策 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_13_1 伦理规范
+facts: ethics.prospective_review_procedure, ethics.approval_status, ethics.responsible_role, ethics.version_control, ethics.new_information_handling, ethics.before_procedure_confirmation
+claims: ethics.approval_status
+prompt: 输入为已确认项目事实，输出为 伦理规范 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_13_2 知情同意
+facts: consent.procedure, consent.version, consent.responsible_role, consent.before_relevant_procedure, consent.capacity_or_representative, consent.witness_if_applicable, consent.new_information_handling
+claims: consent.prospective_process
+prompt: 输入为已确认项目事实，输出为 知情同意 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_13_3 保密和隐私
+facts: confidentiality.data_coding, confidentiality.sample_coding, confidentiality.recipients, confidentiality.access_control, confidentiality.transfer_arrangements, confidentiality.retention_linkage
+claims: confidentiality.access_boundary
+prompt: 输入为已确认项目事实，输出为 保密和隐私 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_13_4 试验参与者的补偿、赔偿与保险
+facts: compensation.arrangement, compensation.trial_related_injury_procedure, compensation.insurance_or_guarantee, compensation.responsible_contact, compensation.missing_fact_resolution
+claims: compensation.resolution_path, compensation.provision
+prompt: 输入为已确认项目事实，输出为 试验参与者的补偿、赔偿与保险 的 ChapterSkillOutput。仅写入实际角色、记录、责任、时间、地点、接收方和适用安排；缺失事实进入待补/建议解决，不得编造。未来使用、当前研究检测、保存、共享、同意、隐私和补偿必须按各自边界分开。
+v2_n_14_1 质量源于设计与风险管理
+facts: quality.critical_to_quality_factors, quality.associated_risks, quality.proportionate_controls, quality.control_responsibility, quality.decision_and_data_review_linkage
+claims: quality.ctq_risk_control_chain, quality.controls_proportionate_to_risks
+prompt: 输入为已确认项目事实，输出为 质量源于设计与风险管理 的 ChapterSkillOutput。仅写入实际关键质量因素、关联风险、相称控制、责任角色与重要决策/数据复核联动，锚点链必须闭合；影响试验参与者安全或数据可靠性的判断以项目事实为准，缺失进入待补/建议解决，不得编造。
+v2_n_14_2 对申办者的要求
+facts: quality.sponsor_conduct_responsibility, quality.sponsor_oversight_and_delegation, quality.sponsor_quality_system, quality.sponsor_records_and_reports, quality.sponsor_training_obligation_statement
+claims: sponsor_responsibility_matches_actual_arrangement
+prompt: 输入为已确认项目事实，输出为 对申办者的要求 的 ChapterSkillOutput。仅写入与试验实际安排一致的申办者责任、监督与委派、质量体系、记录与培训义务表述；试验参与者权益与安全相关的责任不得以意图性职责替代实际安排，缺失进入待补/建议解决。
+v2_n_14_3 申办者或其代表委派的监查员职责
+facts: quality.monitoring_scope_and_extent, quality.monitoring_proportionate_approach, quality.monitoring_methods, quality.monitoring_findings_and_followup, quality.monitor_qualification, quality.monitoring_records
+claims: monitoring_actual_proportionate_plan
+prompt: 输入为已确认项目事实，输出为 申办者或其代表委派的监查员职责 的 ChapterSkillOutput。仅写入与本项目比例化监查方式一致的范围、程度、方法、发现与跟进、资格与记录；涉及试验参与者安全或权益的发现必须进入沟通与记录，缺失进入待补/建议解决。
+v2_n_14_4 对研究者的要求
+facts: quality.investigator_conduct_and_delegation, quality.investigator_supervision, quality.investigator_protocol_compliance, quality.investigator_records, quality.investigator_facilities_and_resources
+claims: investigator_responsibility_matches_arrangements
+prompt: 输入为已确认项目事实，输出为 对研究者的要求 的 ChapterSkillOutput。仅写入与实际安排一致的研究者实施与委派、监督、方案遵循、记录与设施资源责任；研究者对试验参与者的照护与记录责任以项目事实为准，缺失进入待补/建议解决。
+v2_n_14_5 稽查和视察
+facts: quality.audit_program, quality.audit_inspection_distinction, quality.audit_records, quality.inspection_access_and_notification, quality.audit_findings_communication
+claims: audit_inspection_processes_distinct
+prompt: 输入为已确认项目事实，输出为 稽查和视察 的 ChapterSkillOutput。稽查与视察必须作为两个可区分程序分别写入目的、独立性、记录与沟通路径；涉及试验参与者记录的安排以项目事实为准。本地 TP-MA-15 标题不构成其内容已读取或已整合的证据（provenance pending），缺失进入待补/建议解决。
+v2_n_14_6 方案偏离
+facts: quality.deviation_process, quality.deviation_records, quality.deviation_impact_assessment, quality.deviation_communication, quality.important_deviation_definition, quality.general_deviation_definition, quality.urgent_hazard_exception_definition
+claims: deviation_process_and_impact_assessment, important_general_deviation_distinction
+prompt: 输入为已确认项目事实，输出为 方案偏离 的 ChapterSkillOutput。仅写入实际偏离程序、记录、影响评估、沟通对象，以及重要偏离、一般偏离与紧急危害例外的实际定义；涉及试验参与者安全或权益的影响必须留痕。本地 TP-MA-15 标题不构成已整合内容（provenance pending），缺失进入待补/建议解决。
+v2_n_14_7 安全性监督
+facts: quality.safety_oversight_body_type, quality.safety_oversight_composition, quality.safety_oversight_roles, quality.safety_oversight_information_flow, quality.safety_oversight_review_arrangement, quality.safety_escalation_path
+claims: safety_oversight_actual_arrangement, oversight_body_type_and_role_stated
+prompt: 输入为已确认项目事实，输出为 安全性监督 的 ChapterSkillOutput。显式陈述实际监督主体类型（独立 DSMB / 申办者参与的 SMC / 终点 IRC 不可互换）、组成、角色、信息流、审议与升级路径；涉及试验参与者安全信息的安排以项目事实为准。半年一次会议与升级判定只是示例，缺失进入待补/建议解决。
+v2_n_15 参考文献
+facts: references.used_source_register, references.bibliographic_metadata, references.citation_style, references.in_text_citation_targets
+claims: study_bibliography_from_used_sources, citations_resolvable
+prompt: 输入为已确认项目事实，输出为 参考文献 的 ChapterSkillOutput。书目必须由实际使用来源生成，逐条给出完整书目元数据（作者/题名/出版/年份/DOI或URL/访问日期）并保证每条正文引用可解析；试验参与者相关文献同样如此。中文与外文格式遵循适用的已批准模板样式，缺失元数据进入待补，模板示例引用不是研究书目。
+v2_n_16 附录
+facts: appendix.applicable_attachment_index, appendix.inclusion_decision_basis, appendix.container_aggregation_scope
+claims: appendix_aggregates_actual_applicable_attachments, container_preserves_outlined_leaf_obligations
+prompt: 输入为已确认项目事实，输出为 附录 容器的 ChapterSkillOutput。只汇总实际适用附件并给出逐项收录依据；附录涉及试验参与者信息与样本附件时不得自动收录模板全部附件。容器义务不得替代 v2_n_16_x1/x2/x3 大纲叶子各自的覆盖义务，缺失进入待补/建议解决。
+v2_n_16_x1 附录 1 ECOG体力评分
+facts: appendix.ecog_applicability_decision_record
+claims: appendix.ecog_applicability_decided
+prompt: 输入为已确认项目事实，输出为 附录 1 ECOG体力评分 的 ChapterSkillOutput。先写入实际适用性决定记录；仅当评估适用（裸 true）时才写入对照适当来源核对过的版本、来源与复现评分内容，并包含评分表格。ECOG 评分涉及试验参与者功能状态评估，不得自动收录模板示例表格，缺失进入待补/建议解决。
+v2_n_16_x2 附录 2 纽约心脏学会（NYHA）心功能分级
+facts: appendix.nyha_applicability_decision_record
+claims: appendix.nyha_applicability_decided
+prompt: 输入为已确认项目事实，输出为 附录 2 纽约心脏学会（NYHA）心功能分级 的 ChapterSkillOutput。先写入实际适用性决定记录；仅当评估适用（裸 true）时才写入对照适当来源核对过的版本、来源与复现分级内容，并包含分级表格。NYHA 分级涉及试验参与者心功能评估，不得自动收录模板示例表格，缺失进入待补/建议解决。
+v2_n_16_x3 附录 3 中心实验室信息和样本销毁公司信息
+facts: appendix.laboratory_name, appendix.laboratory_identifying_details, appendix.laboratory_roles_and_scope, appendix.destruction_provider_name, appendix.destruction_provider_identifying_details, appendix.destruction_provider_roles
+claims: appendix.laboratory_identity_and_roles, appendix.destruction_provider_identity_and_roles
+prompt: 输入为已确认项目事实，输出为 附录 3 中心实验室信息和样本销毁公司信息 的 ChapterSkillOutput。只写入真实适用的中心实验室与样本销毁公司名称、识别信息（地址/联系方式/资质）和职责范围；中心实验室与销毁方是两条独立来源义务，分别给证据。模板自带的示例实验室与示例销毁公司不是项目供应商；涉及试验参与者样本时必须有真实安排，空白或编造内容进入待补/建议解决。

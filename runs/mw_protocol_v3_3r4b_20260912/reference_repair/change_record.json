@@ -1,0 +1,19 @@
+{
+  "reason": "Replace nonexistent virtual target with source-verified 14.7 oversight node; preserve 14.6 deviations node and original DOCX unchanged",
+  "source_windows": [
+    "statistics_source_window.json",
+    "oversight_reference_source_window.json"
+  ],
+  "changes": [
+    {
+      "path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_9.json",
+      "before_sha256": "fb45be1a11110bd1ebb71e9ad4e71add345d385a4b3e2137d144cf0f99658ac4",
+      "after_sha256": "c957b672c896c2b48a8a2d9492cd16b00e42bb9b18d84939767a40e85419cb3d"
+    },
+    {
+      "path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_skills/v2_n_11_4_9.json",
+      "before_sha256": "9387ba1780dfcb4748fc2c886a967b5ebeadd850845081f6b1dd508ae18a6644",
+      "after_sha256": "bae5799cb86271204b7cc423fa3f91aa9bfc49adb903fce0a6a15501315b4a44"
+    }
+  ]
+}

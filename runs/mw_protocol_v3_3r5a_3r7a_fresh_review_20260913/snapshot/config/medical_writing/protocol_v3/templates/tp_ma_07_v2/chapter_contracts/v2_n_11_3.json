@@ -1,0 +1,220 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-3:v2",
+  "semantic_node_id": "v2_n_11_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-3:general-principles",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-3:v2",
+    "chapter_contract_id": "contract:v2-n-11-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.descriptive.variable_types",
+        "obligation": "required",
+        "rationale": "描述性分析必须按实际变量类型选择统计量。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.descriptive.summary_conventions",
+        "obligation": "required",
+        "rationale": "必须声明连续、分类、时间到事件等变量的汇总约定。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.descriptive.missing_denominator_rules",
+        "obligation": "required",
+        "rationale": "缺失分母规则必须按变量和分析时点定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.descriptive.missing_outcome_handling",
+        "obligation": "required",
+        "rationale": "缺失结局的处理必须独立于伴发事件策略声明。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.descriptive.intercurrent_event_distinction",
+        "obligation": "required",
+        "rationale": "必须明确区分缺失结局与伴发事件。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sap.status",
+        "obligation": "required",
+        "rationale": "必须声明 SAP 的当前状态，不能用“稍后制定”替代协议级义务。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sap.timing",
+        "obligation": "required",
+        "rationale": "必须声明 SAP 计划完成/修订时点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sap.revision_linkage",
+        "obligation": "required",
+        "rationale": "SAP 修订必须回链实际分析和揭盲安排。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sap.analysis_unblinding_alignment",
+        "obligation": "required",
+        "rationale": "SAP 时序必须与分析执行和揭盲安排一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "general_statistical_principles",
+        "obligation": "required",
+        "rationale": "一般原则必须给出适用于本项目的变量、缺失和报告约定。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sap_status_timing_revision",
+        "obligation": "required",
+        "rationale": "SAP 状态、时间和修订链接必须与实际分析揭盲安排一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "descriptive_missing_rules",
+        "obligation": "required",
+        "rationale": "描述性统计和缺失分母规则必须按变量和时点具体化。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "general_statistical_principles"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sap_status_timing_revision"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "descriptive_missing_rules"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "一般分析考虑必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“一般分析考虑”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "继承 v2_n_11 父体 757–760 的 SAP framing：SAP 状态、时序与修订必须匹配实际分析和揭盲安排；缺失结局与伴发事件不是同义词，必须分别声明。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "一般分析考虑仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-3",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623392"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-3:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-3:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-3:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-3:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 778、779–781；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.descriptive.variable_types"
+      ],
+      "linked_claim_types": [
+        "general_statistical_principles"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-3:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

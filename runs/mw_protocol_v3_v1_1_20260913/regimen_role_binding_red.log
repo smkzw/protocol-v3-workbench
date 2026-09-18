@@ -1,0 +1,14 @@
+..F                                                                      [100%]
+=================================== FAILURES ===================================
+______ test_saved_role_assignments_are_rejected_after_regimen_reordering _______
+
+    def test_saved_role_assignments_are_rejected_after_regimen_reordering():
+        from copy import deepcopy
+        from app.protocol_workflow.canonical.hashing import exact_payload_sha256
+>       from app.protocol_workflow.agent2.regimen_projection import project_bound_regimen_roles
+E       ImportError: cannot import name 'project_bound_regimen_roles' from 'app.protocol_workflow.agent2.regimen_projection' (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/agent2/regimen_projection.py)
+
+tests/protocol_v3/test_regimen_role_projection.py:43: ImportError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_role_projection.py::test_saved_role_assignments_are_rejected_after_regimen_reordering
+1 failed, 2 passed in 0.31s

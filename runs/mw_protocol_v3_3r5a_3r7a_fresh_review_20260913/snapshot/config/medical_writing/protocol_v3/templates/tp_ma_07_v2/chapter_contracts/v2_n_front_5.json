@@ -1,0 +1,110 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-5:v2",
+  "semantic_node_id": "v2_n_front_5",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-5:glossary",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-5:v2",
+    "chapter_contract_id": "contract:v2-n-front-5:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "glossary.term_count",
+        "obligation": "required",
+        "rationale": "缩略语表必须记录正文实际使用缩写的数量 provenance。"
+      },
+      {
+        "fact_path": "glossary.used_terms_source",
+        "obligation": "required",
+        "rationale": "每个词条的全称必须有来源回链并保留正确的医学区分。"
+      },
+      {
+        "fact_path": "glossary.unused_template_terms",
+        "obligation": "forbidden",
+        "rationale": "未在正文使用的模板缩写不得保留；不得保留源拼写错误或相互冲突的全称。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "glossary_expansion",
+        "obligation": "required",
+        "rationale": "缩略语表必须声明缩写/来源全称/中文含义三列与正文实际使用一致。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "glossary_expansion"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "缩略语表（模板 table[96]：3列）必须保留缩写/来源全称/中文含义三列表头，并且至少承载一条正文实际使用缩写的真实词条单元格；全部已用术语的逐条覆盖属医学/术语判断，由 QC 延后核查。",
+        "required_object_cells": [
+          "glossary:header:abbreviation",
+          "glossary:header:full_name",
+          "glossary:header:chinese_meaning",
+          "glossary:entry:1.abbreviation",
+          "glossary:entry:1.full_name",
+          "glossary:entry:1.chinese_meaning"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "仅收正文实际使用缩写的三列缩略语表"
+    ],
+    "skeleton_risk_rules": [
+      "缩略语表仅有表头或缺失任一表头单元格即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-5",
+    "required_styles": [
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-5:used-only",
+      "rule": "缩略语表必须只收正文实际使用的缩写，并给出有来源的全称与中文含义，保留正确的医学区分。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-5:expand-3r7",
+      "rule": "表内容随3R.7术语义务扩展；本合同不预设最终词条集，也不在夹具中断言词条医学正确性。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-5:used-only",
+      "question": "缩略语表是否只含正文实际使用且来源可回链的词条？",
+      "linked_fact_paths": [
+        "glossary.used_terms_source"
+      ],
+      "linked_claim_types": [
+        "glossary_expansion"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-5:used-only"
+      ],
+      "risk_if_unmet": "未用模板缩写残留会误导读者并破坏术语一致性。"
+    }
+  ]
+}

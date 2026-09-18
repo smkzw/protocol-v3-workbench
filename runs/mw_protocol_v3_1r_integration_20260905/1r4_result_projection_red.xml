@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.338" timestamp="2026-09-05T18:52:32.217254+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_reservation_result_projection" name="test_terminal_view_derives_state_and_error_from_reservation[completed]" time="0.001"><failure message="TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'">state = &lt;ExecutionTerminalState.COMPLETED: 'completed'&gt;
+
+    @pytest.mark.parametrize("state", list(ExecutionTerminalState))
+    def test_terminal_view_derives_state_and_error_from_reservation(state):
+        now = datetime(2026, 9, 5, tzinfo=timezone.utc)
+        completed = state is ExecutionTerminalState.COMPLETED
+        reservation = ExecutionReservation(
+            execution_reservation_id="res:projection",
+            node_execution_contract_id="node:projection",
+            logical_call_id="call:projection", idempotency_key="projection",
+            input_sha256="a" * 64, attempt=1, provider_session_id="session:projection",
+            status=ReservationStatus(state.value), terminal_state=state,
+            output_sha256="b" * 64 if completed else None,
+            error_code=None if completed else "dispatch_timeout",
+            reserved_at=now, updated_at=now,
+        )
+&gt;       outcome = ReservationOutcome(reservation=reservation)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'
+
+tests/protocol_v3/test_reservation_result_projection.py:27: TypeError</failure></testcase><testcase classname="tests.protocol_v3.test_reservation_result_projection" name="test_terminal_view_derives_state_and_error_from_reservation[failed]" time="0.000"><failure message="TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'">state = &lt;ExecutionTerminalState.FAILED: 'failed'&gt;
+
+    @pytest.mark.parametrize("state", list(ExecutionTerminalState))
+    def test_terminal_view_derives_state_and_error_from_reservation(state):
+        now = datetime(2026, 9, 5, tzinfo=timezone.utc)
+        completed = state is ExecutionTerminalState.COMPLETED
+        reservation = ExecutionReservation(
+            execution_reservation_id="res:projection",
+            node_execution_contract_id="node:projection",
+            logical_call_id="call:projection", idempotency_key="projection",
+            input_sha256="a" * 64, attempt=1, provider_session_id="session:projection",
+            status=ReservationStatus(state.value), terminal_state=state,
+            output_sha256="b" * 64 if completed else None,
+            error_code=None if completed else "dispatch_timeout",
+            reserved_at=now, updated_at=now,
+        )
+&gt;       outcome = ReservationOutcome(reservation=reservation)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'
+
+tests/protocol_v3/test_reservation_result_projection.py:27: TypeError</failure></testcase><testcase classname="tests.protocol_v3.test_reservation_result_projection" name="test_terminal_view_derives_state_and_error_from_reservation[unknown_outcome]" time="0.000"><failure message="TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'">state = &lt;ExecutionTerminalState.UNKNOWN_OUTCOME: 'unknown_outcome'&gt;
+
+    @pytest.mark.parametrize("state", list(ExecutionTerminalState))
+    def test_terminal_view_derives_state_and_error_from_reservation(state):
+        now = datetime(2026, 9, 5, tzinfo=timezone.utc)
+        completed = state is ExecutionTerminalState.COMPLETED
+        reservation = ExecutionReservation(
+            execution_reservation_id="res:projection",
+            node_execution_contract_id="node:projection",
+            logical_call_id="call:projection", idempotency_key="projection",
+            input_sha256="a" * 64, attempt=1, provider_session_id="session:projection",
+            status=ReservationStatus(state.value), terminal_state=state,
+            output_sha256="b" * 64 if completed else None,
+            error_code=None if completed else "dispatch_timeout",
+            reserved_at=now, updated_at=now,
+        )
+&gt;       outcome = ReservationOutcome(reservation=reservation)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: ReservationOutcome.__init__() missing 2 required positional arguments: 'terminal_state' and 'status'
+
+tests/protocol_v3/test_reservation_result_projection.py:27: TypeError</failure></testcase></testsuite></testsuites>

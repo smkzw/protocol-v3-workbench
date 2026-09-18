@@ -1,0 +1,150 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+  "semantic_node_id": "v2_n_6_2_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-2-1:receipt-inventory",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-2-1:v2",
+    "chapter_contract_id": "contract:v2-n-6-2-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.receipt_and_inventory",
+        "obligation": "required",
+        "rationale": "接收与清点程序必须给出实际步骤与责任方；模板示例流程仅为示例，不得作为项目流程。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.accountability_records",
+        "obligation": "required",
+        "rationale": "发放/回收/清点记录必须给出记录类型与字段，不得为空壳。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.dispensing_and_return",
+        "obligation": "required",
+        "rationale": "发放与回收条件（发放身份核验、回收要求）必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.destruction_authorization",
+        "obligation": "required",
+        "rationale": "销毁/退回必须给出授权方与记录要求。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.responsible_party",
+        "obligation": "required",
+        "rationale": "责任方（申办方/研究者/药房）必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_sop_reference",
+        "obligation": "forbidden",
+        "rationale": "通用 SOP 引用不得替代协议特定的接收/清点要求。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "accountability_procedure",
+        "obligation": "required",
+        "rationale": "接收、清点、发放、回收与销毁必须给出责任方与记录要求，并保持可追溯。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "accountability_procedure"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "接收/清点段必须承载接收步骤、记录字段、发放与回收条件、销毁授权及责任方。",
+        "required_object_cells": [
+          "intervention:cell:receipt_identity",
+          "intervention:cell:accountability_record",
+          "intervention:cell:destruction_record"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "接收/清点/发放/回收/销毁记录为项目操作事实。"
+    ],
+    "skeleton_risk_rules": [
+      "接收/清点程序或责任方缺失即失败；仅通用 SOP 引用即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-2-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623349"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-1:responsibility",
+      "rule": "责任方与记录要求必须项目化；仅引用通用 SOP 不留协议特定细节即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-1:traceability",
+      "rule": "接收、清点、发放、回收与销毁记录必须可追溯到实际产品批次/数量。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-2-1:trace",
+      "question": "接收/清点/发放/回收/销毁是否都给出责任方与可追溯记录字段？",
+      "linked_fact_paths": [
+        "intervention.accountability_records",
+        "intervention.responsible_party"
+      ],
+      "linked_claim_types": [
+        "accountability_procedure"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-2-1:responsibility"
+      ],
+      "risk_if_unmet": "责任或记录缺失会破坏试验用药品可追溯性。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

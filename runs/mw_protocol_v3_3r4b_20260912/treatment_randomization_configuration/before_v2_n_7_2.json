@@ -1,0 +1,192 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-7-2:v2",
+  "semantic_node_id": "v2_n_7_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-7-2:treatment-period",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-7-2:v2",
+    "chapter_contract_id": "contract:v2-n-7-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.treatment_period_definition",
+        "obligation": "required",
+        "rationale": "治疗期定义（起止参考事件与总时长）必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.dosing_start_rules",
+        "obligation": "required",
+        "rationale": "首次给药与给药起点的规则必须项目特定。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.treatment_visit_procedures",
+        "obligation": "required",
+        "rationale": "治疗期访视程序必须与 SoA 对应单元格一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.blinded_treatment_handling",
+        "obligation": "required",
+        "rationale": "盲态处理规则必须与设计的盲法安排一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.randomization_day_rules",
+        "obligation": "required",
+        "rationale": "随机化时点规则必须与设计一致（仅在随机化设计适用）。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.randomized_on_day1",
+        "obligation": "optional",
+        "rationale": "确认设计在实际随机化日（如 D1）随机化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "procedure.template_example_visit_schedule",
+        "obligation": "forbidden",
+        "rationale": "模板示例访视时间表不得作为本项目治疗期安排。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "visit_phase_description",
+        "obligation": "required",
+        "rationale": "治疗期定义、给药起点与访视程序必须与 SoA、给药方案及安全评估一致。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "visit_phase_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "治疗期段必须承载治疗期定义、给药起点、访视程序与盲态处理规则。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "治疗期定义/给药起点/访视程序/盲态规则为项目事实。"
+    ],
+    "skeleton_risk_rules": [
+      "治疗期定义或访视程序缺失即失败；仅模板示例时间表即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-7-2",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623359"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-7-2:example",
+      "rule": "D1 随机化与双盲仅为示例，仅在项目实际适用时保留；模板示例时间表不得照抄。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-7-2:agreement",
+      "rule": "治疗期程序必须与 SoA 单元格、安全评估时点及给药方案一致。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-7-2:randomization",
+      "triggering_fact_paths": [
+        "procedure.randomized_on_day1"
+      ],
+      "condition": "确认设计在实际给药/随机化日（如 D1）随机化",
+      "rationale": "设计在 D1 随机化时，随机化日规则必须作为项目事实给出；非随机化设计不得虚构。",
+      "required_when_active_fact_paths": [
+        "procedure.randomization_day_rules"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-7-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_7_2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-7-1:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_7_2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_7_2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-7-2:phases",
+      "question": "治疗期定义与访视程序是否与 SoA 及给药方案一致？",
+      "linked_fact_paths": [
+        "procedure.treatment_period_definition",
+        "procedure.treatment_visit_procedures"
+      ],
+      "linked_claim_types": [
+        "visit_phase_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-7-2:agreement"
+      ],
+      "risk_if_unmet": "治疗期与 SoA 不一致会造成给药与安全评估缺口。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

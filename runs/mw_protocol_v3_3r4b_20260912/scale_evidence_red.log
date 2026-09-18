@@ -1,0 +1,66 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_applicable_scale_requires_evidence_for_its_verified_contents[ecog-v2_n_16_x1] _
+
+scale = 'ecog', node = 'v2_n_16_x1'
+
+    @pytest.mark.parametrize("scale,node", [("ecog", "v2_n_16_x1"), ("nyha", "v2_n_16_x2")])
+    def test_applicable_scale_requires_evidence_for_its_verified_contents(scale, node):
+        import json
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR, REPO_ROOT
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / f"chapter_contracts/{node}.json").read_text())
+        fixtures = json.loads((REPO_ROOT / "tests/fixtures/protocol_v3/chapter_content_v2/batch8.json").read_text())["fixtures"]
+        content = next(f["content"] for f in fixtures if f["chapter_contract_id"] == c.chapter_contract_id and f["fixture_kind"] == "positive")
+        for fact in content["facts"]:
+            if fact["fact_path"] == f"appendix.{scale}_assessment_applicable":
+                fact["value"] = True
+        study = confirmed_study({f["fact_path"]: f["value"] for f in content["facts"]})
+        source = {"source_role": "peer_reviewed", "admission_claim_type": "unrelated_claim",
+                  "locator_kind": "body", "locator": "synthetic scale source",
+                  "context": "synthetic content verification window", "quality_score": 1.0}
+        content["evidence"].append(source)
+        result = evaluate_applicable_content(c, ChapterContentPayload.model_validate(content), study=study,
+                                             rules=real_rule_catalog().rules, subject_id="test:scale-source")
+>       assert not result.passed
+E       AssertionError: assert not True
+E        +  where True = FixtureCheckResult(subject_id='test:scale-source', chapter_contract_id='contract:v2-n-16-x1:v2', passed=True, findings...t_specific_element_not_evaluated: 适用时必须对照适当来源核对版本与内容；本文件的合成/示例值仅用于结构校验，不构成项目批准或医学结论。'), ignored_supplied_verdict=False).passed
+
+tests/protocol_v3/test_chapter_applicability.py:458: AssertionError
+_ test_applicable_scale_requires_evidence_for_its_verified_contents[nyha-v2_n_16_x2] _
+
+scale = 'nyha', node = 'v2_n_16_x2'
+
+    @pytest.mark.parametrize("scale,node", [("ecog", "v2_n_16_x1"), ("nyha", "v2_n_16_x2")])
+    def test_applicable_scale_requires_evidence_for_its_verified_contents(scale, node):
+        import json
+        from app.protocol_workflow.registries.applicability import evaluate_applicable_content
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR, REPO_ROOT
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / f"chapter_contracts/{node}.json").read_text())
+        fixtures = json.loads((REPO_ROOT / "tests/fixtures/protocol_v3/chapter_content_v2/batch8.json").read_text())["fixtures"]
+        content = next(f["content"] for f in fixtures if f["chapter_contract_id"] == c.chapter_contract_id and f["fixture_kind"] == "positive")
+        for fact in content["facts"]:
+            if fact["fact_path"] == f"appendix.{scale}_assessment_applicable":
+                fact["value"] = True
+        study = confirmed_study({f["fact_path"]: f["value"] for f in content["facts"]})
+        source = {"source_role": "peer_reviewed", "admission_claim_type": "unrelated_claim",
+                  "locator_kind": "body", "locator": "synthetic scale source",
+                  "context": "synthetic content verification window", "quality_score": 1.0}
+        content["evidence"].append(source)
+        result = evaluate_applicable_content(c, ChapterContentPayload.model_validate(content), study=study,
+                                             rules=real_rule_catalog().rules, subject_id="test:scale-source")
+>       assert not result.passed
+E       AssertionError: assert not True
+E        +  where True = FixtureCheckResult(subject_id='test:scale-source', chapter_contract_id='contract:v2-n-16-x2:v2', passed=True, findings...t_specific_element_not_evaluated: 适用时必须对照适当来源核对版本与内容；本文件的合成/示例值仅用于结构校验，不构成项目批准或医学结论。'), ignored_supplied_verdict=False).passed
+
+tests/protocol_v3/test_chapter_applicability.py:458: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_applicable_scale_requires_evidence_for_its_verified_contents[ecog-v2_n_16_x1]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_applicable_scale_requires_evidence_for_its_verified_contents[nyha-v2_n_16_x2]
+2 failed, 50 deselected in 0.61s

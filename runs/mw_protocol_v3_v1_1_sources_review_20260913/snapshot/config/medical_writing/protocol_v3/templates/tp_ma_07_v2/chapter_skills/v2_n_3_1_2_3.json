@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-3-1-2-3:estimand-treatment-condition",
+  "skill_version": "3.4.0",
+  "node_id": "v2_n_3_1_2_3",
+  "chapter_contract_id": "contract:v2-n-3-1-2-3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按治疗效应属性合同给出随机分配的治疗条件、背景治疗与补救/背景改变处理，并澄清源标签“治疗效应”的确切含义；存在背景治疗时必须命中条件适用性规则并给出跨合同一致性声明。 背景与补救治疗适用性复用明确项目状态，任一适用则提供处理及跨合同来源；两者均不适用时不虚构处理，仍说明实际治疗条件和背景治疗处置。",
+    "forbidden_behaviors": [
+      "把源标签“治疗效应”当作属性表述",
+      "忽略背景治疗/补救治疗处理",
+      "输出与第6章干预合同冲突的处置"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与条件适用性规则命中情况。",
+    "背景与补救治疗处置必须回链已确认设计事实。",
+    "标签澄清声明必须随属性一并输出。"
+  ],
+  "error_codes": [
+    "skill:v2-n-3-1-2-3:missing-obligation",
+    "skill:v2-n-3-1-2-3:unresolved-fact",
+    "skill:v2-n-3-1-2-3:unsupported-source-role"
+  ]
+}

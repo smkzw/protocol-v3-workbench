@@ -1,0 +1,20 @@
+[PASS(符合预期复现)] A1: two-paragraph non-substantive section qualifies as full-draft target
+         body='研究人群：成年受试者。\n签署知情同意书。' len=20 < 80 -> _is_substantive=False
+[PASS(符合预期复现)] A2: adopt-side first-block hash != target-side joined hash (false staleness, zero edits)
+         target_sha=f72b833db377... adopt_sha=c54f3987e279...
+[PASS(符合预期复现)] A3 (control): single-paragraph target hashes agree
+         equal=True
+[PASS(符合预期复现)] B: regex flags legitimate protocol prose: 筛选前未提供书面知情同意者不进入筛选。
+         UNRESOLVED_DRAFT_MARKER_RE.search -> True
+[FAIL(未复现)] B: regex flags legitimate protocol prose: 未能提供当前有效的诊断证明文件的受试者不纳入。
+         UNRESOLVED_DRAFT_MARKER_RE.search -> False
+[PASS(符合预期复现)] B: regex flags legitimate protocol prose: 未提供既往抗肿瘤治疗记录者须复核后方可入组。
+         UNRESOLVED_DRAFT_MARKER_RE.search -> True
+[PASS(符合预期复现)] B: regex flags legitimate protocol prose: 尚无直接证据支持该药物在此人群中的疗效，故本研究将探索其有效性。
+         UNRESOLVED_DRAFT_MARKER_RE.search -> True
+[PASS(符合预期复现)] B-control: genuine pending marker still flagged
+         待确认 must stay flagged
+[FAIL(未复现)] B-boundary: '未提供'+19 chars no longer matches (window is 18)
+         alt.search('未提供'+19药)=True
+
+9 checks, 2 failed-to-reproduce

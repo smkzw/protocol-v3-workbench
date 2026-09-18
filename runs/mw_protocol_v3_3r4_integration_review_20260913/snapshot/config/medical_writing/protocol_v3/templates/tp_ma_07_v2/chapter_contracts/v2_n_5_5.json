@@ -1,0 +1,254 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-5-5:v2",
+  "semantic_node_id": "v2_n_5_5",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-5-5:recruitment-retention",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-5-5:v2",
+    "chapter_contract_id": "contract:v2-n-5-5:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "picos.population_summary",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.target",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.channels",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.feasibility",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.materials_review",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.contact_measures",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.visit_measures",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.compensation_applicable",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.retention.strategy",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.retention.follow_up",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.ethics_review_plan",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.completed_approval_receipt",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.recruitment.compensation_arrangement",
+        "obligation": "optional",
+        "rationale": "按body-child418给出实际补偿范围、方式、数额/依据、计划与记录；结构化项目值不表示审批已完成。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "recruitment_plan",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "retention_plan",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "compensation_arrangement",
+        "obligation": "qualified",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。",
+        "qualifying_conditions": [
+          "仅在项目确认适用补偿时"
+        ]
+      },
+      {
+        "claim_type": "fabricated_approval",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "recruitment_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "retention_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "compensation_arrangement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 3,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "recruitment:target",
+          "recruitment:channels",
+          "recruitment:feasibility",
+          "recruitment:materials-review",
+          "recruitment:contacts",
+          "recruitment:visits",
+          "retention:strategy",
+          "retention:follow-up"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "招募与保留必须覆盖实际渠道、可行性、材料审查、联系/访视措施及适用的补偿安排；伦理审查计划与开始前批准收据必须区分，计划不得写成已完成批准。",
+      "GCP2026 article14/22/45 仅作为来源范围锚点，最终受监管措辞仍需适用原文与项目审批记录。",
+      "本载体引入的 population.recruitment.* 与 population.retention.* 为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D3修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有招募标题、phantom completed approval或无渠道/可行性/保留措施即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_5_5",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc9900001"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_5:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_5:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_5_5:compensation",
+      "triggering_fact_paths": [
+        "population.recruitment.compensation_applicable"
+      ],
+      "condition": "已确认存在参与者补偿安排",
+      "rationale": "补偿按实际适用性；招募、保留、伦理审查计划独立保留，计划不等于完成审批。",
+      "required_when_active_fact_paths": [
+        "population.recruitment.compensation_arrangement"
+      ],
+      "required_when_active_claim_types": [
+        "compensation_arrangement"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_5_5:closure",
+      "question": "v2_n_5_5 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "picos.population_summary",
+        "population.recruitment.target"
+      ],
+      "linked_claim_types": [
+        "recruitment_plan",
+        "retention_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_5_5:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

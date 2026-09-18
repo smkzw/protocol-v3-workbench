@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-2-1:study-rationale",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_2_1",
+  "chapter_contract_id": "contract:v2-n-2-1:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按研究理论依据章节合同逐条满足事实、声明、证据与结构义务：实际适应症、临床问题、标准治疗、未满足需求、本研究的证据缺口必须分别给出；证据必须来自已声明来源角色与上下文窗口，不得编造。",
+    "forbidden_behaviors": [
+      "用通用疾病介绍或注册关键词替代实际适应症与证据缺口",
+      "编造证据来源或上下文",
+      "输出营销性表述"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与每个已承认证据单元的定位与上下文窗口。",
+    "疾病背景证据必须来自已声明的指南/法规或项目来源，并保留来源版本。",
+    "未确认事实不得写入正文，只进入待补事实清单。"
+  ],
+  "error_codes": [
+    "skill:v2-n-2-1:missing-obligation",
+    "skill:v2-n-2-1:unresolved-fact",
+    "skill:v2-n-2-1:unsupported-source-role"
+  ]
+}

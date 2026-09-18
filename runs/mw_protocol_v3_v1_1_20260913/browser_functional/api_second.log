@@ -1,0 +1,64 @@
+Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_20260913/browser_functional/serve_fixture.py", line 30, in <module>
+    mount_protocol_workflow_router(app,ProtocolWorkflowMountConfig(enabled=True,db_path=db),seed_coordinator_factory=factory)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/composition.py", line 322, in mount_protocol_workflow_router
+    router = create_mounted_protocol_workflow_router(
+        resolved, registry_path=registry_path, seed_coordinator_factory=seed_coordinator_factory
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/composition.py", line 287, in create_mounted_protocol_workflow_router
+    create_source_router(
+    ~~~~~~~~~~~~~~~~~~~~^
+        lambda: SourceIdentityService(uow_factory, LocalArtifactStore(str(artifact_root))),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        route_class=_ValidationEnvelopeRoute,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/sources.py", line 30, in create_source_router
+    @router.post('')
+     ~~~~~~~~~~~^^^^
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py", line 1450, in decorator
+    self.add_api_route(
+    ~~~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<23 lines>...
+        generate_unique_id_function=generate_unique_id_function,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py", line 1386, in add_api_route
+    route = route_class(
+        self.prefix + path,
+    ...<27 lines>...
+        ),
+    )
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py", line 949, in __init__
+    self.dependant = get_dependant(
+                     ~~~~~~~~~~~~~^
+        path=self.path_format, call=self.endpoint, scope="function"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/dependencies/utils.py", line 311, in get_dependant
+    param_details = analyze_param(
+        param_name=param_name,
+    ...<2 lines>...
+        is_path_param=is_path_param,
+    )
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/dependencies/utils.py", line 535, in analyze_param
+    ensure_multipart_is_installed()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/lib/python3.14/site-packages/fastapi/dependencies/utils.py", line 120, in ensure_multipart_is_installed
+    raise RuntimeError(multipart_not_installed_error) from None
+RuntimeError: Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+

@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_catalog_rejects_nonexistent_conditional_table_cell ____________
+tests/protocol_v3/test_chapter_applicability.py:19: in test_catalog_rejects_nonexistent_conditional_table_cell
+    with pytest.raises(ValueError, match="applicability cell target missing"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_catalog_rejects_nonexistent_conditional_table_cell
+1 failed in 0.47s

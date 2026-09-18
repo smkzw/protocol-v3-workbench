@@ -1,0 +1,68 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-6:v2",
+  "semantic_node_id": "v2_n_14_6",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-6",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-6:v2",
+    "chapter_contract_id": "contract:v2-n-14-6:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.deviation_process", "obligation": "required", "rationale": "方案偏离处理程序必须绑定本项目安排，不得只保留通用定义。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.deviation_records", "obligation": "required", "rationale": "偏离记录必须可追溯并声明责任角色。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.deviation_impact_assessment", "obligation": "required", "rationale": "偏离影响评估必须逐项登记；缺失走待补，不得以“无影响”模板句代替。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.deviation_communication", "obligation": "required", "rationale": "偏离沟通对象与路径必须为项目事实。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.important_deviation_definition", "obligation": "required", "rationale": "重要偏离必须有实际定义与判定依据，不得仅以标题占位。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.general_deviation_definition", "obligation": "required", "rationale": "一般偏离必须有实际定义，与重要偏离分开登记。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "quality.urgent_hazard_exception_definition", "obligation": "required", "rationale": "紧急危害例外必须有实际定义与适用边界，不得写成通用豁免。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "deviation_process_and_impact_assessment", "obligation": "required", "rationale": "偏离处理主张必须覆盖程序、记录、影响评估和沟通，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "important_general_deviation_distinction", "obligation": "required", "rationale": "重要/一般偏离的分级主张必须有实际定义与适用条件。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "urgent_hazard_exception_blanket_waiver", "obligation": "forbidden", "rationale": "不得把紧急危害例外写成通用豁免或免除已确认义务；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary"], "admission_claim_types": ["deviation_process_and_impact_assessment"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "本地 TP-MA-15 标题不构成其内容已读取或已整合的证据；TP-MA-15 内容来源登记为待验证（provenance pending），本批次不以标题替代内容、不据此校验。",
+      "v2_n_14 为 §14 结构容器（非载体）；本节绑定源窗口 912–915。",
+      "偏离影响评估涉及试验参与者安全或权益时必须留痕并沟通，不得以模板句替代。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或已完成的偏离判定。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或通用偏离定义而无程序/记录/影响评估/沟通事实时不算实质内容。",
+      "源窗口 912–915：重要、一般与紧急危害例外必须有实际定义，不得相互替代或写成通用豁免。",
+      "结构检查不等于医学、质量或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-6",
+    "required_styles": ["3"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc48315560", "_Toc132623421"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-6:definitions", "rule": "重要偏离、一般偏离与紧急危害例外必须分别给出实际定义、判定依据和适用边界。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-6:impact", "rule": "每类偏离必须完成影响评估并声明沟通对象；不得以“无影响”模板句代替评估。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-14-6:provenance", "rule": "源窗口 912–915 的程序义务必须由项目事实支持；本地 TP-MA-15 标题登记为待验证，不构成已整合内容。"}
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-14-6:graded-definitions", "question": "重要/一般偏离与紧急危害例外是否有可区分的实际定义，且影响评估与沟通可追溯？", "linked_fact_paths": ["quality.important_deviation_definition", "quality.general_deviation_definition", "quality.deviation_impact_assessment"], "linked_claim_types": ["important_general_deviation_distinction"], "positive_qc_rule_ids": ["qc:v2-n-14-6:definitions", "qc:v2-n-14-6:impact"], "risk_if_unmet": "未分级的偏离处理会把严重问题当作一般记录，或把例外当作豁免。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

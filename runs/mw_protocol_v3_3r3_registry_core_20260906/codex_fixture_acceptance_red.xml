@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="1.200" timestamp="2026-09-06T03:29:27.321481+08:00" hostname="MacBook-Pro-4.local"><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_fixtureless_library_cannot_report_complete" time="0.004"><failure message="AssertionError: assert 'complete' == 'incomplete'&#10;  &#10;  - incomplete&#10;  ? --&#10;  + complete">runs/mw_protocol_v3_3r3_registry_core_20260906/test_codex_fixture_acceptance.py:19: in test_fixtureless_library_cannot_report_complete
+    assert report.status == "incomplete"
+E   AssertionError: assert 'complete' == 'incomplete'
+E     
+E     - incomplete
+E     ? --
+E     + complete</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_poisoned_fixture_fails_library_even_in_partial_mode" time="0.001"><failure message="AssertionError: assert 'fixture_expectation_mismatch' in set()">runs/mw_protocol_v3_3r3_registry_core_20260906/test_codex_fixture_acceptance.py:27: in test_poisoned_fixture_fails_library_even_in_partial_mode
+    assert "fixture_expectation_mismatch" in {f.code for f in report.errors()}
+E   AssertionError: assert 'fixture_expectation_mismatch' in set()</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_cli_default_and_formats_share_failing_verdict" time="0.808"><failure message="assert 0 == 1&#10; +  where 0 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...],\n    &quot;unexpected_node_ids&quot;: []\n  },\n  &quot;fixture_results&quot;: [],\n  &quot;fixture_expectation_errors&quot;: []\n}\n', stderr='').returncode">runs/mw_protocol_v3_3r3_registry_core_20260906/test_codex_fixture_acceptance.py:39: in test_cli_default_and_formats_share_failing_verdict
+    assert plain.returncode == machine.returncode == 1
+E   assert 0 == 1
+E    +  where 0 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...],\n    "unexpected_node_ids": []\n  },\n  "fixture_results": [],\n  "fixture_expectation_errors": []\n}\n', stderr='').returncode</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_claim_bearing_control_negative_is_valid" time="0.002"><failure message="AttributeError: 'LintReport' object has no attribute 'fixture_results'">runs/mw_protocol_v3_3r3_registry_core_20260906/test_codex_fixture_acceptance.py:55: in test_claim_bearing_control_negative_is_valid
+    assert len(report.fixture_results) == 1
+               ^^^^^^^^^^^^^^^^^^^^^^
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'LintReport' object has no attribute 'fixture_results'</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_real_template_rejects_arbitrary_cover_identity" time="0.002"><failure message="AssertionError: assert 'cover_identity_mismatch' in set()">runs/mw_protocol_v3_3r3_registry_core_20260906/test_codex_fixture_acceptance.py:68: in test_real_template_rejects_arbitrary_cover_identity
+    assert "cover_identity_mismatch" in {f.code for f in report.errors()}
+E   AssertionError: assert 'cover_identity_mismatch' in set()</failure></testcase></testsuite></testsuites>

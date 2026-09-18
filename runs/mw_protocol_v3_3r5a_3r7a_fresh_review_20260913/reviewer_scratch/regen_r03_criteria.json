@@ -1,0 +1,7355 @@
+{
+  "schema_version": "r03_criteria_v1",
+  "template_id": "cmss_sop_md_5101_r03_qc_table",
+  "status": "registered_not_accepted",
+  "source": [
+    {
+      "path": "/Users/smkzw/Documents/康哲项目资料/SOP/CMSS-SOP-MD-5101_GCP2026_ICHE6R3_修订版_DOCX/CMSS-SOP-MD-5101-R03-00  临床研究方案QC表_修订版.docx",
+      "sha256": "5a5affebd36979cb06e9de239accc163f954c186afcdf3668f23d054400519e9",
+      "source_member": "word/document.xml",
+      "owner": "clinical_template_authority",
+      "allowed": "read_only",
+      "authority_role": "qc_or_sop_reference"
+    }
+  ],
+  "denominator": {
+    "physical_tables": 17,
+    "physical_rows": 104,
+    "identity_rows": 4,
+    "repeated_header_rows": 32,
+    "source_content_rows": 68,
+    "header_embedded_fragments": 1,
+    "atomic_obligations": 129,
+    "atomic_by_category": {
+      "deterministic": 14,
+      "agent4": 109,
+      "human": 6
+    },
+    "atomic_by_status": {
+      "implemented": 5,
+      "pending": 124
+    },
+    "atomic_by_flags": {
+      "source_noise": 2,
+      "reference_hint": 2,
+      "source_ambiguity": 1,
+      "header_embedded": 1
+    },
+    "note": "68内容行是源覆盖分母，不是原子检查总数；每条内容行至少有一个原子义务，复合行拆成多个。"
+  },
+  "identity_fields": [
+    {
+      "source_locator": "table[0]/row[0]",
+      "label": "研究方案题目",
+      "value": "",
+      "note": "空白表格身份栏；实际值由被QC的方案版本承载。"
+    },
+    {
+      "source_locator": "table[0]/row[1]",
+      "label": "方案编号",
+      "value": "",
+      "note": "空白表格身份栏；实际值由被QC的方案版本承载。"
+    },
+    {
+      "source_locator": "table[0]/row[2]",
+      "label": "方案版本号",
+      "value": "",
+      "note": "空白表格身份栏；实际值由被QC的方案版本承载。"
+    },
+    {
+      "source_locator": "table[0]/row[3]",
+      "label": "方案版本日期",
+      "value": "",
+      "note": "空白表格身份栏；实际值由被QC的方案版本承载。"
+    }
+  ],
+  "header_embedded_fragments": [
+    {
+      "source_locator": "table[5]/row[0]/cell[1]",
+      "raw_text": "描述/文本“试验参与者识别和招募方法。",
+      "obligation_text": "试验参与者识别和招募方法。",
+      "note": "表头内嵌义务：不作为第69条内容行计入分母，也不得随表头过滤丢失；原文中的杂引号按源保留，不进入规范化正文。"
+    }
+  ],
+  "signature_area": {
+    "source_locator": "body/paragraph[22]",
+    "raw_text": "填表人签字：                                                                        日期：                                    2       ",
+    "blank_controls_legal": true,
+    "note": "签署控件按原文保留为空白；不生成签名、日期或已审批事实，不把空白控件判为草稿占位符；行内孤立字符按源保留。"
+  },
+  "source_rows": [
+    {
+      "table_index": 0,
+      "body_index": 1,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "研究方案题目"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "identity"
+    },
+    {
+      "table_index": 0,
+      "body_index": 1,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "方案编号"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "identity"
+    },
+    {
+      "table_index": 0,
+      "body_index": 1,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "方案版本号"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "identity"
+    },
+    {
+      "table_index": 0,
+      "body_index": 1,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "方案版本日期"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "identity"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "方案标题、方案识别号和日期。任何修正案还应注明修正案编号和日期。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.2 "
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "申办者和监查员（如果不是申办者）的姓名和地址。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "被授权为申办者签署方案和方案修正案的人员的姓名和职位。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.4"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验申办方医学专家（或牙医，如适用）的姓名、职位、地址和电话号码。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.5"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "负责开展试验的研究者的姓名和职位，以及试验中心的地址和电话号码。列出将进行研究的任何协作研究中心："
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 7,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.6"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "负责所有试验中心相关医学（或牙科）决策的合格医师（或牙医，如适用）的姓名、职位、地址和电话号码（如果不是研究者）。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 1,
+      "body_index": 4,
+      "row_index": 8,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.1.7"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "临床实验室和参与试验的其他医疗和/或技术部门和/或机构的名称和地址。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验用药品的名称和描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "可能具有临床意义的非临床研究和与试验相关的临床试验的结果总结。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "人类试验参与者已知和潜在风险和获益（如有）总结。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.4"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "给药途径、剂量、给药方案和治疗阶段的描述和依据。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.5"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "声明试验将按照方案、GCP和适用的法规要求进行。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 7,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.6"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "待研究人群描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 2,
+      "body_index": 6,
+      "row_index": 8,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.2.7"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "引用与试验相关的文献和数据，并为试验提供背景。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 3,
+      "body_index": 8,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 3,
+      "body_index": 8,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 3,
+      "body_index": 8,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.3.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验目的和目的的详细描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 3,
+      "body_index": 8,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.3.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "科学目的是否清晰明确？如采用目标估计量（Estimand）框架，方案是否明确阐述目标人群、治疗条件、结局变量、伴发事件处理策略及人群汇总量，并与终点及统计分析保持一致？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验期间测量的主要终点和次要终点（如有）的具体声明。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "要进行的试验类型/设计描述（例如，双盲、安慰剂对照、平行设计）和试验设计、程序和阶段示意图。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "-试验参与者何时被视为“入组”（研究中）的定义。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "“确定任何亚研究。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "包括试验参与者访视次数、每个访视窗口期的程序和研究访视时长的详细描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 7,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述为尽量减少/避免偏差而采取的措施，包括（例如）：（a）随机化，（b）设盲"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 8,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.0"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "药物、补充剂或生物制剂：试验治疗和试验药物的剂量和给药方案描述。还包括试验用药品的剂型、包装和标签描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 9,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "器械：试验治疗和器械植入/应用的描述，移除。还包括对试验用产品的器械质量标准、包装和标签的描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 10,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.5"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者参与的预期持续时间，以及所有试验阶段的序列和持续时间的描述，包括随访（如有）。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 11,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.6"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "对个体试验参与者、部分试验和整个试验的“停止规则”或“停药标准”的描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 12,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.7"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验用药品的清点程序，包括安慰剂/假手术和对照药物（如有）。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 13,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.8"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "维持试验治疗随机化代码和破解代码的程序。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 14,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.9"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "直接记录在CRF上的任何数据的标识（即，无先前的书面或电子数据记录），并被视为源数据。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 15,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.10"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "如果您的研究是研究者发起的多中心研究，请参阅IIT的相关指导原则。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 4,
+      "body_index": 10,
+      "row_index": 16,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.4.11"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "方案是否识别关键质量因素（CtQ），并制定与风险相称的控制措施（包括关键给药及配制操作、关键访视及评估时间窗、个体及全试验层面的暂停或终止规则及剂量调整标准）？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本",
+            "“试验参与者识别和招募方法。"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.5.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者入选标准。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.5.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者暴露标准。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述如何确定合格标准"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者报告的信息"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "病历审查"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 7,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "筛查评估结果（如问卷、日记等）"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 8,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.5.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者退出标准（即终止试验药物治疗/试验治疗）和程序规定："
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 9,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "方案是否明确区分：（1）试验参与者停止试验干预但继续随访；（2）试验参与者自主退出试验（撤回知情同意）；（3）研究者决定终止其参加试验？是否分别明确各情形下的数据收集类型、时间、医学随访、已收集数据处理及试验参与者替换规则？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 10,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "如果试验参与者发生排斥反应怎么办？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 11,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "如果试验参与者开始服用排除药物怎么办？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 12,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "研究退出程序的详细描述，包括退出试验参与者收集数据的类型和时间。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 13,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "是否以及如何替换试验参与者。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 5,
+      "body_index": 12,
+      "row_index": 14,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验参与者退出试验药物治疗/试验治疗的随访。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 6,
+      "body_index": 14,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 6,
+      "body_index": 14,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 6,
+      "body_index": 14,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.6.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "要给予的治疗，包括所有产品的名称、剂量、给药计划、给药途径/模式和治疗期，包括各试验药物治疗/试验治疗组/试验组试验参与者的随访期。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 6,
+      "body_index": 14,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.6.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "允许使用的药物/治疗（包括急救药物），试验前和/或试验期间不允许使用。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 6,
+      "body_index": 14,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.6.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "监测试验参与者依从性的程序。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 7,
+      "body_index": 16,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 7,
+      "body_index": 16,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 7,
+      "body_index": 16,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.7.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "有效性参数的质量标准。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 7,
+      "body_index": 16,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.7.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "评估、记录和分析疗效参数的方法和时间。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.8.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "安全参数规范。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.8.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "评估、记录和分析安全性参数的方法和时间。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.8.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "记录和报告不良事件和并发疾病的程序。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.8.4"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "不良事件后试验参与者随访的类型和持续时间。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 8,
+      "body_index": 18,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.8.5"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "如设置独立数据监查委员会（IDMC/DMC）、终点评审委员会（CEC）或安全性审评委员会（SRC），方案或其引用文件是否明确其职责、工作程序及决策接口？是否明确不良事件及妊娠等特定事件的随访周期与要求？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "DescrIDescription/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.1"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述要采用的统计方法，包括任何计划的中期分析的时间。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 3,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.2"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "计划入组的试验参与者数量。在多中心试验中，应指定每个试验中心预计入组的试验参与者人数。选择样本量的原因，包括试验效力的反思（或计算）和临床依据。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 4,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.3"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "要使用的显著性水平。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 5,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.4"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "试验终止标准。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 6,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.5"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "说明缺失、未使用和虚假数据的程序。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 7,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.6"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "是否明确要求制定统计分析计划（SAP）并在数据库锁定和揭盲前批准？是否声明对SAP的任何偏离均将在临床试验报告中如实记录和解释？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 9,
+      "body_index": 20,
+      "row_index": 8,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.9.7"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "选择纳入分析的试验参与者（例如，所有随机化试验参与者、所有给药试验参与者、所有合格试验参与者、可评价试验参与者）。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 10,
+      "body_index": 22,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 10,
+      "body_index": 22,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 10,
+      "body_index": 22,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.10"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "方案或其他书面协议是否明确：研究者、临床试验机构及持有源记录的服务供应商均允许为试验相关监查、稽查、药品监管检查及依适用法规开展的伦理审查直接查阅源数据和源记录？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 11,
+      "body_index": 24,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 11,
+      "body_index": 24,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 11,
+      "body_index": 24,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.11"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "方案或其引用文件是否阐明基于关键质量因素的质量管理方法、与风险相称的监查策略（如中心化与现场监查结合），以及方案/GCP不依从事件的识别、原因分析、纠正预防（CAPA）与报告机制？"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 12,
+      "body_index": 26,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 12,
+      "body_index": 26,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 12,
+      "body_index": 26,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.12"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "与试验相关的伦理考虑的描述。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 13,
+      "body_index": 28,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 13,
+      "body_index": 28,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 13,
+      "body_index": 28,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.13"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "是否明确拟采集数据、数据来源及直接录入数据采集工具的源数据？是否明确电子原始记录不得仅以打印件替代？计算机化系统是否具备适度验证、用户权限、稽查轨迹及备份安全？是否明确试验必备记录按规定妥善保存及可追溯？",
+            "识别将从医疗记录中提取的信息"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 14,
+      "body_index": 30,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 14,
+      "body_index": 30,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 14,
+      "body_index": 30,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.14"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "如果在单独协议中未提及，则提供融资和保险。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 15,
+      "body_index": 34,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 15,
+      "body_index": 34,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 15,
+      "body_index": 34,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.15"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "出版政策，如果未在单独协议中处理。"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    },
+    {
+      "table_index": 16,
+      "body_index": 36,
+      "row_index": 0,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "E6"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "描述/文本"
+          ],
+          "grid_span": null,
+          "vertical_merge": "restart"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "包括在内？"
+          ],
+          "grid_span": "2",
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 16,
+      "body_index": 36,
+      "row_index": 1,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": "continue"
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            "是"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            "否"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "header"
+    },
+    {
+      "table_index": 16,
+      "body_index": 36,
+      "row_index": 2,
+      "cells": [
+        {
+          "cell_index": 0,
+          "paragraphs": [
+            "6.16"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 1,
+          "paragraphs": [
+            "（注：由于方案和临床试验/研究报告密切相关，更多相关信息见Lal临床结构和内容指南研究报告。)"
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 2,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        },
+        {
+          "cell_index": 3,
+          "paragraphs": [
+            ""
+          ],
+          "grid_span": null,
+          "vertical_merge": null
+        }
+      ],
+      "row_kind": "content"
+    }
+  ],
+  "criteria": [
+    {
+      "source_locator": "table[0]/row[0]",
+      "sub_key": "title",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_front_block"
+      ],
+      "normalized_check": "方案题目已填写，且与封面/文档控制区及QC表身份栏完全一致。",
+      "evidence_requirement": "QC表身份四点的typed投影（封面/文档控制区/QC表身份栏实测值）。",
+      "raw_fragment": "研究方案题目",
+      "implementation_status": "implemented",
+      "check_ref": "qc.r03:version_four_point",
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "研究方案题目",
+      "atom_id": "r03-t00-r00-title"
+    },
+    {
+      "source_locator": "table[0]/row[1]",
+      "sub_key": "protocol_number",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_front_block"
+      ],
+      "normalized_check": "方案编号已填写，且与封面/文档控制区及QC表身份栏完全一致。",
+      "evidence_requirement": "QC表身份四点的typed投影（封面/文档控制区/QC表身份栏实测值）。",
+      "raw_fragment": "方案编号",
+      "implementation_status": "implemented",
+      "check_ref": "qc.r03:version_four_point",
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "方案编号",
+      "atom_id": "r03-t00-r01-protocol_number"
+    },
+    {
+      "source_locator": "table[0]/row[2]",
+      "sub_key": "version_number",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_front_block"
+      ],
+      "normalized_check": "方案版本号已填写，且与封面/文档控制区及QC表身份栏完全一致。",
+      "evidence_requirement": "QC表身份四点的typed投影（封面/文档控制区/QC表身份栏实测值）。",
+      "raw_fragment": "方案版本号",
+      "implementation_status": "implemented",
+      "check_ref": "qc.r03:version_four_point",
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "方案版本号",
+      "atom_id": "r03-t00-r02-version_number"
+    },
+    {
+      "source_locator": "table[0]/row[3]",
+      "sub_key": "version_date",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_front_block"
+      ],
+      "normalized_check": "方案版本日期已填写，且与封面/文档控制区及QC表身份栏完全一致；修订历史旧行保留旧值不参与当前一致性比较。",
+      "evidence_requirement": "QC表身份四点的typed投影（封面/文档控制区/QC表身份栏实测值）。",
+      "raw_fragment": "方案版本日期",
+      "implementation_status": "implemented",
+      "check_ref": "qc.r03:version_four_point",
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "方案版本日期",
+      "atom_id": "r03-t00-r03-version_date"
+    },
+    {
+      "source_locator": "table[1]/row[2]",
+      "sub_key": "identification",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_front_block",
+        "v2_n_front_1"
+      ],
+      "normalized_check": "方案给出题目、方案识别号和版本日期；存在修正案时注明修正案编号和日期。",
+      "evidence_requirement": "QC表身份四点的typed投影（封面/文档控制区/QC表身份栏实测值）。",
+      "raw_fragment": "方案标题、方案识别号和日期",
+      "implementation_status": "implemented",
+      "check_ref": "qc.r03:version_four_point",
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.1.1",
+      "atom_id": "r03-t01-r02-identification"
+    },
+    {
+      "source_locator": "table[1]/row[2]",
+      "sub_key": "amendment_numbering",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_front_1"
+      ],
+      "normalized_check": "存在修正案时，修正案带修正案编号和日期，且与修订历史记录一致。",
+      "evidence_requirement": "修订历史记录与修正案文档的实际投影。",
+      "raw_fragment": "任何修正案还应注明修正案编号和日期",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:front-1:amendment",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.1.1",
+      "atom_id": "r03-t01-r02-amendment_numbering"
+    },
+    {
+      "source_locator": "table[1]/row[3]",
+      "sub_key": "sponsor_monitor",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_4"
+      ],
+      "normalized_check": "方案载明申办者及监查员（如非申办者）的名称和地址，与已确认研究事实一致。",
+      "evidence_requirement": "申办者/监查员实体信息的已确认事实。",
+      "raw_fragment": "申办者和监查员",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_contact_entities",
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.1.2",
+      "atom_id": "r03-t01-r03-sponsor_monitor"
+    },
+    {
+      "source_locator": "table[1]/row[4]",
+      "sub_key": "signatory",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_3"
+      ],
+      "normalized_check": "方案载明被授权签署方案及修正案人员的姓名和职位；签署授权真实性由人工确认，签署控件本身保留空白。",
+      "evidence_requirement": "授权签署人已确认事实；正式签署回执属V1。",
+      "raw_fragment": "被授权为申办者签署方案",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_signature_authority",
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.1.3",
+      "atom_id": "r03-t01-r04-signatory"
+    },
+    {
+      "source_locator": "table[1]/row[5]",
+      "sub_key": "medical_expert",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_4"
+      ],
+      "normalized_check": "方案载明申办方医学专家（或牙医，如适用）的姓名、职位、地址和电话号码，与已确认事实一致。",
+      "evidence_requirement": "医学专家实体信息的已确认事实。",
+      "raw_fragment": "试验申办方医学专家",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_contact_entities",
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.1.4",
+      "atom_id": "r03-t01-r05-medical_expert"
+    },
+    {
+      "source_locator": "table[1]/row[6]",
+      "sub_key": "investigator_center",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_2",
+        "v2_n_front_4"
+      ],
+      "normalized_check": "方案载明主要研究者姓名和职位及中心地址电话，与已确认事实一致；不虚构人员或中心。",
+      "evidence_requirement": "研究者与中心的已确认事实。",
+      "raw_fragment": "负责开展试验的研究者的姓名和职位",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_contact_entities",
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.1.5",
+      "atom_id": "r03-t01-r06-investigator_center"
+    },
+    {
+      "source_locator": "table[1]/row[6]",
+      "sub_key": "collaborative_centers",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_front_2",
+        "v2_n_front_4"
+      ],
+      "normalized_check": "存在协作研究中心时，方案逐一列出；无协作中心时该项按适用性为不适用而非缺失。",
+      "evidence_requirement": "中心安排的已确认事实。",
+      "raw_fragment": "列出将进行研究的任何协作研究中心",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.1.5",
+      "atom_id": "r03-t01-r06-collaborative_centers"
+    },
+    {
+      "source_locator": "table[1]/row[7]",
+      "sub_key": "medical_decider",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_4"
+      ],
+      "normalized_check": "相关医学决策负责医师（如非研究者）的姓名、职位、地址和电话载明且真实。",
+      "evidence_requirement": "医学决策负责人的已确认事实。",
+      "raw_fragment": "负责所有试验中心相关医学",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_contact_entities",
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.1.6",
+      "atom_id": "r03-t01-r07-medical_decider"
+    },
+    {
+      "source_locator": "table[1]/row[8]",
+      "sub_key": "labs_institutions",
+      "check_category": "human",
+      "semantic_node_ids": [
+        "v2_n_front_4",
+        "v2_n_16_x3"
+      ],
+      "normalized_check": "参与试验的实验室和其他医疗/技术部门/机构的名称和地址载明且真实；未取得实际供应商名称时保持缺失状态，不填假名。",
+      "evidence_requirement": "中心实验室/供应商已确认信息。",
+      "raw_fragment": "临床实验室和参与试验的其他医疗",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": "confirm_contact_entities",
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:front-4:service-parties",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.1.7",
+      "atom_id": "r03-t01-r08-labs_institutions"
+    },
+    {
+      "source_locator": "table[2]/row[2]",
+      "sub_key": "imp_description",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_2_2_1",
+        "v2_n_6_1_1"
+      ],
+      "normalized_check": "方案给出试验用药品的名称和描述，与已确认研究事实同一版本。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "试验用药品的名称和描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.1",
+      "atom_id": "r03-t02-r02-imp_description"
+    },
+    {
+      "source_locator": "table[2]/row[3]",
+      "sub_key": "prior_results",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_2_2_2_1",
+        "v2_n_2_2_1"
+      ],
+      "normalized_check": "方案总结具有临床意义的非临床研究及相关临床试验结果，关键结论有证据定位。",
+      "evidence_requirement": "IB及已准入证据单元。",
+      "raw_fragment": "非临床研究和与试验相关的临床试验的结果总结",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.2",
+      "atom_id": "r03-t02-r03-prior_results"
+    },
+    {
+      "source_locator": "table[2]/row[4]",
+      "sub_key": "risk_benefit",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_2_3"
+      ],
+      "normalized_check": "方案总结试验参与者已知和潜在风险与获益（如有），与证据一致。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。证据定位由Agent④复核。",
+      "raw_fragment": "已知和潜在风险和获益",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.3",
+      "atom_id": "r03-t02-r04-risk_benefit"
+    },
+    {
+      "source_locator": "table[2]/row[5]",
+      "sub_key": "administration_description",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_3",
+        "v2_n_6_1_2"
+      ],
+      "normalized_check": "方案描述给药途径、剂量、给药方案和治疗阶段。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "给药途径、剂量、给药方案和治疗阶段的描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.4",
+      "atom_id": "r03-t02-r05-administration_description"
+    },
+    {
+      "source_locator": "table[2]/row[5]",
+      "sub_key": "administration_rationale",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_3"
+      ],
+      "normalized_check": "给药途径/剂量/方案/治疗阶段的依据给出，与SOA及剂量选择依据一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "和治疗阶段的描述和依据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.4",
+      "atom_id": "r03-t02-r05-administration_rationale"
+    },
+    {
+      "source_locator": "table[2]/row[6]",
+      "sub_key": "gcp_statement",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_13_1"
+      ],
+      "normalized_check": "方案含按方案、GCP和适用法规要求开展试验的声明。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "声明试验将按照方案、GCP和适用的法规要求进行",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.5",
+      "atom_id": "r03-t02-r06-gcp_statement"
+    },
+    {
+      "source_locator": "table[2]/row[7]",
+      "sub_key": "population_description",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_5_1",
+        "v2_n_3_1_2_1"
+      ],
+      "normalized_check": "方案描述待研究人群，与目标人群/入排标准同一事实版本。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "待研究人群描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.6",
+      "atom_id": "r03-t02-r07-population_description"
+    },
+    {
+      "source_locator": "table[2]/row[8]",
+      "sub_key": "references_present",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_2_1",
+        "v2_n_15"
+      ],
+      "normalized_check": "方案引用与试验相关的文献和数据并为试验提供背景，引文可定位。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "引用与试验相关的文献和数据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.2.7",
+      "atom_id": "r03-t02-r08-references_present"
+    },
+    {
+      "source_locator": "table[2]/row[8]",
+      "sub_key": "references_bidirectional",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_15"
+      ],
+      "normalized_check": "正文文献引用与参考文献列表双向闭合；闭合不等于证据仍适用，时效性由来源/语义复核另行判断。",
+      "evidence_requirement": "参考文献列表与正文引文投影。",
+      "raw_fragment": "引用与试验相关的文献和数据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "属L1文献双向登记项，检查实现pending；不得用年份阈值冒充医学时效性验收。",
+      "source_label": "6.2.7",
+      "atom_id": "r03-t02-r08-references_bidirectional"
+    },
+    {
+      "source_locator": "table[3]/row[2]",
+      "sub_key": "objective_statement",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_1",
+        "v2_n_3_2_1",
+        "v2_n_3_3_1",
+        "v2_n_3_4_1"
+      ],
+      "normalized_check": "方案详细描述研究目的（科学/次要/安全性/探索性，按实际安排）。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "试验目的和目的的详细描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "源行原文为“试验目的和目的”，系源文措辞重复；规范化表述不复制该拼写，原文在raw区保留。",
+      "source_label": "6.3.1",
+      "atom_id": "r03-t03-r02-objective_statement"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "scientific_question",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_1"
+      ],
+      "normalized_check": "科学目的清晰明确，可由目的-终点-估计目标链条核对。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "科学目的是否清晰明确",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-scientific_question"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "population",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_1"
+      ],
+      "normalized_check": "估计目标的目标人群属性明确，与研究人群同一事实版本。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "目标人群、治疗条件、结局变量",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-population"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "treatment_condition",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_3"
+      ],
+      "normalized_check": "估计目标的治疗条件属性明确（含背景/补救治疗安排）。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "目标人群、治疗条件、结局变量",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-treatment_condition"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "outcome_variable",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_2"
+      ],
+      "normalized_check": "估计目标的结局变量属性明确，与终点定义一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "结局变量",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-outcome_variable"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "intercurrent_event",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_4"
+      ],
+      "normalized_check": "伴发事件处理策略明确，与ICE及统计分析一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "伴发事件处理策略",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-intercurrent_event"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "population_summary",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_4"
+      ],
+      "normalized_check": "人群汇总量属性明确；按源审阅该属性由3.1.2.4区承载，不因目录没有第五个标题而判缺失。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "人群汇总量",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "候选映射标注：群体汇总量实际由3.1.2.4承载；由Agent④按实际文本复核，不能只数标题数量。",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-population_summary"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "sub_key": "consistency",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_11_4_3_1",
+        "v2_n_11_4_3_2"
+      ],
+      "normalized_check": "估计目标各属性与终点及统计分析保持一致（跨章同一事实版本）。",
+      "evidence_requirement": "一致性图（consistency edges）与事实标签投影。",
+      "raw_fragment": "并与终点及统计分析保持一致",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:n-3-1-2-4:strategy-crosscheck",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "结构一致性属确定性检查；跨章检查实现pending，未接线前不声称已执行。",
+      "source_label": "6.3.2",
+      "atom_id": "r03-t03-r03-consistency"
+    },
+    {
+      "source_locator": "table[4]/row[2]",
+      "sub_key": "primary_endpoint",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_2",
+        "v2_n_3_2_2"
+      ],
+      "normalized_check": "主要终点具体声明，与目的及统计分析一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "主要终点和次要终点",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.1",
+      "atom_id": "r03-t04-r02-primary_endpoint"
+    },
+    {
+      "source_locator": "table[4]/row[2]",
+      "sub_key": "secondary_endpoints",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_2_2"
+      ],
+      "normalized_check": "次要终点（如有）具体声明；无次要终点时按适用性处理而非缺失。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "主要终点和次要终点（如有）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.4.1",
+      "atom_id": "r03-t04-r02-secondary_endpoints"
+    },
+    {
+      "source_locator": "table[4]/row[3]",
+      "sub_key": "design_description",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_1",
+        "v2_n_1_2"
+      ],
+      "normalized_check": "试验类型/设计描述给出，与已确认设计事实一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "试验类型/设计描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.2",
+      "atom_id": "r03-t04-r03-design_description"
+    },
+    {
+      "source_locator": "table[4]/row[3]",
+      "sub_key": "design_schematic",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_1_2"
+      ],
+      "normalized_check": "试验设计、程序和阶段示意图存在且与研究流程表一致。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验设计、程序和阶段示意图",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.2",
+      "atom_id": "r03-t04-r03-design_schematic"
+    },
+    {
+      "source_locator": "table[4]/row[4]",
+      "sub_key": "enrollment_definition",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_1",
+        "v2_n_7_1"
+      ],
+      "normalized_check": "给出试验参与者何时被视为入组（研究中）的定义。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "何时被视为“入组”（研究中）的定义",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t04-r04-enrollment_definition"
+    },
+    {
+      "source_locator": "table[4]/row[5]",
+      "sub_key": "substudies",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_1",
+        "v2_n_9_3",
+        "v2_n_12_7"
+      ],
+      "normalized_check": "确定任何亚研究并说明其安排；无亚研究时按适用性处理。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "确定任何亚研究",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [
+        "source_noise"
+      ],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "源行以杂引号开头（“确定任何亚研究。），杂符按源保留，不进入规范化正文。",
+      "source_label": "",
+      "atom_id": "r03-t04-r05-substudies"
+    },
+    {
+      "source_locator": "table[4]/row[6]",
+      "sub_key": "visit_schedule",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_1_3",
+        "v2_n_7_1",
+        "v2_n_7_2",
+        "v2_n_7_3"
+      ],
+      "normalized_check": "详细描述访视次数、各访视窗口期程序和研究访视时长，与SOA一致。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "访视次数、每个访视窗口期的程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t04-r06-visit_schedule"
+    },
+    {
+      "source_locator": "table[4]/row[7]",
+      "sub_key": "randomization_measures",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_5",
+        "v2_n_11_3"
+      ],
+      "normalized_check": "随机化设计下描述随机化措施以减少偏差。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "（a）随机化",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:n-7-2:randomization",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.3",
+      "atom_id": "r03-t04-r07-randomization_measures"
+    },
+    {
+      "source_locator": "table[4]/row[7]",
+      "sub_key": "blinding_measures",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_5",
+        "v2_n_11_3"
+      ],
+      "normalized_check": "设盲设计下描述设盲措施以减少偏差；源行以“设盲”截尾，原文按源保留。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "（b）设盲",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:v2_n_4_5:blinding",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.3",
+      "atom_id": "r03-t04-r07-blinding_measures"
+    },
+    {
+      "source_locator": "table[4]/row[8]",
+      "sub_key": "drug_dosing",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_1_1",
+        "v2_n_6_1_2",
+        "v2_n_6_2_2"
+      ],
+      "normalized_check": "药物/补充剂/生物制剂场景：描述试验治疗和试验药物剂量与给药方案。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "药物、补充剂或生物制剂",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.4.0",
+      "atom_id": "r03-t04-r08-drug_dosing"
+    },
+    {
+      "source_locator": "table[4]/row[8]",
+      "sub_key": "drug_formulation_labeling",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_2_2"
+      ],
+      "normalized_check": "药物/补充剂/生物制剂场景：描述试验用药品剂型、包装和标签。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "剂型、包装和标签描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.4.0",
+      "atom_id": "r03-t04-r08-drug_formulation_labeling"
+    },
+    {
+      "source_locator": "table[4]/row[9]",
+      "sub_key": "device_application",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_1_1",
+        "v2_n_6_1_2",
+        "v2_n_6_2_2"
+      ],
+      "normalized_check": "器械场景：描述试验治疗及器械植入/应用/移除。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "器械：试验治疗和器械植入/应用的描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "仅器械研究适用；当前模板/研究事实未裁定产品类型时不评估，不当false也不作普遍缺陷。",
+      "source_label": "",
+      "atom_id": "r03-t04-r09-device_application"
+    },
+    {
+      "source_locator": "table[4]/row[9]",
+      "sub_key": "device_quality_labeling",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_2_2"
+      ],
+      "normalized_check": "器械场景：描述试验用产品（器械）质量标准、包装和标签。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "器械质量标准、包装和标签的描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "同上：器械适用条件未接线，未知不当false。",
+      "source_label": "",
+      "atom_id": "r03-t04-r09-device_quality_labeling"
+    },
+    {
+      "source_locator": "table[4]/row[10]",
+      "sub_key": "participation_duration",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_1",
+        "v2_n_7_1",
+        "v2_n_7_2",
+        "v2_n_7_3"
+      ],
+      "normalized_check": "描述参与者参与的预期持续时间及所有阶段的序列和持续时间（含随访，如有）。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "预期持续时间，以及所有试验阶段的序列",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.5",
+      "atom_id": "r03-t04-r10-participation_duration"
+    },
+    {
+      "source_locator": "table[4]/row[11]",
+      "sub_key": "individual_stop",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_8_2",
+        "v2_n_14_7",
+        "v2_n_11_4_9"
+      ],
+      "normalized_check": "给出个体试验参与者停止规则/停药标准。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "个体试验参与者、部分试验和整个试验",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:n-8-1:individual-hold",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.6",
+      "atom_id": "r03-t04-r11-individual_stop"
+    },
+    {
+      "source_locator": "table[4]/row[11]",
+      "sub_key": "partial_stop",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "给出部分试验层面的停止规则；无此安排时按适用性处理。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "部分试验和整个试验的“停止规则”",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.4.6",
+      "atom_id": "r03-t04-r11-partial_stop"
+    },
+    {
+      "source_locator": "table[4]/row[11]",
+      "sub_key": "trial_stop",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_14_7",
+        "v2_n_11_4_9"
+      ],
+      "normalized_check": "给出整个试验的停止规则；整试验停止安排不默认全部绑定到期中分析。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "整个试验的“停止规则”或“停药标准”",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:n-8-1:hold-to-stop",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.6",
+      "atom_id": "r03-t04-r11-trial_stop"
+    },
+    {
+      "source_locator": "table[4]/row[12]",
+      "sub_key": "imp_accountability",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_2_1"
+      ],
+      "normalized_check": "给出试验用药品清点程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验用药品的清点程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.7",
+      "atom_id": "r03-t04-r12-imp_accountability"
+    },
+    {
+      "source_locator": "table[4]/row[12]",
+      "sub_key": "placebo_accountability",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_2_1"
+      ],
+      "normalized_check": "使用安慰剂/假手术/对照药物时，其清点一并覆盖；未使用时按适用性处理。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "包括安慰剂/假手术和对照药物（如有）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:v2_n_4_2:placebo",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.7",
+      "atom_id": "r03-t04-r12-placebo_accountability"
+    },
+    {
+      "source_locator": "table[4]/row[13]",
+      "sub_key": "randomization_code",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_5"
+      ],
+      "normalized_check": "给出维持试验治疗随机化代码的程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "维持试验治疗随机化代码",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.8",
+      "atom_id": "r03-t04-r13-randomization_code"
+    },
+    {
+      "source_locator": "table[4]/row[13]",
+      "sub_key": "code_break",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_4_5"
+      ],
+      "normalized_check": "给出破解代码程序；非盲设计下按适用性处理。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "和破解代码的程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:v2_n_4_5:emergency",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.8",
+      "atom_id": "r03-t04-r13-code_break"
+    },
+    {
+      "source_locator": "table[4]/row[14]",
+      "sub_key": "direct_crf_source",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_2",
+        "v2_n_12_6"
+      ],
+      "normalized_check": "标识直接记录在CRF上、无先前书面/电子记录即视为源数据的数据项。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "直接记录在CRF上的任何数据的标识",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.9",
+      "atom_id": "r03-t04-r14-direct_crf_source"
+    },
+    {
+      "source_locator": "table[4]/row[15]",
+      "sub_key": "iit_reference",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_14_2",
+        "v2_n_14_4"
+      ],
+      "normalized_check": "研究者发起的多中心研究引用的IIT指导原则可定位；非IIT研究该项不适用，不得标记为普遍缺陷。",
+      "evidence_requirement": "IIT指导原则的目标对象登记。",
+      "raw_fragment": "请参阅IIT的相关指导原则",
+      "implementation_status": "pending",
+      "check_ref": "qc.r03:internal_cross_reference",
+      "human_confirmation_ref": null,
+      "flags": [
+        "reference_hint"
+      ],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "检查函数已实现但适用条件（IIT且多中心）未接线；接线前不对真实文档运行。",
+      "source_label": "6.4.10",
+      "atom_id": "r03-t04-r15-iit_reference"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "ctq_identification",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_1"
+      ],
+      "normalized_check": "方案识别关键质量因素（CtQ）。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "识别关键质量因素（CtQ）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-ctq_identification"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "proportionate_controls",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_1"
+      ],
+      "normalized_check": "制定与风险相称的控制措施。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "与风险相称的控制措施",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-proportionate_controls"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "critical_handling",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_2_4",
+        "v2_n_1_3"
+      ],
+      "normalized_check": "覆盖关键给药及配制操作的控制。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "关键给药及配制操作",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-critical_handling"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "critical_time_windows",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_1_3"
+      ],
+      "normalized_check": "覆盖关键访视及评估时间窗的控制。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "关键访视及评估时间窗",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-critical_time_windows"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "individual_stop",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "覆盖个体层面暂停或终止规则。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "个体及全试验层面的暂停或终止规则",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:n-8-1:individual-hold",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-individual_stop"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "trial_stop",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_7"
+      ],
+      "normalized_check": "覆盖全试验层面暂停或终止规则；不默认绑定到期中分析。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "个体及全试验层面的暂停或终止规则",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": "applicability:n-8-1:hold-to-stop",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-trial_stop"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "sub_key": "dose_adjustment",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_1_2"
+      ],
+      "normalized_check": "给出剂量调整标准；是否需要具体调整方案由研究事实决定，不复用其他药物数值。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "及剂量调整标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:n-6-1-2:dose-modification",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.4.11",
+      "atom_id": "r03-t04-r16-dose_adjustment"
+    },
+    {
+      "source_locator": "table[5]/row[2]",
+      "sub_key": "inclusion_criteria",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_5_1"
+      ],
+      "normalized_check": "给出试验参与者入选标准，与研究人群事实同一版本。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "试验参与者入选标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.5.1",
+      "atom_id": "r03-t05-r02-inclusion_criteria"
+    },
+    {
+      "source_locator": "table[5]/row[3]",
+      "sub_key": "exposure_criteria",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_5_2"
+      ],
+      "normalized_check": "给出试验参与者暴露标准。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验参与者暴露标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "源词为“暴露标准”；规范化为排除标准需独立出处，本注册表保留源词不改写。",
+      "source_label": "6.5.2",
+      "atom_id": "r03-t05-r03-exposure_criteria"
+    },
+    {
+      "source_locator": "table[5]/row[4]",
+      "sub_key": "eligibility_determination",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_5_1",
+        "v2_n_5_2",
+        "v2_n_7_1"
+      ],
+      "normalized_check": "描述如何确定合格标准。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "描述如何确定合格标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r04-eligibility_determination"
+    },
+    {
+      "source_locator": "table[5]/row[5]",
+      "sub_key": "subject_reported_info",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_7_1",
+        "v2_n_12_2"
+      ],
+      "normalized_check": "说明合格性判定中试验参与者报告的信息。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验参与者报告的信息",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r05-subject_reported_info"
+    },
+    {
+      "source_locator": "table[5]/row[6]",
+      "sub_key": "medical_records_review",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_7_1",
+        "v2_n_12_2"
+      ],
+      "normalized_check": "说明合格性判定中的病历审查。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "病历审查",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r06-medical_records_review"
+    },
+    {
+      "source_locator": "table[5]/row[7]",
+      "sub_key": "screening_assessments",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_7_1",
+        "v2_n_9_1",
+        "v2_n_9_2"
+      ],
+      "normalized_check": "说明筛查评估结果（如问卷、日记等）在合格性判定中的使用。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "筛查评估结果（如问卷、日记等）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r07-screening_assessments"
+    },
+    {
+      "source_locator": "table[5]/row[8]",
+      "sub_key": "withdrawal_standards",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_8_2"
+      ],
+      "normalized_check": "给出试验参与者退出标准（终止试验药物治疗/试验治疗）和程序规定。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验参与者退出标准（即终止试验药物治疗/试验治疗）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.5.3",
+      "atom_id": "r03-t05-r08-withdrawal_standards"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "situation_stop_treatment",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_8_2"
+      ],
+      "normalized_check": "情形（1）：明确参与者停止试验干预但继续随访的安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "（1）试验参与者停止试验干预但继续随访",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-situation_stop_treatment"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "situation_withdraw_consent",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_2",
+        "v2_n_13_2"
+      ],
+      "normalized_check": "情形（2）：明确参与者自主退出试验（撤回知情同意）的安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "（2）试验参与者自主退出试验（撤回知情同意）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-situation_withdraw_consent"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "situation_investigator_termination",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_11_3"
+      ],
+      "normalized_check": "情形（3）：明确研究者决定终止其参加试验的安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "（3）研究者决定终止其参加试验",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-situation_investigator_termination"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "data_collection",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_2",
+        "v2_n_7_3",
+        "v2_n_12_6"
+      ],
+      "normalized_check": "分别明确各情形下数据收集类型和时间。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "各情形下的数据收集类型、时间",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-data_collection"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "medical_followup",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_8_2"
+      ],
+      "normalized_check": "分别明确各情形下医学随访安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "数据收集类型、时间、医学随访",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-medical_followup"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "existing_data",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_6"
+      ],
+      "normalized_check": "明确各情形下已收集数据的处理。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "已收集数据处理",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-existing_data"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "sub_key": "replacement",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_2",
+        "v2_n_11_1"
+      ],
+      "normalized_check": "明确试验参与者替换规则；与表[5]/row[13]的独立替换行互为相关义务。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "及试验参与者替换规则",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r09-replacement"
+    },
+    {
+      "source_locator": "table[5]/row[10]",
+      "sub_key": "rejection_reaction",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_9_2"
+      ],
+      "normalized_check": "原文问句所述情形（排斥反应）的处理安排：缺少清楚适用语境，按source ambiguity处理；具体研究语境下由语义审阅裁定该情形应当如何处置，并核对正文是否已覆盖。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。语境判定由Agent④完成。",
+      "raw_fragment": "如果试验参与者发生排斥反应怎么办",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [
+        "source_ambiguity"
+      ],
+      "applicability": {
+        "status": "unknown_context",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "原文保留“排斥反应”，不替它改写为妊娠/过敏/输血反应等其他医学概念，也不设为所有方案必须出现的自动门槛；候选节点仅用于定位，不等于已裁定医学含义。",
+      "source_label": "",
+      "atom_id": "r03-t05-r10-rejection_reaction"
+    },
+    {
+      "source_locator": "table[5]/row[11]",
+      "sub_key": "excluded_medication",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_4_1",
+        "v2_n_8_1"
+      ],
+      "normalized_check": "明确参与者开始服用排除药物时的处理。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "如果试验参与者开始服用排除药物怎么办",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r11-excluded_medication"
+    },
+    {
+      "source_locator": "table[5]/row[12]",
+      "sub_key": "withdrawal_procedure",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_2",
+        "v2_n_7_3",
+        "v2_n_12_2"
+      ],
+      "normalized_check": "给出研究退出程序的详细描述，含退出参与者数据收集的类型和时间。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "研究退出程序的详细描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r12-withdrawal_procedure"
+    },
+    {
+      "source_locator": "table[5]/row[13]",
+      "sub_key": "replacement_rule",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_2",
+        "v2_n_11_1"
+      ],
+      "normalized_check": "说明是否以及如何替换试验参与者。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "是否以及如何替换试验参与者",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r13-replacement_rule"
+    },
+    {
+      "source_locator": "table[5]/row[14]",
+      "sub_key": "post_discontinuation_followup",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_8_1",
+        "v2_n_7_3"
+      ],
+      "normalized_check": "给出退出试验药物治疗/试验治疗后的随访安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验参与者退出试验药物治疗/试验治疗的随访",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "",
+      "atom_id": "r03-t05-r14-post_discontinuation_followup"
+    },
+    {
+      "source_locator": "table[6]/row[2]",
+      "sub_key": "treatments",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_1_1",
+        "v2_n_6_1_2",
+        "v2_n_7_3"
+      ],
+      "normalized_check": "给出各组要给予的治疗：产品名称、剂量、给药计划、途径/模式和治疗期。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "要给予的治疗，包括所有产品的名称",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.6.1",
+      "atom_id": "r03-t06-r02-treatments"
+    },
+    {
+      "source_locator": "table[6]/row[2]",
+      "sub_key": "treatment_followup_periods",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_7_3"
+      ],
+      "normalized_check": "给出各组试验参与者的随访期。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "各试验药物治疗/试验治疗组/试验组试验参与者的随访期",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.6.1",
+      "atom_id": "r03-t06-r02-treatment_followup_periods"
+    },
+    {
+      "source_locator": "table[6]/row[3]",
+      "sub_key": "allowed_medications",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_4_2",
+        "v2_n_6_4_3"
+      ],
+      "normalized_check": "给出允许使用的药物/治疗（含急救药物）。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "允许使用的药物/治疗（包括急救药物）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.6.2",
+      "atom_id": "r03-t06-r03-allowed_medications"
+    },
+    {
+      "source_locator": "table[6]/row[3]",
+      "sub_key": "prohibited_medications",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_4_1"
+      ],
+      "normalized_check": "给出试验前和/或试验期间不允许使用的药物/治疗。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验前和/或试验期间不允许使用",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.6.2",
+      "atom_id": "r03-t06-r03-prohibited_medications"
+    },
+    {
+      "source_locator": "table[6]/row[4]",
+      "sub_key": "adherence_monitoring",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_6_3"
+      ],
+      "normalized_check": "给出监测试验参与者依从性的程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "监测试验参与者依从性的程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.6.3",
+      "atom_id": "r03-t06-r04-adherence_monitoring"
+    },
+    {
+      "source_locator": "table[7]/row[2]",
+      "sub_key": "efficacy_quality_criteria",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_3_1_2_2",
+        "v2_n_9_1"
+      ],
+      "normalized_check": "给出有效性参数的质量标准。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "有效性参数的质量标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.7.1",
+      "atom_id": "r03-t07-r02-efficacy_quality_criteria"
+    },
+    {
+      "source_locator": "table[7]/row[3]",
+      "sub_key": "efficacy_methods_timing",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_1",
+        "v2_n_1_3",
+        "v2_n_11_4_3_1",
+        "v2_n_11_4_4"
+      ],
+      "normalized_check": "给出疗效参数评估、记录和分析的方法和时间。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "评估、记录和分析疗效参数的方法和时间",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.7.2",
+      "atom_id": "r03-t07-r03-efficacy_methods_timing"
+    },
+    {
+      "source_locator": "table[8]/row[2]",
+      "sub_key": "safety_parameters",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_2",
+        "v2_n_3_3_2"
+      ],
+      "normalized_check": "给出安全参数规范。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "安全参数规范",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.8.1",
+      "atom_id": "r03-t08-r02-safety_parameters"
+    },
+    {
+      "source_locator": "table[8]/row[3]",
+      "sub_key": "safety_methods_timing",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_2",
+        "v2_n_1_3",
+        "v2_n_11_4_5"
+      ],
+      "normalized_check": "给出安全性参数评估、记录和分析的方法和时间。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "评估、记录和分析安全性参数的方法和时间",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.8.2",
+      "atom_id": "r03-t08-r03-safety_methods_timing"
+    },
+    {
+      "source_locator": "table[8]/row[4]",
+      "sub_key": "ae_recording_reporting",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_10_1_4",
+        "v2_n_10_1_5",
+        "v2_n_10_2_2"
+      ],
+      "normalized_check": "给出不良事件和并发疾病的记录和报告程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "记录和报告不良事件和并发疾病的程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.8.3",
+      "atom_id": "r03-t08-r04-ae_recording_reporting"
+    },
+    {
+      "source_locator": "table[8]/row[5]",
+      "sub_key": "ae_followup_duration",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_10_1_6",
+        "v2_n_10_2_3",
+        "v2_n_10_3_3"
+      ],
+      "normalized_check": "给出不良事件后随访的类型和持续时间。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "不良事件后试验参与者随访的类型和持续时间",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.8.4",
+      "atom_id": "r03-t08-r05-ae_followup_duration"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "sub_key": "committee_duties",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_4",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "设置IDMC/DMC、CEC或SRC时，方案或其引用文件明确其职责；未设置委员会时按适用性处理，不构成缺陷。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "独立数据监查委员会（IDMC/DMC）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:n-14-7:oversight-charter",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.8.5",
+      "atom_id": "r03-t08-r06-committee_duties"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "sub_key": "committee_procedures",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_4",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "设置相应委员会时，明确其工作程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "其职责、工作程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:n-14-7:oversight-charter",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.8.5",
+      "atom_id": "r03-t08-r06-committee_procedures"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "sub_key": "committee_decision_interface",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_9_4",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "设置相应委员会时，明确其与申办者/研究团队的决策接口。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "及决策接口",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "applicability:n-14-7:oversight-charter",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.8.5",
+      "atom_id": "r03-t08-r06-committee_decision_interface"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "sub_key": "ae_followup",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_10_1_6",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "明确不良事件的随访周期与要求；该义务不因未设置委员会而被免除。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "是否明确不良事件及妊娠等特定事件的随访周期与要求",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.8.5",
+      "atom_id": "r03-t08-r06-ae_followup"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "sub_key": "specific_event_followup",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_10_6"
+      ],
+      "normalized_check": "研究存在妊娠等相应特定事件适用性时，明确该类事件的随访周期与要求；该义务独立于委员会设置：设置委员会不替代它，未设置委员会也不免除它。研究无相应事件适用性时按适用性处理；适用性未知保持未决，不当false。",
+      "evidence_requirement": "研究特定事件适用性事实（如妊娠风险/妊娠队列安排）与正文随访安排投影；以研究自身事件适用性为准，不复用避孕排除等其他规则冒充已接线。",
+      "raw_fragment": "妊娠等特定事件的随访周期与要求",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "科学性修正（owner failed-acceptance 2026-09-13）：委员会独立性不等于普遍适用；特殊事件随访以研究相应事件适用性为条件。当前无可复用的已登记事件适用性规则ID，保持not_wired；未知未决，不当false，源义务不删除。本registry不声称已执行运行时适用性判定。",
+      "source_label": "6.8.5",
+      "atom_id": "r03-t08-r06-specific_event_followup"
+    },
+    {
+      "source_locator": "table[9]/row[2]",
+      "sub_key": "statistical_methods",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_3",
+        "v2_n_11_4_3_1",
+        "v2_n_11_4_9"
+      ],
+      "normalized_check": "描述要采用的统计方法，与估计目标及终点一致。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "描述要采用的统计方法",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.1",
+      "atom_id": "r03-t09-r02-statistical_methods"
+    },
+    {
+      "source_locator": "table[9]/row[2]",
+      "sub_key": "interim_timing",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_4_9",
+        "v2_n_14_7"
+      ],
+      "normalized_check": "计划中期分析时给出其时间；无期中分析时按适用性处理，不要求虚构时点/信息量/alpha消耗表。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "包括任何计划的中期分析的时间",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": "conditional:v2-n-11-4-9:interim",
+        "wiring": "declared_not_evaluated",
+        "note": "规则ID已存在于当前applicability_rules.json；本注册表不重复评估，适用性由现有适用性引擎按研究事实裁定。"
+      },
+      "note": "",
+      "source_label": "6.9.1",
+      "atom_id": "r03-t09-r02-interim_timing"
+    },
+    {
+      "source_locator": "table[9]/row[3]",
+      "sub_key": "planned_sample_size",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_11_1",
+        "v2_n_4_1"
+      ],
+      "normalized_check": "给出计划入组参与者数量；该数值可由研究事实复算。",
+      "evidence_requirement": "样本量事实投影与正文数值复算。",
+      "raw_fragment": "计划入组的试验参与者数量",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.2",
+      "atom_id": "r03-t09-r03-planned_sample_size"
+    },
+    {
+      "source_locator": "table[9]/row[3]",
+      "sub_key": "multicenter_distribution",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_1",
+        "v2_n_4_1"
+      ],
+      "normalized_check": "多中心试验给出各中心预计入组人数；未确定中心名单时不虚构中心或人数，中心分布表达按实际安排审阅。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "每个试验中心预计入组的试验参与者人数",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.9.2",
+      "atom_id": "r03-t09-r03-multicenter_distribution"
+    },
+    {
+      "source_locator": "table[9]/row[3]",
+      "sub_key": "sample_size_justification",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_1"
+      ],
+      "normalized_check": "给出样本量选择原因，含试验效力考虑（或计算）。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "选择样本量的原因，包括试验效力的反思（或计算）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.2",
+      "atom_id": "r03-t09-r03-sample_size_justification"
+    },
+    {
+      "source_locator": "table[9]/row[3]",
+      "sub_key": "clinical_rationale",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_1"
+      ],
+      "normalized_check": "给出样本量的临床依据。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "和临床依据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.2",
+      "atom_id": "r03-t09-r03-clinical_rationale"
+    },
+    {
+      "source_locator": "table[9]/row[4]",
+      "sub_key": "significance_level",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_11_3",
+        "v2_n_11_4_8"
+      ],
+      "normalized_check": "给出要使用的显著性水平，与统计方法及多重性考虑一致。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "要使用的显著性水平",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.3",
+      "atom_id": "r03-t09-r04-significance_level"
+    },
+    {
+      "source_locator": "table[9]/row[5]",
+      "sub_key": "termination_criteria",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_4_9",
+        "v2_n_14_7",
+        "v2_n_8_1"
+      ],
+      "normalized_check": "给出统计层面的试验终止标准；与6.4.6停止规则相关但不相互替代。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验终止标准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.4",
+      "atom_id": "r03-t09-r05-termination_criteria"
+    },
+    {
+      "source_locator": "table[9]/row[6]",
+      "sub_key": "missing_data_handling",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_3",
+        "v2_n_11_4_3_1",
+        "v2_n_11_4_3_2",
+        "v2_n_12_3"
+      ],
+      "normalized_check": "说明缺失、未使用和虚假数据的处理程序。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "说明缺失、未使用和虚假数据的程序",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.5",
+      "atom_id": "r03-t09-r06-missing_data_handling"
+    },
+    {
+      "source_locator": "table[9]/row[7]",
+      "sub_key": "sap_creation",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_3",
+        "v2_n_12_5"
+      ],
+      "normalized_check": "明确要求制定统计分析计划（SAP）。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "是否明确要求制定统计分析计划（SAP）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.6",
+      "atom_id": "r03-t09-r07-sap_creation"
+    },
+    {
+      "source_locator": "table[9]/row[7]",
+      "sub_key": "sap_approval_timing",
+      "check_category": "deterministic",
+      "semantic_node_ids": [
+        "v2_n_12_5"
+      ],
+      "normalized_check": "明确SAP在数据库锁定和揭盲前批准的安排；这是将来时点安排，不等于已有批准事实，不伪造签署或批准。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "并在数据库锁定和揭盲前批准",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.6",
+      "atom_id": "r03-t09-r07-sap_approval_timing"
+    },
+    {
+      "source_locator": "table[9]/row[7]",
+      "sub_key": "sap_deviation_reporting",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_3",
+        "v2_n_12_5"
+      ],
+      "normalized_check": "声明对SAP的任何偏离将在临床试验报告中如实记录和解释。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "如实记录和解释",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.6",
+      "atom_id": "r03-t09-r07-sap_deviation_reporting"
+    },
+    {
+      "source_locator": "table[9]/row[8]",
+      "sub_key": "analysis_sets",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_11_2"
+      ],
+      "normalized_check": "给出纳入分析的试验参与者选择（分析集）。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "选择纳入分析的试验参与者",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.9.7",
+      "atom_id": "r03-t09-r08-analysis_sets"
+    },
+    {
+      "source_locator": "table[10]/row[2]",
+      "sub_key": "direct_access_parties",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_3",
+        "v2_n_14_4",
+        "v2_n_14_5",
+        "v2_n_12_8"
+      ],
+      "normalized_check": "方案或书面协议明确研究者、临床试验机构及持有源记录的服务供应商允许直接查阅源数据和源记录。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。以外部协议承载时须引用已核实文件。",
+      "raw_fragment": "研究者、临床试验机构及持有源记录的服务供应商",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.10",
+      "atom_id": "r03-t10-r02-direct_access_parties"
+    },
+    {
+      "source_locator": "table[10]/row[2]",
+      "sub_key": "direct_access_purposes",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_3",
+        "v2_n_14_5",
+        "v2_n_12_8"
+      ],
+      "normalized_check": "查阅目的覆盖试验相关监查、稽查、药品监管检查及依适用法规开展的伦理审查。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验相关监查、稽查、药品监管检查",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.10",
+      "atom_id": "r03-t10-r02-direct_access_purposes"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "quality_management_method",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_1"
+      ],
+      "normalized_check": "阐明基于关键质量因素的质量管理方法。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "基于关键质量因素的质量管理方法",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-quality_management_method"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "monitoring_strategy",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_3"
+      ],
+      "normalized_check": "阐明与风险相称的监查策略（如中心化与现场监查结合）；具体组合由项目安排决定。",
+      "evidence_requirement": "已确认研究事实（StudyDefinition投影）与正文的一致性证据。",
+      "raw_fragment": "与风险相称的监查策略（如中心化与现场监查结合）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-monitoring_strategy"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "noncompliance_identification",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_6"
+      ],
+      "normalized_check": "给出方案/GCP不依从事件的识别机制。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "不依从事件的识别",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-noncompliance_identification"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "cause_analysis",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_6"
+      ],
+      "normalized_check": "给出不依从事件的原因分析安排。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "原因分析",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-cause_analysis"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "capa",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_6"
+      ],
+      "normalized_check": "给出纠正预防措施（CAPA）安排；出现缩写本身不构成通过，须有实际机制描述。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "纠正预防（CAPA）",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-capa"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "sub_key": "reporting_mechanism",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_14_6"
+      ],
+      "normalized_check": "给出不依从事件的报告机制。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "与报告机制",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.11",
+      "atom_id": "r03-t11-r02-reporting_mechanism"
+    },
+    {
+      "source_locator": "table[12]/row[2]",
+      "sub_key": "ethics_description",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_13_1",
+        "v2_n_13_2",
+        "v2_n_13_3",
+        "v2_n_13_4"
+      ],
+      "normalized_check": "给出与试验相关的伦理考虑描述。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "与试验相关的伦理考虑的描述",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.12",
+      "atom_id": "r03-t12-r02-ethics_description"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "data_collection_set",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_1",
+        "v2_n_12_2"
+      ],
+      "normalized_check": "明确拟采集数据的集合。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "是否明确拟采集数据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-data_collection_set"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "data_sources",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_2"
+      ],
+      "normalized_check": "明确数据来源。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "数据来源及直接录入数据采集工具的源数据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-data_sources"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "direct_entry_source",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_2"
+      ],
+      "normalized_check": "明确直接录入数据采集工具的源数据。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "直接录入数据采集工具的源数据",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-direct_entry_source"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "electronic_source_records",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_2",
+        "v2_n_12_6"
+      ],
+      "normalized_check": "明确电子原始记录不得仅以打印件替代。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "电子原始记录不得仅以打印件替代",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-electronic_source_records"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "computerized_systems",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_6"
+      ],
+      "normalized_check": "明确计算机化系统具备适度验证、用户权限、稽查轨迹及备份安全。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "计算机化系统是否具备适度验证、用户权限、稽查轨迹及备份安全",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "本条是临床方案的数据治理正文义务；不扩展为本工作台软件安全工程。",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-computerized_systems"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "record_retention",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_8"
+      ],
+      "normalized_check": "明确试验必备记录按规定妥善保存及可追溯。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验必备记录按规定妥善保存及可追溯",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-record_retention"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "sub_key": "medical_record_extraction",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_2"
+      ],
+      "normalized_check": "识别将从医疗记录中提取的信息。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "识别将从医疗记录中提取的信息",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "",
+      "source_label": "6.13",
+      "atom_id": "r03-t13-r02-medical_record_extraction"
+    },
+    {
+      "source_locator": "table[14]/row[2]",
+      "sub_key": "funding",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_13_4",
+        "v2_n_14_2"
+      ],
+      "normalized_check": "单独协议未提及经费安排时，方案提供融资安排；以已核实引用承载时可指向协议，未知不得按“已在协议中处理”自动不适用。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "如果在单独协议中未提及，则提供融资和保险",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.14",
+      "atom_id": "r03-t14-r02-funding"
+    },
+    {
+      "source_locator": "table[14]/row[2]",
+      "sub_key": "insurance",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_13_4"
+      ],
+      "normalized_check": "单独协议未提及保险安排时，方案提供保险安排；未知不得自动不适用。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "如果在单独协议中未提及，则提供融资和保险",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.14",
+      "atom_id": "r03-t14-r02-insurance"
+    },
+    {
+      "source_locator": "table[15]/row[2]",
+      "sub_key": "publication_policy",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_12_9"
+      ],
+      "normalized_check": "单独协议未处理出版政策时，方案给出出版政策；未知不得自动不适用。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "出版政策，如果未在单独协议中处理",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [],
+      "applicability": {
+        "status": "conditional",
+        "rule_ref": null,
+        "wiring": "not_wired",
+        "note": "适用条件依赖研究事实且当前没有可复用的已登记规则ID；未知按未决处理，不得当false。"
+      },
+      "note": "",
+      "source_label": "6.15",
+      "atom_id": "r03-t15-r02-publication_policy"
+    },
+    {
+      "source_locator": "table[16]/row[2]",
+      "sub_key": "csr_reference_hint",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_15"
+      ],
+      "normalized_check": "源行是关于方案与临床试验报告结构/内容指南相关的参考提示；保留原文，不生成方案正文必填义务，也不作为普遍内容检查门槛。",
+      "evidence_requirement": "无（参考提示）。",
+      "raw_fragment": "更多相关信息见Lal临床结构和内容指南研究报告",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [
+        "reference_hint",
+        "source_noise"
+      ],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "源文含乱码（“Lal临床结构和内容指南研究报告。”），原文在raw区保留；规范化表述不复制乱码。",
+      "source_label": "6.16",
+      "atom_id": "r03-t16-r02-csr_reference_hint"
+    },
+    {
+      "source_locator": "table[5]/row[0]/cell[1]",
+      "sub_key": "recruitment_method",
+      "check_category": "agent4",
+      "semantic_node_ids": [
+        "v2_n_5_5"
+      ],
+      "normalized_check": "描述试验参与者识别和招募方法（表头内嵌义务，独立于68条内容行分母）。",
+      "evidence_requirement": "生成方案正文对应章节的实际内容投影。",
+      "raw_fragment": "试验参与者识别和招募方法",
+      "implementation_status": "pending",
+      "check_ref": null,
+      "human_confirmation_ref": null,
+      "flags": [
+        "header_embedded"
+      ],
+      "applicability": {
+        "status": "always",
+        "rule_ref": null,
+        "wiring": "not_applicable",
+        "note": "对进入QC的方案普遍适用，无需条件规则。"
+      },
+      "note": "该义务物理上位于T5/R0表头描述列内；单独保留，既不丢失也不计入68内容行。",
+      "source_label": "",
+      "atom_id": "r03-t05-r00hdr-recruitment_method"
+    }
+  ],
+  "human_confirmations": [
+    {
+      "ref": "confirm_contact_entities",
+      "description": "申办者/监查员/医学专家/研究者/医学决策医师/实验室与机构等实体信息的真实性与已确认研究事实一致。",
+      "eight_card_mapping": "pending_v1"
+    },
+    {
+      "ref": "confirm_signature_authority",
+      "description": "签署授权的真实性与最终签署事实；签署控件保持空白，正式签署回执属V1。",
+      "eight_card_mapping": "pending_v1"
+    }
+  ],
+  "l1_checks": [
+    {
+      "id": "l1_version_four_point",
+      "name": "版本四点一致",
+      "implemented": true,
+      "wiring": "typed_input_only",
+      "check_ref": "qc.r03:version_four_point",
+      "notes": [
+        "当前版本须与各当前位置（封面/文档控制区/QC表身份栏）一致；修订历史旧行合法保留旧值，不参与当前一致性比较。",
+        "真实文档投影与产品消费者属V1接线，当前仅对typed输入负责。"
+      ]
+    },
+    {
+      "id": "l1_abbreviation_closure",
+      "name": "缩略语闭环",
+      "implemented": false,
+      "wiring": "pending",
+      "check_ref": null,
+      "pending_reason": "缩略语集合须从实际正文生成并与权威术语条目绑定；全称医学正确不能凭字符串非空判定（3R.7术语库接线）。"
+    },
+    {
+      "id": "l1_literature_bidirectional",
+      "name": "文献双向",
+      "implemented": false,
+      "wiring": "pending",
+      "check_ref": null,
+      "pending_reason": "双向闭合与日期识别不等于证据仍适用；文献是否被替代、适用对象是否匹配由来源/语义复核提供证据，不用年份阈值冒充时效性验收。"
+    },
+    {
+      "id": "l1_textual_cross_reference",
+      "name": "文字性交叉引用",
+      "implemented": true,
+      "wiring": "typed_input_only",
+      "check_ref": "qc.r03:internal_cross_reference",
+      "notes": [
+        "以明确目标对象清单为准解析文字引用，不以“含数字”冒充引用检查；缺目标显式失败。",
+        "真实文档投影V1接线。"
+      ]
+    },
+    {
+      "id": "l1_numbers_units",
+      "name": "数字单位",
+      "implemented": false,
+      "wiring": "pending",
+      "check_ref": null,
+      "pending_reason": "数值复算需绑定研究事实投影（样本量/显著性水平等）；单位规范检查未实现，不得用正则匹配冒充医学正确。"
+    },
+    {
+      "id": "l1_registration_consistency",
+      "name": "登记一致性",
+      "implemented": false,
+      "wiring": "pending",
+      "check_ref": null,
+      "pending_reason": "先核实实际适用登记源和版本；尚无已登记材料时不得生成“已登记一致”回执；字段结构相等与入排医学语义等价须分别登记。"
+    }
+  ],
+  "wired_checks": [
+    {
+      "check_ref": "qc.r03:version_four_point",
+      "module": "services/api/app/protocol_workflow/qc/r03.py",
+      "function": "check_version_consistency",
+      "input_type": "R03VersionMaterial",
+      "wiring": "typed_input_only"
+    },
+    {
+      "check_ref": "qc.r03:internal_cross_reference",
+      "module": "services/api/app/protocol_workflow/qc/r03.py",
+      "function": "check_internal_citations",
+      "input_type": "R03CitationMaterial",
+      "wiring": "typed_input_only"
+    }
+  ],
+  "product_wiring": {
+    "generation_model": "not_wired_v1",
+    "word_export": "not_wired_v1",
+    "ui_consumers": "not_wired_v1",
+    "document_projection": "pending",
+    "note": "已实现的两个确定性检查只对typed输入负责；生成模型、原生Word与UI消费者的实际接线及全量核对属V1/V1.5，本注册表不声称已接。"
+  },
+  "status_note": "本注册表是R03源义务的结构化登记，不是已接受医学registry：逐原子医学充分性、适用性判定与正式人工确认仍未执行；注册不等于通过。"
+}

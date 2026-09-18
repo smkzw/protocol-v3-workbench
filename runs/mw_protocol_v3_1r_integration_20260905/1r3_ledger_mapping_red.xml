@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="0.547" timestamp="2026-09-05T18:35:48.998272+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_unknown_operation_requests_reconciliation_before_retry" time="0.001" /><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_storage_unavailable_before_operation_has_actionable_response" time="0.000" /><testcase classname="tests.protocol_v3.test_unknown_operation_response" name="test_corrupt_decision_ledger_requires_recovery_not_reconfirmation" time="0.000"><failure message="AssertionError: assert &lt;ProtocolErro...DECISION-CAS'&gt; == &lt;ProtocolErro...ENT_MISMATCH'&gt;&#10;  &#10;  - MW-PRO-P1-CHECKPOINT-CHECKPOINT_EVENT_MISMATCH&#10;  + MW-PRO-P1-DECISION-CAS">def test_corrupt_decision_ledger_requires_recovery_not_reconfirmation():
+        from app.protocol_workflow.application.service import _LedgerRebuildError, _translate
+        from app.protocol_workflow.errors import ProtocolErrorCode
+    
+        error = _translate(
+            _LedgerRebuildError(event_id="event:synthetic", detail="missing decision effect"),
+            project_id="proj:synthetic", object_id="sd:synthetic",
+        )
+&gt;       assert error.code == ProtocolErrorCode.P1_CHECKPOINT_EVENT_MISMATCH
+E       AssertionError: assert &lt;ProtocolErro...DECISION-CAS'&gt; == &lt;ProtocolErro...ENT_MISMATCH'&gt;
+E         
+E         - MW-PRO-P1-CHECKPOINT-CHECKPOINT_EVENT_MISMATCH
+E         + MW-PRO-P1-DECISION-CAS
+
+tests/protocol_v3/test_unknown_operation_response.py:49: AssertionError</failure></testcase></testsuite></testsuites>

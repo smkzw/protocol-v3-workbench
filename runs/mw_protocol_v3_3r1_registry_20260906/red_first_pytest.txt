@@ -1,0 +1,758 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 27 items
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py FFFFEEEEEEEEEEEEEEEEEEEEE [ 92%]
+EE                                                                       [100%]
+
+==================================== ERRORS ====================================
+______ ERROR at setup of test_candidate_outputs_carry_no_volatile_fields _______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_ ERROR at setup of test_template_declares_candidate_status_and_promotion_gate _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_____ ERROR at setup of test_authoritative_counts_match_preflight_metrics ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+________ ERROR at setup of test_terminology_counts_use_explicit_scopes _________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+______ ERROR at setup of test_new_registry_text_contains_no_obsolete_term ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_______ ERROR at setup of test_node_ids_unique_and_parent_links_resolve ________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+____ ERROR at setup of test_heading_style_tree_is_subset_with_exact_counts _____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+___ ERROR at setup of test_normal_outlined_captions_preserved_with_locators ____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+____ ERROR at setup of test_unheaded_content_and_semantic_objects_recorded _____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+________ ERROR at setup of test_blank_outlined_exclusions_keep_locators ________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+______ ERROR at setup of test_tables_and_sections_carry_owner_and_locator ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+________ ERROR at setup of test_bookmark_and_field_inventories_recorded ________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+____ ERROR at setup of test_legacy_inventory_matches_actual_module_identity ____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_______________ ERROR at setup of test_legacy_ids_remain_literal _______________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+______ ERROR at setup of test_every_legacy_leaf_has_explicit_disposition _______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_______ ERROR at setup of test_phase1_leaves_retain_historical_identity ________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_________ ERROR at setup of test_every_v2_leaf_has_reverse_disposition _________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+__________ ERROR at setup of test_mapping_targets_exist_in_node_tree ___________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_ ERROR at setup of test_financial_disclosure_conditional_default_not_applicable_with_reason _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_____ ERROR at setup of test_management_structure_declares_joint_carrying ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+__________ ERROR at setup of test_projection_evidence_is_source_bound __________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_____ ERROR at setup of test_candidate_findings_exclude_unverified_claims ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+____________ ERROR at setup of test_no_implemented_contracts_claim _____________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x10ad0cfe0>, _basetemp=PosixPath('/private/tmp/pytest-of-smkzw/pytest-11'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="session")
+    def regenerated(tmp_path_factory):
+        out = tmp_path_factory.mktemp("tp_ma_07_v2_regen")
+>       module().build_all(out)
+        ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b48a660>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+=================================== FAILURES ===================================
+________________ test_source_hash_gate_rejects_modified_source _________________
+
+tmp_path = PosixPath('/private/tmp/pytest-of-smkzw/pytest-11/test_source_hash_gate_rejects_0')
+
+    def test_source_hash_gate_rejects_modified_source(tmp_path):
+>       m = module()
+            ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b4609b0>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+______________ test_source_hash_constant_matches_authorized_docx _______________
+
+    def test_source_hash_constant_matches_authorized_docx():
+>       m = module()
+            ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b461940>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+_____________________ test_regeneration_is_byte_identical ______________________
+
+tmp_path = PosixPath('/private/tmp/pytest-of-smkzw/pytest-11/test_regeneration_is_byte_iden0')
+
+    def test_regeneration_is_byte_identical(tmp_path):
+>       m = module()
+            ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b488800>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+___________ test_committed_artifacts_match_source_bound_regeneration ___________
+
+    def test_committed_artifacts_match_source_bound_regeneration():
+>       m = module()
+            ^^^^^^^^
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:34: in module
+    spec.loader.exec_module(result)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_frozen_importlib_external.SourceFileLoader object at 0x10b489820>
+path = '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/extract_tp_ma_07_v2_registry.py'
+
+<frozen importlib._bootstrap_external>:1190: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_source_hash_gate_rejects_modified_source
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_source_hash_constant_matches_authorized_docx
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_regeneration_is_byte_identical
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_committed_artifacts_match_source_bound_regeneration
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_candidate_outputs_carry_no_volatile_fields
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_template_declares_candidate_status_and_promotion_gate
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_authoritative_counts_match_preflight_metrics
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_terminology_counts_use_explicit_scopes
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_new_registry_text_contains_no_obsolete_term
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_node_ids_unique_and_parent_links_resolve
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_heading_style_tree_is_subset_with_exact_counts
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_normal_outlined_captions_preserved_with_locators
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_unheaded_content_and_semantic_objects_recorded
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_blank_outlined_exclusions_keep_locators
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_tables_and_sections_carry_owner_and_locator
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_bookmark_and_field_inventories_recorded
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_legacy_inventory_matches_actual_module_identity
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_legacy_ids_remain_literal
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_every_legacy_leaf_has_explicit_disposition
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_phase1_leaves_retain_historical_identity
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_every_v2_leaf_has_reverse_disposition
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_mapping_targets_exist_in_node_tree
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_financial_disclosure_conditional_default_not_applicable_with_reason
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_management_structure_declares_joint_carrying
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_projection_evidence_is_source_bound
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_candidate_findings_exclude_unverified_claims
+ERROR tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_no_implemented_contracts_claim
+========================= 4 failed, 23 errors in 0.20s =========================

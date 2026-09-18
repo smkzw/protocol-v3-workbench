@@ -1,0 +1,274 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-5-1:v2",
+  "semantic_node_id": "v2_n_5_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-5-1:inclusion-criteria",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-5-1:v2",
+    "chapter_contract_id": "contract:v2-n-5-1:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "framing.population_intent",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.population_summary",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.population_target",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.subpopulations",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.logic",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.criteria",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.parameters",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.windows",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.exceptions",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.registry_identity",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.registry_source_version",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.risk.pregnancy_contraception",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.inclusion_modules.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "population_target",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "inclusion_predicate",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "eligibility_rationale",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "registry_consistency",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "population_target"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "inclusion_predicate"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "eligibility_rationale"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "registry_only"
+        ],
+        "admission_claim_types": [
+          "registry_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 3,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "population:target",
+          "population:subpopulations",
+          "inclusion:logic",
+          "inclusion:criteria",
+          "inclusion:parameters",
+          "inclusion:windows",
+          "inclusion:exceptions"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "临床目标人群及相关亚组先由父章 v2_n_5 body372–379 的人群 framing 定义，再由本纳入载体承载；纳入标准是 all-applicable-criteria 谓词，必须保留布尔逻辑、单位、阈值、窗口和例外，不新造父章叶子。",
+      "既有 framing.population_intent、picos.population_summary、picos.inclusion_modules 是共享事实绑定，不设第二编辑存储。",
+      "本载体引入的 picos.risk.pregnancy_contraception 为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D3修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有编号清单、标题或缺少参数/窗口/例外的纳入标准即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_5_1",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623340"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_1:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_1:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_5_1:active",
+      "triggering_fact_paths": [
+        "picos.inclusion_modules"
+      ],
+      "condition": "all-applicable-criteria predicate 生效时，必须完整输出适用标准及其结构化参数。",
+      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+      "required_when_active_fact_paths": [],
+      "required_when_active_claim_types": [
+        "inclusion_predicate"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_5_1:closure",
+      "question": "v2_n_5_1 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "framing.population_intent",
+        "picos.population_summary"
+      ],
+      "linked_claim_types": [
+        "population_target",
+        "inclusion_predicate"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_5_1:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "registry_consistency_obligation_id": "registry:v2-n-5-1:eligibility",
+      "registry_name": "适用临床试验注册库（项目实例指定）",
+      "eligibility_fact_paths": [
+        "picos.inclusion_modules.registry_identity",
+        "picos.inclusion_modules.registry_source_version"
+      ],
+      "consistency_rules": [
+        "必须记录实际注册库身份、来源版本和核对日期；不得以药品注册分类代替资格一致性。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+......F                                                                  [100%]
+=================================== FAILURES ===================================
+_______ test_contract_whitespace_normalization_keeps_one_logical_source ________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-588/test_contract_whitespace_norma0')
+
+    def test_contract_whitespace_normalization_keeps_one_logical_source(tmp_path):
+        svc = service(tmp_path)
+        first = adopt(svc, logical_source_key=' ib ')
+>       again = adopt(svc, logical_source_key=' ib ')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_source_identity_product.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_source_identity_product.py:23: in adopt
+    return svc.adopt(**args)
+           ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/source_identity.py:135: in adopt
+    uow.event_stream_repository.append_events(project_id, STREAM, [event])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.protocol_workflow.storage.sqlite._SqliteEventStreamRepository object at 0x1088714f0>
+project_id = 'project-1', stream_id = 'source_catalog'
+events = [DomainEvent(schema_version='mw_protocol_v3_contract_v1', domain_event_id='source-event-2e2e20f8389f8a1f2d8de039ff8b2c...6ffeca012dd3bf9f723c3f1fc45ea2d9777df', emitted_at=datetime.datetime(2026, 9, 13, 0, 0, tzinfo=datetime.timezone.utc))]
+
+    def append_events(
+        self, project_id: str, stream_id: str, events: Sequence[DomainEvent]
+    ) -> Tuple[DomainEvent, ...]:
+        self._guard.ensure_active()
+        if not events:
+            return ()
+        head_row = self._conn.execute(
+            "SELECT sequence, event_sha256 FROM event_stream "
+            "WHERE project_id=? AND stream_id=? ORDER BY sequence DESC LIMIT 1",
+            (project_id, stream_id),
+        ).fetchone()
+        last_seq = head_row["sequence"] if head_row else 0
+        last_sha: Optional[str] = head_row["event_sha256"] if head_row else None
+        seen_ids = {
+            r["domain_event_id"]
+            for r in self._conn.execute(
+                "SELECT domain_event_id FROM event_stream "
+                "WHERE project_id=? AND stream_id=?",
+                (project_id, stream_id),
+            )
+        }
+        seen_seqs = {
+            r["sequence"]
+            for r in self._conn.execute(
+                "SELECT sequence FROM event_stream "
+                "WHERE project_id=? AND stream_id=?",
+                (project_id, stream_id),
+            )
+        }
+        # Validate the WHOLE batch before writing any row, so a repository
+        # failure can never leak a partially written batch inside a larger
+        # transaction whose caller catches the exception.
+        pending = []
+        for evt in events:
+            if evt.stream_id != stream_id:
+                raise EventSequenceConflictError(
+                    project_id,
+                    stream_id,
+                    expected_sequence=last_seq + 1 + len(pending),
+                    actual_sequence=evt.sequence,
+                    detail=(
+                        f"event stream_id={evt.stream_id!r} does not match "
+                        f"append target {stream_id!r}"
+                    ),
+                )
+            if evt.domain_event_id in seen_ids:
+>               raise EventSequenceConflictError(
+                    project_id,
+                    stream_id,
+                    expected_sequence=None,
+                    actual_sequence=None,
+                    detail=f"duplicate domain_event_id={evt.domain_event_id}",
+                )
+E               app.protocol_workflow.ports.repositories.EventSequenceConflictError: project=project-1 aggregate=source_catalog detail=duplicate domain_event_id=source-event-2e2e20f8389f8a1f2d8de039ff8b2cecbb4453faa2b3cda91f6271f756fc904e
+
+services/api/app/protocol_workflow/storage/sqlite.py:1102: EventSequenceConflictError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_source_identity_product.py::test_contract_whitespace_normalization_keeps_one_logical_source
+1 failed, 6 passed in 0.39s

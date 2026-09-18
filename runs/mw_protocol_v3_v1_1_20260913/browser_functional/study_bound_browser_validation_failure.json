@@ -1,0 +1,155 @@
+{
+  "status": "needs_structure_correction",
+  "validation": {
+    "errors": [
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.0.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.1.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.2.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.3.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.4.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.5.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.6.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "coverage.7.candidate"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.0.steps.0.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.0.steps.0.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.0.steps.1.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.0.steps.1.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.1.steps.0.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.1.steps.0.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.1.steps.1.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.1.steps.1.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.2.steps.0.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.2.steps.0.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.2.steps.1.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.2.steps.1.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.3.steps.0.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.3.steps.0.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.3.steps.1.requires_confirmation"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "regimen.schedules.3.steps.1.source_support"
+      },
+      {
+        "code": "regimen_output_schema_invalid",
+        "issue": "extra_forbidden",
+        "location": "status"
+      }
+    ],
+    "proposal": null,
+    "raw_response": {
+      "artifact_ref": "regimen-response:81ac60af801b6a81ca0c49c066996b006c988766ee5540bfc8d88c589443738e:revision:1",
+      "idempotency_key": "regimen-design.generate.v1",
+      "input_artifacts": [
+        {
+          "ref": "regimen-intake",
+          "sha256": "4930251e475d06939f902d1a71a9b49650fda0a9cb83eb58e96a05e35ca092f1"
+        }
+      ],
+      "logical_call_id": "call:regimen-design:67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049:regimen-generate",
+      "node_execution_contract_id": "nec:regimen-design:67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049:regimen-generate",
+      "observed_model": "glm-5.3-flash",
+      "observed_provider": "zhipu-coding-plan",
+      "output_schema_ref": "https://protocol-v3.local/schemas/regimen-design-output.v1.json",
+      "output_sha256": "0b4a214bd2fefbf0d3d2c208c4970a344d5d42a5ecdb04334ab67afa17797a9b",
+      "prompt_sha256": "0856271c062c6b06f3a5261b2fe079efe5b87448c3c7ab56dd92dafd526240d0",
+      "provider_session_id": "synthetic-study-bound-browser-once",
+      "requested_reasoning_effort": "max"
+    },
+    "status": "needs_structure_correction",
+    "valid": false
+  },
+  "can_resume": false
+}

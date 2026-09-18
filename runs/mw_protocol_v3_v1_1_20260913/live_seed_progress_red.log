@@ -1,0 +1,39 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+________ test_read_during_live_generation_reports_progress_not_unknown _________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-690/test_read_during_live_generati0')
+
+    def test_read_during_live_generation_reports_progress_not_unknown(tmp_path):
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Event
+        from app.protocol_workflow.agent1.seed_product import create_product_seed_factory
+        entered, release = Event(), Event()
+        class BlockingOpener(_FakeOpener):
+            def open(self, request, timeout=None):
+                entered.set()
+                assert release.wait(5), 'test release was not signalled'
+                return super().open(request, timeout)
+        opener = BlockingOpener([_FakeResponse(_completion_body(content='{"fields":{}}'))])
+        prior = ROOT.parents[2] / 'runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json'
+        factory = create_product_seed_factory(
+            storage_config={'backend': 'sqlite', 'path': str(tmp_path / 'live.db')},
+            prior_probe_receipt=prior, max_input_bytes=100_000,
+            credential_resolver=lambda: 'synthetic-key', http_opener=opener,
+        )
+        run_id = factory('project-one').start(prepare_seed_request('实际调用进行中', ()))
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            result = pool.submit(factory('project-one').resume, run_id)
+            try:
+                assert entered.wait(5)
+                state = factory('project-one').read(run_id)
+>               assert state['status'] == 'running'
+E               AssertionError: assert 'blocked' == 'running'
+E                 
+E                 - running
+E                 + blocked
+
+tests/protocol_v3/test_seed_product_factory.py:56: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_product_factory.py::test_read_during_live_generation_reports_progress_not_unknown
+1 failed, 1 passed in 0.51s

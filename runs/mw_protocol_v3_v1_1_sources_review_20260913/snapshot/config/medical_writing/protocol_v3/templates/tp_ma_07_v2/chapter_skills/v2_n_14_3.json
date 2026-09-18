@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-14-3",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_14_3",
+  "chapter_contract_id": "contract:v2-n-14-3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-14-3:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 申办者或其代表委派的监查员职责 的 ChapterSkillOutput。仅写入与本项目比例化监查方式一致的范围、程度、方法、发现与跟进、资格与记录；涉及试验参与者安全或权益的发现必须进入沟通与记录，缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "承诺对所有字段的全覆盖源数据核查或与所选比例化方式不符的监查强度",
+      "把模板示例公司名、示例记录或示例周期写成项目事实",
+      "把缺失事实写成不适用或已完成监查",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：申办者或其代表委派的监查员职责，零基 body-child 索引 892–900；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=3 与 bookmarks=['_Toc48315556', '_Toc132623418']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、质量或审批释放；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-14-3:missing-obligation",
+    "skill:chapter:v2-n-14-3:unresolved-fact",
+    "skill:chapter:v2-n-14-3:wrong-source"
+  ]
+}

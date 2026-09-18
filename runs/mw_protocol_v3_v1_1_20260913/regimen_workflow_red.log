@@ -1,0 +1,14 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_sparse_design_runs_once_with_full_input_and_reopens_without_new_call ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-715/test_sparse_design_runs_once_w0')
+
+    def test_sparse_design_runs_once_with_full_input_and_reopens_without_new_call(tmp_path):
+>       from app.protocol_workflow.agent2.subgraph import build_regimen_runtime, regimen_plan
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.subgraph'
+
+tests/protocol_v3/test_regimen_workflow_integration.py:17: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_workflow_integration.py::test_sparse_design_runs_once_with_full_input_and_reopens_without_new_call
+1 failed in 0.36s

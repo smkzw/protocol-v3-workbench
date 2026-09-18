@@ -1,0 +1,19 @@
+....F                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_declared_complete_fact_read_set_detects_added_keys_without_metadata_noise _
+
+    def test_declared_complete_fact_read_set_detects_added_keys_without_metadata_noise():
+>       ref=DecisionInputRef(fact_path='clinical-read-set',scope='all_facts',
+            excluded_fact_paths=('research.input_context','research.regimen_producer'))
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for DecisionInputRef
+E       scope
+E         Extra inputs are not permitted [type=extra_forbidden, input_value='all_facts', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+E       excluded_fact_paths
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('research.input_context'...earch.regimen_producer'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_decision_input_binding.py:33: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_decision_input_binding.py::test_declared_complete_fact_read_set_detects_added_keys_without_metadata_noise
+1 failed, 4 passed in 0.31s

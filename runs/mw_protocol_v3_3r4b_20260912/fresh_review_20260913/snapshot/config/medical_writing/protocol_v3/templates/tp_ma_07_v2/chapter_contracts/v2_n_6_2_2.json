@@ -1,0 +1,196 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+  "semantic_node_id": "v2_n_6_2_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-2-2:packaging-labeling",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-2-2:v2",
+    "chapter_contract_id": "contract:v2-n-6-2-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.packaging_and_labeling",
+        "obligation": "required",
+        "rationale": "包装与标签内容必须给出项目实际文本与版本。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_label_text",
+        "obligation": "forbidden",
+        "rationale": "模板示例标签文本不得作为本项目标签内容。"
+      },
+      {
+        "fact_path": "intervention.regulatory_labeling_check",
+        "obligation": "optional",
+        "rationale": "确认是否需要药品说明书/标签核对；为真时触发说明书文本条件义务（fresh复核D3修复：原先条件规则引用了未声明事实）。"
+      },
+      {
+        "fact_path": "intervention.label_text",
+        "obligation": "optional",
+        "rationale": "适用的说明书/标签文本内容，仅当 regulatory_labeling_check 为真时必需。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "packaging_labeling_description",
+        "obligation": "required",
+        "rationale": "包装与标签内容必须与实际产品包装一致并给出标签文本来源。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "regulatory_labeling_review",
+        "obligation": "required",
+        "rationale": "标签文本须经适用的监管/操作核查；本节不断言普遍标签法规。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "packaging_labeling_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "regulatory_labeling_review"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "包装/标签段必须承载实际包装形式与标签文本及其版本，并登记核查状态。",
+        "required_object_cells": [
+          "intervention:cell:packaging",
+          "intervention:cell:label_binding"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "包装/标签文本与核查状态为项目事实，不设第二可编辑标签存储。"
+    ],
+    "skeleton_risk_rules": [
+      "包装形式或标签文本来源缺失即失败；仅复制示例标签文本即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-2-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623350"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-2:label",
+      "rule": "包装与标签内容必须与实际产品一致并给出标签文本来源；模板示例标签文本仅为示例。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-2:threshold",
+      "rule": "不得复制其他项目的等级阈值或标签规则；标签文本须经适用监管/操作核查，无核查记录时不得断言合规。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-6-2-2:label-text",
+      "triggering_fact_paths": [
+        "intervention.regulatory_labeling_check"
+      ],
+      "condition": "确认需要对标签文本做监管/操作核查",
+      "rationale": "标签文本存在时，核查状态必须作为项目事实登记，不得断言普遍合规。",
+      "required_when_active_fact_paths": [
+        "intervention.label_text"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-6-2-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_6_2_2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-6-2-1:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_2_2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_6_2_2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-2-2:label",
+      "question": "包装形式与标签文本是否给出实际来源与版本，并登记核查状态？",
+      "linked_fact_paths": [
+        "intervention.packaging_and_labeling"
+      ],
+      "linked_claim_types": [
+        "packaging_labeling_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-2-2:label"
+      ],
+      "risk_if_unmet": "标签错挂会造成用药与合规风险。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

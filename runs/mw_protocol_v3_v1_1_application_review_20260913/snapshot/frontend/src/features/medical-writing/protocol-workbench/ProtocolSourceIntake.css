@@ -1,0 +1,368 @@
+/* 方案资料来源录入。所有选择器均限定在 .pvs-intake 下。 */
+
+.pvs-intake {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  color: var(--text, #20242a);
+  font-size: 16px;
+}
+
+.pvs-intake h3,
+.pvs-intake p {
+  margin: 0;
+}
+
+.pvs-head {
+  display: grid;
+  gap: 4px;
+}
+
+.pvs-title {
+  color: var(--text, #20242a);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.pvs-sub,
+.pvs-hint,
+.pvs-selection-note {
+  color: var(--muted, #65707c);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pvs-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pvs-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 5px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #20242a);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pvs-add:hover {
+  border-color: var(--orange, #f37021);
+  background: #fffaf6;
+}
+
+.pvs-add:focus-within {
+  outline: 2px solid var(--info, #2f6fd6);
+  outline-offset: 2px;
+}
+
+.pvs-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pvs-intake button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.pvs-intake button:focus-visible,
+.pvs-intake a:focus-visible,
+.pvs-intake select:focus-visible,
+.pvs-intake input:focus-visible,
+.pvs-intake textarea:focus-visible {
+  outline: 2px solid var(--info, #2f6fd6);
+  outline-offset: 2px;
+}
+
+.pvs-primary {
+  padding: 5px 14px;
+  background: var(--orange-dark, #d95710);
+  color: #ffffff;
+  font-weight: 650;
+}
+
+.pvs-primary:hover:not(:disabled) {
+  background: #b9460d;
+}
+
+.pvs-primary:disabled,
+.pvs-ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pvs-ghost {
+  padding: 5px 12px;
+  border-color: var(--line, #dfe3e8);
+  background: var(--surface, #ffffff);
+  color: var(--text, #20242a);
+}
+
+.pvs-ghost:hover:not(:disabled) {
+  border-color: var(--orange, #f37021);
+  background: #fffaf6;
+}
+
+.pvs-stage {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-left: 3px solid var(--orange, #f37021);
+  border-radius: 6px;
+  background: var(--surface, #ffffff);
+  box-shadow: 0 1px 2px rgb(32 36 42 / 6%);
+}
+
+.pvs-stage-name {
+  color: var(--text, #20242a);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.pvs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pvs-row label,
+.pvs-correct-field label,
+.pvs-brief label {
+  color: var(--text, #20242a);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pvs-row select {
+  min-width: 210px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 5px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #20242a);
+  font: inherit;
+  font-size: 14px;
+}
+
+.pvs-brief {
+  display: grid;
+  gap: 4px;
+}
+
+.pvs-brief textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 10px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 5px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #20242a);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.pvs-selection-note {
+  padding-left: 10px;
+  border-left: 3px solid var(--orange, #f37021);
+}
+
+.pvs-cards {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pvs-card {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 6px;
+  background: var(--surface, #ffffff);
+  box-shadow: 0 1px 2px rgb(32 36 42 / 5%);
+}
+
+.pvs-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pvs-check {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--orange-dark, #d95710);
+}
+
+.pvs-card-info {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pvs-card-name {
+  color: var(--text, #20242a);
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.pvs-card-meta {
+  color: var(--muted, #65707c);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.pvs-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 26px;
+}
+
+.pvs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--info, #2f6fd6);
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.pvs-link:hover {
+  text-decoration: underline;
+}
+
+.pvs-correct {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--soft-line, #edf0f3);
+  border-radius: 5px;
+  background: var(--page, #f6f7f9);
+}
+
+.pvs-correct-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.pvs-correct-field {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pvs-correct-field input {
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 5px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #20242a);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pvs-ok,
+.pvs-error {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pvs-ok {
+  color: var(--success, #1f7a42);
+}
+
+.pvs-error {
+  padding: 10px 12px;
+  border: 1px solid var(--danger-bg, #fff0f0);
+  border-left: 3px solid var(--danger, #c92a2a);
+  border-radius: 5px;
+  background: var(--danger-bg, #fff0f0);
+  color: var(--danger, #c92a2a);
+}
+
+.pvs-error-step {
+  color: var(--muted, #65707c);
+  font-size: 12px;
+}
+
+.pvs-error .pvs-ghost,
+.pvs-ok .pvs-ghost {
+  justify-self: start;
+}
+
+.pvs-prepare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--soft-line, #edf0f3);
+}
+
+@media (max-width: 640px) {
+  .pvs-row select,
+  .pvs-row button {
+    flex: 1 1 180px;
+  }
+
+  .pvs-correct-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .pvs-card-actions {
+    padding-left: 0;
+  }
+}

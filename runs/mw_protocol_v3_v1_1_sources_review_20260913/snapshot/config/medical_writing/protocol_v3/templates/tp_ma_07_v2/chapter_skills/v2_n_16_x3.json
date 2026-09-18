@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-16-x3",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_16_x3",
+  "chapter_contract_id": "contract:v2-n-16-x3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-16-x3:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 附录 3 中心实验室信息和样本销毁公司信息 的 ChapterSkillOutput。只写入真实适用的中心实验室与样本销毁公司名称、识别信息（地址/联系方式/资质）和职责范围；中心实验室与销毁方是两条独立来源义务，分别给证据。模板自带的示例实验室与示例销毁公司不是项目供应商；涉及试验参与者样本时必须有真实安排，空白或编造内容进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "把模板示例实验室或示例销毁公司写成项目供应商",
+      "用空白或编造的单元格充数",
+      "把缺失供应商事实写成不适用或已确认",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：附录 3 中心实验室信息和样本销毁公司信息，零基 body-child 索引 981–995；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 该 caption 节点无自有样式（style_id=null），bookmarks=['_Toc147489439', '_Hlk147489751'] 构成其 Word 义务；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是供应商资质、医学或审批判断；合成测试值不是真实项目批准。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-16-x3:missing-obligation",
+    "skill:chapter:v2-n-16-x3:unresolved-fact",
+    "skill:chapter:v2-n-16-x3:wrong-source"
+  ]
+}

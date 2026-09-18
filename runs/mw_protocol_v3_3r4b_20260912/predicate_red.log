@@ -1,0 +1,226 @@
+FFFFFFFFFFFFFFF                                                          [100%]
+=================================== FAILURES ===================================
+____ test_boolean_predicate_does_not_infer_from_truthiness[True-applicable] ____
+
+value = True, expected = 'applicable'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+_ test_boolean_predicate_does_not_infer_from_truthiness[False-not_applicable] __
+
+value = False, expected = 'not_applicable'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+___ test_boolean_predicate_does_not_infer_from_truthiness[None-conditional] ____
+
+value = None, expected = 'conditional'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+___ test_boolean_predicate_does_not_infer_from_truthiness[false-conditional] ___
+
+value = 'false', expected = 'conditional'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+_____ test_boolean_predicate_does_not_infer_from_truthiness[0-conditional] _____
+
+value = 0, expected = 'conditional'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+__ test_boolean_predicate_does_not_infer_from_truthiness[value5-conditional] ___
+
+value = {}, expected = 'conditional'
+
+    @pytest.mark.parametrize("value,expected", [
+        (True, "applicable"), (False, "not_applicable"),
+        (None, "conditional"), ("false", "conditional"),
+        (0, "conditional"), ({}, "conditional"),
+    ])
+    def test_boolean_predicate_does_not_infer_from_truthiness(value, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:11: ModuleNotFoundError
+________________ test_missing_condition_is_unresolved_not_false ________________
+
+    def test_missing_condition_is_unresolved_not_false():
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:18: ModuleNotFoundError
+______ test_dotted_canonical_key_and_explicit_object_member_are_distinct _______
+
+    def test_dotted_canonical_key_and_explicit_object_member_are_distinct():
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:23: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[any-values0-not_applicable] _
+
+mode = 'any', values = [False, False], expected = 'not_applicable'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[any-values1-conditional] _
+
+mode = 'any', values = [False, None], expected = 'conditional'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[any-values2-applicable] _
+
+mode = 'any', values = [True, None], expected = 'applicable'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[all-values3-applicable] _
+
+mode = 'all', values = [True, True], expected = 'applicable'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[all-values4-conditional] _
+
+mode = 'all', values = [True, None], expected = 'conditional'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_ test_multiple_triggers_have_explicit_three_state_combination[all-values5-not_applicable] _
+
+mode = 'all', values = [False, None], expected = 'not_applicable'
+
+    @pytest.mark.parametrize("mode,values,expected", [
+        ("any", [False, False], "not_applicable"),
+        ("any", [False, None], "conditional"),
+        ("any", [True, None], "applicable"),
+        ("all", [True, True], "applicable"),
+        ("all", [True, None], "conditional"),
+        ("all", [False, None], "not_applicable"),
+    ])
+    def test_multiple_triggers_have_explicit_three_state_combination(mode, values, expected):
+>       from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:39: ModuleNotFoundError
+_____________ test_empty_predicate_set_cannot_claim_applicability ______________
+
+    def test_empty_predicate_set_cannot_claim_applicability():
+>       from app.protocol_workflow.registries.applicability import evaluate_predicates
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.registries.applicability'
+
+tests/protocol_v3/test_chapter_applicability.py:46: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[True-applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[False-not_applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[None-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[false-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[0-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_boolean_predicate_does_not_infer_from_truthiness[value5-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_missing_condition_is_unresolved_not_false
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_dotted_canonical_key_and_explicit_object_member_are_distinct
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[any-values0-not_applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[any-values1-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[any-values2-applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[all-values3-applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[all-values4-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_multiple_triggers_have_explicit_three_state_combination[all-values5-not_applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_empty_predicate_set_cannot_claim_applicability
+15 failed in 0.51s

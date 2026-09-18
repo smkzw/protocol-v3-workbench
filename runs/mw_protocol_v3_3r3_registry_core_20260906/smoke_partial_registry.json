@@ -1,0 +1,516 @@
+{
+  "schema_version": "protocol-v3-chapter-registry.v1",
+  "generated_for": "tp-ma-07 v2 chapter contracts (3R.3)",
+  "authority": "Codex-approved Plan v2 Task 3R.3",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fact_vocabulary": [
+    "picos.objective.primary",
+    "picos.population.adult",
+    "picos.risk.pregnancy_contraception",
+    "provenance.template.version",
+    "provenance.appendix.child_manifest",
+    "glossary.term_count"
+  ],
+  "claim_vocabulary": [
+    "study_objective",
+    "efficacy_superiority",
+    "safety_tolerability",
+    "marketing_claim"
+  ],
+  "chapters": [
+    {
+      "node_id": "v2_front_block",
+      "coverage_role": "cover",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-front-block:v2",
+        "semantic_node_id": "v2_front_block",
+        "contract_version": "3.1.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:front-block",
+        "chapter_skill_version": "3.1.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-front-block:v2",
+          "chapter_contract_id": "contract:v2-front-block:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "provenance.template.version",
+              "obligation": "required",
+              "rationale": "封面必须承载真实模板/文档版本 provenance。"
+            }
+          ],
+          "claim_requirements": [],
+          "evidence_source_requirements": [],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "封面版本对照表逐行给出 UC301 文档版本与日期。",
+              "required_object_cells": [
+                "doc:control:version"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "UC301 封面版本 provenance"
+          ],
+          "skeleton_risk_rules": [
+            "版本表缺失或仅有表头即失败"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:front-block",
+          "required_styles": [
+            "Normal"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:front-block:provenance",
+            "rule": "封面版本信息必须与文档控制 provenance 一致。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:front-block",
+          "skill_version": "3.1.0",
+          "node_id": "v2_front_block",
+          "chapter_contract_id": "contract:v2-front-block:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:v3.1.0",
+            "instructions": "按章节合同逐条满足事实/声明/证据/结构义务，禁止编造证据。",
+            "forbidden_behaviors": [
+              "编造证据来源",
+              "输出未声明事实"
+            ]
+          },
+          "provenance_requirements": [
+            "输出必须记录模板身份与章节合同 material sha256。"
+          ],
+          "error_codes": [
+            "skill:chapter:missing-obligation",
+            "skill:chapter:unresolved-fact"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_3_1_1",
+      "coverage_role": "heading_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+        "semantic_node_id": "v2_n_3_1_1",
+        "contract_version": "3.1.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:primary-objective",
+        "chapter_skill_version": "3.1.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-3-1-1:v2",
+          "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "picos.objective.primary",
+              "obligation": "required",
+              "rationale": "主要目的章必须回链已确认的主要目的事实。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "picos.population.adult",
+              "obligation": "optional",
+              "rationale": "仅在人群声明涉及成人年龄界值时引用。"
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "picos.risk.pregnancy_contraception",
+              "obligation": "optional",
+              "rationale": "由条件规则在人群包含育龄女性时升级为必须。"
+            }
+          ],
+          "claim_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "study_objective",
+              "obligation": "required",
+              "rationale": "研究目的章必须声明主要目的。",
+              "qualifying_conditions": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "efficacy_superiority",
+              "obligation": "qualified",
+              "rationale": "优效表述必须满足限定条件。",
+              "qualifying_conditions": [
+                "仅在主要终点显著且与已采信竞品证据一致时"
+              ]
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "claim_type": "marketing_claim",
+              "obligation": "forbidden",
+              "rationale": "协议正文禁止营销性表述。",
+              "qualifying_conditions": []
+            }
+          ],
+          "evidence_source_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "source_roles": [
+                "competitor_full_protocol",
+                "regulatory_or_guideline"
+              ],
+              "admission_claim_types": [
+                "study_objective"
+              ],
+              "allowed_locator_kinds": [
+                "body",
+                "table"
+              ],
+              "require_context_window": true,
+              "minimum_quality_score": 0.85
+            }
+          ],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 2,
+              "project_specific_specification": "主要目的段必须逐条映射 UC301 主要目的与主要估计目标。",
+              "required_object_cells": []
+            },
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "主要终点对照表必须给出 UC301 主要终点行。",
+              "required_object_cells": [
+                "estimand:table:primary_endpoint"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "UC301 主要目的与主要估计目标映射"
+          ],
+          "skeleton_risk_rules": [
+            "只有标题或通用模板句即失败"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:primary-objective",
+          "required_styles": [
+            "Heading 3",
+            "List Paragraph"
+          ],
+          "forbidden_styles": [
+            "Heading 1"
+          ],
+          "required_bookmarks": [
+            "bm_primary_objective"
+          ],
+          "required_cross_references": [
+            "soa_table_1"
+          ]
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:primary-objective:mapping",
+            "rule": "主要目的必须与主要估计目标一一映射并给出事实路径回链。"
+          }
+        ],
+        "conditional_applicability_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "conditional_applicability_rule_id": "applicability:contraception",
+            "triggering_fact_paths": [
+              "picos.population.adult"
+            ],
+            "condition": "已确认人群包含育龄女性",
+            "rationale": "妊娠避孕义务仅在人群包含育龄女性时生效。",
+            "required_when_active_fact_paths": [
+              "picos.risk.pregnancy_contraception"
+            ],
+            "required_when_active_claim_types": [],
+            "required_when_active_source_roles": [],
+            "required_when_active_structural_objects": [
+              "paragraph"
+            ]
+          }
+        ],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "ctq_item_id": "ctq:primary-objective:mapping",
+            "question": "主要目的是否与主要估计目标一一映射？",
+            "linked_fact_paths": [
+              "picos.objective.primary"
+            ],
+            "linked_claim_types": [
+              "study_objective"
+            ],
+            "positive_qc_rule_ids": [
+              "qc:primary-objective:mapping"
+            ],
+            "risk_if_unmet": "目的与估计目标脱节会导致研究目的章整体不可用。"
+          }
+        ],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:primary-objective",
+          "skill_version": "3.1.0",
+          "node_id": "v2_n_3_1_1",
+          "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:v3.1.0",
+            "instructions": "按章节合同逐条满足事实/声明/证据/结构义务，禁止编造证据。",
+            "forbidden_behaviors": [
+              "编造证据来源",
+              "输出未声明事实"
+            ]
+          },
+          "provenance_requirements": [
+            "输出必须记录模板身份与章节合同 material sha256。"
+          ],
+          "error_codes": [
+            "skill:chapter:missing-obligation",
+            "skill:chapter:unresolved-fact"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_16",
+      "coverage_role": "heading_only_aggregation",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-16:v2",
+        "semantic_node_id": "v2_n_16",
+        "contract_version": "3.1.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:appendix-aggregation",
+        "chapter_skill_version": "3.1.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-16:v2",
+          "chapter_contract_id": "contract:v2-n-16:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "provenance.appendix.child_manifest",
+              "obligation": "required",
+              "rationale": "附录容器必须逐项列出实际承载附录叶子。"
+            }
+          ],
+          "claim_requirements": [],
+          "evidence_source_requirements": [],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "paragraph",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "附录容器仅承载聚合与 Word 书签/交叉引用义务，不新增临床声明。",
+              "required_object_cells": []
+            }
+          ],
+          "project_specific_elements": [
+            "附录聚合清单（v2_n_16_x1/x2/x3）"
+          ],
+          "skeleton_risk_rules": [
+            "聚合清单缺失即失败"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:appendix-aggregation",
+          "required_styles": [],
+          "forbidden_styles": [],
+          "required_bookmarks": [
+            "bm_appendix_container"
+          ],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:appendix-aggregation:manifest",
+            "rule": "附录聚合清单必须与具体附录叶子的实际承载一致。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:appendix-aggregation",
+          "skill_version": "3.1.0",
+          "node_id": "v2_n_16",
+          "chapter_contract_id": "contract:v2-n-16:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:v3.1.0",
+            "instructions": "按章节合同逐条满足事实/声明/证据/结构义务，禁止编造证据。",
+            "forbidden_behaviors": [
+              "编造证据来源",
+              "输出未声明事实"
+            ]
+          },
+          "provenance_requirements": [
+            "输出必须记录模板身份与章节合同 material sha256。"
+          ],
+          "error_codes": [
+            "skill:chapter:missing-obligation",
+            "skill:chapter:unresolved-fact"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "v2_n_front_5",
+      "coverage_role": "outline_only_leaf",
+      "contract": {
+        "schema_version": "mw_protocol_v3_contract_v2",
+        "canonical_state": "frozen",
+        "chapter_contract_id": "contract:v2-n-front-5:v2",
+        "semantic_node_id": "v2_n_front_5",
+        "contract_version": "3.1.0",
+        "template_id": "tp_ma_07_v2",
+        "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+        "chapter_skill_id": "skill:chapter:glossary",
+        "chapter_skill_version": "3.1.0",
+        "substantive_content": {
+          "schema_version": "mw_protocol_v3_contract_v2",
+          "canonical_state": "frozen",
+          "substantive_content_contract_id": "content:v2-n-front-5:v2",
+          "chapter_contract_id": "contract:v2-n-front-5:v2",
+          "fact_requirements": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "fact_path": "glossary.term_count",
+              "obligation": "required",
+              "rationale": "缩略语表必须记录实际术语数量 provenance。"
+            }
+          ],
+          "claim_requirements": [],
+          "evidence_source_requirements": [],
+          "structural_object_obligations": [
+            {
+              "schema_version": "mw_protocol_v3_contract_v1",
+              "object_kind": "table",
+              "minimum_occurrences": 1,
+              "project_specific_specification": "缩略语表必须给出缩写与全称两列表头。",
+              "required_object_cells": [
+                "glossary:header:abbreviation",
+                "glossary:header:full_name"
+              ]
+            }
+          ],
+          "project_specific_elements": [
+            "UC301 缩略语表"
+          ],
+          "skeleton_risk_rules": [
+            "缩略语表仅有表头即失败"
+          ]
+        },
+        "word_rules": {
+          "schema_version": "mw_protocol_v3_contract_v1",
+          "word_formatting_rules_id": "word:rules:glossary",
+          "required_styles": [
+            "table"
+          ],
+          "forbidden_styles": [],
+          "required_bookmarks": [],
+          "required_cross_references": []
+        },
+        "positive_qc_rules": [
+          {
+            "schema_version": "mw_protocol_v3_contract_v1",
+            "positive_qc_rule_id": "qc:glossary:completeness",
+            "rule": "缩略语表条目必须覆盖正文出现的全部缩写。"
+          }
+        ],
+        "conditional_applicability_rules": [],
+        "dependency_ids": [],
+        "dependency_repair_policy": null,
+        "ctq_items": [],
+        "patient_participation_obligations": [],
+        "registry_consistency_obligations": []
+      },
+      "skills": [
+        {
+          "skill_id": "skill:chapter:glossary",
+          "skill_version": "3.1.0",
+          "node_id": "v2_n_front_5",
+          "chapter_contract_id": "contract:v2-n-front-5:v2",
+          "template_id": "tp_ma_07_v2",
+          "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+          "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+          "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+          "prompt_contract": {
+            "prompt_version": "prompt:v3.1.0",
+            "instructions": "按章节合同逐条满足事实/声明/证据/结构义务，禁止编造证据。",
+            "forbidden_behaviors": [
+              "编造证据来源",
+              "输出未声明事实"
+            ]
+          },
+          "provenance_requirements": [
+            "输出必须记录模板身份与章节合同 material sha256。"
+          ],
+          "error_codes": [
+            "skill:chapter:missing-obligation",
+            "skill:chapter:unresolved-fact"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": []
+}

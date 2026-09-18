@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.0
+collected 1 item
+
+tests/protocol_v3/test_research_context_creation.py F                    [100%]
+
+=================================== FAILURES ===================================
+_________ test_context_genesis_records_only_the_actual_writing_request _________
+
+    def test_context_genesis_records_only_the_actual_writing_request():
+>       from app.protocol_workflow.application.research_context import prepare_research_context_creation
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.application.research_context'
+
+tests/protocol_v3/test_research_context_creation.py:7: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_research_context_creation.py::test_context_genesis_records_only_the_actual_writing_request
+============================== 1 failed in 0.58s ===============================

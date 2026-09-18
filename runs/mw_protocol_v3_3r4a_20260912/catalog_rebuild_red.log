@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_shipped_fact_catalog_covers_registry_and_binds_current_contracts _____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-285/test_shipped_fact_catalog_cove0')
+
+    def test_shipped_fact_catalog_covers_registry_and_binds_current_contracts(tmp_path):
+        from app.protocol_workflow.registries.chapters import load_chapter_registry
+        from app.protocol_workflow.registries.fact_bindings import load_fact_catalog, FactBindingError
+        from test_all_chapter_contracts import REPO_ROOT, REAL_TEMPLATE_DIR
+        # Rebuild from current source; no assumption that a historical report is latest.
+        from scripts.qc.protocol_v3.assemble_chapter_registry import assemble_registries
+        registry = load_chapter_registry(assemble_registries(
+            REAL_TEMPLATE_DIR / "chapter_contracts", REAL_TEMPLATE_DIR / "chapter_skills",
+            [REPO_ROOT / f"tests/fixtures/protocol_v3/chapter_content_v2/batch{i}.json" for i in range(1, 9)],
+        ))
+        catalog_path = REAL_TEMPLATE_DIR / "fact_bindings.json"
+        catalog = load_fact_catalog(catalog_path, registry)
+        from app.protocol_workflow.registries.fact_bindings import build_direct_fact_catalog
+>       rebuilt = build_direct_fact_catalog(registry, declarations=catalog.bindings)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: build_direct_fact_catalog() got an unexpected keyword argument 'declarations'
+
+tests/protocol_v3/test_chapter_fact_binding.py:218: TypeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_shipped_fact_catalog_covers_registry_and_binds_current_contracts
+1 failed, 36 deselected in 0.66s

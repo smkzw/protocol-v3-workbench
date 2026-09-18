@@ -1,0 +1,39 @@
+{
+  "status": "needs_information",
+  "structural_validation": true,
+  "correction_run_id": null,
+  "manifest_files": 96,
+  "manifest_drift": [],
+  "receipt": {
+    "artifact_ref": "regimen-response:0517ee8718cf376df8d7980a174bd3c557179fa64a091cfbfc8e85f82aec2ce6:revision:1",
+    "idempotency_key": "regimen-design.generate.v1",
+    "input_artifacts": [
+      {
+        "ref": "regimen-intake",
+        "sha256": "55cb32ba8c61a835341a0b962ebd4faad29aa85ec67ef67ece15942d755e3567"
+      }
+    ],
+    "logical_call_id": "call:regimen-design:e072c81b3d5c801e220eec6732125d6bc5978bcbeedd2c5022e9936346b3ff03:regimen-generate",
+    "node_execution_contract_id": "nec:regimen-design:e072c81b3d5c801e220eec6732125d6bc5978bcbeedd2c5022e9936346b3ff03:regimen-generate",
+    "observed_model": "glm-5.3-flash",
+    "observed_provider": "zhipu-coding-plan",
+    "output_schema_ref": "https://protocol-v3.local/schemas/regimen-design-output.v1.json",
+    "output_sha256": "942072e9e6dd2d4b58fc214d02bd5e4dfa0168ff9d360fd7772a3742bb16c7ca",
+    "prompt_sha256": "0856271c062c6b06f3a5261b2fe079efe5b87448c3c7ab56dd92dafd526240d0",
+    "provider_session_id": "20260913144811a0932dc02f8a43b3",
+    "requested_reasoning_effort": "max"
+  },
+  "effective_effort": "not_reported",
+  "coverage_count": 24,
+  "schedule_count": 4,
+  "step_count": 8,
+  "original_seed_unchanged": true,
+  "clinical_acceptance": false,
+  "canonical_adoption": false,
+  "owner_findings": [
+    "Whitespace-only unit formatting is not a clinical question. Preserve literal quotes, normalize presentation deterministically.",
+    "Pending figure inspection belongs to engineering evidence; do not ask user to decide whether verification should happen.",
+    "Continued-treatment visit count requires checking original SOA before escalation.",
+    "Cross-over wording remains unsupported design inference; source says transition to MG-K10."
+  ]
+}

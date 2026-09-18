@@ -1,0 +1,17 @@
+[
+  {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "conditional_applicability_rule_id": "applicability:n-3-4-2:non-confirmatory",
+    "triggering_fact_paths": [
+      "exploratory.endpoint_disposition"
+    ],
+    "condition": "探索性终点不开展或仅作支持性分析",
+    "rationale": "当探索性终点不开展或仅支持性时，必须显式声明其不构成确证性结论，避免被后续合同误用。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "exploratory_non_confirmatory"
+    ],
+    "required_when_active_source_roles": [],
+    "required_when_active_structural_objects": []
+  }
+]

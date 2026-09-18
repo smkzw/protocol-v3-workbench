@@ -1,0 +1,68 @@
+{
+  "logical_work_key": "mw_protocol_v3_3r4b_fresh_review_20260913_candidate1",
+  "role": "C03",
+  "mode": "independent conference, no extra manager",
+  "source_manifest": "/Users/smkzw/.codex/tools/workflow_routes.json",
+  "source_manifest_sha256": "ef297ff3b5ba162df178fef9180e9cb1dcb3c13223db52a49d00bca3ab7a2be7",
+  "node": {
+    "task_type": "high_risk_contradiction_review",
+    "label": "重要证据审阅",
+    "kind": "conference",
+    "peak": [
+      {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      {
+        "agent": "pi",
+        "provider": "cursor",
+        "model": "cursor-grok-4.6",
+        "effort": "high"
+      },
+      {
+        "agent": "codex-subagent",
+        "provider": "codex",
+        "model": "gpt-6-astra",
+        "effort": "low"
+      }
+    ],
+    "off_peak": [
+      {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3",
+        "effort": "max"
+      },
+      {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      {
+        "agent": "pi",
+        "provider": "cursor",
+        "model": "cursor-grok-4.6",
+        "effort": "high"
+      },
+      {
+        "agent": "pi",
+        "provider": "openai-codex",
+        "model": "gpt-5.6-sol",
+        "effort": "medium"
+      }
+    ]
+  },
+  "guard_limitation": "guard import fails on unrelated C01 peak string entry; no generated packet or guard acceptance claimed. Existing approved runner uses complete C03 schedule chain unchanged. Global files untouched.",
+  "max_turns": 128,
+  "hard_timeout_seconds": 7200,
+  "artifact_manifest": "runs/mw_protocol_v3_3r4b_20260912/fresh_review_20260913/artifact_manifest.json",
+  "status": "terminal_success",
+  "runner_pid_observed": 24406,
+  "identity_verification": "verified by runner request/response model GLM-5.3 and observed max; no fallback",
+  "session_id": "sess_e3599511-8964-4589-b7bf-c2c90ac2e0d2",
+  "report_file": "review_receipt.json (Markdown despite extension)",
+  "runtime_receipt_file": "reviewer_stdout.log (JSON despite extension)"
+}

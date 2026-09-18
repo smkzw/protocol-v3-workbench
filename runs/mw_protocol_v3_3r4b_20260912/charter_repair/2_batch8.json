@@ -1,0 +1,4166 @@
+{
+  "schema_version": "protocol-v3-chapter-batch.v1",
+  "generated_for": "TP-MA-07 v2 batch8 chapter contracts and fixtures (3R.3：质量保证与质量控制、参考文献与附录；20260911，最终批次)",
+  "authority": "Batch8 source-bound authoring contract (final 3R.3 batch); frozen template identity; synthetic fixture values are not project approval. 文本使用“试验参与者”术语。",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fact_vocabulary": [
+    "appendix.applicable_attachment_index",
+    "appendix.container_aggregation_scope",
+    "appendix.destruction_provider_identifying_details",
+    "appendix.destruction_provider_name",
+    "appendix.destruction_provider_roles",
+    "appendix.ecog_applicability_decision_record",
+    "appendix.ecog_assessment_applicable",
+    "appendix.ecog_scale_reproduced",
+    "appendix.ecog_source_reference",
+    "appendix.ecog_template_example_table",
+    "appendix.ecog_version",
+    "appendix.inclusion_decision_basis",
+    "appendix.laboratory_identifying_details",
+    "appendix.laboratory_name",
+    "appendix.laboratory_roles_and_scope",
+    "appendix.nyha_applicability_decision_record",
+    "appendix.nyha_assessment_applicable",
+    "appendix.nyha_classification_reproduced",
+    "appendix.nyha_source_reference",
+    "appendix.nyha_template_example_table",
+    "appendix.nyha_version",
+    "appendix.template_example_supplier_row",
+    "quality.associated_risks",
+    "quality.audit_findings_communication",
+    "quality.audit_inspection_distinction",
+    "quality.audit_program",
+    "quality.audit_records",
+    "quality.control_responsibility",
+    "quality.copied_template_company_name",
+    "quality.critical_to_quality_factors",
+    "quality.decision_and_data_review_linkage",
+    "quality.deviation_communication",
+    "quality.deviation_impact_assessment",
+    "quality.deviation_process",
+    "quality.deviation_records",
+    "quality.general_deviation_definition",
+    "quality.important_deviation_definition",
+    "quality.inspection_access_and_notification",
+    "quality.investigator_conduct_and_delegation",
+    "quality.investigator_facilities_and_resources",
+    "quality.investigator_protocol_compliance",
+    "quality.investigator_records",
+    "quality.investigator_supervision",
+    "quality.monitor_qualification",
+    "quality.monitoring_findings_and_followup",
+    "quality.monitoring_methods",
+    "quality.monitoring_proportionate_approach",
+    "quality.monitoring_records",
+    "quality.monitoring_scope_and_extent",
+    "quality.oversight_charter_applicable",
+    "quality.oversight_charter_approval_record",
+    "quality.oversight_charter_version",
+    "quality.plan_review_cadence",
+    "quality.proportionate_controls",
+    "quality.remote_monitoring_applicable",
+    "quality.remote_monitoring_records",
+    "quality.risk_management_plan_applicable",
+    "quality.risk_management_plan_identity",
+    "quality.safety_escalation_path",
+    "quality.safety_oversight_body_type",
+    "quality.safety_oversight_composition",
+    "quality.safety_oversight_information_flow",
+    "quality.safety_oversight_review_arrangement",
+    "quality.safety_oversight_roles",
+    "quality.sponsor_conduct_responsibility",
+    "quality.sponsor_oversight_and_delegation",
+    "quality.sponsor_quality_system",
+    "quality.sponsor_records_and_reports",
+    "quality.sponsor_training_obligation_statement",
+    "quality.template_example_plan_name",
+    "quality.urgent_hazard_exception_definition",
+    "references.bibliographic_metadata",
+    "references.citation_style",
+    "references.foreign_format_style",
+    "references.foreign_sources_present",
+    "references.in_text_citation_targets",
+    "references.template_example_reference_list",
+    "references.used_source_register"
+  ],
+  "claim_vocabulary": [
+    "appendix.destruction_provider_identity_and_roles",
+    "appendix.ecog_applicability_decided",
+    "appendix.ecog_version_and_contents_verified",
+    "appendix.laboratory_identity_and_roles",
+    "appendix.nyha_applicability_decided",
+    "appendix.nyha_version_and_contents_verified",
+    "appendix_aggregates_actual_applicable_attachments",
+    "appendix_placeholder_or_template_example_included_as_final",
+    "audit_inspection_conflated",
+    "audit_inspection_processes_distinct",
+    "blank_or_invented_supplier_content",
+    "citations_resolvable",
+    "container_preserves_outlined_leaf_obligations",
+    "container_replaces_outlined_leaf_obligations",
+    "ctq_generic_slogan_without_anchors",
+    "deviation_process_and_impact_assessment",
+    "dsmb_smc_irc_interchangeable",
+    "ecog_appendix_version_unverified",
+    "ecog_appendix_without_actual_assessment",
+    "fabricated_approved_charter",
+    "fabricated_committee_membership",
+    "important_general_deviation_distinction",
+    "in_text_citation_without_target",
+    "investigator_protocol_acceptance_inferred_signed",
+    "investigator_responsibility_matches_arrangements",
+    "investigator_training_inferred_complete",
+    "local_tp_ma_15_title_equals_integrated_content",
+    "monitor_training_inferred_complete",
+    "monitoring_actual_proportionate_plan",
+    "nyha_appendix_version_unverified",
+    "nyha_appendix_without_actual_assessment",
+    "oversight_body_type_and_role_stated",
+    "quality.controls_proportionate_to_risks",
+    "quality.ctq_risk_control_chain",
+    "safety_oversight_actual_arrangement",
+    "semiannual_cadence_as_universal_rule",
+    "sponsor_protocol_acceptance_inferred_signed",
+    "sponsor_responsibility_matches_actual_arrangement",
+    "sponsor_training_inferred_complete",
+    "study_bibliography_from_used_sources",
+    "template_example_bibliography_used_as_study_bibliography",
+    "template_example_lab_or_destruction_company_as_project_supplier",
+    "universal_100_percent_source_verification_promised",
+    "unused_reference_listed",
+    "urgent_hazard_exception_blanket_waiver"
+  ],
+  "coverage_roles": {
+    "v2_n_14_1": "heading_leaf",
+    "v2_n_14_2": "heading_leaf",
+    "v2_n_14_3": "heading_leaf",
+    "v2_n_14_4": "heading_leaf",
+    "v2_n_14_5": "heading_leaf",
+    "v2_n_14_6": "heading_leaf",
+    "v2_n_14_7": "heading_leaf",
+    "v2_n_15": "heading_leaf",
+    "v2_n_16": "heading_only_aggregation",
+    "v2_n_16_x1": "outline_only_leaf",
+    "v2_n_16_x2": "outline_only_leaf",
+    "v2_n_16_x3": "outline_only_leaf"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:positive",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.critical_to_quality_factors",
+            "value": "关键质量因素：入组标准判定与随机化执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.associated_risks",
+            "value": "关联风险：标准理解偏差导致入组偏离（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.proportionate_controls",
+            "value": "相称控制：中心培训与首例入组复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.control_responsibility",
+            "value": "责任角色：项目经理与监查员联合复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.decision_and_data_review_linkage",
+            "value": "联动：关键数据复核绑定设计决策记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_identity",
+            "value": "质量风险管理计划 QRM-SYN-01（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.plan_review_cadence",
+            "value": "复核节奏：每季度一次（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "quality.ctq_risk_control_chain",
+            "statement": "关键因素→风险→相称控制→责任→决策/数据复核链完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "quality.controls_proportionate_to_risks",
+            "statement": "控制强度与识别风险相称（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "quality.ctq_risk_control_chain",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[884-885]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "CtQ 承载段：因素/风险/控制/责任/联动逐项登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.critical_to_quality_factors",
+            "value": "关键质量因素：入组标准判定与随机化执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.associated_risks",
+            "value": "关联风险：标准理解偏差导致入组偏离（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.control_responsibility",
+            "value": "责任角色：项目经理与监查员联合复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.decision_and_data_review_linkage",
+            "value": "联动：关键数据复核绑定设计决策记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_identity",
+            "value": "质量风险管理计划 QRM-SYN-01（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.plan_review_cadence",
+            "value": "复核节奏：每季度一次（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "quality.ctq_risk_control_chain",
+            "statement": "关键因素→风险→相称控制→责任→决策/数据复核链完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "quality.controls_proportionate_to_risks",
+            "statement": "控制强度与识别风险相称（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "quality.ctq_risk_control_chain",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[884-885]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "CtQ 承载段：因素/风险/控制/责任/联动逐项登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.critical_to_quality_factors",
+            "value": "关键质量因素：入组标准判定与随机化执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.associated_risks",
+            "value": "关联风险：标准理解偏差导致入组偏离（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.proportionate_controls",
+            "value": "相称控制：中心培训与首例入组复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.control_responsibility",
+            "value": "责任角色：项目经理与监查员联合复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.decision_and_data_review_linkage",
+            "value": "联动：关键数据复核绑定设计决策记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_identity",
+            "value": "质量风险管理计划 QRM-SYN-01（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.plan_review_cadence",
+            "value": "复核节奏：每季度一次（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "quality.ctq_risk_control_chain",
+            "statement": "关键因素→风险→相称控制→责任→决策/数据复核链完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "quality.controls_proportionate_to_risks",
+            "statement": "控制强度与识别风险相称（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "quality.ctq_risk_control_chain",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "CtQ 承载段：因素/风险/控制/责任/联动逐项登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:generic-ctq-slogan",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.critical_to_quality_factors",
+            "value": "关键质量因素：入组标准判定与随机化执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.proportionate_controls",
+            "value": "相称控制：中心培训与首例入组复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.control_responsibility",
+            "value": "责任角色：项目经理与监查员联合复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.decision_and_data_review_linkage",
+            "value": "联动：关键数据复核绑定设计决策记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_identity",
+            "value": "质量风险管理计划 QRM-SYN-01（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.plan_review_cadence",
+            "value": "复核节奏：每季度一次（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "quality.ctq_risk_control_chain",
+            "statement": "关键因素→风险→相称控制→责任→决策/数据复核链完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "quality.controls_proportionate_to_risks",
+            "statement": "控制强度与识别风险相称（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "ctq_generic_slogan_without_anchors",
+            "statement": "质量第一，人人有责（无锚点通用口号）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "quality.ctq_risk_control_chain",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[884-885]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "CtQ 承载段：因素/风险/控制/责任/联动逐项登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-1:placeholder-plan-name",
+      "chapter_contract_id": "contract:v2-n-14-1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.critical_to_quality_factors",
+            "value": "关键质量因素：入组标准判定与随机化执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.associated_risks",
+            "value": "关联风险：标准理解偏差导致入组偏离（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.proportionate_controls",
+            "value": "相称控制：中心培训与首例入组复核（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.decision_and_data_review_linkage",
+            "value": "联动：关键数据复核绑定设计决策记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.risk_management_plan_identity",
+            "value": "质量风险管理计划 QRM-SYN-01（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.plan_review_cadence",
+            "value": "复核节奏：每季度一次（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.template_example_plan_name",
+            "value": "模板示例计划名 QRM-EXAMPLE（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "quality.ctq_risk_control_chain",
+            "statement": "关键因素→风险→相称控制→责任→决策/数据复核链完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "quality.controls_proportionate_to_risks",
+            "statement": "控制强度与识别风险相称（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "quality.ctq_risk_control_chain",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[884-885]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "CtQ 承载段：因素/风险/控制/责任/联动逐项登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:positive",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.sponsor_conduct_responsibility",
+            "value": "申办者实施责任：按项目分工执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_oversight_and_delegation",
+            "value": "监督与委派：项目组向 CRO 的委派边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_quality_system",
+            "value": "质量体系：本项目适用的质量流程（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_records_and_reports",
+            "value": "记录与报告：项目角色与留存安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_training_obligation_statement",
+            "value": "培训义务表述：按计划开展（不等同已完成）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "statement": "申办者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[886-891]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "申办者责任承载段：监督/委派/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.sponsor_conduct_responsibility",
+            "value": "申办者实施责任：按项目分工执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_oversight_and_delegation",
+            "value": "监督与委派：项目组向 CRO 的委派边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_quality_system",
+            "value": "质量体系：本项目适用的质量流程（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_training_obligation_statement",
+            "value": "培训义务表述：按计划开展（不等同已完成）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "statement": "申办者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[886-891]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "申办者责任承载段：监督/委派/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.sponsor_conduct_responsibility",
+            "value": "申办者实施责任：按项目分工执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_oversight_and_delegation",
+            "value": "监督与委派：项目组向 CRO 的委派边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_quality_system",
+            "value": "质量体系：本项目适用的质量流程（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_records_and_reports",
+            "value": "记录与报告：项目角色与留存安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_training_obligation_statement",
+            "value": "培训义务表述：按计划开展（不等同已完成）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "statement": "申办者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "申办者责任承载段：监督/委派/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:inferred-completed-training",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.sponsor_conduct_responsibility",
+            "value": "申办者实施责任：按项目分工执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_quality_system",
+            "value": "质量体系：本项目适用的质量流程（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_records_and_reports",
+            "value": "记录与报告：项目角色与留存安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_training_obligation_statement",
+            "value": "培训义务表述：按计划开展（不等同已完成）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "statement": "申办者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "sponsor_training_inferred_complete",
+            "statement": "申办者团队已完成全部培训（从职责推断）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[886-891]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "申办者责任承载段：监督/委派/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-2:inferred-signed-acceptance",
+      "chapter_contract_id": "contract:v2-n-14-2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.sponsor_conduct_responsibility",
+            "value": "申办者实施责任：按项目分工执行（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_oversight_and_delegation",
+            "value": "监督与委派：项目组向 CRO 的委派边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_records_and_reports",
+            "value": "记录与报告：项目角色与留存安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.sponsor_training_obligation_statement",
+            "value": "培训义务表述：按计划开展（不等同已完成）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "statement": "申办者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "sponsor_protocol_acceptance_inferred_signed",
+            "statement": "研究者已签署方案接受（从职责推断）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "sponsor_responsibility_matches_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[886-891]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "申办者责任承载段：监督/委派/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:positive",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.monitoring_scope_and_extent",
+            "value": "监查范围与程度：按风险分层（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_proportionate_approach",
+            "value": "比例化监查：现场+中心化组合（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_methods",
+            "value": "监查方法：现场/中心化/远程逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_findings_and_followup",
+            "value": "发现与跟进：分级跟进路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitor_qualification",
+            "value": "监查员资格与授权：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_records",
+            "value": "监查记录：可追溯留存（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_records",
+            "value": "远程监查记录：方式与留存边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "monitoring_actual_proportionate_plan",
+            "statement": "监查安排为本项目实际比例化方案（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "monitoring_actual_proportionate_plan",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[892-900]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "监查安排承载段：范围/方法/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.monitoring_scope_and_extent",
+            "value": "监查范围与程度：按风险分层（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_proportionate_approach",
+            "value": "比例化监查：现场+中心化组合（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_methods",
+            "value": "监查方法：现场/中心化/远程逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_findings_and_followup",
+            "value": "发现与跟进：分级跟进路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitor_qualification",
+            "value": "监查员资格与授权：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_records",
+            "value": "远程监查记录：方式与留存边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "monitoring_actual_proportionate_plan",
+            "statement": "监查安排为本项目实际比例化方案（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "monitoring_actual_proportionate_plan",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[892-900]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "监查安排承载段：范围/方法/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.monitoring_scope_and_extent",
+            "value": "监查范围与程度：按风险分层（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_proportionate_approach",
+            "value": "比例化监查：现场+中心化组合（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_methods",
+            "value": "监查方法：现场/中心化/远程逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_findings_and_followup",
+            "value": "发现与跟进：分级跟进路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitor_qualification",
+            "value": "监查员资格与授权：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_records",
+            "value": "监查记录：可追溯留存（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_records",
+            "value": "远程监查记录：方式与留存边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "monitoring_actual_proportionate_plan",
+            "statement": "监查安排为本项目实际比例化方案（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "monitoring_actual_proportionate_plan",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "监查安排承载段：范围/方法/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:universal-source-verification-promise",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.monitoring_scope_and_extent",
+            "value": "监查范围与程度：按风险分层（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_proportionate_approach",
+            "value": "比例化监查：现场+中心化组合（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_methods",
+            "value": "监查方法：现场/中心化/远程逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitor_qualification",
+            "value": "监查员资格与授权：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_records",
+            "value": "监查记录：可追溯留存（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_records",
+            "value": "远程监查记录：方式与留存边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "monitoring_actual_proportionate_plan",
+            "statement": "监查安排为本项目实际比例化方案（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "universal_100_percent_source_verification_promised",
+            "statement": "对所有字段执行 100% 源数据核查（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "monitoring_actual_proportionate_plan",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[892-900]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "监查安排承载段：范围/方法/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:copied-company-name",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.monitoring_proportionate_approach",
+            "value": "比例化监查：现场+中心化组合（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_methods",
+            "value": "监查方法：现场/中心化/远程逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_findings_and_followup",
+            "value": "发现与跟进：分级跟进路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitor_qualification",
+            "value": "监查员资格与授权：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.monitoring_records",
+            "value": "监查记录：可追溯留存（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.remote_monitoring_records",
+            "value": "远程监查记录：方式与留存边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.copied_template_company_name",
+            "value": "模板示例公司名（非项目事实）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "monitoring_actual_proportionate_plan",
+            "statement": "监查安排为本项目实际比例化方案（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "monitoring_actual_proportionate_plan",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[892-900]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "监查安排承载段：范围/方法/记录（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:positive",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_supervision",
+            "value": "监督安排：对研究团队的授权边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_supervision",
+            "value": "监督安排：对研究团队的授权边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_supervision",
+            "value": "监督安排：对研究团队的授权边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:inferred-completed-training",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "investigator_training_inferred_complete",
+            "statement": "研究者团队培训已完成（从职责推断）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-4:inferred-signed-acceptance",
+      "chapter_contract_id": "contract:v2-n-14-4:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_supervision",
+            "value": "监督安排：对研究团队的授权边界（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "investigator_protocol_acceptance_inferred_signed",
+            "statement": "研究者已签署方案接受（从职责推断）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:positive",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.audit_program",
+            "value": "稽查计划：本项目适用安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_inspection_distinction",
+            "value": "稽查与视察分管程序：目的/独立性/记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_records",
+            "value": "稽查记录与报告：可追溯（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.inspection_access_and_notification",
+            "value": "视察访问与通知：项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_findings_communication",
+            "value": "发现与整改沟通：适用对象（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "audit_inspection_processes_distinct",
+            "statement": "稽查与视察为两个可区分程序（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "audit_inspection_processes_distinct",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[910-911]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "稽查/视察承载段：分程序登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.audit_program",
+            "value": "稽查计划：本项目适用安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_inspection_distinction",
+            "value": "稽查与视察分管程序：目的/独立性/记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.inspection_access_and_notification",
+            "value": "视察访问与通知：项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_findings_communication",
+            "value": "发现与整改沟通：适用对象（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "audit_inspection_processes_distinct",
+            "statement": "稽查与视察为两个可区分程序（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "audit_inspection_processes_distinct",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[910-911]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "稽查/视察承载段：分程序登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.audit_program",
+            "value": "稽查计划：本项目适用安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_inspection_distinction",
+            "value": "稽查与视察分管程序：目的/独立性/记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_records",
+            "value": "稽查记录与报告：可追溯（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.inspection_access_and_notification",
+            "value": "视察访问与通知：项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_findings_communication",
+            "value": "发现与整改沟通：适用对象（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "audit_inspection_processes_distinct",
+            "statement": "稽查与视察为两个可区分程序（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "audit_inspection_processes_distinct",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "稽查/视察承载段：分程序登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:tp-ma-15-title-as-integrated-content",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.audit_program",
+            "value": "稽查计划：本项目适用安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_inspection_distinction",
+            "value": "稽查与视察分管程序：目的/独立性/记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_records",
+            "value": "稽查记录与报告：可追溯（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.inspection_access_and_notification",
+            "value": "视察访问与通知：项目路径（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "audit_inspection_processes_distinct",
+            "statement": "稽查与视察为两个可区分程序（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "local_tp_ma_15_title_equals_integrated_content",
+            "statement": "按本地 TP-MA-15 标题即完成内容整合（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "audit_inspection_processes_distinct",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[910-911]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "稽查/视察承载段：分程序登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-5:audit-inspection-conflated",
+      "chapter_contract_id": "contract:v2-n-14-5:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.audit_program",
+            "value": "稽查计划：本项目适用安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_inspection_distinction",
+            "value": "稽查与视察分管程序：目的/独立性/记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_records",
+            "value": "稽查记录与报告：可追溯（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.audit_findings_communication",
+            "value": "发现与整改沟通：适用对象（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "audit_inspection_processes_distinct",
+            "statement": "稽查与视察为两个可区分程序（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "audit_inspection_conflated",
+            "statement": "稽查与视察为同一程序（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "audit_inspection_processes_distinct",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[910-911]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "稽查/视察承载段：分程序登记（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:positive",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.deviation_process",
+            "value": "偏离处理程序：本项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_records",
+            "value": "偏离记录：可追溯与责任（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_impact_assessment",
+            "value": "影响评估：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_communication",
+            "value": "沟通对象与路径：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.important_deviation_definition",
+            "value": "重要偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.general_deviation_definition",
+            "value": "一般偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.urgent_hazard_exception_definition",
+            "value": "紧急危害例外定义：适用边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "deviation_process_and_impact_assessment",
+            "statement": "偏离程序/记录/影响评估/沟通完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "important_general_deviation_distinction",
+            "statement": "重要与一般偏离分级有定义（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "deviation_process_and_impact_assessment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[912-915]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "偏离承载段：分级定义与影响评估（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.deviation_process",
+            "value": "偏离处理程序：本项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_records",
+            "value": "偏离记录：可追溯与责任（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_communication",
+            "value": "沟通对象与路径：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.important_deviation_definition",
+            "value": "重要偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.general_deviation_definition",
+            "value": "一般偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.urgent_hazard_exception_definition",
+            "value": "紧急危害例外定义：适用边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "deviation_process_and_impact_assessment",
+            "statement": "偏离程序/记录/影响评估/沟通完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "important_general_deviation_distinction",
+            "statement": "重要与一般偏离分级有定义（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "deviation_process_and_impact_assessment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[912-915]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "偏离承载段：分级定义与影响评估（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.deviation_process",
+            "value": "偏离处理程序：本项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_records",
+            "value": "偏离记录：可追溯与责任（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_impact_assessment",
+            "value": "影响评估：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_communication",
+            "value": "沟通对象与路径：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.important_deviation_definition",
+            "value": "重要偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.general_deviation_definition",
+            "value": "一般偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.urgent_hazard_exception_definition",
+            "value": "紧急危害例外定义：适用边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "deviation_process_and_impact_assessment",
+            "statement": "偏离程序/记录/影响评估/沟通完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "important_general_deviation_distinction",
+            "statement": "重要与一般偏离分级有定义（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "deviation_process_and_impact_assessment",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "偏离承载段：分级定义与影响评估（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:urgent-hazard-blanket-waiver",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.deviation_process",
+            "value": "偏离处理程序：本项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_records",
+            "value": "偏离记录：可追溯与责任（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_impact_assessment",
+            "value": "影响评估：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_communication",
+            "value": "沟通对象与路径：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.important_deviation_definition",
+            "value": "重要偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.general_deviation_definition",
+            "value": "一般偏离定义：判定依据（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "deviation_process_and_impact_assessment",
+            "statement": "偏离程序/记录/影响评估/沟通完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "important_general_deviation_distinction",
+            "statement": "重要与一般偏离分级有定义（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "urgent_hazard_exception_blanket_waiver",
+            "statement": "紧急危害情况可豁免全部偏离义务（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "deviation_process_and_impact_assessment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[912-915]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "偏离承载段：分级定义与影响评估（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-6:important-deviation-undefined",
+      "chapter_contract_id": "contract:v2-n-14-6:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.deviation_process",
+            "value": "偏离处理程序：本项目路径（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_records",
+            "value": "偏离记录：可追溯与责任（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_impact_assessment",
+            "value": "影响评估：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.deviation_communication",
+            "value": "沟通对象与路径：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.general_deviation_definition",
+            "value": "一般偏离定义：判定依据（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.urgent_hazard_exception_definition",
+            "value": "紧急危害例外定义：适用边界（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "deviation_process_and_impact_assessment",
+            "statement": "偏离程序/记录/影响评估/沟通完整（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "important_general_deviation_distinction",
+            "statement": "重要与一般偏离分级有定义（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "deviation_process_and_impact_assessment",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[912-915]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "偏离承载段：分级定义与影响评估（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:positive",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.safety_oversight_body_type",
+            "value": "监督主体类型：独立 DSMB（非 SMC/IRC）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_composition",
+            "value": "组成：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_roles",
+            "value": "角色与职责：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_information_flow",
+            "value": "信息流：安全性数据流向（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_review_arrangement",
+            "value": "审议安排：实际节奏（半年为示例）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_escalation_path",
+            "value": "升级路径：可追溯建议链（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.oversight_charter_version",
+            "value": "章程版本：SYN-CH-1.0（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_approval_record",
+            "value": "批准记录：项目登记（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "safety_oversight_actual_arrangement",
+            "statement": "安全性监督为实际主体/组成/角色/信息/审议安排（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "oversight_body_type_and_role_stated",
+            "statement": "已显式陈述监督主体类型与角色边界（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "safety_oversight_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[916-921]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "安全性监督承载段：主体/组成/信息/审议（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:missing-control",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.safety_oversight_body_type",
+            "value": "监督主体类型：独立 DSMB（非 SMC/IRC）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_composition",
+            "value": "组成：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_roles",
+            "value": "角色与职责：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_information_flow",
+            "value": "信息流：安全性数据流向（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_review_arrangement",
+            "value": "审议安排：实际节奏（半年为示例）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.oversight_charter_version",
+            "value": "章程版本：SYN-CH-1.0（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_approval_record",
+            "value": "批准记录：项目登记（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "safety_oversight_actual_arrangement",
+            "statement": "安全性监督为实际主体/组成/角色/信息/审议安排（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "oversight_body_type_and_role_stated",
+            "statement": "已显式陈述监督主体类型与角色边界（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "safety_oversight_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[916-921]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "安全性监督承载段：主体/组成/信息/审议（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:wrong-source",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.safety_oversight_body_type",
+            "value": "监督主体类型：独立 DSMB（非 SMC/IRC）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_composition",
+            "value": "组成：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_roles",
+            "value": "角色与职责：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_information_flow",
+            "value": "信息流：安全性数据流向（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_review_arrangement",
+            "value": "审议安排：实际节奏（半年为示例）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_escalation_path",
+            "value": "升级路径：可追溯建议链（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.oversight_charter_version",
+            "value": "章程版本：SYN-CH-1.0（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_approval_record",
+            "value": "批准记录：项目登记（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "safety_oversight_actual_arrangement",
+            "statement": "安全性监督为实际主体/组成/角色/信息/审议安排（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "oversight_body_type_and_role_stated",
+            "statement": "已显式陈述监督主体类型与角色边界（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "safety_oversight_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "安全性监督承载段：主体/组成/信息/审议（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:skeleton",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:incompatible-committee-roles",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.safety_oversight_body_type",
+            "value": "监督主体类型：独立 DSMB（非 SMC/IRC）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_composition",
+            "value": "组成：按项目记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_roles",
+            "value": "角色与职责：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_information_flow",
+            "value": "信息流：安全性数据流向（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_escalation_path",
+            "value": "升级路径：可追溯建议链（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.oversight_charter_approval_record",
+            "value": "批准记录：项目登记（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "safety_oversight_actual_arrangement",
+            "statement": "安全性监督为实际主体/组成/角色/信息/审议安排（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "oversight_body_type_and_role_stated",
+            "statement": "已显式陈述监督主体类型与角色边界（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "dsmb_smc_irc_interchangeable",
+            "statement": "DSMB、SMC 与 IRC 角色可互换（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "semiannual_cadence_as_universal_rule",
+            "statement": "半年度会议频次被写成普遍规则（合成负例扩展，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "safety_oversight_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[916-921]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "安全性监督承载段：主体/组成/信息/审议（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-7:fabricated-membership-and-approval",
+      "chapter_contract_id": "contract:v2-n-14-7:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.safety_oversight_body_type",
+            "value": "监督主体类型：独立 DSMB（非 SMC/IRC）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_roles",
+            "value": "角色与职责：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_information_flow",
+            "value": "信息流：安全性数据流向（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_oversight_review_arrangement",
+            "value": "审议安排：实际节奏（半年为示例）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.safety_escalation_path",
+            "value": "升级路径：可追溯建议链（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "quality.oversight_charter_version",
+            "value": "章程版本：SYN-CH-1.0（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.oversight_charter_approval_record",
+            "value": "批准记录：项目登记（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "safety_oversight_actual_arrangement",
+            "statement": "安全性监督为实际主体/组成/角色/信息/审议安排（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "oversight_body_type_and_role_stated",
+            "statement": "已显式陈述监督主体类型与角色边界（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "fabricated_committee_membership",
+            "statement": "委员会成员为合成名单且视为已确认（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "fabricated_approved_charter",
+            "statement": "章程已获批准（无实际记录）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "safety_oversight_actual_arrangement",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[916-921]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "安全性监督承载段：主体/组成/信息/审议（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:positive",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "references.used_source_register",
+            "value": "实际使用来源登记表：逐条与引用对应（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.bibliographic_metadata",
+            "value": "书目元数据：作者/题名/出版/年份/DOI/访问日期（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.citation_style",
+            "value": "引用格式：适用已批准模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.in_text_citation_targets",
+            "value": "正文引用目标：每条可解析（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.foreign_sources_present",
+            "value": "true"
+          },
+          {
+            "fact_path": "references.foreign_format_style",
+            "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "study_bibliography_from_used_sources",
+            "statement": "研究书目由实际使用来源生成（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "citations_resolvable",
+            "statement": "每条正文引用可解析到对应条目（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_bibliography_from_used_sources",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "citations_resolvable",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "参考文献承载段：来源登记与可解析引用（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": false,
+      "supplied_qc_verdict": "合成自评 fail：确定性检查忽略该自评，不改变机械检查结果（合成示例，非真实项目）"
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:missing-claim",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "references.used_source_register",
+            "value": "实际使用来源登记表：逐条与引用对应（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.bibliographic_metadata",
+            "value": "书目元数据：作者/题名/出版/年份/DOI/访问日期（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.citation_style",
+            "value": "引用格式：适用已批准模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.in_text_citation_targets",
+            "value": "正文引用目标：每条可解析（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.foreign_sources_present",
+            "value": "true"
+          },
+          {
+            "fact_path": "references.foreign_format_style",
+            "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "study_bibliography_from_used_sources",
+            "statement": "研究书目由实际使用来源生成（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_bibliography_from_used_sources",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "citations_resolvable",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "参考文献承载段：来源登记与可解析引用（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:wrong-source",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "references.used_source_register",
+            "value": "实际使用来源登记表：逐条与引用对应（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.bibliographic_metadata",
+            "value": "书目元数据：作者/题名/出版/年份/DOI/访问日期（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.citation_style",
+            "value": "引用格式：适用已批准模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.in_text_citation_targets",
+            "value": "正文引用目标：每条可解析（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.foreign_sources_present",
+            "value": "true"
+          },
+          {
+            "fact_path": "references.foreign_format_style",
+            "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "study_bibliography_from_used_sources",
+            "statement": "研究书目由实际使用来源生成（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "citations_resolvable",
+            "statement": "每条正文引用可解析到对应条目（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "study_bibliography_from_used_sources",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "citations_resolvable",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "参考文献承载段：来源登记与可解析引用（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:skeleton",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:template-example-bibliography",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "references.used_source_register",
+            "value": "实际使用来源登记表：逐条与引用对应（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.bibliographic_metadata",
+            "value": "书目元数据：作者/题名/出版/年份/DOI/访问日期（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.citation_style",
+            "value": "引用格式：适用已批准模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.in_text_citation_targets",
+            "value": "正文引用目标：每条可解析（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.foreign_sources_present",
+            "value": "true"
+          },
+          {
+            "fact_path": "references.foreign_format_style",
+            "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.template_example_reference_list",
+            "value": "模板示例参考文献列表被当作研究文献目录（合成负例扩展，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "study_bibliography_from_used_sources",
+            "statement": "研究书目由实际使用来源生成（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "template_example_bibliography_used_as_study_bibliography",
+            "statement": "直接使用模板示例书目作为研究书目（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "unused_reference_listed",
+            "statement": "列出了未被正文使用的参考文献（合成负例扩展，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_bibliography_from_used_sources",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "citations_resolvable",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "参考文献承载段：来源登记与可解析引用（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-15:in-text-citation-without-target",
+      "chapter_contract_id": "contract:v2-n-15:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "references.used_source_register",
+            "value": "实际使用来源登记表：逐条与引用对应（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.citation_style",
+            "value": "引用格式：适用已批准模板样式（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.in_text_citation_targets",
+            "value": "正文引用目标：每条可解析（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "references.foreign_sources_present",
+            "value": "true"
+          },
+          {
+            "fact_path": "references.foreign_format_style",
+            "value": "外文格式样式：适用模板样式（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "study_bibliography_from_used_sources",
+            "statement": "研究书目由实际使用来源生成（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "citations_resolvable",
+            "statement": "每条正文引用可解析到对应条目（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "in_text_citation_without_target",
+            "statement": "正文引用 [SYN-9] 无需对应条目（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "study_bibliography_from_used_sources",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "regulatory_or_guideline",
+            "admission_claim_type": "citations_resolvable",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[926-969]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "参考文献承载段：来源登记与可解析引用（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:positive",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.applicable_attachment_index",
+            "value": "适用附件索引：仅实际适用项（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.inclusion_decision_basis",
+            "value": "收录依据：逐项决定记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.container_aggregation_scope",
+            "value": "容器汇总范围：保留 x1/x2/x3 独立义务（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "statement": "容器汇总实际适用附件（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "container_preserves_outlined_leaf_obligations",
+            "statement": "容器不替代大纲叶子义务（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[970-972]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录容器承载段：适用附件与收录依据（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:missing-claim",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "missing_claim",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.applicable_attachment_index",
+            "value": "适用附件索引：仅实际适用项（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.inclusion_decision_basis",
+            "value": "收录依据：逐项决定记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.container_aggregation_scope",
+            "value": "容器汇总范围：保留 x1/x2/x3 独立义务（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "statement": "容器汇总实际适用附件（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[970-972]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录容器承载段：适用附件与收录依据（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:wrong-source",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.applicable_attachment_index",
+            "value": "适用附件索引：仅实际适用项（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.inclusion_decision_basis",
+            "value": "收录依据：逐项决定记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.container_aggregation_scope",
+            "value": "容器汇总范围：保留 x1/x2/x3 独立义务（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "statement": "容器汇总实际适用附件（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "container_preserves_outlined_leaf_obligations",
+            "statement": "容器不替代大纲叶子义务（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录容器承载段：适用附件与收录依据（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:skeleton",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:placeholder-appendix-included",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.applicable_attachment_index",
+            "value": "适用附件索引：仅实际适用项（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.container_aggregation_scope",
+            "value": "容器汇总范围：保留 x1/x2/x3 独立义务（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "statement": "容器汇总实际适用附件（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "container_preserves_outlined_leaf_obligations",
+            "statement": "容器不替代大纲叶子义务（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix_placeholder_or_template_example_included_as_final",
+            "statement": "占位附录可作为最终内容（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[970-972]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录容器承载段：适用附件与收录依据（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16:container-replaces-outline-leaves",
+      "chapter_contract_id": "contract:v2-n-16:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.inclusion_decision_basis",
+            "value": "收录依据：逐项决定记录（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.container_aggregation_scope",
+            "value": "容器汇总范围：保留 x1/x2/x3 独立义务（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "statement": "容器汇总实际适用附件（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "container_preserves_outlined_leaf_obligations",
+            "statement": "容器不替代大纲叶子义务（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "container_replaces_outlined_leaf_obligations",
+            "statement": "容器替代 x1/x2/x3 义务（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix_aggregates_actual_applicable_attachments",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[970-972]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录容器承载段：适用附件与收录依据（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:positive",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_applicability_decision_record",
+            "value": "ECOG 适用性决定记录：项目登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_version",
+            "value": "ECOG 版本：SYN-ECOG-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_scale_reproduced",
+            "value": "评分内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.ecog_version_and_contents_verified",
+            "statement": "ECOG 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[973-974]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "ECOG 评分表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:ecog_grade",
+                "value": "合成 ECOG 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:ecog_definition",
+                "value": "合成活动能力定义（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:conditional-inactive",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_applicability_decision_record",
+            "value": "附录适用性决定记录：评估为不适用（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "false"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "附录适用性已由实际评估决定（不适用）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[973-974]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录适用性决定承载段：不适用时不含表格（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:missing-control",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_version",
+            "value": "ECOG 版本：SYN-ECOG-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_scale_reproduced",
+            "value": "评分内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.ecog_version_and_contents_verified",
+            "statement": "ECOG 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[973-974]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "ECOG 评分表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:ecog_grade",
+                "value": "合成 ECOG 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:ecog_definition",
+                "value": "合成活动能力定义（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:wrong-source",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_applicability_decision_record",
+            "value": "ECOG 适用性决定记录：项目登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_version",
+            "value": "ECOG 版本：SYN-ECOG-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_scale_reproduced",
+            "value": "评分内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.ecog_version_and_contents_verified",
+            "statement": "ECOG 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "ECOG 评分表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:ecog_grade",
+                "value": "合成 ECOG 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:ecog_definition",
+                "value": "合成活动能力定义（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:skeleton",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:ecog-appendix-without-assessment",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_template_example_table",
+            "value": "模板示例 ECOG 表被直接收录（合成负例扩展，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "ecog_appendix_without_actual_assessment",
+            "statement": "未做实际评估即收录 ECOG 附录（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[973-974]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": []
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:positive",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_applicability_decision_record",
+            "value": "NYHA 适用性决定记录：项目登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_version",
+            "value": "NYHA 版本：SYN-NYHA-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_classification_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "NYHA 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.nyha_version_and_contents_verified",
+            "statement": "NYHA 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "NYHA 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:nyha_class",
+                "value": "合成 NYHA 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:nyha_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:conditional-inactive",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_applicability_decision_record",
+            "value": "附录适用性决定记录：评估为不适用（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "false"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "附录适用性已由实际评估决定（不适用）（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录适用性决定承载段：不适用时不含表格（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:missing-control",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_version",
+            "value": "NYHA 版本：SYN-NYHA-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_classification_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "NYHA 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.nyha_version_and_contents_verified",
+            "statement": "NYHA 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "NYHA 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:nyha_class",
+                "value": "合成 NYHA 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:nyha_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:wrong-source",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_applicability_decision_record",
+            "value": "NYHA 适用性决定记录：项目登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_version",
+            "value": "NYHA 版本：SYN-NYHA-1（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_classification_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "NYHA 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.nyha_version_and_contents_verified",
+            "statement": "NYHA 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "NYHA 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:nyha_class",
+                "value": "合成 NYHA 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:nyha_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:skeleton",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:nyha-appendix-unverified-version",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.nyha_classification_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "NYHA 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.nyha_version_and_contents_verified",
+            "statement": "NYHA 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "nyha_appendix_version_unverified",
+            "statement": "未核对版本即收录 NYHA 附录（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "NYHA 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:nyha_class",
+                "value": "合成 NYHA 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:nyha_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x2:nyha-appendix-without-assessment",
+      "chapter_contract_id": "contract:v2-n-16-x2:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.nyha_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.nyha_template_example_table",
+            "value": "模板示例 NYHA 表被直接收录（合成负例扩展，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.nyha_applicability_decided",
+            "statement": "NYHA 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "nyha_appendix_without_actual_assessment",
+            "statement": "未做实际评估即收录 NYHA 附录（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.nyha_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": []
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:positive",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "positive",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_name",
+            "value": "中心实验室名称：合成 LAB-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_roles_and_scope",
+            "value": "实验室职责与检测范围：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_name",
+            "value": "样本销毁公司名称：合成 DEST-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_identifying_details",
+            "value": "销毁方识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:missing-control",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_name",
+            "value": "中心实验室名称：合成 LAB-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_roles_and_scope",
+            "value": "实验室职责与检测范围：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_name",
+            "value": "样本销毁公司名称：合成 DEST-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:wrong-source",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "wrong_source",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_name",
+            "value": "中心实验室名称：合成 LAB-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_roles_and_scope",
+            "value": "实验室职责与检测范围：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_name",
+            "value": "样本销毁公司名称：合成 DEST-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_identifying_details",
+            "value": "销毁方识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "company_style_only",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成错误来源登记：公司风格材料不得准入本项目主张（合成示例，非真实项目）",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:skeleton",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "skeleton",
+      "content": {},
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:template-example-supplier",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_name",
+            "value": "中心实验室名称：合成 LAB-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_name",
+            "value": "样本销毁公司名称：合成 DEST-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_identifying_details",
+            "value": "销毁方识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.template_example_supplier_row",
+            "value": "模板示例供应商行（非项目供应商）（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "template_example_lab_or_destruction_company_as_project_supplier",
+            "statement": "模板示例实验室/销毁公司被当作项目供应商（合成负例扩展，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:blank-provider-fields",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_name",
+            "value": "中心实验室名称：合成 LAB-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_roles_and_scope",
+            "value": "实验室职责与检测范围：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x3:invented-provider-content",
+      "chapter_contract_id": "contract:v2-n-16-x3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.laboratory_identifying_details",
+            "value": "实验室识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.laboratory_roles_and_scope",
+            "value": "实验室职责与检测范围：项目安排（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_name",
+            "value": "样本销毁公司名称：合成 DEST-A（非真实供应商）（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_identifying_details",
+            "value": "销毁方识别信息：地址/联系/资质登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.destruction_provider_roles",
+            "value": "销毁职责与边界：项目安排（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.laboratory_identity_and_roles",
+            "statement": "中心实验室身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.destruction_provider_identity_and_roles",
+            "statement": "销毁方身份与职责由项目事实支持（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "blank_or_invented_supplier_content",
+            "statement": "供应商信息可编造填充（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.laboratory_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          },
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.destruction_provider_identity_and_roles",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[981-995]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "附录 3 承载段：实验室与销毁方分列（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-14-3:inferred-completed-training",
+      "chapter_contract_id": "contract:v2-n-14-3:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "quality.investigator_conduct_and_delegation",
+            "value": "研究者实施与委派：项目分工（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_protocol_compliance",
+            "value": "方案遵循：逐项登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_records",
+            "value": "研究记录与报告责任：项目角色（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "quality.investigator_facilities_and_resources",
+            "value": "设施与资源：实际配置（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "investigator_responsibility_matches_arrangements",
+            "statement": "研究者责任与实际安排一致（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "monitor_training_inferred_complete",
+            "statement": "监查员培训已按计划完成（由职责意图推断，无记录；合成负例，非真实项目）。"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "investigator_responsibility_matches_arrangements",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[901-909]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "paragraph",
+            "occurrences": 2,
+            "text": "研究者责任承载段：实施/监督/记录/资源（合成示例，非真实项目）"
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    },
+    {
+      "fixture_id": "fixture:batch8:v2-n-16-x1:ecog-appendix-unverified-version",
+      "chapter_contract_id": "contract:v2-n-16-x1:v2",
+      "fixture_kind": "missing_control",
+      "content": {
+        "facts": [
+          {
+            "fact_path": "appendix.ecog_assessment_applicable",
+            "value": "true"
+          },
+          {
+            "fact_path": "appendix.ecog_source_reference",
+            "value": "来源核对：适当来源登记（合成示例，非真实项目）"
+          },
+          {
+            "fact_path": "appendix.ecog_scale_reproduced",
+            "value": "分级内容复现：与核对来源一致（合成示例，非真实项目）"
+          }
+        ],
+        "claims": [
+          {
+            "claim_type": "appendix.ecog_applicability_decided",
+            "statement": "ECOG 附录适用性已由实际评估决定（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "appendix.ecog_version_and_contents_verified",
+            "statement": "ECOG 版本与内容已对照适当来源核对（合成示例，非真实项目）"
+          },
+          {
+            "claim_type": "ecog_appendix_version_unverified",
+            "statement": "未核对版本即收录 ECOG 附录（合成示例，非真实项目）"
+          }
+        ],
+        "evidence": [
+          {
+            "source_role": "project_primary",
+            "admission_claim_type": "appendix.ecog_applicability_decided",
+            "locator_kind": "body",
+            "locator": "合成来源登记：TP-MA-07 v2.0 body[977-978]（零基 body-child 索引；合成夹具，非真实项目批准）。",
+            "context": "合成上下文窗口：项目事实来源（测试用，非真实项目记录）。",
+            "quality_score": 0.95
+          }
+        ],
+        "objects": [
+          {
+            "object_kind": "table",
+            "occurrences": 1,
+            "text": "ECOG 分级表承载（合成示例，非真实项目）",
+            "cells": [
+              {
+                "cell_id": "appendix:cell:ecog_class",
+                "value": "合成 ECOG 分级（合成示例，非真实项目）"
+              },
+              {
+                "cell_id": "appendix:cell:ecog_description",
+                "value": "合成心功能描述（合成示例，非真实项目）"
+              }
+            ]
+          }
+        ]
+      },
+      "supplied_passed": null,
+      "supplied_qc_verdict": null
+    }
+  ]
+}

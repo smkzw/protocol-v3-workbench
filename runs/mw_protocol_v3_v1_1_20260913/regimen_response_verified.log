@@ -1,0 +1,120 @@
+.......FFFF.............                                                 [100%]
+=================================== FAILURES ===================================
+___ test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts ___
+
+    def test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts():
+        from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+>       prepared, output = prepared_reference()
+                           ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_clinical_design_worker.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+        from test_writing_reference_docx import build_docx, paragraph_xml
+        data = build_docx(paragraph_xml("合成给药依据：200 mg，2 mL。") + paragraph_xml("合成维持依据：100 mg。"))
+>       source = SourceArtifact(source_artifact_id="source-fixture", logical_source_key="reference",
+            content_sha256=hashlib.sha256(data).hexdigest(), source_role="company_style_only",
+            source_version="1", jurisdiction=None, mime_type="application/docx", captured_at=datetime.now(timezone.utc))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for SourceArtifact
+E       jurisdiction
+E         Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_type
+
+tests/protocol_v3/test_clinical_design_worker.py:102: ValidationError
+_____ test_new_regimen_quote_must_exist_in_its_bound_original_source_unit ______
+
+    def test_new_regimen_quote_must_exist_in_its_bound_original_source_unit():
+        from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+>       prepared, output = prepared_reference()
+                           ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_clinical_design_worker.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+        from test_writing_reference_docx import build_docx, paragraph_xml
+        data = build_docx(paragraph_xml("合成给药依据：200 mg，2 mL。") + paragraph_xml("合成维持依据：100 mg。"))
+>       source = SourceArtifact(source_artifact_id="source-fixture", logical_source_key="reference",
+            content_sha256=hashlib.sha256(data).hexdigest(), source_role="company_style_only",
+            source_version="1", jurisdiction=None, mime_type="application/docx", captured_at=datetime.now(timezone.utc))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for SourceArtifact
+E       jurisdiction
+E         Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_type
+
+tests/protocol_v3/test_clinical_design_worker.py:102: ValidationError
+______ test_regimen_from_another_input_cannot_be_adopted_as_this_proposal ______
+
+    def test_regimen_from_another_input_cannot_be_adopted_as_this_proposal():
+        from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+>       prepared, output = prepared_reference()
+                           ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_clinical_design_worker.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+        from test_writing_reference_docx import build_docx, paragraph_xml
+        data = build_docx(paragraph_xml("合成给药依据：200 mg，2 mL。") + paragraph_xml("合成维持依据：100 mg。"))
+>       source = SourceArtifact(source_artifact_id="source-fixture", logical_source_key="reference",
+            content_sha256=hashlib.sha256(data).hexdigest(), source_role="company_style_only",
+            source_version="1", jurisdiction=None, mime_type="application/docx", captured_at=datetime.now(timezone.utc))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for SourceArtifact
+E       jurisdiction
+E         Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_type
+
+tests/protocol_v3/test_clinical_design_worker.py:102: ValidationError
+___ test_missing_regimen_is_information_gap_not_a_fabricated_complete_design ___
+
+    def test_missing_regimen_is_information_gap_not_a_fabricated_complete_design():
+        from app.protocol_workflow.agent2.clinical_worker import read_regimen_response
+>       prepared, _ = prepared_reference()
+                      ^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_clinical_design_worker.py:144: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def prepared_reference():
+        from datetime import datetime, timezone
+        import hashlib
+        from packages.contracts.workbench_contracts.protocol_v3 import SourceArtifact
+        from app.protocol_workflow.agent1.docx_parse import parse_docx
+        from app.protocol_workflow.agent1.research_seed import prepare_seed_request, read_seed_candidates
+        from app.protocol_workflow.agent2.clinical_worker import prepare_regimen_request
+        from test_writing_reference_docx import build_docx, paragraph_xml
+        data = build_docx(paragraph_xml("合成给药依据：200 mg，2 mL。") + paragraph_xml("合成维持依据：100 mg。"))
+>       source = SourceArtifact(source_artifact_id="source-fixture", logical_source_key="reference",
+            content_sha256=hashlib.sha256(data).hexdigest(), source_role="company_style_only",
+            source_version="1", jurisdiction=None, mime_type="application/docx", captured_at=datetime.now(timezone.utc))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for SourceArtifact
+E       jurisdiction
+E         Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_type
+
+tests/protocol_v3/test_clinical_design_worker.py:102: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_reference_regimen_stays_reference_and_never_becomes_confirmed_facts
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_new_regimen_quote_must_exist_in_its_bound_original_source_unit
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_regimen_from_another_input_cannot_be_adopted_as_this_proposal
+FAILED tests/protocol_v3/test_clinical_design_worker.py::test_missing_regimen_is_information_gap_not_a_fabricated_complete_design
+4 failed, 20 passed in 0.36s

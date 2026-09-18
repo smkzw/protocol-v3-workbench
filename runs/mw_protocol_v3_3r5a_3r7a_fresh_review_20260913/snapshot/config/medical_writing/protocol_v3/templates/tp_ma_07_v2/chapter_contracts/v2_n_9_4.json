@@ -1,0 +1,186 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-9-4:v2",
+  "semantic_node_id": "v2_n_9_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-9-4:independent-review-committee",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-9-4:v2",
+    "chapter_contract_id": "contract:v2-n-9-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.applicable",
+        "obligation": "required",
+        "rationale": "IRC 是否设立必须由项目事实条件判定（裸 true/false）；IRC 为条件性机制。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.charter_and_independence",
+        "obligation": "optional",
+        "rationale": "设立 IRC 时必须给出章程与独立性保障。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.review_scope_endpoints",
+        "obligation": "optional",
+        "rationale": "设立 IRC 时必须给出评审范围与适用终点。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.adjudication_method_and_instrument",
+        "obligation": "optional",
+        "rationale": "设立 IRC 时必须给出裁定方法与工具版本（RECIST 1.1 仅为示例）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.roles_and_conflict_management",
+        "obligation": "optional",
+        "rationale": "设立 IRC 时必须给出角色与利益冲突管理。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "irc.template_example_adjudication",
+        "obligation": "forbidden",
+        "rationale": "模板示例裁定方法不得作为项目裁定方法。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "irc_applicability_decision",
+        "obligation": "required",
+        "rationale": "必须声明本项目是否设立 IRC 及其依据。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "irc_equals_safety_committee",
+        "obligation": "forbidden",
+        "rationale": "IRC 不得与安全性/数据监查委员会混同。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "recist_universal_method",
+        "obligation": "forbidden",
+        "rationale": "RECIST 1.1、肿瘤影像与 CD 传输仅为示例，不得作为通用裁定方法。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "协议正文禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "irc_applicability_decision"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明 IRC 适用性判定；设立时逐项给出章程、独立性、评审范围与裁定方法。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "IRC 为条件性项目事实集合（适用性/章程/范围/裁定方法/角色）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "未判定 IRC 适用性，或仅以“IRC 按章程执行”通用句交付即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-9-4",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623369"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-4:conditional",
+      "rule": "IRC 是否设立必须由项目事实条件判定；设立时须给出章程、独立性、评审范围/终点、裁定方法与工具版本、角色与利益冲突管理。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-9-4:not-committee",
+      "rule": "IRC 不得与安全性/数据监查委员会混同；RECIST 1.1、肿瘤影像与 CD 传输仅为示例，不是通用裁定方法。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-9-4:irc",
+      "triggering_fact_paths": [
+        "irc.applicable"
+      ],
+      "condition": "已确认本项目设立 IRC",
+      "rationale": "IRC 义务仅在适用性成立时生效。",
+      "required_when_active_fact_paths": [
+        "irc.charter_and_independence",
+        "irc.review_scope_endpoints",
+        "irc.adjudication_method_and_instrument",
+        "irc.roles_and_conflict_management"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-9-4:conditional",
+      "question": "IRC 适用性与设立义务是否分别声明？",
+      "linked_fact_paths": [
+        "irc.applicable"
+      ],
+      "linked_claim_types": [
+        "irc_applicability_decision"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-9-4:conditional"
+      ],
+      "risk_if_unmet": "未判定适用性会使评审义务不可追溯。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

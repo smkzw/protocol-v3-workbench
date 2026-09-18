@@ -1,0 +1,20 @@
+vite v6.4.2 building for production...
+
+(!) outDir /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+transforming...
+✓ 1953 modules transformed.
+rendering chunks...
+computing gzip size...
+../runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser/runtime-build.json                   0.27 kB │ gzip:   0.20 kB
+../runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser/index.html                           0.50 kB │ gzip:   0.35 kB
+../runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser/assets/header_logo-clkbaD-d.png     10.06 kB
+../runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser/assets/index-CCnp6bCb.css          455.52 kB │ gzip:  68.99 kB
+../runs/mw_protocol_v3_v1_1_20260913/intake-enabled-build-after-browser/assets/index-Du_clTyZ.js         2,103.38 kB │ gzip: 608.90 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.85s

@@ -1,0 +1,1 @@
+按用户授权升版旧阶段断言：原dose-modification一经成立即必须暂停给药，现改为必须明确动作features，独立hold分支必须包含hold criteria。永久停药/漏服/操作指令/禁止模板阈值等断言原样保留；源码原文body430明确剂量降低若适用，432只是示例。新增实际binding验证无修改与仅减量均保留永久停药标准，原fixture/expected未改。

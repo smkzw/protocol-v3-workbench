@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:front-2:investigator-commitment",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_front_2",
+  "chapter_contract_id": "contract:v2-n-front-2:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认方案身份与机构事实），输出为 ChapterSkillOutput。生成与现行方案编号/版本/日期及实际机构一致的研究者承诺段与签名/日期控件段；签名与日期控件保持未签署空白控件状态；不得引用过期修订或替换机构。",
+    "forbidden_behaviors": [
+      "引用过期方案修订",
+      "替换或虚构研究机构",
+      "生成合成签名/日期或已签署回执",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 49、51、54、56、58（研究者承诺与签署控件段）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：2=heading 1，1=Normal。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-2:investigator-commitment:missing-obligation",
+    "skill:chapter:front-2:investigator-commitment:unresolved-fact",
+    "skill:chapter:front-2:investigator-commitment:wrong-source"
+  ]
+}

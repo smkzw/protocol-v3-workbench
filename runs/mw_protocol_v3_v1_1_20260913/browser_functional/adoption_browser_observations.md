@@ -1,0 +1,10 @@
+# Actual synthetic adoption browser check
+
+CUA iab tab5 /tests/protocol-intake-functional.html?regimen=adoption, actual React RegimenAdoptionCard and project-mounted API/SQLite. All values synthesized by prepared_reference test helper, stored via actual Graph with fake HTTP; no real model request or real study approval. No dummy dose fact at initialization; only synthetic indication. Source links intentionally absent because this fixture tests adoption, not source catalog download.
+
+Viewed desktop screenshots and all4 period-arm/8 steps. Clicked confirm once; pending disabled -> saved receipt. Database +1 aggregate revision/+1 event; revision1->2. Reload shows saved receipt; database logical dump unchanged. Browser console warn/error none. Raw evidence: adoption_before_browser.json, adoption_after_browser.json, adoption_browser_verification.json, api_adoption.log. Screenshot inspected inline, not saved to file.
+
+UI defect found: saved success appears only at card top, out of viewport after clicking bottom; bottom button remains grey with confirm wording. Red tag still says needs confirmation beside saved receipt. After review freeze releases, make bottom receipt status immediately clear and distinguish saved historical record from current decision validity. Do not claim this validates first project creation, full intake-to-design, source download, other decisions, draft or Word.
+
+## After-commit reply interruption
+Tab6 uses a second synthetic study and the same saved design, zero new model calls. Test-only middleware returned503 after actual apply200 once, persisted marker recovery_reply_intercepted.json. Browser kept intent/disabled original confirm and offered readonly lookup; one click recovered saved result. DB logical dump before lookup equals after lookup, revisions[1,2]. Additional UX defect: busy prop also covers unresolved receipt, causing “正在处理中” alongside terminal reply interruption. Must distinguish in-flight from awaiting reconciliation. First fixture-service restart hitTIME_WAIT bind error; kept api_recovery.log, enabled SO_REUSEADDR for own test server, rebind succeeded. No unrelated service touched.

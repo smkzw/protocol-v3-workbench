@@ -1,0 +1,14 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_product_factory_is_lazy_and_restores_prior_probe_before_generation ____
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-678/test_product_factory_is_lazy_a0')
+
+    def test_product_factory_is_lazy_and_restores_prior_probe_before_generation(tmp_path):
+>       from app.protocol_workflow.agent1.seed_product import create_product_seed_factory
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_product'
+
+tests/protocol_v3/test_seed_product_factory.py:8: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_product_factory.py::test_product_factory_is_lazy_and_restores_prior_probe_before_generation
+1 failed in 0.38s

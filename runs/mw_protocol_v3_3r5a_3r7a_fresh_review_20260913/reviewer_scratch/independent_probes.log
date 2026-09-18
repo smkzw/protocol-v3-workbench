@@ -1,0 +1,24 @@
+== probe 1: conduct-clause variant with prefix (expect FLAGGED=over-detect) ==
+flagged: ['未提供书面知情同意书']
+== probe 2: canonical clause + appended clause after comma ==
+flagged: []
+== probe 3: signature-style blank text passes ==
+flagged: []
+== probe 4: version check, location missing date while current has it ==
+passed: False codes: ('r03_version_inconsistent',)
+== probe 5: citation duplicate targets + citation to duplicated id ==
+passed: False codes: ['r03_citation_target_duplicate', 'r03_citation_target_duplicate']
+== probe 6: citation empty-material with projection_completed=True is caller-asserted only ==
+passed: True (typed-input contract: flag asserted by caller; V1 wiring owns projection proof)
+== probe 7: reference_target edges ==
+('external', None)
+('internal', '书签A')
+('internal', '表1')
+('field', None)
+== probe 8: same-part duplicate bookmark name -> ambiguous ==
+resolution: ambiguous findings: [{'code': 'source_reference_ambiguous', 'location': 'word/document.xml#field:0'}]
+== probe 9: abbreviation inventory candidate-never-used not in missing ==
+used: {'AE': ['b1']} missing: [] unused: []
+== probe 10: terminology scan on reference title with full-width unit is exempt, quote source enforced ==
+findings: []
+body findings: [('preferred_participant_term', 'b1:chars:36-39'), ('full_width_percent', 'b1:chars:33-35')]

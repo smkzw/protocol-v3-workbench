@@ -1,0 +1,81 @@
+.............................F..........                                 [100%]
+=================================== FAILURES ===================================
+_ TestQCInvocationIndependence.test_qc_service_receives_only_declared_inputs_with_separate_context _
+
+self = <test_graph_runtime.TestQCInvocationIndependence object at 0x108099a00>
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-602/test_qc_service_receives_only_0')
+
+    def test_qc_service_receives_only_declared_inputs_with_separate_context(
+        self, tmp_path
+    ) -> None:
+        from app.protocol_workflow.graph import NodeServiceRequest
+    
+        plan = _probe_plan()
+        review_node = plan.node("review_node")
+        assert review_node.owner.value == "quality_control"
+    
+        invocations: list[dict[str, Any]] = []
+    
+        def _make_qc_service():
+            # Fresh context per injected QC invocation: the callable closes
+            # over its own private token and shares nothing with the writer
+            # services or the decision path.
+            qc_token = f"qc-context-{len(invocations) + 1}"
+    
+            def _qc_service(request: NodeServiceRequest) -> dict[str, Any]:
+                invocations.append(
+                    {
+                        "qc_token": qc_token,
+                        "received_input_schemas": sorted(request.inputs.keys()),
+                        "request_slots": sorted(request.__slots__),
+                        "node_id": request.node.node_id,
+                    }
+                )
+                return {
+                    "node": request.node.node_id,
+                    "open_count": 0,
+                    "qc_context": qc_token,
+                    "label": "labeled-synthetic-qc",
+                }
+    
+            return _qc_service
+    
+        services = {
+            "draft_node": lambda request: {"node": "draft_node", "label": "labeled-synthetic"},
+            "review_node": _make_qc_service(),
+            "final_node": lambda request: {"node": "final_node", "label": "labeled-synthetic"},
+        }
+        runtime = _runtime(tmp_path, services, runtime_owner="writer-owner")
+        run_id = "run-qc-independence"
+        runtime.start_run(plan, workflow_run_id=run_id, root_inputs=_root_inputs())
+        paused = runtime.run_to_completion(run_id, plan=plan)
+        assert paused.status.value == "awaiting_decision"
+        runtime.record_decision(
+            run_id,
+            node_id="lock_node",
+            decision_id="dec-qc",
+            actor_id="reviewer-human",
+            value={"approved": True},
+            reason="human confirmation",
+        )
+    
+        # 1. The QC service was invoked exactly once, over exactly its
+        #    declared input schemas — no root or other artifacts, and the
+        #    request carries none of the runtime's private surface.
+        assert len(invocations) == 1
+        invocation = invocations[0]
+        assert invocation["received_input_schemas"] == sorted(review_node.input_schemas)
+        assert invocation["node_id"] == "review_node"
+>       assert set(invocation["request_slots"]) == {
+            "plan", "node", "inputs", "input_hashes", "attempt", "reservation_id",
+        }
+E       AssertionError: assert {'attempt', '..., 'plan', ...} == {'attempt', '...servation_id'}
+E         
+E         Extra items in the left set:
+E         'execution_contract'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_graph_runtime.py:1345: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_graph_runtime.py::TestQCInvocationIndependence::test_qc_service_receives_only_declared_inputs_with_separate_context
+1 failed, 39 passed in 5.73s

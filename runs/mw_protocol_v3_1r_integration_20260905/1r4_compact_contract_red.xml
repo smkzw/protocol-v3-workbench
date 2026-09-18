@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="6" time="0.450" timestamp="2026-09-05T19:16:13.502214+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_legacy_node_material_hash_remains_byte_stable" time="0.001" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compaction_is_explicit_versioned_and_roundtrips" time="0.000"><failure message="AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'">def test_compaction_is_explicit_versioned_and_roundtrips():
+        legacy = _node_contract()
+        before = legacy.model_dump_json()
+&gt;       compact = legacy.compact_dependencies()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_compact_dependency_contract.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = NodeExecutionContract(schema_version='mw_protocol_v3_contract_v1', canonical_state=&lt;CanonicalState.FROZEN: 'frozen'&gt;, ..._id='red:default', retention_policy_id='ret:default', logical_call_id='lc:chapter-1-draft:1', idempotency_key='idem-1')
+item = 'compact_dependencies'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'
+
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: AttributeError</failure></testcase><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_binds_matching_inputs_through_real_harness" time="0.000"><failure message="AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'">def test_compact_contract_binds_matching_inputs_through_real_harness():
+&gt;       compact = _node_contract().compact_dependencies()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_compact_dependency_contract.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = NodeExecutionContract(schema_version='mw_protocol_v3_contract_v1', canonical_state=&lt;CanonicalState.FROZEN: 'frozen'&gt;, ..._id='red:default', retention_policy_id='ret:default', logical_call_id='lc:chapter-1-draft:1', idempotency_key='idem-1')
+item = 'compact_dependencies'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'
+
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: AttributeError</failure></testcase><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes0]" time="0.000"><failure message="AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'">hashes = ('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',)
+
+    @pytest.mark.parametrize("hashes", [("a" * 64,), ("b" * 64, "a" * 64), ("a" * 64, "c" * 64)])
+    def test_compact_contract_detects_missing_reordered_or_replaced_input(hashes):
+        original = _node_contract(input_hashes=("a" * 64, "b" * 64))
+&gt;       compact = original.compact_dependencies()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_compact_dependency_contract.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = NodeExecutionContract(schema_version='mw_protocol_v3_contract_v1', canonical_state=&lt;CanonicalState.FROZEN: 'frozen'&gt;, ..._id='red:default', retention_policy_id='ret:default', logical_call_id='lc:chapter-1-draft:1', idempotency_key='idem-1')
+item = 'compact_dependencies'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'
+
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: AttributeError</failure></testcase><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes1]" time="0.000"><failure message="AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'">hashes = ('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+
+    @pytest.mark.parametrize("hashes", [("a" * 64,), ("b" * 64, "a" * 64), ("a" * 64, "c" * 64)])
+    def test_compact_contract_detects_missing_reordered_or_replaced_input(hashes):
+        original = _node_contract(input_hashes=("a" * 64, "b" * 64))
+&gt;       compact = original.compact_dependencies()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_compact_dependency_contract.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = NodeExecutionContract(schema_version='mw_protocol_v3_contract_v1', canonical_state=&lt;CanonicalState.FROZEN: 'frozen'&gt;, ..._id='red:default', retention_policy_id='ret:default', logical_call_id='lc:chapter-1-draft:1', idempotency_key='idem-1')
+item = 'compact_dependencies'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'
+
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: AttributeError</failure></testcase><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes2]" time="0.000"><failure message="AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'">hashes = ('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc')
+
+    @pytest.mark.parametrize("hashes", [("a" * 64,), ("b" * 64, "a" * 64), ("a" * 64, "c" * 64)])
+    def test_compact_contract_detects_missing_reordered_or_replaced_input(hashes):
+        original = _node_contract(input_hashes=("a" * 64, "b" * 64))
+&gt;       compact = original.compact_dependencies()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_compact_dependency_contract.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = NodeExecutionContract(schema_version='mw_protocol_v3_contract_v1', canonical_state=&lt;CanonicalState.FROZEN: 'frozen'&gt;, ..._id='red:default', retention_policy_id='ret:default', logical_call_id='lc:chapter-1-draft:1', idempotency_key='idem-1')
+item = 'compact_dependencies'
+
+    def __getattr__(self, item: str) -&gt; Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+    
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+    
+            if pydantic_extra and item in pydantic_extra:
+                return pydantic_extra[item]
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+&gt;                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'NodeExecutionContract' object has no attribute 'compact_dependencies'
+
+runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py:1042: AttributeError</failure></testcase></testsuite></testsuites>

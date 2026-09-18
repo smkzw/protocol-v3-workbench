@@ -1,0 +1,252 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-14-7:v2",
+  "semantic_node_id": "v2_n_14_7",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-14-7",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-14-7:v2",
+    "chapter_contract_id": "contract:v2-n-14-7:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_oversight_body_type",
+        "obligation": "required",
+        "rationale": "声明项目计划的安全监督主体与职责，如DSMB、SMC、安全评价委员会或独立安全性监查员；终点IRC不自动承担安全监督，也不要求虚构委员会。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_oversight_composition",
+        "obligation": "required",
+        "rationale": "监督组成必须为实际安排；缺失走待补，不得虚构成员。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_oversight_roles",
+        "obligation": "required",
+        "rationale": "角色与职责必须逐项登记并与主体类型一致。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_oversight_information_flow",
+        "obligation": "required",
+        "rationale": "监督所需信息（安全性数据/揭盲信息）流向必须为项目事实。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_oversight_review_arrangement",
+        "obligation": "required",
+        "rationale": "审议安排必须声明实际节奏与升格条件；半年一次仅为示例。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.safety_escalation_path",
+        "obligation": "required",
+        "rationale": "升级/暂停建议路径必须可追溯，不得只写“按需召开”。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.oversight_charter_applicable",
+        "obligation": "optional",
+        "rationale": "监督章程适用性触发事实，采用裸 true/false 编码；不适用不豁免监督义务。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.oversight_charter_version",
+        "obligation": "optional",
+        "rationale": "章程已草拟或已批准时登记真实版本；仅计划制定时不编造版本。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "quality.oversight_charter_approval_record",
+        "obligation": "optional",
+        "rationale": "仅在确认章程已批准时提供真实批准记录；草拟中不能写成已批准，也不要求提前制造批准记录。"
+      },
+      {
+        "fact_path": "quality.oversight_charter_status",
+        "obligation": "optional",
+        "rationale": "章程适用时确认实际状态：planned（计划制定）、draft（已草拟）或approved（已批准）；这不是生产或研究启动批准。未知状态先对账。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "safety_oversight_actual_arrangement",
+        "obligation": "required",
+        "rationale": "安全性监督主张必须描述实际主体/组成/角色/信息/审议安排，并由项目事实和证据支持。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "oversight_body_type_and_role_stated",
+        "obligation": "required",
+        "rationale": "必须显式陈述监督主体类型及其角色边界，不能只写“设有委员会”。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "dsmb_smc_irc_interchangeable",
+        "obligation": "forbidden",
+        "rationale": "独立 DSMB、申办者参与的 SMC 与终点 IRC 不可互换；负向夹具据此触发 forbidden_claim_present。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "fabricated_committee_membership",
+        "obligation": "forbidden",
+        "rationale": "不得虚构委员会成员名单；负向夹具据此触发 forbidden_claim_present。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "fabricated_approved_charter",
+        "obligation": "forbidden",
+        "rationale": "不得虚构已批准的章程；负向夹具据此触发 forbidden_claim_present。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "semiannual_cadence_as_universal_rule",
+        "obligation": "forbidden",
+        "rationale": "半年一次会议与升级判定只是示例，不得写成通用规则；负向夹具据此触发 forbidden_claim_present。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary",
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "safety_oversight_actual_arrangement"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 quality.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "v2_n_14 为 §14 结构容器（非载体）；本节绑定源窗口 916–921；独立 DSMB、申办者参与的 SMC 与终点 IRC 保持类型分离。",
+      "安全性监督涉及试验参与者安全信息流时必须与项目事实一致，不得虚构成员或章程。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准、已批准章程或真实成员名单。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或“设有安全性监督委员会”一句而无主体类型/组成/信息/审议事实时不算实质内容。",
+      "源窗口 916–921：半年会议与升级判定只是示例；不得据此写出通用规则或虚构章程/成员。",
+      "结构检查不等于医学、安全性或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-14-7",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc14880132",
+      "_Toc14883333",
+      "_Toc89521025",
+      "_Toc89521032",
+      "_Toc132623422"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-14-7:type-separation",
+      "rule": "明确安全监督主体及职责；DSMB/SMC/独立安全性监查员等安排以项目为准，终点IRC不自动替代安全监督。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-14-7:arrangement",
+      "rule": "组成、角色、信息流、审议与升级路径必须逐项绑定项目事实；缺失走待补/建议解决。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-14-7:no-fabrication",
+      "rule": "不得虚构章程批准或成员名单；半年会议为示例而非通用规则。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-14-7:oversight-charter",
+      "triggering_fact_paths": [
+        "quality.oversight_charter_applicable"
+      ],
+      "condition": "quality.oversight_charter_applicable 为 true 时章程义务激活",
+      "rationale": "章程适用时先明确计划/草拟/已批准状态；按状态分别要求版本与真实批准记录，不以计划意图冒充已完成。",
+      "required_when_active_fact_paths": [
+        "quality.oversight_charter_status"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:n-14-7:charter-draft",
+      "triggering_fact_paths": [
+        "quality.oversight_charter_applicable",
+        "quality.oversight_charter_status"
+      ],
+      "condition": "章程适用且状态为draft",
+      "rationale": "状态与内容一致：草拟版本不等于批准；只有真实已批准状态要求批准记录。",
+      "required_when_active_fact_paths": [
+        "quality.oversight_charter_version"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:n-14-7:charter-approved",
+      "triggering_fact_paths": [
+        "quality.oversight_charter_applicable",
+        "quality.oversight_charter_status"
+      ],
+      "condition": "章程适用且状态为approved",
+      "rationale": "状态与内容一致：草拟版本不等于批准；只有真实已批准状态要求批准记录。",
+      "required_when_active_fact_paths": [
+        "quality.oversight_charter_version",
+        "quality.oversight_charter_approval_record"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-14-7:type-and-role",
+      "question": "监督主体类型、组成、角色与信息流是否一致且可追溯，且未与其他委员会类型混用？",
+      "linked_fact_paths": [
+        "quality.safety_oversight_body_type",
+        "quality.safety_oversight_composition",
+        "quality.safety_oversight_information_flow"
+      ],
+      "linked_claim_types": [
+        "safety_oversight_actual_arrangement",
+        "oversight_body_type_and_role_stated"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-14-7:type-separation",
+        "qc:v2-n-14-7:arrangement"
+      ],
+      "risk_if_unmet": "委员会类型混用或虚构章程会误导安全性监督结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

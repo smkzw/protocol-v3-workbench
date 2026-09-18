@@ -1,0 +1,108 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_actual_interim_without_efficacy_testing_or_committees_needs_no_fake_details _
+
+    def test_actual_interim_without_efficacy_testing_or_committees_needs_no_fake_details():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c, _ = interim_case()
+        optional_details = {"statistics.interim.information_fraction", "statistics.interim.efficacy_alpha_spending",
+                            "statistics.interim.idmc_responsibilities", "statistics.interim.endpoint_irc_responsibilities"}
+        facts = {f.fact_path: "synthetic interim arrangement" for f in c.substantive_content.fact_requirements
+                 if f.obligation.value == "required" and f.fact_path not in optional_details}
+        facts.update({"statistics.interim.applicable": True, "statistics.interim.canonical_reference": "v2_n_14_7",
+                      "statistics.interim.features": {"information_fraction": False, "efficacy_testing": False, "idmc_review": False},
+                      "irc.applicable": False})
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR / "fact_bindings.json").read_text()).bindings
+>       result = bind_applicable_input(confirmed_study(facts), c, bindings, rules=real_rule_catalog().rules)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:581: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:338: in bind_applicable_input
+    return bind_chapter_input(study, effective, bindings, source_format=source_format,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...cable': False}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='统计章节与项目设计不一致会导致不可复核或误导性结论。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif...'chapter_contracts/v2_n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None), ...)
+
+    def bind_chapter_input(
+        study: StudyDefinitionV3,
+        contract: ChapterContractV2,
+        bindings: Iterable[FactBinding],
+        *,
+        source_format: Literal["native_json", "legacy_strings_v1"] = "native_json",
+        active_conditional_rule_ids: tuple[StableId, ...] = (),
+        applicability_rules_sha256: Sha256 | None = None,
+    ) -> BoundChapterSkillInput:
+        """Read literal canonical dictionary keys; never split dotted paths.
+    
+        Required/conditional applicability remains the contract's responsibility.
+        This boundary fails with exact paths when a required value cannot be read.
+        Legacy conversion is opt-in and does not rewrite the original study.
+        """
+        if study.canonical_state not in (CanonicalState.CONFIRMED, CanonicalState.FROZEN):
+            raise FactBindingError("study_not_confirmed")
+        if source_format not in ("native_json", "legacy_strings_v1"):
+            raise FactBindingError("unknown_fact_source_format")
+        index = {}
+        for binding in bindings:
+            if binding.fact_path in index:
+                raise FactBindingError("duplicate_fact_binding", (binding.fact_path,))
+            index[binding.fact_path] = binding
+        required = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "required"
+        }
+        paths = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value != "forbidden"
+        }
+        # Some trigger/conditional paths have no unconditional FactRequirement.
+        # Carry available values now; 3R.4B decides which obligations activate.
+        forbidden = {
+            item.fact_path for item in contract.substantive_content.fact_requirements
+            if item.obligation.value == "forbidden"
+        }
+        for rule in contract.conditional_applicability_rules:
+            paths.update(rule.triggering_fact_paths)
+            paths.update(rule.required_when_active_fact_paths)
+        for item in contract.ctq_items:
+            paths.update(item.linked_fact_paths)
+        for item in contract.registry_consistency_obligations:
+            paths.update(item.eligibility_fact_paths)
+        paths.difference_update(forbidden)
+        resolved, missing, unsupported = {}, [], []
+        for path in sorted(paths):
+            binding = index.get(path)
+            if binding is None or binding.canonical_path is None:
+                if path in required:
+                    unsupported.append(path)
+                continue
+            if binding.canonical_path not in study.facts:
+                if path in required:
+                    missing.append(path)
+                continue
+            value = _typed_value(binding, study.facts[binding.canonical_path], source_format)
+            if binding.canonical_path != path and path in study.facts:
+                alias_value = _typed_value(binding, study.facts[path], source_format)
+                if _json(value) != _json(alias_value):
+                    raise FactBindingError("fact_alias_conflict", (path, binding.canonical_path))
+            if not _is_resolved_fact(value):
+                if path in required:
+                    missing.append(path)
+                continue
+            resolved[path] = value
+        if unsupported:
+            raise FactBindingError("unsupported_required_fact", unsupported)
+        if missing:
+>           raise FactBindingError("missing_required_fact", missing)
+E           app.protocol_workflow.registries.fact_bindings.FactBindingError: missing_required_fact: statistics.interim.efficacy_alpha_spending, statistics.interim.endpoint_irc_responsibilities, statistics.interim.idmc_responsibilities, statistics.interim.information_fraction
+
+services/api/app/protocol_workflow/registries/fact_bindings.py:261: FactBindingError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_actual_interim_without_efficacy_testing_or_committees_needs_no_fake_details
+1 failed, 67 deselected in 0.50s

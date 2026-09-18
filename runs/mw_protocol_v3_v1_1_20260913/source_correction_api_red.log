@@ -1,0 +1,24 @@
+..F                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_metadata_can_be_corrected_without_reupload_and_stale_edit_is_explained __
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-599/test_metadata_can_be_corrected0')
+
+    def test_metadata_can_be_corrected_without_reupload_and_stale_edit_is_explained(tmp_path):
+        db = tmp_path / 'product.db'
+        shared.admit(db, PROJECT)
+        original = build_docx(paragraph_xml('历史方案，仅供参考。'))
+        metadata = {'source_role': 'company_style_only', 'source_version': '1.3', 'jurisdiction': 'CN'}
+        with client(db) as c:
+            first = upload(c, original).json()
+            sid = first['source']['source']['source_artifact_id']
+            result = c.patch(f'{BASE}/{sid}/metadata', json=metadata)
+>           assert result.status_code == 200, result.text
+E           AssertionError: {"detail":"Not Found"}
+E           assert 404 == 200
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/protocol_v3/integration/test_source_import_api.py:70: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_source_import_api.py::test_metadata_can_be_corrected_without_reupload_and_stale_edit_is_explained
+1 failed, 2 passed in 0.61s

@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+______ ERROR collecting tests/protocol_v3/test_clinical_design_worker.py _______
+ImportError while importing test module '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_clinical_design_worker.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_clinical_design_worker.py:5: in <module>
+    from app.protocol_workflow.agent2.clinical_worker import RegimenProposal
+E   ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.clinical_worker'
+=========================== short test summary info ============================
+ERROR tests/protocol_v3/test_clinical_design_worker.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.08s

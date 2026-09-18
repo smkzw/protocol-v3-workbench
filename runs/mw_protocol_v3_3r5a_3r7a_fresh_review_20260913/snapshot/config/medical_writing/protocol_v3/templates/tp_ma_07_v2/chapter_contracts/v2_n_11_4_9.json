@@ -1,0 +1,349 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-4-9:v2",
+  "semantic_node_id": "v2_n_11_4_9",
+  "contract_version": "3.4.1",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-4-9:interim-analysis",
+  "chapter_skill_version": "3.4.1",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-4-9:v2",
+    "chapter_contract_id": "contract:v2-n-11-4-9:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.applicable",
+        "obligation": "required",
+        "rationale": "必须显式声明期中分析是否适用。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.timing",
+        "obligation": "required",
+        "rationale": "适用期中分析必须声明时点或信息量比例。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.information_fraction",
+        "obligation": "required",
+        "rationale": "必须声明期中信息量比例及其计算口径。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.purpose",
+        "obligation": "required",
+        "rationale": "必须声明期中分析目的和决策问题。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.rules",
+        "obligation": "required",
+        "rationale": "必须声明停止、继续、调整或保密规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.decision_responsibility",
+        "obligation": "required",
+        "rationale": "必须声明决策责任人/委员会及其权限。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.final_analysis_impact",
+        "obligation": "required",
+        "rationale": "必须声明期中决策对最终分析的影响。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.efficacy_alpha_spending",
+        "obligation": "required",
+        "rationale": "若涉及疗效期中，必须声明 alpha 消耗/分配。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.safety_review_alpha_separation",
+        "obligation": "required",
+        "rationale": "安全性审查不自动消耗疗效 alpha，必须声明其分离处置。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.idmc_responsibilities",
+        "obligation": "required",
+        "rationale": "必须区分 IDMC 的数据审查职责。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.endpoint_irc_responsibilities",
+        "obligation": "required",
+        "rationale": "必须区分终点 IRC 的终点评定职责。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.interim.canonical_reference",
+        "obligation": "required",
+        "rationale": "必须使用已解析的规范参考目标，不沿用过时 14.6 指向。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "fact_path": "statistics.interim.stale_reference_pointer",
+        "obligation": "forbidden",
+        "rationale": "过时编号引用不得作为期中分析规范目标写入（解析后以现行规范目标身份为准）。"
+      },
+      {
+        "fact_path": "statistics.interim.features",
+        "obligation": "optional",
+        "rationale": "开展期中分析时确认结构化设计用途：information_fraction是否使用信息量比例、efficacy_testing是否正式检验疗效假设、idmc_review是否由IDMC承担审查，均为原生布尔；未知不默认false。IRC复用irc.applicable。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "interim_analysis_plan",
+        "obligation": "required",
+        "rationale": "期中分析必须声明时点、目的、规则和责任。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "interim_final_analysis_impact",
+        "obligation": "required",
+        "rationale": "期中决策对最终分析和 alpha 的影响必须明确。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "interim_timing_alpha_inconsistent",
+        "obligation": "forbidden",
+        "rationale": "期中时点、信息量或 alpha 处置不得与最终设计矛盾。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "interim_analysis_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "interim_final_analysis_impact"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "期中分析必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": [
+          "interim:cell:timing",
+          "interim:cell:information-fraction",
+          "interim:cell:purpose",
+          "interim:cell:rules",
+          "interim:cell:decision",
+          "interim:cell:final-impact",
+          "interim:cell:efficacy-alpha",
+          "interim:cell:safety-separation",
+          "interim:cell:idmc",
+          "interim:cell:irc",
+          "interim:cell:canonical-reference"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“期中分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "源文示例的“第14.6节”实际指向方案偏离，不能作安全性监督目标。规范目标为安全性监督 v2_n_14_7，设盲与数据访问管理另参 v2_n_4_5；具体IDMC/DSMB职责只在项目确实采用时生成，不因模板示例虚构委员会。源正文窗口805–806、916–921及node_tree真实节点已核对。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "期中分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-4-9",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Ref89873252",
+      "_Toc132623402"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-9:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-9:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-9:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:interim",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable"
+      ],
+      "condition": "已确认本项目包含期中分析",
+      "rationale": "期中分析保留目的、时点、决策、最终分析影响及监督引用；信息量比例、正式疗效检验、IDMC和终点IRC按独立确认用途激活，不由开展期中分析一并推定。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.timing",
+        "statistics.interim.purpose",
+        "statistics.interim.rules",
+        "statistics.interim.decision_responsibility",
+        "statistics.interim.final_analysis_impact",
+        "statistics.interim.safety_review_alpha_separation",
+        "statistics.interim.canonical_reference",
+        "statistics.interim.features",
+        "irc.applicable"
+      ],
+      "required_when_active_claim_types": [
+        "interim_analysis_plan"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:information-fraction",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且information-fraction用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.information_fraction"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:efficacy",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且efficacy用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.efficacy_alpha_spending"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:idmc",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "statistics.interim.features"
+      ],
+      "condition": "已开展期中分析且idmc用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.idmc_responsibilities"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "conditional:v2-n-11-4-9:irc",
+      "triggering_fact_paths": [
+        "statistics.interim.applicable",
+        "irc.applicable"
+      ],
+      "condition": "已开展期中分析且irc用途明确适用",
+      "rationale": "根据本项目确认的期中目的、方法及委员会职责激活专属内容；源body806为示例而非每项研究均应设置的委员会或检验。",
+      "required_when_active_fact_paths": [
+        "statistics.interim.endpoint_irc_responsibilities"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-11-4-3-1:v2",
+    "contract:v2-n-11-4-8:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:v2_n_11_4_9:dependency-drift",
+    "dependency_ids": [
+      "contract:v2-n-11-4-3-1:v2",
+      "contract:v2-n-11-4-8:v2"
+    ],
+    "downstream_impact": "上游终点、估计目标、分析集或设计变更会使本节点统计结论失效，必须停止沿用旧草稿。",
+    "repair_owner": "user",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_9:recompute",
+        "sequence": 1,
+        "action": "重新读取已确认的上游事实并重算本节点统计承载。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_9:confirm",
+        "sequence": 2,
+        "action": "由用户核对差异、证据来源与可复算输入后确认或退回。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-4-9:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 805、806；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.interim.applicable"
+      ],
+      "linked_claim_types": [
+        "interim_analysis_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-4-9:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

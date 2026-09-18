@@ -1,0 +1,49 @@
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 26%]
+........................................................................ [ 30%]
+........................................................................ [ 34%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 45%]
+........................................................................ [ 49%]
+........................................................................ [ 53%]
+........................................................................ [ 57%]
+........................................................................ [ 60%]
+........................................................................ [ 64%]
+........................................................................ [ 68%]
+........................................................................ [ 72%]
+......................................F................................. [ 76%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 87%]
+........................................................................ [ 91%]
+........................................................................ [ 95%]
+........................................................................ [ 99%]
+..................                                                       [100%]
+=================================== FAILURES ===================================
+_______ TestIntegrityFollowup4.test_raw_tempfile_var_alias_path_accepted _______
+tests/protocol_v3/test_repository_hygiene_mutator.py:3312: in test_raw_tempfile_var_alias_path_accepted
+    assert raw_root.parts[:2] == ("/", "var") or raw_root.as_posix().startswith(
+E   AssertionError: assert (('/', 'tmp') == ('/', 'var')
+E     
+E     At index 1 diff: 'tmp' != 'var'
+E     Use -v to get more diff or False)
+E    +  where False = <built-in method startswith of str object at 0x10d380c10>('/private/var')
+E    +    where <built-in method startswith of str object at 0x10d380c10> = '/tmp/hygiene_var_alias_qlk8uyql'.startswith
+E    +      where '/tmp/hygiene_var_alias_qlk8uyql' = as_posix()
+E    +        where as_posix = PosixPath('/tmp/hygiene_var_alias_qlk8uyql').as_posix
+=============================== warnings summary ===============================
+tests/protocol_v3/test_source_baseline.py::ManifestAndTarTests::test_manifest_and_tar_round_trip
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/verify_source_baseline.py:75: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+    archive.extractall(str(destination_root))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_3r4a_20260912/intermediate_regression.xml -
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_repository_hygiene_mutator.py::TestIntegrityFollowup4::test_raw_tempfile_var_alias_path_accepted
+1 failed, 1889 passed, 1 warning in 89.14s (0:01:29)

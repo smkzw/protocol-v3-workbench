@@ -1,0 +1,152 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-12-4:v2",
+  "semantic_node_id": "v2_n_12_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-12-4",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-12-4:v2",
+    "chapter_contract_id": "contract:v2-n-12-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "corrections.procedure",
+        "obligation": "required",
+        "rationale": "数据的修改和审核必须保留项目化事实；合成测试值仅用于结构校验。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "corrections.reason_record",
+        "obligation": "required",
+        "rationale": "数据的修改和审核必须保留项目化事实；合成测试值仅用于结构校验。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "corrections.audit_trail",
+        "obligation": "required",
+        "rationale": "数据的修改和审核必须保留项目化事实；合成测试值仅用于结构校验。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "corrections.review_approval",
+        "obligation": "required",
+        "rationale": "数据的修改和审核必须保留项目化事实；合成测试值仅用于结构校验。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "corrections.untracked_edit",
+        "obligation": "forbidden",
+        "rationale": "数据的修改和审核必须保留项目化事实；合成测试值仅用于结构校验。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "corrections.traceability",
+        "obligation": "required",
+        "rationale": "数据的修改和审核的主张必须由适用项目事实支持，不得把模板示例当作项目结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "corrections.unreviewed_change_accepted",
+        "obligation": "forbidden",
+        "rationale": "数据的修改和审核的主张必须由适用项目事实支持，不得把模板示例当作项目结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "corrections.traceability"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "数据的修改和审核表格字段必须由项目事实填充；合成示例不得转为项目事实。",
+        "required_object_cells": [
+          "data:cell:correction_reason",
+          "data:cell:review_signoff"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "数据的修改和审核的实际角色、记录、协议和适用安排需由项目事实补齐。",
+      "缺失事实进入待补/建议解决路径，不得以不适用替代强制内容。",
+      "本章节涉及试验参与者相关安排；合成值仅用于结构校验，不构成项目批准。",
+      "本批次引入的数据管理与伦理相关新事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D2修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "数据的修改和审核不得只有标题或空表格；必须有实质项目事实、主张和证据上下文。",
+      "结构检查不等于医学、伦理、法律或审批判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-12-4",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623407"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-12-4:source-bound",
+      "rule": "源窗口 820–821 的实际项目安排必须逐项绑定，不得复制示例或虚构单位。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-12-4:semantic-closure",
+      "rule": "保留数据管理、伦理、隐私、未来使用和补偿安排的边界；缺失事实走待补/建议解决，不得降级为不适用。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-12-4:completeness",
+      "question": "数据的修改和审核是否同时具备项目事实、责任/控制边界和可追溯证据？",
+      "linked_fact_paths": [
+        "corrections.procedure",
+        "corrections.reason_record"
+      ],
+      "linked_claim_types": [
+        "corrections.traceability"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-12-4:source-bound",
+        "qc:v2-n-12-4:semantic-closure"
+      ],
+      "risk_if_unmet": "缺少该边界会把模板示例、未确认安排或审批结论误写为项目事实。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

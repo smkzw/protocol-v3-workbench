@@ -1,0 +1,74 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.0
+collected 2 items
+
+tests/protocol_v3/test_current_study_inventory.py FF                     [100%]
+
+=================================== FAILURES ===================================
+______ test_current_inventory_keeps_one_latest_revision_per_study[memory] ______
+
+store = namespace(name='memory', factory=<function store.<locals>.factory at 0x10a14bd80>, inspect=<function store.<locals>.inspect at 0x10a14bce0>)
+
+    def test_current_inventory_keeps_one_latest_revision_per_study(store):
+        project = 'project:inventory'
+        with store.factory() as uow:
+            uow.study_definition_cas_repository.save_with_expected_revision(project, _study(project_id=project, study_id='study:b'), 0)
+            first = uow.study_definition_cas_repository.save_with_expected_revision(project, _study(project_id=project, study_id='study:a'), 0)
+            uow.study_definition_cas_repository.save_with_expected_revision(project,
+                _study(project_id=project, study_id='study:a', revision=2, previous=study_revision_hash(first)), 1)
+            uow.study_definition_cas_repository.save_with_expected_revision('project:other',
+                _study(project_id='project:other', study_id='study:elsewhere'), 0)
+>       found = store.inspect(lambda uow: uow.study_definition_repository.list_current(project))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_current_study_inventory.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_repository_backends.py:301: in inspect
+    return fn(uow)
+           ^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+uow = InMemoryUnitOfWork(study_definition_repository=InMemoryCurrentAggregateRepository(identity_field='study_definition_id'...=0 at 0x10a0f8580>), artifact_store=<app.protocol_workflow.storage.memory.InMemoryArtifactStore object at 0x10a0f8500>)
+
+>   found = store.inspect(lambda uow: uow.study_definition_repository.list_current(project))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'InMemoryCurrentAggregateRepository' object has no attribute 'list_current'. Did you mean: 'get_current'?
+
+tests/protocol_v3/test_current_study_inventory.py:15: AttributeError
+______ test_current_inventory_keeps_one_latest_revision_per_study[sqlite] ______
+
+store = namespace(name='sqlite', factory=<function build_unit_of_work_factory.<locals>.factory at 0x10a132020>, inspect=<function store.<locals>.inspect at 0x10a1320c0>)
+
+    def test_current_inventory_keeps_one_latest_revision_per_study(store):
+        project = 'project:inventory'
+        with store.factory() as uow:
+            uow.study_definition_cas_repository.save_with_expected_revision(project, _study(project_id=project, study_id='study:b'), 0)
+            first = uow.study_definition_cas_repository.save_with_expected_revision(project, _study(project_id=project, study_id='study:a'), 0)
+            uow.study_definition_cas_repository.save_with_expected_revision(project,
+                _study(project_id=project, study_id='study:a', revision=2, previous=study_revision_hash(first)), 1)
+            uow.study_definition_cas_repository.save_with_expected_revision('project:other',
+                _study(project_id='project:other', study_id='study:elsewhere'), 0)
+>       found = store.inspect(lambda uow: uow.study_definition_repository.list_current(project))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_current_study_inventory.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_repository_backends.py:301: in inspect
+    return fn(uow)
+           ^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+uow = <app.protocol_workflow.storage.sqlite.SqliteUnitOfWork object at 0x10a153470>
+
+>   found = store.inspect(lambda uow: uow.study_definition_repository.list_current(project))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: '_SqliteCurrentAggregateRepository' object has no attribute 'list_current'. Did you mean: 'get_current'?
+
+tests/protocol_v3/test_current_study_inventory.py:15: AttributeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_current_study_inventory.py::test_current_inventory_keeps_one_latest_revision_per_study[memory]
+FAILED tests/protocol_v3/test_current_study_inventory.py::test_current_inventory_keeps_one_latest_revision_per_study[sqlite]
+============================== 2 failed in 0.40s ===============================

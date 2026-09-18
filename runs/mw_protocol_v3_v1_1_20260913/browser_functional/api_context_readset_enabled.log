@@ -1,0 +1,19 @@
+INFO:     Started server process [30899]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:60675 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60672 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60674 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/research-intake/research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60673 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/research-intake/research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60677 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/study-context?seed_run_id=research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60679 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/study-context?seed_run_id=research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60683 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60687 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952/adopt/recover HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60686 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952/adopt/recover HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60691 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/study-definitions/study%3Av3%3A21a20263b69422f2dde33817a2f1a6ba/decision-graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61162 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/prepare HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61164 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30899]

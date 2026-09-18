@@ -1,0 +1,129 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-2-2:v2",
+  "semantic_node_id": "v2_n_3_2_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-2-2:secondary-endpoints",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-2-2:v2",
+    "chapter_contract_id": "contract:v2-n-3-2-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.key_secondary_endpoints",
+        "obligation": "required",
+        "rationale": "关键次要终点复用既有 picos.key_secondary_endpoints 绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.other_secondary_endpoints",
+        "obligation": "required",
+        "rationale": "其他次要终点复用既有 picos.other_secondary_endpoints 绑定，与关键次要终点分列。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.secondary_endpoint_definitions",
+        "obligation": "required",
+        "rationale": "每个次要终点必须给出测量与时点定义，而非仅有终点名称。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "secondary_endpoint_definition",
+        "obligation": "required",
+        "rationale": "次要终点定义声明必须包含测量与时点。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "次要终点章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "secondary_endpoint_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "次要终点定义表必须逐行给出终点定义与评价时点，不得只有表头。",
+        "required_object_cells": [
+          "secondary:cell:endpoint:definition",
+          "secondary:cell:endpoint:timepoint"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "关键与其他次要终点分列：关键次要终点不得与其他次要终点混为一体（影响后续多重性策略）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有次要终点名称列表即失败；定义表为空壳即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-2-2",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623326"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-2-2:definition-timepoint",
+      "rule": "每个次要终点必须给出定义与评价时点；仅列终点名称即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-2-2:primary",
+      "question": "次要终点是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "picos.key_secondary_endpoints"
+      ],
+      "linked_claim_types": [
+        "secondary_endpoint_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-2-2:definition-timepoint"
+      ],
+      "risk_if_unmet": "次要终点缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

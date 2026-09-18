@@ -1,0 +1,122 @@
+........................................................................ [ 53%]
+................................F.........F........F..........           [100%]
+=================================== FAILURES ===================================
+_ test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies _
+
+    def test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies():
+        from app.protocol_workflow.registries.chapters import load_chapter_registry
+        from app.protocol_workflow.registries.fact_bindings import load_fact_catalog, bind_chapter_input, FactBindingError
+        from scripts.qc.protocol_v3.assemble_chapter_registry import assemble_registries
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR, REPO_ROOT
+        registry = load_chapter_registry(assemble_registries(
+            REAL_TEMPLATE_DIR / "chapter_contracts", REAL_TEMPLATE_DIR / "chapter_skills",
+            [REPO_ROOT / f"tests/fixtures/protocol_v3/chapter_content_v2/batch{i}.json" for i in range(1, 9)],
+        ))
+        catalog = load_fact_catalog(REAL_TEMPLATE_DIR / "fact_bindings.json", registry)
+        # Synthetic addressing test, not medical acceptance. The five explicitly
+        # declared new canonical keys are supplied exactly like existing keys.
+        facts = {b.canonical_path: (False if b.value_type == "boolean" else {"text": f"synthetic:{b.canonical_path}"})
+                 for b in catalog.bindings if b.canonical_path is not None}
+        study = confirmed_study(facts)
+        by_path = {b.fact_path: b for b in catalog.bindings}
+        for entry in registry.chapters:
+>           bound = bind_chapter_input(study, entry.contract, catalog.bindings)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_fact_binding.py:283: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/fact_bindings.py:248: in bind_chapter_input
+    value = _typed_value(binding, study.facts[binding.canonical_path], source_format)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+binding = FactBinding(fact_path='quality.oversight_charter_status', canonical_path='quality.oversight_charter_status', value_typ...ths/1', 'chapter_contracts/v2_n_14_7.json#/substantive_content/fact_requirements/9/fact_path'), unit=None, timing=None)
+value = {'text': 'synthetic:quality.oversight_charter_status'}
+source_format = 'native_json'
+
+    def _typed_value(binding: FactBinding, value: JsonValue, source_format: str) -> JsonValue:
+        kind = binding.value_type
+        if source_format == "legacy_strings_v1" and isinstance(value, str) and kind != "string":
+            if kind == "json":
+                # A generic JSON slot does not tell us whether the old text meant a
+                # boolean, number or prose. Never guess from its spelling.
+                raise FactBindingError("legacy_fact_type_unresolved", (binding.fact_path,))
+            try:
+                value = json.loads(value)
+            except (ValueError, TypeError):
+                raise FactBindingError("legacy_fact_parse_failed", (binding.fact_path,)) from None
+        matches = {
+            "json": True,
+            "boolean": type(value) is bool,
+            "integer": type(value) is int,
+            "number": type(value) in (int, float),
+            "string": isinstance(value, str),
+            "array": isinstance(value, list),
+            "object": isinstance(value, dict),
+        }[kind]
+        if not matches or (isinstance(value, float) and not math.isfinite(value)):
+>           raise FactBindingError("fact_type_mismatch", (binding.fact_path,))
+E           app.protocol_workflow.registries.fact_bindings.FactBindingError: fact_type_mismatch: quality.oversight_charter_status
+
+services/api/app/protocol_workflow/registries/fact_bindings.py:183: FactBindingError
+_____________ test_safety_oversight_roles_are_not_interchangeable ______________
+
+    def test_safety_oversight_roles_are_not_interchangeable():
+        contract = _contract("v2_n_14_7")
+        facts = _fact_obligations(contract)
+        assert {
+            "quality.safety_oversight_body_type",
+            "quality.safety_oversight_composition",
+            "quality.safety_oversight_roles",
+            "quality.safety_oversight_information_flow",
+            "quality.safety_oversight_review_arrangement",
+            "quality.safety_escalation_path",
+        } <= set(facts)
+        claims = _claim_obligations(contract)
+        assert claims["safety_oversight_actual_arrangement"] == "required"
+        assert claims["oversight_body_type_and_role_stated"] == "required"
+        assert set(claims) >= {
+            "dsmb_smc_irc_interchangeable",
+            "fabricated_committee_membership",
+            "fabricated_approved_charter",
+            "semiannual_cadence_as_universal_rule",
+        }
+        for forbidden in (
+            "dsmb_smc_irc_interchangeable",
+            "fabricated_committee_membership",
+            "fabricated_approved_charter",
+            "semiannual_cadence_as_universal_rule",
+        ):
+            assert claims[forbidden] == "forbidden"
+        rule = next(
+            rule
+            for rule in contract.conditional_applicability_rules
+            if rule.conditional_applicability_rule_id
+            == "applicability:n-14-7:oversight-charter"
+        )
+        assert rule.triggering_fact_paths == ("quality.oversight_charter_applicable",)
+>       assert "quality.oversight_charter_approval_record" in (
+            rule.required_when_active_fact_paths
+        )
+E       AssertionError: assert 'quality.oversight_charter_approval_record' in ('quality.oversight_charter_status',)
+E        +  where ('quality.oversight_charter_status',) = ConditionalApplicabilityRule(schema_version='mw_protocol_v3_contract_v1', conditional_applicability_rule_id='applicabi... required_when_active_claim_types=(), required_when_active_source_roles=(), required_when_active_structural_objects=()).required_when_active_fact_paths
+
+tests/protocol_v3/test_chapter_batch8.py:654: AssertionError
+_________________ test_batch8_terminology_is_participant_safe __________________
+
+    def test_batch8_terminology_is_participant_safe():
+        paths = [BATCH_PATH]
+        paths.extend(CONTRACTS_DIR / f"{node_id}.json" for node_id in EXPECTED_CARRIERS)
+        paths.extend(SKILLS_DIR / f"{node_id}.json" for node_id in EXPECTED_CARRIERS)
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+>           assert "试验参与者" in text, path.name
+E           AssertionError: v2_n_14_7.json
+E           assert '试验参与者' in '{\n  "skill_id": "skill:chapter:v2-n-14-7",\n  "skill_version": "3.4.0",\n  "node_id": "v2_n_14_7",\n  "chapter_contr...ing-obligation",\n    "skill:chapter:v2-n-14-7:unresolved-fact",\n    "skill:chapter:v2-n-14-7:wrong-source"\n  ]\n}\n'
+
+tests/protocol_v3/test_chapter_batch8.py:855: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies
+FAILED tests/protocol_v3/test_chapter_batch8.py::test_safety_oversight_roles_are_not_interchangeable
+FAILED tests/protocol_v3/test_chapter_batch8.py::test_batch8_terminology_is_participant_safe
+3 failed, 131 passed in 6.52s

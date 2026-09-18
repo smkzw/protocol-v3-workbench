@@ -1,0 +1,209 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-1-2:v2",
+  "semantic_node_id": "v2_n_1_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-1-2:design-diagram",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-1-2:v2",
+    "chapter_contract_id": "contract:v2-n-1-2:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "diagram.phase_arm_structure",
+        "obligation": "required",
+        "rationale": "流程图必须呈现与正文一致的相位与臂结构。"
+      },
+      {
+        "fact_path": "diagram.allocation_ratio",
+        "obligation": "optional",
+        "rationale": "分配比例仅在确认设计实际随机化时必需（条件规则升级）；单臂非随机设计不得虚构分配比例。"
+      },
+      {
+        "fact_path": "diagram.visit_timepoints",
+        "obligation": "required",
+        "rationale": "流程图访视时间点必须与 SOA 一致。"
+      },
+      {
+        "fact_path": "diagram.escalation_design",
+        "obligation": "optional",
+        "rationale": "确认设计是否实际包含剂量升级。"
+      },
+      {
+        "fact_path": "diagram.escalation_transition",
+        "obligation": "optional",
+        "rationale": "含升级设计的升级路径图示义务，仅在实际适用时必需。"
+      },
+      {
+        "fact_path": "diagram.template_example_timeline",
+        "obligation": "forbidden",
+        "rationale": "模板帕金森/滴定示例时间线或无依据升级路径不得插入无关设计。"
+      },
+      {
+        "fact_path": "diagram.randomized",
+        "obligation": "optional",
+        "rationale": "确认设计是否实际随机化；为真时触发分配比例条件义务。"
+      },
+      {
+        "fact_path": "diagram.supporting_asset_ref",
+        "obligation": "optional",
+        "rationale": "引用矢量示例素材时必须记录素材身份与 sha256；素材仅作风格参考，不提供项目事实。"
+      },
+      {
+        "fact_path": "diagram.source_example_values",
+        "obligation": "forbidden",
+        "rationale": "示例图中的 1:1/区块随机化/IWRS/安慰剂/12周/每周4次访视/4周随访/n=XX 占位不得自动成为项目事实。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "design_description",
+        "obligation": "required",
+        "rationale": "流程图必须附带与正文一致的设计描述声明。"
+      },
+      {
+        "claim_type": "diagram_transition",
+        "obligation": "required",
+        "rationale": "流程图阶段转换必须声明与 SOA 一致。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "design_description"
+        ],
+        "allowed_locator_kinds": [
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "diagram_transition"
+        ],
+        "allowed_locator_kinds": [
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "figure",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "研究流程图必须呈现相位/臂/分配/时间点与转换；引用的矢量素材仅可参考风格，不得提供项目事实。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "与 SOA 一致的研究流程图（相位/臂/分配/时间点/转换）"
+    ],
+    "skeleton_risk_rules": [
+      "缺少流程图对象或仅模板示例时间线即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:n-1-2",
+    "required_styles": [
+      "3",
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:n-1-2:soa-agreement",
+      "rule": "流程图相位/臂/分配/时间点与转换必须与 SOA 一致；所有适用臂的早退/停药/退出转换必须按已确认事实逐一建模，不得照抄示例图只画右臂早退且不连随访的做法；早期退出与干预停药的区别按实际方案保留。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-2:escalation-only-if-applicable",
+      "rule": "升级图示仅在确认设计实际包含升级时适用；矢量素材仅参考风格。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-2:asset-style-only",
+      "rule": "引用矢量素材仅限风格参考，必须记录素材身份与 sha256（示例素材 /Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07_研究流程图示例.svg，sha256 c08dc55324b92ed45e283335c1e28a7955993cd42f687c0ca1395c4730c0372c）；示例取值不得自动成为项目事实。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-2:omission-disposition",
+      "rule": "source[246] 允许适合的极简设计省略流程图；省略必须有记录在案的适用性处置，不得静默放弃默认的流程图推荐；是否省略属项目判断，本合同不断言其结论。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:n-1-2:escalation",
+      "triggering_fact_paths": [
+        "diagram.escalation_design"
+      ],
+      "condition": "确认设计实际包含剂量升级",
+      "rationale": "source[250] 升级图示义务仅在实际含升级的设计中适用。",
+      "required_when_active_fact_paths": [
+        "diagram.escalation_transition"
+      ]
+    },
+    {
+      "conditional_applicability_rule_id": "applicability:n-1-2:allocation",
+      "triggering_fact_paths": [
+        "diagram.randomized"
+      ],
+      "condition": "确认设计实际随机化",
+      "rationale": "分配比例义务仅在随机化设计下适用；单臂非随机设计必须能通过。",
+      "required_when_active_fact_paths": [
+        "diagram.allocation_ratio"
+      ]
+    }
+  ],
+  "dependency_ids": [
+    "contract:v2-n-1-3:v2"
+  ],
+  "dependency_repair_policy": {
+    "dependency_repair_policy_id": "repair:v2-n-1-2:soa-policy",
+    "dependency_ids": [
+      "contract:v2-n-1-3:v2"
+    ],
+    "downstream_impact": "SOA 访视/窗口修订后，研究流程图必须同步复核相位/臂/分配与时间点一致性。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "repair_step_id": "repair:v2-n-1-2:step-1",
+        "sequence": 1,
+        "action": "重读 SOA 差异并重算流程图时间点与转换。",
+        "owner": "ai"
+      },
+      {
+        "repair_step_id": "repair:v2-n-1-2:step-2",
+        "sequence": 2,
+        "action": "复核升级/退出路径与 SOA 早期终止评估一致后重新提交。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:n-1-2:soa-agreement",
+      "question": "流程图时间点与转换是否与 SOA 完全一致？",
+      "linked_fact_paths": [
+        "diagram.visit_timepoints"
+      ],
+      "linked_claim_types": [
+        "diagram_transition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-1-2:soa-agreement"
+      ],
+      "risk_if_unmet": "图与SOA不一致会误导研究与执行。"
+    }
+  ]
+}

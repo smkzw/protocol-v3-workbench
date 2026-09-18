@@ -1,0 +1,516 @@
+  1 r03-t00-r00-title [deterministic/implemented]
+     label='研究方案题目' raw='研究方案题目'
+     norm=方案题目已填写，且与封面/文档控制区及QC表身份栏完全一致。
+     appl=always/None/not_applicable flags=[]
+  2 r03-t00-r01-protocol_number [deterministic/implemented]
+     label='方案编号' raw='方案编号'
+     norm=方案编号已填写，且与封面/文档控制区及QC表身份栏完全一致。
+     appl=always/None/not_applicable flags=[]
+  3 r03-t00-r02-version_number [deterministic/implemented]
+     label='方案版本号' raw='方案版本号'
+     norm=方案版本号已填写，且与封面/文档控制区及QC表身份栏完全一致。
+     appl=always/None/not_applicable flags=[]
+  4 r03-t00-r03-version_date [deterministic/implemented]
+     label='方案版本日期' raw='方案版本日期'
+     norm=方案版本日期已填写，且与封面/文档控制区及QC表身份栏完全一致；修订历史旧行保留旧值不参与当前一致性比较。
+     appl=always/None/not_applicable flags=[]
+  5 r03-t01-r02-identification [deterministic/implemented]
+     label='6.1.1' raw='方案标题、方案识别号和日期'
+     norm=方案给出题目、方案识别号和版本日期；存在修正案时注明修正案编号和日期。
+     appl=always/None/not_applicable flags=[]
+  6 r03-t01-r02-amendment_numbering [deterministic/pending]
+     label='6.1.1' raw='任何修正案还应注明修正案编号和日期'
+     norm=存在修正案时，修正案带修正案编号和日期，且与修订历史记录一致。
+     appl=always/applicability:front-1:amendment/declared_not_evaluated flags=[]
+  7 r03-t01-r03-sponsor_monitor [human/pending]
+     label='6.1.2' raw='申办者和监查员'
+     norm=方案载明申办者及监查员（如非申办者）的名称和地址，与已确认研究事实一致。
+     appl=always/None/not_applicable flags=[]
+  8 r03-t01-r04-signatory [human/pending]
+     label='6.1.3' raw='被授权为申办者签署方案'
+     norm=方案载明被授权签署方案及修正案人员的姓名和职位；签署授权真实性由人工确认，签署控件本身保留空白。
+     appl=always/None/not_applicable flags=[]
+  9 r03-t01-r05-medical_expert [human/pending]
+     label='6.1.4' raw='试验申办方医学专家'
+     norm=方案载明申办方医学专家（或牙医，如适用）的姓名、职位、地址和电话号码，与已确认事实一致。
+     appl=always/None/not_applicable flags=[]
+ 10 r03-t01-r06-investigator_center [human/pending]
+     label='6.1.5' raw='负责开展试验的研究者的姓名和职位'
+     norm=方案载明主要研究者姓名和职位及中心地址电话，与已确认事实一致；不虚构人员或中心。
+     appl=always/None/not_applicable flags=[]
+ 11 r03-t01-r06-collaborative_centers [agent4/pending]
+     label='6.1.5' raw='列出将进行研究的任何协作研究中心'
+     norm=存在协作研究中心时，方案逐一列出；无协作中心时该项按适用性为不适用而非缺失。
+     appl=conditional/None/not_wired flags=[]
+ 12 r03-t01-r07-medical_decider [human/pending]
+     label='6.1.6' raw='负责所有试验中心相关医学'
+     norm=相关医学决策负责医师（如非研究者）的姓名、职位、地址和电话载明且真实。
+     appl=conditional/None/not_wired flags=[]
+ 13 r03-t01-r08-labs_institutions [human/pending]
+     label='6.1.7' raw='临床实验室和参与试验的其他医疗'
+     norm=参与试验的实验室和其他医疗/技术部门/机构的名称和地址载明且真实；未取得实际供应商名称时保持缺失状态，不填假名。
+     appl=conditional/applicability:front-4:service-parties/declared_not_evaluated flags=[]
+ 14 r03-t02-r02-imp_description [agent4/pending]
+     label='6.2.1' raw='试验用药品的名称和描述'
+     norm=方案给出试验用药品的名称和描述，与已确认研究事实同一版本。
+     appl=always/None/not_applicable flags=[]
+ 15 r03-t02-r03-prior_results [agent4/pending]
+     label='6.2.2' raw='非临床研究和与试验相关的临床试验的结果总结'
+     norm=方案总结具有临床意义的非临床研究及相关临床试验结果，关键结论有证据定位。
+     appl=always/None/not_applicable flags=[]
+ 16 r03-t02-r04-risk_benefit [agent4/pending]
+     label='6.2.3' raw='已知和潜在风险和获益'
+     norm=方案总结试验参与者已知和潜在风险与获益（如有），与证据一致。
+     appl=always/None/not_applicable flags=[]
+ 17 r03-t02-r05-administration_description [agent4/pending]
+     label='6.2.4' raw='给药途径、剂量、给药方案和治疗阶段的描述'
+     norm=方案描述给药途径、剂量、给药方案和治疗阶段。
+     appl=always/None/not_applicable flags=[]
+ 18 r03-t02-r05-administration_rationale [agent4/pending]
+     label='6.2.4' raw='和治疗阶段的描述和依据'
+     norm=给药途径/剂量/方案/治疗阶段的依据给出，与SOA及剂量选择依据一致。
+     appl=always/None/not_applicable flags=[]
+ 19 r03-t02-r06-gcp_statement [deterministic/pending]
+     label='6.2.5' raw='声明试验将按照方案、GCP和适用的法规要求进行'
+     norm=方案含按方案、GCP和适用法规要求开展试验的声明。
+     appl=always/None/not_applicable flags=[]
+ 20 r03-t02-r07-population_description [agent4/pending]
+     label='6.2.6' raw='待研究人群描述'
+     norm=方案描述待研究人群，与目标人群/入排标准同一事实版本。
+     appl=always/None/not_applicable flags=[]
+ 21 r03-t02-r08-references_present [agent4/pending]
+     label='6.2.7' raw='引用与试验相关的文献和数据'
+     norm=方案引用与试验相关的文献和数据并为试验提供背景，引文可定位。
+     appl=always/None/not_applicable flags=[]
+ 22 r03-t02-r08-references_bidirectional [deterministic/pending]
+     label='6.2.7' raw='引用与试验相关的文献和数据'
+     norm=正文文献引用与参考文献列表双向闭合；闭合不等于证据仍适用，时效性由来源/语义复核另行判断。
+     appl=always/None/not_applicable flags=[]
+ 23 r03-t03-r02-objective_statement [agent4/pending]
+     label='6.3.1' raw='试验目的和目的的详细描述'
+     norm=方案详细描述研究目的（科学/次要/安全性/探索性，按实际安排）。
+     appl=always/None/not_applicable flags=[]
+ 24 r03-t03-r03-scientific_question [agent4/pending]
+     label='6.3.2' raw='科学目的是否清晰明确'
+     norm=科学目的清晰明确，可由目的-终点-估计目标链条核对。
+     appl=always/None/not_applicable flags=[]
+ 25 r03-t03-r03-population [agent4/pending]
+     label='6.3.2' raw='目标人群、治疗条件、结局变量'
+     norm=估计目标的目标人群属性明确，与研究人群同一事实版本。
+     appl=always/None/not_applicable flags=[]
+ 26 r03-t03-r03-treatment_condition [agent4/pending]
+     label='6.3.2' raw='目标人群、治疗条件、结局变量'
+     norm=估计目标的治疗条件属性明确（含背景/补救治疗安排）。
+     appl=always/None/not_applicable flags=[]
+ 27 r03-t03-r03-outcome_variable [agent4/pending]
+     label='6.3.2' raw='结局变量'
+     norm=估计目标的结局变量属性明确，与终点定义一致。
+     appl=always/None/not_applicable flags=[]
+ 28 r03-t03-r03-intercurrent_event [agent4/pending]
+     label='6.3.2' raw='伴发事件处理策略'
+     norm=伴发事件处理策略明确，与ICE及统计分析一致。
+     appl=always/None/not_applicable flags=[]
+ 29 r03-t03-r03-population_summary [agent4/pending]
+     label='6.3.2' raw='人群汇总量'
+     norm=人群汇总量属性明确；按源审阅该属性由3.1.2.4区承载，不因目录没有第五个标题而判缺失。
+     appl=always/None/not_applicable flags=[]
+ 30 r03-t03-r03-consistency [deterministic/pending]
+     label='6.3.2' raw='并与终点及统计分析保持一致'
+     norm=估计目标各属性与终点及统计分析保持一致（跨章同一事实版本）。
+     appl=always/applicability:n-3-1-2-4:strategy-crosscheck/declared_not_evaluated flags=[]
+ 31 r03-t04-r02-primary_endpoint [agent4/pending]
+     label='6.4.1' raw='主要终点和次要终点'
+     norm=主要终点具体声明，与目的及统计分析一致。
+     appl=always/None/not_applicable flags=[]
+ 32 r03-t04-r02-secondary_endpoints [agent4/pending]
+     label='6.4.1' raw='主要终点和次要终点（如有）'
+     norm=次要终点（如有）具体声明；无次要终点时按适用性处理而非缺失。
+     appl=conditional/None/not_wired flags=[]
+ 33 r03-t04-r03-design_description [agent4/pending]
+     label='6.4.2' raw='试验类型/设计描述'
+     norm=试验类型/设计描述给出，与已确认设计事实一致。
+     appl=always/None/not_applicable flags=[]
+ 34 r03-t04-r03-design_schematic [deterministic/pending]
+     label='6.4.2' raw='试验设计、程序和阶段示意图'
+     norm=试验设计、程序和阶段示意图存在且与研究流程表一致。
+     appl=always/None/not_applicable flags=[]
+ 35 r03-t04-r04-enrollment_definition [agent4/pending]
+     label='' raw='何时被视为“入组”（研究中）的定义'
+     norm=给出试验参与者何时被视为入组（研究中）的定义。
+     appl=always/None/not_applicable flags=[]
+ 36 r03-t04-r05-substudies [agent4/pending]
+     label='' raw='确定任何亚研究'
+     norm=确定任何亚研究并说明其安排；无亚研究时按适用性处理。
+     appl=always/None/not_applicable flags=['source_noise']
+ 37 r03-t04-r06-visit_schedule [agent4/pending]
+     label='' raw='访视次数、每个访视窗口期的程序'
+     norm=详细描述访视次数、各访视窗口期程序和研究访视时长，与SOA一致。
+     appl=always/None/not_applicable flags=[]
+ 38 r03-t04-r07-randomization_measures [agent4/pending]
+     label='6.4.3' raw='（a）随机化'
+     norm=随机化设计下描述随机化措施以减少偏差。
+     appl=conditional/applicability:n-7-2:randomization/declared_not_evaluated flags=[]
+ 39 r03-t04-r07-blinding_measures [agent4/pending]
+     label='6.4.3' raw='（b）设盲'
+     norm=设盲设计下描述设盲措施以减少偏差；源行以“设盲”截尾，原文按源保留。
+     appl=conditional/applicability:v2_n_4_5:blinding/declared_not_evaluated flags=[]
+ 40 r03-t04-r08-drug_dosing [agent4/pending]
+     label='6.4.0' raw='药物、补充剂或生物制剂'
+     norm=药物/补充剂/生物制剂场景：描述试验治疗和试验药物剂量与给药方案。
+     appl=conditional/None/not_wired flags=[]
+ 41 r03-t04-r08-drug_formulation_labeling [agent4/pending]
+     label='6.4.0' raw='剂型、包装和标签描述'
+     norm=药物/补充剂/生物制剂场景：描述试验用药品剂型、包装和标签。
+     appl=conditional/None/not_wired flags=[]
+ 42 r03-t04-r09-device_application [agent4/pending]
+     label='' raw='器械：试验治疗和器械植入/应用的描述'
+     norm=器械场景：描述试验治疗及器械植入/应用/移除。
+     appl=conditional/None/not_wired flags=[]
+ 43 r03-t04-r09-device_quality_labeling [agent4/pending]
+     label='' raw='器械质量标准、包装和标签的描述'
+     norm=器械场景：描述试验用产品（器械）质量标准、包装和标签。
+     appl=conditional/None/not_wired flags=[]
+ 44 r03-t04-r10-participation_duration [agent4/pending]
+     label='6.4.5' raw='预期持续时间，以及所有试验阶段的序列'
+     norm=描述参与者参与的预期持续时间及所有阶段的序列和持续时间（含随访，如有）。
+     appl=always/None/not_applicable flags=[]
+ 45 r03-t04-r11-individual_stop [agent4/pending]
+     label='6.4.6' raw='个体试验参与者、部分试验和整个试验'
+     norm=给出个体试验参与者停止规则/停药标准。
+     appl=always/applicability:n-8-1:individual-hold/declared_not_evaluated flags=[]
+ 46 r03-t04-r11-partial_stop [agent4/pending]
+     label='6.4.6' raw='部分试验和整个试验的“停止规则”'
+     norm=给出部分试验层面的停止规则；无此安排时按适用性处理。
+     appl=conditional/None/not_wired flags=[]
+ 47 r03-t04-r11-trial_stop [agent4/pending]
+     label='6.4.6' raw='整个试验的“停止规则”或“停药标准”'
+     norm=给出整个试验的停止规则；整试验停止安排不默认全部绑定到期中分析。
+     appl=always/applicability:n-8-1:hold-to-stop/declared_not_evaluated flags=[]
+ 48 r03-t04-r12-imp_accountability [agent4/pending]
+     label='6.4.7' raw='试验用药品的清点程序'
+     norm=给出试验用药品清点程序。
+     appl=always/None/not_applicable flags=[]
+ 49 r03-t04-r12-placebo_accountability [agent4/pending]
+     label='6.4.7' raw='包括安慰剂/假手术和对照药物（如有）'
+     norm=使用安慰剂/假手术/对照药物时，其清点一并覆盖；未使用时按适用性处理。
+     appl=conditional/applicability:v2_n_4_2:placebo/declared_not_evaluated flags=[]
+ 50 r03-t04-r13-randomization_code [agent4/pending]
+     label='6.4.8' raw='维持试验治疗随机化代码'
+     norm=给出维持试验治疗随机化代码的程序。
+     appl=always/None/not_applicable flags=[]
+ 51 r03-t04-r13-code_break [agent4/pending]
+     label='6.4.8' raw='和破解代码的程序'
+     norm=给出破解代码程序；非盲设计下按适用性处理。
+     appl=conditional/applicability:v2_n_4_5:emergency/declared_not_evaluated flags=[]
+ 52 r03-t04-r14-direct_crf_source [agent4/pending]
+     label='6.4.9' raw='直接记录在CRF上的任何数据的标识'
+     norm=标识直接记录在CRF上、无先前书面/电子记录即视为源数据的数据项。
+     appl=always/None/not_applicable flags=[]
+ 53 r03-t04-r15-iit_reference [deterministic/pending]
+     label='6.4.10' raw='请参阅IIT的相关指导原则'
+     norm=研究者发起的多中心研究引用的IIT指导原则可定位；非IIT研究该项不适用，不得标记为普遍缺陷。
+     appl=conditional/None/not_wired flags=['reference_hint']
+ 54 r03-t04-r16-ctq_identification [agent4/pending]
+     label='6.4.11' raw='识别关键质量因素（CtQ）'
+     norm=方案识别关键质量因素（CtQ）。
+     appl=always/None/not_applicable flags=[]
+ 55 r03-t04-r16-proportionate_controls [agent4/pending]
+     label='6.4.11' raw='与风险相称的控制措施'
+     norm=制定与风险相称的控制措施。
+     appl=always/None/not_applicable flags=[]
+ 56 r03-t04-r16-critical_handling [agent4/pending]
+     label='6.4.11' raw='关键给药及配制操作'
+     norm=覆盖关键给药及配制操作的控制。
+     appl=always/None/not_applicable flags=[]
+ 57 r03-t04-r16-critical_time_windows [agent4/pending]
+     label='6.4.11' raw='关键访视及评估时间窗'
+     norm=覆盖关键访视及评估时间窗的控制。
+     appl=always/None/not_applicable flags=[]
+ 58 r03-t04-r16-individual_stop [agent4/pending]
+     label='6.4.11' raw='个体及全试验层面的暂停或终止规则'
+     norm=覆盖个体层面暂停或终止规则。
+     appl=always/applicability:n-8-1:individual-hold/declared_not_evaluated flags=[]
+ 59 r03-t04-r16-trial_stop [agent4/pending]
+     label='6.4.11' raw='个体及全试验层面的暂停或终止规则'
+     norm=覆盖全试验层面暂停或终止规则；不默认绑定到期中分析。
+     appl=always/applicability:n-8-1:hold-to-stop/declared_not_evaluated flags=[]
+ 60 r03-t04-r16-dose_adjustment [agent4/pending]
+     label='6.4.11' raw='及剂量调整标准'
+     norm=给出剂量调整标准；是否需要具体调整方案由研究事实决定，不复用其他药物数值。
+     appl=conditional/applicability:n-6-1-2:dose-modification/declared_not_evaluated flags=[]
+ 61 r03-t05-r02-inclusion_criteria [agent4/pending]
+     label='6.5.1' raw='试验参与者入选标准'
+     norm=给出试验参与者入选标准，与研究人群事实同一版本。
+     appl=always/None/not_applicable flags=[]
+ 62 r03-t05-r03-exposure_criteria [agent4/pending]
+     label='6.5.2' raw='试验参与者暴露标准'
+     norm=给出试验参与者暴露标准。
+     appl=always/None/not_applicable flags=[]
+ 63 r03-t05-r04-eligibility_determination [agent4/pending]
+     label='' raw='描述如何确定合格标准'
+     norm=描述如何确定合格标准。
+     appl=always/None/not_applicable flags=[]
+ 64 r03-t05-r05-subject_reported_info [agent4/pending]
+     label='' raw='试验参与者报告的信息'
+     norm=说明合格性判定中试验参与者报告的信息。
+     appl=always/None/not_applicable flags=[]
+ 65 r03-t05-r06-medical_records_review [agent4/pending]
+     label='' raw='病历审查'
+     norm=说明合格性判定中的病历审查。
+     appl=always/None/not_applicable flags=[]
+ 66 r03-t05-r07-screening_assessments [agent4/pending]
+     label='' raw='筛查评估结果（如问卷、日记等）'
+     norm=说明筛查评估结果（如问卷、日记等）在合格性判定中的使用。
+     appl=always/None/not_applicable flags=[]
+ 67 r03-t05-r08-withdrawal_standards [agent4/pending]
+     label='6.5.3' raw='试验参与者退出标准（即终止试验药物治疗/试验治疗）'
+     norm=给出试验参与者退出标准（终止试验药物治疗/试验治疗）和程序规定。
+     appl=always/None/not_applicable flags=[]
+ 68 r03-t05-r09-situation_stop_treatment [agent4/pending]
+     label='' raw='（1）试验参与者停止试验干预但继续随访'
+     norm=情形（1）：明确参与者停止试验干预但继续随访的安排。
+     appl=always/None/not_applicable flags=[]
+ 69 r03-t05-r09-situation_withdraw_consent [agent4/pending]
+     label='' raw='（2）试验参与者自主退出试验（撤回知情同意）'
+     norm=情形（2）：明确参与者自主退出试验（撤回知情同意）的安排。
+     appl=always/None/not_applicable flags=[]
+ 70 r03-t05-r09-situation_investigator_termination [agent4/pending]
+     label='' raw='（3）研究者决定终止其参加试验'
+     norm=情形（3）：明确研究者决定终止其参加试验的安排。
+     appl=always/None/not_applicable flags=[]
+ 71 r03-t05-r09-data_collection [agent4/pending]
+     label='' raw='各情形下的数据收集类型、时间'
+     norm=分别明确各情形下数据收集类型和时间。
+     appl=always/None/not_applicable flags=[]
+ 72 r03-t05-r09-medical_followup [agent4/pending]
+     label='' raw='数据收集类型、时间、医学随访'
+     norm=分别明确各情形下医学随访安排。
+     appl=always/None/not_applicable flags=[]
+ 73 r03-t05-r09-existing_data [agent4/pending]
+     label='' raw='已收集数据处理'
+     norm=明确各情形下已收集数据的处理。
+     appl=always/None/not_applicable flags=[]
+ 74 r03-t05-r09-replacement [agent4/pending]
+     label='' raw='及试验参与者替换规则'
+     norm=明确试验参与者替换规则；与表[5]/row[13]的独立替换行互为相关义务。
+     appl=always/None/not_applicable flags=[]
+ 75 r03-t05-r10-rejection_reaction [agent4/pending]
+     label='' raw='如果试验参与者发生排斥反应怎么办'
+     norm=原文问句所述情形（排斥反应）的处理安排：缺少清楚适用语境，按source ambiguity处理；具体研究语境下由语义审阅裁定该情形应当如何处置，并核对正文是否已覆盖。
+     appl=unknown_context/None/not_wired flags=['source_ambiguity']
+ 76 r03-t05-r11-excluded_medication [agent4/pending]
+     label='' raw='如果试验参与者开始服用排除药物怎么办'
+     norm=明确参与者开始服用排除药物时的处理。
+     appl=always/None/not_applicable flags=[]
+ 77 r03-t05-r12-withdrawal_procedure [agent4/pending]
+     label='' raw='研究退出程序的详细描述'
+     norm=给出研究退出程序的详细描述，含退出参与者数据收集的类型和时间。
+     appl=always/None/not_applicable flags=[]
+ 78 r03-t05-r13-replacement_rule [agent4/pending]
+     label='' raw='是否以及如何替换试验参与者'
+     norm=说明是否以及如何替换试验参与者。
+     appl=always/None/not_applicable flags=[]
+ 79 r03-t05-r14-post_discontinuation_followup [agent4/pending]
+     label='' raw='试验参与者退出试验药物治疗/试验治疗的随访'
+     norm=给出退出试验药物治疗/试验治疗后的随访安排。
+     appl=always/None/not_applicable flags=[]
+ 80 r03-t06-r02-treatments [agent4/pending]
+     label='6.6.1' raw='要给予的治疗，包括所有产品的名称'
+     norm=给出各组要给予的治疗：产品名称、剂量、给药计划、途径/模式和治疗期。
+     appl=always/None/not_applicable flags=[]
+ 81 r03-t06-r02-treatment_followup_periods [agent4/pending]
+     label='6.6.1' raw='各试验药物治疗/试验治疗组/试验组试验参与者的随访期'
+     norm=给出各组试验参与者的随访期。
+     appl=always/None/not_applicable flags=[]
+ 82 r03-t06-r03-allowed_medications [agent4/pending]
+     label='6.6.2' raw='允许使用的药物/治疗（包括急救药物）'
+     norm=给出允许使用的药物/治疗（含急救药物）。
+     appl=always/None/not_applicable flags=[]
+ 83 r03-t06-r03-prohibited_medications [agent4/pending]
+     label='6.6.2' raw='试验前和/或试验期间不允许使用'
+     norm=给出试验前和/或试验期间不允许使用的药物/治疗。
+     appl=always/None/not_applicable flags=[]
+ 84 r03-t06-r04-adherence_monitoring [agent4/pending]
+     label='6.6.3' raw='监测试验参与者依从性的程序'
+     norm=给出监测试验参与者依从性的程序。
+     appl=always/None/not_applicable flags=[]
+ 85 r03-t07-r02-efficacy_quality_criteria [agent4/pending]
+     label='6.7.1' raw='有效性参数的质量标准'
+     norm=给出有效性参数的质量标准。
+     appl=always/None/not_applicable flags=[]
+ 86 r03-t07-r03-efficacy_methods_timing [agent4/pending]
+     label='6.7.2' raw='评估、记录和分析疗效参数的方法和时间'
+     norm=给出疗效参数评估、记录和分析的方法和时间。
+     appl=always/None/not_applicable flags=[]
+ 87 r03-t08-r02-safety_parameters [agent4/pending]
+     label='6.8.1' raw='安全参数规范'
+     norm=给出安全参数规范。
+     appl=always/None/not_applicable flags=[]
+ 88 r03-t08-r03-safety_methods_timing [agent4/pending]
+     label='6.8.2' raw='评估、记录和分析安全性参数的方法和时间'
+     norm=给出安全性参数评估、记录和分析的方法和时间。
+     appl=always/None/not_applicable flags=[]
+ 89 r03-t08-r04-ae_recording_reporting [agent4/pending]
+     label='6.8.3' raw='记录和报告不良事件和并发疾病的程序'
+     norm=给出不良事件和并发疾病的记录和报告程序。
+     appl=always/None/not_applicable flags=[]
+ 90 r03-t08-r05-ae_followup_duration [agent4/pending]
+     label='6.8.4' raw='不良事件后试验参与者随访的类型和持续时间'
+     norm=给出不良事件后随访的类型和持续时间。
+     appl=always/None/not_applicable flags=[]
+ 91 r03-t08-r06-committee_duties [agent4/pending]
+     label='6.8.5' raw='独立数据监查委员会（IDMC/DMC）'
+     norm=设置IDMC/DMC、CEC或SRC时，方案或其引用文件明确其职责；未设置委员会时按适用性处理，不构成缺陷。
+     appl=conditional/applicability:n-14-7:oversight-charter/declared_not_evaluated flags=[]
+ 92 r03-t08-r06-committee_procedures [agent4/pending]
+     label='6.8.5' raw='其职责、工作程序'
+     norm=设置相应委员会时，明确其工作程序。
+     appl=conditional/applicability:n-14-7:oversight-charter/declared_not_evaluated flags=[]
+ 93 r03-t08-r06-committee_decision_interface [agent4/pending]
+     label='6.8.5' raw='及决策接口'
+     norm=设置相应委员会时，明确其与申办者/研究团队的决策接口。
+     appl=conditional/applicability:n-14-7:oversight-charter/declared_not_evaluated flags=[]
+ 94 r03-t08-r06-ae_followup [agent4/pending]
+     label='6.8.5' raw='是否明确不良事件及妊娠等特定事件的随访周期与要求'
+     norm=明确不良事件的随访周期与要求；该义务不因未设置委员会而被免除。
+     appl=always/None/not_applicable flags=[]
+ 95 r03-t08-r06-specific_event_followup [agent4/pending]
+     label='6.8.5' raw='妊娠等特定事件的随访周期与要求'
+     norm=研究存在妊娠等相应特定事件适用性时，明确该类事件的随访周期与要求；该义务独立于委员会设置：设置委员会不替代它，未设置委员会也不免除它。研究无相应事件适用性时按适用性处理；适用性未知保持未决，不当fal
+     appl=conditional/None/not_wired flags=[]
+ 96 r03-t09-r02-statistical_methods [agent4/pending]
+     label='6.9.1' raw='描述要采用的统计方法'
+     norm=描述要采用的统计方法，与估计目标及终点一致。
+     appl=always/None/not_applicable flags=[]
+ 97 r03-t09-r02-interim_timing [agent4/pending]
+     label='6.9.1' raw='包括任何计划的中期分析的时间'
+     norm=计划中期分析时给出其时间；无期中分析时按适用性处理，不要求虚构时点/信息量/alpha消耗表。
+     appl=conditional/conditional:v2-n-11-4-9:interim/declared_not_evaluated flags=[]
+ 98 r03-t09-r03-planned_sample_size [deterministic/pending]
+     label='6.9.2' raw='计划入组的试验参与者数量'
+     norm=给出计划入组参与者数量；该数值可由研究事实复算。
+     appl=always/None/not_applicable flags=[]
+ 99 r03-t09-r03-multicenter_distribution [agent4/pending]
+     label='6.9.2' raw='每个试验中心预计入组的试验参与者人数'
+     norm=多中心试验给出各中心预计入组人数；未确定中心名单时不虚构中心或人数，中心分布表达按实际安排审阅。
+     appl=conditional/None/not_wired flags=[]
+100 r03-t09-r03-sample_size_justification [agent4/pending]
+     label='6.9.2' raw='选择样本量的原因，包括试验效力的反思（或计算）'
+     norm=给出样本量选择原因，含试验效力考虑（或计算）。
+     appl=always/None/not_applicable flags=[]
+101 r03-t09-r03-clinical_rationale [agent4/pending]
+     label='6.9.2' raw='和临床依据'
+     norm=给出样本量的临床依据。
+     appl=always/None/not_applicable flags=[]
+102 r03-t09-r04-significance_level [deterministic/pending]
+     label='6.9.3' raw='要使用的显著性水平'
+     norm=给出要使用的显著性水平，与统计方法及多重性考虑一致。
+     appl=always/None/not_applicable flags=[]
+103 r03-t09-r05-termination_criteria [agent4/pending]
+     label='6.9.4' raw='试验终止标准'
+     norm=给出统计层面的试验终止标准；与6.4.6停止规则相关但不相互替代。
+     appl=always/None/not_applicable flags=[]
+104 r03-t09-r06-missing_data_handling [agent4/pending]
+     label='6.9.5' raw='说明缺失、未使用和虚假数据的程序'
+     norm=说明缺失、未使用和虚假数据的处理程序。
+     appl=always/None/not_applicable flags=[]
+105 r03-t09-r07-sap_creation [agent4/pending]
+     label='6.9.6' raw='是否明确要求制定统计分析计划（SAP）'
+     norm=明确要求制定统计分析计划（SAP）。
+     appl=always/None/not_applicable flags=[]
+106 r03-t09-r07-sap_approval_timing [deterministic/pending]
+     label='6.9.6' raw='并在数据库锁定和揭盲前批准'
+     norm=明确SAP在数据库锁定和揭盲前批准的安排；这是将来时点安排，不等于已有批准事实，不伪造签署或批准。
+     appl=always/None/not_applicable flags=[]
+107 r03-t09-r07-sap_deviation_reporting [agent4/pending]
+     label='6.9.6' raw='如实记录和解释'
+     norm=声明对SAP的任何偏离将在临床试验报告中如实记录和解释。
+     appl=always/None/not_applicable flags=[]
+108 r03-t09-r08-analysis_sets [agent4/pending]
+     label='6.9.7' raw='选择纳入分析的试验参与者'
+     norm=给出纳入分析的试验参与者选择（分析集）。
+     appl=always/None/not_applicable flags=[]
+109 r03-t10-r02-direct_access_parties [agent4/pending]
+     label='6.10' raw='研究者、临床试验机构及持有源记录的服务供应商'
+     norm=方案或书面协议明确研究者、临床试验机构及持有源记录的服务供应商允许直接查阅源数据和源记录。
+     appl=always/None/not_applicable flags=[]
+110 r03-t10-r02-direct_access_purposes [agent4/pending]
+     label='6.10' raw='试验相关监查、稽查、药品监管检查'
+     norm=查阅目的覆盖试验相关监查、稽查、药品监管检查及依适用法规开展的伦理审查。
+     appl=always/None/not_applicable flags=[]
+111 r03-t11-r02-quality_management_method [agent4/pending]
+     label='6.11' raw='基于关键质量因素的质量管理方法'
+     norm=阐明基于关键质量因素的质量管理方法。
+     appl=always/None/not_applicable flags=[]
+112 r03-t11-r02-monitoring_strategy [agent4/pending]
+     label='6.11' raw='与风险相称的监查策略（如中心化与现场监查结合）'
+     norm=阐明与风险相称的监查策略（如中心化与现场监查结合）；具体组合由项目安排决定。
+     appl=always/None/not_applicable flags=[]
+113 r03-t11-r02-noncompliance_identification [agent4/pending]
+     label='6.11' raw='不依从事件的识别'
+     norm=给出方案/GCP不依从事件的识别机制。
+     appl=always/None/not_applicable flags=[]
+114 r03-t11-r02-cause_analysis [agent4/pending]
+     label='6.11' raw='原因分析'
+     norm=给出不依从事件的原因分析安排。
+     appl=always/None/not_applicable flags=[]
+115 r03-t11-r02-capa [agent4/pending]
+     label='6.11' raw='纠正预防（CAPA）'
+     norm=给出纠正预防措施（CAPA）安排；出现缩写本身不构成通过，须有实际机制描述。
+     appl=always/None/not_applicable flags=[]
+116 r03-t11-r02-reporting_mechanism [agent4/pending]
+     label='6.11' raw='与报告机制'
+     norm=给出不依从事件的报告机制。
+     appl=always/None/not_applicable flags=[]
+117 r03-t12-r02-ethics_description [agent4/pending]
+     label='6.12' raw='与试验相关的伦理考虑的描述'
+     norm=给出与试验相关的伦理考虑描述。
+     appl=always/None/not_applicable flags=[]
+118 r03-t13-r02-data_collection_set [agent4/pending]
+     label='6.13' raw='是否明确拟采集数据'
+     norm=明确拟采集数据的集合。
+     appl=always/None/not_applicable flags=[]
+119 r03-t13-r02-data_sources [agent4/pending]
+     label='6.13' raw='数据来源及直接录入数据采集工具的源数据'
+     norm=明确数据来源。
+     appl=always/None/not_applicable flags=[]
+120 r03-t13-r02-direct_entry_source [agent4/pending]
+     label='6.13' raw='直接录入数据采集工具的源数据'
+     norm=明确直接录入数据采集工具的源数据。
+     appl=always/None/not_applicable flags=[]
+121 r03-t13-r02-electronic_source_records [agent4/pending]
+     label='6.13' raw='电子原始记录不得仅以打印件替代'
+     norm=明确电子原始记录不得仅以打印件替代。
+     appl=always/None/not_applicable flags=[]
+122 r03-t13-r02-computerized_systems [agent4/pending]
+     label='6.13' raw='计算机化系统是否具备适度验证、用户权限、稽查轨迹及备份安全'
+     norm=明确计算机化系统具备适度验证、用户权限、稽查轨迹及备份安全。
+     appl=always/None/not_applicable flags=[]
+123 r03-t13-r02-record_retention [agent4/pending]
+     label='6.13' raw='试验必备记录按规定妥善保存及可追溯'
+     norm=明确试验必备记录按规定妥善保存及可追溯。
+     appl=always/None/not_applicable flags=[]
+124 r03-t13-r02-medical_record_extraction [agent4/pending]
+     label='6.13' raw='识别将从医疗记录中提取的信息'
+     norm=识别将从医疗记录中提取的信息。
+     appl=always/None/not_applicable flags=[]
+125 r03-t14-r02-funding [agent4/pending]
+     label='6.14' raw='如果在单独协议中未提及，则提供融资和保险'
+     norm=单独协议未提及经费安排时，方案提供融资安排；以已核实引用承载时可指向协议，未知不得按“已在协议中处理”自动不适用。
+     appl=conditional/None/not_wired flags=[]
+126 r03-t14-r02-insurance [agent4/pending]
+     label='6.14' raw='如果在单独协议中未提及，则提供融资和保险'
+     norm=单独协议未提及保险安排时，方案提供保险安排；未知不得自动不适用。
+     appl=conditional/None/not_wired flags=[]
+127 r03-t15-r02-publication_policy [agent4/pending]
+     label='6.15' raw='出版政策，如果未在单独协议中处理'
+     norm=单独协议未处理出版政策时，方案给出出版政策；未知不得自动不适用。
+     appl=conditional/None/not_wired flags=[]
+128 r03-t16-r02-csr_reference_hint [agent4/pending]
+     label='6.16' raw='更多相关信息见Lal临床结构和内容指南研究报告'
+     norm=源行是关于方案与临床试验报告结构/内容指南相关的参考提示；保留原文，不生成方案正文必填义务，也不作为普遍内容检查门槛。
+     appl=always/None/not_applicable flags=['reference_hint', 'source_noise']
+129 r03-t05-r00hdr-recruitment_method [agent4/pending]
+     label='<hdr>' raw='试验参与者识别和招募方法'
+     norm=描述试验参与者识别和招募方法（表头内嵌义务，独立于68条内容行分母）。
+     appl=always/None/not_applicable flags=['header_embedded']

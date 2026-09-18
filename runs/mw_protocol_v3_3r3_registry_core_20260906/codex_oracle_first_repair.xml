@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="49" time="2.346" timestamp="2026-09-06T03:30:50.466407+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_compact_json_layout_roundtrip_and_typed_access" time="0.007" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_loader_fails_closed_on_unknown_field_or_bad_template_hash" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_loader_rejects_duplicate_node_entries" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_loader_rejects_duplicate_contract_skill_and_fixture_ids" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_entry_identity_binding_is_enforced" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_skill_manifest_exports_real_typed_io_schemas" time="0.000" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_skill_manifest_carries_no_model_transport_fields" time="0.000" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_positive_fixture_passes_and_records_deferred_qc" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_claim_and_blank_fact_fail_independently[claim_absent]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_claim_and_blank_fact_fail_independently[claim_blank_statement]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_claim_and_blank_fact_fail_independently[fact_absent]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_claim_and_blank_fact_fail_independently[fact_null_value]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_claim_and_blank_fact_fail_independently[fact_blank_value]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_wrong_source_role_fails_deterministically" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_evidence_floor_violations_fail[locator_not_allowed]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_evidence_floor_violations_fail[context_missing]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_evidence_floor_violations_fail[quality_low]" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_skeleton_and_shell_objects_do_not_pass" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_forbidden_fact_and_claim_presence_fails" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_supplied_passed_and_qc_verdict_are_never_trusted" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_control_provenance_fixture_passes_without_medical_claims" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_skill_output_is_checked_by_same_engine" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_full_mode_complete_registry_reports_complete" time="0.001"><failure message="AssertionError: assert 'incomplete' == 'complete'&#10;  &#10;  - complete&#10;  + incomplete&#10;  ? ++">tests/protocol_v3/test_all_chapter_contracts.py:1190: in test_full_mode_complete_registry_reports_complete
+    assert report.status == "complete"
+E   AssertionError: assert 'incomplete' == 'complete'
+E     
+E     - complete
+E     + incomplete
+E     ? ++</failure></testcase><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_full_mode_missing_coverage_lists_nodes_and_fails" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_partial_mode_reports_incomplete_and_never_complete" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_unexpected_carrier_and_role_mismatch_fail" time="0.002" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_unknown_vocabulary_entries_fail" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_conditional_required_vs_forbidden_conflict_fails" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_dangling_ctq_anchor_fails" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_dangling_dependency_full_error_partial_warning" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_template_hash_and_id_mismatch_fail" time="0.002" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_skill_not_bound_fails" time="0.001" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_missing_or_duplicate_cover_carrier_fails" time="0.002" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_real_template_derives_leaf_union_and_partial_batch" time="0.010" /><testcase classname="tests.protocol_v3.test_all_chapter_contracts" name="test_cli_exit_codes_json_output_and_readonly" time="0.365"><failure message="AssertionError: {&#10;    &quot;mode&quot;: &quot;full&quot;,&#10;    &quot;status&quot;: &quot;incomplete&quot;,&#10;    &quot;findings&quot;: [&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;v2_front_block&quot;,&#10;        &quot;location&quot;: &quot;chapters[v2_front_block].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: positive&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;v2_front_block&quot;,&#10;        &quot;location&quot;: &quot;chapters[v2_front_block].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: missing_claim or missing_control&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;v2_front_block&quot;,&#10;        &quot;location&quot;: &quot;chapters[v2_front_block].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: wrong_source&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;v2_front_block&quot;,&#10;        &quot;location&quot;: &quot;chapters[v2_front_block].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: skeleton&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_1&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_1].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: missing_claim or missing_control&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_1&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_1].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: wrong_source&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_1&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_1].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: skeleton&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_2&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_2].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: positive&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_2&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_2].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: missing_claim or missing_control&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_2&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_2].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: wrong_source&quot;&#10;      },&#10;      {&#10;        &quot;code&quot;: &quot;missing_fixture&quot;,&#10;        &quot;severity&quot;: &quot;error&quot;,&#10;        &quot;node_id&quot;: &quot;syn_n_2&quot;,&#10;        &quot;location&quot;: &quot;chapters[syn_n_2].fixtures&quot;,&#10;        &quot;message&quot;: &quot;missing fixture family: skeleton&quot;&#10;      }&#10;    ],&#10;    &quot;coverage&quot;: {&#10;      &quot;heading_leaf_count&quot;: 2,&#10;      &quot;heading_only_aggregation_count&quot;: 0,&#10;      &quot;outline_only_leaf_count&quot;: 0,&#10;      &quot;leaf_union_count&quot;: 2,&#10;      &quot;expected_carrier_count&quot;: 3,&#10;      &quot;covered_carrier_count&quot;: 3,&#10;      &quot;cover_node_id&quot;: &quot;v2_front_block&quot;,&#10;      &quot;missing_node_ids&quot;: [],&#10;      &quot;unexpected_node_ids&quot;: []&#10;    },&#10;    &quot;fixture_results&quot;: [&#10;      {&#10;        &quot;subject_id&quot;: &quot;fixture:syn-1:positive&quot;,&#10;        &quot;chapter_contract_id&quot;: &quot;contract:syn-1:v2&quot;,&#10;        &quot;passed&quot;: true,&#10;        &quot;findings&quot;: [],&#10;        &quot;deferred_qc_obligations&quot;: [&#10;          &quot;medical_and_qc_judgment_not_executed&quot;,&#10;          &quot;positive_qc_rule:qc:syn-1:body: 合成章 1 必须给出项目化正文。&quot;,&#10;          &quot;skeleton_risk_rule: 只有标题即失败&quot;,&#10;          &quot;project_specific_element_not_evaluated: 合成章 1 项目义务&quot;&#10;        ],&#10;        &quot;ignored_supplied_verdict&quot;: false&#10;      }&#10;    ]&#10;  }&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...fic_element_not_evaluated: 合成章 1 项目义务&quot;\n      ],\n      &quot;ignored_supplied_verdict&quot;: false\n    }\n  ]\n}\n', stderr='').returncode">tests/protocol_v3/test_all_chapter_contracts.py:1629: in test_cli_exit_codes_json_output_and_readonly
+    assert result.returncode == 0, result.stdout + result.stderr
+E   AssertionError: {
+E       "mode": "full",
+E       "status": "incomplete",
+E       "findings": [
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "v2_front_block",
+E           "location": "chapters[v2_front_block].fixtures",
+E           "message": "missing fixture family: positive"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "v2_front_block",
+E           "location": "chapters[v2_front_block].fixtures",
+E           "message": "missing fixture family: missing_claim or missing_control"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "v2_front_block",
+E           "location": "chapters[v2_front_block].fixtures",
+E           "message": "missing fixture family: wrong_source"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "v2_front_block",
+E           "location": "chapters[v2_front_block].fixtures",
+E           "message": "missing fixture family: skeleton"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_1",
+E           "location": "chapters[syn_n_1].fixtures",
+E           "message": "missing fixture family: missing_claim or missing_control"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_1",
+E           "location": "chapters[syn_n_1].fixtures",
+E           "message": "missing fixture family: wrong_source"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_1",
+E           "location": "chapters[syn_n_1].fixtures",
+E           "message": "missing fixture family: skeleton"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_2",
+E           "location": "chapters[syn_n_2].fixtures",
+E           "message": "missing fixture family: positive"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_2",
+E           "location": "chapters[syn_n_2].fixtures",
+E           "message": "missing fixture family: missing_claim or missing_control"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_2",
+E           "location": "chapters[syn_n_2].fixtures",
+E           "message": "missing fixture family: wrong_source"
+E         },
+E         {
+E           "code": "missing_fixture",
+E           "severity": "error",
+E           "node_id": "syn_n_2",
+E           "location": "chapters[syn_n_2].fixtures",
+E           "message": "missing fixture family: skeleton"
+E         }
+E       ],
+E       "coverage": {
+E         "heading_leaf_count": 2,
+E         "heading_only_aggregation_count": 0,
+E         "outline_only_leaf_count": 0,
+E         "leaf_union_count": 2,
+E         "expected_carrier_count": 3,
+E         "covered_carrier_count": 3,
+E         "cover_node_id": "v2_front_block",
+E         "missing_node_ids": [],
+E         "unexpected_node_ids": []
+E       },
+E       "fixture_results": [
+E         {
+E           "subject_id": "fixture:syn-1:positive",
+E           "chapter_contract_id": "contract:syn-1:v2",
+E           "passed": true,
+E           "findings": [],
+E           "deferred_qc_obligations": [
+E             "medical_and_qc_judgment_not_executed",
+E             "positive_qc_rule:qc:syn-1:body: 合成章 1 必须给出项目化正文。",
+E             "skeleton_risk_rule: 只有标题即失败",
+E             "project_specific_element_not_evaluated: 合成章 1 项目义务"
+E           ],
+E           "ignored_supplied_verdict": false
+E         }
+E       ]
+E     }
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...fic_element_not_evaluated: 合成章 1 项目义务"\n      ],\n      "ignored_supplied_verdict": false\n    }\n  ]\n}\n', stderr='').returncode</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_optional_context_is_actually_optional" time="0.000" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_two_valid_evidence_groups_do_not_reject_each_other" time="0.000" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_output_cannot_belong_to_another_node" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_cover_receives_vocabulary_checks" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_skill_version_must_match_contract" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_all_claim_references_resolve_in_vocabulary[condition]" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_all_claim_references_resolve_in_vocabulary[evidence]" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_cli_fixture_expectation_failure_changes_exit_status[positive-content0]" time="0.377" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_registry_obligations" name="test_cli_fixture_expectation_failure_changes_exit_status[skeleton-content1]" time="0.400" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_fixtureless_library_cannot_report_complete" time="0.002" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_poisoned_fixture_fails_library_even_in_partial_mode" time="0.001" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_cli_default_and_formats_share_failing_verdict" time="0.744" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_claim_bearing_control_negative_is_valid" time="0.002" /><testcase classname="runs.mw_protocol_v3_3r3_registry_core_20260906.test_codex_fixture_acceptance" name="test_real_template_rejects_arbitrary_cover_identity" time="0.003" /></testsuite></testsuites>

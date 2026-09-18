@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:front-4:contact-directory",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_front_4",
+  "chapter_contract_id": "contract:v2-n-front-4:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch1:3.3.0",
+    "instructions": "输入为 ChapterSkillInput（已确认联系事实），输出为 ChapterSkillOutput。申办方与研究者联系表为无条件义务，各自给出真实角色与地址单元格；服务方联系表仅在实际适用时生成并给出真实角色/地址值，不适用时整表省略；禁止输出占位 N/A 单元格或借用竞品/模板联系信息。",
+    "forbidden_behaviors": [
+      "借用竞品联系信息",
+      "角色/地址单元格留空",
+      "虚构联系方",
+      "输出任何模型/供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：零基 body-child 索引 84、87–93 与三张联系表 table[89]（2列×3行）、table[91]（4列×6行）、table[93]（3列×5行）。 索引为零基 body-child 计数，非段落序号。",
+    "提示词与定位仅约束出处要求；本清单是重用模板合同，合成测试值不是真实项目批准。",
+    "Word 规则依据：样式ID：2=heading 1；28=Table Grid（表格样式原生核对属7R义务）。"
+  ],
+  "error_codes": [
+    "skill:chapter:front-4:contact-directory:missing-obligation",
+    "skill:chapter:front-4:contact-directory:unresolved-fact",
+    "skill:chapter:front-4:contact-directory:wrong-source"
+  ]
+}

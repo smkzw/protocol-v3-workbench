@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.822" timestamp="2026-09-05T20:03:08.513325+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_durable_reservation_dispatch" name="test_concurrent_orphan_recovery_converges_without_repository_error" time="0.392"><failure message="assert [RepositorySt...-&gt; 'failed'&quot;)] == []&#10;  &#10;  Left contains one more item: RepositoryStateTransitionError(&quot;project=proj:task16:001 aggregate=res:09bc9232611348debcc38710 detail=illegal state transition 'failed' -&gt; 'failed'&quot;)&#10;  Use -v to get more diff">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2945/test_concurrent_orphan_recover0')
+
+    def test_concurrent_orphan_recovery_converges_without_repository_error(tmp_path):
+        db_path = tmp_path / "orphan-race.sqlite"
+        crashed = _run_crash_child(
+            _CRASH_BEFORE_RUNNING_CHILD, db_path, tmp_path / "unused.marker",
+        )
+        assert crashed.returncode == 70
+        factory = _repository_factory(db_path)
+        probed = threading.Barrier(2)
+        outcomes, errors = [], []
+    
+        def recover():
+            try:
+                with factory() as repository:
+                    probe = repository.has_live_dispatch
+    
+                    def synchronized_probe(*args):
+                        active = probe(*args)
+                        probed.wait(timeout=10)
+                        return active
+    
+                    repository.has_live_dispatch = synchronized_probe
+                    transport = _CountingTransport(_FakeTransport())
+                    outcome = ReservationCoordinator(repository).reserve_or_reuse(
+                        project_id=_PROJ, node_contract=_node_contract(),
+                        input_payload=_payload_a(), now=_T1, transport=transport,
+                    )
+                    assert transport.dispatch_count == 0
+                    outcomes.append(outcome.status)
+            except BaseException as exc:
+                errors.append(exc)
+    
+        threads = [threading.Thread(target=recover) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(15)
+        assert not any(thread.is_alive() for thread in threads)
+&gt;       assert errors == []
+E       assert [RepositorySt...-&gt; 'failed'")] == []
+E         
+E         Left contains one more item: RepositoryStateTransitionError("project=proj:task16:001 aggregate=res:09bc9232611348debcc38710 detail=illegal state transition 'failed' -&gt; 'failed'")
+E         Use -v to get more diff
+
+tests/protocol_v3/test_durable_reservation_dispatch.py:438: AssertionError</failure></testcase></testsuite></testsuites>

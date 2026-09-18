@@ -1,0 +1,45 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_interim_reference_resolves_to_real_oversight_node_before_generation ___
+
+    def test_interim_reference_resolves_to_real_oversight_node_before_generation():
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+>       contract, rule = interim_case()
+                         ^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:273: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def interim_case():
+        import json
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from app.protocol_workflow.registries.applicability import FactPredicate, RulePredicate
+        contract = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR / "chapter_contracts/v2_n_11_4_9.json").read_text())
+        rule = contract.conditional_applicability_rules[0]
+>       declaration = RulePredicate(
+            rule_id=rule.conditional_applicability_rule_id,
+            source_rule_sha256=rule.material_sha256(), source_contract_sha256=contract.material_sha256(),
+            predicates=(FactPredicate(fact_path="statistics.interim.applicable", expected=True),),
+            conditional_fact_paths=tuple(f.fact_path for f in contract.substantive_content.fact_requirements
+                                         if f.obligation.value == "required" and f.fact_path != "statistics.interim.applicable"),
+            conditional_claim_types=("interim_analysis_plan", "interim_final_analysis_impact"),
+            conditional_evidence_admission_types=("interim_analysis_plan", "interim_final_analysis_impact"),
+            conditional_object_kinds=("table",),
+            reference_targets=({"fact_path": "statistics.interim.canonical_reference", "semantic_node_ids": ("v2_n_14_7",)},),
+            inactive_claim_requirements=({"claim_type": "interim_not_planned", "obligation": "required", "rationale": "Record the confirmed non-applicability disposition"},),
+            inactive_evidence_requirements=({"source_roles": ("project_primary",), "admission_claim_types": ("interim_not_planned",),
+                                             "allowed_locator_kinds": ("body", "table"), "require_context_window": True, "minimum_quality_score": 0.9},),
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for RulePredicate
+E       reference_targets
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=({'fact_path': 'statistic..._ids': ('v2_n_14_7',)},), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:122: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_interim_reference_resolves_to_real_oversight_node_before_generation
+1 failed, 29 deselected in 1.03s

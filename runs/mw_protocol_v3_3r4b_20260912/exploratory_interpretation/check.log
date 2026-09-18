@@ -1,0 +1,43 @@
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 69%]
+........................................................................ [ 93%]
+....F................                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_node_source_obligations_are_declared[v2_n_3_4_2] _____________
+
+batch2_registry = ChapterRegistryDocument(schema_version='protocol-v3-chapter-registry.v1', generated_for='TP-MA-07 v2 batch2 chapter co...='risk:cell:assessment', value='【合成夹具】risk:cell:assessment 合成值'))))), supplied_passed=None, supplied_qc_verdict=None)))
+node_id = 'v2_n_3_4_2'
+
+    @pytest.mark.parametrize("node_id", sorted(EXPECTED_OBLIGATIONS))
+    def test_node_source_obligations_are_declared(batch2_registry, node_id):
+        expected = EXPECTED_OBLIGATIONS[node_id]
+        contract = _contract(batch2_registry, node_id)
+        substantive = contract.substantive_content
+    
+        required_facts = {
+            item.fact_path
+            for item in substantive.fact_requirements
+            if item.obligation.value == "required"
+        }
+        assert set(expected["required_facts"]) <= required_facts
+    
+        declared_claims = {
+            item.claim_type: item.obligation.value
+            for item in substantive.claim_requirements
+        }
+        for claim in expected["required_claims"]:
+            assert declared_claims.get(claim) == "required"
+        for claim in expected["forbidden_claims"]:
+            assert declared_claims.get(claim) == "forbidden"
+    
+        groups = substantive.evidence_source_requirements
+>       assert len(groups) == len(expected["evidence_groups"])
+E       AssertionError: assert 3 == 2
+E        +  where 3 = len((EvidenceSourceRequirement(schema_version='mw_protocol_v3_contract_v1', source_roles=(<SourceRole.PROJECT_PRIMARY: 'pr...ds=(<LocatorKind.BODY: 'body'>, <LocatorKind.TABLE: 'table'>), require_context_window=True, minimum_quality_score=0.9)))
+E        +  and   2 = len(((('project_primary',), ('exploratory_endpoint',)), (('project_primary',), ('exploratory_endpoint_disposition',))))
+
+tests/protocol_v3/test_chapter_batch2.py:647: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_batch2.py::test_node_source_obligations_are_declared[v2_n_3_4_2]
+1 failed, 308 passed in 6.92s

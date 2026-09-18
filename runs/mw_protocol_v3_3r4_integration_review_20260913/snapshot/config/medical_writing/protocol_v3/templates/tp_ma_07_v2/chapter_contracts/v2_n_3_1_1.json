@@ -1,0 +1,204 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+  "semantic_node_id": "v2_n_3_1_1",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-1-1:primary-objective",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-1-1:v2",
+    "chapter_contract_id": "contract:v2-n-3-1-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_objectives",
+        "obligation": "required",
+        "rationale": "主要目的复用既有 picos.primary_objectives 绑定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_clinical_question",
+        "obligation": "required",
+        "rationale": "必须给出具体临床问题，而不能只写“评价疗效”。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_comparison",
+        "obligation": "required",
+        "rationale": "必须给出治疗比较（试验药与对照的对比关系）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.primary_endpoint",
+        "obligation": "required",
+        "rationale": "主要目的必须链接已确认主要终点。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "design.rescue_treatment_planned",
+        "obligation": "optional",
+        "rationale": "研究是否计划停药/补救治疗策略的已确认设计事实；源示例不构成项目默认。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "design.discontinuation_rescue_strategy",
+        "obligation": "optional",
+        "rationale": "仅当已确认设计包含该策略时填写；否则只登记不适用处置。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "study_objective",
+        "obligation": "required",
+        "rationale": "主要目的声明必须具体、可评价。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "primary_endpoint_definition",
+        "obligation": "required",
+        "rationale": "主要终点定义声明必须与主要目的一一对应。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_linkage",
+        "obligation": "qualified",
+        "rationale": "主要目的与主要估计目标的链接必须满足限定条件。",
+        "qualifying_conditions": [
+          "仅在主要估计目标五属性齐备且与主要终点一致时"
+        ]
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "rescue_strategy_statement",
+        "obligation": "qualified",
+        "rationale": "源示例的停药/补救治疗策略不是项目默认，必须显式确认。",
+        "qualifying_conditions": [
+          "仅当已确认研究设计包含停药/补救治疗策略且已完成高风险确认时"
+        ]
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "主要目的章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "study_objective"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "primary_endpoint_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "临床问题段与治疗比较段必须分别给出；主要目的不得只有“评价疗效”式标签。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "源示例处置：@309-312 中停药/补救治疗策略属示例，不是项目默认；启用需显式高风险确认。",
+      "目的—终点—估计目标三元映射（项目化）。",
+      "关闭补救治疗分支不改变必需的主临床问题、主要终点或估计目标中的其他ICE要求；停药处理仍依已确认临床问题与3.1.2.4事实，不能据false推断无停药或默认策略。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“主要目的”标题或“评价疗效”标签即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-1-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623322"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-1-1:clinical-question",
+      "rule": "主要目的必须给出具体临床问题、治疗比较与主要终点映射；缺项即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-1-1:rescue-strategy",
+      "triggering_fact_paths": [
+        "design.rescue_treatment_planned"
+      ],
+      "condition": "已确认设计包含补救治疗，需要说明其与停药处置及主要临床问题的关系",
+      "rationale": "源312为临床问题示例，不将示例策略默认用于本项目；本规则控制补救相关补充说明，不能免除主临床问题中的停药处置或3.1.2.4其他相关伴发事件策略。",
+      "required_when_active_fact_paths": [
+        "design.discontinuation_rescue_strategy"
+      ],
+      "required_when_active_claim_types": [
+        "rescue_strategy_statement"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-1-1:primary",
+      "question": "主要目的是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "picos.primary_objectives"
+      ],
+      "linked_claim_types": [
+        "study_objective"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-1-1:clinical-question"
+      ],
+      "risk_if_unmet": "主要目的缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

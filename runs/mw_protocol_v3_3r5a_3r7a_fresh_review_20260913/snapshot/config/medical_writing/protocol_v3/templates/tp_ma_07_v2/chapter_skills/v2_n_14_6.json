@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:v2-n-14-6",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_14_6",
+  "chapter_contract_id": "contract:v2-n-14-6:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:batch8:v2-n-14-6:3.3.0",
+    "instructions": "输入为已确认项目事实，输出为 方案偏离 的 ChapterSkillOutput。仅写入实际偏离程序、记录、影响评估、沟通对象，以及重要偏离、一般偏离与紧急危害例外的实际定义；涉及试验参与者安全或权益的影响必须留痕。本地 TP-MA-15 标题不构成已整合内容（provenance pending），缺失进入待补/建议解决。",
+    "forbidden_behaviors": [
+      "把紧急危害例外写成通用豁免或免除已确认义务",
+      "用本地 TP-MA-15 标题代替已整合的偏离内容",
+      "把缺失定义写成不适用或已批准",
+      "输出任何模型、供应商或传输设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2，source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：方案偏离，零基 body-child 索引 912–915；索引不是段落序号。",
+    "Word 规则依据：node_tree.json 的 heading style_id=3 与 bookmarks=['_Toc48315560', '_Toc132623421']；不得清空这些来源锚点。",
+    "结构检查是证据边界，不是医学、质量或审批释放；合成测试值不是真实项目批准，TP-MA-15 内容登记为待验证。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2-n-14-6:missing-obligation",
+    "skill:chapter:v2-n-14-6:unresolved-fact",
+    "skill:chapter:v2-n-14-6:wrong-source"
+  ]
+}

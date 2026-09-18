@@ -1,0 +1,264 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+__ test_study_end_keeps_completion_and_separates_planned_phases[False-False] ___
+
+followup = False, assessment = False
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        active={k for k,v in options.items() if v}
+        if active:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            assert set(caught.value.fact_paths)==active
+        facts.update({k:'Synthetic planned phase definition' for k in active})
+>       assert bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules).resolved_facts==facts
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:1773: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ment': False}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+___ test_study_end_keeps_completion_and_separates_planned_phases[True-False] ___
+
+followup = True, assessment = False
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        active={k for k,v in options.items() if v}
+        if active:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1770: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ment': False}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+___ test_study_end_keeps_completion_and_separates_planned_phases[False-True] ___
+
+followup = False, assessment = True
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        active={k for k,v in options.items() if v}
+        if active:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1770: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...sment': True}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+___ test_study_end_keeps_completion_and_separates_planned_phases[True-True] ____
+
+followup = True, assessment = True
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+            return
+        active={k for k,v in options.items() if v}
+        if active:
+            with pytest.raises(FactBindingError,match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1770: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...sment': True}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+___ test_study_end_keeps_completion_and_separates_planned_phases[None-False] ___
+
+followup = None, assessment = False
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+            with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts),c,bindings,rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1765: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ment': False}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...isk_if_unmet='未满足该问题会使章节内容无法安全进入下游协议草稿。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+followup = None, assessment = False
+
+    @pytest.mark.parametrize('followup,assessment',[(False,False),(True,False),(False,True),(True,True),(None,False)])
+    def test_study_end_keeps_completion_and_separates_planned_phases(followup,assessment):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input,ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog,FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c=ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_4_4.json').read_text())
+        bindings=FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        options={'picos.study_epochs.follow_up_definition':followup,'picos.study_epochs.follow_up_window':followup,'picos.study_epochs.post_treatment_assessment':assessment}
+        facts={f.fact_path:'Synthetic study completion definition' for f in c.substantive_content.fact_requirements if f.obligation.value=='required' and f.fact_path not in options}
+        facts['picos.study_epochs.features']={'follow_up':followup,'post_treatment_assessment':assessment}
+        rules=real_rule_catalog().rules
+        if followup is None:
+>           with pytest.raises(ApplicabilityResolutionError,match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:v2_n_4_4:active'
+
+tests/protocol_v3/test_chapter_applicability.py:1764: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_study_end_keeps_completion_and_separates_planned_phases[False-False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_study_end_keeps_completion_and_separates_planned_phases[True-False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_study_end_keeps_completion_and_separates_planned_phases[False-True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_study_end_keeps_completion_and_separates_planned_phases[True-True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_study_end_keeps_completion_and_separates_planned_phases[None-False]
+5 failed, 234 deselected in 0.68s

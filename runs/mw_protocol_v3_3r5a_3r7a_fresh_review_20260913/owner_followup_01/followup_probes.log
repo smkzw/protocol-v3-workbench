@@ -1,0 +1,26 @@
+== P1 conditional variants standalone (expect no markers) ==
+'若受试者未提供书面知情同意书，则不进入筛选。' -> []
+'如试验参与者未提供书面知情同意，则不得入组。' -> []
+'如果受试者未提供书面知情同意书 则不进入筛选。' -> []
+'若受试者未提供书面知情同意书则不得参加研究。' -> []
+'如受试者未提供书面知情同意书，不进入筛选。' -> []
+== P2 real drafting marker after conditional, offsets in paragraph ==
+matched: '待医学经理确认' offsets: 25 32 slice-equals: True locator: probe kind: paragraph
+== P3 same text in TABLE CELL with cell identity ==
+matched: '待医学经理确认' cell: c9 row/col: 1 2 slice-equals: True
+== P4 conditional + drafting in SAME sentence via comma clause ==
+iter: ['未提供书面知情同意书', '待医学经理确认']
+  matched: '未提供书面知情同意书' at 4 - 14 slice-equals: True
+  matched: '待医学经理确认' at 25 - 32 slice-equals: True
+== P5 db-lock clause with extra comma clause (clause-level recognition retained) ==
+iter: []
+iter: ['尚无直接证据支持']
+== P6 cannot hide a drafting marker inside a conduct sentence ==
+iter: ['未提供书面知情同意者不进入筛选待医学经理确']
+== P7 old true positives unchanged ==
+'主要终点的具体数值未提供。' -> ['未提供']
+'样本量待医学经理确认后写入。' -> ['待医学经理确认']
+'筛选期时长将在本方案正式文本中具体规定。' -> ['将在本方案正式文本中具体规定']
+== P8 adopt-path consumer still uses shared iterator (regression guard) ==
+full_draft uses iter: True
+ai_runner imports iter: True

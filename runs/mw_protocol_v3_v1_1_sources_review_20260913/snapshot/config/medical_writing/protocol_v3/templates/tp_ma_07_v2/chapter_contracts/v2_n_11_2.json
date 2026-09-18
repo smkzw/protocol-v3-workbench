@@ -1,0 +1,265 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-2:v2",
+  "semantic_node_id": "v2_n_11_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-2:analysis-sets",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-2:v2",
+    "chapter_contract_id": "contract:v2-n-11-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.randomized",
+        "obligation": "required",
+        "rationale": "随机集必须有纳入、分组与处理规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.treated",
+        "obligation": "required",
+        "rationale": "治疗集必须按实际暴露定义，不能代替随机集。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.available_assessments",
+        "obligation": "required",
+        "rationale": "可评价集必须按实际评估可用性定义，不能盲目丢弃已暴露人员。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.inclusion_rules",
+        "obligation": "required",
+        "rationale": "每个分析集都必须有明确纳入规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.grouping_rules",
+        "obligation": "required",
+        "rationale": "每个分析集都必须有明确分组规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.handling_rules",
+        "obligation": "required",
+        "rationale": "每个分析集都必须有缺失、偏离和暴露处理规则。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.analysis_sets.rescue_treated_handling",
+        "obligation": "required",
+        "rationale": "补救治疗人员的保留、分组和数据处理必须与估计目标一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_definition",
+        "obligation": "required",
+        "rationale": "随机集、治疗集和可评价集必须分别定义。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_distinction",
+        "obligation": "required",
+        "rationale": "不同分析集不可互换，必须说明纳入、分组与暴露处理差异。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_handling",
+        "obligation": "required",
+        "rationale": "必须说明救援治疗、偏离和缺失数据的分析处理。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_cross_contract_consistency",
+        "obligation": "required",
+        "rationale": "分析集定义必须与估计目标和干预事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "analysis_set_equivalence",
+        "obligation": "forbidden",
+        "rationale": "不得把随机集、治疗集和可评价集宣称为同一人群。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "mislabeled_analysis_set",
+        "obligation": "forbidden",
+        "rationale": "不得以错误名称或错误纳入规则标记分析集。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "analysis_set_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "analysis_set_distinction"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "analysis_set_handling"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "analysis_set_cross_contract_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "分析集必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": [
+          "analysis_set:cell:randomized",
+          "analysis_set:cell:treated",
+          "analysis_set:cell:available-assessments",
+          "analysis_set:cell:inclusion",
+          "analysis_set:cell:grouping",
+          "analysis_set:cell:handling",
+          "analysis_set:cell:rescue-treated"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“分析集”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "分析集仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-2",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623391"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-2:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-2:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-2:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-2:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 773、774、776、777；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.analysis_sets.randomized"
+      ],
+      "linked_claim_types": [
+        "analysis_set_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-2:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-2:estimand",
+      "registry_name": "analysis_set_estimand_registry",
+      "eligibility_fact_paths": [
+        "statistics.analysis_sets.randomized",
+        "estimand.primary.population",
+        "statistics.analysis_sets.rescue_treated_handling"
+      ],
+      "consistency_rules": [
+        "分析集和补救治疗处理必须与主要估计目标人群及策略一致。"
+      ]
+    }
+  ]
+}

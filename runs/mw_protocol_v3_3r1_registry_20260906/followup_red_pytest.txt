@@ -1,0 +1,190 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 42 items
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py ......................... [ 59%]
+..F.FFFFF.FFFFFFF                                                        [100%]
+
+=================================== FAILURES ===================================
+______________ test_every_partial_mapping_has_content_resolution _______________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_every_partial_mapping_has_content_resolution(docs):
+        forward = forward_by_semantic(docs)
+        partials = {
+            semantic
+            for semantic, entry in forward.items()
+            if entry["confidence"] == "partial"
+        }
+        assert partials, "expected the partial-confidence population to stay non-empty"
+        for semantic in partials:
+            resolution = forward[semantic].get("source_resolution")
+>           assert resolution, semantic
+E           AssertionError: study_management.compliance
+E           assert None
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:432: AssertionError
+______ test_pregnancy_testing_is_distinct_from_pregnancy_event_reporting _______
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_pregnancy_testing_is_distinct_from_pregnancy_event_reporting(docs):
+>       resolution = forward_by_semantic(docs)["procedures_assessments.pregnancy"][
+            "source_resolution"
+        ]
+E       KeyError: 'source_resolution'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:457: KeyError
+________ test_own_product_clinical_evidence_is_not_same_class_evidence _________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_own_product_clinical_evidence_is_not_same_class_evidence(docs):
+>       resolution = forward_by_semantic(docs)["background.product.clinical"][
+            "source_resolution"
+        ]
+E       KeyError: 'source_resolution'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:476: KeyError
+___________ test_sample_handling_is_distinct_from_future_use_consent ___________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_sample_handling_is_distinct_from_future_use_consent(docs):
+        forward = forward_by_semantic(docs)
+        specimen = forward["procedures_assessments.specimen"]
+>       assert specimen["target_v2_node_ids"] == ["v2_n_9_2"]
+E       AssertionError: assert ['v2_n_12_7'] == ['v2_n_9_2']
+E         
+E         At index 0 diff: 'v2_n_12_7' != 'v2_n_9_2'
+E         Use -v to get more diff
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:492: AssertionError
+_________ test_appendix_examples_do_not_define_all_project_instruments _________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_appendix_examples_do_not_define_all_project_instruments(docs):
+>       resolution = forward_by_semantic(docs)["appendices.instruments"][
+            "source_resolution"
+        ]
+E       KeyError: 'source_resolution'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:503: KeyError
+_____________ test_overdose_error_is_explicitly_awaiting_contract ______________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_overdose_error_is_explicitly_awaiting_contract(docs):
+        entry = forward_by_semantic(docs)["intervention.overdose_error"]
+>       assert entry["source_resolution"]["status"] == "awaiting_3r3_contract"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'source_resolution'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:519: KeyError
+________ test_retained_conditional_obligations_carry_rules_and_carriers ________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_retained_conditional_obligations_carry_rules_and_carriers(docs):
+        mapping = docs["v1_to_v2_mapping.json"]
+>       block = mapping["retained_conditional_obligations"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'retained_conditional_obligations'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:530: KeyError
+_____________________ test_mapping_conventions_documented ______________________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_mapping_conventions_documented(docs):
+>       conventions = docs["v1_to_v2_mapping.json"]["mapping_conventions"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mapping_conventions'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:556: KeyError
+____________________ test_m11_anchor_policy_and_provenance _____________________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_m11_anchor_policy_and_provenance(docs):
+        mapping = docs["v1_to_v2_mapping.json"]
+>       policy = mapping["m11_anchor_policy"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'm11_anchor_policy'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:564: KeyError
+_________ test_section_metadata_binds_header_footer_and_page_numbering _________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_section_metadata_binds_header_footer_and_page_numbering(docs):
+        sections = docs["node_tree.json"]["sections"]
+        with_refs = [
+            section
+            for section in sections
+>           if section["header_reference"] or section["footer_reference"]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        ]
+E       KeyError: 'header_reference'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:588: KeyError
+_______________ test_style_properties_exposed_for_word_contract ________________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_style_properties_exposed_for_word_contract(docs):
+>       styles = docs["node_tree.json"]["style_properties"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'style_properties'
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:598: KeyError
+____________ test_nonclinical_mapping_is_partial_with_unheaded_note ____________
+
+docs = {'node_tree.json': {'bookmark_inventory': {'other': 50, 'toc_anchored': 264, 'total': 314}, 'candidate_status': 'candi...ode': 'required', 'conditional_rules': [], 'confidence': 'structural', 'disposition': 'mapped_to_v2', ...}, ...], ...}}
+
+    def test_nonclinical_mapping_is_partial_with_unheaded_note(docs):
+        entry = forward_by_semantic(docs)["background.product.nonclinical"]
+>       assert entry["confidence"] == "partial"
+E       AssertionError: assert 'structural' == 'partial'
+E         
+E         - partial
+E         + structural
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:609: AssertionError
+______________________ test_no_false_codex_reviewed_label ______________________
+
+    def test_no_false_codex_reviewed_label():
+        script = SCRIPT_PATH.read_text(encoding="utf-8")
+>       assert "Codex-reviewed" not in script
+E       assert 'Codex-reviewed' not in '"""Task 3R....it(main())\n'
+E         
+E         'Codex-reviewed' is contained here:
+E           judgment, Codex-reviewed)
+E           # ---------------------------------------------------------------------------
+E           
+E           PHASE1_RATIONALE = (
+E               "Ⅰ期专属章节（applicability 含 phase:1），本候选面向 TP-MA-07 v2（Ⅱ/Ⅲ期）模板；"...
+E         
+E         ...Full output truncated (1067 lines hidden), use '-vv' to show
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:615: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_every_partial_mapping_has_content_resolution
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_pregnancy_testing_is_distinct_from_pregnancy_event_reporting
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_own_product_clinical_evidence_is_not_same_class_evidence
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_sample_handling_is_distinct_from_future_use_consent
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_appendix_examples_do_not_define_all_project_instruments
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_overdose_error_is_explicitly_awaiting_contract
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_retained_conditional_obligations_carry_rules_and_carriers
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_mapping_conventions_documented
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_m11_anchor_policy_and_provenance
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_section_metadata_binds_header_footer_and_page_numbering
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_style_properties_exposed_for_word_contract
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_nonclinical_mapping_is_partial_with_unheaded_note
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_no_false_codex_reviewed_label
+======================== 13 failed, 29 passed in 0.38s =========================

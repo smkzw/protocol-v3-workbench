@@ -1,0 +1,46 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+____ test_complete_source_and_schema_reach_actual_http_body_through_harness ____
+
+    def test_complete_source_and_schema_reach_actual_http_body_through_harness():
+        full = json.dumps({'instruction': '提取研究设计', 'source': '原文内容' * 3000 + '末尾关键剂量',
+                           'output_schema': {'type': 'object', 'required': ['fields']}}, ensure_ascii=False)
+        opener = _FakeOpener([_FakeResponse(_completion_body())])
+        resolved = []
+    
+        def resolve(ref, sha):
+            resolved.append((ref, sha))
+            return full
+    
+>       adapter = build_zhipu_api_adapter(credential_resolver=_resolver(), output_sink=_FakeSink(),
+                                          http_opener=opener, artifact_text_resolver=resolve,
+                                          max_input_bytes=100_000)
+E       TypeError: build_zhipu_api_adapter() got an unexpected keyword argument 'artifact_text_resolver'
+
+tests/protocol_v3/test_zhipu_full_artifact_input.py:33: TypeError
+_________ test_total_input_budget_counts_all_bytes_without_truncating __________
+
+    def test_total_input_budget_counts_all_bytes_without_truncating():
+        full = '研究资料' * 3000
+        opener = _FakeOpener([_FakeResponse(_completion_body())])
+>       adapter = build_zhipu_api_adapter(credential_resolver=_resolver(), output_sink=_FakeSink(),
+                                          http_opener=opener, artifact_text_resolver=lambda ref, sha: full,
+                                          max_input_bytes=1000)
+E       TypeError: build_zhipu_api_adapter() got an unexpected keyword argument 'artifact_text_resolver'
+
+tests/protocol_v3/test_zhipu_full_artifact_input.py:48: TypeError
+______ test_old_or_wrong_resolved_version_is_not_sent_as_current_material ______
+
+    def test_old_or_wrong_resolved_version_is_not_sent_as_current_material():
+        opener = _FakeOpener([_FakeResponse(_completion_body())])
+>       adapter = build_zhipu_api_adapter(credential_resolver=_resolver(), output_sink=_FakeSink(),
+                                          http_opener=opener, artifact_text_resolver=lambda ref, sha: '旧版本',
+                                          max_input_bytes=1000)
+E       TypeError: build_zhipu_api_adapter() got an unexpected keyword argument 'artifact_text_resolver'
+
+tests/protocol_v3/test_zhipu_full_artifact_input.py:58: TypeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_zhipu_full_artifact_input.py::test_complete_source_and_schema_reach_actual_http_body_through_harness
+FAILED tests/protocol_v3/test_zhipu_full_artifact_input.py::test_total_input_budget_counts_all_bytes_without_truncating
+FAILED tests/protocol_v3/test_zhipu_full_artifact_input.py::test_old_or_wrong_resolved_version_is_not_sent_as_current_material
+3 failed in 0.37s

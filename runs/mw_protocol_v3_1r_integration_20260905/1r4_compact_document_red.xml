@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="0.415" timestamp="2026-09-05T19:27:21.359115+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_legacy_node_material_hash_remains_byte_stable" time="0.003" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compaction_is_explicit_versioned_and_roundtrips" time="0.000" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_binds_matching_inputs_through_real_harness" time="0.000" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes0]" time="0.000" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes1]" time="0.000" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_contract_detects_missing_reordered_or_replaced_input[hashes2]" time="0.000" /><testcase classname="tests.protocol_v3.test_compact_dependency_contract" name="test_compact_document_revision_stays_versioned_and_replays" time="0.019"><failure message="AssertionError: assert 'mw_protocol_v3_contract_v1' == 'mw_protocol_v3_contract_v1_1'&#10;  &#10;  - mw_protocol_v3_contract_v1_1&#10;  ?                           --&#10;  + mw_protocol_v3_contract_v1">def test_compact_document_revision_stays_versioned_and_replays():
+        from app.protocol_workflow.canonical.document import DocumentEffectLedger, SemanticDocumentReducer
+        from test_semantic_document_reducer import (
+            _study_definition, _document_revision, _decision, _snapshot_for, _apply_kwargs, LATER,
+        )
+        study = _study_definition()
+        original = _document_revision(study).compact_dependencies()
+        decision = _decision(snapshot_sha256=_snapshot_for(original))
+        reducer = SemanticDocumentReducer()
+        revised, _, ledger, replayed = reducer.replay_or_apply(
+            original, study, decision, DocumentEffectLedger(), now=LATER, **_apply_kwargs(),
+        )
+        assert not replayed
+&gt;       assert revised.schema_version == original.schema_version
+E       AssertionError: assert 'mw_protocol_v3_contract_v1' == 'mw_protocol_v3_contract_v1_1'
+E         
+E         - mw_protocol_v3_contract_v1_1
+E         ?                           --
+E         + mw_protocol_v3_contract_v1
+
+tests/protocol_v3/test_compact_dependency_contract.py:67: AssertionError</failure></testcase></testsuite></testsuites>

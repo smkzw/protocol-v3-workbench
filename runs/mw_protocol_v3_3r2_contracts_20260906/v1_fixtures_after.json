@@ -1,0 +1,1002 @@
+{
+  "captured_with": "mw_protocol_v3_3r2_contracts_20260906 worker_01",
+  "models": {
+    "ChapterContract": {
+      "material_sha256": "f34ab58cbc2c5cbb911ad880c78be460da95f0a722d7f6e90301b82d42244f52",
+      "material_sha256_compact": null,
+      "model_dump_json": "{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"frozen\",\"chapter_contract_id\":\"contract:objectives:v1\",\"semantic_node_id\":\"node:study-objectives\",\"contract_version\":\"1.0.0\",\"template_id\":\"template:tp-ma-07\",\"template_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"chapter_skill_id\":\"skill:chapter:objectives\",\"chapter_skill_version\":\"1.0.0\",\"required_fact_paths\":[\"picos.outcome.primary\"],\"required_admission_claim_types\":[],\"required_source_roles\":[\"competitor_full_protocol\"],\"required_claim_types\":[\"primary_objective\"],\"required_structural_objects\":[\"paragraph\"],\"positive_qc_rules\":[\"主要目的必须与主要终点形成一一映射\"],\"word_block_schema\":\"paragraph-list-v1\",\"dependency_ids\":[\"contract:background:v1\"]}",
+      "model_dump_json_compact": null,
+      "model_dump_json_schema": {
+        "$defs": {
+          "CanonicalState": {
+            "enum": [
+              "raw",
+              "normalized",
+              "proposed",
+              "confirmed",
+              "frozen",
+              "superseded",
+              "quarantined"
+            ],
+            "title": "CanonicalState",
+            "type": "string"
+          },
+          "SourceRole": {
+            "enum": [
+              "project_primary",
+              "regulatory_or_guideline",
+              "competitor_full_protocol",
+              "registry_only",
+              "peer_reviewed",
+              "company_style_only",
+              "endpoint_or_instrument"
+            ],
+            "title": "SourceRole",
+            "type": "string"
+          },
+          "StructuralObjectKind": {
+            "enum": [
+              "paragraph",
+              "table",
+              "schedule_of_activities",
+              "figure",
+              "formula",
+              "instrument"
+            ],
+            "title": "StructuralObjectKind",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "canonical_state": {
+            "$ref": "#/$defs/CanonicalState",
+            "default": "frozen"
+          },
+          "chapter_contract_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Chapter Contract Id",
+            "type": "string"
+          },
+          "chapter_skill_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Chapter Skill Id",
+            "type": "string"
+          },
+          "chapter_skill_version": {
+            "minLength": 1,
+            "title": "Chapter Skill Version",
+            "type": "string"
+          },
+          "contract_version": {
+            "minLength": 1,
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "dependency_ids": {
+            "default": [],
+            "items": {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Dependency Ids",
+            "type": "array"
+          },
+          "positive_qc_rules": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Positive Qc Rules",
+            "type": "array"
+          },
+          "required_admission_claim_types": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Admission Claim Types",
+            "type": "array"
+          },
+          "required_claim_types": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Claim Types",
+            "type": "array"
+          },
+          "required_fact_paths": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Fact Paths",
+            "type": "array"
+          },
+          "required_source_roles": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/SourceRole"
+            },
+            "title": "Required Source Roles",
+            "type": "array"
+          },
+          "required_structural_objects": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/StructuralObjectKind"
+            },
+            "title": "Required Structural Objects",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "mw_protocol_v3_contract_v1",
+            "default": "mw_protocol_v3_contract_v1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "semantic_node_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Semantic Node Id",
+            "type": "string"
+          },
+          "template_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "template_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Template Sha256",
+            "type": "string"
+          },
+          "word_block_schema": {
+            "minLength": 1,
+            "title": "Word Block Schema",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chapter_contract_id",
+          "semantic_node_id",
+          "contract_version",
+          "template_id",
+          "template_sha256",
+          "chapter_skill_id",
+          "chapter_skill_version",
+          "positive_qc_rules",
+          "word_block_schema"
+        ],
+        "title": "ChapterContract",
+        "type": "object"
+      },
+      "schema_version": "mw_protocol_v3_contract_v1"
+    },
+    "ChapterLockSnapshot_legacy": {
+      "material_sha256": "1a1a0ee92f96915cdd91e4d1320c76818b468e53518aa0aa845699d5e815c03d",
+      "material_sha256_compact": "6faffaf679652705ab5c21df247fef885493d08158df215374b2b790492e2d69",
+      "model_dump_json": "{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"frozen\",\"chapter_lock_snapshot_id\":\"lock:objectives:001\",\"semantic_node_id\":\"node:study-objectives\",\"semantic_document_revision_id\":\"document:uc301:001\",\"semantic_document_sha256\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"upstream_artifact_hashes\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"],\"accepted_semantic_block_hashes\":[\"f2551074c125cc5b4dda2916b7378e8d3246f928eea07cced198ee88bbf00b03\"],\"locked_by_actor_id\":\"user:medical-writer\",\"locked_at\":\"2026-09-06T02:00:00Z\",\"is_locked\":true,\"auto_unlock_reason\":null}",
+      "model_dump_json_compact": "{\"schema_version\":\"mw_protocol_v3_contract_v1_1\",\"canonical_state\":\"frozen\",\"dependency_sha256\":\"ee74c851b15660c04cdfd9f98d2f86feb76b598c7a8be89bc332da004a03081e\",\"chapter_lock_snapshot_id\":\"lock:objectives:001\",\"semantic_node_id\":\"node:study-objectives\",\"semantic_document_revision_id\":\"document:uc301:001\",\"semantic_document_sha256\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"accepted_semantic_block_hashes\":[\"f2551074c125cc5b4dda2916b7378e8d3246f928eea07cced198ee88bbf00b03\"],\"locked_by_actor_id\":\"user:medical-writer\",\"locked_at\":\"2026-09-06T02:00:00Z\",\"is_locked\":true,\"auto_unlock_reason\":null}",
+      "model_dump_json_schema": {
+        "$defs": {
+          "CanonicalState": {
+            "enum": [
+              "raw",
+              "normalized",
+              "proposed",
+              "confirmed",
+              "frozen",
+              "superseded",
+              "quarantined"
+            ],
+            "title": "CanonicalState",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "accepted_semantic_block_hashes": {
+            "items": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Accepted Semantic Block Hashes",
+            "type": "array"
+          },
+          "auto_unlock_reason": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Auto Unlock Reason"
+          },
+          "canonical_state": {
+            "$ref": "#/$defs/CanonicalState",
+            "default": "frozen"
+          },
+          "chapter_lock_snapshot_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Chapter Lock Snapshot Id",
+            "type": "string"
+          },
+          "dependency_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Dependency Sha256"
+          },
+          "is_locked": {
+            "default": true,
+            "title": "Is Locked",
+            "type": "boolean"
+          },
+          "locked_at": {
+            "format": "date-time",
+            "title": "Locked At",
+            "type": "string"
+          },
+          "locked_by_actor_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Locked By Actor Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "mw_protocol_v3_contract_v1",
+            "enum": [
+              "mw_protocol_v3_contract_v1",
+              "mw_protocol_v3_contract_v1_1"
+            ],
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "semantic_document_revision_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Semantic Document Revision Id",
+            "type": "string"
+          },
+          "semantic_document_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Semantic Document Sha256",
+            "type": "string"
+          },
+          "semantic_node_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Semantic Node Id",
+            "type": "string"
+          },
+          "upstream_artifact_hashes": {
+            "default": [],
+            "items": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "title": "Upstream Artifact Hashes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "chapter_lock_snapshot_id",
+          "semantic_node_id",
+          "semantic_document_revision_id",
+          "semantic_document_sha256",
+          "accepted_semantic_block_hashes",
+          "locked_by_actor_id",
+          "locked_at"
+        ],
+        "title": "ChapterLockSnapshot",
+        "type": "object"
+      },
+      "schema_version": "mw_protocol_v3_contract_v1"
+    },
+    "NodeExecutionContract_legacy": {
+      "material_sha256": "6126c9a83369b7e73b1f6815059a8c5807873b756ca112257b37e605d696ac21",
+      "material_sha256_compact": "abac96f1c115fcf2bb487a115eebde024a0c76c5b8ab427dac062be3cae093e8",
+      "model_dump_json": "{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"frozen\",\"node_execution_contract_id\":\"execution:contract:001\",\"skill_definition_id\":\"skill:chapter:objectives\",\"role\":\"chapter_writer\",\"harness\":\"zcode\",\"provider\":\"zcode\",\"model\":\"GLM-5.3-Flash\",\"reasoning_effort\":\"high\",\"provider_session_id\":null,\"same_session_recovery\":true,\"timeout_seconds\":600,\"fallback_policy_id\":\"policy:fallback:001\",\"prompt_sha256\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"input_schema_ref\":\"schemas/chapter-input-v1.json\",\"output_schema_ref\":\"schemas/chapter-output-v1.json\",\"allowed_tools\":[\"read\",\"grep\"],\"allowed_paths\":[\"runs/\"],\"permission_policy_id\":\"policy:permission:001\",\"input_artifact_hashes\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"sensitivity_tier\":\"confidential\",\"allowed_providers\":[\"zcode\"],\"allowed_regions\":[\"cn-north-1\"],\"redaction_policy_id\":\"policy:redaction:001\",\"retention_policy_id\":\"policy:retention:001\",\"logical_call_id\":\"call:chapter:001\",\"idempotency_key\":\"call:chapter:001@input-a\"}",
+      "model_dump_json_compact": "{\"schema_version\":\"mw_protocol_v3_contract_v1_1\",\"canonical_state\":\"frozen\",\"dependency_sha256\":\"cb8695fd039d70cd693c619ad474c8e03c21e8ad10a94fc023706391d93da806\",\"node_execution_contract_id\":\"execution:contract:001\",\"skill_definition_id\":\"skill:chapter:objectives\",\"role\":\"chapter_writer\",\"harness\":\"zcode\",\"provider\":\"zcode\",\"model\":\"GLM-5.3-Flash\",\"reasoning_effort\":\"high\",\"provider_session_id\":null,\"same_session_recovery\":true,\"timeout_seconds\":600,\"fallback_policy_id\":\"policy:fallback:001\",\"prompt_sha256\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"input_schema_ref\":\"schemas/chapter-input-v1.json\",\"output_schema_ref\":\"schemas/chapter-output-v1.json\",\"allowed_tools\":[\"read\",\"grep\"],\"allowed_paths\":[\"runs/\"],\"permission_policy_id\":\"policy:permission:001\",\"sensitivity_tier\":\"confidential\",\"allowed_providers\":[\"zcode\"],\"allowed_regions\":[\"cn-north-1\"],\"redaction_policy_id\":\"policy:redaction:001\",\"retention_policy_id\":\"policy:retention:001\",\"logical_call_id\":\"call:chapter:001\",\"idempotency_key\":\"call:chapter:001@input-a\"}",
+      "model_dump_json_schema": {
+        "$defs": {
+          "CanonicalState": {
+            "enum": [
+              "raw",
+              "normalized",
+              "proposed",
+              "confirmed",
+              "frozen",
+              "superseded",
+              "quarantined"
+            ],
+            "title": "CanonicalState",
+            "type": "string"
+          },
+          "ReasoningEffort": {
+            "enum": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max",
+              "xhigh"
+            ],
+            "title": "ReasoningEffort",
+            "type": "string"
+          },
+          "SensitivityTier": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted"
+            ],
+            "title": "SensitivityTier",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "allowed_paths": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Allowed Paths",
+            "type": "array"
+          },
+          "allowed_providers": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Allowed Providers",
+            "type": "array"
+          },
+          "allowed_regions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Allowed Regions",
+            "type": "array"
+          },
+          "allowed_tools": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Allowed Tools",
+            "type": "array"
+          },
+          "canonical_state": {
+            "$ref": "#/$defs/CanonicalState",
+            "default": "frozen"
+          },
+          "dependency_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Dependency Sha256"
+          },
+          "fallback_policy_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Fallback Policy Id",
+            "type": "string"
+          },
+          "harness": {
+            "minLength": 1,
+            "title": "Harness",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "minLength": 1,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "input_artifact_hashes": {
+            "default": [],
+            "items": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "title": "Input Artifact Hashes",
+            "type": "array"
+          },
+          "input_schema_ref": {
+            "minLength": 1,
+            "title": "Input Schema Ref",
+            "type": "string"
+          },
+          "logical_call_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Logical Call Id",
+            "type": "string"
+          },
+          "model": {
+            "minLength": 1,
+            "title": "Model",
+            "type": "string"
+          },
+          "node_execution_contract_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Node Execution Contract Id",
+            "type": "string"
+          },
+          "output_schema_ref": {
+            "minLength": 1,
+            "title": "Output Schema Ref",
+            "type": "string"
+          },
+          "permission_policy_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Permission Policy Id",
+            "type": "string"
+          },
+          "prompt_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Prompt Sha256",
+            "type": "string"
+          },
+          "provider": {
+            "minLength": 1,
+            "title": "Provider",
+            "type": "string"
+          },
+          "provider_session_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Session Id"
+          },
+          "reasoning_effort": {
+            "$ref": "#/$defs/ReasoningEffort"
+          },
+          "redaction_policy_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Redaction Policy Id",
+            "type": "string"
+          },
+          "retention_policy_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Retention Policy Id",
+            "type": "string"
+          },
+          "role": {
+            "minLength": 1,
+            "title": "Role",
+            "type": "string"
+          },
+          "same_session_recovery": {
+            "title": "Same Session Recovery",
+            "type": "boolean"
+          },
+          "schema_version": {
+            "default": "mw_protocol_v3_contract_v1",
+            "enum": [
+              "mw_protocol_v3_contract_v1",
+              "mw_protocol_v3_contract_v1_1"
+            ],
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sensitivity_tier": {
+            "$ref": "#/$defs/SensitivityTier"
+          },
+          "skill_definition_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Skill Definition Id",
+            "type": "string"
+          },
+          "timeout_seconds": {
+            "exclusiveMinimum": 0,
+            "title": "Timeout Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "node_execution_contract_id",
+          "skill_definition_id",
+          "role",
+          "harness",
+          "provider",
+          "model",
+          "reasoning_effort",
+          "same_session_recovery",
+          "timeout_seconds",
+          "fallback_policy_id",
+          "prompt_sha256",
+          "input_schema_ref",
+          "output_schema_ref",
+          "permission_policy_id",
+          "sensitivity_tier",
+          "allowed_providers",
+          "allowed_regions",
+          "redaction_policy_id",
+          "retention_policy_id",
+          "logical_call_id",
+          "idempotency_key"
+        ],
+        "title": "NodeExecutionContract",
+        "type": "object"
+      },
+      "schema_version": "mw_protocol_v3_contract_v1"
+    },
+    "SemanticDocumentRevision_legacy": {
+      "material_sha256": "b42241126ecb1c748243419bda061e5cd1e77d76317f742055411e84b1825e9f",
+      "material_sha256_compact": "857cbc1ed44d1d8e30f0d9b2cc3b525bc9a1adcb5c5da1c22859ab181e937052",
+      "model_dump_json": "{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"proposed\",\"semantic_document_revision_id\":\"document:uc301:001\",\"project_id\":\"project:uc301\",\"revision\":1,\"previous_revision_sha256\":null,\"study_definition_id\":\"study:def:uc301\",\"study_definition_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"applicability_snapshot_id\":\"applicability:uc301:v1\",\"applicability_snapshot_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"semantic_blocks\":[{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"confirmed\",\"semantic_block_id\":\"block:introduction:001\",\"semantic_node_id\":\"node:introduction\",\"chapter_contract_id\":\"contract:introduction:v1\",\"substantive_content_contract_id\":\"content:introduction:v1\",\"block_kind\":\"paragraph\",\"content\":\"本研究拟评价研究药物 A 用于目标人群的有效性与安全性。\",\"fact_paths\":[\"picos.population.indication\"],\"claim_evidence_link_ids\":[\"link:introduction:001\"],\"medical_admission_unit_ids\":[\"admission:introduction:001\"],\"content_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"chapter_contract_hashes\":[\"0008591628e5119be9da192b77274438b7ec4d43f71784a9a06a4a29a19d99a2\"],\"updated_at\":\"2026-09-06T02:00:00Z\"}",
+      "model_dump_json_compact": "{\"schema_version\":\"mw_protocol_v3_contract_v1_1\",\"canonical_state\":\"proposed\",\"dependency_sha256\":\"35a16ed63a98ffe92e982ecd8a47e57b2bf20dea6f8be94afdc92e488ad2a77b\",\"semantic_document_revision_id\":\"document:uc301:001\",\"project_id\":\"project:uc301\",\"revision\":1,\"previous_revision_sha256\":null,\"study_definition_id\":\"study:def:uc301\",\"study_definition_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"applicability_snapshot_id\":\"applicability:uc301:v1\",\"applicability_snapshot_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"semantic_blocks\":[{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"confirmed\",\"semantic_block_id\":\"block:introduction:001\",\"semantic_node_id\":\"node:introduction\",\"chapter_contract_id\":\"contract:introduction:v1\",\"substantive_content_contract_id\":\"content:introduction:v1\",\"block_kind\":\"paragraph\",\"content\":\"本研究拟评价研究药物 A 用于目标人群的有效性与安全性。\",\"fact_paths\":[\"picos.population.indication\"],\"claim_evidence_link_ids\":[\"link:introduction:001\"],\"medical_admission_unit_ids\":[\"admission:introduction:001\"],\"content_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"updated_at\":\"2026-09-06T02:00:00Z\"}",
+      "model_dump_json_schema": {
+        "$defs": {
+          "CanonicalState": {
+            "enum": [
+              "raw",
+              "normalized",
+              "proposed",
+              "confirmed",
+              "frozen",
+              "superseded",
+              "quarantined"
+            ],
+            "title": "CanonicalState",
+            "type": "string"
+          },
+          "SemanticBlock": {
+            "additionalProperties": false,
+            "properties": {
+              "block_kind": {
+                "$ref": "#/$defs/SemanticBlockKind"
+              },
+              "canonical_state": {
+                "$ref": "#/$defs/CanonicalState",
+                "default": "confirmed"
+              },
+              "chapter_contract_id": {
+                "maxLength": 160,
+                "minLength": 3,
+                "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                "title": "Chapter Contract Id",
+                "type": "string"
+              },
+              "claim_evidence_link_ids": {
+                "items": {
+                  "maxLength": 160,
+                  "minLength": 3,
+                  "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Claim Evidence Link Ids",
+                "type": "array"
+              },
+              "content": {
+                "minLength": 1,
+                "title": "Content",
+                "type": "string"
+              },
+              "content_sha256": {
+                "pattern": "^[0-9a-f]{64}$",
+                "title": "Content Sha256",
+                "type": "string"
+              },
+              "fact_paths": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Fact Paths",
+                "type": "array"
+              },
+              "medical_admission_unit_ids": {
+                "items": {
+                  "maxLength": 160,
+                  "minLength": 3,
+                  "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Medical Admission Unit Ids",
+                "type": "array"
+              },
+              "schema_version": {
+                "const": "mw_protocol_v3_contract_v1",
+                "default": "mw_protocol_v3_contract_v1",
+                "title": "Schema Version",
+                "type": "string"
+              },
+              "semantic_block_id": {
+                "maxLength": 160,
+                "minLength": 3,
+                "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                "title": "Semantic Block Id",
+                "type": "string"
+              },
+              "semantic_node_id": {
+                "maxLength": 160,
+                "minLength": 3,
+                "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                "title": "Semantic Node Id",
+                "type": "string"
+              },
+              "substantive_content_contract_id": {
+                "maxLength": 160,
+                "minLength": 3,
+                "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+                "title": "Substantive Content Contract Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "semantic_block_id",
+              "semantic_node_id",
+              "chapter_contract_id",
+              "substantive_content_contract_id",
+              "block_kind",
+              "content",
+              "fact_paths",
+              "claim_evidence_link_ids",
+              "medical_admission_unit_ids",
+              "content_sha256"
+            ],
+            "title": "SemanticBlock",
+            "type": "object"
+          },
+          "SemanticBlockKind": {
+            "enum": [
+              "paragraph",
+              "table",
+              "schedule_of_activities",
+              "figure",
+              "formula",
+              "instrument",
+              "page_field"
+            ],
+            "title": "SemanticBlockKind",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "applicability_snapshot_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Applicability Snapshot Id",
+            "type": "string"
+          },
+          "applicability_snapshot_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Applicability Snapshot Sha256",
+            "type": "string"
+          },
+          "canonical_state": {
+            "$ref": "#/$defs/CanonicalState",
+            "default": "proposed"
+          },
+          "chapter_contract_hashes": {
+            "default": [],
+            "items": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "title": "Chapter Contract Hashes",
+            "type": "array"
+          },
+          "dependency_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Dependency Sha256"
+          },
+          "previous_revision_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Previous Revision Sha256"
+          },
+          "project_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "mw_protocol_v3_contract_v1",
+            "enum": [
+              "mw_protocol_v3_contract_v1",
+              "mw_protocol_v3_contract_v1_1"
+            ],
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "semantic_blocks": {
+            "items": {
+              "$ref": "#/$defs/SemanticBlock"
+            },
+            "minItems": 1,
+            "title": "Semantic Blocks",
+            "type": "array"
+          },
+          "semantic_document_revision_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Semantic Document Revision Id",
+            "type": "string"
+          },
+          "study_definition_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Study Definition Id",
+            "type": "string"
+          },
+          "study_definition_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Study Definition Sha256",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "semantic_document_revision_id",
+          "project_id",
+          "revision",
+          "study_definition_id",
+          "study_definition_sha256",
+          "applicability_snapshot_id",
+          "applicability_snapshot_sha256",
+          "semantic_blocks",
+          "updated_at"
+        ],
+        "title": "SemanticDocumentRevision",
+        "type": "object"
+      },
+      "schema_version": "mw_protocol_v3_contract_v1"
+    },
+    "SubstantiveContentContract": {
+      "material_sha256": "5f9619dc40a0ec1cb3e90bde3f5cd2feb4cbb659cf6865eeea791a76a54831f0",
+      "material_sha256_compact": null,
+      "model_dump_json": "{\"schema_version\":\"mw_protocol_v3_contract_v1\",\"canonical_state\":\"frozen\",\"substantive_content_contract_id\":\"content:objectives:v1\",\"chapter_contract_id\":\"contract:objectives:v1\",\"required_claim_types\":[\"primary_objective\"],\"required_fact_paths\":[\"picos.outcome.primary\"],\"minimum_source_roles\":[\"competitor_full_protocol\"],\"required_admission_claim_types\":[\"study_objective\"],\"project_specific_elements\":[\"UC301 主要终点定义\"],\"required_structural_objects\":[\"paragraph\"],\"required_object_cells\":[\"soa:visit:week12\"],\"skeleton_risk_rules\":[\"只有标题或通用模板句即失败\"]}",
+      "model_dump_json_compact": null,
+      "model_dump_json_schema": {
+        "$defs": {
+          "CanonicalState": {
+            "enum": [
+              "raw",
+              "normalized",
+              "proposed",
+              "confirmed",
+              "frozen",
+              "superseded",
+              "quarantined"
+            ],
+            "title": "CanonicalState",
+            "type": "string"
+          },
+          "SourceRole": {
+            "enum": [
+              "project_primary",
+              "regulatory_or_guideline",
+              "competitor_full_protocol",
+              "registry_only",
+              "peer_reviewed",
+              "company_style_only",
+              "endpoint_or_instrument"
+            ],
+            "title": "SourceRole",
+            "type": "string"
+          },
+          "StructuralObjectKind": {
+            "enum": [
+              "paragraph",
+              "table",
+              "schedule_of_activities",
+              "figure",
+              "formula",
+              "instrument"
+            ],
+            "title": "StructuralObjectKind",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "canonical_state": {
+            "$ref": "#/$defs/CanonicalState",
+            "default": "frozen"
+          },
+          "chapter_contract_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Chapter Contract Id",
+            "type": "string"
+          },
+          "minimum_source_roles": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/SourceRole"
+            },
+            "title": "Minimum Source Roles",
+            "type": "array"
+          },
+          "project_specific_elements": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Project Specific Elements",
+            "type": "array"
+          },
+          "required_admission_claim_types": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Admission Claim Types",
+            "type": "array"
+          },
+          "required_claim_types": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Claim Types",
+            "type": "array"
+          },
+          "required_fact_paths": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Fact Paths",
+            "type": "array"
+          },
+          "required_object_cells": {
+            "default": [],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Required Object Cells",
+            "type": "array"
+          },
+          "required_structural_objects": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/StructuralObjectKind"
+            },
+            "title": "Required Structural Objects",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "mw_protocol_v3_contract_v1",
+            "default": "mw_protocol_v3_contract_v1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "skeleton_risk_rules": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Skeleton Risk Rules",
+            "type": "array"
+          },
+          "substantive_content_contract_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+            "title": "Substantive Content Contract Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "substantive_content_contract_id",
+          "chapter_contract_id",
+          "skeleton_risk_rules"
+        ],
+        "title": "SubstantiveContentContract",
+        "type": "object"
+      },
+      "schema_version": "mw_protocol_v3_contract_v1"
+    }
+  }
+}

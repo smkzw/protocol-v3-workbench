@@ -1,0 +1,448 @@
+{
+  "fresh_assembly_equals_previous_artifact": true,
+  "assembly_different_top_level_keys": [],
+  "source_docx_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "fresh_extraction_equals_stored": true,
+  "extraction_different_top_level_keys": [],
+  "coverage": {
+    "heading_leaf_count": 105,
+    "heading_only_aggregation_count": 1,
+    "outline_only_leaf_count": 4,
+    "leaf_union_count": 110,
+    "expected_carrier_count": 111,
+    "covered_carrier_count": 111,
+    "cover_node_id": "v2_front_block",
+    "missing_node_ids": [],
+    "unexpected_node_ids": []
+  },
+  "lint_status": "complete",
+  "lint_errors": 0,
+  "fixtures": 558,
+  "all_fixtures_defer_medical_judgment": true,
+  "condition_count": 49,
+  "condition_texts": [
+    {
+      "node": "v2_n_1_2",
+      "id": "applicability:n-1-2:escalation",
+      "condition": "确认设计实际包含剂量升级"
+    },
+    {
+      "node": "v2_n_1_2",
+      "id": "applicability:n-1-2:allocation",
+      "condition": "确认设计实际随机化"
+    },
+    {
+      "node": "v2_n_1_3",
+      "id": "applicability:n-1-3:pk-sampling",
+      "condition": "确认存在 PK 采血"
+    },
+    {
+      "node": "v2_n_front_1",
+      "id": "applicability:front-1:amendment",
+      "condition": "存在已确认修订历史"
+    },
+    {
+      "node": "v2_n_front_3",
+      "id": "applicability:front-3:additional-signatory",
+      "condition": "存在申办方代表以外的适用签署方"
+    },
+    {
+      "node": "v2_n_front_4",
+      "id": "applicability:front-4:service-parties",
+      "condition": "项目实际使用服务方（如中心实验室/交互式响应系统）"
+    },
+    {
+      "node": "v2_n_front_8",
+      "id": "applicability:front-8:figures-present",
+      "condition": "正文实际包含图"
+    },
+    {
+      "node": "v2_n_3_1_1",
+      "id": "applicability:n-3-1-1:rescue-strategy",
+      "condition": "已确认研究设计包含停药/补救治疗策略"
+    },
+    {
+      "node": "v2_n_3_1_2_3",
+      "id": "applicability:n-3-1-2-3:background-rescue",
+      "condition": "已确认研究设计存在背景治疗或允许补救治疗"
+    },
+    {
+      "node": "v2_n_3_1_2_4",
+      "id": "applicability:n-3-1-2-4:strategy-crosscheck",
+      "condition": "汇总指标与伴发事件策略涉及补救治疗或背景治疗改变"
+    },
+    {
+      "node": "v2_n_3_3_1",
+      "id": "applicability:n-3-3-1:injection-reaction",
+      "condition": "给药途径可能引起注射反应（适用性判定为适用）"
+    },
+    {
+      "node": "v2_n_3_4_1",
+      "id": "applicability:n-3-4-1:analysis-commitment",
+      "condition": "任一探索性分析被判定适用"
+    },
+    {
+      "node": "v2_n_3_4_2",
+      "id": "applicability:n-3-4-2:non-confirmatory",
+      "condition": "探索性终点不开展或仅作支持性分析"
+    },
+    {
+      "node": "v2_n_4_1",
+      "id": "applicability:v2_n_4_1:active",
+      "condition": "所有设计特征均以实际项目适用性为条件；模板不提供默认分配比或分层方案。"
+    },
+    {
+      "node": "v2_n_4_2",
+      "id": "applicability:v2_n_4_2:active",
+      "condition": "确证性设计或特定对照选择适用时，补齐假设、界值/对照理由及证据要求。"
+    },
+    {
+      "node": "v2_n_4_3",
+      "id": "applicability:v2_n_4_3:active",
+      "condition": "当项目存在多剂量或剂量范围时，必须给出起始/最大剂量及安全性依据。"
+    },
+    {
+      "node": "v2_n_4_4",
+      "id": "applicability:v2_n_4_4:active",
+      "condition": "当研究设计包含治疗后评估或随访时，分别激活参与者完成与总体研究结束定义。"
+    },
+    {
+      "node": "v2_n_4_5",
+      "id": "applicability:v2_n_4_5:active",
+      "condition": "随机化、盲法或开放标签偏倚控制适用时，激活对应的程序和记录义务。"
+    },
+    {
+      "node": "v2_n_5_1",
+      "id": "applicability:v2_n_5_1:active",
+      "condition": "all-applicable-criteria predicate 生效时，必须完整输出适用标准及其结构化参数。"
+    },
+    {
+      "node": "v2_n_5_2",
+      "id": "applicability:v2_n_5_2:active",
+      "condition": "any-applicable-criterion predicate 生效时，必须逐项给出适用排除条件及理由。"
+    },
+    {
+      "node": "v2_n_5_2",
+      "id": "applicability:n-5-2:contraception-exclusion-reference",
+      "condition": "项目确认妊娠/避孕风险适用"
+    },
+    {
+      "node": "v2_n_5_3",
+      "id": "applicability:v2_n_5_3:active",
+      "condition": "当确认存在妊娠风险或其他生活方式限制时，激活对应的时点、范围和理由字段。"
+    },
+    {
+      "node": "v2_n_5_4",
+      "id": "applicability:v2_n_5_4:active",
+      "condition": "当项目允许重新筛选时，激活其资格条件、原因、时间窗口和记录要求。"
+    },
+    {
+      "node": "v2_n_5_5",
+      "id": "applicability:v2_n_5_5:active",
+      "condition": "当补偿或伦理审查适用时，激活对应范围、计划和记录义务；不得生成完成审批收据。"
+    },
+    {
+      "node": "v2_n_6_1_2",
+      "id": "applicability:n-6-1-2:dose-modification",
+      "condition": "确认设计包含剂量调整/暂停/恢复路径"
+    },
+    {
+      "node": "v2_n_6_1_2",
+      "id": "applicability:n-6-1-2:escalation",
+      "condition": "确认设计包含剂量递增或 DLT 定义"
+    },
+    {
+      "node": "v2_n_6_2_2",
+      "id": "applicability:n-6-2-2:label-text",
+      "condition": "确认需要对标签文本做监管/操作核查"
+    },
+    {
+      "node": "v2_n_6_4_2",
+      "id": "applicability:n-6-4-2:background",
+      "condition": "确认存在必须使用的背景治疗"
+    },
+    {
+      "node": "v2_n_7_2",
+      "id": "applicability:n-7-2:randomization",
+      "condition": "确认设计在实际给药/随机化日（如 D1）随机化"
+    },
+    {
+      "node": "v2_n_7_3",
+      "id": "applicability:n-7-3:unscheduled-contact",
+      "condition": "确认存在计划外访视或电话联系访视"
+    },
+    {
+      "node": "v2_n_8_1",
+      "id": "applicability:n-8-1:individual-hold",
+      "condition": "确认设计包含个体暂时暂停路径"
+    },
+    {
+      "node": "v2_n_8_1",
+      "id": "applicability:n-8-1:hold-to-stop",
+      "condition": "确认个体暂停可能转为永久停药"
+    },
+    {
+      "node": "v2_n_10_1_1",
+      "id": "applicability:n-10-1-1:oncology-progression",
+      "condition": "已确认本项目适用肿瘤进展例外"
+    },
+    {
+      "node": "v2_n_9_2",
+      "id": "applicability:n-9-2:central-lab",
+      "condition": "项目使用中央实验室且已确认适用"
+    },
+    {
+      "node": "v2_n_9_3",
+      "id": "applicability:n-9-3:immunogenicity",
+      "condition": "产品免疫原性风险成立且项目已确认检测策略"
+    },
+    {
+      "node": "v2_n_9_4",
+      "id": "applicability:n-9-4:irc",
+      "condition": "已确认本项目设立 IRC"
+    },
+    {
+      "node": "v2_n_11_1",
+      "id": "conditional:v2-n-11-1:interim-adjustment",
+      "condition": "已确认样本量设计包含期中或自适应调整"
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "id": "conditional:v2-n-11-4-6:pk",
+      "condition": "已确认 PK 分析适用于本项目"
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "id": "conditional:v2-n-11-4-6:pd",
+      "condition": "已确认 PD 分析适用于本项目"
+    },
+    {
+      "node": "v2_n_11_4_6",
+      "id": "conditional:v2-n-11-4-6:er",
+      "condition": "已确认暴露-效应分析适用于本项目"
+    },
+    {
+      "node": "v2_n_11_4_8",
+      "id": "conditional:v2-n-11-4-8:no-adjustment",
+      "condition": "已确认本项目无需进行多重性调整"
+    },
+    {
+      "node": "v2_n_11_4_9",
+      "id": "conditional:v2-n-11-4-9:interim",
+      "condition": "已确认本项目包含期中分析"
+    },
+    {
+      "node": "v2_n_12_7",
+      "id": "applicability:v2-n-12-7:future-use",
+      "condition": "未来样本或数据使用适用时，必须独立说明用途、地点、期限、遗传检测、同意与复核。"
+    },
+    {
+      "node": "v2_n_14_1",
+      "id": "applicability:n-14-1:risk-plan",
+      "condition": "quality.risk_management_plan_applicable 为 true 时风险管理计划义务激活"
+    },
+    {
+      "node": "v2_n_14_3",
+      "id": "applicability:n-14-3:remote-monitoring",
+      "condition": "quality.remote_monitoring_applicable 为 true 时远程监查记录义务激活"
+    },
+    {
+      "node": "v2_n_14_7",
+      "id": "applicability:n-14-7:oversight-charter",
+      "condition": "quality.oversight_charter_applicable 为 true 时章程义务激活"
+    },
+    {
+      "node": "v2_n_15",
+      "id": "applicability:n-15:foreign-style",
+      "condition": "references.foreign_sources_present 为 true 时外文格式样式义务激活"
+    },
+    {
+      "node": "v2_n_16_x1",
+      "id": "applicability:v2-n-16-x1:assessment",
+      "condition": "appendix.ecog_assessment_applicable 为 true 时 ECOG 附录内容义务激活"
+    },
+    {
+      "node": "v2_n_16_x2",
+      "id": "applicability:v2-n-16-x2:assessment",
+      "condition": "appendix.nyha_assessment_applicable 为 true 时 NYHA 附录内容义务激活"
+    }
+  ],
+  "fact_path_count": 724,
+  "graph_counts": {
+    "nodes": 111,
+    "scheduling": 41,
+    "consistency": 43
+  },
+  "bridge_expected_affected": [
+    "contract:node-a:v2",
+    "contract:node-b:v2"
+  ],
+  "bridge_actual": {
+    "changed_fact_paths": [
+      "x"
+    ],
+    "direct_contract_ids": [
+      "contract:node-a:v2",
+      "contract:node-b:v2"
+    ],
+    "consistency_contract_ids": [
+      "contract:node-c:v2"
+    ],
+    "scheduling_contract_ids": [],
+    "affected_contract_ids": [
+      "contract:node-a:v2",
+      "contract:node-b:v2",
+      "contract:node-c:v2"
+    ],
+    "unindexed_fact_paths": [],
+    "findings": [],
+    "impact_sha256": "25ad8175166007110c01cf6d9d19463ca4541f5debc8678bfcf64737ca732b2f"
+  },
+  "bridge_false_positive_c": true,
+  "invalid_graph_findings": [
+    {
+      "code": "missing_repair_owner",
+      "severity": "error",
+      "location": "contract:missing:v2->contract:node-b:v2",
+      "message": "declared dependency has no repair owner in the chapter repair policy; drift cannot be assigned"
+    },
+    {
+      "code": "unknown_dependency_target",
+      "severity": "error",
+      "location": "contract:missing:v2->contract:node-b:v2",
+      "message": "declared dependency target is not an accepted carrier in this registry; the edge is kept and identified, never silently dropped"
+    }
+  ],
+  "invalid_graph_impact_returns": {
+    "changed_fact_paths": [
+      "y"
+    ],
+    "direct_contract_ids": [
+      "contract:node-b:v2"
+    ],
+    "consistency_contract_ids": [],
+    "scheduling_contract_ids": [],
+    "affected_contract_ids": [
+      "contract:node-b:v2"
+    ],
+    "unindexed_fact_paths": [],
+    "findings": [
+      {
+        "code": "missing_repair_owner",
+        "severity": "error",
+        "location": "contract:missing:v2->contract:node-b:v2",
+        "message": "declared dependency has no repair owner in the chapter repair policy; drift cannot be assigned"
+      },
+      {
+        "code": "unknown_dependency_target",
+        "severity": "error",
+        "location": "contract:missing:v2->contract:node-b:v2",
+        "message": "declared dependency target is not an accepted carrier in this registry; the edge is kept and identified, never silently dropped"
+      }
+    ],
+    "impact_sha256": "cd43baf49c7a30bf5cfe2a08cd2b5965ec69aba8a9262182a817e23e5e7aab80"
+  },
+  "hash_scope": "Only registry and changed fact paths; function accepts no study/project/value/revision. This is a projection hash, not an adoption receipt.",
+  "required_style_names": {
+    "25": 1,
+    "17": 1,
+    "16": 1,
+    "3": 52,
+    "1": 16,
+    "2": 8,
+    "28": 1,
+    "18": 1,
+    "21": 2,
+    "4": 38,
+    "5": 7,
+    "68": 1,
+    "8": 2
+  },
+  "required_styles_absent_exact_name": [
+    "1",
+    "16",
+    "17",
+    "18",
+    "2",
+    "21",
+    "25",
+    "28",
+    "3",
+    "4",
+    "5",
+    "68",
+    "8"
+  ],
+  "style_names": [
+    "Balloon Text",
+    "Bayer Body text Full Zchn",
+    "Body Text",
+    "Default",
+    "Default Paragraph Font",
+    "Document Map",
+    "Document Text",
+    "Hyperlink",
+    "List Paragraph",
+    "No Spacing",
+    "Normal",
+    "Normal (Web)",
+    "Normal Table",
+    "Report Text",
+    "Revision",
+    "Strong",
+    "TOC 标题1",
+    "Table Grid",
+    "Text",
+    "Text Char1",
+    "Title",
+    "Unresolved Mention",
+    "annotation reference",
+    "annotation subject",
+    "annotation text",
+    "caption",
+    "footer",
+    "header",
+    "heading 1",
+    "heading 2",
+    "heading 3",
+    "heading 4",
+    "heading 5",
+    "table of figures",
+    "toc 1",
+    "toc 2",
+    "toc 3",
+    "toc 4",
+    "toc 5",
+    "toc 6",
+    "toc 7",
+    "toc 8",
+    "toc 9",
+    "修订1",
+    "列出段落 Char",
+    "列出段落1",
+    "列表段落 字符",
+    "批注主题 字符",
+    "批注文字 字符",
+    "批注框文本 字符",
+    "报告正文",
+    "文档结构图 字符",
+    "标题 1 1.",
+    "标题 1 字符",
+    "标题 2 1.1",
+    "标题 2 2.1",
+    "标题 2 字符",
+    "标题 3 字符",
+    "标题 4 字符",
+    "标题 5 字符",
+    "标题 字符",
+    "正文2",
+    "正文文本 字符",
+    "网格型1",
+    "页眉 字符",
+    "页脚 字符",
+    "题注 字符",
+    "！正文",
+    "！正文 Char",
+    "！正文段落"
+  ]
+}

@@ -1,0 +1,168 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___ test_injection_decision_uses_explicit_member_and_requires_reason[False] ____
+
+flag = False
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_injection_decision_uses_explicit_member_and_requires_reason(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_3_3_1.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts = {f.fact_path: 'Synthetic safety objective' for f in c.substantive_content.fact_requirements if f.obligation.value == 'required'}
+        decision = 'safety.injection_reaction_applicability'
+        facts[decision] = {'applicable': flag, 'reason': '据方案'}
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError, match='missing_required_fact') as caught:
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+            assert caught.value.fact_paths == ('safety.injection_reaction_definitions',)
+            facts['safety.injection_reaction_definitions'] = 'Synthetic protocol-specific definitions'
+>       assert bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules).resolved_facts == facts
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_applicability.py:1235: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ason': '据方案'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='安全性目的缺项会使该章不可用，并使下游合同失去输入。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-3-3-1:injection-reaction
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+____ test_injection_decision_uses_explicit_member_and_requires_reason[True] ____
+
+flag = True
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_injection_decision_uses_explicit_member_and_requires_reason(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_3_3_1.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts = {f.fact_path: 'Synthetic safety objective' for f in c.substantive_content.fact_requirements if f.obligation.value == 'required'}
+        decision = 'safety.injection_reaction_applicability'
+        facts[decision] = {'applicable': flag, 'reason': '据方案'}
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+            return
+        if flag:
+            with pytest.raises(FactBindingError, match='missing_required_fact') as caught:
+>               bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1232: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ason': '据方案'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='安全性目的缺项会使该章不可用，并使下游合同失去输入。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-3-3-1:injection-reaction
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+____ test_injection_decision_uses_explicit_member_and_requires_reason[None] ____
+
+flag = None
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_injection_decision_uses_explicit_member_and_requires_reason(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_3_3_1.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts = {f.fact_path: 'Synthetic safety objective' for f in c.substantive_content.fact_requirements if f.obligation.value == 'required'}
+        decision = 'safety.injection_reaction_applicability'
+        facts[decision] = {'applicable': flag, 'reason': '据方案'}
+        rules = real_rule_catalog().rules
+        if flag is None:
+            with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+>               bind_applicable_input(confirmed_study(facts), c, bindings, rules=rules)
+
+tests/protocol_v3/test_chapter_applicability.py:1228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/applicability.py:346: in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+study = StudyDefinitionV3(schema_version='mw_protocol_v3_contract_v1', canonical_state=<CanonicalState.CONFIRMED: 'confirmed'>...ason': '据方案'}}, decision_record_ids=(), updated_at=datetime.datetime(2026, 8, 10, 10, 0, tzinfo=datetime.timezone.utc))
+contract = ChapterContractV2(schema_version='mw_protocol_v3_contract_v2', canonical_state=<CanonicalState.FROZEN: 'frozen'>, chap...sk_if_unmet='安全性目的缺项会使该章不可用，并使下游合同失去输入。'),), patient_participation_obligations=(), registry_consistency_obligations=())
+bindings = (FactBinding(fact_path='ae.ae_collection_not_teaee_classification', canonical_path='ae.ae_collection_not_teaee_classif..._n_10_1_4.json#/substantive_content/fact_requirements/3/fact_path'), unit=None, timing=None, required_members={}), ...)
+rules = (RulePredicate(rule_id='conditional:v2-n-11-4-6:pk', source_rule_sha256='9c71f57857555dc84965dfabe4a9fa1898691bdbfcc04..._claim_requirements=(), inactive_evidence_requirements=(), active_evidence_requirements=(), reference_targets=()), ...)
+
+    def _resolved_input_contract(study, contract, bindings, rules):
+        from app.protocol_workflow.registries.chapters import ChapterContentPayload, ContentFact
+        index, states, findings = _resolve_rule_states(contract, study, rules)
+        if findings:
+>           raise ApplicabilityResolutionError(findings)
+E           app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_predicate_missing:conditional_rule:applicability:n-3-3-1:injection-reaction
+
+services/api/app/protocol_workflow/registries/applicability.py:305: ApplicabilityResolutionError
+
+During handling of the above exception, another exception occurred:
+
+flag = None
+
+    @pytest.mark.parametrize('flag', [False, True, None])
+    def test_injection_decision_uses_explicit_member_and_requires_reason(flag):
+        from app.protocol_workflow.registries.applicability import bind_applicable_input, ApplicabilityResolutionError
+        from app.protocol_workflow.registries.fact_bindings import FactBindingCatalog, FactBindingError
+        from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR
+        from test_chapter_fact_binding import confirmed_study
+        c = ChapterContractV2.model_validate_json((REAL_TEMPLATE_DIR/'chapter_contracts/v2_n_3_3_1.json').read_text())
+        bindings = FactBindingCatalog.model_validate_json((REAL_TEMPLATE_DIR/'fact_bindings.json').read_text()).bindings
+        facts = {f.fact_path: 'Synthetic safety objective' for f in c.substantive_content.fact_requirements if f.obligation.value == 'required'}
+        decision = 'safety.injection_reaction_applicability'
+        facts[decision] = {'applicable': flag, 'reason': '据方案'}
+        rules = real_rule_catalog().rules
+        if flag is None:
+>           with pytest.raises(ApplicabilityResolutionError, match='conditional_applicability_unresolved'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E            Regex: 'conditional_applicability_unresolved'
+E            Input: 'conditional_predicate_missing:conditional_rule:applicability:n-3-3-1:injection-reaction'
+
+tests/protocol_v3/test_chapter_applicability.py:1227: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_injection_decision_uses_explicit_member_and_requires_reason[False]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_injection_decision_uses_explicit_member_and_requires_reason[True]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_injection_decision_uses_explicit_member_and_requires_reason[None]
+3 failed, 158 deselected in 0.53s

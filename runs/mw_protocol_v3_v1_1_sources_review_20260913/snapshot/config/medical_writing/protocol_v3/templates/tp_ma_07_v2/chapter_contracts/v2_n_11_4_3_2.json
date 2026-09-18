@@ -1,0 +1,260 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-11-4-3-2:v2",
+  "semantic_node_id": "v2_n_11_4_3_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-11-4-3-2:sensitivity-analysis",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-11-4-3-2:v2",
+    "chapter_contract_id": "contract:v2-n-11-4-3-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.method",
+        "obligation": "required",
+        "rationale": "必须声明敏感性分析方法及其实际数据要求。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.assumption",
+        "obligation": "required",
+        "rationale": "必须声明敏感性分析检验的目标假设。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.estimand_alignment",
+        "obligation": "required",
+        "rationale": "必须说明敏感性分析仍针对同一估计目标或明确改变。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.missing_data_handling",
+        "obligation": "required",
+        "rationale": "必须声明敏感性分析的缺失和伴发事件处理。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.result_interpretation",
+        "obligation": "required",
+        "rationale": "必须声明结果解释、与主要分析比较和决策边界。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "statistics.sensitivity_analysis.primary_method_link",
+        "obligation": "required",
+        "rationale": "必须链接主要分析方法和估计目标。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sensitivity_analysis_definition",
+        "obligation": "required",
+        "rationale": "敏感性分析必须有具体方法、数据处理和结果解释。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sensitivity_estimand_alignment",
+        "obligation": "required",
+        "rationale": "敏感性分析必须检验目标假设并保持估计目标语义一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sensitivity_analysis_cross_contract_consistency",
+        "obligation": "required",
+        "rationale": "敏感性分析必须与主要分析及缺失/伴发事件处置衔接。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "统计章节禁止营销性表述。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "placeholder_sensitivity_table",
+        "obligation": "forbidden",
+        "rationale": "敏感性分析表不得使用占位行或空壳表。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "method_name_without_estimand_alignment",
+        "obligation": "forbidden",
+        "rationale": "单独写方法名称不得替代假设/估计目标一致性。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sensitivity_analysis_definition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sensitivity_estimand_alignment"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sensitivity_analysis_cross_contract_consistency"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "主要估计目标的敏感性分析必须以项目特异的变量定义、分析方法、数据规则和试验参与者可追溯记录承载，不得以空标题或“同前”替代。",
+        "required_object_cells": [
+          "sensitivity:cell:method",
+          "sensitivity:cell:assumption",
+          "sensitivity:cell:estimand",
+          "sensitivity:cell:missing-data",
+          "sensitivity:cell:interpretation"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "本节点承载“主要估计目标的敏感性分析”的独立来源义务；父节点 v2_n_11、v2_n_11_4 和 v2_n_11_4_3 仅为结构容器，义务已诚实展开到本叶节点。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "统计结论、变量类型、缺失分母、估计目标及试验参与者处理均须使用项目已确认事实；模板示例只作合成测试对照。",
+      "敏感性分析可按项目假设选择 ANCOVA、MMRM 或 tipping-point 等方法，但方法名称本身不能替代同一估计目标、目标假设、缺失处理和结果解释的一致性证据。",
+      "父体义务叶级承载标记：本文件对非载体父节点义务作显式新增承载（declared_addition），不把 v2_n_11、v2_n_11_4 或 v2_n_11_4_3 当作可执行载体。",
+      "本批次引入的 statistics.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D6修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "主要估计目标的敏感性分析仅有标题、空表、占位语句或“同前”均不构成实质内容。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-11-4-3-2",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-2:source",
+      "rule": "源义务必须逐项映射并保留独立证据。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-2:consistency",
+      "rule": "统计承载必须与相关估计目标、终点、分析集、SOA和设计事实一致。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:v2-n-11-4-3-2:reproducibility",
+      "rule": "统计方法与计算输入必须可追溯、可复核，且不凭模板默认值。 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-11-4-3-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:v2_n_11_4_3_2:dependency-drift",
+    "dependency_ids": [
+      "contract:v2-n-11-4-3-1:v2"
+    ],
+    "downstream_impact": "上游终点、估计目标、分析集或设计变更会使本节点统计结论失效，必须停止沿用旧草稿。",
+    "repair_owner": "user",
+    "max_repair_attempts": 2,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_3_2:recompute",
+        "sequence": 1,
+        "action": "重新读取已确认的上游事实并重算本节点统计承载。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:v2_n_11_4_3_2:confirm",
+        "sequence": 2,
+        "action": "由用户核对差异、证据来源与可复算输入后确认或退回。",
+        "owner": "user"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-11-4-3-2:consistency",
+      "question": "该节点的统计结论是否与已确认设计及相关合同一致？ 源窗口绑定于 TP-MA-07 v2.0 的 body-child 790（标题后无直接正文段落）；合成夹具值仅用于结构检查，不是项目批准或医学结论。",
+      "linked_fact_paths": [
+        "statistics.sensitivity_analysis.method"
+      ],
+      "linked_claim_types": [
+        "sensitivity_analysis_definition"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2-n-11-4-3-2:consistency"
+      ],
+      "risk_if_unmet": "统计章节与项目设计不一致会导致不可复核或误导性结论。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "registry_consistency_obligation_id": "registry-consistency:v2-n-11-4-3-2:sensitivity",
+      "registry_name": "sensitivity_primary_registry",
+      "eligibility_fact_paths": [
+        "statistics.sensitivity_analysis.primary_method_link",
+        "statistics.sensitivity_analysis.estimand_alignment"
+      ],
+      "consistency_rules": [
+        "敏感性分析必须回链主要分析和同一估计目标，不得仅改换方法名称。"
+      ]
+    }
+  ]
+}

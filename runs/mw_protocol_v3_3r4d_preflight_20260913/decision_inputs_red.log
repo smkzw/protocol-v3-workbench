@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_current_decisions_track_their_bound_inputs_not_the_whole_revision ____
+tests/protocol_v3/integration/test_fact_impact_adoption.py:116: in test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+    assert adopted.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_fact_impact_adoption.py::test_current_decisions_track_their_bound_inputs_not_the_whole_revision
+1 failed in 0.60s

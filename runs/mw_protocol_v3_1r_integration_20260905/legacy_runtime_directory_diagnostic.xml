@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.714" timestamp="2026-09-05T21:09:08.054498+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.test_runtime_directory_configuration.RuntimeDirectoryConfigurationTests" name="test_all_mutable_stores_follow_runtime_directory_override" time="2.665"><failure message="AssertionError: False is not true">tests/test_runtime_directory_configuration.py:52: in test_all_mutable_stores_follow_runtime_directory_override
+    self.assertTrue(payload.pop("ocr_gateway_configured"))
+E   AssertionError: False is not true</failure></testcase></testsuite></testsuites>

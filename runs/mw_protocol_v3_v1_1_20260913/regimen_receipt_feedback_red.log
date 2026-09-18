@@ -1,0 +1,78 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx (5 tests | 5 failed) 6ms
+   × persists one explicit intent and reads its saved receipt on reopen 3ms
+   × keeps an uncertain commit for readonly lookup without a second adoption 0ms
+   × refreshes a definitively rejected revision and requires a new explicit confirmation 0ms
+   × does not call a pre-adoption version a successful save 0ms
+   × separates awaiting reconciliation from an active request and shows saved feedback at the action 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx > persists one explicit intent and reads its saved receipt on reopen
+ReferenceError: React is not defined
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx:15:23
+     13|   const api = { getStudyDefinition: vi.fn(async () => current), source…
+     14|     adoptRegimenDesign: vi.fn(async () => receipt), recoverRegimenAdop…
+     15|   const view = render(<RegimenAdoptionCard {...props} api={api} />);
+       |                       ^
+     16|   await waitFor(() => expect(screen.getByRole("button", { name: "确认这套给…
+     17|   fireEvent.click(screen.getByRole("button", { name: "确认这套给药方案" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx > keeps an uncertain commit for readonly lookup without a second adoption
+ReferenceError: React is not defined
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx:33:10
+     31|     adoptRegimenDesign: vi.fn(async () => { throw new Error("连接中断"); }…
+     32|     recoverRegimenAdoption: vi.fn(async () => receipt) };
+     33|   render(<RegimenAdoptionCard {...props} api={api} />);
+       |          ^
+     34|   await waitFor(() => expect(screen.getByRole("button", { name: "确认这套给…
+     35|   fireEvent.click(screen.getByRole("button", { name: "确认这套给药方案" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx > refreshes a definitively rejected revision and requires a new explicit confirmation
+ReferenceError: React is not defined
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx:49:10
+     47|       new Error("研究版本已更新，请重新查看。"), { status: 409 })).mockResolvedValue…
+     48|         definition: { study_definition_id: "study:one", revision: 3 } …
+     49|   render(<RegimenAdoptionCard {...props} api={api} />);
+       |          ^
+     50|   const button = screen.getByRole("button", { name: "确认这套给药方案" });
+     51|   await waitFor(() => expect(button.disabled).toBe(false));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx > does not call a pre-adoption version a successful save
+ReferenceError: React is not defined
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx:68:10
+     66|   const api = { getStudyDefinition: vi.fn(async () => current), source…
+     67|     adoptRegimenDesign: vi.fn(async () => ({...receipt, revision: 1, d…
+     68|   render(<RegimenAdoptionCard {...props} api={api} />);
+       |          ^
+     69|   await waitFor(() => expect(screen.getByRole("button", { name: "确认这套给…
+     70|   fireEvent.click(screen.getByRole("button", { name: "确认这套给药方案" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx > separates awaiting reconciliation from an active request and shows saved feedback at the action
+ReferenceError: React is not defined
+ ❯ frontend/src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx:79:10
+     77|     adoptRegimenDesign: vi.fn(async () => { throw new Error("连接中断"); }…
+     78|     recoverRegimenAdoption: vi.fn(async () => receipt) };
+     79|   render(<RegimenAdoptionCard {...props} api={api} />);
+       |          ^
+     80|   await waitFor(() => expect(screen.getByRole("button", { name: "确认这套给…
+     81|   fireEvent.click(screen.getByRole("button", { name: "确认这套给药方案" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  15:47:07
+   Duration  934ms (transform 116ms, setup 0ms, import 218ms, tests 6ms, environment 613ms)
+

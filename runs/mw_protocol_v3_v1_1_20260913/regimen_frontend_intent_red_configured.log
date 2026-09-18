@@ -1,0 +1,98 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx (5 tests | 5 failed) 4ms
+   × starts from a saved seed once and restores the same result without generation 2ms
+   × looks up a lost acknowledgement and never automatically starts again 0ms
+   × does not apply a late response to a different seed 0ms
+   × resumes an explicitly queued job but never redispatches an unknown outcome 0ms
+   × pins the server study request before dispatch and recovers that exact request 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > starts from a saved seed once and restores the same result without generation
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:256:5
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:10:16
+      8| it("starts from a saved seed once and restores the same result without…
+      9|   const api = { startRegimenDesign: vi.fn(async () => done), getRegime…
+     10|   const view = render(<RegimenDesignWorkspace projectId="one" seedRunI…
+       |                ^
+     11|   fireEvent.click(screen.getByRole("button", { name: "整理完整给药建议" }));
+     12|   await screen.findByText("请补充研究给药途径。");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > starts from a saved seed once and restores the same result without generation
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > looks up a lost acknowledgement and never automatically starts again
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > does not apply a late response to a different seed
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > resumes an explicitly queued job but never redispatches an unknown outcome
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > pins the server study request before dispatch and recovers that exact request
+ReferenceError: localStorage is not defined
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:7:30
+      5| const done = { workflow_run_id: "design:one", status: "needs_informati…
+      6|   validation: { valid: true, proposal: { regimen: null, questions: ["请…
+      7| afterEach(() => { cleanup(); localStorage.clear(); });
+       |                              ^
+      8| it("starts from a saved seed once and restores the same result without…
+      9|   const api = { startRegimenDesign: vi.fn(async () => done), getRegime…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > looks up a lost acknowledgement and never automatically starts again
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:256:5
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:22:16
+     20|   const api = { startRegimenDesign: vi.fn(async () => { throw new Erro…
+     21|     recoverRegimenDesign: vi.fn(async () => done), getRegimenDesign: v…
+     22|   const view = render(<RegimenDesignWorkspace projectId="one" seedRunI…
+       |                ^
+     23|   fireEvent.click(screen.getByRole("button", { name: "整理完整给药建议" }));
+     24|   await screen.findByText("连接中断，记录待核对。");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > does not apply a late response to a different seed
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:256:5
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:35:16
+     33|   let finish;
+     34|   const api = { startRegimenDesign: vi.fn(() => new Promise(resolve =>…
+     35|   const view = render(<RegimenDesignWorkspace projectId="one" seedRunI…
+       |                ^
+     36|   fireEvent.click(screen.getByRole("button", { name: "整理完整给药建议" }));
+     37|   view.rerender(<RegimenDesignWorkspace projectId="one" seedRunId="see…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > resumes an explicitly queued job but never redispatches an unknown outcome
+ReferenceError: localStorage is not defined
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:45:3
+     43| it("resumes an explicitly queued job but never redispatches an unknown…
+     44|   const key = "protocol-v3:regimen:" + JSON.stringify(["one", "seed:on…
+     45|   localStorage.setItem(key, JSON.stringify({ runId: "design:one" }));
+       |   ^
+     46|   const api = { getRegimenDesign: vi.fn(async () => ({ workflow_run_id…
+     47|     resumeRegimenDesign: vi.fn(async () => done), startRegimenDesign: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > pins the server study request before dispatch and recovers that exact request
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:256:5
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:66:14
+     64|     recoverRegimenDesign: vi.fn(async () => done),getRegimenDesign:vi.…
+     65|   };
+     66|   const view=render(<RegimenDesignWorkspace projectId="one" seedRunId=…
+       |              ^
+     67|   fireEvent.click(screen.getByRole('button',{name:'整理完整给药建议'}));
+     68|   await screen.findByText('连接中断，记录待核对。');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  17:13:39
+   Duration  143ms (transform 32ms, setup 0ms, import 81ms, tests 4ms, environment 0ms)
+

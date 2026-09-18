@@ -1,0 +1,36 @@
+{
+  "scope": "readonly actual II/III candidate source parse; not selected study or medical admission",
+  "source_file": "/Users/smkzw/Documents/康哲项目资料/模版/方案模版/研究方案库/MG-K10-CSU-001_临床研究方案-V1.3-0212-clean-0211.docx",
+  "source_sha256": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+  "status": "parsed_pending_source_review",
+  "blocks": 1275,
+  "roles": {
+    "body": 1126,
+    "heading": 17,
+    "derived_toc": 126,
+    "footer": 2,
+    "header": 4
+  },
+  "tables": 17,
+  "diagnostics": [
+    {
+      "code": "visual_objects_pending",
+      "locator": "word/document.xml",
+      "detail": "图形或图像需视觉核对，文字提取不代表图中信息完整。"
+    },
+    {
+      "code": "nested_table_layout_pending",
+      "locator": "word/document.xml/body/132:tbl/38:tr/3:tc",
+      "detail": "已保留可读文字；嵌套表格布局需来源核对。"
+    },
+    {
+      "code": "nested_table_layout_pending",
+      "locator": "word/document.xml/body/135:tbl/20:tr/2:tc",
+      "detail": "已保留可读文字；嵌套表格布局需来源核对。"
+    }
+  ],
+  "body_nonspace_characters_raw": 86696,
+  "body_nonspace_characters_parsed": 86696,
+  "ordered_body_text_equal_ignoring_whitespace": true,
+  "physical_page_count": null
+}

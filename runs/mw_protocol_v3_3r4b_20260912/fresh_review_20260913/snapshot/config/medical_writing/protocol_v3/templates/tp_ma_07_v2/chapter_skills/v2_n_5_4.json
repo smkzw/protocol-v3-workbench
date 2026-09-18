@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill:chapter:n-5-4:screening-failure",
+  "skill_version": "3.4.0",
+  "node_id": "v2_n_5_4",
+  "chapter_contract_id": "contract:v2-n-5-4:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:tp-ma-07-v2:rescreening:3.4.0",
+    "instructions": "输入为已确认项目事实，按 v2_n_5_4 章节合同逐项输出结构化事实、声明、证据和结构对象；只复用既有事实路径，不编造项目值；保留适用性、阈值、单位、窗口和例外。 复筛使用population.rescreening.allowed；不允许时明确说明且保留筛选失败记录，不编造复筛时间或许可原因。",
+    "forbidden_behaviors": [
+      "编造证据来源或项目事实",
+      "复制模板示例作为项目默认值",
+      "把条件义务写成无条件结论",
+      "输出任何模型或供应商设置"
+    ]
+  },
+  "provenance_requirements": [
+    "模板身份：tp_ma_07_v2；source sha256 018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756（冻结不变）。",
+    "源定位：body-child 410；正文段落 411-414；bookmark _Toc132623343。",
+    "Word 规则依据：style ID 3=heading 2，style ID 1=Normal；不得新增未授权样式。",
+    "该技能只处理内容合同与来源追溯，不处理 provider/model settings，不输出供应商设置；合成夹具不是项目批准或临床结论。"
+  ],
+  "error_codes": [
+    "skill:chapter:v2_n_5_4:missing-obligation",
+    "skill:chapter:v2_n_5_4:unresolved-fact",
+    "skill:chapter:v2_n_5_4:wrong-source"
+  ]
+}

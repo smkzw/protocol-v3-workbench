@@ -1,0 +1,22 @@
+........................................................................ [ 29%]
+........................................................................ [ 59%]
+........................................................................ [ 88%]
+.........................F.                                              [100%]
+=================================== FAILURES ===================================
+____ test_partial_lint_is_incomplete_and_full_lint_reports_missing_coverage ____
+
+    def test_partial_lint_is_incomplete_and_full_lint_reports_missing_coverage():
+        document = _document()
+        partial = lint_registry(TEMPLATE_DIR, document, require_complete=False)
+        assert partial.mode == "partial"
+        assert partial.status == "incomplete"
+        assert "partial_mode_not_full_acceptance" in {finding.code for finding in partial.findings}
+>       assert not partial.errors()
+E       assert not (LintFinding(code='fixture_expectation_mismatch', severity='error', node_id='v2_n_4_5', location='fixtures[fixture:batch3:v2-n-4-5:positive]', message="positive fixture produced ('missing_required_fact',)"),)
+E        +  where (LintFinding(code='fixture_expectation_mismatch', severity='error', node_id='v2_n_4_5', location='fixtures[fixture:batch3:v2-n-4-5:positive]', message="positive fixture produced ('missing_required_fact',)"),) = errors()
+E        +    where errors = LintReport(mode='partial', status='incomplete', findings=(LintFinding(code='partial_mode_not_full_acceptance', severit...on.* 为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D3修复：归属声明补齐）。'), ignored_supplied_verdict=True))).errors
+
+tests/protocol_v3/test_chapter_batch3.py:261: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_batch3.py::test_partial_lint_is_incomplete_and_full_lint_reports_missing_coverage
+1 failed, 242 passed in 5.43s

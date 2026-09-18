@@ -1,0 +1,44 @@
+=== 1. D1: RUNNING-window repair carries event identity; UNKNOWN freeze preserved ===
+PASS D1 running-repair ledger id == event actual id :: ledger='completion-actual-F1' event='completion-actual-F1'
+PASS D1 running-repair status COMPLETED + sha match
+PASS D1 no redispatch during repair
+PASS D1 unknown-row repair keeps ledger freeze (placeholder retained) :: 'sess:res:794c6ba6758a48fab4781b1d'
+PASS D1 storage UNKNOWN id-freeze negative (different id rejected) :: project=proj-graph-rt aggregate=res:794c6ba6758a48fab4781b1d detail=illegal state transition 'unknown_outcome' -> 'completed'
+
+=== 2. D5: pinned pre-dispatch contract survives factory drift; deterministic nodes emit no dispatch event ===
+PASS D5 dispatch event recorded before failure
+PASS D5 recovered event keeps original model :: glm-original
+PASS D5 recovered event keeps original output_schema_ref :: https://drift.example/original
+PASS D5 drifted factory never applied
+PASS D5 deterministic node emits no graph_node_dispatch
+
+=== 3. Q2: crash between receipt_sink persistence and result event -> full no-recall recovery ===
+PASS Q2 interrupted dispatch classified UNKNOWN :: unknown_outcome/'dispatch_exception'
+PASS Q2 orphan artifact discoverable by reservation-derived key :: seed-response:db7ac5e48fdebb385b660f93286b88baffedb4237f9f88fd8a2dfd6ac9cfef95
+PASS Q2 envelope binds actual provider id :: chatcmpl-actual-crash-case
+PASS Q2 envelope binds logical work identity
+PASS Q2 envelope binds input artifact hash
+PASS Q2 envelope content hash self-consistent
+PASS Q2 receipt carries no input excerpts/credential material
+PASS Q2 recovered event stamped with actual provider id
+PASS Q2 ledger identity unchanged (freeze)
+PASS Q2 validator completes after adoption (no provider call added) :: valid=True calls=2->2 status=needs_information
+PASS Q2 DispatchReceipt accepts :revision: ref
+PASS Q2 sinks mutually exclusive :: select one output_sink or receipt_sink
+PASS Q2 one sink mandatory :: output_sink must be injected; no default exists
+
+=== 4. D3: real harness path cross-validates contract<->skill; base refs cannot be frozen ===
+PASS D3 factory binds registry URI not graph symbolic ref
+PASS D3 base symbolic ref rejected by real build_request (cannot freeze base refs) :: node_contract.role 'design_and_summary' does not match registered role
+PASS D3 drifted contract ref rejected by real build_request :: HarnessPolicyError
+
+=== 5. D4: schema minItems + explicit empty-candidate guard ===
+PASS D4 shipped schema array variant has minItems :: [{'items': {'minLength': 1, 'type': 'string'}, 'minItems': 1, 'type': 'array'}]
+PASS D4 pydantic rejects candidate=[] :: 2 validation errors for _Candidate
+candidate.constrained-str
+  Input should be a
+PASS D4 seed_empty_candidate branch retained in source
+
+=== 6. ordered-hash: unsorted artifact tuple fails real binding, sorted passes ===
+PASS ordered-hash unsorted tuple rejected :: HarnessPolicyError
+PASS ordered-hash sorted tuple accepted

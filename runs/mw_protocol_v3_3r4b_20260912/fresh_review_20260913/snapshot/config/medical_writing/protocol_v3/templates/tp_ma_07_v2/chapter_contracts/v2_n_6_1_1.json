@@ -1,0 +1,150 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+  "semantic_node_id": "v2_n_6_1_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-1-1:intervention-description",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-1-1:v2",
+    "chapter_contract_id": "contract:v2-n-6-1-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.product_identity",
+        "obligation": "required",
+        "rationale": "研究药物身份必须绑定本项目产品权威（IB/方案既定信息），不得沿用其他项目药物描述。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.formulation",
+        "obligation": "required",
+        "rationale": "剂型/规格/外观必须按成品实际属性给出，标签与处方信息一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.exposure_dose",
+        "obligation": "required",
+        "rationale": "暴露剂量必须带单位与频次，并与设计章节、给药方案及 SoA 的剂量表达一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.route_of_administration",
+        "obligation": "required",
+        "rationale": "给药途径必须为类型化事实（口服/静脉/皮下等），不得为泛化说明。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.product_authority",
+        "obligation": "required",
+        "rationale": "支持产品描述的项目权威（IB 版本、既定产品资料）必须显式登记，缺失进入待补事实清单。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_dose",
+        "obligation": "forbidden",
+        "rationale": "模板示例剂量/给药描述不得作为本项目事实。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "intervention_description",
+        "obligation": "required",
+        "rationale": "研究药物身份、剂型、途径与剂量必须来自本项目既定的产品权威事实。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "intervention_description"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "研究药物描述段必须承载身份、剂型/规格、给药途径与暴露剂量，并标注产品权威来源。",
+        "required_object_cells": [
+          "intervention:cell:drug_identity",
+          "intervention:cell:formulation_strength",
+          "intervention:cell:source_authority"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "研究药物身份/剂型/途径/剂量为项目既定事实的投影，不设第二可编辑产品存储。"
+    ],
+    "skeleton_risk_rules": [
+      "研究药物身份、剂型或剂量缺失即失败；仅模板示例描述即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-1-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623346"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-1-1:identity",
+      "rule": "研究药物身份、剂型、途径与剂量必须与既定产品权威一致；模板示例剂量仅为示例，不得作为项目事实。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-1-1:coherence",
+      "rule": "暴露剂量与给药途径必须与给药方案及设计章节一致，试验参与者实际接受的产品信息不冲突。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-1-1:authority",
+      "question": "研究药物身份、剂型与剂量是否全部绑定本项目产品权威并标注来源？",
+      "linked_fact_paths": [
+        "intervention.product_identity",
+        "intervention.exposure_dose"
+      ],
+      "linked_claim_types": [
+        "intervention_description"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-1-1:identity"
+      ],
+      "risk_if_unmet": "身份或剂量错挂其他项目/模板会给试验参与者带来直接用药风险。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,24 @@
+# 设计
+
+复用现有产品OOXML读取/段落取文工具（writing_reference_docx），补v3有序结构投影，不虚构NCT/物理页。顶层SDT必须递归：TOC按域或docPartGallery识别并保留为派生目录，EndNote.ReferenceList为真实参考文献。保留XML部件/树位置、原始hash、块/表格/单元格身份，源文句不改写。需要视觉核对的图像/修订/复杂对象登记诊断，不拿字符串读取成功当完整材料准入。
+
+复用SourceArtifact/EvidenceUnit/MedicalAdmissionUnit和ArtifactStore；未经评估的解析块不自动创建confirmed medical admission/quality=1。LocalArtifactStore已有可恢复持久化实现；按产品实际所有权复用，原字节与canonical采用分层，失败采用不删除暂存历史，不另造第二DB。
+
+资料预填先用已绑定源与当前事实合同组织候选，八类高风险仍逐卡。来源标题、目录、页眉页脚、一般背景不能独立支持设计关键参数。UI只显示理解结果/真正缺口、出处、下一动作。
+
+
+来源采用最小接线：新增agent1/source_identity.py，复用现有SQLite event_stream按项目的source_catalog流保存SourceArtifact与LocalArtifactStore具体logical_key/revision引用；不需要新增BLOB或第二事实表。每次写采用都在既有UoW BEGIN IMMEDIATE内，序列化同库并发来源写；文件是内容寻址暂存，SQL回滚可留下未采用文件但不可让其成为当前来源。当前来源从成功事件投影，绝不以文件manifest latest代替。相同来源内容回放返原身份并保留已有后继当前版本；新内容保留新修订。身份确认不是医学准入；源角色/版本/Jurisdiction与字节绑定。
+
+
+研究种子入口细化：既有ResearchSeed/NormalizedResearchSeed八类非空合同是完整对象，不直接作为上传或初始表单请求schema。入口允许一句意图与已有来源、字段缺失；AI输出raw/canonical候选/置信说明/理由/精确来源，不靠占位字符串填满合同。缺口独立登记，未确认候选不写StudyDefinition。source_role=company_style_only、competitor等不能作为本项目剂量/人群/对照已确认事实。相应高风险候选在V1.2八类卡上完成确认，不新增重复八字段表单/第二轮人审。SourceArtifact仅文件身份；模型自报confidence不能成为医学准入质量分。原文角色/引用必须绑定已保存source_id/hash及真实XML块。
+
+来源元数据更正：普通adopt仍按相同key/字节/元数据复用原身份，不以重传自动改类别。新增用户明确“更正类别/版本/辖区”操作，要求目标仍为当前来源；新SourceArtifact身份与事件保留原字节和前身份，历史不改。相同更正重复提交返回原回执并保留后继；若期间换过文件则提示刷新，不误改后继。这里只更正资料身份描述，不批准研究事实或抹去原医学判断。前端一处可修改类别/版本，不要求重新上传。
+
+
+## 实际预填执行接线细化（2026-09-13）
+
+已具备：全文artifact resolver（总字节预算而非tokenizer实测）、真实输出JSON schema、逐节点持久化execution contract。尚不触发产品调用。模型响应的完成与候选科学/结构合格分开：原始输出和实际provider receipt先留存；随后确定性read_seed_candidates验证。结构失败不能冒充网络unknown，也不能批准canonical；具体结构错误带回同模型纠错输入，原始资料/输出/错误保持关联。当前ReservationCoordinator将transport抛出的任何异常视为unknown，因此不得把JSON解析直接放在physical-call未返回receipt的窗口中。优先图中模型产物节点与确定性验证节点分离，复用现有存储，不增加第二job引擎。
+
+需要在真实调用前闭合的具体问题：GLM当前output_sink仅接content，返回后才构造完整receipt；需持久化raw-content与provider response identity的关联，避免崩溃后仅有孤立文本。GraphRuntime原ServiceTransport丢失真实provider receipt identity，现新增ConfiguredNodeServiceResult和结果事件provider_session_id，正常完成reservation已采用实际identity。历史字段名provider_session_id在此API代表completion response id；当前代码不把历史messages发回，不能声称provider原生会话恢复。结构纠错应显式包含原请求、原输出和错误，属于同模型上下文续作，不自动切模型。未知结果仍先对账，不能自动重派。
+
+当前修订未接受为完整接线：result事件已提交、reservation尚未完成的崩溃窗口对实际provider identity的恢复仍待验证；UNKNOWN_OUTCOME仓库既有规则禁止改identity，不能随意删规则掩盖关联问题。最小方案需独立源代码审查。不是新增纯安全专项，是避免一次生成后永久卡住或重复调用的用户功能。

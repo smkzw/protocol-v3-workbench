@@ -1,0 +1,249 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-6:v2",
+  "semantic_node_id": "v2_n_10_6",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-6:pregnancy",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-6:v2",
+    "chapter_contract_id": "contract:v2-n-10-6:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.testing_requirements",
+        "obligation": "required",
+        "rationale": "妊娠检测要求（人群与时点）必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.prevention_requirements",
+        "obligation": "required",
+        "rationale": "妊娠预防要求必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.exposure_reporting",
+        "obligation": "required",
+        "rationale": "妊娠暴露报告义务必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.partner_consent",
+        "obligation": "required",
+        "rationale": "伴侣知情同意要求必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.outcome_followup",
+        "obligation": "required",
+        "rationale": "妊娠结局随访必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.abnormal_outcome_reporting",
+        "obligation": "required",
+        "rationale": "异常结局作为事件报告的义务必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.withdrawal_arrangement",
+        "obligation": "required",
+        "rationale": "因妊娠停用研究干预后的安排必须项目化（不等于自动全面退出）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.continued_collection_arrangement",
+        "obligation": "required",
+        "rationale": "继续随访与数据收集安排必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.continued_assessment_scope",
+        "obligation": "optional",
+        "rationale": "因妊娠停药后的继续评估边界引用 batch4 已确认事实（不另建第二套规则）。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "pregnancy.template_example_periods",
+        "obligation": "forbidden",
+        "rationale": "三个月/六个月期限仅为示例，不得作为通用规则。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pregnancy_handling",
+        "obligation": "required",
+        "rationale": "必须声明检测、预防、暴露报告、伴侣同意、结局随访与异常结局报告的分工。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pregnancy_equals_sae",
+        "obligation": "forbidden",
+        "rationale": "妊娠不自动等于 SAE。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pregnancy_forces_total_withdrawal",
+        "obligation": "forbidden",
+        "rationale": "因妊娠停药不等于自动全面退出研究。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "pregnancy_stops_all_followup",
+        "obligation": "forbidden",
+        "rationale": "不得因妊娠停止全部随访与数据收集。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "pregnancy_handling"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须分别书写妊娠检测、预防、暴露报告、伴侣同意、结局随访与异常结局事件报告。",
+        "required_object_cells": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "妊娠检测表必须逐行给出检测、时点与适用人群。",
+        "required_object_cells": [
+          "pregnancy:cell:test",
+          "pregnancy:cell:timing",
+          "pregnancy:cell:population"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "妊娠为项目事实集合（检测/预防/报告/同意/结局/停药安排）；与 batch4 停药/退出语义一致。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“妊娠按 SAE 处理并全面退出”通用句即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-6",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623388",
+      "_Toc48315541",
+      "_Toc90487636"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-6:distinct",
+      "rule": "妊娠检测、预防、暴露报告、伴侣知情同意、结局随访与异常结局事件报告必须分别成立；妊娠不自动等于 SAE。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-6:withdrawal",
+      "rule": "因妊娠停用研究干预不等于自动全面退出研究；后续随访与数据收集须按项目安排继续，三/六个月仅为示例。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-6:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-6:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-6:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-6:distinct",
+      "question": "妊娠各项义务是否分别声明且与 SAE 区分？",
+      "linked_fact_paths": [
+        "pregnancy.testing_requirements",
+        "pregnancy.exposure_reporting",
+        "pregnancy.abnormal_outcome_reporting"
+      ],
+      "linked_claim_types": [
+        "pregnancy_handling"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-6:distinct"
+      ],
+      "risk_if_unmet": "将妊娠直接归为 SAE 会歪曲报告路径。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-6:withdrawal",
+      "question": "因妊娠停药后的随访与收集安排是否项目化？",
+      "linked_fact_paths": [
+        "pregnancy.withdrawal_arrangement",
+        "pregnancy.continued_collection_arrangement"
+      ],
+      "linked_claim_types": [
+        "pregnancy_handling"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-6:withdrawal"
+      ],
+      "risk_if_unmet": "自动全面退出会使安全性随访与数据不完整。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

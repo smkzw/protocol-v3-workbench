@@ -1,0 +1,94 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_enumerated_condition_does_not_treat_unknown_status_as_negative[planned-not_applicable] _
+
+value = 'planned', state = 'not_applicable'
+
+    @pytest.mark.parametrize("value,state", [("planned", "not_applicable"), ("draft", "not_applicable"),
+                                              ("approved", "applicable"), ("apprvoed", "conditional"),
+                                              (None, "conditional")])
+    def test_enumerated_condition_does_not_treat_unknown_status_as_negative(value, state):
+        from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+>       predicate = FactPredicate(fact_path="test.charter_status", expected="approved",
+                                  accepted_values=("planned", "draft", "approved"))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactPredicate
+E       accepted_values
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('planned', 'draft', 'approved'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:474: ValidationError
+_ test_enumerated_condition_does_not_treat_unknown_status_as_negative[draft-not_applicable] _
+
+value = 'draft', state = 'not_applicable'
+
+    @pytest.mark.parametrize("value,state", [("planned", "not_applicable"), ("draft", "not_applicable"),
+                                              ("approved", "applicable"), ("apprvoed", "conditional"),
+                                              (None, "conditional")])
+    def test_enumerated_condition_does_not_treat_unknown_status_as_negative(value, state):
+        from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+>       predicate = FactPredicate(fact_path="test.charter_status", expected="approved",
+                                  accepted_values=("planned", "draft", "approved"))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactPredicate
+E       accepted_values
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('planned', 'draft', 'approved'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:474: ValidationError
+_ test_enumerated_condition_does_not_treat_unknown_status_as_negative[approved-applicable] _
+
+value = 'approved', state = 'applicable'
+
+    @pytest.mark.parametrize("value,state", [("planned", "not_applicable"), ("draft", "not_applicable"),
+                                              ("approved", "applicable"), ("apprvoed", "conditional"),
+                                              (None, "conditional")])
+    def test_enumerated_condition_does_not_treat_unknown_status_as_negative(value, state):
+        from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+>       predicate = FactPredicate(fact_path="test.charter_status", expected="approved",
+                                  accepted_values=("planned", "draft", "approved"))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactPredicate
+E       accepted_values
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('planned', 'draft', 'approved'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:474: ValidationError
+_ test_enumerated_condition_does_not_treat_unknown_status_as_negative[apprvoed-conditional] _
+
+value = 'apprvoed', state = 'conditional'
+
+    @pytest.mark.parametrize("value,state", [("planned", "not_applicable"), ("draft", "not_applicable"),
+                                              ("approved", "applicable"), ("apprvoed", "conditional"),
+                                              (None, "conditional")])
+    def test_enumerated_condition_does_not_treat_unknown_status_as_negative(value, state):
+        from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+>       predicate = FactPredicate(fact_path="test.charter_status", expected="approved",
+                                  accepted_values=("planned", "draft", "approved"))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactPredicate
+E       accepted_values
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('planned', 'draft', 'approved'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:474: ValidationError
+_ test_enumerated_condition_does_not_treat_unknown_status_as_negative[None-conditional] _
+
+value = None, state = 'conditional'
+
+    @pytest.mark.parametrize("value,state", [("planned", "not_applicable"), ("draft", "not_applicable"),
+                                              ("approved", "applicable"), ("apprvoed", "conditional"),
+                                              (None, "conditional")])
+    def test_enumerated_condition_does_not_treat_unknown_status_as_negative(value, state):
+        from app.protocol_workflow.registries.applicability import FactPredicate, evaluate_predicate
+>       predicate = FactPredicate(fact_path="test.charter_status", expected="approved",
+                                  accepted_values=("planned", "draft", "approved"))
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for FactPredicate
+E       accepted_values
+E         Extra inputs are not permitted [type=extra_forbidden, input_value=('planned', 'draft', 'approved'), input_type=tuple]
+E           For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden
+
+tests/protocol_v3/test_chapter_applicability.py:474: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_enumerated_condition_does_not_treat_unknown_status_as_negative[planned-not_applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_enumerated_condition_does_not_treat_unknown_status_as_negative[draft-not_applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_enumerated_condition_does_not_treat_unknown_status_as_negative[approved-applicable]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_enumerated_condition_does_not_treat_unknown_status_as_negative[apprvoed-conditional]
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_enumerated_condition_does_not_treat_unknown_status_as_negative[None-conditional]
+5 failed, 52 deselected in 0.42s

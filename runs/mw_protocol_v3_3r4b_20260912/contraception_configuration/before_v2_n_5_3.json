@@ -1,0 +1,210 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-5-3:v2",
+  "semantic_node_id": "v2_n_5_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-5-3:lifestyle-constraints",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-5-3:v2",
+    "chapter_contract_id": "contract:v2-n-5-3:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "picos.inclusion_modules",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.exclusion_modules",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "picos.risk.pregnancy_contraception",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.constraints",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.scope",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.timing",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.exceptions",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.contraception_duration",
+        "obligation": "required",
+        "rationale": "该事实以结构化项目字段承载，required义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.prohibited_concomitant_treatment",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.withdrawal_rule",
+        "obligation": "optional",
+        "rationale": "该事实以结构化项目字段承载，optional义务用于防止模板示例替代项目值。"
+      },
+      {
+        "fact_path": "population.lifestyle.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "该事实以结构化项目字段承载，forbidden义务用于防止模板示例替代项目值。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "lifestyle_restriction",
+        "obligation": "required",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      },
+      {
+        "claim_type": "contraception_handling",
+        "obligation": "qualified",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。",
+        "qualifying_conditions": [
+          "仅在项目确认相关风险、人群和干预方式适用时"
+        ]
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "该声明必须以结构化项目事实和可追溯证据支撑。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "lifestyle_restriction"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.94
+      },
+      {
+        "source_roles": [
+          "regulatory_or_guideline"
+        ],
+        "admission_claim_types": [
+          "contraception_handling"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "合成项目实例必须承载可核查的项目化内容，而非标题或模板空壳。"
+      },
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "合成项目结构表必须逐项保留结构化字段。",
+        "required_object_cells": [
+          "lifestyle:constraint",
+          "lifestyle:scope",
+          "lifestyle:timing",
+          "lifestyle:exceptions",
+          "lifestyle:contraception"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "生活方式限制必须说明实际范围、起止时点、例外和产品/设计理由；妊娠避孕义务与纳入、排除和干预风险条件联动，不采用通用一月期限、吸烟或器械限制。",
+      "持续限制和必要禁用合并治疗必须连接干预与退出规则，而不是泛化为自动全研究终止。",
+      "本载体引入的 population.lifestyle.* 与 picos.risk.pregnancy_contraception 为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（fresh复核D3修复：归属声明补齐）。"
+    ],
+    "skeleton_risk_rules": [
+      "只有通用生活方式句、复制样例期限或没有时点/范围/例外即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2_n_5_3",
+    "required_styles": [
+      "3",
+      "1"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623342"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_3:source-bindings",
+      "rule": "来源组、项目事实和结构对象必须闭合，并接受人工医学与质量复核。"
+    },
+    {
+      "positive_qc_rule_id": "qc:v2_n_5_3:no-template-defaults",
+      "rule": "模板示例、通用默认值和未确认项目事实不得进入正文。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:v2_n_5_3:active",
+      "triggering_fact_paths": [
+        "picos.risk.pregnancy_contraception"
+      ],
+      "condition": "当确认存在妊娠风险或其他生活方式限制时，激活对应的时点、范围和理由字段。",
+      "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+      "required_when_active_fact_paths": [],
+      "required_when_active_claim_types": [
+        "lifestyle_restriction"
+      ]
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:v2_n_5_3:closure",
+      "question": "v2_n_5_3 的项目事实、证据和结构义务是否闭合？",
+      "linked_fact_paths": [
+        "picos.inclusion_modules",
+        "picos.exclusion_modules"
+      ],
+      "linked_claim_types": [
+        "lifestyle_restriction",
+        "contraception_handling"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:v2_n_5_3:source-bindings"
+      ],
+      "risk_if_unmet": "未满足该问题会使章节内容无法安全进入下游协议草稿。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

@@ -1,0 +1,1301 @@
+{
+  "status": "owner_source_review_candidate_not_registry_or_acceptance",
+  "source_sha256": "5a5affebd36979cb06e9de239accc163f954c186afcdf3668f23d054400519e9",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "content_row_count": 68,
+  "rows": [
+    {
+      "source_locator": "table[1]/row[2]",
+      "source_label": "6.1.1",
+      "source_text": "方案标题、方案识别号和日期。任何修正案还应注明修正案编号和日期。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_front_block",
+          "title": "封面/文档控制"
+        },
+        {
+          "id": "v2_n_front_1",
+          "title": "方案修订历史记录"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[3]",
+      "source_label": "6.1.2 ",
+      "source_text": "申办者和监查员（如果不是申办者）的姓名和地址。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[4]",
+      "source_label": "6.1.3",
+      "source_text": "被授权为申办者签署方案和方案修正案的人员的姓名和职位。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_3",
+          "title": "申办者签字页"
+        },
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[5]",
+      "source_label": "6.1.4",
+      "source_text": "试验申办方医学专家（或牙医，如适用）的姓名、职位、地址和电话号码。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[6]",
+      "source_label": "6.1.5",
+      "source_text": "负责开展试验的研究者的姓名和职位，以及试验中心的地址和电话号码。列出将进行研究的任何协作研究中心：",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_2",
+          "title": "主要研究者签字页"
+        },
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[7]",
+      "source_label": "6.1.6",
+      "source_text": "负责所有试验中心相关医学（或牙科）决策的合格医师（或牙医，如适用）的姓名、职位、地址和电话号码（如果不是研究者）。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[1]/row[8]",
+      "source_label": "6.1.7",
+      "source_text": "临床实验室和参与试验的其他医疗和/或技术部门和/或机构的名称和地址。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_front_4",
+          "title": "临床试验相关单位联系方式"
+        },
+        {
+          "id": "v2_n_16_x3",
+          "title": "附录 3 中心实验室信息和样本销毁公司信息"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[2]",
+      "source_label": "6.2.1",
+      "source_text": "试验用药品的名称和描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_2_2_1",
+          "title": "研究药物"
+        },
+        {
+          "id": "v2_n_6_1_1",
+          "title": "研究药物描述"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[3]",
+      "source_label": "6.2.2",
+      "source_text": "可能具有临床意义的非临床研究和与试验相关的临床试验的结果总结。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_2_2_2_1",
+          "title": "药效学研究"
+        },
+        {
+          "id": "v2_n_2_2_1",
+          "title": "研究药物"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[4]",
+      "source_label": "6.2.3",
+      "source_text": "人类试验参与者已知和潜在风险和获益（如有）总结。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_2_3",
+          "title": "风险/获益评估"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[5]",
+      "source_label": "6.2.4",
+      "source_text": "给药途径、剂量、给药方案和治疗阶段的描述和依据。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_3",
+          "title": "剂量选择依据"
+        },
+        {
+          "id": "v2_n_6_1_2",
+          "title": "研究药物给药方案"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[6]",
+      "source_label": "6.2.5",
+      "source_text": "声明试验将按照方案、GCP和适用的法规要求进行。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_13_1",
+          "title": "伦理规范"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[7]",
+      "source_label": "6.2.6",
+      "source_text": "待研究人群描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_5_1",
+          "title": "入选标准"
+        },
+        {
+          "id": "v2_n_3_1_2_1",
+          "title": "目标人群：有“状况/疾病”的试验参与者。更多细节见第5章节-研究人群。"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[2]/row[8]",
+      "source_label": "6.2.7",
+      "source_text": "引用与试验相关的文献和数据，并为试验提供背景。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_2_1",
+          "title": "研究理论依据"
+        },
+        {
+          "id": "v2_n_15",
+          "title": "参考文献"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[3]/row[2]",
+      "source_label": "6.3.1",
+      "source_text": "试验目的和目的的详细描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_3_1_1",
+          "title": "主要目的"
+        },
+        {
+          "id": "v2_n_3_2_1",
+          "title": "次要目的"
+        },
+        {
+          "id": "v2_n_3_3_1",
+          "title": "安全性目的"
+        },
+        {
+          "id": "v2_n_3_4_1",
+          "title": "探索性目的"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[3]/row[3]",
+      "source_label": "6.3.2",
+      "source_text": "科学目的是否清晰明确？如采用目标估计量（Estimand）框架，方案是否明确阐述目标人群、治疗条件、结局变量、伴发事件处理策略及人群汇总量，并与终点及统计分析保持一致？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_3_1_2_1",
+          "title": "目标人群：有“状况/疾病”的试验参与者。更多细节见第5章节-研究人群。"
+        },
+        {
+          "id": "v2_n_3_1_2_2",
+          "title": "研究变量：即研究终点。"
+        },
+        {
+          "id": "v2_n_3_1_2_3",
+          "title": "治疗效应：随机分配的治疗，伴有或不伴有“补救治疗或背景治疗改变”。关于研究治疗和伴随治疗包括补救治疗的更多细节见第6章节-研究干预。"
+        },
+        {
+          "id": "v2_n_3_1_2_4",
+          "title": "伴发事件：伴发事件及处理策略见表 1。"
+        },
+        {
+          "id": "v2_n_11_4_3_1",
+          "title": "主要估计目标的主要分析"
+        },
+        {
+          "id": "v2_n_11_4_3_2",
+          "title": "主要估计目标的敏感性分析"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "必须拆estimand五属性及终点/分析一致性；群体汇总量在3.1.2.4，不因目录没有第五标题而判缺失。"
+    },
+    {
+      "source_locator": "table[4]/row[2]",
+      "source_label": "6.4.1",
+      "source_text": "试验期间测量的主要终点和次要终点（如有）的具体声明。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_3_1_2_2",
+          "title": "研究变量：即研究终点。"
+        },
+        {
+          "id": "v2_n_3_2_2",
+          "title": "次要终点"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[3]",
+      "source_label": "6.4.2",
+      "source_text": "要进行的试验类型/设计描述（例如，双盲、安慰剂对照、平行设计）和试验设计、程序和阶段示意图。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_1",
+          "title": "总体设计"
+        },
+        {
+          "id": "v2_n_1_2",
+          "title": "研究流程图"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[4]",
+      "source_label": "",
+      "source_text": "-试验参与者何时被视为“入组”（研究中）的定义。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_1",
+          "title": "总体设计"
+        },
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[5]",
+      "source_label": "",
+      "source_text": "“确定任何亚研究。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_1",
+          "title": "总体设计"
+        },
+        {
+          "id": "v2_n_9_3",
+          "title": "群体药动学药效学评估"
+        },
+        {
+          "id": "v2_n_12_7",
+          "title": "储备样本和数据的未来使用"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[6]",
+      "source_label": "",
+      "source_text": "包括试验参与者访视次数、每个访视窗口期的程序和研究访视时长的详细描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_1_3",
+          "title": "研究流程表（SOA）"
+        },
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        },
+        {
+          "id": "v2_n_7_2",
+          "title": "治疗期"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[7]",
+      "source_label": "6.4.3",
+      "source_text": "描述为尽量减少/避免偏差而采取的措施，包括（例如）：（a）随机化，（b）设盲",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_5",
+          "title": "随机化和盲法"
+        },
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[8]",
+      "source_label": "6.4.0",
+      "source_text": "药物、补充剂或生物制剂：试验治疗和试验药物的剂量和给药方案描述。还包括试验用药品的剂型、包装和标签描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_1_1",
+          "title": "研究药物描述"
+        },
+        {
+          "id": "v2_n_6_1_2",
+          "title": "研究药物给药方案"
+        },
+        {
+          "id": "v2_n_6_2_2",
+          "title": "剂型、外观、包装和标签"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[9]",
+      "source_label": "",
+      "source_text": "器械：试验治疗和器械植入/应用的描述，移除。还包括对试验用产品的器械质量标准、包装和标签的描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_1_1",
+          "title": "研究药物描述"
+        },
+        {
+          "id": "v2_n_6_1_2",
+          "title": "研究药物给药方案"
+        },
+        {
+          "id": "v2_n_6_2_2",
+          "title": "剂型、外观、包装和标签"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "器械适用条件；当前药物模板仅候选落点，不代表器械场景已支持。"
+    },
+    {
+      "source_locator": "table[4]/row[10]",
+      "source_label": "6.4.5",
+      "source_text": "试验参与者参与的预期持续时间，以及所有试验阶段的序列和持续时间的描述，包括随访（如有）。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_1",
+          "title": "总体设计"
+        },
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        },
+        {
+          "id": "v2_n_7_2",
+          "title": "治疗期"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[11]",
+      "source_label": "6.4.6",
+      "source_text": "对个体试验参与者、部分试验和整个试验的“停止规则”或“停药标准”的描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_8_2",
+          "title": "试验参与者中止/退出研究"
+        },
+        {
+          "id": "v2_n_14_7",
+          "title": "安全性监督"
+        },
+        {
+          "id": "v2_n_11_4_9",
+          "title": "期中分析"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[12]",
+      "source_label": "6.4.7",
+      "source_text": "试验用药品的清点程序，包括安慰剂/假手术和对照药物（如有）。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_2_1",
+          "title": "药物接收和清点"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[13]",
+      "source_label": "6.4.8",
+      "source_text": "维持试验治疗随机化代码和破解代码的程序。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_4_5",
+          "title": "随机化和盲法"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[14]",
+      "source_label": "6.4.9",
+      "source_text": "直接记录在CRF上的任何数据的标识（即，无先前的书面或电子数据记录），并被视为源数据。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_12_2",
+          "title": "数据采集与方式"
+        },
+        {
+          "id": "v2_n_12_6",
+          "title": "数据治理与计算机化系统"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[4]/row[15]",
+      "source_label": "6.4.10",
+      "source_text": "如果您的研究是研究者发起的多中心研究，请参阅IIT的相关指导原则。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_14_2",
+          "title": "对申办者的要求"
+        },
+        {
+          "id": "v2_n_14_4",
+          "title": "对研究者的要求"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "IIT且多中心才应用；源为指导原则引用，不能标记药物注册试验普遍缺陷。"
+    },
+    {
+      "source_locator": "table[4]/row[16]",
+      "source_label": "6.4.11",
+      "source_text": "方案是否识别关键质量因素（CtQ），并制定与风险相称的控制措施（包括关键给药及配制操作、关键访视及评估时间窗、个体及全试验层面的暂停或终止规则及剂量调整标准）？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_14_1",
+          "title": "质量源于设计与风险管理"
+        },
+        {
+          "id": "v2_n_6_2_4",
+          "title": "准备"
+        },
+        {
+          "id": "v2_n_1_3",
+          "title": "研究流程表（SOA）"
+        },
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_14_7",
+          "title": "安全性监督"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[2]",
+      "source_label": "6.5.1",
+      "source_text": "试验参与者入选标准。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_5_1",
+          "title": "入选标准"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[3]",
+      "source_label": "6.5.2",
+      "source_text": "试验参与者暴露标准。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_5_2",
+          "title": "排除标准"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "保留原词暴露标准，规范化排除标准需独立出处。"
+    },
+    {
+      "source_locator": "table[5]/row[4]",
+      "source_label": "",
+      "source_text": "描述如何确定合格标准",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_5_1",
+          "title": "入选标准"
+        },
+        {
+          "id": "v2_n_5_2",
+          "title": "排除标准"
+        },
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[5]",
+      "source_label": "",
+      "source_text": "试验参与者报告的信息",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        },
+        {
+          "id": "v2_n_12_2",
+          "title": "数据采集与方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[6]",
+      "source_label": "",
+      "source_text": "病历审查",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        },
+        {
+          "id": "v2_n_12_2",
+          "title": "数据采集与方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[7]",
+      "source_label": "",
+      "source_text": "筛查评估结果（如问卷、日记等）",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_7_1",
+          "title": "筛选期"
+        },
+        {
+          "id": "v2_n_9_1",
+          "title": "疗效评估"
+        },
+        {
+          "id": "v2_n_9_2",
+          "title": "安全性和其他评估"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[8]",
+      "source_label": "6.5.3",
+      "source_text": "试验参与者退出标准（即终止试验药物治疗/试验治疗）和程序规定：",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_8_2",
+          "title": "试验参与者中止/退出研究"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[9]",
+      "source_label": "",
+      "source_text": "方案是否明确区分：（1）试验参与者停止试验干预但继续随访；（2）试验参与者自主退出试验（撤回知情同意）；（3）研究者决定终止其参加试验？是否分别明确各情形下的数据收集类型、时间、医学随访、已收集数据处理及试验参与者替换规则？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_8_2",
+          "title": "试验参与者中止/退出研究"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        },
+        {
+          "id": "v2_n_12_6",
+          "title": "数据治理与计算机化系统"
+        },
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[10]",
+      "source_label": "",
+      "source_text": "如果试验参与者发生排斥反应怎么办？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_9_2",
+          "title": "安全性和其他评估"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "source ambiguity；候选节点不等于已裁定医学含义，不作关键词硬门。"
+    },
+    {
+      "source_locator": "table[5]/row[11]",
+      "source_label": "",
+      "source_text": "如果试验参与者开始服用排除药物怎么办？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_4_1",
+          "title": "禁止使用的食物、药物和治疗"
+        },
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[12]",
+      "source_label": "",
+      "source_text": "研究退出程序的详细描述，包括退出试验参与者收集数据的类型和时间。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_2",
+          "title": "试验参与者中止/退出研究"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        },
+        {
+          "id": "v2_n_12_2",
+          "title": "数据采集与方式"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[13]",
+      "source_label": "",
+      "source_text": "是否以及如何替换试验参与者。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_2",
+          "title": "试验参与者中止/退出研究"
+        },
+        {
+          "id": "v2_n_11_1",
+          "title": "样本量估算"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[5]/row[14]",
+      "source_label": "",
+      "source_text": "试验参与者退出试验药物治疗/试验治疗的随访。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[6]/row[2]",
+      "source_label": "6.6.1",
+      "source_text": "要给予的治疗，包括所有产品的名称、剂量、给药计划、给药途径/模式和治疗期，包括各试验药物治疗/试验治疗组/试验组试验参与者的随访期。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_1_1",
+          "title": "研究药物描述"
+        },
+        {
+          "id": "v2_n_6_1_2",
+          "title": "研究药物给药方案"
+        },
+        {
+          "id": "v2_n_7_3",
+          "title": "随访期"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[6]/row[3]",
+      "source_label": "6.6.2",
+      "source_text": "允许使用的药物/治疗（包括急救药物），试验前和/或试验期间不允许使用。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_4_1",
+          "title": "禁止使用的食物、药物和治疗"
+        },
+        {
+          "id": "v2_n_6_4_2",
+          "title": "允许使用的药物和治疗"
+        },
+        {
+          "id": "v2_n_6_4_3",
+          "title": "补救治疗"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[6]/row[4]",
+      "source_label": "6.6.3",
+      "source_text": "监测试验参与者依从性的程序。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_6_3",
+          "title": "研究干预的依从性"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[7]/row[2]",
+      "source_label": "6.7.1",
+      "source_text": "有效性参数的质量标准。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_3_1_2_2",
+          "title": "研究变量：即研究终点。"
+        },
+        {
+          "id": "v2_n_9_1",
+          "title": "疗效评估"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[7]/row[3]",
+      "source_label": "6.7.2",
+      "source_text": "评估、记录和分析疗效参数的方法和时间。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_9_1",
+          "title": "疗效评估"
+        },
+        {
+          "id": "v2_n_1_3",
+          "title": "研究流程表（SOA）"
+        },
+        {
+          "id": "v2_n_11_4_3_1",
+          "title": "主要估计目标的主要分析"
+        },
+        {
+          "id": "v2_n_11_4_4",
+          "title": "次要终点的统计分析"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[8]/row[2]",
+      "source_label": "6.8.1",
+      "source_text": "安全参数规范。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_9_2",
+          "title": "安全性和其他评估"
+        },
+        {
+          "id": "v2_n_3_3_2",
+          "title": "安全性终点"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[8]/row[3]",
+      "source_label": "6.8.2",
+      "source_text": "评估、记录和分析安全性参数的方法和时间。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_9_2",
+          "title": "安全性和其他评估"
+        },
+        {
+          "id": "v2_n_1_3",
+          "title": "研究流程表（SOA）"
+        },
+        {
+          "id": "v2_n_11_4_5",
+          "title": "安全性分析"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[8]/row[4]",
+      "source_label": "6.8.3",
+      "source_text": "记录和报告不良事件和并发疾病的程序。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_10_1_4",
+          "title": "不良事件的收集"
+        },
+        {
+          "id": "v2_n_10_1_5",
+          "title": "不良事件的记录"
+        },
+        {
+          "id": "v2_n_10_2_2",
+          "title": "严重不良事件的报告"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[8]/row[5]",
+      "source_label": "6.8.4",
+      "source_text": "不良事件后试验参与者随访的类型和持续时间。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_10_1_6",
+          "title": "不良事件的随访"
+        },
+        {
+          "id": "v2_n_10_2_3",
+          "title": "严重不良事件的随访"
+        },
+        {
+          "id": "v2_n_10_3_3",
+          "title": "快速报告的随访"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[8]/row[6]",
+      "source_label": "6.8.5",
+      "source_text": "如设置独立数据监查委员会（IDMC/DMC）、终点评审委员会（CEC）或安全性审评委员会（SRC），方案或其引用文件是否明确其职责、工作程序及决策接口？是否明确不良事件及妊娠等特定事件的随访周期与要求？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_9_4",
+          "title": "独立评审委员会"
+        },
+        {
+          "id": "v2_n_14_7",
+          "title": "安全性监督"
+        },
+        {
+          "id": "v2_n_10_6",
+          "title": "妊娠"
+        },
+        {
+          "id": "v2_n_10_1_6",
+          "title": "不良事件的随访"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "委员会职责与特定事件随访必须拆开；无委员会不免除妊娠/AE随访义务。"
+    },
+    {
+      "source_locator": "table[9]/row[2]",
+      "source_label": "6.9.1",
+      "source_text": "描述要采用的统计方法，包括任何计划的中期分析的时间。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        },
+        {
+          "id": "v2_n_11_4_3_1",
+          "title": "主要估计目标的主要分析"
+        },
+        {
+          "id": "v2_n_11_4_9",
+          "title": "期中分析"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[9]/row[3]",
+      "source_label": "6.9.2",
+      "source_text": "计划入组的试验参与者数量。在多中心试验中，应指定每个试验中心预计入组的试验参与者人数。选择样本量的原因，包括试验效力的反思（或计算）和临床依据。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_1",
+          "title": "样本量估算"
+        },
+        {
+          "id": "v2_n_4_1",
+          "title": "总体设计"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "样本量/效力/临床依据与多中心分配分别检查，不虚构中心名单或人数。"
+    },
+    {
+      "source_locator": "table[9]/row[4]",
+      "source_label": "6.9.3",
+      "source_text": "要使用的显著性水平。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        },
+        {
+          "id": "v2_n_11_4_8",
+          "title": "多重性问题考量"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[9]/row[5]",
+      "source_label": "6.9.4",
+      "source_text": "试验终止标准。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_4_9",
+          "title": "期中分析"
+        },
+        {
+          "id": "v2_n_14_7",
+          "title": "安全性监督"
+        },
+        {
+          "id": "v2_n_8_1",
+          "title": "研究干预中止/终止"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[9]/row[6]",
+      "source_label": "6.9.5",
+      "source_text": "说明缺失、未使用和虚假数据的程序。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        },
+        {
+          "id": "v2_n_11_4_3_1",
+          "title": "主要估计目标的主要分析"
+        },
+        {
+          "id": "v2_n_11_4_3_2",
+          "title": "主要估计目标的敏感性分析"
+        },
+        {
+          "id": "v2_n_12_3",
+          "title": "数据清理与质疑解决"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[9]/row[7]",
+      "source_label": "6.9.6",
+      "source_text": "是否明确要求制定统计分析计划（SAP）并在数据库锁定和揭盲前批准？是否声明对SAP的任何偏离均将在临床试验报告中如实记录和解释？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_3",
+          "title": "一般分析考虑"
+        },
+        {
+          "id": "v2_n_12_5",
+          "title": "数据锁定及导出"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "SAP将来审批计划和已经批准事实分开，不假称已完成。"
+    },
+    {
+      "source_locator": "table[9]/row[8]",
+      "source_label": "6.9.7",
+      "source_text": "选择纳入分析的试验参与者（例如，所有随机化试验参与者、所有给药试验参与者、所有合格试验参与者、可评价试验参与者）。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_11_2",
+          "title": "分析集"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[10]/row[2]",
+      "source_label": "6.10",
+      "source_text": "方案或其他书面协议是否明确：研究者、临床试验机构及持有源记录的服务供应商均允许为试验相关监查、稽查、药品监管检查及依适用法规开展的伦理审查直接查阅源数据和源记录？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_14_3",
+          "title": "申办者或其代表委派的监查员职责"
+        },
+        {
+          "id": "v2_n_14_4",
+          "title": "对研究者的要求"
+        },
+        {
+          "id": "v2_n_14_5",
+          "title": "稽查和视察"
+        },
+        {
+          "id": "v2_n_12_8",
+          "title": "研究记录的保存"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[11]/row[2]",
+      "source_label": "6.11",
+      "source_text": "方案或其引用文件是否阐明基于关键质量因素的质量管理方法、与风险相称的监查策略（如中心化与现场监查结合），以及方案/GCP不依从事件的识别、原因分析、纠正预防（CAPA）与报告机制？",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_14_1",
+          "title": "质量源于设计与风险管理"
+        },
+        {
+          "id": "v2_n_14_3",
+          "title": "申办者或其代表委派的监查员职责"
+        },
+        {
+          "id": "v2_n_14_6",
+          "title": "方案偏离"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[12]/row[2]",
+      "source_label": "6.12",
+      "source_text": "与试验相关的伦理考虑的描述。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_13_1",
+          "title": "伦理规范"
+        },
+        {
+          "id": "v2_n_13_2",
+          "title": "知情同意"
+        },
+        {
+          "id": "v2_n_13_3",
+          "title": "保密和隐私"
+        },
+        {
+          "id": "v2_n_13_4",
+          "title": "试验参与者的补偿、赔偿与保险"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[13]/row[2]",
+      "source_label": "6.13",
+      "source_text": "是否明确拟采集数据、数据来源及直接录入数据采集工具的源数据？是否明确电子原始记录不得仅以打印件替代？计算机化系统是否具备适度验证、用户权限、稽查轨迹及备份安全？是否明确试验必备记录按规定妥善保存及可追溯？\n识别将从医疗记录中提取的信息",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_12_1",
+          "title": "数据收集和管理职责"
+        },
+        {
+          "id": "v2_n_12_2",
+          "title": "数据采集与方式"
+        },
+        {
+          "id": "v2_n_12_6",
+          "title": "数据治理与计算机化系统"
+        },
+        {
+          "id": "v2_n_12_8",
+          "title": "研究记录的保存"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "临床方案的数据治理安排，不能扩展为被排除的本软件安全工程。"
+    },
+    {
+      "source_locator": "table[14]/row[2]",
+      "source_label": "6.14",
+      "source_text": "如果在单独协议中未提及，则提供融资和保险。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_13_4",
+          "title": "试验参与者的补偿、赔偿与保险"
+        },
+        {
+          "id": "v2_n_14_2",
+          "title": "对申办者的要求"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[15]/row[2]",
+      "source_label": "6.15",
+      "source_text": "出版政策，如果未在单独协议中处理。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_12_9",
+          "title": "研究发表和数据共享政策"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "节点映射仅用于定位；内容充分性、实际条件与原子义务仍须逐项核对。"
+    },
+    {
+      "source_locator": "table[16]/row[2]",
+      "source_label": "6.16",
+      "source_text": "（注：由于方案和临床试验/研究报告密切相关，更多相关信息见Lal临床结构和内容指南研究报告。)",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_15",
+          "title": "参考文献"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review",
+      "note": "reference_hint/source_noise，不直接生成正文必填义务。"
+    }
+  ],
+  "additional_fragments": [
+    {
+      "source_locator": "table[5]/row[0]/cell[1]",
+      "source_text": "试验参与者识别和招募方法。",
+      "candidate_semantic_nodes": [
+        {
+          "id": "v2_n_5_5",
+          "title": "试验参与者招募与保留"
+        }
+      ],
+      "status": "candidate_requires_atomic_obligation_review"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_catalog_rejects_nonexistent_conditional_table_cell ____________
+tests/protocol_v3/test_chapter_applicability.py:12: in test_catalog_rejects_nonexistent_conditional_table_cell
+    for path in (REAL_TEMPLATE_DIR / "chapter_contracts").glob("*.json")]
+                 ^^^^^^^^^^^^^^^^^
+E   NameError: name 'REAL_TEMPLATE_DIR' is not defined
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_applicability.py::test_catalog_rejects_nonexistent_conditional_table_cell
+1 failed in 0.40s

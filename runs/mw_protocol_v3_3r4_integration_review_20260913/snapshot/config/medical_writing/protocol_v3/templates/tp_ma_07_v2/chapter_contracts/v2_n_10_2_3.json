@@ -1,0 +1,162 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-2-3:v2",
+  "semantic_node_id": "v2_n_10_2_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-2-3:sae-followup",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-2-3:v2",
+    "chapter_contract_id": "contract:v2-n-10-2-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_followup.scope",
+        "obligation": "required",
+        "rationale": "SAE 随访范围必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_followup.new_information_reporting",
+        "obligation": "required",
+        "rationale": "新/变更信息的报告义务必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "sae_followup.outcome_documentation",
+        "obligation": "required",
+        "rationale": "结局记录与关闭标准必须明确。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sae_followup_plan",
+        "obligation": "required",
+        "rationale": "必须声明 SAE 随访范围、新信息报告与结局记录。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "sae_followup_stops_at_last_dose",
+        "obligation": "forbidden",
+        "rationale": "不得把 SAE 随访限定为末次给药后即终止，新信息报告义务不受此限制。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "sae_followup_plan"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明 SAE 随访范围、新信息报告与结局记录。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "SAE 随访为项目事实集合（范围/新信息/结局）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“随访至结局或死亡”通用句即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-2-3",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623381",
+      "_Toc46411097",
+      "_Toc48315533",
+      "_Toc90487628"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-2-3:followup",
+      "rule": "SAE 随访范围、新信息报告与结局记录必须项目化，不得以“已随访”通用句替代。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-2-2:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-2-3:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-2-2:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-3:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-2-3:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-2-3:followup",
+      "question": "SAE 随访与新信息报告是否项目化？",
+      "linked_fact_paths": [
+        "sae_followup.scope",
+        "sae_followup.new_information_reporting",
+        "sae_followup.outcome_documentation"
+      ],
+      "linked_claim_types": [
+        "sae_followup_plan"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-2-3:followup"
+      ],
+      "risk_if_unmet": "新信息未报告会使安全信息不完整。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

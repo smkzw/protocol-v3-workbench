@@ -1,0 +1,372 @@
+FAIL tests.test_ai_route_freeze.AiRouteFreezeTests::test_dynamic_route_mutation_during_execution_cannot_change_provider
+  msg: AssertionError: 'route_b' != 'independent_ai__route_b' | - route_b | + independent_ai__route_b
+FAIL tests.test_approval_center.ApprovalCenterActionTests::test_rux_risk_disposition_approval_can_be_approved_without_closing_risk
+  msg: StopIteration
+FAIL tests.test_contracts.WorkbenchContractTests::test_reference_translation_status_separates_flash_support_from_hy_body
+  msg: AssertionError: False is not true
+FAIL tests.test_document_pipeline_round8.BatchDocumentPipelineRound8Tests::test_real_persisted_batch_retry_recovers_source_and_siblings_once
+  msg: AssertionError: Items in the first set but not the second: | 'failed_retryable' | Items in the second set but not the first: | 'candidate_ready' | 'fidelity_blocked'
+FAIL tests.test_frontend_button_contract.FrontendButtonContractTests::test_disabled_buttons_explain_why_they_are_unavailable
+  msg: AssertionError: Lists differ: [] != ['line 1400: <button type="button" classNa[395 chars] =>'] |  | Second list contains 3 additional elements. | First extra element 0: | 'line 1400: <button type="button" className={`new-project-trigger ${!hasActiveProject ? "primary-button" : ""}`} disabled={!proje
+FAIL tests.test_frontend_empty_project_contract.FrontendEmptyProjectContractTests::test_empty_overview_has_zero_state_and_primary_create_action
+  msg: AssertionError: 1 not greater than or equal to 4
+FAIL tests.test_frontend_medical_writing_translation_batch_contract.FrontendMedicalWritingTranslationBatchContractTests::test_latest_batch_restores_its_frozen_scope_and_never_mixes_other_preview_counts
+  msg: AssertionError: 'setSelectedAnchors([...payload.anchor_filter])' not found in 'import { useCallback, useEffect, useMemo, useRef, useState } from "react";\nimport { ArrowUpDown, CheckCheck, Eye, Languages, Play, RefreshCw, RotateCcw } from "lucide-react";\nimport { WritingReferenceProgressJourney } f
+FAIL tests.test_frontend_medical_writing_translation_batch_contract.FrontendMedicalWritingTranslationBatchContractTests::test_scope_defaults_to_all_eligible_mapped_anchors_and_shows_preview_counts
+  msg: AssertionError: 'setSelectedAnchors(returnedAnchors.map((item) => item.value))' not found in 'import { useCallback, useEffect, useMemo, useRef, useState } from "react";\nimport { ArrowUpDown, CheckCheck, Eye, Languages, Play, RefreshCw, RotateCcw } from "lucide-react";\nimport { WritingReferenceProg
+FAIL tests.test_frontend_source_manifest_contract.FrontendSourceManifestContractTests::test_subject_identity_mismatch_is_visible_without_relaxing_fail_closed_guards
+  msg: AssertionError: 'monitoringDataError={monitoringDataError}' not found in 'import { Component, useCallback, useEffect, useMemo, useRef, useState } from "react";\nimport { EditorContent, useEditor } from "@tiptap/react";\nimport { Extension, Mark, Node, mergeAttributes } from "@tiptap/core";\nimport S
+FAIL tests.test_frontend_unified_risk_workbench_contract.FrontendUnifiedRiskWorkbenchContractTests::test_checklist_fails_closed_on_malformed_rows_taxonomy_counts_and_refresh
+  msg: AssertionError: ': safeRows.map((risk) => (' not found in 'import { useEffect, useMemo, useRef, useState } from "react";\nimport {\n  ArrowDownUp,\n  ChevronLeft,\n  ChevronRight,\n  Download,\n  Filter,\n  RefreshCw,\n  RotateCcw,\n  X,\n} from "lucide-react";\nimport {\n  activeRiskChecklistFilter
+FAIL tests.test_medical_writing_backend_launcher::test_backend_launcher_does_not_pin_or_require_a_supplier
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runtime/start_medical_writing_backend_8911.zsh'
+FAIL tests.test_medical_writing_competitor_triage_crswnp.TestCrswnpClassificationReconciliation::test_full_validation_corrects_reason_and_preserves_source_truth
+  msg: AssertionError: '公开文档：方案与统计分析计划' not found in '适应症一致（慢性鼻窦炎伴鼻息肉）。候选分期：PHASE3。项目分期：III期。公开文档：方案。因当前项目技术类型、给药途径、靶点/机制未知，不能判断直接竞争性。候选干预类型待核实，可作为同适应症研究参考。'
+FAIL tests.test_medical_writing_competitor_triage_v4_source_truth.TestReasonSanitization::test_reason_is_rebuilt_even_when_no_protected_dim_is_forced
+  msg: AssertionError: '无公开方案或统计分析计划' not found in '适应症不同（项目：类风湿关节炎（RA）；候选：Paroxysmal Nocturnal Hemoglobinuria）。候选分期：PHASE2。项目分期：II期。无公开方案。'
+FAIL tests.test_medical_writing_direct_ai_policy.MedicalWritingDirectAiPolicyTests::test_flash_exception_is_limited_to_structure_and_translation_tasks
+  msg: AssertionError: AiExecutionPolicyDenied not raised
+FAIL tests.test_medical_writing_direct_ai_policy.MedicalWritingDirectAiPolicyTests::test_missing_or_wrong_model_is_rejected
+  msg: AssertionError: AiExecutionPolicyDenied not raised
+FAIL tests.test_medical_writing_durable_job_integration.TestAtomicAcceptApplyValidation::test_nonexistent_thread_returns_404
+  msg: AssertionError: 422 not found in (404, 409)
+FAIL tests.test_medical_writing_study_binding_backend::test_accept_and_bind_is_atomic_idempotent_and_preserves_source
+  msg: services.api.app.sqlite_runtime_store.RuntimeStoreError: 医学写作 Word 导出已阻断：仍有适用正文章节缺少实质正文。请先完成全文初稿候选审核与采纳；[{"heading": "研究目的", "reason": "substantive_body_missing", "section_id": "mwsec_alpha_objectives", "section_number": ""}]
+FAIL tests.test_medical_writing_study_binding_backend::test_imported_source_without_working_copy_gets_additive_binding
+  msg: services.api.app.sqlite_runtime_store.RuntimeStoreError: 医学写作 Word 导出已阻断：仍有适用正文章节缺少实质正文。请先完成全文初稿候选审核与采纳；[{"heading": "研究目的", "reason": "substantive_body_missing", "section_id": "mwsec_alpha_objectives", "section_number": ""}]
+FAIL tests.test_medical_writing_study_consistency::test_rebind_advances_all_bindings_and_reconciles_only_affected_content
+  msg: services.api.app.sqlite_runtime_store.RuntimeStoreError: 医学写作 Word 导出已阻断：仍有适用正文章节缺少实质正文。请先完成全文初稿候选审核与采纳；[{"heading": "入选标准", "reason": "substantive_body_missing", "section_id": "mwsec_greenfield_proj_consistency_rebind_f9aeeaf435b047a4", "section_number": "5.2"}, {"heading": "统计分析", "reason": "subst
+FAIL tests.test_medical_writing_template_upgrade.MedicalWritingTemplateUpgradeTests::test_apply_creates_new_160_node_document_preserves_content_and_can_rollback
+  msg: pydantic_core._pydantic_core.ValidationError: 13 validation errors for ProtocolDocument | sections.2 |   Value error, structural_container requires completion_status=structure_ready [type=value_error, input_value={'applicability_mode': 'r...', 'title_locked': True}, input_type=dict] |     For furthe
+FAIL tests.test_medical_writing_template_upgrade.MedicalWritingTemplateUpgradeTests::test_current_template_document_is_not_offered_an_upgrade
+  msg: pydantic_core._pydantic_core.ValidationError: 13 validation errors for ProtocolDocument | sections.2 |   Value error, structural_container requires completion_status=structure_ready [type=value_error, input_value={'applicability_mode': 'r...', 'title_locked': True}, input_type=dict] |     For furthe
+FAIL tests.test_medical_writing_template_upgrade.MedicalWritingTemplateUpgradeTests::test_rollback_blocks_after_upgraded_document_has_a_saved_working_copy
+  msg: pydantic_core._pydantic_core.ValidationError: 13 validation errors for ProtocolDocument | sections.2 |   Value error, structural_container requires completion_status=structure_ready [type=value_error, input_value={'applicability_mode': 'r...', 'title_locked': True}, input_type=dict] |     For furthe
+FAIL tests.test_monitoring_adapter_consumer_coverage::test_actual_c3_inventory_has_46_review_only_coverage_observations
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'runs/execution/medical_monitoring_phase_c3_mapping_inventory_20260802/OBSERVED_ADAPTER_MAPPING_INVENTORY.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_current_coverage_is_fresh_but_p4_evidence_blocked
+  msg: AssertionError: assert 'invalid' == 'blocked' |    |   - blocked |   + invalid
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_drift_is_fail_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[id-123]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[path-123]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[bytes-6]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[bytes-True]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[sha256-123]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_source_declaration_rejects_implicit_type_coercion[role-123]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_independent_ai_status_and_decision_drift_are_visible
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_existing_unbound_artifact_does_not_become_evidence
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_authority_drift_never_grants_permission[authority_granted]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_ai_evidence_revalidation::test_authority_drift_never_grants_permission[decision]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_current_formal_package_is_blocked_without_inference
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_missing_manifest_observation_is_not_treated_as_verified
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_source_manifest_rejects_boolean_byte_count
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_package_hash_tampering_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_complete_synthetic_package_is_ready_but_never_writable
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_string_cas_completion_flags_fail_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_b6_ready_requires_typed_empty_blockers_and_integer_counts[pending_candidate_record_ids-[]]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_b6_ready_requires_typed_empty_blockers_and_integer_counts[missing_candidate_record_ids-[]]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_b6_ready_requires_typed_empty_blockers_and_integer_counts[rejected_candidate_record_ids-[]]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_b6_ready_requires_typed_empty_blockers_and_integer_counts[unresolved_blockers-[]]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_b6_ready_requires_typed_empty_blockers_and_integer_counts[candidate_count-5]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_true_authority_flag_is_an_issue_even_with_valid_package_hash
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_controlled_entrypoint_requires_hash_bound_source_batches
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_controlled_entrypoint_reopens_bound_files_and_can_be_diagnostic_ready
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_controlled_entrypoint_blocks_when_bound_file_changes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_approved_input_report_rejects_non_boolean_readiness_flags
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_approved_input_dry_run::test_controlled_approved_input_report_rejects_non_boolean_source_preflight_flag
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_current_packet_is_stale_against_current_gate_and_package
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_hash_bound_packet_can_be_fresh_without_reviewer_outcomes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_refresh_packet_can_use_explicit_new_workspace_paths
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_mutated_source_observation_blocks_freshness
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_candidate_fingerprint_drift_is_not_repaired
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_authority_flag_true_is_rejected_even_with_matching_hashes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_outcome_present_authority_flags_are_rejected[review_outcome_present]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_outcome_present_authority_flags_are_rejected[medical_approval_present]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_outcome_present_authority_flags_are_rejected[engineering_approval_present]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_current_gate_write_or_migration_flag_true_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_duplicate_current_outcome_id_is_not_folded_into_a_fresh_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_missing_observation_map_fails_closed_without_file_io_assumption
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_non_mapping_inputs_are_rejected[None]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_non_mapping_inputs_are_rejected[value1]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_b6_reviewer_packet_revalidation::test_non_mapping_inputs_are_rejected[packet]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_b6_reviewer_packet_20260802/B6_REVIEW_PACKET.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_current_package_with_no_resolution_is_invalid_and_non_authoritative
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_conservative_hash_bound_resolution_is_structurally_valid_only
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_package_hash_mismatch_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_candidate_and_source_hash_mismatch_are_reported
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_approve_requires_confirmed_lineage_cas_and_explicit_versions
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_missing_identity_time_evidence_and_rationale_are_explicit
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_reviewer_identity_fields_are_strictly_typed_and_review_id_is_required
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_duplicate_review_ids_are_rejected_without_merging_candidate_outcomes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_evidence_fields_must_be_non_empty_string_arrays
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_true_authority_flag_is_rejected_even_for_valid_hash_bound_input
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[package_hash_verified-1]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[reviewer_outcomes_complete-0]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[write_permitted-0]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[migration_ready-0]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[activation_allowed-0]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[candidate_count-5]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_resolution_report_rejects_coerced_bool_and_count_shapes[outcome_count-5.0]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_duplicate_and_unknown_outcomes_do_not_overwrite_candidate_identity
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_report_hash_is_deterministic
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_template_is_hash_bound_blank_and_explicitly_non_authoritative
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_formal_reviewer_resolution::test_template_rejects_package_hash_or_candidate_fingerprint_drift
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_formal_reviewer_provenance_package_20260802/B6_FORMAL_REVIEWER_PROVENANCE_PACKAGE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_artifact_hash_requires_exact_lowercase_bytes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_current_filesystem_manifest_is_blocked_and_deterministic
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_duplicate_artifact_hash_blocks_assembly_even_when_mapping_is_valid
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_invalid_identity_and_missing_gate_are_visible
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_manifest_rows_follow_canonical_gate_order
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_payload_mutation_changes_manifest_identity
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_current_manifest.RealLoopCurrentManifestTests::test_unknown_runtime_verified_payload_does_not_unlock_manifest
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_evidence_semantics.RealLoopEvidenceSemanticsTests::test_current_sources_keep_freshness_decision_replay_and_signature_separate
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_evidence_semantics.RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_source_token_evidence_revalidation_20260803/SOURCE_TOKEN_EVIDENCE_REVALIDATION.json'
+FAIL tests.test_monitoring_real_loop_evidence_semantics.RealLoopEvidenceSemanticsTests::test_mapping_result_hash_is_bound_to_current_manifest
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_evidence_semantics.RealLoopEvidenceSemanticsTests::test_semantics_are_deterministic_and_signature_cannot_be_promoted
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_invalid_manifest_shape_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_missing_runtime_row_is_allowed_only_when_explicit
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_payload_mutation_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_persisted_report_hash_mutation_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_persisted_row_hash_mutation_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_required_source_bytes_missing_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_manifest_replay.RealLoopManifestReplayTests::test_source_bytes_mutation_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_prompt_manifest.RealLoopPromptManifestTests::test_frozen_audit_artifact_matches_source_builder
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_prompt_manifest_20260802/PROMPT_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_current_semantic_snapshot_matches_current_manifest
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_derived_status_mutation_blocks_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_manifest_report_hash_mutation_blocks_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_mapping_result_hash_mutation_blocks_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_missing_gate_or_invalid_shape_fails_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_snapshot_mutation_does_not_change_original_pair
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_semantics_binding.RealLoopSemanticsBindingTests::test_snapshot_source_hash_mutation_blocks_binding
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'
+FAIL tests.test_monitoring_real_loop_status_mapping.RealLoopStatusMappingTests::test_current_filesystem_payloads_remain_non_proven
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_real_loop_upstream_assembly.RealLoopUpstreamAssemblyTests::test_current_gate_artifacts_assemble_without_unlocking_any_gate
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_current_release_snapshot_is_fresh_but_release_remains_blocked
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_report_rejects_non_boolean_freshness_flag
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'runs/execution/medical_monitoring_phase_b6_review_gate_20260801/B6_REVIEW_OUTCOME_GATE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_source_content_drift_blocks_revalidation
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_source_and_gate_hashes_require_exact_lowercase_bytes
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_source_path_traversal_and_symlink_are_rejected
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_unbound_gate_hash_blocks_revalidation
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_decision_order_and_b6_snapshot_drift_fail_closed
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_decision_derived_fields_and_b6_projection_must_match
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_unknown_gate_status_is_not_fresh
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_release_evidence_revalidation::test_true_authority_flag_is_rejected_even_when_sources_are_current
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_release_evidence_coverage_20260802/CURRENT_RELEASE_COVERAGE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_persisted_candidate_profile_is_ready_for_offline_mapping_only
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_report_is_deterministic_and_redacted
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-processing_flag_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-sheet_row_count_sum_mismatch]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-source_filename_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-domain_group_sheet_unknown]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-classification_overlap]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-project_id_duplicate]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_classification_partition_detects_removed_unclassified_sheet
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_absolute_evidence_reference_is_blocked
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_profile_contract::test_traversal_evidence_reference_and_empty_identifier_fields_are_blocked
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_recorded_five_project_shape_matrix_is_review_only
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_report_is_deterministic_and_does_not_echo_source_names_or_paths
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-project_set_incomplete]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-domain_unknown]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-identity_status_mismatch]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-source_filename_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_monitoring_structure_shape_matrix::test_matrix_mutations_fail_closed[<lambda>-reference_invalid]
+  msg: FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'
+FAIL tests.test_mw_final_4x3_harness::test_current_tester_a_prompt_package_matches_locked_luna_identity
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/final_4x3_e2e_20260727/MATRIX_ASSIGNMENT.json'
+FAIL tests.test_mw_final_5x3_harness::test_current_tester_a_prompt_package_matches_locked_luna_identity
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/final_5x3_e2e_20260728/MATRIX_ASSIGNMENT.json'
+FAIL tests.test_mw_final_5x3_harness::test_tester_e_is_locked_to_qwen_window_and_new_indications_are_distinct
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/prompts/final_5x3_e2e_20260728/MATRIX_ASSIGNMENT.json'
+FAIL tests.test_phase1_corpus_source_boundaries::test_primary_protocol_selection_excludes_amendment_summary
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/build_translation_selection.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_validator_rejects_locator_page_without_source_overlap
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/validate_translation_selection.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_executor_candidate_packet_is_complete_current_and_hash_bound
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/build_executor_candidate_packet.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_production_runner_requires_explicit_boundary_opt_in
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/run_production_translations.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_finalization_instruction_carries_both_untrusted_candidates
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/run_production_translations.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_flash_translation_contract_is_distinct_from_pro_contract
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/run_production_translations.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_biologic_selection_reuses_current_translation_contract
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/build_biologic_translation_selection.py'
+FAIL tests.test_phase1_corpus_source_boundaries::test_flash_correction_instruction_is_source_authority_and_quality_specific
+  msg: FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/run_production_translations.py'
+FAIL tests.test_runtime_directory_configuration.RuntimeDirectoryConfigurationTests::test_all_mutable_stores_follow_runtime_directory_override
+  msg: AssertionError: False is not true
+FAIL tests.test_source_registry.SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths
+  msg: AssertionError: '/Users/' unexpectedly found in 'import { Component, useCallback, useEffect, useMemo, useRef, useState } from "react";\nimport { EditorContent, useEditor } from "@tiptap/react";\nimport { Extension, Mark, Node, mergeAttributes } from "@tiptap/core";\nimport StarterKit from "@tiptap/s
+FAIL tests.test_sqlite_runtime_integration.SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay
+  msg: StopIteration
+FAIL tests.test_sqlite_runtime_integration.SqliteRuntimeIntegrationTests::test_duplicate_submission_replays_before_state_transition_validation
+  msg: StopIteration
+FAIL tests.test_sqlite_runtime_integration.SqliteRuntimeIntegrationTests::test_rux_submission_and_approval_action_use_one_sqlite_store
+  msg: StopIteration
+FAIL tests.test_sqlite_runtime_integration.SqliteRuntimeIntegrationTests::test_stale_source_and_invalid_transition_rejections_are_audited
+  msg: StopIteration
+FAIL tests.test_sqlite_runtime_integration.SqliteRuntimeIntegrationTests::test_submission_fault_does_not_leave_orphan_gate
+  msg: StopIteration
+FAIL tests.test_sqlite_runtime_real_rux.SqliteRuntimeRealRuxTests::test_real_listing_and_protocol_risk_survives_full_transaction_and_restart
+  msg: StopIteration
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_acquire_rejects_nonmatching_ocr_model
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_acquire_rejects_nonmatching_translation_model
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_cli_acquire_no_model_flag
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_cli_acquire_rejects_model_flag
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_cli_config_command
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_combined_8_8_peak
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_config_returns_exact_models_and_limits
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_finally_release_leaves_zero_leases
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_granted_lease_uses_authoritative_model
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_granted_translation_lease_uses_authoritative_model
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_no_lease_row_after_rejection
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_none_model_grants_authoritative_default
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_ocr_limit_8
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_release_after_exception
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_run_rejects_nonmatching_model
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_selection_alias_matches_config
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_total_limit_16
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+ERROR tests.test_omlx_workload_gate_contract.GateContractTests::test_translation_limit_8
+  msg: failed on setup with "FileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'"
+SKIP tests.test_medical_writing_pdf_page_hash::test_disposable_word_gate_fixture_is_hashable_when_present
+  msg: disposable Word gate fixture is not present

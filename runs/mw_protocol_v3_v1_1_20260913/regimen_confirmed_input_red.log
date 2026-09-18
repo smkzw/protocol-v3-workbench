@@ -1,0 +1,20 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___ test_study_context_is_a_deep_pinned_read_set_and_changes_logical_request ___
+
+    def test_study_context_is_a_deep_pinned_read_set_and_changes_logical_request():
+>       from app.protocol_workflow.agent2.study_input import bind_regimen_study_input
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.study_input'
+
+tests/protocol_v3/test_regimen_confirmed_study_input.py:8: ModuleNotFoundError
+_ test_unchanged_clinical_facts_do_not_regenerate_for_producer_metadata_changes _
+
+    def test_unchanged_clinical_facts_do_not_regenerate_for_producer_metadata_changes():
+>       from app.protocol_workflow.agent2.study_input import bind_regimen_study_input
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent2.study_input'
+
+tests/protocol_v3/test_regimen_confirmed_study_input.py:25: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_confirmed_study_input.py::test_study_context_is_a_deep_pinned_read_set_and_changes_logical_request
+FAILED tests/protocol_v3/test_regimen_confirmed_study_input.py::test_unchanged_clinical_facts_do_not_regenerate_for_producer_metadata_changes
+2 failed in 0.34s

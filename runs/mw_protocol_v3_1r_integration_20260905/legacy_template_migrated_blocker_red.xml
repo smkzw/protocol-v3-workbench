@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.496" timestamp="2026-09-05T21:31:50.341284+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.test_medical_writing_template_upgrade.MedicalWritingTemplateUpgradeTests" name="test_migrated_body_replaces_empty_target_blocker_without_claiming_readiness" time="0.045"><failure message="pydantic_core._pydantic_core.ValidationError: 1 validation error for ProtocolDocument&#10;sections.0&#10;  Value error, actionable drafting blocker must not contain substantive body text [type=value_error, input_value={'section_id': 'target-sy... ['导入已有摘要']}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/value_error">tests/test_medical_writing_template_upgrade.py:189: in test_migrated_body_replaces_empty_target_blocker_without_claiming_readiness
+    restored = ProtocolDocument.model_validate_json(merged.model_dump_json())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ProtocolDocument
+E   sections.0
+E     Value error, actionable drafting blocker must not contain substantive body text [type=value_error, input_value={'section_id': 'target-sy... ['导入已有摘要']}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/value_error</failure></testcase></testsuite></testsuites>

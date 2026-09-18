@@ -1,0 +1,149 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-1-2-3:v2",
+  "semantic_node_id": "v2_n_3_1_2_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-1-2-3:estimand-treatment-condition",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-1-2-3:v2",
+    "chapter_contract_id": "contract:v2-n-3-1-2-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.treatment_condition",
+        "obligation": "required",
+        "rationale": "治疗效应属性必须给出随机分配的治疗条件本身。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.background_treatment",
+        "obligation": "required",
+        "rationale": "必须说明相关背景治疗。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.rescue_treatment_handling",
+        "obligation": "required",
+        "rationale": "必须说明补救治疗/背景治疗改变的处理方式。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "estimand.primary.treatment_effect_label_clarification",
+        "obligation": "required",
+        "rationale": "必须澄清源标签“治疗效应”在本文中的确切含义，避免把属性三丢失为泛化表述。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "estimand_treatment_condition_attribute",
+        "obligation": "required",
+        "rationale": "治疗条件属性声明必须可区分试验组与对照组条件。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "treatment_effect_label_only",
+        "obligation": "forbidden",
+        "rationale": "仅复述源标签“治疗效应”不构成属性三。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_treatment_condition_attribute"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "治疗条件段与背景/补救处理段必须分别给出；不得只复述源标签。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "源标签澄清：源 @318 的“治疗效应”标签必须在正文中被展开为治疗条件属性，不得直接沿用为唯一表述。",
+      "背景/补救治疗处理必须与第6章研究干预合同一致。"
+    ],
+    "skeleton_risk_rules": [
+      "只有“治疗效应”标签或仅复述源标题文字即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-1-2-3",
+    "required_styles": [
+      "5"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-1-2-3:clarify-effect-label",
+      "rule": "必须澄清源标签“治疗效应”的含义并给出治疗条件、背景治疗与补救处理；只复述标签即失败。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-1-2-3:background-rescue",
+      "triggering_fact_paths": [
+        "estimand.primary.background_treatment"
+      ],
+      "condition": "已确认研究设计存在背景治疗或允许补救治疗",
+      "rationale": "存在背景治疗时，治疗条件属性必须同时给出补救/背景改变的处置与跨合同一致性声明。",
+      "required_when_active_fact_paths": [
+        "estimand.primary.rescue_treatment_handling"
+      ],
+      "required_when_active_claim_types": [
+        "estimand_cross_contract_consistency"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-1-2-3:primary",
+      "question": "治疗效应（估计目标属性三）是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "estimand.primary.treatment_condition"
+      ],
+      "linked_claim_types": [
+        "estimand_treatment_condition_attribute"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-1-2-3:clarify-effect-label"
+      ],
+      "risk_if_unmet": "治疗效应（估计目标属性三）缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

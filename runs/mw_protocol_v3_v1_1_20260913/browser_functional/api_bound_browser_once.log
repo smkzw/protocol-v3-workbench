@@ -1,0 +1,32 @@
+INFO:     Started server process [31489]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61252 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/prepare HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61254 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:61258 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61260 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049/resume HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:61266 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61328 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61786 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62063 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62067 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952/adopt/recover HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62066 - "POST /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A2dc12aa20b608c48121dc9743a41b067c97dddb628f9f8408a98baafcc994952/adopt/recover HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62069 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/study-definitions/study%3Av3%3A21a20263b69422f2dde33817a2f1a6ba/decision-graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52275 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52276 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/research-intake/research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52278 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/study-context?seed_run_id=research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52280 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52288 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52290 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52289 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/research-intake/research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52291 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/research-intake/research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52292 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/study-context?seed_run_id=research-intake%3Aac9f5d00becf42a3182c5c715c6bbf285bfbe1d980194e2bf0f15932968184ee HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52293 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52909 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/study-definitions/study%3Av3%3A21a20263b69422f2dde33817a2f1a6ba HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52913 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/study-definitions/study%3Av3%3A21a20263b69422f2dde33817a2f1a6ba HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52914 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52910 - "GET /api/projects/project-context-browser-fixture/protocol-workflow/design/regimen/regimen-design%3A67cba409bfc52d86893dd70dccaef63559aa06ad8189ef466b96adc21ac67049 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [31489]

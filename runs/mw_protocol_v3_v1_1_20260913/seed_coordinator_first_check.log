@@ -1,0 +1,210 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-655/test_reopen_reuses_original_an0')
+first = '{"fields":{}}', second = None, calls = 2, status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='p', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='p', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+>       initial = coordinator().execute(prepared)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_seed_coordinator_integration.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:41: in execute
+    outcome = self._run(run_id, {'research_intake': prepared.to_payload()}, correction=False)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:29: in _run
+    plan = seed_plan(self.project_id, self.branch_id, correction=correction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+project_id = 'p', branch_id = 'main'
+
+    def seed_plan(project_id: str, branch_id: str, *, correction: bool = False) -> GraphPlan:
+        roots = ('research_intake', 'correction_context') if correction else ('research_intake',)
+>       return GraphPlan(
+            project_id=project_id, branch_id=branch_id,
+            graph_id='research-seed-correction' if correction else 'research-seed', graph_version='research-seed.v1',
+            description='Persist the raw model result, then validate proposed research facts.',
+            schemas=(*roots, 'raw_response', 'seed_validation'), root_inputs=roots,
+            nodes=(
+                GraphNodePlan(node_id='seed-generate', kind=GraphNodeKind.WORK,
+                              owner=GraphNodeOwner.DESIGN_AND_SUMMARY, depends_on=(),
+                              input_schemas=roots, output_schema='raw_response',
+                              logical_key='research-seed.correct.v1' if correction else 'research-seed.generate.v1'),
+                GraphNodePlan(node_id='seed-validate', kind=GraphNodeKind.CHECK,
+                              owner=GraphNodeOwner.SYSTEM, depends_on=('seed-generate',),
+                              input_schemas=('research_intake', 'raw_response'), output_schema='seed_validation',
+                              logical_key='research-seed.validate.v1'),
+            ),
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for GraphPlan
+E       project_id
+E         String should have at least 3 characters [type=string_too_short, input_value='p', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_too_short
+
+services/api/app/protocol_workflow/agent1/seed_workflow.py:18: ValidationError
+_ test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-655/test_reopen_reuses_original_an1')
+first = 'bad json', second = '{"fields":{}}', calls = 3
+status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='p', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='p', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+>       initial = coordinator().execute(prepared)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_seed_coordinator_integration.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:41: in execute
+    outcome = self._run(run_id, {'research_intake': prepared.to_payload()}, correction=False)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:29: in _run
+    plan = seed_plan(self.project_id, self.branch_id, correction=correction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+project_id = 'p', branch_id = 'main'
+
+    def seed_plan(project_id: str, branch_id: str, *, correction: bool = False) -> GraphPlan:
+        roots = ('research_intake', 'correction_context') if correction else ('research_intake',)
+>       return GraphPlan(
+            project_id=project_id, branch_id=branch_id,
+            graph_id='research-seed-correction' if correction else 'research-seed', graph_version='research-seed.v1',
+            description='Persist the raw model result, then validate proposed research facts.',
+            schemas=(*roots, 'raw_response', 'seed_validation'), root_inputs=roots,
+            nodes=(
+                GraphNodePlan(node_id='seed-generate', kind=GraphNodeKind.WORK,
+                              owner=GraphNodeOwner.DESIGN_AND_SUMMARY, depends_on=(),
+                              input_schemas=roots, output_schema='raw_response',
+                              logical_key='research-seed.correct.v1' if correction else 'research-seed.generate.v1'),
+                GraphNodePlan(node_id='seed-validate', kind=GraphNodeKind.CHECK,
+                              owner=GraphNodeOwner.SYSTEM, depends_on=('seed-generate',),
+                              input_schemas=('research_intake', 'raw_response'), output_schema='seed_validation',
+                              logical_key='research-seed.validate.v1'),
+            ),
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for GraphPlan
+E       project_id
+E         String should have at least 3 characters [type=string_too_short, input_value='p', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_too_short
+
+services/api/app/protocol_workflow/agent1/seed_workflow.py:18: ValidationError
+_ test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-655/test_reopen_reuses_original_an2')
+first = 'bad json', second = 'still bad', calls = 3
+status = 'needs_structure_correction'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+        from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+        role = next(r for r in load_role_registry(ROOT / 'role_registry.json').roles if r.role_kind == 'llm')
+        skill = next(s for s in load_skill_registry(ROOT / 'skill_registry.json').skill_definitions()
+                     if s.skill_definition_id == 'skill.research-seed-proposal')
+        replies = ['probe', first] + ([second] if second is not None else [])
+        opener = _FakeOpener([_FakeResponse(_completion_body(content=reply, response_id=f'reply-{i}'))
+                             for i, reply in enumerate(replies)])
+        dispatcher = HarnessDispatcher()
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'db.sqlite')}
+        store = LocalArtifactStore(str(tmp_path / 'artifacts'))
+        def coordinator():
+            rt = build_seed_runtime(project_id='p', uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=store, role_entry=role, skill=skill, dispatcher=dispatcher,
+                adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(), http_opener=opener, **kw))
+            return SeedCoordinator(project_id='p', branch_id='main', runtime=rt, artifact_store=store)
+        prepared = prepare_seed_request('仅给出建议，不代表确认。', ())
+>       initial = coordinator().execute(prepared)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_seed_coordinator_integration.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:41: in execute
+    outcome = self._run(run_id, {'research_intake': prepared.to_payload()}, correction=False)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/agent1/seed_coordinator.py:29: in _run
+    plan = seed_plan(self.project_id, self.branch_id, correction=correction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+project_id = 'p', branch_id = 'main'
+
+    def seed_plan(project_id: str, branch_id: str, *, correction: bool = False) -> GraphPlan:
+        roots = ('research_intake', 'correction_context') if correction else ('research_intake',)
+>       return GraphPlan(
+            project_id=project_id, branch_id=branch_id,
+            graph_id='research-seed-correction' if correction else 'research-seed', graph_version='research-seed.v1',
+            description='Persist the raw model result, then validate proposed research facts.',
+            schemas=(*roots, 'raw_response', 'seed_validation'), root_inputs=roots,
+            nodes=(
+                GraphNodePlan(node_id='seed-generate', kind=GraphNodeKind.WORK,
+                              owner=GraphNodeOwner.DESIGN_AND_SUMMARY, depends_on=(),
+                              input_schemas=roots, output_schema='raw_response',
+                              logical_key='research-seed.correct.v1' if correction else 'research-seed.generate.v1'),
+                GraphNodePlan(node_id='seed-validate', kind=GraphNodeKind.CHECK,
+                              owner=GraphNodeOwner.SYSTEM, depends_on=('seed-generate',),
+                              input_schemas=('research_intake', 'raw_response'), output_schema='seed_validation',
+                              logical_key='research-seed.validate.v1'),
+            ),
+        )
+E       pydantic_core._pydantic_core.ValidationError: 1 validation error for GraphPlan
+E       project_id
+E         String should have at least 3 characters [type=string_too_short, input_value='p', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/string_too_short
+
+services/api/app/protocol_workflow/agent1/seed_workflow.py:18: ValidationError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction]
+3 failed in 0.48s

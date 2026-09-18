@@ -1,0 +1,26 @@
+[
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_5_1:active",
+    "triggering_fact_paths": [
+      "picos.inclusion_modules"
+    ],
+    "condition": "all-applicable-criteria predicate 生效时，必须完整输出适用标准及其结构化参数。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "inclusion_predicate"
+    ]
+  },
+  {
+    "conditional_applicability_rule_id": "applicability:v2_n_5_2:active",
+    "triggering_fact_paths": [
+      "picos.exclusion_modules"
+    ],
+    "condition": "any-applicable-criterion predicate 生效时，必须逐项给出适用排除条件及理由。",
+    "rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+    "required_when_active_fact_paths": [],
+    "required_when_active_claim_types": [
+      "exclusion_predicate"
+    ]
+  }
+]

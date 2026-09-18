@@ -1,0 +1,251 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-1-1:v2",
+  "semantic_node_id": "v2_n_1_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-1-1:summary-table",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-1-1:v2",
+    "chapter_contract_id": "contract:v2-n-1-1:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "framing.protocol_id",
+        "obligation": "required",
+        "rationale": "汇总表方案编号行复用既有 framing.protocol_id 绑定，与封面/文档控制同源。"
+      },
+      {
+        "fact_path": "framing.document_title",
+        "obligation": "required",
+        "rationale": "汇总表标题行复用既有 framing.document_title 绑定。"
+      },
+      {
+        "fact_path": "framing.version",
+        "obligation": "required",
+        "rationale": "汇总表版本行复用既有 framing.version 绑定；版本与日期分开承载。"
+      },
+      {
+        "fact_path": "document_control.version_date",
+        "obligation": "required",
+        "rationale": "汇总表版本/日期行的日期部分为结构化独立事实，与 framing.version 分离。"
+      },
+      {
+        "fact_path": "framing.study_phase",
+        "obligation": "required",
+        "rationale": "汇总表期别行复用既有 framing.study_phase 绑定，与正文一致。"
+      },
+      {
+        "fact_path": "synopsis.registration_classification",
+        "obligation": "required",
+        "rationale": "登记分类为药物注册申请分类行，必须与正文一致；它不是临床试验注册记录的证明，不得据此断言已在任何注册机构登记；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.sponsor",
+        "obligation": "required",
+        "rationale": "汇总表申办者行必须与文档控制一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.principal_investigator",
+        "obligation": "required",
+        "rationale": "汇总表主要研究者行必须与联系表一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.trial_institutions",
+        "obligation": "required",
+        "rationale": "汇总表试验机构行必须与实际机构清单一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.design",
+        "obligation": "required",
+        "rationale": "汇总表设计行必须给出与正文一致的规范设计描述；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.population_eligibility",
+        "obligation": "required",
+        "rationale": "汇总表人群/入选行必须与正文入选标准一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.investigational_drug",
+        "obligation": "required",
+        "rationale": "汇总表研究药物行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.comparator_drug",
+        "obligation": "required",
+        "rationale": "汇总表对照药行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.interventions",
+        "obligation": "required",
+        "rationale": "汇总表干预行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.sample_size",
+        "obligation": "required",
+        "rationale": "汇总表样本量行必须与统计学章节一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.statistical_methods",
+        "obligation": "required",
+        "rationale": "汇总表统计分析行必须与统计学章节一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.overall_duration",
+        "obligation": "required",
+        "rationale": "汇总表总体试验周期行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.participation_duration",
+        "obligation": "required",
+        "rationale": "汇总表个体参与时长行必须与正文一致；汇总行为正文既定事实的投影，不设第二可编辑事实存储。"
+      },
+      {
+        "fact_path": "synopsis.template_example_values",
+        "obligation": "forbidden",
+        "rationale": "模板示例剂量/疾病/统计假设不得作为项目事实填入汇总表。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "synopsis_fact_row",
+        "obligation": "required",
+        "rationale": "每个汇总行必须声明其值来自既定项目事实而非第二事实存储。"
+      },
+      {
+        "claim_type": "study_objective",
+        "obligation": "required",
+        "rationale": "嵌套表必须按多目的分别给出目的行，不合并为单句。"
+      },
+      {
+        "claim_type": "estimand_linkage",
+        "obligation": "required",
+        "rationale": "嵌套表必须分别链接估计目标/终点/分析策略，并使用已记录的 E9(R1)/M11 适用性处置。"
+      },
+      {
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "汇总表禁止营销性表述。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "synopsis_fact_row"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "study_objective"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "estimand_linkage"
+        ],
+        "allowed_locator_kinds": [
+          "table",
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "汇总表（模板 table[242]：2列×17行+嵌套表）必须保留全部17行选择器：编号、标题、版本/日期、期别、注册分类、申办者、主要研究者、试验机构、目的/估计目标/终点、设计、人群、药物、干预、样本量、统计分析、总体周期、参与者访视时长；行值为正文既定事实（framing.* 复用与 synopsis.* 派生）的投影单元格，不是第二事实存储。",
+        "required_object_cells": [
+          "synopsis:cell:protocol_id",
+          "synopsis:cell:title",
+          "synopsis:cell:version_date",
+          "synopsis:cell:study_phase",
+          "synopsis:cell:registration_classification",
+          "synopsis:cell:sponsor",
+          "synopsis:cell:principal_investigator",
+          "synopsis:cell:trial_institutions",
+          "synopsis:cell:objective_estimand_endpoint",
+          "synopsis:cell:design",
+          "synopsis:cell:population_eligibility",
+          "synopsis:cell:drug",
+          "synopsis:cell:interventions",
+          "synopsis:cell:sample_size",
+          "synopsis:cell:statistical_methods",
+          "synopsis:cell:overall_duration",
+          "synopsis:cell:participation_duration"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "17个汇总选择器行与嵌套目的/估计目标映射",
+      "元数据归属声明：编号/标题/版本/期别复用既有 framing.* 绑定；其余汇总行为 synopsis.* 派生投影，无独立可编辑副本。"
+    ],
+    "skeleton_risk_rules": [
+      "汇总表缺失、仅表头或行值与正文冲突即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:n-1-1",
+    "required_styles": [
+      "3",
+      "1"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:n-1-1:row-identity",
+      "rule": "汇总表17行选择器必须与正文既定事实一致；剂量、样本量或入选标准与正文冲突即为失败。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-1:estimand-linkage",
+      "rule": "目的/估计目标/终点必须分别链接，使用已记录的 E9(R1)/M11 适用性处置，不采用『仅关键性』一刀切规则。"
+    },
+    {
+      "positive_qc_rule_id": "qc:n-1-1:registration",
+      "rule": "登记分类是药物注册申请分类，必须与正文一致；它不是临床试验注册记录的证明。实际注册一致性属于适用注册的入选资格记录及其来源/版本，无记录时不得虚构或断言已登记。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:n-1-1:consistency",
+      "question": "汇总行的设计、人群、剂量与样本量是否全部与正文既定事实一致？",
+      "linked_fact_paths": [
+        "synopsis.sample_size",
+        "synopsis.design"
+      ],
+      "linked_claim_types": [
+        "study_objective"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-1-1:row-identity"
+      ],
+      "risk_if_unmet": "汇总与正文冲突会直接误导审评。"
+    }
+  ]
+}

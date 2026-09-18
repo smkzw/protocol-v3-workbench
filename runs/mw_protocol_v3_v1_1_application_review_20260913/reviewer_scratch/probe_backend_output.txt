@@ -1,0 +1,25 @@
+[PASS] A1 start persists run before any dispatch
+[PASS] A2 read after start shows running, zero effects
+[PASS] A3 repeated GET leaves event count unchanged
+[PASS] A4 repeated GET creates no reservations
+[PASS] B1 invalid initial -> exactly one correction, then needs_information
+[PASS] B2 same-input re-execute reuses both runs without new calls
+[PASS] B3 restart returns the same run_id
+[PASS] C1 crash window observable: needs_structure_correction, correction None
+[PASS] C2 recovery runs exactly the missing correction
+[PASS] D1 initial timeout -> blocked, no correction
+[PASS] D2 re-execute after blocked outcome does not redispatch
+[PASS] D3 correction timeout -> blocked, correction id recorded
+[PASS] D4 re-execute after blocked correction does not redispatch
+[PASS] E1 concurrent resume -> exactly one physical generation :: calls=2 statuses={'t0': 'ok', 't1': 'ok'} final=needs_information
+[PASS] E2 no overlapping physical HTTP calls :: max_active=1
+[PASS] E3 run converges to terminal after contention :: final=needs_information
+[PASS] E4 at least one worker completed the run :: statuses={'t0': 'ok', 't1': 'ok'}
+[PASS] F1 selection order and duplicate ids do not change the seed
+[PASS] F2 superseded id rejected :: seed_source_selection_stale
+[PASS] G1 restored policy pins the real receipt hash
+[PASS] G2 effective effort recorded as not reported
+[PASS] G3 restored policy: generation dispatch makes exactly one call (no new probe) :: calls=1
+[PASS] G4 mismatching receipt rejected :: prior_product_probe_does_not_match_profile
+
+== 23/23 checks passed ==

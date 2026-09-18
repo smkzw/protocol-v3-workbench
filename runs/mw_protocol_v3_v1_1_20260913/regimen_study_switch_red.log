@@ -1,0 +1,35 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx (6 tests | 1 failed) 96ms
+   × does not carry a saved study-bound run into another study with the same seed 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx > does not carry a saved study-bound run into another study with the same seed
+AssertionError: expected <li></li> to be null
+
+- Expected:
+null
+
++ Received:
+<li>
+  请补充研究给药途径。
+</li>
+
+ ❯ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx:85:44
+     83|   await screen.findByText('请补充研究给药途径。');
+     84|   view.rerender(<RegimenDesignWorkspace projectId="one" seedRunId="see…
+     85|   expect(screen.queryByText('请补充研究给药途径。')).toBeNull();
+       |                                            ^
+     86|   expect(screen.getByRole('button',{name:'整理完整给药建议'})).toBeTruthy();
+     87|   expect(api.startRegimenDesign).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  17:15:29
+   Duration  479ms (transform 33ms, setup 0ms, import 77ms, tests 96ms, environment 244ms)
+

@@ -1,0 +1,98 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-7:v2",
+  "semantic_node_id": "v2_n_front_7",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-7:table-index",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-7:v2",
+    "chapter_contract_id": "contract:v2-n-front-7:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "table_index.caption_inventory",
+        "obligation": "required",
+        "rationale": "表索引必须来自实际表格题注清单并保持有序表格身份。"
+      },
+      {
+        "fact_path": "table_index.cached_static_list",
+        "obligation": "forbidden",
+        "rationale": "旧 AE/SAE-only 缓存清单不得作为表索引来源；索引必须来自当前实际题注。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "table_index_record",
+        "obligation": "required",
+        "rationale": "表索引必须声明覆盖全部实际题注（含估计目标/SOA 表），而非旧 AE/SAE-only 缓存清单。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "table_index_record"
+        ],
+        "allowed_locator_kinds": [
+          "body"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "paragraph",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "表索引域段落（table of figures 样式）；SEQ 题注域原生刷新为7R义务。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "来自实际题注与有序表格身份的表索引"
+    ],
+    "skeleton_risk_rules": [
+      "表索引缺少域段落或缺失实际题注清单即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-7",
+    "required_styles": [
+      "2",
+      "21"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-7:captions",
+      "rule": "表索引必须来自实际表格题注并保持有序表格身份。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-7:complete",
+      "rule": "索引遗漏估计目标/SOA 表或沿用旧 AE/SAE-only 缓存清单即为失败。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-7:captions",
+      "question": "表索引是否覆盖全部实际题注且次序与表格身份一致？",
+      "linked_fact_paths": [
+        "table_index.caption_inventory"
+      ],
+      "linked_claim_types": [
+        "table_index_record"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-7:captions"
+      ],
+      "risk_if_unmet": "表索引遗漏会破坏表格可检索性。"
+    }
+  ]
+}

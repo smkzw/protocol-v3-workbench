@@ -1,0 +1,185 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-10-1-4:v2",
+  "semantic_node_id": "v2_n_10_1_4",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-10-1-4:ae-collection",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-10-1-4:v2",
+    "chapter_contract_id": "contract:v2-n-10-1-4:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.collection_period_definition",
+        "obligation": "required",
+        "rationale": "AE 收集期起止必须项目化。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.collection_period_start_reference",
+        "obligation": "required",
+        "rationale": "收集起点参考事件（如知情同意后首次给药）必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.consent_history_distinction",
+        "obligation": "required",
+        "rationale": "同意后随访收集与给药前病史性回顾必须区分。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.collection_stop_reference",
+        "obligation": "required",
+        "rationale": "收集终点参考事件必须明确。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.ae_collection_not_teaee_classification",
+        "obligation": "required",
+        "rationale": "AE 收集不等于 TEAE 归类，必须分开说明。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "ae.template_example_period_cutoffs",
+        "obligation": "forbidden",
+        "rationale": "30 天、5 个半衰期与新的抗肿瘤治疗仅为示例，不得作为通用截断。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_collection_scope",
+        "obligation": "required",
+        "rationale": "必须声明 AE 收集范围与起止参考事件。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "ae_collection_equals_teaee_classification",
+        "obligation": "forbidden",
+        "rationale": "不得把 AE 收集等同于 TEAE 归类。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "ae_collection_scope"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "本节必须写明收集期起止、参考事件与与 TEAE 归类的区别。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "AE 收集为项目事实集合（期间/起点/终点/与 TEAE 区分）。",
+      "【合成夹具】本节点义务以合成夹具执行验证（非真实项目事实与批准）；试验参与者安全与数据完整性不得被静默牺牲。"
+    ],
+    "skeleton_risk_rules": [
+      "仅给出“自第一次给药至访视结束”模板句或直接套用三十天截断即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-10-1-4",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Hlk89792198",
+      "_Toc132623375",
+      "_Toc361923527",
+      "_Toc48315526",
+      "_Toc90487621"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-4:periods",
+      "rule": "AE 收集期起止与参考事件必须项目化；30 天、5 个半衰期与新的抗肿瘤治疗仅为示例，不得作为通用截断。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-10-1-4:distinct",
+      "rule": "AE 收集不等于 TEAE 归类；同意后随访收集与给药前病史性回顾必须区分。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-10-1-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch5:v2-n-10-1-4:dependency",
+    "dependency_ids": [
+      "contract:v2-n-10-1-1:v2"
+    ],
+    "downstream_impact": "上游节点合同修订时本节义务需重新核对，避免跨节事实与报告义务不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-4:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch5:v2-n-10-1-4:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-10-1-4:periods",
+      "question": "收集期与参考事件是否项目化，截断是否仅为示例？",
+      "linked_fact_paths": [
+        "ae.collection_period_definition",
+        "ae.collection_stop_reference"
+      ],
+      "linked_claim_types": [
+        "ae_collection_scope"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-10-1-4:periods"
+      ],
+      "risk_if_unmet": "通用截断会使事件漏收。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

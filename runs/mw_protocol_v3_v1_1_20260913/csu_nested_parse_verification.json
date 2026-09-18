@@ -1,0 +1,24 @@
+{
+  "source_sha256": "73024713c28382ca8fca7c9338d7151256b2765d78d512876731156a9a504199",
+  "checks": {
+    "body_ordered_text_equal": true,
+    "all_tables_preserved": true,
+    "all_cells_preserved": true,
+    "vertical_merge_markers_preserved": true,
+    "unique_object_ids": true
+  },
+  "tables_including_nested": 22,
+  "cells": 1406,
+  "diagnostics": [
+    {
+      "code": "visual_objects_pending",
+      "locator": "word/document.xml",
+      "detail": "图形或图像需视觉核对，文字提取不代表图中信息完整。"
+    }
+  ],
+  "status": "parsed_pending_source_review",
+  "code_hashes": {
+    "services/api/app/protocol_workflow/agent1/docx_parse.py": "ece7ecf3c8a972e95f43d1e62c0cd956fbc846f4dfc2e77e295d39bdf3a6c95d",
+    "tests/protocol_v3/test_agent1_docx_parse.py": "986353a28c1ca0a270d27e4542138a31528a225529fecbf98cdfaeb51a04335b"
+  }
+}

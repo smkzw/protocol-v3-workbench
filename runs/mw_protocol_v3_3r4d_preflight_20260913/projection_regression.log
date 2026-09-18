@@ -1,0 +1,740 @@
+.................................F........FFFFFF...FFFFFFF.FFFFF.F..FFF. [  3%]
+........................................................................ [  6%]
+........................................................................ [  9%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 42%]
+.....................................F......FFF......................... [ 45%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 58%]
+..............................................................F.F.FFFFF. [ 62%]
+........................................................................ [ 65%]
+........................................................................ [ 68%]
+........................................................................ [ 72%]
+........................................................................ [ 75%]
+.........................................................F.............. [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 91%]
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+.....................................                                    [100%]
+=================================== FAILURES ===================================
+_______ TestRunManifestPinning.test_pin_rejects_missing_study_definition _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:711: in test_pin_rejects_missing_study_definition
+    coordinator = _coordinator(state)
+                  ^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_______ TestWorkPackageDecomposition.test_deterministic_dependency_order _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:835: in test_deterministic_dependency_order
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+______ TestWorkPackageDecomposition.test_decompose_rejects_unknown_skill _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:852: in test_decompose_rejects_unknown_skill
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+__ TestWorkPackageDecomposition.test_decompose_rejects_duplicate_package_ids ___
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:864: in test_decompose_rejects_duplicate_package_ids
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_____ TestWorkPackageDecomposition.test_decompose_rejects_dependency_cycle _____
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:880: in test_decompose_rejects_dependency_cycle
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+____ TestWorkPackageDecomposition.test_decompose_rejects_missing_dependency ____
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:898: in test_decompose_rejects_missing_dependency
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_ TestWorkPackageDecomposition.test_decompose_rejects_empty_and_mutable_inputs _
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:911: in test_decompose_rejects_empty_and_mutable_inputs
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+____ TestReadOnlyAggregation.test_gate_summary_deterministic_and_read_only _____
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1009: in test_gate_summary_deterministic_and_read_only
+    coordinator = _coordinator(gate_observer=lambda: (late, early))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_______ TestReadOnlyAggregation.test_gate_summary_empty_without_observer _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1019: in test_gate_summary_empty_without_observer
+    summary = _coordinator().aggregate_gates(project_id=_PROJECT, workflow_run_id=_RUN_ID)
+              ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_____ TestReadOnlyAggregation.test_gate_observer_must_return_typed_values ______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1023: in test_gate_observer_must_return_typed_values
+    coordinator = _coordinator(gate_observer=lambda: ("not-an-observation",))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_ TestReadOnlyAggregation.test_decision_request_queue_contains_only_unresolved _
+tests/protocol_v3/test_agent5_authority_boundary.py:1062: in test_decision_request_queue_contains_only_unresolved
+    assert [r.decision_key for r in queue.requests] == ["decision:arm", "decision:blinded"]
+E   AssertionError: assert [] == ['decision:ar...sion:blinded']
+E     
+E     Right contains 2 more items, first extra item: 'decision:arm'
+E     Use -v to get more diff
+________ TestExceptionCards.test_public_payload_uses_catalog_copy_only _________
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1075: in test_public_payload_uses_catalog_copy_only
+    card = _coordinator().to_exception_card(error, card_id="card:test:1")
+           ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+______ TestExceptionCards.test_audit_payload_carries_machine_fields_only _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1086: in test_audit_payload_carries_machine_fields_only
+    card = _coordinator().to_exception_card(error, card_id="card:test:2")
+           ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_______ TestExceptionCards.test_public_payload_never_leaks_audit_content _______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1109: in test_public_payload_never_leaks_audit_content
+    card = _coordinator().to_exception_card(_error(), card_id="card:test:3")
+           ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_____________ TestExceptionCards.test_card_is_immutable_and_closed _____________
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1140: in test_card_is_immutable_and_closed
+    card = _coordinator().to_exception_card(_error(), card_id="card:test:4")
+           ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_____ TestExceptionCards.test_to_exception_card_rejects_non_protocol_error _____
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1148: in test_to_exception_card_rejects_non_protocol_error
+    _coordinator().to_exception_card(
+    ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_ TestAuthorityBoundary.test_coordinator_exposes_no_forbidden_mutation_capabilities _
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1224: in test_coordinator_exposes_no_forbidden_mutation_capabilities
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_ TestAuthorityBoundary.test_coordinator_attributes_have_no_authority_handles __
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1231: in test_coordinator_attributes_have_no_authority_handles
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+______________ TestAuthorityBoundary.test_query_facade_is_narrow _______________
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1247: in test_query_facade_is_narrow
+    facade = _facade(_SharedState())
+             ^^^^^^^^^^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_ TestAuthorityBoundary.test_coordinator_rejects_raw_service_and_mutable_inputs _
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1296: in test_coordinator_rejects_raw_service_and_mutable_inputs
+    application=_facade(state), registry_selection={"skills": ()}
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+______ TestAuthorityBoundary.test_no_submission_ready_capability_anywhere ______
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1340: in test_no_submission_ready_capability_anywhere
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+_______ TestAuthorityBoundary.test_no_decision_record_construction_path ________
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1350: in test_no_decision_record_construction_path
+    coordinator = _coordinator()
+                  ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+________ TestAuthorityBoundary.test_value_objects_are_frozen_and_closed ________
+services/api/app/protocol_workflow/application/service.py:619: in get_decision_graph
+    raise AggregateNotFoundError(
+E   app.protocol_workflow.ports.repositories.AggregateNotFoundError: project=proj:test:sd:1 aggregate=sd:test:1
+
+The above exception was the direct cause of the following exception:
+tests/protocol_v3/test_agent5_authority_boundary.py:1420: in test_value_objects_are_frozen_and_closed
+    _coordinator().to_exception_card(_error(), card_id="card:test:9"),
+    ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:305: in _coordinator
+    application=_facade(state),
+                ^^^^^^^^^^^^^^
+tests/protocol_v3/test_agent5_authority_boundary.py:285: in _facade
+    return Agent5QueryFacade(
+services/api/app/protocol_workflow/agent5/coordinator.py:152: in __init__
+    self._decision_graph = service.get_decision_graph(
+services/api/app/protocol_workflow/application/service.py:650: in get_decision_graph
+    raise _translate(
+E   app.protocol_workflow.errors.ProtocolWorkflowError: 未找到所请求的方案工作流对象。
+
+During handling of the above exception, another exception occurred:
+/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py:167: in __exit__
+    exc.__traceback__ = traceback
+    ^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/errors.py:375: in __setattr__
+    raise AttributeError("ProtocolWorkflowError is immutable")
+E   AttributeError: ProtocolWorkflowError is immutable
+______ test_plan_conditional_unknown_stays_candidate_and_resolved_reopens ______
+tests/protocol_v3/test_fact_labeled_impact.py:375: in test_plan_conditional_unknown_stays_candidate_and_resolved_reopens
+    assert pending_entry.confirmation == "candidate_check"
+E   AssertionError: assert 'obligation_change' == 'pending_facts'
+E     
+E     - pending_facts
+E     + obligation_change
+_________ test_current_registry_plan_full_fanout_and_version_bindings __________
+tests/protocol_v3/test_fact_labeled_impact.py:614: in test_current_registry_plan_full_fanout_and_version_bindings
+    ):
+services/api/app/protocol_workflow/registries/dependency_graph.py:885: in build_fact_labeled_impact_plan
+    ???
+E   AttributeError: 'tuple' object has no attribute 'rule_id'
+___________ test_current_registry_alias_translation_reopens_synopsis ___________
+tests/protocol_v3/test_fact_labeled_impact.py:665: in test_current_registry_alias_translation_reopens_synopsis
+    facts_after={DOSE_CANONICAL: {"regimen": "new"}},
+             ^^^^^^^^^^^^^^^^
+E   NameError: name 'current_bindings' is not defined
+______________ test_current_registry_interim_unknown_vs_resolved _______________
+tests/protocol_v3/test_fact_labeled_impact.py:695: in test_current_registry_interim_unknown_vs_resolved
+    ???
+services/api/app/protocol_workflow/registries/dependency_graph.py:885: in build_fact_labeled_impact_plan
+    ???
+E   AttributeError: 'tuple' object has no attribute 'rule_id'
+_______________ TestQueryContract.test_get_decision_graph_empty ________________
+tests/protocol_v3/test_protocol_v3_api_contract.py:708: in test_get_decision_graph_empty
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+__ TestAgent5FreshSnapshot.test_progress_observes_new_state_between_requests ___
+tests/protocol_v3/test_protocol_v3_api_contract.py:736: in test_progress_observes_new_state_between_requests
+    assert first.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+___ TestAgent5FreshSnapshot.test_manifest_pin_rejects_unapproved_study_state ___
+tests/protocol_v3/test_protocol_v3_api_contract.py:804: in test_manifest_pin_rejects_unapproved_study_state
+    assert response.status_code == 422
+E   assert 404 == 422
+E    +  where 404 = <Response [404 Not Found]>.status_code
+______ TestAgent5FreshSnapshot.test_gates_aggregation_uses_live_observer _______
+tests/protocol_v3/test_protocol_v3_api_contract.py:828: in test_gates_aggregation_uses_live_observer
+    assert first.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________ TestAgent5FreshSnapshot.test_decision_requests_only_unresolved ________
+tests/protocol_v3/test_protocol_v3_api_contract.py:878: in test_decision_requests_only_unresolved
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+________ TestAgent5FreshSnapshot.test_decomposition_deterministic_order ________
+tests/protocol_v3/test_protocol_v3_api_contract.py:889: in test_decomposition_deterministic_order
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_______ TestAgent5FreshSnapshot.test_decomposition_rejects_unknown_skill _______
+tests/protocol_v3/test_protocol_v3_api_contract.py:916: in test_decomposition_rejects_unknown_skill
+    assert response.status_code == 422
+E   assert 404 == 422
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_______ TestIntegrityFollowup4.test_raw_tempfile_var_alias_path_accepted _______
+tests/protocol_v3/test_repository_hygiene_mutator.py:3312: in test_raw_tempfile_var_alias_path_accepted
+    assert raw_root.parts[:2] == ("/", "var") or raw_root.as_posix().startswith(
+E   AssertionError: assert (('/', 'tmp') == ('/', 'var')
+E     
+E     At index 1 diff: 'tmp' != 'var'
+E     Use -v to get more diff or False)
+E    +  where False = <built-in method startswith of str object at 0x10dbe53e0>('/private/var')
+E    +    where <built-in method startswith of str object at 0x10dbe53e0> = '/tmp/hygiene_var_alias_h3oyug4m'.startswith
+E    +      where '/tmp/hygiene_var_alias_h3oyug4m' = as_posix()
+E    +        where as_posix = PosixPath('/tmp/hygiene_var_alias_h3oyug4m').as_posix
+=============================== warnings summary ===============================
+tests/protocol_v3/test_source_baseline.py::ManifestAndTarTests::test_manifest_and_tar_round_trip
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/verify_source_baseline.py:75: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+    archive.extractall(str(destination_root))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestRunManifestPinning::test_pin_rejects_missing_study_definition
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_deterministic_dependency_order
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_decompose_rejects_unknown_skill
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_decompose_rejects_duplicate_package_ids
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_decompose_rejects_dependency_cycle
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_decompose_rejects_missing_dependency
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestWorkPackageDecomposition::test_decompose_rejects_empty_and_mutable_inputs
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestReadOnlyAggregation::test_gate_summary_deterministic_and_read_only
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestReadOnlyAggregation::test_gate_summary_empty_without_observer
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestReadOnlyAggregation::test_gate_observer_must_return_typed_values
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestReadOnlyAggregation::test_decision_request_queue_contains_only_unresolved
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestExceptionCards::test_public_payload_uses_catalog_copy_only
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestExceptionCards::test_audit_payload_carries_machine_fields_only
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestExceptionCards::test_public_payload_never_leaks_audit_content
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestExceptionCards::test_card_is_immutable_and_closed
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestExceptionCards::test_to_exception_card_rejects_non_protocol_error
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_coordinator_exposes_no_forbidden_mutation_capabilities
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_coordinator_attributes_have_no_authority_handles
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_query_facade_is_narrow
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_coordinator_rejects_raw_service_and_mutable_inputs
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_no_submission_ready_capability_anywhere
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_no_decision_record_construction_path
+FAILED tests/protocol_v3/test_agent5_authority_boundary.py::TestAuthorityBoundary::test_value_objects_are_frozen_and_closed
+FAILED tests/protocol_v3/test_fact_labeled_impact.py::test_plan_conditional_unknown_stays_candidate_and_resolved_reopens
+FAILED tests/protocol_v3/test_fact_labeled_impact.py::test_current_registry_plan_full_fanout_and_version_bindings
+FAILED tests/protocol_v3/test_fact_labeled_impact.py::test_current_registry_alias_translation_reopens_synopsis
+FAILED tests/protocol_v3/test_fact_labeled_impact.py::test_current_registry_interim_unknown_vs_resolved
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestQueryContract::test_get_decision_graph_empty
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_progress_observes_new_state_between_requests
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_manifest_pin_rejects_unapproved_study_state
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_gates_aggregation_uses_live_observer
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_decision_requests_only_unresolved
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_decomposition_deterministic_order
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestAgent5FreshSnapshot::test_decomposition_rejects_unknown_skill
+FAILED tests/protocol_v3/test_repository_hygiene_mutator.py::TestIntegrityFollowup4::test_raw_tempfile_var_alias_path_accepted
+35 failed, 2162 passed, 1 warning in 51.77s

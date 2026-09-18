@@ -1,0 +1,28 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[ {"fields":{}} -needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-618/test_complete_intake_reaches_m0')
+content = ' {"fields":{}} ', expected = 'needs_information'
+
+    @pytest.mark.parametrize('content, expected', [(' {"fields":{}} ', 'needs_information'), ('无法解析的回复', 'needs_structure_correction')])
+    def test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen(tmp_path, content, expected):
+>       from app.protocol_workflow.agent1.seed_workflow import build_seed_runtime, seed_plan
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_workflow'
+
+tests/protocol_v3/test_seed_workflow_integration.py:18: ModuleNotFoundError
+_ test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[\u65e0\u6cd5\u89e3\u6790\u7684\u56de\u590d-needs_structure_correction] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-618/test_complete_intake_reaches_m1')
+content = '无法解析的回复', expected = 'needs_structure_correction'
+
+    @pytest.mark.parametrize('content, expected', [(' {"fields":{}} ', 'needs_information'), ('无法解析的回复', 'needs_structure_correction')])
+    def test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen(tmp_path, content, expected):
+>       from app.protocol_workflow.agent1.seed_workflow import build_seed_runtime, seed_plan
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_workflow'
+
+tests/protocol_v3/test_seed_workflow_integration.py:18: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_workflow_integration.py::test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[ {"fields":{}} -needs_information]
+FAILED tests/protocol_v3/test_seed_workflow_integration.py::test_complete_intake_reaches_model_then_validates_without_repeating_on_reopen[\u65e0\u6cd5\u89e3\u6790\u7684\u56de\u590d-needs_structure_correction]
+2 failed in 0.47s

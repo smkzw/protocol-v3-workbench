@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.369" timestamp="2026-09-05T18:32:45.317637+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_study_event_reconstruction" name="test_genesis_event_preserves_facts_needed_for_independent_reconstruction" time="0.007" /><testcase classname="tests.protocol_v3.test_study_event_reconstruction" name="test_rebuild_from_events_after_fact_change_matches_saved_revision" time="0.001"><failure message="ModuleNotFoundError: No module named 'app.protocol_workflow.application.reconstruction'">tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2846/test_rebuild_from_events_after0')
+
+    def test_rebuild_from_events_after_fact_change_matches_saved_revision(tmp_path):
+&gt;       from app.protocol_workflow.application.reconstruction import reconstruct_study
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.application.reconstruction'
+
+tests/protocol_v3/test_study_event_reconstruction.py:23: ModuleNotFoundError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,54 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-654/test_reopen_reuses_original_an0')
+first = '{"fields":{}}', second = None, calls = 2, status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+>       from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_coordinator'
+
+tests/protocol_v3/test_seed_coordinator_integration.py:20: ModuleNotFoundError
+_ test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-654/test_reopen_reuses_original_an1')
+first = 'bad json', second = '{"fields":{}}', calls = 3
+status = 'needs_information'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+>       from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_coordinator'
+
+tests/protocol_v3/test_seed_coordinator_integration.py:20: ModuleNotFoundError
+_ test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-654/test_reopen_reuses_original_an2')
+first = 'bad json', second = 'still bad', calls = 3
+status = 'needs_structure_correction'
+
+    @pytest.mark.parametrize('first,second,calls,status', [
+        ('{"fields":{}}', None, 2, 'needs_information'),
+        ('bad json', '{"fields":{}}', 3, 'needs_information'),
+        ('bad json', 'still bad', 3, 'needs_structure_correction'),
+    ])
+    def test_reopen_reuses_original_and_single_correction(tmp_path, first, second, calls, status):
+>       from app.protocol_workflow.agent1.seed_coordinator import SeedCoordinator
+E       ModuleNotFoundError: No module named 'app.protocol_workflow.agent1.seed_coordinator'
+
+tests/protocol_v3/test_seed_coordinator_integration.py:20: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[{"fields":{}}-None-2-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-{"fields":{}}-3-needs_information]
+FAILED tests/protocol_v3/test_seed_coordinator_integration.py::test_reopen_reuses_original_and_single_correction[bad json-still bad-3-needs_structure_correction]
+3 failed in 0.43s

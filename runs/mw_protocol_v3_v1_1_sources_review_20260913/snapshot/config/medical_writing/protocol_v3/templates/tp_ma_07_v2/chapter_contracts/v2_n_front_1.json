@@ -1,0 +1,136 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "chapter_contract_id": "contract:v2-n-front-1:v2",
+  "semantic_node_id": "v2_n_front_1",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:front-1:version-history",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "substantive_content_contract_id": "content:v2-n-front-1:v2",
+    "chapter_contract_id": "contract:v2-n-front-1:v2",
+    "fact_requirements": [
+      {
+        "fact_path": "document_control.version_history",
+        "obligation": "required",
+        "rationale": "版本/日期/变更/依据表必须绑定真实修订历史。"
+      },
+      {
+        "fact_path": "document_control.version_date",
+        "obligation": "required",
+        "rationale": "当前版本日期必须与封面及文档控制一致。"
+      },
+      {
+        "fact_path": "document_control.initial_version_treatment",
+        "obligation": "required",
+        "rationale": "初始版本处理必须显式说明，不得含糊。"
+      },
+      {
+        "fact_path": "document_control.change_rationale",
+        "obligation": "optional",
+        "rationale": "无修订历史时可由初始版本处理说明代替。"
+      },
+      {
+        "fact_path": "document_control.amendment_exists",
+        "obligation": "optional",
+        "rationale": "存在已确认修订时触发变更依据条件义务。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "claim_type": "version_history_record",
+        "obligation": "required",
+        "rationale": "版本表必须声明其行与真实修订历史一致。"
+      },
+      {
+        "claim_type": "fabricated_approval",
+        "obligation": "forbidden",
+        "rationale": "不得虚构修订批准记录或已完成审批回执。"
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "version_history_record"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "修订历史表（模板 table[46]：4列×5行）逐行给出版本号、版本日期、变更摘要与变更依据。",
+        "required_object_cells": [
+          "version:cell:version_no",
+          "version:cell:version_date",
+          "version:cell:change_summary",
+          "version:cell:change_rationale"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "TP-MA-07 v2.0 修订历史表项目化"
+    ],
+    "skeleton_risk_rules": [
+      "版本表缺失或仅有表头/空白单元格即失败。"
+    ],
+    "canonical_state": "frozen"
+  },
+  "word_rules": {
+    "word_formatting_rules_id": "word:rules:front-1",
+    "required_styles": [
+      "2"
+    ]
+  },
+  "positive_qc_rules": [
+    {
+      "positive_qc_rule_id": "qc:front-1:history-source",
+      "rule": "版本/日期/变更/依据必须回链真实修订历史；初始版本必须显式说明初始版本处理。"
+    },
+    {
+      "positive_qc_rule_id": "qc:front-1:no-invented-amendments",
+      "rule": "不得新增未发生的修订行，也不得在已有修订时保留空白表壳。"
+    }
+  ],
+  "canonical_state": "frozen",
+  "conditional_applicability_rules": [
+    {
+      "conditional_applicability_rule_id": "applicability:front-1:amendment",
+      "triggering_fact_paths": [
+        "document_control.amendment_exists"
+      ],
+      "condition": "存在已确认修订历史",
+      "rationale": "存在修订时变更依据必须逐行给出，初始版本才可省略。",
+      "required_when_active_fact_paths": [
+        "document_control.change_rationale"
+      ]
+    }
+  ],
+  "ctq_items": [
+    {
+      "ctq_item_id": "ctq:front-1:history",
+      "question": "版本/日期/变更/依据各单元格是否全部来自真实修订历史？",
+      "linked_fact_paths": [
+        "document_control.version_history"
+      ],
+      "linked_claim_types": [
+        "version_history_record"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:front-1:history-source"
+      ],
+      "risk_if_unmet": "版本表挂错来源会使方案版本追溯失效。"
+    }
+  ]
+}

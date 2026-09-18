@@ -1,0 +1,74 @@
+........................................................................ [ 28%]
+........................................................................ [ 57%]
+............................................................F........... [ 86%]
+..................................                                       [100%]
+=================================== FAILURES ===================================
+_ test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies _
+
+    def test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies():
+        from app.protocol_workflow.registries.chapters import load_chapter_registry
+        from app.protocol_workflow.registries.fact_bindings import load_fact_catalog, bind_chapter_input, FactBindingError
+        from scripts.qc.protocol_v3.assemble_chapter_registry import assemble_registries
+        from test_all_chapter_contracts import REAL_TEMPLATE_DIR, REPO_ROOT
+        registry = load_chapter_registry(assemble_registries(
+            REAL_TEMPLATE_DIR / "chapter_contracts", REAL_TEMPLATE_DIR / "chapter_skills",
+            [REPO_ROOT / f"tests/fixtures/protocol_v3/chapter_content_v2/batch{i}.json" for i in range(1, 9)],
+        ))
+        catalog = load_fact_catalog(REAL_TEMPLATE_DIR / "fact_bindings.json", registry)
+        # Synthetic addressing test, not medical acceptance. The five explicitly
+        # declared new canonical keys are supplied exactly like existing keys.
+        facts = {b.canonical_path: (False if b.value_type == "boolean" else
+                                  f"synthetic:{b.canonical_path}" if b.value_type == "string" else
+                                  {"text": f"synthetic:{b.canonical_path}"})
+                 for b in catalog.bindings if b.canonical_path is not None}
+        study = confirmed_study(facts)
+        by_path = {b.fact_path: b for b in catalog.bindings}
+        for entry in registry.chapters:
+>           bound = bind_chapter_input(study, entry.contract, catalog.bindings)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_chapter_fact_binding.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/protocol_workflow/registries/fact_bindings.py:261: in bind_chapter_input
+    value = _typed_value(binding, study.facts[binding.canonical_path], source_format)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+binding = FactBinding(fact_path='safety.injection_reaction_applicability', canonical_path='safety.injection_reaction_applicabili...act_requirements/3/fact_path'), unit=None, timing=None, required_members={'applicable': 'boolean', 'reason': 'string'})
+value = {'text': 'synthetic:safety.injection_reaction_applicability'}
+source_format = 'native_json'
+
+    def _typed_value(binding: FactBinding, value: JsonValue, source_format: str) -> JsonValue:
+        kind = binding.value_type
+        if source_format == "legacy_strings_v1" and isinstance(value, str) and kind != "string":
+            if kind == "json":
+                # A generic JSON slot does not tell us whether the old text meant a
+                # boolean, number or prose. Never guess from its spelling.
+                raise FactBindingError("legacy_fact_type_unresolved", (binding.fact_path,))
+            try:
+                value = json.loads(value)
+            except (ValueError, TypeError):
+                raise FactBindingError("legacy_fact_parse_failed", (binding.fact_path,)) from None
+        matches = {
+            "json": True,
+            "boolean": type(value) is bool,
+            "integer": type(value) is int,
+            "number": type(value) in (int, float),
+            "string": isinstance(value, str),
+            "array": isinstance(value, list),
+            "object": isinstance(value, dict),
+        }[kind]
+        if not matches or (isinstance(value, float) and not math.isfinite(value)):
+            raise FactBindingError("fact_type_mismatch", (binding.fact_path,))
+        for member, member_type in binding.required_members.items():
+            item = value.get(member)
+            valid = (type(item) is bool if member_type == "boolean"
+                     else isinstance(item, str) and bool(item.strip()))
+            if not valid:
+>               raise FactBindingError("fact_member_invalid", (binding.fact_path,))
+E               app.protocol_workflow.registries.fact_bindings.FactBindingError: fact_member_invalid: safety.injection_reaction_applicability
+
+services/api/app/protocol_workflow/registries/fact_bindings.py:196: FactBindingError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_chapter_fact_binding.py::test_every_real_contract_reads_confirmed_canonical_values_without_projection_copies
+1 failed, 249 passed in 4.10s

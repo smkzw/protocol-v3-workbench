@@ -1,0 +1,187 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx (8 tests | 1 failed) 465ms
+   × distinguishes reference suggestions and exposes their exact source quotes 34ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx > distinguishes reference suggestions and exposes their exact source quotes
+TestingLibraryElementError: Unable to find an element with the text: 参考资料中的信息. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"pvi-workspace"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"pvi-heading"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"pvi-eyebrow"[39m
+        [36m>[39m
+          [0m研究方案 · 准备资料[0m
+        [36m</p>[39m
+        [36m<h2>[39m
+          [0m准备研究资料[0m
+        [36m</h2>[39m
+        [36m<p>[39m
+          [0m添加已有方案、研究者手册或参考资料，整理研究信息和需要补充的内容。[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"pvi-inputs"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"_r_a_-title"[39m
+          [33mclass[39m=[32m"pvs-intake"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"pvs-head"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"pvs-title"[39m
+              [33mid[39m=[32m"_r_a_-title"[39m
+            [36m>[39m
+              [0m资料来源[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"pvs-sub"[39m
+            [36m>[39m
+              [0m保存Word原文与资料分类，供后续写作使用；医学内容的确认在后续步骤完成。[0m
+            [36m</p>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-add-row"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"pvs-add"[39m
+              [33mfor[39m=[32m"_r_a_-file"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-plus-corner"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 19h6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M17 16v6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m添加DOCX文件[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33maccept[39m=[32m".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"[39m
+              [33maria-label[39m=[32m"选择要添加的DOCX文件"[39m
+              [33mclass[39m=[32m"pvs-file-input"[39m
+              [33mid[39m=[32m"_r_a_-file"[39m
+              [33mmultiple[39m=[32m""[39m
+              [33mtype[39m=[32m"file"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-brief"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"_r_a_-brief"[39m
+            [36m>[39m
+              [0m写作说明（可选）[0m
+            [36m</label>[39m
+            [36m<textarea[39m
+              [33mid[39m=[32m"_r_a_-brief"[39m
+              [33mplaceholder[39m=[32m"补充本次写作的意图或注意事项，可留空。"[39m
+              [33mrows[39m=[32m"2"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"pvs-hint"[39m
+          [36m>[39m
+            [0m还没有已保存的资料。[0m
+          [36m</p>[39m
+          [36m<footer[39m
+            [33mclass[39m=[32m"pvs-prepare"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"pvs-primary"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m准备写作材料[0m
+            [36m</button>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"pvs-hint"[39m
+            [36m>[39m
+              [0m将使用已勾选的 0 份资料。[0m
+            [36m</span>[39m
+          [36m</footer>[39m
+        [36m</section>[39m
+      [36m</fieldset>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"整理建议"[39m
+        [33mclass[39m=[32m"pvi-proposal"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0m已整理的研究信息[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0m以下是上次提交资料时的整理建议，尚未确认为研究事实。[0m
+        [36m</p>[39m
+        [36m<dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvi-proposal-row"[39m
+          [36m>[39m
+            [36m<dt>[39m
+              [0m研究药物[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0m参考研究药物[0m
+                [36m</strong>[39m
+                [36m<p>[39m
+                  [0m仅来自参考方案[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx:121:17
+    119|   fireEvent.click(screen.getByRole("button",{name:"准备写作材料"}));
+    120|   await screen.findByText("参考研究药物");
+    121|   expect(screen.getByText("参考资料中的信息")).toBeTruthy();
+       |                 ^
+    122|   expect(screen.getByText("原文药物名称")).toBeTruthy();
+    123|   expect(screen.getByRole("link",{name:"下载对应原文件"}).getAttribute("href"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:03:19
+   Duration  1.80s (transform 110ms, setup 0ms, import 354ms, tests 465ms, environment 841ms)
+

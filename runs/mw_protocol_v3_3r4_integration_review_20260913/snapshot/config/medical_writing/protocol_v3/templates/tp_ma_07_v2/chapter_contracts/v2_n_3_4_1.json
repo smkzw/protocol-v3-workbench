@@ -1,0 +1,277 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-3-4-1:v2",
+  "semantic_node_id": "v2_n_3_4_1",
+  "contract_version": "3.4.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:n-3-4-1:exploratory-objectives",
+  "chapter_skill_version": "3.4.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-3-4-1:v2",
+    "chapter_contract_id": "contract:v2-n-3-4-1:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "picos.exploratory_objectives",
+        "obligation": "required",
+        "rationale": "探索性目的复用既有 picos.exploratory_objectives 绑定；探索性目的依研究而定。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.disposition",
+        "obligation": "required",
+        "rationale": "若研究不设某类探索性分析，必须给出显式不适用处置，而不是留空。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.population_pk",
+        "obligation": "optional",
+        "rationale": "PopPK 为示例分析，不是自动项目承诺；仅在适用时登记。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.exposure_response",
+        "obligation": "optional",
+        "rationale": "暴露-效应关系为示例分析，仅在适用时登记。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.immunogenicity",
+        "obligation": "optional",
+        "rationale": "免疫原性为示例分析，仅在适用时登记。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "exploratory.biomarker",
+        "obligation": "optional",
+        "rationale": "生物标志物为示例分析，仅在适用时登记。"
+      },
+      {
+        "fact_path": "exploratory.population_pk_applicable",
+        "obligation": "optional",
+        "rationale": "项目确认的原生布尔适用性；未知不等于不开展，复用StudyDefinition单一事实。"
+      },
+      {
+        "fact_path": "statistics.pk_pd_er.er_applicable",
+        "obligation": "optional",
+        "rationale": "项目确认的原生布尔适用性；未知不等于不开展，复用StudyDefinition单一事实。"
+      },
+      {
+        "fact_path": "exploratory.immunogenicity_applicable",
+        "obligation": "optional",
+        "rationale": "项目确认的原生布尔适用性；未知不等于不开展，复用StudyDefinition单一事实。"
+      },
+      {
+        "fact_path": "exploratory.biomarker_applicable",
+        "obligation": "optional",
+        "rationale": "项目确认的原生布尔适用性；未知不等于不开展，复用StudyDefinition单一事实。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exploratory_objective",
+        "obligation": "required",
+        "rationale": "探索性目的声明必须明确其探索性质。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exploratory_disposition",
+        "obligation": "required",
+        "rationale": "必须给出开展/不开展的显式处置。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "exploratory_commitment",
+        "obligation": "qualified",
+        "rationale": "探索性分析承诺必须逐项限定，不得整包继承示例。",
+        "qualifying_conditions": [
+          "仅当相应探索性分析被判定适用时"
+        ]
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "marketing_claim",
+        "obligation": "forbidden",
+        "rationale": "探索性目的章禁止营销性表述。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exploratory_objective"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "exploratory_disposition"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "探索性目的段与处置段必须分列；不得留空或仅照抄示例分析清单。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "示例非承诺：PopPK、暴露-效应、免疫原性与生物标志物均为示例分析，只有适用性判定成立时才成为义务。",
+      "缺失处置：不开展探索性分析时必须显式说明，不留空白。"
+    ],
+    "skeleton_risk_rules": [
+      "只有示例分析清单或留空即失败；缺处置声明即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-3-4-1",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [],
+    "required_bookmarks": [
+      "_Toc132623331"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-3-4-1:conditional-examples",
+      "rule": "PopPK/暴露-效应/免疫原性/生物标志物均为示例而非自动承诺；不开展时必须给出显式处置。"
+    }
+  ],
+  "conditional_applicability_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-4-1:analysis-commitment",
+      "triggering_fact_paths": [
+        "exploratory.population_pk_applicable",
+        "statistics.pk_pd_er.er_applicable",
+        "exploratory.immunogenicity_applicable",
+        "exploratory.biomarker_applicable"
+      ],
+      "condition": "任一探索性分析被判定适用",
+      "rationale": "从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。",
+      "required_when_active_fact_paths": [],
+      "required_when_active_claim_types": [
+        "exploratory_commitment"
+      ],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": [
+        "table"
+      ]
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-4-1:population-pk",
+      "triggering_fact_paths": [
+        "exploratory.population_pk_applicable"
+      ],
+      "condition": "项目确认该类探索性分析适用",
+      "rationale": "从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。",
+      "required_when_active_fact_paths": [
+        "exploratory.population_pk"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-4-1:er",
+      "triggering_fact_paths": [
+        "statistics.pk_pd_er.er_applicable"
+      ],
+      "condition": "项目确认该类探索性分析适用",
+      "rationale": "从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。",
+      "required_when_active_fact_paths": [
+        "exploratory.exposure_response"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-4-1:immunogenicity",
+      "triggering_fact_paths": [
+        "exploratory.immunogenicity_applicable"
+      ],
+      "condition": "项目确认该类探索性分析适用",
+      "rationale": "从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。",
+      "required_when_active_fact_paths": [
+        "exploratory.immunogenicity"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "conditional_applicability_rule_id": "applicability:n-3-4-1:biomarker",
+      "triggering_fact_paths": [
+        "exploratory.biomarker_applicable"
+      ],
+      "condition": "项目确认该类探索性分析适用",
+      "rationale": "从明确原生布尔适用性判断分析承诺，不将分析文字的非空当作适用性；各章复用同一事实。",
+      "required_when_active_fact_paths": [
+        "exploratory.biomarker"
+      ],
+      "required_when_active_claim_types": [],
+      "required_when_active_source_roles": [],
+      "required_when_active_structural_objects": []
+    }
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:v2-n-3-4-1:primary",
+      "question": "探索性目的是否逐项满足其事实、声明、证据与结构义务？",
+      "linked_fact_paths": [
+        "picos.exploratory_objectives"
+      ],
+      "linked_claim_types": [
+        "exploratory_objective"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-3-4-1:conditional-examples"
+      ],
+      "risk_if_unmet": "探索性目的缺项会使该章不可用，并使下游合同失去输入。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

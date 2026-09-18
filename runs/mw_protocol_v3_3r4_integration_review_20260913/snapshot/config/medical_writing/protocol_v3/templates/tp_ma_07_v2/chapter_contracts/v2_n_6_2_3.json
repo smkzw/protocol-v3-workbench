@@ -1,0 +1,137 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+  "semantic_node_id": "v2_n_6_2_3",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-6-2-3:storage-stability",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-6-2-3:v2",
+    "chapter_contract_id": "contract:v2-n-6-2-3:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.storage_conditions",
+        "obligation": "required",
+        "rationale": "储存条件必须给出温度范围等实际条件与适用单位。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.storage_conditions.unit",
+        "obligation": "required",
+        "rationale": "储存条件必须带明确单位（如 ℃），不得为空单位。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.stability_handling",
+        "obligation": "required",
+        "rationale": "稳定性与在用期处理必须给出实际时限与条件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "intervention.template_example_storage_text",
+        "obligation": "forbidden",
+        "rationale": "模板示例储存描述不得作为本项目储存条件。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "storage_handling_conditions",
+        "obligation": "required",
+        "rationale": "储存条件与稳定性处理必须给出真实单位与条件，并与标签一致。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "storage_handling_conditions"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "table",
+        "minimum_occurrences": 1,
+        "project_specific_specification": "储存段必须承载实际温度/条件、单位与稳定性处理时限。",
+        "required_object_cells": [
+          "intervention:cell:storage_condition",
+          "intervention:cell:storage_unit"
+        ]
+      }
+    ],
+    "project_specific_elements": [
+      "储存条件与稳定性处理为项目事实，须与标签一致。"
+    ],
+    "skeleton_risk_rules": [
+      "储存条件或单位缺失即失败；空单位模板文本即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-6-2-3",
+    "required_styles": [
+      "4"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623351"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-3:units",
+      "rule": "储存条件必须带真实单位与适用范围；空单位或仅模板示例文本即为失败。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-6-2-3:agreement",
+      "rule": "储存条件与稳定性处理必须与标签及产品权威一致。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-6-2-3:units",
+      "question": "储存条件是否给出实际数值范围与单位，并与标签一致？",
+      "linked_fact_paths": [
+        "intervention.storage_conditions",
+        "intervention.storage_conditions.unit"
+      ],
+      "linked_claim_types": [
+        "storage_handling_conditions"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-6-2-3:units"
+      ],
+      "risk_if_unmet": "空单位或错误条件会造成产品失效与试验参与者风险。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

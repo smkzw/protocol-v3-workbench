@@ -1,0 +1,38 @@
+...F.                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_unresolved_call_keeps_pre_dispatch_contract_when_configuration_changes __
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-616/test_unresolved_call_keeps_pre0')
+
+    def test_unresolved_call_keeps_pre_dispatch_contract_when_configuration_changes(tmp_path):
+        config = {'backend': 'sqlite', 'path': str(tmp_path / 'graph.sqlite')}
+        invoked = []
+        observed_dispatches = []
+    
+        def interrupted(request):
+            observed_dispatches.extend(e for e in rt.read_events('pinned-model') if e.event_type == 'graph_node_dispatch')
+            invoked.append(request.execution_contract.model_dump(mode='json'))
+            raise RuntimeError('interrupted after entering the provider boundary')
+    
+        def runtime(model):
+            return GraphRuntime(
+                project_id=_PROJ, uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                services={'draft_node': interrupted}, clock=_StepClock(),
+                execution_contract_factories={'draft_node': lambda base: base.model_copy(update={
+                    'model': model, 'provider': 'zhipu-coding-plan', 'harness': 'direct-api',
+                    'allowed_providers': ('zhipu-coding-plan',), 'allowed_regions': ('cn',),
+                })},
+            )
+    
+        rt = runtime('glm-5.3-flash')
+        rt.start_run(_probe_plan(), workflow_run_id='pinned-model', root_inputs=_root_inputs())
+        rt.advance('pinned-model')
+>       assert len(observed_dispatches) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/protocol_v3/test_graph_model_contract.py:91: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_graph_model_contract.py::test_unresolved_call_keeps_pre_dispatch_contract_when_configuration_changes
+1 failed, 4 passed in 0.54s

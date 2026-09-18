@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.314" timestamp="2026-09-08T09:14:11.689880+08:00" hostname="MacBook-Pro-4.local"><testcase classname="runs.mw_protocol_v3_3r3_batch1_20260906.test_codex_batch_assembly" name="test_unrelated_later_batch_does_not_break_first_batch" time="0.009"><failure message="pydantic_core._pydantic_core.ValidationError: 10 validation errors for ChapterContractV2&#10;chapter_contract_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;semantic_node_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;contract_version&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;template_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;template_sha256&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;chapter_skill_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;chapter_skill_version&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;substantive_content&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;word_rules&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;positive_qc_rules&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing">runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_batch_assembly.py:24: in test_unrelated_later_batch_does_not_break_first_batch
+    result = assembly.assemble_registry(contracts, skills, BATCH)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:132: in assemble_registry
+    contract = ChapterContractV2.model_validate(contract_payloads[stem])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 10 validation errors for ChapterContractV2
+E   chapter_contract_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   semantic_node_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   contract_version
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   template_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   template_sha256
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   chapter_skill_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   chapter_skill_version
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   substantive_content
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   word_rules
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   positive_qc_rules
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_batch1_20260906.test_codex_batch_assembly" name="test_declared_missing_carrier_cannot_be_silently_omitted" time="0.007"><failure message="Failed: DID NOT RAISE &lt;class 'batch_assembly.AssemblyInputError'&gt;">runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_batch_assembly.py:34: in test_declared_missing_carrier_cannot_be_silently_omitted
+    with pytest.raises(assembly.AssemblyInputError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'batch_assembly.AssemblyInputError'&gt;</failure></testcase><testcase classname="runs.mw_protocol_v3_3r3_batch1_20260906.test_codex_batch_assembly" name="test_invalid_selected_contract_has_cli_input_error" time="0.003"><failure message="pydantic_core._pydantic_core.ValidationError: 10 validation errors for ChapterContractV2&#10;chapter_contract_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;semantic_node_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;contract_version&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;template_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;template_sha256&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;chapter_skill_id&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;chapter_skill_version&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;substantive_content&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;word_rules&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing&#10;positive_qc_rules&#10;  Field required [type=missing, input_value={}, input_type=dict]&#10;    For further information visit https://errors.pydantic.dev/2.13/v/missing">runs/mw_protocol_v3_3r3_batch1_20260906/test_codex_batch_assembly.py:42: in test_invalid_selected_contract_has_cli_input_error
+    result = assembly.main(['--contracts-dir', str(contracts), '--skills-dir',
+scripts/qc/protocol_v3/assemble_chapter_registry.py:185: in main
+    payload = assemble_registry(args.contracts_dir, args.skills_dir, args.batch)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/qc/protocol_v3/assemble_chapter_registry.py:132: in assemble_registry
+    contract = ChapterContractV2.model_validate(contract_payloads[stem])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 10 validation errors for ChapterContractV2
+E   chapter_contract_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   semantic_node_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   contract_version
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   template_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   template_sha256
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   chapter_skill_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   chapter_skill_version
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   substantive_content
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   word_rules
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing
+E   positive_qc_rules
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.13/v/missing</failure></testcase></testsuite></testsuites>

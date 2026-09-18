@@ -1,0 +1,73 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-15:v2",
+  "semantic_node_id": "v2_n_15",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-15",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-15:v2",
+    "chapter_contract_id": "contract:v2-n-15:v2",
+    "fact_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.used_source_register", "obligation": "required", "rationale": "参考文献必须来自实际使用来源的登记表；模板示例引用不是研究书目。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.bibliographic_metadata", "obligation": "required", "rationale": "每条引用必须有完整书目元数据（作者/题名/出版/年份/DOI或URL/访问日期），缺失走待补。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.citation_style", "obligation": "required", "rationale": "格式必须遵循适用的已批准模板样式，不得照抄示例引用。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.in_text_citation_targets", "obligation": "required", "rationale": "每条正文引用必须有可解析目标；悬空引用是禁止状态。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.foreign_sources_present", "obligation": "optional", "rationale": "外文来源存在性触发事实，采用裸 true/false 编码；不适用不豁免书目完整性。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.foreign_format_style", "obligation": "optional", "rationale": "存在外文来源时必须声明其适用格式样式，不得沿用中文格式默认值。"},
+      {"schema_version": "mw_protocol_v3_contract_v1", "fact_path": "references.template_example_reference_list", "obligation": "forbidden", "rationale": "模板示例引用清单不得作为研究书目；负向夹具据此触发 forbidden_fact_present。"}
+    ],
+    "claim_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "study_bibliography_from_used_sources", "obligation": "required", "rationale": "书目主张必须由实际使用的来源生成，并由项目事实和证据支持。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "citations_resolvable", "obligation": "required", "rationale": "正文引用必须能解析到对应书目条目，不能只写编号。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "template_example_bibliography_used_as_study_bibliography", "obligation": "forbidden", "rationale": "把模板示例引用用作研究书目是禁止主张；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "in_text_citation_without_target", "obligation": "forbidden", "rationale": "无目标的正文引用不得存在；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []},
+      {"schema_version": "mw_protocol_v3_contract_v1", "claim_type": "unused_reference_listed", "obligation": "forbidden", "rationale": "未被实际使用的文献不得列入研究书目；负向夹具据此触发 forbidden_claim_present。", "qualifying_conditions": []}
+    ],
+    "evidence_source_requirements": [
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["project_primary", "peer_reviewed"], "admission_claim_types": ["study_bibliography_from_used_sources"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9},
+      {"schema_version": "mw_protocol_v3_contract_v1", "source_roles": ["regulatory_or_guideline", "peer_reviewed"], "admission_claim_types": ["citations_resolvable"], "allowed_locator_kinds": ["body", "table"], "require_context_window": true, "minimum_quality_score": 0.9}
+    ],
+    "structural_object_obligations": [],
+    "project_specific_elements": [
+      "本批次引入的 references.* 事实根为项目实例事实，归属共享事实命名空间，由 StudyDefinition 统一承载，本载体不建立章内第二可编辑存储（batch3 D3/batch6 D6 归属声明）。",
+      "本节绑定源窗口 926–969；模板自带示例引用与 JAMA/AMA 链接不构成这些页面已被核查或已被本项目使用的证据。",
+      "书目完整性、格式样式与引用可解析性是两条独立来源义务，分别建立证据下限，不得合并降级。",
+      "参考文献涉及试验参与者相关来源时必须来自实际使用并完整可解析，不得复制示例。",
+      "本文件的合成/示例值仅用于结构校验，不构成项目批准或真实参考文献。"
+    ],
+    "skeleton_risk_rules": [
+      "只有标题或复制示例引用清单而无实际使用来源登记时不算实质内容。",
+      "源窗口 926–969：示例引用、示例 URL 或未使用文献不得进入研究书目。",
+      "结构检查不等于文献真实性、可访问性或医学判断；这些判断明确延期。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-15",
+    "required_styles": ["68"],
+    "forbidden_styles": [],
+    "required_bookmarks": ["_Toc12381560", "_Toc132623423", "_Toc14377338"],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-15:used-sources", "rule": "参考文献必须由实际使用来源生成；模板示例引用、示例 URL 或从未引用的文献不得列入。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-15:metadata", "rule": "每条引用必须包含完整书目元数据并可解析；缺失元数据走待补，不得写成已验证。"},
+    {"schema_version": "mw_protocol_v3_contract_v1", "positive_qc_rule_id": "qc:v2-n-15:style", "rule": "中文与外文引用格式必须遵循适用的已批准模板样式，不得照抄示例格式或混用。"}
+  ],
+  "conditional_applicability_rules": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "conditional_applicability_rule_id": "applicability:n-15:foreign-style", "triggering_fact_paths": ["references.foreign_sources_present"], "condition": "references.foreign_sources_present 为 true 时外文格式样式义务激活", "rationale": "外文来源存在性由项目事实决定；激活时必须声明其适用格式样式，不得照抄示例。", "required_when_active_fact_paths": ["references.foreign_format_style"], "required_when_active_claim_types": [], "required_when_active_source_roles": [], "required_when_active_structural_objects": []}
+  ],
+  "dependency_ids": [],
+  "dependency_repair_policy": null,
+  "ctq_items": [
+    {"schema_version": "mw_protocol_v3_contract_v1", "ctq_item_id": "ctq:v2-n-15:used-and-resolvable", "question": "参考文献是否全部来自实际使用来源、具备完整书目元数据，且每条正文引用都有可解析目标？", "linked_fact_paths": ["references.used_source_register", "references.bibliographic_metadata", "references.in_text_citation_targets"], "linked_claim_types": ["study_bibliography_from_used_sources", "citations_resolvable"], "positive_qc_rule_ids": ["qc:v2-n-15:used-sources", "qc:v2-n-15:metadata"], "risk_if_unmet": "复制示例书目或悬空引用会把未核查内容呈现为研究证据。"}
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

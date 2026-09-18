@@ -1,0 +1,95 @@
+PASS F1 int-1-not-bool-true 
+PASS F2 bool-true-not-int-1 
+PASS F3 false-vs-0 
+PASS F4 str-false-vs-bool 
+PASS F5 empty-list 
+PASS F6 float-int-strict 
+PASS F7 all NA+COND->NA 
+PASS F8 any APP+COND->APP 
+PASS F9 any NA+COND->COND 
+PASS F10 enum-out-of-domain 
+PASS F11 enum-in-domain-ne 
+PASS F12 enum-int-vs-str 
+PASS F13 member-missing 
+PASS F14 member-not-map 
+PASS F15 member-int 
+PASS F16 trigger-equality-all-70 []
+FAIL F17 tamper-detected no error raised
+PASS F18 shared-pk-only-keeps-3-shared 
+PASS F19 all-inactive-releases-shared 
+PASS F20 unresolved-input-fails 
+PASS F21 ecog-presence-na 
+PASS F22 interim-inner-conditional 
+Traceback (most recent call last):
+  File "<stdin>", line 102, in <module>
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 346, in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 305, in _resolved_input_contract
+    raise ApplicabilityResolutionError(findings)
+app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:irc
+PASS F17a tamper-reported ['conditional_predicate_source_changed']
+PASS F17b tamper-rule-excluded-from-states 
+PASS F17c tamper-fails-closed 
+PASS F23 interim-true-needs-irc-fact conditional_applicability_unresolved:conditional_rule:conditional:v2-n-11-4-9:irc
+Traceback (most recent call last):
+  File "<stdin>", line 50, in <module>
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 346, in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 315, in _resolved_input_contract
+    raise ApplicabilityResolutionError(conflicts)
+app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: inactive_conditional_fact_present:statistics.interim.efficacy_alpha_spending; inactive_conditional_fact_present:statistics.interim.endpoint_irc_responsibilities; inactive_conditional_fact_present:statistics.interim.idmc_responsibilities; inactive_conditional_fact_present:statistics.interim.information_fraction
+PASS F23b interim-true-purposes-false-binds 
+PASS F23c irc-true-requires-endpoint-irc ('statistics.interim.endpoint_irc_responsibilities',)
+PASS F23d efficacy-true-requires-alpha-spending ('statistics.interim.efficacy_alpha_spending',)
+PASS F24 stale-inactive-conflict 
+PASS F25 ghost-reference-rejected 
+PASS F26 real-reference-accepted 
+PASS F27 projection-needs-contract-hash 
+FAIL F28 dup-rule-id-rejected accepted
+PASS F29 empty-pred-rejected 
+PASS F30 bad-mode-rejected 
+PASS F31 unresolved-is-error-finding 
+FAIL F32 all-na-9-3-needs-only-disposition ('missing_structural_object',)
+PASS F33 stale-shared-fact-conflicts 
+PASS F34 contraception-off-releases-duration 
+PASS F35 contraception-on-requires-duration ('population.lifestyle.contraception_duration',)
+PASS F36 draft-with-approval-record-conflicts 
+Traceback (most recent call last):
+  File "<stdin>", line 137, in <module>
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 346, in bind_applicable_input
+    effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/registries/applicability.py", line 315, in _resolved_input_contract
+    raise ApplicabilityResolutionError(conflicts)
+app.protocol_workflow.registries.applicability.ApplicabilityResolutionError: inactive_conditional_fact_present:intervention.dose_modification_features
+PASS F28b loader-rejects-dup applicability catalog coverage mismatch
+PASS F32b all-na-9-3-disposition-only ()
+PASS F37b no-modify-releases-hold 
+PASS F37c all-false-features-still-conflict (documented strictness) inactive_conditional_fact_present:intervention.dose_modification_features
+PASS F41 interim-false-features-conflict 
+PASS F42 ecog-true-applicable 
+Traceback (most recent call last):
+  File "<stdin>", line 75, in <module>
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_chapter_fact_binding.py", line 98, in confirmed_study
+    return _study_definition(facts=facts, canonical_state="confirmed", **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/protocol_v3/test_study_definition_reducer.py", line 84, in _study_definition
+    return StudyDefinitionV3(**payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/pydantic/main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for StudyDefinitionV3
+facts
+  Dictionary should have at least 1 item after validation, not 0 [type=too_short, input_value={}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/too_short
+PASS F32b all-na-9-3-disposition-only ()
+PASS F37b no-modify-releases-hold 
+PASS F37c all-false-features-still-conflict (documented strictness) inactive_conditional_fact_present:intervention.dose_modification_features
+PASS F41 interim-false-features-conflict 
+PASS F42 ecog-true-applicable 
+PASS F43 ecog-unknown-conditional 
+
+TOTAL(round5): 6 passed, 0 failed

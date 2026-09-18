@@ -1,0 +1,510 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx (17 tests | 1 failed) 317ms
+   × can explicitly remove mistaken source version and region without re-upload 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx > can explicitly remove mistaken source version and region without re-upload
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "版本改为未注明"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "资料来源":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"_r_g_-title"[39m
+    [33mclass[39m=[32m"pvs-intake"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"pvs-head"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "资料来源":
+  [36m<h3[39m
+    [33mclass[39m=[32m"pvs-title"[39m
+    [33mid[39m=[32m"_r_g_-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvs-sub"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvs-selection-note"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"pvs-hint"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "写作说明（可选）":
+  [36m<textarea[39m
+    [33mid[39m=[32m"_r_g_-brief"[39m
+    [33mmaxlength[39m=[32m"500"[39m
+    [33mplaceholder[39m=[32m"补充本次写作的意图或注意事项，可留空。"[39m
+    [33mreadonly[39m=[32m""[39m
+    [33mrows[39m=[32m"2"[39m
+  [36m/>[39m
+
+  Name "版本（留空保持原值）":
+  [36m<input[39m
+    [33mid[39m=[32m"_r_g_-correction-version"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "地区（留空保持原值）":
+  [36m<input[39m
+    [33mid[39m=[32m"_r_g_-correction-jurisdiction"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"pvs-cards"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33mclass[39m=[32m"pvs-card"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  checkbox:
+
+  Name "纳入后续写作：资料.docx":
+  [36m<input[39m
+    [33maria-label[39m=[32m"纳入后续写作：资料.docx"[39m
+    [33mchecked[39m=[32m""[39m
+    [33mclass[39m=[32m"pvs-check"[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "下载原文件":
+  [36m<a[39m
+    [33mclass[39m=[32m"pvs-link"[39m
+    [33mdownload[39m=[32m""[39m
+    [33mhref[39m=[32m"/api/projects/p1/protocol-workflow/sources/wrong/content"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "更正类别或版本":
+  [36m<button[39m
+    [33mclass[39m=[32m"pvs-ghost"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "保存更正":
+  [36m<button[39m
+    [33mclass[39m=[32m"pvs-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "取消更正":
+  [36m<button[39m
+    [33mclass[39m=[32m"pvs-ghost"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "更正类别":
+  [36m<select[39m
+    [33mid[39m=[32m"_r_g_-correction-role"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "本方案文件（项目方案/研究者手册）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"project_primary"[39m
+  [36m/>[39m
+
+  Name "法规或指导原则":
+  [36m<option[39m
+    [33mvalue[39m=[32m"regulatory_or_guideline"[39m
+  [36m/>[39m
+
+  Name "竞品完整方案":
+  [36m<option[39m
+    [33mvalue[39m=[32m"competitor_full_protocol"[39m
+  [36m/>[39m
+
+  Name "仅试验登记信息":
+  [36m<option[39m
+    [33mvalue[39m=[32m"registry_only"[39m
+  [36m/>[39m
+
+  Name "同行评审文献":
+  [36m<option[39m
+    [33mvalue[39m=[32m"peer_reviewed"[39m
+  [36m/>[39m
+
+  Name "公司风格与模板文件":
+  [36m<option[39m
+    [33mvalue[39m=[32m"company_style_only"[39m
+  [36m/>[39m
+
+  Name "终点定义或评估工具":
+  [36m<option[39m
+    [33mvalue[39m=[32m"endpoint_or_instrument"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-labelledby[39m=[32m"_r_g_-title"[39m
+      [33mclass[39m=[32m"pvs-intake"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"pvs-head"[39m
+      [36m>[39m
+        [36m<h3[39m
+          [33mclass[39m=[32m"pvs-title"[39m
+          [33mid[39m=[32m"_r_g_-title"[39m
+        [36m>[39m
+          [0m资料来源[0m
+        [36m</h3>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"pvs-sub"[39m
+        [36m>[39m
+          [0m保存Word原文与资料分类，供后续写作使用；医学内容的确认在后续步骤完成。[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"pvs-add-row"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"pvs-add"[39m
+          [33mfor[39m=[32m"_r_g_-file"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-file-plus-corner"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 19h6"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M17 16v6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m添加DOCX文件[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maccept[39m=[32m".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"[39m
+          [33maria-label[39m=[32m"选择要添加的DOCX文件"[39m
+          [33mclass[39m=[32m"pvs-file-input"[39m
+          [33mid[39m=[32m"_r_g_-file"[39m
+          [33mtype[39m=[32m"file"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"pvs-brief"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m"_r_g_-brief"[39m
+        [36m>[39m
+          [0m写作说明（可选）[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33mid[39m=[32m"_r_g_-brief"[39m
+          [33mmaxlength[39m=[32m"500"[39m
+          [33mplaceholder[39m=[32m"补充本次写作的意图或注意事项，可留空。"[39m
+          [33mreadonly[39m=[32m""[39m
+          [33mrows[39m=[32m"2"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"pvs-selection-note"[39m
+      [36m>[39m
+        [0m勾选仅表示带入后续写作，默认纳入当前资料；不代表医学内容已确认。[0m
+      [36m</p>[39m
+      [36m<ul[39m
+        [33mclass[39m=[32m"pvs-cards"[39m
+      [36m>[39m
+        [36m<li[39m
+          [33mclass[39m=[32m"pvs-card"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-card-main"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33maria-label[39m=[32m"纳入后续写作：资料.docx"[39m
+              [33mchecked[39m=[32m""[39m
+              [33mclass[39m=[32m"pvs-check"[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"pvs-card-info"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"pvs-card-name"[39m
+              [36m>[39m
+                [0m资料.docx[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"pvs-card-meta"[39m
+              [36m>[39m
+                [0m本方案文件（项目方案/研究者手册）[0m
+                [0m · [0m
+                [0m版本：误填版本[0m
+                [0m ·[0m
+                [0m [0m
+                [0m地区：误填地区[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-card-actions"[39m
+          [36m>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"pvs-link"[39m
+              [33mdownload[39m=[32m""[39m
+              [33mhref[39m=[32m"/api/projects/p1/protocol-workflow/sources/wrong/content"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m下载原文件[0m
+            [36m</a>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"pvs-ghost"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-pencil-line"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M13 21h8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m15 5 4 4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m更正类别或版本[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"pvs-correct"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"pvs-hint"[39m
+            [36m>[39m
+              [0m更正资料分类，不重新上传文件；原文与历史记录保持不变。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"pvs-row"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"_r_g_-correction-role"[39m
+              [36m>[39m
+                [0m更正类别[0m
+              [36m</label>[39m
+              [36m<select[39m
+                [33mid[39m=[32m"_r_g_-correction-role"[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"project_primary"[39m
+                [36m>[39m
+                  [0m本方案文件（项目方案/研究者手册）[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"regulatory_or_guideline"[39m
+                [36m>[39m
+                  [0m法规或指导原则[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"competitor_full_protocol"[39m
+                [36m>[39m
+                  [0m竞品完整方案[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"registry_only"[39m
+                [36m>[39m
+                  [0m仅试验登记信息[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"peer_reviewed"[39m
+                [36m>[39m
+                  [0m同行评审文献[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"company_style_only"[39m
+                [36m>[39m
+                  [0m公司风格与模板文件[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"endpoint_or_instrument"[39m
+                [36m>[39m
+                  [0m终点定义或评估工具[0m
+                [36m</option>[39m
+              [36m</select>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"pvs-primary"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m保存更正[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"pvs-ghost"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m取消更正[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"pvs-correct-fields"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"pvs-correct-field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"_r_g_-correction-version"[39m
+                [36m>[39m
+                  [0m版本（留空保持原值）[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"_r_g_-correction-version"[39m
+                  [33mtype[39m=[32m"text"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"pvs-hint"[39m
+                [36m>[39m
+                  [0m当前：[0m
+                  [0m误填版本[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"pvs-correct-field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"_r_g_-correction-jurisdiction"[39m
+                [36m>[39m
+                  [0m地区（留空保持原值）[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"_r_g_-correction-jurisdiction"[39m
+                  [33mtype[39m=[32m"text"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"pvs-hint"[39m
+                [36m>[39m
+                  [0m当前：[0m
+                  [0m误填地区[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</li>[39m
+      [36m</ul>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx:531:26
+    529|   await screen.findByText("资料.docx");
+    530|   fireEvent.click(screen.getByRole("button", { name: "更正类别或版本" }));
+    531|   fireEvent.click(screen.getByRole("button", { name: "版本改为未注明" }));
+       |                          ^
+    532|   fireEvent.click(screen.getByRole("button", { name: "地区改为未注明" }));
+    533|   fireEvent.click(screen.getByRole("button", { name: "保存更正" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  11:10:26
+   Duration  746ms (transform 41ms, setup 0ms, import 114ms, tests 317ms, environment 245ms)
+

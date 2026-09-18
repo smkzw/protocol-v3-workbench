@@ -1,0 +1,49 @@
+TAP version 13
+# Subtest: metadata correction changes descriptors without uploading file bytes
+ok 1 - metadata correction changes descriptors without uploading file bytes
+  ---
+  duration_ms: 0.675292
+  type: 'test'
+  ...
+# Subtest: source upload preserves bytes and lets the browser provide multipart boundary
+ok 2 - source upload preserves bytes and lets the browser provide multipart boundary
+  ---
+  duration_ms: 8.922542
+  type: 'test'
+  ...
+# Subtest: source conflict retains the server's actionable explanation
+ok 3 - source conflict retains the server's actionable explanation
+  ---
+  duration_ms: 0.219667
+  type: 'test'
+  ...
+# Subtest: parse and original download use the selected immutable source
+ok 4 - parse and original download use the selected immutable source
+  ---
+  duration_ms: 0.137
+  type: 'test'
+  ...
+# Subtest: research intake carries selected identities and reads the same durable job
+not ok 5 - research intake carries selected identities and reads the same durable job
+  ---
+  duration_ms: 0.19325
+  type: 'test'
+  location: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs:56:1'
+  failureType: 'testCodeFailure'
+  error: 'api.recoverResearchIntake is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/smkzw/Documents/%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/protocolSourceApi.test.mjs:78:13)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 47.950208

@@ -1,0 +1,4375 @@
+{
+ "schema_version": "mw_protocol_v3_condition_proposal_v1",
+ "created": "2026-09-13",
+ "author": "worker_01 (zcode/GLM-5.3-Flash), bounded execution for mw_protocol_v3_3r4b_condition_matrix_20260913",
+ "status": "worker_proposal_pending_codex_adjudication",
+ "not_an_accepted_medical_conclusion": true,
+ "inputs": {
+  "plan": "plans/mw_protocol_v3_implementation_plan_v3_20260912.md#3R.4B",
+  "base_matrix": "runs/mw_protocol_v3_3r4b_20260912/applicability_obligation_matrix.json (status=source_inventory_only_not_executable)",
+  "contracts": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/*.json",
+  "fact_bindings": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/fact_bindings.json",
+  "node_tree": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/node_tree.json",
+  "source_docx": "TP-MA-07 临床试验方案（2期或3期）_清洁版_v2.0_20260905.docx sha256=018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756 (readonly, stdlib zip/XML)",
+  "registry": "services/api/app/protocol_workflow/registries/applicability.py (readonly context)"
+ },
+ "encoding_summary": {
+  "rules_total": 49,
+  "predicate_status_counts": {
+   "executable_boolean_declared": 10,
+   "unresolved_json_encoding_proposed_member": 19,
+   "unresolved_requires_owner_schema": 18,
+   "unresolved_non_scalar_condition": 2
+  },
+  "declared_bare_boolean_triggers": [
+   "ae.oncology_progression_exception_applicable",
+   "appendix.ecog_assessment_applicable",
+   "appendix.nyha_assessment_applicable",
+   "exploratory.immunogenicity_applicable",
+   "irc.applicable",
+   "quality.oversight_charter_applicable",
+   "quality.remote_monitoring_applicable",
+   "quality.risk_management_plan_applicable",
+   "references.foreign_sources_present",
+   "statistics.sample_size.interim_applicable"
+  ],
+  "json_typed_trigger_count": 42,
+  "key_constraint": "FactPredicate 对 value_type=json 的事实做严格同型比较：expected=true 永远 CONDITIONAL，永不 APPLICABLE/NOT_APPLICABLE——36 个 json 触发路径在 owner 声明编码前不可落码"
+ },
+ "release_semantics_note": "false 分支的 release 属合同修订（promote/drop 义务），不是运行期对无条件义务的减法；registries/applicability.py evaluate_applicable_content 明确『释放遗留无条件要求须源裁定合同修订』。unknown 分支由现有 conditional_applicability_unresolved finding 承载。",
+ "rows": [
+  {
+   "row_index": 0,
+   "node_id": "v2_n_10_1_1",
+   "node_title": "不良事件的定义",
+   "rule_id": "applicability:n-10-1-1:oncology-progression",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_10_1_1.json",
+   "contract_sha256": "e5da176b2b4f3585e559e0617c1cc0b575bf255b6511ac34d9533ff6bb6861e6",
+   "condition": "已确认本项目适用肿瘤进展例外",
+   "rule_rationale": "肿瘤进展例外仅在适用性成立时生效。",
+   "trigger_analysis": [
+    {
+     "fact_path": "ae.oncology_progression_exception_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "合同 rationale 明示『裸 true/false』且 fact_bindings value_type=boolean；FactPredicate{expected:true} 可执行。",
+    "predicates": [
+     {
+      "fact_path": "ae.oncology_progression_exception_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "ae.oncology_progression_exception",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[599] 肿瘤进展不记AE除非更重/相关；新发原发恶性肿瘤记AE——例外细节仅肿瘤项目适用"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "ae.oncology_progression_exception"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "ae.definition（src[599] 的一般性进展措辞仍属AE定义无条件义务）",
+      "forbidden: ae.template_example_*"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 1,
+   "node_id": "v2_n_11_1",
+   "node_title": "样本量估算",
+   "rule_id": "conditional:v2-n-11-1:interim-adjustment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_1.json",
+   "contract_sha256": "771d989e94f246f55b4a7c2a71262927dc8f88e1a312c124b4921233aa2a15d5",
+   "condition": "已确认样本量设计包含期中或自适应调整",
+   "rule_rationale": "若适用期中调整，样本量方法必须补充调整规则和依据。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.sample_size.interim_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『期中样本量调整适用性必须有明确布尔状态』+ value_type=boolean；可执行。",
+    "predicates": [
+     {
+      "fact_path": "statistics.sample_size.interim_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.sample_size.interim_adjustment",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[771]『对于计划的中期分析进行I类错误调整的方法（若有）』"
+      },
+      {
+       "fact_path": "statistics.sample_size.interim_alpha_adjustment",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[771] 同上（若有）"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "statistics.sample_size.interim_adjustment",
+      "statistics.sample_size.interim_alpha_adjustment"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "sample_size_cross_contract_consistency claim（须与 statistics.interim.applicable 交叉一致）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "与 statistics.interim.applicable 的跨合同一致性目前只靠 claim，建议 checker 增加显式交叉核对"
+   ]
+  },
+  {
+   "row_index": 2,
+   "node_id": "v2_n_11_4_6",
+   "node_title": "探索性终点的统计分析",
+   "rule_id": "conditional:v2-n-11-4-6:pk",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_6.json",
+   "contract_sha256": "60f8efddf70642968534d1428c2477b142dd36687c58c0b77942ec8ac1d4599b",
+   "condition": "已确认 PK 分析适用于本项目",
+   "rule_rationale": "PK 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.pk_pd_er.pk_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "rationale『必须显式声明 PK 分析是否适用』但 fact_bindings value_type=json；expected:true 永不匹配。提议 owner 声明 members=('applicable',) expected=true 或改型 boolean。",
+    "predicates": [
+     {
+      "fact_path": "statistics.pk_pd_er.pk_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "确证性使用必须链接主要/次要分析（contract rationale）"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.sampling_schedule",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[262] PK 时间窗以分钟/小时计"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.model_assumptions",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "contract rationale：必须有模型假设"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.confirmatory_analysis_link",
+       "encoding": "required_when_active",
+       "origin": "inherited_overrequirement",
+       "note": "rationale 限定『确证性使用』才需链接；仅适用（探索性）即要求属过要求"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "pk_pd_er_analysis",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "claim 亦为无条件 required，与14项事实交集平行"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "statistics.pk_pd_er.endpoint_linkage",
+      "statistics.pk_pd_er.sampling_schedule",
+      "statistics.pk_pd_er.model_assumptions",
+      "statistics.pk_pd_er.confirmatory_analysis_link"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "statistics.exploratory_analysis.endpoints/methods/data_definition（探索性节核心义务）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "statistics.pk_pd_er.not_applicable_disposition",
+       "note": "提议：三个适用事实均为 false 时，必须显式记录不开展 PK/PD/E-R 及理由（参照 src[584]『否则注明不适用』）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "statistics.pk_pd_er.endpoint_linkage",
+     "statistics.pk_pd_er.model_assumptions",
+     "statistics.pk_pd_er.sampling_schedule"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.sampling_schedule",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.model_assumptions",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "pk_pd_er_analysis",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "src[798] 仅剩片段『则同既往方案描述内容。』——本节源薄弱，义务颗粒度主要来自合同；owner 需确认是否接受合同升版依据",
+    "pk/pd/er 三规则共享同一事实集，true 时必须三事实并存而非逐规则重复要求"
+   ]
+  },
+  {
+   "row_index": 3,
+   "node_id": "v2_n_11_4_6",
+   "node_title": "探索性终点的统计分析",
+   "rule_id": "conditional:v2-n-11-4-6:pd",
+   "rule_locator": "#/conditional_applicability_rules/1",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_6.json",
+   "contract_sha256": "60f8efddf70642968534d1428c2477b142dd36687c58c0b77942ec8ac1d4599b",
+   "condition": "已确认 PD 分析适用于本项目",
+   "rule_rationale": "PD 义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.pk_pd_er.pd_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "rationale『必须显式声明 PK 分析是否适用』但 fact_bindings value_type=json；expected:true 永不匹配。提议 owner 声明 members=('applicable',) expected=true 或改型 boolean。",
+    "predicates": [
+     {
+      "fact_path": "statistics.pk_pd_er.pd_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "确证性使用必须链接主要/次要分析（contract rationale）"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.sampling_schedule",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[262] PK 时间窗以分钟/小时计"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.model_assumptions",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "contract rationale：必须有模型假设"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.confirmatory_analysis_link",
+       "encoding": "required_when_active",
+       "origin": "inherited_overrequirement",
+       "note": "rationale 限定『确证性使用』才需链接；仅适用（探索性）即要求属过要求"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "pk_pd_er_analysis",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "claim 亦为无条件 required，与14项事实交集平行"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "statistics.pk_pd_er.endpoint_linkage",
+      "statistics.pk_pd_er.sampling_schedule",
+      "statistics.pk_pd_er.model_assumptions",
+      "statistics.pk_pd_er.confirmatory_analysis_link"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "statistics.exploratory_analysis.endpoints/methods/data_definition（探索性节核心义务）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "statistics.pk_pd_er.not_applicable_disposition",
+       "note": "提议：三个适用事实均为 false 时，必须显式记录不开展 PK/PD/E-R 及理由（参照 src[584]『否则注明不适用』）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "statistics.pk_pd_er.endpoint_linkage",
+     "statistics.pk_pd_er.model_assumptions",
+     "statistics.pk_pd_er.sampling_schedule"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.sampling_schedule",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.model_assumptions",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "pk_pd_er_analysis",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "src[798] 仅剩片段『则同既往方案描述内容。』——本节源薄弱，义务颗粒度主要来自合同；owner 需确认是否接受合同升版依据",
+    "pk/pd/er 三规则共享同一事实集，true 时必须三事实并存而非逐规则重复要求"
+   ]
+  },
+  {
+   "row_index": 4,
+   "node_id": "v2_n_11_4_6",
+   "node_title": "探索性终点的统计分析",
+   "rule_id": "conditional:v2-n-11-4-6:er",
+   "rule_locator": "#/conditional_applicability_rules/2",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_6.json",
+   "contract_sha256": "60f8efddf70642968534d1428c2477b142dd36687c58c0b77942ec8ac1d4599b",
+   "condition": "已确认暴露-效应分析适用于本项目",
+   "rule_rationale": "暴露-效应义务必须有终点、采样窗口和模型假设；确证性使用必须链接主要/次要分析。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.pk_pd_er.er_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "rationale『必须显式声明 PK 分析是否适用』但 fact_bindings value_type=json；expected:true 永不匹配。提议 owner 声明 members=('applicable',) expected=true 或改型 boolean。",
+    "predicates": [
+     {
+      "fact_path": "statistics.pk_pd_er.er_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "确证性使用必须链接主要/次要分析（contract rationale）"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.sampling_schedule",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[262] PK 时间窗以分钟/小时计"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.model_assumptions",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "contract rationale：必须有模型假设"
+      },
+      {
+       "fact_path": "statistics.pk_pd_er.confirmatory_analysis_link",
+       "encoding": "required_when_active",
+       "origin": "inherited_overrequirement",
+       "note": "rationale 限定『确证性使用』才需链接；仅适用（探索性）即要求属过要求"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "pk_pd_er_analysis",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "claim 亦为无条件 required，与14项事实交集平行"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "statistics.pk_pd_er.endpoint_linkage",
+      "statistics.pk_pd_er.sampling_schedule",
+      "statistics.pk_pd_er.model_assumptions",
+      "statistics.pk_pd_er.confirmatory_analysis_link"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "statistics.exploratory_analysis.endpoints/methods/data_definition（探索性节核心义务）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "statistics.pk_pd_er.not_applicable_disposition",
+       "note": "提议：三个适用事实均为 false 时，必须显式记录不开展 PK/PD/E-R 及理由（参照 src[584]『否则注明不适用』）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "statistics.pk_pd_er.endpoint_linkage",
+     "statistics.pk_pd_er.model_assumptions",
+     "statistics.pk_pd_er.sampling_schedule"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "statistics.pk_pd_er.endpoint_linkage",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.sampling_schedule",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.pk_pd_er.model_assumptions",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "pk_pd_er_analysis",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "src[798] 仅剩片段『则同既往方案描述内容。』——本节源薄弱，义务颗粒度主要来自合同；owner 需确认是否接受合同升版依据",
+    "pk/pd/er 三规则共享同一事实集，true 时必须三事实并存而非逐规则重复要求"
+   ]
+  },
+  {
+   "row_index": 5,
+   "node_id": "v2_n_11_4_8",
+   "node_title": "多重性问题考量",
+   "rule_id": "conditional:v2-n-11-4-8:no-adjustment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_8.json",
+   "contract_sha256": "2362fccca34c53510729feea9fc2de4ef2e1f536ec7cef7a3acb458e9a679033",
+   "condition": "已确认本项目无需进行多重性调整",
+   "rule_rationale": "无需调整不是默认句，必须有实际确证性家族适用性处置。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.multiplicity.no_adjustment_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "no_adjustment_applicable value_type=json；提议 owner 声明 boolean 或 members 编码。",
+    "predicates": [
+     {
+      "fact_path": "statistics.multiplicity.no_adjustment_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.multiplicity.applicability_disposition",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[803] 条件句『如…多于一个』→ 任何项目都须记录其多重性处置（含单终点无需调整）"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "multiplicity_procedure",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "true 时其值必须是显式『无需调整』处置句，而非默认句（contract rationale）"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "statistics.multiplicity.confirmatory_family/ordering/alpha_allocation/dependencies/procedure 在『需调整』分支仍须给出"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "statistics.multiplicity.multi_confirmatory_endpoints",
+       "note": "提议新增显式 boolean：确证性家族>1 终点时才要求 family/ordering/alpha/dependencies/procedure；当前这些事实无条件 required 对单主要终点项目属过要求（src[803] 条件句）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "statistics.multiplicity.applicability_disposition"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "statistics.multiplicity.applicability_disposition",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "multiplicity_procedure",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "规则只覆盖 no-adjustment 分支；需调整分支义务目前藏在无条件事实里，建议以 multi_confirmatory_endpoints 重建对称条件结构（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 6,
+   "node_id": "v2_n_11_4_9",
+   "node_title": "期中分析",
+   "rule_id": "conditional:v2-n-11-4-9:interim",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_11_4_9.json",
+   "contract_sha256": "fb45be1a11110bd1ebb71e9ad4e71add345d385a4b3e2137d144cf0f99658ac4",
+   "condition": "已确认本项目包含期中分析",
+   "rule_rationale": "适用期中分析必须将时点、信息量、目的、规则、责任、最终影响和 alpha 处置连成一致设计。",
+   "trigger_analysis": [
+    {
+     "fact_path": "statistics.interim.applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "statistics.interim.applicable value_type=json、rationale『必须显式声明期中分析是否适用』；提议 boolean 或 members=('applicable',) expected=true。",
+    "predicates": [
+     {
+      "fact_path": "statistics.interim.applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "statistics.interim.timing",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] 分析时间点（入组<XX>例或发生<XX>事件后）"
+      },
+      {
+       "fact_path": "statistics.interim.information_fraction",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] 时间点/信息量语义"
+      },
+      {
+       "fact_path": "statistics.interim.purpose",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] 目的（有效性/无效性/安全性监查）"
+      },
+      {
+       "fact_path": "statistics.interim.rules",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] 停止/调整规则语义"
+      },
+      {
+       "fact_path": "statistics.interim.decision_responsibility",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] IDMC/DSMB 职责"
+      },
+      {
+       "fact_path": "statistics.interim.final_analysis_impact",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[806] 期中→最终分析联动"
+      },
+      {
+       "fact_path": "statistics.interim.efficacy_alpha_spending",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[806] α消耗方法（O'Brien-Fleming/Lan-DeMets）仅当期中目的含有效性；纯安全性期中不适用——建议复合条件（未来 boolean：purpose_includes_efficacy）"
+      },
+      {
+       "fact_path": "statistics.interim.safety_review_alpha_separation",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "仅当有效性与安全性审查并存时才需α分离；同上建议复合条件"
+      },
+      {
+       "fact_path": "statistics.interim.idmc_responsibilities",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[806] IDMC/DSMB 职责仅当设立委员会；决策主体为其他时该事实应记录实际主体（处置式取值），不得虚构委员会"
+      },
+      {
+       "fact_path": "statistics.interim.endpoint_irc_responsibilities",
+       "encoding": "required_when_active",
+       "origin": "inherited_overrequirement",
+       "note": "IRC 未设立（irc.applicable=false）时不得要求 IRC 职责——建议拆分为 interim×IRC 复合规则（predicates=[interim.applicable, irc.applicable], mode=all），irc.applicable 已是可执行 boolean"
+      },
+      {
+       "fact_path": "statistics.interim.canonical_reference",
+       "encoding": "not_in_rule_list",
+       "origin": "source_required",
+       "note": "必须指向已解析规范目标（v2_n_14_7 安全性监督 或项目确认的现行 IDMC 章节身份）；不得指向过时『14.6』（现14.6=方案偏离）；字面『v2_n_13_x』为虚拟族ID（13.x=伦理族），不得视为已解析"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "interim_analysis_plan",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "claim 亦无条件 required"
+      },
+      {
+       "fact_path": "interim_final_analysis_impact",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional",
+       "note": ""
+      }
+     ],
+     "objects": [
+      {
+       "fact_path": "table",
+       "encoding": "already_unconditional",
+       "origin": "keep_at_true",
+       "note": "11个必需单元格：timing/information-fraction/purpose/rules/decision/final-impact/efficacy-alpha/safety-separation/idmc/irc/canonical-reference"
+      }
+     ],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "statistics.interim.timing",
+      "statistics.interim.information_fraction",
+      "statistics.interim.purpose",
+      "statistics.interim.rules",
+      "statistics.interim.decision_responsibility",
+      "statistics.interim.final_analysis_impact",
+      "statistics.interim.efficacy_alpha_spending",
+      "statistics.interim.safety_review_alpha_separation",
+      "statistics.interim.idmc_responsibilities",
+      "statistics.interim.endpoint_irc_responsibilities",
+      "statistics.interim.canonical_reference"
+     ],
+     "release_claims": [
+      "interim_analysis_plan",
+      "interim_final_analysis_impact"
+     ],
+     "release_objects": [
+      "table（含全部11单元格义务一并释放，不能只释放10个交集事实字段）"
+     ],
+     "retain": [
+      "statistics.interim.applicable（记录 false 的显式判定）",
+      "forbidden: statistics.interim.stale_reference_pointer / marketing_claim / interim_timing_alpha_inconsistent",
+      "与 statistics.sample_size.interim_applicable 交叉一致（v2_n_11_1）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "statistics.interim.not_planned_disposition",
+       "note": "提议：false 时必须保留真实『不计划开展』处置与依据（含理由），canonical_reference 改为指向该处置记录身份；正文不得残留计划期中参数（残留即矛盾，须处理而非静默采入）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "statistics.interim.decision_responsibility",
+     "statistics.interim.efficacy_alpha_spending",
+     "statistics.interim.endpoint_irc_responsibilities",
+     "statistics.interim.final_analysis_impact",
+     "statistics.interim.idmc_responsibilities",
+     "statistics.interim.information_fraction",
+     "statistics.interim.purpose",
+     "statistics.interim.rules",
+     "statistics.interim.safety_review_alpha_separation",
+     "statistics.interim.timing"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "statistics.interim.timing",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.information_fraction",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.purpose",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.rules",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.decision_responsibility",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.final_analysis_impact",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.efficacy_alpha_spending",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.safety_review_alpha_separation",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.idmc_responsibilities",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "statistics.interim.endpoint_irc_responsibilities",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "interim_analysis_plan",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "合同 word_rule 以『v2_n_13_x 载体族』作为过时14.6引用的规范目标——13.x 实为伦理族（13_1伦理/13_2知情同意/13_3保密/13_4补偿），无IDMC载体；真实载体为 v2_n_14_7 安全性监督（计划3R.4B步骤5缺陷确认）",
+    "efficacy_alpha_spending / safety_review_alpha_separation / idmc_responsibilities 的条件范围需要 owner 声明 purpose/decision-body 类型化事实后才能收窄",
+    "endpoint_irc_responsibilities 拆分规则需新增 rule id 并绑定 source_rule_sha256"
+   ]
+  },
+  {
+   "row_index": 7,
+   "node_id": "v2_n_12_7",
+   "node_title": "储备样本和数据的未来使用",
+   "rule_id": "applicability:v2-n-12-7:future-use",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_12_7.json",
+   "contract_sha256": "37436ebe075542b4c1fd0b7934fa51e61883059b0d0b21ff3b2196c7b7b7a552",
+   "condition": "未来样本或数据使用适用时，必须独立说明用途、地点、期限、遗传检测、同意与复核。",
+   "rule_rationale": "未来使用不得与本研究当前必需检测混同；普通试验同意不得推导未来使用许可。",
+   "trigger_analysis": [
+    {
+     "fact_path": "future_use.applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "future_use.applicable value_type=json；提议 boolean 或 members 编码（如 samples_retained）。",
+    "predicates": [
+     {
+      "fact_path": "future_use.applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "future_use.purpose",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.location",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.duration",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.genetic_testing",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.consent",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.review_plan",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      },
+      {
+       "fact_path": "future_use.current_study_assay_separation",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[830]『如研究结束后将保留预存或残余的样本，应说明…』——保留样本/数据时才成为义务"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "future_use.separation",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "与本研究当前必需检测分离"
+      },
+      {
+       "fact_path": "future_use.review_required",
+       "encoding": "already_unconditional",
+       "origin": "inherited_overrequirement",
+       "note": "src[830] EC是否审查未来研究属于保留样本时的披露项；不留存时不适用"
+      }
+     ],
+     "objects": [
+      {
+       "fact_path": "table",
+       "encoding": "already_unconditional",
+       "origin": "promote_to_conditional",
+       "note": "src[830]-[836] 示例为表格承载；不留存时应释放"
+      }
+     ],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "future_use.purpose",
+      "future_use.location",
+      "future_use.duration",
+      "future_use.genetic_testing",
+      "future_use.consent",
+      "future_use.review_plan",
+      "future_use.current_study_assay_separation"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "forbidden: future_use.universal_withdrawal_conclusion / conflated_with_current_assay",
+      "src[831] 禁止无EC批准的样品检测（GCP(2026修订)第三十七条）——保留为禁止性规则"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "future_use.not_retained_disposition",
+       "note": "提议：不留存时显式记录不留存/销毁处置与依据"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "future_use.consent",
+     "future_use.current_study_assay_separation",
+     "future_use.duration",
+     "future_use.genetic_testing",
+     "future_use.location",
+     "future_use.purpose",
+     "future_use.review_plan"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "future_use.purpose",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.location",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.duration",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.genetic_testing",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.consent",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.review_plan",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "future_use.current_study_assay_separation",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": [
+     {
+      "claim_type": "future_use.separation",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "『确实不留存』与『适用但材料缺失』须分开：not_retained_disposition 需 owner 确认事实路径与编码"
+   ]
+  },
+  {
+   "row_index": 8,
+   "node_id": "v2_n_14_1",
+   "node_title": "质量源于设计与风险管理",
+   "rule_id": "applicability:n-14-1:risk-plan",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_14_1.json",
+   "contract_sha256": "9e26184ce29a66fa669c9ff2d2457416e683b46f77b4a461a02ba2886c141421",
+   "condition": "quality.risk_management_plan_applicable 为 true 时风险管理计划义务激活",
+   "rule_rationale": "计划适用性由项目事实决定；激活时必须有实际计划身份与复核节奏，不适用不豁免基础 CtQ 链。",
+   "trigger_analysis": [
+    {
+     "fact_path": "quality.risk_management_plan_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『采用裸 true/false 编码』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "quality.risk_management_plan_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "quality.risk_management_plan_identity",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[885]『详见<质量风险管理计划/监查计划>（如适用）』——适用时须有实际计划身份"
+      },
+      {
+       "fact_path": "quality.plan_review_cadence",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "复核节奏为合同派生良好实践，模板未直接给出"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "quality.risk_management_plan_identity",
+      "quality.plan_review_cadence"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "基础 CtQ 链义务不豁免（rationale + src[885] CtQ/RCA/CAPA 为无条件）",
+      "forbidden: quality.template_example_plan_name"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 9,
+   "node_id": "v2_n_14_3",
+   "node_title": "申办者或其代表委派的监查员职责",
+   "rule_id": "applicability:n-14-3:remote-monitoring",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_14_3.json",
+   "contract_sha256": "5562cf3c6b6e172af9ab54e144c1328ca4283a051c459f4959b24ada258b99c3",
+   "condition": "quality.remote_monitoring_applicable 为 true 时远程监查记录义务激活",
+   "rule_rationale": "远程监查由项目事实决定适用性；激活时必须声明记录方式与留存边界。",
+   "trigger_analysis": [
+    {
+     "fact_path": "quality.remote_monitoring_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『采用裸 true/false 编码』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "quality.remote_monitoring_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "quality.remote_monitoring_records",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "远程监查记录方式与留存边界为合同派生；src[893]-[900] 仅给一般监查记录义务"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "quality.remote_monitoring_records"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "基础监查义务（monitoring_scope/methods/records 等）不豁免",
+      "forbidden: quality.copied_template_company_name"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 10,
+   "node_id": "v2_n_14_7",
+   "node_title": "安全性监督",
+   "rule_id": "applicability:n-14-7:oversight-charter",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_14_7.json",
+   "contract_sha256": "77bec5bdb88ed846d7749fe3274abf4ad4bc237b19709ba6d259b56cc16fb954",
+   "condition": "quality.oversight_charter_applicable 为 true 时章程义务激活",
+   "rule_rationale": "章程适用性由项目事实决定；激活时必须给出实际版本与批准记录，不适用不得写成已批准。",
+   "trigger_analysis": [
+    {
+     "fact_path": "quality.oversight_charter_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『采用裸 true/false 编码』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "quality.oversight_charter_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "quality.oversight_charter_version",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "src[918]『一份单独制定的DSMB章程将提供更详细的信息』；版本/批准记录为合同派生"
+      },
+      {
+       "fact_path": "quality.oversight_charter_approval_record",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "同上；不适用不得写成已批准（rationale）"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "quality.oversight_charter_version",
+      "quality.oversight_charter_approval_record"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "监督义务本体不豁免（src[917]『如适用…否则注明不适用』→ 显式不适用声明）",
+      "forbidden: fabricated_approved_charter / dsmb_smc_irc_interchangeable / fabricated_committee_membership"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "quality.oversight_charter_not_applicable_statement",
+       "note": "提议：false 时显式『不适用』声明（src[917] 支持），替代章程版本义务"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 11,
+   "node_id": "v2_n_15",
+   "node_title": "参考文献",
+   "rule_id": "applicability:n-15:foreign-style",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_15.json",
+   "contract_sha256": "83d874df993c23833c5e8fe70468fa58268451046ab6172d040ba8cf482b9fb3",
+   "condition": "references.foreign_sources_present 为 true 时外文格式样式义务激活",
+   "rule_rationale": "外文来源存在性由项目事实决定；激活时必须声明其适用格式样式，不得照抄示例。",
+   "trigger_analysis": [
+    {
+     "fact_path": "references.foreign_sources_present",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『采用裸 true/false 编码』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "references.foreign_sources_present",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "references.foreign_format_style",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[937]-[967] 模板为外文文献规定 JAMA/AMA 著录格式——存在外文来源时适用"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "references.foreign_format_style"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "references.citation_style / used_source_register / bibliographic_metadata 无条件保留",
+      "forbidden: references.template_example_reference_list"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 12,
+   "node_id": "v2_n_16_x1",
+   "node_title": "附录 1 ECOG体力评分",
+   "rule_id": "applicability:v2-n-16-x1:assessment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_16_x1.json",
+   "contract_sha256": "d18124ec63b9af857656a3d80f557c9507d9c1dc76c1ee610743b75cd06db3c5",
+   "condition": "appendix.ecog_assessment_applicable 为 true 时 ECOG 附录内容义务激活",
+   "rule_rationale": "评分附录由实际评估决定适用性；激活时必须给出核对版本、来源与复现内容，并包含评分表格。",
+   "trigger_analysis": [
+    {
+     "fact_path": "appendix.ecog_assessment_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『采用裸 true/false 编码』+ value_type=boolean；不适用时不得自动收录。",
+    "predicates": [
+     {
+      "fact_path": "appendix.ecog_assessment_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "appendix.ecog_version",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "核对版本"
+      },
+      {
+       "fact_path": "appendix.ecog_source_reference",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "来源参考"
+      },
+      {
+       "fact_path": "appendix.ecog_scale_reproduced",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "复现评分内容"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "appendix.ecog_version_and_contents_verified",
+       "encoding": "promote_from_allowed",
+       "origin": "source_required",
+       "note": "版本与内容核对"
+      }
+     ],
+     "objects": [
+      {
+       "fact_path": "table",
+       "encoding": "required_when_active",
+       "origin": "source_required",
+       "note": "ECOG 评分表为附录本体"
+      }
+     ],
+     "evidence": [
+      {
+       "source_roles_or_note": "regulatory_or_guideline|peer_reviewed",
+       "note": "评分表须有可追溯来源"
+      }
+     ]
+    },
+    "false": {
+     "release_facts": [
+      "appendix.ecog_version",
+      "appendix.ecog_source_reference",
+      "appendix.ecog_scale_reproduced"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "appendix.ecog_applicability_decision_record（无条件，记录不适用+理由）",
+      "claim appendix.ecog_applicability_decided",
+      "forbidden: appendix.ecog_template_example_table / ecog_appendix_without_actual_assessment"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 13,
+   "node_id": "v2_n_16_x2",
+   "node_title": "附录 2 纽约心脏学会（NYHA）心功能分级",
+   "rule_id": "applicability:v2-n-16-x2:assessment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_16_x2.json",
+   "contract_sha256": "400d4ba68a7e568e1462fcc8cdd705a6b750f93bdebec7c2824c911b5353a532",
+   "condition": "appendix.nyha_assessment_applicable 为 true 时 NYHA 附录内容义务激活",
+   "rule_rationale": "分级附录由实际评估决定适用性；激活时必须给出核对版本、来源与复现内容，并包含分级表格。",
+   "trigger_analysis": [
+    {
+     "fact_path": "appendix.nyha_assessment_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "同 ECOG：裸 true/false；不适用时不得自动收录。",
+    "predicates": [
+     {
+      "fact_path": "appendix.nyha_assessment_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "appendix.nyha_version",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "核对版本"
+      },
+      {
+       "fact_path": "appendix.nyha_source_reference",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "来源参考"
+      },
+      {
+       "fact_path": "appendix.nyha_classification_reproduced",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "复现分级内容"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "appendix.nyha_version_and_contents_verified",
+       "encoding": "promote_from_allowed",
+       "origin": "source_required",
+       "note": "版本与内容核对"
+      }
+     ],
+     "objects": [
+      {
+       "fact_path": "table",
+       "encoding": "required_when_active",
+       "origin": "source_required",
+       "note": "NYHA 分级表为附录本体"
+      }
+     ],
+     "evidence": [
+      {
+       "source_roles_or_note": "regulatory_or_guideline|peer_reviewed",
+       "note": "分级表须有可追溯来源"
+      }
+     ]
+    },
+    "false": {
+     "release_facts": [
+      "appendix.nyha_version",
+      "appendix.nyha_source_reference",
+      "appendix.nyha_classification_reproduced"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "appendix.nyha_applicability_decision_record（无条件）",
+      "claim appendix.nyha_applicability_decided",
+      "forbidden: appendix.nyha_template_example_table"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 14,
+   "node_id": "v2_n_1_2",
+   "node_title": "研究流程图",
+   "rule_id": "applicability:n-1-2:escalation",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_2.json",
+   "contract_sha256": "9dd9f8772ca8e9cb8b7660837e16da9638729dac9a3b035438d29c752f8eb1a8",
+   "condition": "确认设计实际包含剂量升级",
+   "rule_rationale": "source[250] 升级图示义务仅在实际含升级的设计中适用。",
+   "trigger_analysis": [
+    {
+     "fact_path": "diagram.escalation_design",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "diagram.escalation_design value_type=json，rationale 未声明编码；提议显式 boolean（名义含 design 但未证布尔）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "diagram.escalation_transition",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[250]『除整个试验流程图外，还需有剂量递增图』"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "diagram.escalation_transition"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "diagram.phase_arm_structure / visit_timepoints 无条件",
+      "forbidden: diagram.template_example_timeline / source_example_values"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "相邻：O[figure] 无条件 required vs src[246]『研究流程图为可选项目…可以删除』——图义务本身可能过要求（owner 决定，不在49条内）"
+   ]
+  },
+  {
+   "row_index": 15,
+   "node_id": "v2_n_1_2",
+   "node_title": "研究流程图",
+   "rule_id": "applicability:n-1-2:allocation",
+   "rule_locator": "#/conditional_applicability_rules/1",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_2.json",
+   "contract_sha256": "9dd9f8772ca8e9cb8b7660837e16da9638729dac9a3b035438d29c752f8eb1a8",
+   "condition": "确认设计实际随机化",
+   "rule_rationale": "分配比例义务仅在随机化设计下适用；单臂非随机设计必须能通过。",
+   "trigger_analysis": [
+    {
+     "fact_path": "diagram.randomized",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "diagram.randomized value_type=json；rationale『为真时触发』暗示布尔意图但未声明编码；提议显式 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "diagram.allocation_ratio",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[246]『修改试验分组的分配方法』；单臂非随机设计必须能通过（rationale）"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "diagram.allocation_ratio"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "design_description / diagram_transition claims"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 16,
+   "node_id": "v2_n_1_3",
+   "node_title": "研究流程表（SOA）",
+   "rule_id": "applicability:n-1-3:pk-sampling",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_1_3.json",
+   "contract_sha256": "242c493e45bbc60e862e57c77a6f9fa910eff5b994d62fa605f68641e11bf937",
+   "condition": "确认存在 PK 采血",
+   "rule_rationale": "PK 采血存在时窗口必须带单位/参考事件，不得渲染为泛化日窗。",
+   "trigger_analysis": [
+    {
+     "fact_path": "soa.pk_sampling_present",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "soa.pk_sampling_present value_type=json；提议显式 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "soa.pk_timing_units",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[262] PK 研究允许较小或无时间窗，时间点以分钟/小时计——窗口须带单位/参考事件"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "soa.pk_timing_units"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "soa.visit_window_definitions / assessment_cells / early_exit_assessment 等无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 17,
+   "node_id": "v2_n_3_1_1",
+   "node_title": "主要目的",
+   "rule_id": "applicability:n-3-1-1:rescue-strategy",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_1.json",
+   "contract_sha256": "7b8840eb5ea6cf1ef623ffd8c1e65b08be71d0c8f7661aceb6227ea94f5fe801",
+   "condition": "已确认研究设计包含停药/补救治疗策略",
+   "rule_rationale": "仅当设计确认包含停药/补救治疗策略时，才要求给出该策略及其与主要终点的一致性；示例不得自动升级为项目要求。",
+   "trigger_analysis": [
+    {
+     "fact_path": "design.rescue_treatment_planned",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "design.rescue_treatment_planned value_type=json（『已确认设计事实』）；提议显式 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "design.discontinuation_rescue_strategy",
+       "encoding": "promote_from_optional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[312] 估计目标措辞含『不考虑…补救治疗』——设计含补救/停药策略时须给出该策略"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "rescue_strategy_statement",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "C[qualified]→true 时 required；示例不得自动升级为项目要求（rationale）"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "design.discontinuation_rescue_strategy"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "picos.primary_objectives / primary_clinical_question / primary_endpoint 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 18,
+   "node_id": "v2_n_3_1_2_3",
+   "node_title": "治疗效应：随机分配的治疗，伴有或不伴有“补救治疗或背景治疗改变”。关于研究治疗和伴随治疗包括补救治疗的更多细节见第6章节-研究干预。",
+   "rule_id": "applicability:n-3-1-2-3:background-rescue",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_2_3.json",
+   "contract_sha256": "3a3055840db1f89d657a58f487163b86b96af3e9585f4978a80604deec7ccc37",
+   "condition": "已确认研究设计存在背景治疗或允许补救治疗",
+   "rule_rationale": "存在背景治疗时，治疗条件属性必须同时给出补救/背景改变的处置与跨合同一致性声明。",
+   "trigger_analysis": [
+    {
+     "fact_path": "estimand.primary.background_treatment",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "estimand.primary.background_treatment value_type=json（『必须说明相关背景治疗』）；提议 members（如 ('present',)）或专用 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "estimand.primary.rescue_treatment_handling",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "节点标题即『伴有或不伴有补救治疗或背景治疗改变』——无论有无背景治疗都须说明处置；规则内要求属重复"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "estimand_cross_contract_consistency",
+       "encoding": "promote_from_absent",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "跨合同一致性声明"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "estimand.primary.rescue_treatment_handling 保持无条件（false 分支取值可为『无补救治疗允许』式显式处置）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "estimand.primary.rescue_treatment_handling"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "estimand.primary.rescue_treatment_handling",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "触发事实本身为必填结构化属性，present/absent 子字段未声明——谓词无法落码直至 owner 声明 schema"
+   ]
+  },
+  {
+   "row_index": 19,
+   "node_id": "v2_n_3_1_2_4",
+   "node_title": "伴发事件：伴发事件及处理策略见表 1。",
+   "rule_id": "applicability:n-3-1-2-4:strategy-crosscheck",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_1_2_4.json",
+   "contract_sha256": "a14c232c981a2b8da9dc59f78045804d876c60f02e5e3e1a150707b9aacfb9d0",
+   "condition": "汇总指标与伴发事件策略涉及补救治疗或背景治疗改变",
+   "rule_rationale": "策略必须与随访、分析、缺失数据与敏感性分析合同交叉核对后才能定稿（源 @324 措辞存在潜在冲突）。",
+   "trigger_analysis": [
+    {
+     "fact_path": "estimand.primary.population_summary_measure",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_non_scalar_condition",
+    "note": "条件『汇总指标与伴发事件策略涉及补救治疗或背景治疗改变』不是触发事实（population_summary_measure）本身的取值；FactPredicate 无法表达。提议专用 boolean estimand.primary.ice_strategy_involves_treatment_change 作为显式触发。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "estimand.primary.ice_strategy_crosscheck",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "策略须与随访/分析/缺失数据/敏感性分析合同交叉核对；rationale 自认 src[324] 措辞存在潜在冲突"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "estimand_cross_contract_consistency",
+       "encoding": "promote_from_absent",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "estimand.primary.ice_strategy_crosscheck"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "estimand.primary.intercurrent_events / ice_strategy / ice_rationale / population_summary_measure 无条件（src[323]）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "src[324] 五要素示例与四属性表述的潜在冲突需 owner 源核实后收口"
+   ]
+  },
+  {
+   "row_index": 20,
+   "node_id": "v2_n_3_3_1",
+   "node_title": "安全性目的",
+   "rule_id": "applicability:n-3-3-1:injection-reaction",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_3_1.json",
+   "contract_sha256": "a319c4cd8651a0a47db1fee9f5453ccf092f7f76925808625c966239aa3fa342",
+   "condition": "给药途径可能引起注射反应（适用性判定为适用）",
+   "rule_rationale": "仅当给药途径适用时，注射反应定义与观察方式才成为义务；不适用时须显式记录不适用理由。",
+   "trigger_analysis": [
+    {
+     "fact_path": "safety.injection_reaction_applicability",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "safety.injection_reaction_applicability value_type=json；rationale『必须显式给出给药途径是否适用及理由』→ 提议 members=('applicable',) expected=true（理由另立事实）。",
+    "predicates": [
+     {
+      "fact_path": "safety.injection_reaction_applicability",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "safety.injection_reaction_definitions",
+       "encoding": "promote_from_optional",
+       "origin": "source_required_conditional_scope",
+       "note": "注射途径适用时才要求定义与观察方式"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "injection_reaction_statement",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "C[qualified]→适用时 required"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "safety.injection_reaction_definitions"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "safety.safety_objectives / picos.safety_endpoints / observation_period 无条件"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "（适用性事实本身）",
+       "note": "applicability 事实须记录 false+理由（事实 rationale 为源义务：『必须显式给出…及理由』）——『确实不适用』与『材料缺失』由此分开"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "本节点无正文文本（仅标题 src[333]）——义务颗粒度全部来自合同，源支持薄弱（source_thin 标记）"
+   ]
+  },
+  {
+   "row_index": 21,
+   "node_id": "v2_n_3_4_1",
+   "node_title": "探索性目的",
+   "rule_id": "applicability:n-3-4-1:analysis-commitment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_4_1.json",
+   "contract_sha256": "2f8693751d6c55bfd7d962d7030ca8424604ca03643c95600dca4141250f6661",
+   "condition": "任一探索性分析被判定适用",
+   "rule_rationale": "只有相应适用性事实成立时，该探索性分析才需要承诺声明与表格承载；示例不得整包继承为项目承诺。",
+   "trigger_analysis": [
+    {
+     "fact_path": "exploratory.population_pk",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    },
+    {
+     "fact_path": "exploratory.exposure_response",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    },
+    {
+     "fact_path": "exploratory.immunogenicity",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    },
+    {
+     "fact_path": "exploratory.biomarker",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "四个触发事实（population_pk/exposure_response/immunogenicity/biomarker）均 value_type=json；『任一适用』= mode=any，但每个都需要 owner 声明布尔/成员编码。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "exploratory_commitment",
+       "encoding": "promote_from_qualified",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "C[qualified]→任一适用时 required；『示例不得整包继承』（rationale）"
+      }
+     ],
+     "objects": [
+      {
+       "fact_path": "table",
+       "encoding": "required_when_active",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "节点无正文（仅标题 src[337]）；表格承载义务源支持薄弱"
+      }
+     ],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "picos.exploratory_objectives / exploratory.disposition claim 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "四个适用性事实与 v2_n_9_3 的 immunogenicity_applicable（boolean）编码不一致——建议统一（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 22,
+   "node_id": "v2_n_3_4_2",
+   "node_title": "探索性终点",
+   "rule_id": "applicability:n-3-4-2:non-confirmatory",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_3_4_2.json",
+   "contract_sha256": "25f557119b5f1e75d9486fdd6f92bb822a658bd3648a2264f8b7257217a20ee2",
+   "condition": "探索性终点不开展或仅作支持性分析",
+   "rule_rationale": "当探索性终点不开展或仅支持性时，必须显式声明其不构成确证性结论，避免被后续合同误用。",
+   "trigger_analysis": [
+    {
+     "fact_path": "exploratory.endpoint_disposition",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "exploratory.endpoint_disposition value_type=json；语义为『处置∈{不开展, 仅支持性}』——提议 members=('disposition',) 两条谓词 mode=any（expected 各取一枚举），schema 待 owner 声明。",
+    "predicates": [
+     {
+      "fact_path": "exploratory.endpoint_disposition",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "exploratory_non_confirmatory",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "src[339] 探索性表述；不开展/仅支持性时必须显式声明不构成确证性结论"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "picos.exploratory_endpoints / exploratory_endpoint_disposition claim 无条件",
+      "forbidden: confirmatory_relabeling（11_4_6 同族）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "处置枚举值集合未声明（not_conducted/supportive_only/…）——谓词落码前需 owner 声明"
+   ]
+  },
+  {
+   "row_index": 23,
+   "node_id": "v2_n_4_1",
+   "node_title": "总体设计",
+   "rule_id": "applicability:v2_n_4_1:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_1.json",
+   "contract_sha256": "7429510f97163c8131921d97e64d97f0fbec1a8800ae5afd2e58b2b92d88c6ab",
+   "condition": "所有设计特征均以实际项目适用性为条件；模板不提供默认分配比或分层方案。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "framing.structured_design",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "framing.structured_design 为必填结构化载体（恒存在）——以其为触发等于恒真，规则空洞。src[351]-[353]『如果有中期分析计划，需注明』等逐特征条件 → 提议逐特征显式 boolean（如 features.interim_analysis_applicable）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "design_description",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": "claim 已无条件 required，规则激活不新增"
+      },
+      {
+       "fact_path": "design_feature_applicability",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional",
+       "note": "逐特征适用性声明已是源义务（src[345] 设计类型清单+src[351]-[353] 条件项）"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "structured_design 全载体事实无条件",
+      "forbidden: framing.structured_design.template_example_values"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "design_description",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "逐特征 boolean schema 未声明；建议规则要么删除、要么改为特征级谓词（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 24,
+   "node_id": "v2_n_4_2",
+   "node_title": "研究设计的依据",
+   "rule_id": "applicability:v2_n_4_2:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_2.json",
+   "contract_sha256": "7c8e9f11a78ea0e0e2358c62940c115ff5ca0abe2a7899b137f87174eddb6f80",
+   "condition": "确证性设计或特定对照选择适用时，补齐假设、界值/对照理由及证据要求。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "framing.structured_design",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "同 v2_n_4_1：载体触发恒真。src[355] 对照类型及选择理由为无条件义务；非劣效界值/安慰剂决策为条件项（F[optional] 已就位）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "design_rationale",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": ""
+      },
+      {
+       "fact_path": "control_choice_decision",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": ""
+      },
+      {
+       "fact_path": "noninferiority_margin_decision",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "仅非劣效设计适用"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "comparator_type/comparator_rationale/hypothesis/evidence_floor 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "design_rationale",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     },
+     {
+      "claim_type": "control_choice_decision",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "非劣效/安慰剂特征 boolean 未声明；规则空洞化处理同 v2_n_4_1"
+   ]
+  },
+  {
+   "row_index": 25,
+   "node_id": "v2_n_4_3",
+   "node_title": "剂量选择依据",
+   "rule_id": "applicability:v2_n_4_3:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_3.json",
+   "contract_sha256": "2d9942bbe9667dbc44f9c7b6fc1d268d480f03055efb7640fe0ccbdd6ae0c37d",
+   "condition": "当项目存在多剂量或剂量范围时，必须给出起始/最大剂量及安全性依据。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.intervention_dose_regimen",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "picos.intervention_dose_regimen 载体触发；条件『存在多剂量或剂量范围』→ 提议 members=('has_multiple_doses',) expected=true（schema 未声明）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "picos.intervention_dose_regimen.maximum_dose",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[357]『计划最大给药量和给药方案（包括起始剂量）的制定依据』——多剂量/范围时必须明确起始/最大+安全依据"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "dose_regimen_rationale",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "picos.intervention_dose_regimen.maximum_dose"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "起始剂量/途径/方案/人群链接无条件（src[357]）",
+      "forbidden: picos.intervention_dose_regimen.template_example_values"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "dose_regimen_rationale",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "src[357] 未用条件句——最大剂量义务是否应无条件存在存在张力（owner 源核实）"
+   ]
+  },
+  {
+   "row_index": 26,
+   "node_id": "v2_n_4_4",
+   "node_title": "研究结束的定义",
+   "rule_id": "applicability:v2_n_4_4:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_4.json",
+   "contract_sha256": "6246dd00e4fc977aaa41c0e8dd685e9a160ca98973008dd909ce6ce16097aec2",
+   "condition": "当研究设计包含治疗后评估或随访时，分别激活参与者完成与总体研究结束定义。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.study_epochs",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "picos.study_epochs 载体触发；条件『包含治疗后评估或随访』→ 提议特征 boolean（has_post_treatment_followup）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "study_follow_up_definition",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": ""
+      },
+      {
+       "fact_path": "overall_study_end_definition",
+       "encoding": "already_unconditional",
+       "origin": "overlap_note",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "src[359] 研究结束定义无条件；完成/随访窗口细节按设计（src[361]『完成研究的所有阶段，包括末次访视或SoA所列最后一个计划程序』）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "study_follow_up_definition",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     },
+     {
+      "claim_type": "overall_study_end_definition",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "规则空洞；完成/结束定义无条件与条件触发的张力需 owner 收口"
+   ]
+  },
+  {
+   "row_index": 27,
+   "node_id": "v2_n_4_5",
+   "node_title": "随机化和盲法",
+   "rule_id": "applicability:v2_n_4_5:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_4_5.json",
+   "contract_sha256": "7c3f25b174a2711bd7a13585ab6c8926fd1314a08a5d47dc1615ce420ccb23ea",
+   "condition": "随机化、盲法或开放标签偏倚控制适用时，激活对应的程序和记录义务。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "framing.structured_design",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "载体触发恒真。src[364]『本小节应对随机化和设盲程序进行描述（若研究设计适用）』——显式条件；开放标签项目不该被要求 masking_procedure。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "allocation_procedure",
+       "encoding": "already_unconditional",
+       "origin": "inherited_overrequirement",
+       "note": "非随机化设计不应要求——建议条件化（randomized 特征 boolean）"
+      },
+      {
+       "fact_path": "masking_procedure",
+       "encoding": "already_unconditional",
+       "origin": "inherited_overrequirement",
+       "note": "开放标签设计不应要求——建议条件化（masking 特征 boolean）"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "盲法不适用时须解释（src[369]『若盲法被认为可取但不可行，则应讨论其原因和含义』→ 处置式义务）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "（适用性声明）",
+       "note": "src[369] 支持显式『不设盲/不可行』讨论作为 false 分支内容"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "allocation_procedure",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "claim_type": "masking_procedure",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "randomization/masking 特征 boolean 未声明；unblinding 族事实随 masking 特征联动（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 28,
+   "node_id": "v2_n_5_1",
+   "node_title": "入选标准",
+   "rule_id": "applicability:v2_n_5_1:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_1.json",
+   "contract_sha256": "f62cedd1d2e7a32098389a14846d087b1957979510d2845e82b4e812befcb1f8",
+   "condition": "all-applicable-criteria predicate 生效时，必须完整输出适用标准及其结构化参数。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.inclusion_modules",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "picos.inclusion_modules 载体触发恒真；『all-applicable-criteria』即 src[381]/[384]『必须满足所有入选标准』——模块 logic 结构值，非适用性开关。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "inclusion_predicate",
+       "encoding": "already_unconditional",
+       "origin": "remove_from_conditional_keep_unconditional",
+       "note": "claim 已无条件 required——规则冗余"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "criteria/parameters/windows/exceptions/registry_identity 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "inclusion_predicate",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "规则当前空洞：建议删除或改为模块 logic 字段一致性核对（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 29,
+   "node_id": "v2_n_5_2",
+   "node_title": "排除标准",
+   "rule_id": "applicability:v2_n_5_2:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_2.json",
+   "contract_sha256": "4b79c2060f0c74c008e9f6dc0435acfa554cfbc9e459e2e1aff3eadced59fd69",
+   "condition": "any-applicable-criterion predicate 生效时，必须逐项给出适用排除条件及理由。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.exclusion_modules",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "picos.exclusion_modules 载体触发恒真；『any-applicable-criterion』即 src[399]『符合以下任一标准…均将排除』——logic 结构值。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "exclusion_predicate",
+       "encoding": "already_unconditional",
+       "origin": "remove_from_conditional_keep_unconditional",
+       "note": "claim 已无条件 required——规则冗余"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "criteria/parameters/windows/exceptions/registry_identity 无条件",
+      "src[395] 特殊人群排除须给理由（无条件义务）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "exclusion_predicate",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "同 v2_n_5_1：建议删除或改为 logic 一致性核对"
+   ]
+  },
+  {
+   "row_index": 30,
+   "node_id": "v2_n_5_2",
+   "node_title": "排除标准",
+   "rule_id": "applicability:n-5-2:contraception-exclusion-reference",
+   "rule_locator": "#/conditional_applicability_rules/1",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_2.json",
+   "contract_sha256": "4b79c2060f0c74c008e9f6dc0435acfa554cfbc9e459e2e1aff3eadced59fd69",
+   "condition": "项目确认妊娠/避孕风险适用",
+   "rule_rationale": "避孕资格义务按 reconciliation 文档扩展至纳入与排除两个载体；排除标准引用纳入载体事实，不复制逆命题，不设通用期限（fresh复核D2修复）。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.risk.pregnancy_contraception",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "picos.risk.pregnancy_contraception value_type=json；提议显式 boolean/members（('applicable',)）。",
+    "predicates": [
+     {
+      "fact_path": "picos.risk.pregnancy_contraception",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "population.exclusion.contraception_criterion_ref",
+       "encoding": "required_when_active",
+       "origin": "proposed_new_defect",
+       "note": "缺陷：该事实未在 v2_n_5_2 fact_requirements 声明（fact_bindings 仅指向规则自身）——true 时无处承载；须在合同声明（json 引用纳入载体标准身份，不复制逆命题、不设通用期限）"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "population.exclusion.contraception_criterion_ref"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "exclusion_modules logic/criteria 无条件（不含避孕项即自然 omission）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "缺陷 D2：声明缺口须 owner 修复（合同增列该事实）后规则才可执行"
+   ]
+  },
+  {
+   "row_index": 31,
+   "node_id": "v2_n_5_3",
+   "node_title": "生活方式注意事项",
+   "rule_id": "applicability:v2_n_5_3:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_3.json",
+   "contract_sha256": "b0b0f739d0ab9e2de47a2fba76d87843660b58a4640c5c61a02a27708aa33409",
+   "condition": "当确认存在妊娠风险或其他生活方式限制时，激活对应的时点、范围和理由字段。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.risk.pregnancy_contraception",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "picos.risk.pregnancy_contraception json；同上提议。",
+    "predicates": [
+     {
+      "fact_path": "picos.risk.pregnancy_contraception",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "lifestyle_restriction",
+       "encoding": "already_unconditional",
+       "origin": "remove_from_conditional_keep_unconditional",
+       "note": "claim 已无条件 required（生活方式限制本身无条件：src[409]）"
+      },
+      {
+       "fact_path": "contraception_handling",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "妊娠/避孕风险适用时才要求避孕处置"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "population.lifestyle.contraception_duration"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "population.lifestyle.constraints/scope/timing/exceptions 无条件（src[409]）",
+      "forbidden: population.lifestyle.template_example_values"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "lifestyle_restriction",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "population.lifestyle.contraception_duration 当前无条件 required——src[391]/[392]『对于有生育能力的女性/男性…』为条件措辞，建议 promote_to_conditional（未列入14项事实交集，但属同类过要求，owner 决定）"
+   ]
+  },
+  {
+   "row_index": 32,
+   "node_id": "v2_n_5_4",
+   "node_title": "筛选失败",
+   "rule_id": "applicability:v2_n_5_4:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_4.json",
+   "contract_sha256": "86386beab4e715ac1ce0a102616576c45e1aa01168dcb29c6477bfbceb5098f2",
+   "condition": "当项目允许重新筛选时，激活其资格条件、原因、时间窗口和记录要求。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "population.screen_failure.definition",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "population.screen_failure.definition 载体触发；条件『允许重新筛选时』→ 提议 members=('rescreening_allowed',)（schema 未声明）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "screen_failure_record",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional_as_negative_disposition_record",
+       "note": "src[411]『指明如何处理筛选失败，包括…复筛后是可接受的，何时可接受』——即使不允许复筛也要显式说明（处置式取值）"
+      },
+      {
+       "fact_path": "rescreening_eligibility",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional_as_negative_disposition_record",
+       "note": "同上；『不允许复筛』为合法显式负值，不属虚构"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "population.rescreening.* 无条件但取值可为显式否定（确实不适用≠材料缺失）",
+      "forbidden: population.screen_failure.template_example_values"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "screen_failure_record",
+      "proposed_action": "keep_unconditional_as_negative_disposition_record"
+     },
+     {
+      "claim_type": "rescreening_eligibility",
+      "proposed_action": "keep_unconditional_as_negative_disposition_record"
+     }
+    ]
+   },
+   "unresolved": [
+    "规则空洞（载体恒真）+ 取值语义依赖处置式负值编码——owner 需确认事实 schema 允许显式负值"
+   ]
+  },
+  {
+   "row_index": 33,
+   "node_id": "v2_n_5_5",
+   "node_title": "试验参与者招募与保留",
+   "rule_id": "applicability:v2_n_5_5:active",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_5_5.json",
+   "contract_sha256": "9bd2420deace09faf8610735437c7ba40b72768fb2c10ddb1066cdcaf24630a8",
+   "condition": "当补偿或伦理审查适用时，激活对应范围、计划和记录义务；不得生成完成审批收据。",
+   "rule_rationale": "条件激活后必须补齐项目实例义务，不得把模板示例当作默认值。",
+   "trigger_analysis": [
+    {
+     "fact_path": "picos.population_summary",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_non_scalar_condition",
+    "note": "条件『当补偿或伦理审查适用时』与触发事实 picos.population_summary（载体）不符；真实开关 population.recruitment.compensation_applicable 已存在（F[optional]）→ 提议加入 triggering_fact_paths 并以 typed boolean 作谓词。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [],
+     "claims": [
+      {
+       "fact_path": "recruitment_plan",
+       "encoding": "already_unconditional",
+       "origin": "remove_from_conditional_keep_unconditional",
+       "note": "src[416] 招募方式+材料EC批准为无条件义务"
+      },
+      {
+       "fact_path": "retention_plan",
+       "encoding": "already_unconditional",
+       "origin": "remove_from_conditional_keep_unconditional",
+       "note": "src[418] 保留措施/补偿记录为无条件义务"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "population.recruitment.ethics_review_plan 无条件（src[416]/[418]）",
+      "forbidden: completed_approval_receipt / fabricated_approval（条件文本『不得生成完成审批收据』）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": [
+     {
+      "claim_type": "recruitment_plan",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     },
+     {
+      "claim_type": "retention_plan",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ]
+   },
+   "unresolved": [
+    "compensation_applicable 编码未声明（json）；触发路径增量需合同修订"
+   ]
+  },
+  {
+   "row_index": 34,
+   "node_id": "v2_n_6_1_2",
+   "node_title": "研究药物给药方案",
+   "rule_id": "applicability:n-6-1-2:dose-modification",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_6_1_2.json",
+   "contract_sha256": "ec65dfac56809b7f238deaa190bab6a6a021db91b1095d80e34771e944d009cc",
+   "condition": "确认设计包含剂量调整/暂停/恢复路径",
+   "rule_rationale": "设计包含剂量调整时，暂停/降低/恢复/永久停药条件必须完整给出。",
+   "trigger_analysis": [
+    {
+     "fact_path": "intervention.dose_modification_required",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "intervention.dose_modification_required value_type=json；提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "intervention.dose_modification_required",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "intervention.dose_hold_criteria",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[430]『如果适用，方案中应规定在何种情况下需要做出剂量调整』——设计含调整路径时才成为义务"
+      },
+      {
+       "fact_path": "intervention.dose_reduction_rules",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[430]『如果适用，方案中应规定在何种情况下需要做出剂量调整』——设计含调整路径时才成为义务"
+      },
+      {
+       "fact_path": "intervention.restart_criteria",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[430]『如果适用，方案中应规定在何种情况下需要做出剂量调整』——设计含调整路径时才成为义务"
+      },
+      {
+       "fact_path": "intervention.permanent_discontinuation_criteria",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[430]『如果适用，方案中应规定在何种情况下需要做出剂量调整』——设计含调整路径时才成为义务"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "intervention.dose_hold_criteria",
+      "intervention.dose_reduction_rules",
+      "intervention.restart_criteria",
+      "intervention.permanent_discontinuation_criteria"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "intervention.dose_regimen / administration_instructions / missed_dose_instructions 无条件",
+      "forbidden: intervention.template_example_hold_threshold"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "intervention.dose_modification_disposition",
+       "note": "提议：false 时显式『固定剂量、无调整路径』处置（确实不适用≠材料缺失）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "intervention.dose_hold_criteria",
+     "intervention.dose_reduction_rules",
+     "intervention.permanent_discontinuation_criteria",
+     "intervention.restart_criteria"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "intervention.dose_hold_criteria",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "intervention.dose_reduction_rules",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "intervention.restart_criteria",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "intervention.permanent_discontinuation_criteria",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "四个事实当前无条件 required——对无调整路径设计属过要求；owner 需在『promote 条件化』与『处置式负值』间选择（本提案推荐前者+处置事实）"
+   ]
+  },
+  {
+   "row_index": 35,
+   "node_id": "v2_n_6_1_2",
+   "node_title": "研究药物给药方案",
+   "rule_id": "applicability:n-6-1-2:escalation",
+   "rule_locator": "#/conditional_applicability_rules/1",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_6_1_2.json",
+   "contract_sha256": "ec65dfac56809b7f238deaa190bab6a6a021db91b1095d80e34771e944d009cc",
+   "condition": "确认设计包含剂量递增或 DLT 定义",
+   "rule_rationale": "设计包含递增/DLT 时，递增与 DLT 定义逻辑必须作为项目事实给出。",
+   "trigger_analysis": [
+    {
+     "fact_path": "intervention.dose_escalation_or_dlt_logic",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "自触发规则：触发事实=intervention.dose_escalation_or_dlt_logic（study facts 适用性声明）与 required 事实（content facts 逻辑本体）同名异层。json 编码未声明。",
+    "predicates": [
+     {
+      "fact_path": "intervention.dose_escalation_or_dlt_logic",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "intervention.dose_escalation_or_dlt_logic",
+       "encoding": "already_unconditional",
+       "origin": "inherited_overrequirement",
+       "note": "src[430]『如果适用，需描述剂量递增方案…方案必须明确规定预期的剂量限制性毒性』——条件语境；无递增/DLT 设计不应要求"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "intervention.dose_escalation_or_dlt_logic"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "dose_consistency_with_design 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "intervention.dose_escalation_or_dlt_logic"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "intervention.dose_escalation_or_dlt_logic",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "自触发双层语义（声明 vs 内容）需 owner 在事实命名上区分（如 *_applicable 声明 + 逻辑本体事实）"
+   ]
+  },
+  {
+   "row_index": 36,
+   "node_id": "v2_n_6_2_2",
+   "node_title": "剂型、外观、包装和标签",
+   "rule_id": "applicability:n-6-2-2:label-text",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_6_2_2.json",
+   "contract_sha256": "59e544ff53ba52e4f53aa249836cea67b0587fc39fbf904e87f48f1966ca79ca",
+   "condition": "确认需要对标签文本做监管/操作核查",
+   "rule_rationale": "标签文本存在时，核查状态必须作为项目事实登记，不得断言普遍合规。",
+   "trigger_analysis": [
+    {
+     "fact_path": "intervention.regulatory_labeling_check",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "intervention.regulatory_labeling_check value_type=json；rationale『为真时触发』暗示布尔意图（fresh-D3 已修复引用漂移）→ 提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "intervention.regulatory_labeling_check",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "intervention.label_text",
+       "encoding": "promote_from_optional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[441]-[461] 标签必须包含内容清单——需核查时须登记实际标签文本"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "intervention.label_text"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "intervention.packaging_and_labeling 无条件",
+      "claim packaging_labeling_description / regulatory_labeling_review 无条件",
+      "forbidden: intervention.template_example_label_text"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 37,
+   "node_id": "v2_n_6_4_2",
+   "node_title": "允许使用的药物和治疗",
+   "rule_id": "applicability:n-6-4-2:background",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_6_4_2.json",
+   "contract_sha256": "51585af888f5ab6e3d05466187f90eb604943f8dce440450193a8e621ff3237d",
+   "condition": "确认存在必须使用的背景治疗",
+   "rule_rationale": "存在背景治疗时，其规则必须作为项目事实给出。",
+   "trigger_analysis": [
+    {
+     "fact_path": "intervention.background_therapy_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "intervention.background_therapy_applicable value_type=json；提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "intervention.background_therapy_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "intervention.background_therapy_rules",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[479]『如适用，请在本节说明相关内容，否则注明不适用』"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "intervention.allowed_treatments / allowed_timing 无条件",
+      "forbidden: intervention.template_example_concomitant_drug"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "intervention.background_therapy_disposition",
+       "note": "提议：false 时显式『无必须背景治疗』处置（src[479]『否则注明不适用』）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "intervention.background_therapy_rules"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "intervention.background_therapy_rules",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "两种可行处置：promote 条件化（推荐）或保留无条件处置式负值——owner 决定"
+   ]
+  },
+  {
+   "row_index": 38,
+   "node_id": "v2_n_7_2",
+   "node_title": "治疗期",
+   "rule_id": "applicability:n-7-2:randomization",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_7_2.json",
+   "contract_sha256": "be9f49e43c6c5bc1ca1a7370e809a0af3f59e032bf3f26f2b1405bcf9b337cfe",
+   "condition": "确认设计在实际给药/随机化日（如 D1）随机化",
+   "rule_rationale": "设计在 D1 随机化时，随机化日规则必须作为项目事实给出；非随机化设计不得虚构。",
+   "trigger_analysis": [
+    {
+     "fact_path": "procedure.randomized_on_day1",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "procedure.randomized_on_day1 value_type=json；提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "procedure.randomized_on_day1",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "procedure.randomization_day_rules",
+       "encoding": "already_unconditional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[489] 示例『合格试验参与者于D1随机并接受首次给药』——随机化日规则仅随机化设计适用"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "procedure.randomization_day_rules"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "procedure.treatment_period_definition / dosing_start_rules / blinded_treatment_handling 无条件",
+      "forbidden: procedure.template_example_visit_schedule"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "procedure.randomization_day_rules"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "procedure.randomization_day_rules",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "非随机化设计不得虚构随机化日规则（rationale）——条件化后由 applicability 事实承载否定"
+   ]
+  },
+  {
+   "row_index": 39,
+   "node_id": "v2_n_7_3",
+   "node_title": "随访期",
+   "rule_id": "applicability:n-7-3:unscheduled-contact",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_7_3.json",
+   "contract_sha256": "5ea7b637a3371e1a82f3c9d76575fb1fb96dcc81758106422a305909c027c3e0",
+   "condition": "确认存在计划外访视或电话联系访视",
+   "rule_rationale": "存在计划外/电话访视时，日期、方式、原因与适用评估必须作为项目事实登记。",
+   "trigger_analysis": [
+    {
+     "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "procedure.followup_unscheduled_and_phone_visits value_type=json；提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "procedure.followup_unscheduled_and_phone_visits",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "procedure.contact_visit_date",
+       "encoding": "promote_from_absent",
+       "origin": "source_required",
+       "note": "src[492]『应记录访视日期、方式、内容及原因』"
+      },
+      {
+       "fact_path": "procedure.contact_visit_modality",
+       "encoding": "promote_from_absent",
+       "origin": "source_required",
+       "note": "src[492] 方式"
+      },
+      {
+       "fact_path": "procedure.contact_visit_reason",
+       "encoding": "promote_from_absent",
+       "origin": "source_required",
+       "note": "src[492] 原因"
+      },
+      {
+       "fact_path": "procedure.contact_visit_assessments",
+       "encoding": "promote_from_absent",
+       "origin": "source_required",
+       "note": "src[492] 内容（含安全性信息按第10章记录）"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "procedure.contact_visit_date",
+      "procedure.contact_visit_modality",
+      "procedure.contact_visit_reason",
+      "procedure.contact_visit_assessments"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "procedure.followup_period_definition / followup_visit_windows 无条件"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "procedure.phone_visit_linkage 无条件 required——无电话访视设计属潜在过要求（src[492] 条件句『如发生计划外访视（含电话随访）』；owner 决定）"
+   ]
+  },
+  {
+   "row_index": 40,
+   "node_id": "v2_n_8_1",
+   "node_title": "研究干预中止/终止",
+   "rule_id": "applicability:n-8-1:individual-hold",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_8_1.json",
+   "contract_sha256": "c1359e2df336d0c5debc9f2fd9c10535a1ac2aff244de57eac2132790749773d",
+   "condition": "确认设计包含个体暂时暂停路径",
+   "rule_rationale": "存在个体暂停路径时，暂停触发条件与执行记录要求必须完整给出。",
+   "trigger_analysis": [
+    {
+     "fact_path": "discontinuation.individual_hold_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "discontinuation.individual_hold_applicable value_type=json；提议显式 boolean 并升为 required（设计必须记录是否存在个体暂停路径）。",
+    "predicates": [
+     {
+      "fact_path": "discontinuation.individual_hold_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "discontinuation.individual_hold_criteria",
+       "encoding": "already_unconditional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "src[500]-[511] 个体『中止』概念存在（[511] 研究干预中止不意味着研究中止），但『暂时暂停路径』细则为合同派生；适用时必须完整"
+      },
+      {
+       "fact_path": "discontinuation.personal_hold",
+       "encoding": "already_unconditional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "同上"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "individual_cessation_rules",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "discontinuation.individual_hold_criteria",
+      "discontinuation.personal_hold"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "discontinuation.permanent_stop_criteria.participant / permanent_stop_recording 无条件（任何试验都可能有参试者永久停药）",
+      "trial_suspension/termination 族无条件",
+      "forbidden: discontinuation.template_example_stop_rule",
+      "claim individual_cessation_rules / trial_level_stop_criteria；forbidden individual_equals_trial_stop"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "（applicability 事实）",
+       "note": "individual_hold_applicable 升为 required 并记录 false——『确实无暂停路径』显式化，与『适用但材料缺失』分开"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "discontinuation.individual_hold_criteria",
+     "discontinuation.personal_hold"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "discontinuation.individual_hold_criteria",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     },
+     {
+      "fact_path": "discontinuation.personal_hold",
+      "proposed_action": "promote_to_conditional_drop_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "暂停 vs 永久停药语义边界：src[500] 停药原因是研究级列举；个体级暂停细则源支持薄弱（source_thin 标记，owner 源核实）"
+   ]
+  },
+  {
+   "row_index": 41,
+   "node_id": "v2_n_8_1",
+   "node_title": "研究干预中止/终止",
+   "rule_id": "applicability:n-8-1:hold-to-stop",
+   "rule_locator": "#/conditional_applicability_rules/1",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_8_1.json",
+   "contract_sha256": "c1359e2df336d0c5debc9f2fd9c10535a1ac2aff244de57eac2132790749773d",
+   "condition": "确认个体暂停可能转为永久停药",
+   "rule_rationale": "存在暂停转永久停药路径时，永久停药标准与记录必须完整给出。",
+   "trigger_analysis": [
+    {
+     "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "discontinuation.individual_hold_requires_permanent_stop value_type=json；提议显式 boolean。",
+    "predicates": [
+     {
+      "fact_path": "discontinuation.individual_hold_requires_permanent_stop",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "discontinuation.permanent_stop_criteria.participant",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[500]/[511]——永久停药标准对任何试验均适用，规则内要求属重复"
+      },
+      {
+       "fact_path": "discontinuation.permanent_stop_recording",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "同上"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "permanent_stop 两事实保持无条件（不受本规则 false 影响）"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "discontinuation.permanent_stop_criteria.participant",
+     "discontinuation.permanent_stop_recording"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "discontinuation.permanent_stop_criteria.participant",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     },
+     {
+      "fact_path": "discontinuation.permanent_stop_recording",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "规则在移除重复后剩余值为『暂停→永久停药转换链』——若需保留建议专用事实 discontinuation.hold_to_stop_conversion（owner 决定是否新增）"
+   ]
+  },
+  {
+   "row_index": 42,
+   "node_id": "v2_n_9_2",
+   "node_title": "安全性和其他评估",
+   "rule_id": "applicability:n-9-2:central-lab",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_9_2.json",
+   "contract_sha256": "1aa6ea2ee8194a3b2cd7a89ba70f9219ceda2ccb1b135296c731de3f3761feb0",
+   "condition": "项目使用中央实验室且已确认适用",
+   "rule_rationale": "中央实验室适用时才升级为必需义务。",
+   "trigger_analysis": [
+    {
+     "fact_path": "safety.central_lab_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_json_encoding_proposed_member",
+    "note": "safety.central_lab_applicable value_type=json；提议显式 boolean。缺陷：该触发事实未在 v2_n_9_2 fact_requirements 声明——无人有义务记录中央实验室适用性判定（fact_bindings 仅指向规则）。",
+    "predicates": [
+     {
+      "fact_path": "safety.central_lab_applicable",
+      "members": [
+       "applicable"
+      ],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "safety.lab_units_and_reference_ranges",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[574] 单位/参考范围对本地与中央实验室同样必需——规则内要求属重复，应保留无条件"
+      },
+      {
+       "fact_path": "safety.special_assay_purposes",
+       "encoding": "already_unconditional",
+       "origin": "source_required",
+       "note": "src[575] 特殊化验目的无条件；规则内要求属重复"
+      },
+      {
+       "fact_path": "（新增）safety.central_lab_qualification",
+       "encoding": "proposed_new",
+       "origin": "source_required",
+       "note": "src[574]『如采用中心实验室，应说明其资质与承担的检测项目』"
+      },
+      {
+       "fact_path": "（新增）safety.assay_site_assignment",
+       "encoding": "proposed_new",
+       "origin": "source_required",
+       "note": "src[574]『如果使用多个实验室，请指定每个实验室评估的项目』——中央/本地检测项目分配"
+      },
+      {
+       "fact_path": "（新增）safety.ecg_reading_location",
+       "encoding": "proposed_new",
+       "origin": "source_required",
+       "note": "src[572] ECG 中心分析→收集/传输/归档；本地阅读→处理方法与格式——中央 vs 本地须显式二选一记录"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "safety_assessment_plan",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "lab_units_and_reference_ranges / special_assay_purposes / specimen_types_and_handling 无条件——『无中央实验室』不释放本地实验室义务（src[574] 实验室资质+室间质评）"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "safety.lab_strategy",
+       "note": "提议：中央 vs 本地是必须显式记录的实验室策略（central|local|mixed）；false 时记录本地/混合策略及本地 ECG 阅读方法（src[572]）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": true,
+    "reported_fact_overlap": [
+     "safety.lab_units_and_reference_ranges",
+     "safety.special_assay_purposes"
+    ],
+    "fact_items": [
+     {
+      "fact_path": "safety.lab_units_and_reference_ranges",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     },
+     {
+      "fact_path": "safety.special_assay_purposes",
+      "proposed_action": "remove_from_conditional_keep_unconditional"
+     }
+    ],
+    "claim_items": []
+   },
+   "unresolved": [
+    "缺陷 D1：触发事实声明缺口须 owner 修复（合同增列 safety.central_lab_applicable 为 required 适用性判定）",
+    "中央实验室专属义务目前缺位——规则现在的 required 列表是错配（通用事实），应替换为上述新增事实"
+   ]
+  },
+  {
+   "row_index": 43,
+   "node_id": "v2_n_9_3",
+   "node_title": "群体药动学药效学评估",
+   "rule_id": "applicability:n-9-3:immunogenicity",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_9_3.json",
+   "contract_sha256": "e5e2c13dc39f20bb0ed237140643580b199605d77825b223d4bdd8b9477325f8",
+   "condition": "产品免疫原性风险成立且项目已确认检测策略",
+   "rule_rationale": "免疫原性义务仅在适用性成立时生效。",
+   "trigger_analysis": [
+    {
+     "fact_path": "exploratory.immunogenicity_applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『裸 true/false』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "exploratory.immunogenicity_applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "exploratory.immunogenicity",
+       "encoding": "promote_from_optional",
+       "origin": "source_required_conditional_scope",
+       "note": "src[584]『如果适用，请将该内容写在本节』+ src[339] 免疫原性（如适用）"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "immunogenicity_strategy",
+       "encoding": "promote_from_qualified",
+       "origin": "source_required_conditional_scope",
+       "note": "检测策略适用时 required"
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "exploratory.immunogenicity"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "exploratory.population_pk / exposure_response / pk.* 无条件（见相邻发现）",
+      "forbidden: pk.template_example_sampling"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "（适用性事实本身）",
+       "note": "false 时按 src[584]『否则注明不适用』显式记录"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": [
+    "相邻（不在49条内）：v2_n_9_3 无条件 required exploratory.population_pk/exposure_response vs src[584]『如果适用…否则注明不适用』——疑 inherited overrequirement（owner 决定）"
+   ]
+  },
+  {
+   "row_index": 44,
+   "node_id": "v2_n_9_4",
+   "node_title": "独立评审委员会",
+   "rule_id": "applicability:n-9-4:irc",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_9_4.json",
+   "contract_sha256": "b0474b670eb63b8bb0c8c7e7ec341dd4c7c44c96829364e9c6f1668720e2d8c4",
+   "condition": "已确认本项目设立 IRC",
+   "rule_rationale": "IRC 义务仅在适用性成立时生效。",
+   "trigger_analysis": [
+    {
+     "fact_path": "irc.applicable",
+     "fact_bindings_value_type": "boolean",
+     "declared_bare_boolean": true
+    }
+   ],
+   "predicate_proposal": {
+    "status": "executable_boolean_declared",
+    "note": "rationale『IRC 是否设立必须由项目事实条件判定（裸 true/false）』+ value_type=boolean。",
+    "predicates": [
+     {
+      "fact_path": "irc.applicable",
+      "members": [],
+      "expected": true,
+      "mode": "all"
+     }
+    ],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "irc.review_scope_endpoints",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[588]/[589] IRC 对主要疗效终点独立评估、RECIST1.1 评估流程"
+      },
+      {
+       "fact_path": "irc.adjudication_method_and_instrument",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[589] 评估标准与数据流转（光盘存档/发送独立评估）"
+      },
+      {
+       "fact_path": "irc.charter_and_independence",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "章程与独立性为合同派生良好实践（src[588]『独立评审委员会』）"
+      },
+      {
+       "fact_path": "irc.roles_and_conflict_management",
+       "encoding": "promote_from_optional",
+       "origin": "contract_derived_pending_owner_source_review",
+       "note": "同上"
+      }
+     ],
+     "claims": [
+      {
+       "fact_path": "irc_applicability_decision",
+       "encoding": "already_unconditional",
+       "origin": "keep_unconditional",
+       "note": ""
+      }
+     ],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "irc.charter_and_independence",
+      "irc.review_scope_endpoints",
+      "irc.adjudication_method_and_instrument",
+      "irc.roles_and_conflict_management"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "irc.applicable（记录 false）+ claim irc_applicability_decision",
+      "forbidden: irc.template_example_adjudication / irc_equals_safety_committee / recist_universal_method"
+     ],
+     "require_negative_disposition": [
+      {
+       "proposed": "（处置声明）",
+       "note": "src[587]『如不适用，删除本节，或对其他第三方独立评估进行描述』——保留本节时须描述替代性第三方独立评估（提议 conditional claim alternative_independent_assessment）"
+      }
+     ]
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 45,
+   "node_id": "v2_n_front_1",
+   "node_title": "方案修订历史记录",
+   "rule_id": "applicability:front-1:amendment",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_1.json",
+   "contract_sha256": "1cd6fa417aa1b02951f2063c0aa10a9c7ab6be8798311fcd04c093b7fc112ea6",
+   "condition": "存在已确认修订历史",
+   "rule_rationale": "存在修订时变更依据必须逐行给出，初始版本才可省略。",
+   "trigger_analysis": [
+    {
+     "fact_path": "document_control.amendment_exists",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "document_control.amendment_exists value_type=json；提议显式 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "document_control.change_rationale",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[45]『包括修订内容描述及依据』——存在修订时依据逐行给出"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "document_control.change_rationale"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "document_control.version_history / version_date / initial_version_treatment 无条件（初版本处置已覆盖）",
+      "O[table] 保留（初版本行）",
+      "forbidden: fabricated_approval"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 46,
+   "node_id": "v2_n_front_3",
+   "node_title": "申办者签字页",
+   "rule_id": "applicability:front-3:additional-signatory",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_3.json",
+   "contract_sha256": "daddc1cbeffee656d3aa137b0c16b5e541a96e294372ced36c6823341054899e",
+   "condition": "存在申办方代表以外的适用签署方",
+   "rule_rationale": "仅在实际适用时提供附加签署页并给出其身份。",
+   "trigger_analysis": [
+    {
+     "fact_path": "signature.additional_signatory_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "signature.additional_signatory_applicable value_type=json；提议显式 boolean。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "signature.additional_signatory_identity",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[77]『以下签字页如有需要可进行添加』——附加签署方身份"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "signature.additional_signatory_identity"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "signature.sponsor.protocol_identity / representative 无条件",
+      "forbidden: signature.completed_receipt；claim 级 forbidden synthetic_signature"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 47,
+   "node_id": "v2_n_front_4",
+   "node_title": "临床试验相关单位联系方式",
+   "rule_id": "applicability:front-4:service-parties",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_4.json",
+   "contract_sha256": "c0648f5efa75655c2570ee92bf66ee34146b08b39a05eb9f6ebd82d1702632fd",
+   "condition": "项目实际使用服务方（如中心实验室/交互式响应系统）",
+   "rule_rationale": "服务方联系表仅在实际适用时必需。",
+   "trigger_analysis": [
+    {
+     "fact_path": "contact.service_parties_applicable",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "contact.service_parties_applicable value_type=json；提议显式 boolean（含中央实验室/IWRS 等服务方判定）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "contact.service_parties",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "src[87]『如适用，示例#1』+ src[92] 参与临床试验单位及相关部门——实际使用服务方时列出联系方式"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "contact.service_parties"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "contact.sponsor_representative / principal_investigator 无条件（src[88]/[90]）",
+      "O[table] 保留（申办者/研究者行）",
+      "forbidden: contact.competitor_directory"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  },
+  {
+   "row_index": 48,
+   "node_id": "v2_n_front_8",
+   "node_title": "图目录",
+   "rule_id": "applicability:front-8:figures-present",
+   "rule_locator": "#/conditional_applicability_rules/0",
+   "contract_path": "config/medical_writing/protocol_v3/templates/tp_ma_07_v2/chapter_contracts/v2_n_front_8.json",
+   "contract_sha256": "961900787315f12255425b953b824535ca181c4fd9b653f0ffb2a31dc72437fe",
+   "condition": "正文实际包含图",
+   "rule_rationale": "存在图时必须给出实际图题注清单。",
+   "trigger_analysis": [
+    {
+     "fact_path": "figure_index.has_figures",
+     "fact_bindings_value_type": "json",
+     "declared_bare_boolean": false
+    }
+   ],
+   "predicate_proposal": {
+    "status": "unresolved_requires_owner_schema",
+    "note": "figure_index.has_figures value_type=json；rationale『由正文题注清单决定』→ 提议由题注清单派生的显式 boolean 或计数成员谓词（schema 未声明）。",
+    "predicates": [],
+    "trigger_path_delta": [],
+    "binding_requirement": "声明须以 RulePredicate.source_rule_sha256 == rule.material_sha256() 绑定现行规则（registries/applicability.py）；谓词 fact_path 必须⊆triggering_fact_paths，否则 conditional_predicate_trigger_mismatch"
+   },
+   "obligations": {
+    "true": {
+     "facts": [
+      {
+       "fact_path": "figure_index.caption_inventory",
+       "encoding": "promote_from_optional",
+       "origin": "source_required",
+       "note": "存在图时必须给出实际图题注清单"
+      }
+     ],
+     "claims": [],
+     "objects": [],
+     "evidence": []
+    },
+    "false": {
+     "release_facts": [
+      "figure_index.caption_inventory"
+     ],
+     "release_claims": [],
+     "release_objects": [],
+     "retain": [
+      "forbidden: figure_index.stale_figure_refs（无条件）",
+      "claim figure_index_record"
+     ],
+     "require_negative_disposition": []
+    },
+    "unknown": {
+     "behavior": "retain_dependency_do_not_treat_as_false_no_template_autofill",
+     "checker_semantics": "ApplicabilityStatus.CONDITIONAL → finding conditional_applicability_unresolved（现有 registries/applicability.py 行为，符合计划『unknown 等待事实』）"
+    }
+   },
+   "overlap_disposition": {
+    "in_14_fact_overlaps": false,
+    "reported_fact_overlap": [],
+    "fact_items": [],
+    "claim_items": []
+   },
+   "unresolved": []
+  }
+ ]
+}

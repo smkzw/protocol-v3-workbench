@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.506" timestamp="2026-09-05T17:37:51.381353+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.protocol_v3.test_protocol_v3_1r2_mount.TestDefaultOffMount" name="test_disabled_chain_ignores_unused_invalid_timeout" time="0.068"><failure message="ValueError: WORKBENCH_PROTOCOL_V3_WORKFLOW_BUSY_TIMEOUT_MS must be a positive integer (milliseconds), got 'not-a-number'">env = None
+
+    def protocol_workflow_config_from_env(
+        env: Optional[Mapping[str, str]] = None,
+    ) -&gt; ProtocolWorkflowMountConfig:
+        """Build the mount configuration from the environment — no side effects."""
+        source: Mapping[str, str] = os.environ if env is None else env
+        raw_flag = source.get(ENV_ENABLED, "")
+        enabled = str(raw_flag).strip().lower() in _TRUTHY
+        raw_db = source.get(ENV_DB_PATH, "")
+        db_path = (
+            Path(str(raw_db).strip()).expanduser()
+            if isinstance(raw_db, str) and str(raw_db).strip()
+            else None
+        )
+        raw_busy = source.get(ENV_BUSY_TIMEOUT_MS, "")
+        busy_timeout_ms = _DEFAULT_BUSY_TIMEOUT_MS
+        if isinstance(raw_busy, str) and raw_busy.strip():
+            try:
+&gt;               busy_timeout_ms = int(raw_busy.strip())
+                                  ^^^^^^^^^^^^^^^^^^^^^
+E               ValueError: invalid literal for int() with base 10: 'not-a-number'
+
+services/api/app/protocol_workflow/api/composition.py:121: ValueError
+
+The above exception was the direct cause of the following exception:
+
+self = &lt;test_protocol_v3_1r2_mount.TestDefaultOffMount object at 0x10a55cf50&gt;
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2799/test_disabled_chain_ignores_un0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x109fc3200&gt;
+
+    def test_disabled_chain_ignores_unused_invalid_timeout(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -&gt; None:
+        db_path = _set_env(monkeypatch, tmp_path, enabled="off")
+        monkeypatch.setenv(ENV_BUSY_MS, "not-a-number")
+        app = _app_with_legacy()
+&gt;       assert _mount(app) is False
+               ^^^^^^^^^^^
+
+tests/protocol_v3/test_protocol_v3_1r2_mount.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/protocol_v3/test_protocol_v3_1r2_mount.py:132: in _mount
+    return mount_protocol_workflow_router(app)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/protocol_workflow/api/composition.py:267: in mount_protocol_workflow_router
+    else protocol_workflow_config_from_env()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = None
+
+    def protocol_workflow_config_from_env(
+        env: Optional[Mapping[str, str]] = None,
+    ) -&gt; ProtocolWorkflowMountConfig:
+        """Build the mount configuration from the environment — no side effects."""
+        source: Mapping[str, str] = os.environ if env is None else env
+        raw_flag = source.get(ENV_ENABLED, "")
+        enabled = str(raw_flag).strip().lower() in _TRUTHY
+        raw_db = source.get(ENV_DB_PATH, "")
+        db_path = (
+            Path(str(raw_db).strip()).expanduser()
+            if isinstance(raw_db, str) and str(raw_db).strip()
+            else None
+        )
+        raw_busy = source.get(ENV_BUSY_TIMEOUT_MS, "")
+        busy_timeout_ms = _DEFAULT_BUSY_TIMEOUT_MS
+        if isinstance(raw_busy, str) and raw_busy.strip():
+            try:
+                busy_timeout_ms = int(raw_busy.strip())
+            except ValueError as exc:
+&gt;               raise ValueError(
+                    f"{ENV_BUSY_TIMEOUT_MS} must be a positive integer "
+                    f"(milliseconds), got {raw_busy!r}"
+                ) from exc
+E               ValueError: WORKBENCH_PROTOCOL_V3_WORKFLOW_BUSY_TIMEOUT_MS must be a positive integer (milliseconds), got 'not-a-number'
+
+services/api/app/protocol_workflow/api/composition.py:123: ValueError</failure></testcase></testsuite></testsuites>

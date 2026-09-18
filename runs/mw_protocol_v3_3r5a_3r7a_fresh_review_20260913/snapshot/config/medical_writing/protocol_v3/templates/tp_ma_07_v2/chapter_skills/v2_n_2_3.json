@@ -1,0 +1,29 @@
+{
+  "skill_id": "skill:chapter:n-2-3:risk-benefit",
+  "skill_version": "3.3.0",
+  "node_id": "v2_n_2_3",
+  "chapter_contract_id": "contract:v2-n-2-3:v2",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "input_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillInput",
+  "output_schema_ref": "app.protocol_workflow.registries.chapters:ChapterSkillOutput",
+  "prompt_contract": {
+    "prompt_version": "prompt:v3.3.0",
+    "instructions": "按风险/获益评估章节合同逐项给出已知风险、潜在风险、预期获益、不确定性、缓解措施与实际判断，并附风险/获益评估表；补偿不得计入获益，源 @306 的一刀切表述不得复述。",
+    "forbidden_behaviors": [
+      "把补偿/赔偿写成治疗获益",
+      "复述源 @306 的一刀切风险正当化表述",
+      "只罗列风险与获益而不给判断"
+    ]
+  },
+  "provenance_requirements": [
+    "输出必须记录模板身份、章节合同 material sha256 与风险/获益结论所依据的定位与上下文。",
+    "风险清单与获益声明必须可回溯到已采信证据。",
+    "监管解释属源文医学复核，不在本技能内做确定性判定。"
+  ],
+  "error_codes": [
+    "skill:v2-n-2-3:missing-obligation",
+    "skill:v2-n-2-3:unresolved-fact",
+    "skill:v2-n-2-3:unsupported-source-role"
+  ]
+}

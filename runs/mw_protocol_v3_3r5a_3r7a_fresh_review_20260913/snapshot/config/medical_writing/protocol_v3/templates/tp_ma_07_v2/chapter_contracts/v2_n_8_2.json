@@ -1,0 +1,262 @@
+{
+  "schema_version": "mw_protocol_v3_contract_v2",
+  "canonical_state": "frozen",
+  "chapter_contract_id": "contract:v2-n-8-2:v2",
+  "semantic_node_id": "v2_n_8_2",
+  "contract_version": "3.3.0",
+  "template_id": "tp_ma_07_v2",
+  "template_sha256": "018d28d37b3e58ee97f41414371b78fc9251cbe0942f0b8baa875948bb143756",
+  "chapter_skill_id": "skill:chapter:v2-n-8-2:withdrawal",
+  "chapter_skill_version": "3.3.0",
+  "substantive_content": {
+    "schema_version": "mw_protocol_v3_contract_v2",
+    "canonical_state": "frozen",
+    "substantive_content_contract_id": "content:v2-n-8-2:v2",
+    "chapter_contract_id": "contract:v2-n-8-2:v2",
+    "fact_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.continued_assessment_scope",
+        "obligation": "required",
+        "rationale": "停用研究干预后继续评估的范围必须场景化。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.continued_data_types",
+        "obligation": "required",
+        "rationale": "继续收集的数据类型必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.time_limits",
+        "obligation": "required",
+        "rationale": "继续评估的时间限制必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.existing_data_handling",
+        "obligation": "required",
+        "rationale": "已收集数据的处理必须明确，不得静默删除。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.basis_for_further_collection",
+        "obligation": "required",
+        "rationale": "继续收集的依据必须记录。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.withdrawal_reason_recording",
+        "obligation": "required",
+        "rationale": "退出原因可被请求记录，但不得设为强制条件。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.withdrawal_scenarios",
+        "obligation": "required",
+        "rationale": "妊娠、疾病进展、不依从等退出情景必须分别处理。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.followup_after_withdrawal",
+        "obligation": "required",
+        "rationale": "退出后的随访安排必须明确，不得在末次给药处静默终止。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.data_retention_after_withdrawal",
+        "obligation": "required",
+        "rationale": "退出后已收集数据的保留与使用必须明确。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.replacement_policy",
+        "obligation": "required",
+        "rationale": "参与者替换政策必须与样本量与分析合同一致。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.disposition_schedule_integration",
+        "obligation": "required",
+        "rationale": "退出与处置安排必须与 SoA/评估计划衔接。试验参与者安全与试验数据完整性必须保持可追溯。"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "fact_path": "discontinuation.template_example_replacement_rule",
+        "obligation": "forbidden",
+        "rationale": "模板示例替换规则不得作为所有随机化未治疗参与者的既定政策。"
+      }
+    ],
+    "claim_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "withdrawal_handling",
+        "obligation": "required",
+        "rationale": "退出处理必须区分治疗停止与同意撤回，说明继续评估、已收集数据保留、随访与替换政策。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "withdrawal_reason_compulsory",
+        "obligation": "forbidden",
+        "rationale": "不得把记录退出原因设为参与者退出的强制条件。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "followup_terminates_at_last_dose",
+        "obligation": "forbidden",
+        "rationale": "不得在末次给药处静默终止随访。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "silent_erase_prior_data",
+        "obligation": "forbidden",
+        "rationale": "不得静默删除已收集数据。",
+        "qualifying_conditions": []
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "claim_type": "treatment_stop_equals_consent_withdrawal",
+        "obligation": "forbidden",
+        "rationale": "不得把停用研究干预等同于撤回知情同意。",
+        "qualifying_conditions": []
+      }
+    ],
+    "evidence_source_requirements": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "source_roles": [
+          "project_primary"
+        ],
+        "admission_claim_types": [
+          "withdrawal_handling"
+        ],
+        "allowed_locator_kinds": [
+          "body",
+          "table"
+        ],
+        "require_context_window": true,
+        "minimum_quality_score": 0.9
+      }
+    ],
+    "structural_object_obligations": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "object_kind": "paragraph",
+        "minimum_occurrences": 2,
+        "project_specific_specification": "退出段必须承载继续评估范围/数据/时限、已收集数据处理、场景化退出处理、随访与替换政策。",
+        "required_object_cells": []
+      }
+    ],
+    "project_specific_elements": [
+      "退出处理/继续评估/数据保留/替换政策为项目事实集合。"
+    ],
+    "skeleton_risk_rules": [
+      "退出处理、继续评估或已收集数据处理缺失即失败；仅模板示例替换规则即失败。"
+    ]
+  },
+  "word_rules": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "word_formatting_rules_id": "word:rules:v2-n-8-2",
+    "required_styles": [
+      "3"
+    ],
+    "forbidden_styles": [
+      "Title",
+      "Subtitle"
+    ],
+    "required_bookmarks": [
+      "_Toc132623363"
+    ],
+    "required_cross_references": []
+  },
+  "positive_qc_rules": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-2:consent",
+      "rule": "停用研究干预不等于撤回知情同意，也不自动终止随访；不得静默终止随访（末次给药不是随访终点）。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-2:reason",
+      "rule": "退出原因可被请求记录，但不得设为强制条件；参与者不提供原因不得阻碍其退出。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-2:data",
+      "rule": "已收集数据不得删除、不得静默删除；继续收集范围、数据类型与时间限制必须场景化。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "positive_qc_rule_id": "qc:n-8-2:replacement",
+      "rule": "参与者替换政策必须与样本量及分析合同一致；模板示例替换规则仅为示例。"
+    }
+  ],
+  "conditional_applicability_rules": [],
+  "dependency_ids": [
+    "contract:v2-n-8-1:v2"
+  ],
+  "dependency_repair_policy": {
+    "schema_version": "mw_protocol_v3_contract_v1",
+    "dependency_repair_policy_id": "repair:batch4:v2_n_8_2:dependency",
+    "dependency_ids": [
+      "contract:v2-n-8-1:v2"
+    ],
+    "downstream_impact": "上游节点合同变更时本节义务需重新核对，避免跨节事实不一致。",
+    "repair_owner": "ai",
+    "max_repair_attempts": 3,
+    "repair_steps": [
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_2:detect",
+        "sequence": 1,
+        "action": "检测依赖合同哈希漂移并标记本节义务需复核。",
+        "owner": "system"
+      },
+      {
+        "schema_version": "mw_protocol_v3_contract_v1",
+        "repair_step_id": "repair:batch4:v2_n_8_2:realign",
+        "sequence": 2,
+        "action": "按更新后的上游合同重新对齐本节事实与声明，等待人工确认。",
+        "owner": "ai"
+      }
+    ]
+  },
+  "ctq_items": [
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-2:consent",
+      "question": "退出处理是否区分治疗停止与同意撤回，并保留随访与已收集数据？",
+      "linked_fact_paths": [
+        "discontinuation.withdrawal_reason_recording",
+        "discontinuation.followup_after_withdrawal"
+      ],
+      "linked_claim_types": [
+        "withdrawal_handling"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-2:consent"
+      ],
+      "risk_if_unmet": "混淆停用与撤回同意会同时违反参与者权益与数据完整性。"
+    },
+    {
+      "schema_version": "mw_protocol_v3_contract_v1",
+      "ctq_item_id": "ctq:n-8-2:replacement",
+      "question": "参与者替换政策是否与样本量及分析合同一致？",
+      "linked_fact_paths": [
+        "discontinuation.replacement_policy"
+      ],
+      "linked_claim_types": [
+        "withdrawal_handling"
+      ],
+      "positive_qc_rule_ids": [
+        "qc:n-8-2:replacement"
+      ],
+      "risk_if_unmet": "替换政策与样本量假设冲突会使分析计划不可执行。"
+    }
+  ],
+  "patient_participation_obligations": [],
+  "registry_consistency_obligations": []
+}

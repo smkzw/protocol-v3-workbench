@@ -1,0 +1,215 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+__ test_original_design_request_is_reused_with_no_blind_timeout_retry[False] ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-726/test_original_design_request_i0')
+timeout = False
+
+    @pytest.mark.parametrize("timeout", [False, True])
+    def test_original_design_request_is_reused_with_no_blind_timeout_retry(tmp_path, timeout):
+        from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+        role = next(r for r in load_role_registry(ROOT / "role_registry.json").roles if r.role_id == "product-llm")
+        skill = next(s for s in load_skill_registry(ROOT / "skill_registry.json").skill_definitions() if s.skill_definition_id == "skill.regimen-design-proposal")
+        reply = TimeoutError("synthetic uncertain outcome") if timeout else _FakeResponse(_completion_body(content=json.dumps({"coverage":[],"regimen":None,"questions":["请明确给药依据"]})))
+        opener = _FakeOpener([_FakeResponse(_completion_body(content="probe")), reply])
+        dispatcher = HarnessDispatcher()
+        config = {"backend":"sqlite", "path":str(tmp_path / "db.sqlite")}
+        def coordinator():
+            runtime = build_regimen_runtime(project_id="design-project", uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")), role_entry=role, skill=skill,
+                dispatcher=dispatcher, adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+            return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=runtime, artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")))
+        intake = prepare_seed_request("整理历史资料", ())
+        prepared = prepare_regimen_request(intake, read_seed_candidates(intake,{"fields":{}}))
+>       run_id = coordinator().start(prepared)
+                 ^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def coordinator():
+        runtime = build_regimen_runtime(project_id="design-project", uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),
+            artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")), role_entry=role, skill=skill,
+            dispatcher=dispatcher, adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+>       return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=runtime, artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: RegimenCoordinator.__init__() got an unexpected keyword argument 'artifact_store'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:32: TypeError
+___ test_original_design_request_is_reused_with_no_blind_timeout_retry[True] ___
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-726/test_original_design_request_i1')
+timeout = True
+
+    @pytest.mark.parametrize("timeout", [False, True])
+    def test_original_design_request_is_reused_with_no_blind_timeout_retry(tmp_path, timeout):
+        from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+        role = next(r for r in load_role_registry(ROOT / "role_registry.json").roles if r.role_id == "product-llm")
+        skill = next(s for s in load_skill_registry(ROOT / "skill_registry.json").skill_definitions() if s.skill_definition_id == "skill.regimen-design-proposal")
+        reply = TimeoutError("synthetic uncertain outcome") if timeout else _FakeResponse(_completion_body(content=json.dumps({"coverage":[],"regimen":None,"questions":["请明确给药依据"]})))
+        opener = _FakeOpener([_FakeResponse(_completion_body(content="probe")), reply])
+        dispatcher = HarnessDispatcher()
+        config = {"backend":"sqlite", "path":str(tmp_path / "db.sqlite")}
+        def coordinator():
+            runtime = build_regimen_runtime(project_id="design-project", uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),
+                artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")), role_entry=role, skill=skill,
+                dispatcher=dispatcher, adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+            return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=runtime, artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")))
+        intake = prepare_seed_request("整理历史资料", ())
+        prepared = prepare_regimen_request(intake, read_seed_candidates(intake,{"fields":{}}))
+>       run_id = coordinator().start(prepared)
+                 ^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def coordinator():
+        runtime = build_regimen_runtime(project_id="design-project", uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),
+            artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")), role_entry=role, skill=skill,
+            dispatcher=dispatcher, adapter_factory=lambda **kw: build_zhipu_api_adapter(credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+>       return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=runtime, artifact_store=LocalArtifactStore(str(tmp_path / "artifacts")))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: RegimenCoordinator.__init__() got an unexpected keyword argument 'artifact_store'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:32: TypeError
+_ test_one_same_model_structural_correction_is_preserved_on_reopen[{"coverage":[],"regimen":null,"questions":["\u9700\u660e\u786e\u7ed9\u836f\u4f9d\u636e"]}-needs_information] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-726/test_one_same_model_structural0')
+second = '{"coverage":[],"regimen":null,"questions":["需明确给药依据"]}'
+expected = 'needs_information'
+
+    @pytest.mark.parametrize("second,expected", [
+        ('{"coverage":[],"regimen":null,"questions":["需明确给药依据"]}', "needs_information"),
+        ("still malformed", "needs_structure_correction"),
+        (TimeoutError("synthetic correction timeout"), "blocked"),
+    ])
+    def test_one_same_model_structural_correction_is_preserved_on_reopen(tmp_path, second, expected):
+        from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+        role = next(r for r in load_role_registry(ROOT / "role_registry.json").roles if r.role_id == "product-llm")
+        skill = next(s for s in load_skill_registry(ROOT / "skill_registry.json").skill_definitions() if s.skill_definition_id == "skill.regimen-design-proposal")
+        replies = ["probe", "malformed", second]
+        opener = _FakeOpener([x if isinstance(x, Exception) else _FakeResponse(_completion_body(content=x)) for x in replies])
+        dispatcher = HarnessDispatcher()
+        config = {"backend":"sqlite","path":str(tmp_path / "db.sqlite")}
+        store = LocalArtifactStore(str(tmp_path / "artifacts"))
+        def coordinator():
+            rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+                role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                    credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+            return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+        original = prepare_seed_request("原始材料不能换掉",())
+        prepared = prepare_regimen_request(original, read_seed_candidates(original,{"fields":{}}))
+>       run_id = coordinator().start(prepared)
+                 ^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def coordinator():
+        rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+            role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+>       return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: RegimenCoordinator.__init__() got an unexpected keyword argument 'artifact_store'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:70: TypeError
+_ test_one_same_model_structural_correction_is_preserved_on_reopen[still malformed-needs_structure_correction] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-726/test_one_same_model_structural1')
+second = 'still malformed', expected = 'needs_structure_correction'
+
+    @pytest.mark.parametrize("second,expected", [
+        ('{"coverage":[],"regimen":null,"questions":["需明确给药依据"]}', "needs_information"),
+        ("still malformed", "needs_structure_correction"),
+        (TimeoutError("synthetic correction timeout"), "blocked"),
+    ])
+    def test_one_same_model_structural_correction_is_preserved_on_reopen(tmp_path, second, expected):
+        from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+        role = next(r for r in load_role_registry(ROOT / "role_registry.json").roles if r.role_id == "product-llm")
+        skill = next(s for s in load_skill_registry(ROOT / "skill_registry.json").skill_definitions() if s.skill_definition_id == "skill.regimen-design-proposal")
+        replies = ["probe", "malformed", second]
+        opener = _FakeOpener([x if isinstance(x, Exception) else _FakeResponse(_completion_body(content=x)) for x in replies])
+        dispatcher = HarnessDispatcher()
+        config = {"backend":"sqlite","path":str(tmp_path / "db.sqlite")}
+        store = LocalArtifactStore(str(tmp_path / "artifacts"))
+        def coordinator():
+            rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+                role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                    credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+            return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+        original = prepare_seed_request("原始材料不能换掉",())
+        prepared = prepare_regimen_request(original, read_seed_candidates(original,{"fields":{}}))
+>       run_id = coordinator().start(prepared)
+                 ^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def coordinator():
+        rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+            role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+>       return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: RegimenCoordinator.__init__() got an unexpected keyword argument 'artifact_store'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:70: TypeError
+_ test_one_same_model_structural_correction_is_preserved_on_reopen[second2-blocked] _
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-726/test_one_same_model_structural2')
+second = TimeoutError('synthetic correction timeout'), expected = 'blocked'
+
+    @pytest.mark.parametrize("second,expected", [
+        ('{"coverage":[],"regimen":null,"questions":["需明确给药依据"]}', "needs_information"),
+        ("still malformed", "needs_structure_correction"),
+        (TimeoutError("synthetic correction timeout"), "blocked"),
+    ])
+    def test_one_same_model_structural_correction_is_preserved_on_reopen(tmp_path, second, expected):
+        from app.protocol_workflow.agent2.coordinator import RegimenCoordinator
+        role = next(r for r in load_role_registry(ROOT / "role_registry.json").roles if r.role_id == "product-llm")
+        skill = next(s for s in load_skill_registry(ROOT / "skill_registry.json").skill_definitions() if s.skill_definition_id == "skill.regimen-design-proposal")
+        replies = ["probe", "malformed", second]
+        opener = _FakeOpener([x if isinstance(x, Exception) else _FakeResponse(_completion_body(content=x)) for x in replies])
+        dispatcher = HarnessDispatcher()
+        config = {"backend":"sqlite","path":str(tmp_path / "db.sqlite")}
+        store = LocalArtifactStore(str(tmp_path / "artifacts"))
+        def coordinator():
+            rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+                reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+                role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                    credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+            return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+        original = prepare_seed_request("原始材料不能换掉",())
+        prepared = prepare_regimen_request(original, read_seed_candidates(original,{"fields":{}}))
+>       run_id = coordinator().start(prepared)
+                 ^^^^^^^^^^^^^
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def coordinator():
+        rt = build_regimen_runtime(project_id="design-project",uow_factory=build_unit_of_work_factory(config),
+            reservation_repository_factory=build_committed_reservation_repository_factory(config),artifact_store=store,
+            role_entry=role,skill=skill,dispatcher=dispatcher,adapter_factory=lambda **kw: build_zhipu_api_adapter(
+                credential_resolver=_resolver(),http_opener=opener,max_input_bytes=100000,**kw))
+>       return RegimenCoordinator(project_id="design-project",branch_id="main",runtime=rt,artifact_store=store)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: RegimenCoordinator.__init__() got an unexpected keyword argument 'artifact_store'
+
+tests/protocol_v3/test_regimen_coordinator_integration.py:70: TypeError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_original_design_request_is_reused_with_no_blind_timeout_retry[False]
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_original_design_request_is_reused_with_no_blind_timeout_retry[True]
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_one_same_model_structural_correction_is_preserved_on_reopen[{"coverage":[],"regimen":null,"questions":["\u9700\u660e\u786e\u7ed9\u836f\u4f9d\u636e"]}-needs_information]
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_one_same_model_structural_correction_is_preserved_on_reopen[still malformed-needs_structure_correction]
+FAILED tests/protocol_v3/test_regimen_coordinator_integration.py::test_one_same_model_structural_correction_is_preserved_on_reopen[second2-blocked]
+5 failed in 0.36s

@@ -1,0 +1,36 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___________ test_mounted_import_reopen_parse_download_and_old_replay ___________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-584/test_mounted_import_reopen_par0')
+
+    def test_mounted_import_reopen_parse_download_and_old_replay(tmp_path):
+        db = tmp_path / 'product.db'
+        shared.admit(db, PROJECT)
+        with client(db) as c:
+            first = upload(c, '源文件里的研究设计。')
+>           assert first.status_code == 200, first.text
+E           AssertionError: {"detail":"Not Found"}
+E           assert 404 == 200
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/protocol_v3/integration/test_source_import_api.py:32: AssertionError
+__________________ test_bad_docx_is_explained_and_not_adopted __________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-584/test_bad_docx_is_explained_and0')
+
+    def test_bad_docx_is_explained_and_not_adopted(tmp_path):
+        db = tmp_path / 'product.db'
+        shared.admit(db, PROJECT)
+        with client(db) as c:
+            response = c.post(BASE, data={'logical_source_key': 'broken', 'source_role': 'project_primary'},
+                              files={'file': ('source.docx', b'not a docx')})
+>           assert response.status_code == 400
+E           assert 404 == 400
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/protocol_v3/integration/test_source_import_api.py:55: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/integration/test_source_import_api.py::test_mounted_import_reopen_parse_download_and_old_replay
+FAILED tests/protocol_v3/integration/test_source_import_api.py::test_bad_docx_is_explained_and_not_adopted
+2 failed in 0.51s
