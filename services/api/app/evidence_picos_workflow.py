@@ -870,7 +870,7 @@ def _options_for_question(question: EvidencePicosQuestion) -> List[EvidencePicos
     templates = (
         [template.model_dump(mode="python") for template in question.option_templates]
         if question.option_templates
-        else _OPTION_TEMPLATES.get(question.question_id, _generic_options(question))
+        else _generic_options(question)
     )
     return [
         EvidencePicosDecisionOption(
@@ -1089,105 +1089,3 @@ def _record_id(project_id: str, package_id: str, question_id: str, action: str) 
     return f"picosrec_{sha1(seed.encode('utf-8')).hexdigest()[:12]}"
 
 
-_OPTION_TEMPLATES: Dict[str, List[Dict[str, object]]] = {
-    "picos:population": [
-        {
-            "label": "重度未控制人群候选",
-            "design_summary": "聚焦双侧鼻息肉、症状负担较高且既往标准治疗控制不足的人群。",
-            "medical_rationale_prompt": "请说明目标严重程度、NPS/NCS阈值、既往手术/系统性激素史和中国人群桥接理由。",
-            "risk_notes": ["需避免把竞品入排阈值直接等同为本项目最终标准。"],
-        },
-        {
-            "label": "Type 2炎症富集候选",
-            "design_summary": "在未控制CRSwNP基础上增加嗜酸性炎症、合并哮喘或手术史等富集因素。",
-            "medical_rationale_prompt": "请说明生物标志物/合并症富集是否服务疗效检测、标签定位或亚组策略。",
-            "risk_notes": ["需补充检测可及性、入组速度和统计分层影响。"],
-        },
-        {
-            "label": "较宽泛适应症候选",
-            "design_summary": "保留核心CRSwNP诊断和症状要求，减少富集限制以提升外推性。",
-            "medical_rationale_prompt": "请说明较宽泛人群对效应量、样本量和安全性解释的影响。",
-            "risk_notes": ["需确认是否削弱差异化和阳性检出概率。"],
-        },
-    ],
-    "picos:intervention": [
-        {
-            "label": "竞品相似给药周期候选",
-            "design_summary": "采用与同类生物制剂相近的给药频率和治疗观察窗口。",
-            "medical_rationale_prompt": "请说明该周期与药代/药效、患者依从性和竞品可比性的关系。",
-            "risk_notes": ["需补充产品自身剂量探索或PK/PD依据。"],
-        },
-        {
-            "label": "差异化剂量探索候选",
-            "design_summary": "在关键研究前保留剂量探索或多剂量比较，用于支持剂量选择。",
-            "medical_rationale_prompt": "请说明剂量探索对开发阶段、样本量和监管沟通的影响。",
-            "risk_notes": ["需统计和运营共同确认复杂度。"],
-        },
-        {
-            "label": "背景治疗严格统一候选",
-            "design_summary": "固定INCS等背景治疗和救援治疗规则，降低疗效解释混杂。",
-            "medical_rationale_prompt": "请说明背景治疗统一规则、救援治疗定义和依从性监测方式。",
-            "risk_notes": ["需确认真实临床可执行性。"],
-        },
-    ],
-    "picos:comparator": [
-        {
-            "label": "安慰剂+标准背景治疗候选",
-            "design_summary": "在标准背景治疗一致的条件下使用安慰剂对照。",
-            "medical_rationale_prompt": "请说明伦理可接受性、背景治疗、救援治疗和盲法维持依据。",
-            "risk_notes": ["需明确是否满足当地监管和伦理要求。"],
-        },
-        {
-            "label": "剂量/给药方案对照候选",
-            "design_summary": "通过不同剂量或给药频率比较支持方案优化。",
-            "medical_rationale_prompt": "请说明剂量对照与主要研究目的、样本量和多重性控制的关系。",
-            "risk_notes": ["需统计学和医学共同确认。"],
-        },
-        {
-            "label": "活性对照探索候选",
-            "design_summary": "在特定开发定位下考虑活性对照或外部证据补充。",
-            "medical_rationale_prompt": "请说明活性对照的可行性、可比性和注册价值。",
-            "risk_notes": ["需谨慎处理跨试验/跨产品可比性。"],
-        },
-    ],
-    "picos:outcomes": [
-        {
-            "label": "症状+客观鼻息肉双终点候选",
-            "design_summary": "围绕NPS/NCS等症状和客观鼻息肉评估构建主要或关键次要终点。",
-            "medical_rationale_prompt": "请说明终点组合、评价时间点、临床意义阈值和多重性顺序。",
-            "risk_notes": ["需补齐统计方法和缺失数据处理依据。"],
-        },
-        {
-            "label": "生活质量/嗅觉强化候选",
-            "design_summary": "增加SNOT-22、嗅觉或救援治疗相关终点以体现患者获益。",
-            "medical_rationale_prompt": "请说明患者获益终点如何支持标签和医学解释。",
-            "risk_notes": ["需确认工具验证、语言版本和评价窗口。"],
-        },
-        {
-            "label": "安全性/AESI聚焦候选",
-            "design_summary": "明确TEAE、SAE、AESI、实验室和感染相关安全性评价。",
-            "medical_rationale_prompt": "请说明安全性关注项、监测窗口和PV/医学协同边界。",
-            "risk_notes": ["不能把安全摘要误写成跨试验安全性优劣结论。"],
-        },
-    ],
-    "picos:study_design": [
-        {
-            "label": "随机双盲安慰剂对照候选",
-            "design_summary": "采用随机、双盲、平行分组、安慰剂对照的确证性设计框架。",
-            "medical_rationale_prompt": "请说明研究阶段、随机比例、盲法、分层因素和关键访视窗口。",
-            "risk_notes": ["需确认SAP/Protocol全文抽取后再固化统计细节。"],
-        },
-        {
-            "label": "延长期/开放标签候选",
-            "design_summary": "在双盲期后增加延长期或开放标签阶段，支持长期疗效/安全性观察。",
-            "medical_rationale_prompt": "请说明延长期目的、转换规则、长期安全性和缺失数据影响。",
-            "risk_notes": ["需运营、统计和PV确认执行复杂度。"],
-        },
-        {
-            "label": "区域桥接/全球同步候选",
-            "design_summary": "根据中国和全球开发策略设置区域桥接或多区域同步设计。",
-            "medical_rationale_prompt": "请说明区域差异、样本量分配、监管沟通和一致性评价策略。",
-            "risk_notes": ["需注册策略确认。"],
-        },
-    ],
-}

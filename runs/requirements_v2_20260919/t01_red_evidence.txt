@@ -1,0 +1,133 @@
+FFF..FFFF                                                                [100%]
+=================================== FAILURES ===================================
+____________ test_residual_recommendations_case_free_across_domains ____________
+
+    def test_residual_recommendations_case_free_across_domains():
+        template = _template()
+        for name, facts in (('oncology', _ONCOLOGY_III), ('diabetes', _DIABETES_II)):
+            out = residual_recommendations(template, _study_stub(facts, f'study:v3:{name}'))
+            blob = json.dumps(out, ensure_ascii=False)
+            for token in CASE_TOKENS:
+>               assert token not in blob, f'{name}: leaked case token {token!r}'
+E               AssertionError: oncology: leaked case token '慢性鼻窦炎'
+E               assert '慢性鼻窦炎' not in '{"statistic...n_front_7"}}'
+E                 
+E                 '慢性鼻窦炎' is contained here:
+E                   is": "适应症为慢性鼻窦炎伴鼻息肉", "chapter": "v2_n_16_x1"}, "appendix.nyha_applicability_decision_record": {"canonical_path": "appendix.nyha_applicability_decision_record", "value": {"applicable": false, "note": "非心衰研究，不适用NYHA"}, "basis": "适应症为慢性鼻窦炎伴鼻息肉", "chapter": "v2_n_16_x2"}, "appendix.destruction_provider_identifying_details": {"canonical_path": "appendix.destruction_provider_identifying_details", "value": {"note": "销毁记录由研究中心存档"}, "basis": "通行约定", "chapter": "v2_n_16_x3"}, "appendix.destruction_provider_name": {"canonical_path": "appendix.destruction_provider_name", "v...
+E                 
+E                 ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/protocol_v3/test_no_case_fitting.py:61: AssertionError
+_______________ test_confirmed_assumptions_are_never_pushed_back _______________
+
+    def test_confirmed_assumptions_are_never_pushed_back():
+        template = _template()
+        facts = dict(_DIABETES_II)
+        facts['statistics.sample_size.assumptions'] = '本研究自行确认的样本量假设：第52周达标率，差12个百分点。'
+        index = _binding_index(template.fact_catalog.bindings)
+        facts[index['statistics.sample_size.assumptions'].canonical_path] = \
+            facts['statistics.sample_size.assumptions']
+        out = residual_recommendations(template, _study_stub(facts))
+>       assert 'statistics.sample_size.assumptions' not in out
+E       AssertionError: assert 'statistics.sample_size.assumptions' not in {'statistics.sample_size.assumptions': {'canonical_path': 'statistics.sample_size.assumptions', 'value': ['主要终点为第24周临床... 'value': {'method': '主要终点缺失采用无应答插补（NRI），敏感性分析采用tipping point'}, 'basis': '与已确认估计目标一致', 'chapter': 'v2_n_11_4_4'}, ...}
+
+tests/protocol_v3/test_no_case_fitting.py:75: AssertionError
+_________________ test_consistency_gate_uses_study_own_anchors _________________
+
+    def test_consistency_gate_uses_study_own_anchors():
+        status = cross_check(_diabetes_gate_facts())['status']
+>       assert status == 'consistent', 'a week-52 study must pass on its own anchors'
+E       AssertionError: a week-52 study must pass on its own anchors
+E       assert 'contradiction' == 'consistent'
+E         
+E         - consistent
+E         + contradiction
+
+tests/protocol_v3/test_no_case_fitting.py:104: AssertionError
+_________ test_synopsis_projection_without_facts_has_no_case_defaults __________
+
+    def test_synopsis_projection_without_facts_has_no_case_defaults():
+        blocks = build_synopsis_blocks({})
+        blob = json.dumps(blocks, ensure_ascii=False)
+        for token in CASE_TOKENS + ('双盲', '成人', '探索性'):
+>           assert token not in blob, f'empty design must not default to {token!r}'
+E           AssertionError: empty design must not default to '鼻息肉'
+E           assert '鼻息肉' not in '[{"block_ki... = 无应答插补。"}]'
+E             
+E             '鼻息肉' is contained here:
+E               件；NPS = 双侧鼻息肉评分（0～8分）；VAS = 视觉模拟量表（0～10 cm）；SNOT-22 = 鼻腔鼻窦结局测试-22；ICE = 伴发事件；FAS = 全分析集；NRI = 无应答插补。"}]
+E             ?           +++
+
+tests/protocol_v3/test_no_case_fitting.py:129: AssertionError
+_______________ test_synopsis_projection_follows_confirmed_facts _______________
+
+    def test_synopsis_projection_follows_confirmed_facts():
+        facts = {
+            'framing.investigational_product': '合成药D',
+            'framing.indication': '2型糖尿病',
+            'framing.study_phase': 'II期',
+            'picos.primary_endpoint': {'text': '主要终点：第52周HbA1c较基线变化'},
+            'picos.population_summary': {'text': '2型糖尿病伴肥胖成人患者'},
+            'statistics.sample_size.planned_n': '240',
+            'framing.structured_design.features': {'stratification': True},
+            'statistics.interim.features': {'planned': False},
+        }
+        blob = json.dumps(build_synopsis_blocks(facts), ensure_ascii=False)
+>       assert '第52周' in blob and '第24周' not in blob
+E       assert ('第52周' in '[{"block_kind": "paragraph", "content": "本研究为一项II期、随机、双盲、安慰剂对照的探索性临床研究，评价合成药D在2型糖尿病伴肥胖成人患者中的有效性、安全性与耐受性。主要终点为主要终点：第52...第52周HbA1c较基线变化。第24周为主要终点评估时点，电话访视不得替代其现场评估。"}, {"block_kind": "paragraph", "content": "随机化按中心分层，分组比例1:1；本研究无期中分析计划。"}]' and '第24周' not in '[{"block_ki...究无期中分析计划。"}]'
+E         
+E         '第24周' is contained here:
+E           bA1c较基线变化。第24周为主要终点评估时点，电话访视不得替代其现场评估。"}, {"block_kind": "paragraph", "content": "随机化按中心分层，分组比例1:1；本研究无期中分析计划。"}]
+E         ?           ++++)
+
+tests/protocol_v3/test_no_case_fitting.py:144: AssertionError
+_________________ test_case_values_absent_from_generic_sources _________________
+
+    def test_case_values_absent_from_generic_sources():
+        for name, path, tokens in _MODULE_SOURCES:
+            source = path.read_text(encoding='utf-8')
+            for token in tokens:
+>               assert token not in source, f'{name}: case token {token!r} back in source'
+E               AssertionError: chapter_facts: case token '慢性鼻窦炎' back in source
+E               assert '慢性鼻窦炎' not in '"""Derive m...return out\n'
+E                 
+E                 '慢性鼻窦炎' is contained here:
+E                   is': '适应症为慢性鼻窦炎伴鼻息肉'},
+E                 ?           +++++
+E                       'appendix.nyha_applicability_decision_record': {'value': {'applicable': False, 'note': '非心衰研究，不适用NYHA'}, 'basis': '适应症为慢性鼻窦炎伴鼻息肉'},
+E                       'ae.oncology_progression_exception_applicable': {'value': False, 'basis': '非肿瘤研究，不适用肿瘤进展例外'},
+E                   }...
+E                 
+E                 ...Full output truncated (136 lines hidden), use '-vv' to show
+
+tests/protocol_v3/test_no_case_fitting.py:170: AssertionError
+____________________ test_picos_option_templates_case_free _____________________
+
+    def test_picos_option_templates_case_free():
+        source = (Path(__file__).parents[2] /
+                  'services/api/app/evidence_picos_workflow.py').read_text(encoding='utf-8')
+        table = source.split('_OPTION_TEMPLATES', 1)[1]
+        for token in ('鼻息肉', '鼻窦', 'NPS', 'NCS', 'SNOT-22', '嗅觉', '慢性鼻窦炎'):
+>           assert token not in table, f'option template leaked case token {token!r}'
+E           AssertionError: option template leaked case token '鼻息肉'
+E           assert '鼻息肉' not in '.get(questi...n    ],\n}\n'
+E             
+E             '鼻息肉' is contained here:
+E               ry": "聚焦双侧鼻息肉、症状负担较高且既往标准治疗控制不足的人群。",
+E             ?           +++
+E                           "medical_rationale_prompt": "请说明目标严重程度、NPS/NCS阈值、既往手术/系统性激素史和中国人群桥接理由。",
+E                           "risk_notes": ["需避免把竞品入排阈值直接等同为本项目最终标准。"],
+E                       },...
+E             
+E             ...Full output truncated (94 lines hidden), use '-vv' to show
+
+tests/protocol_v3/test_no_case_fitting.py:178: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_residual_recommendations_case_free_across_domains
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_confirmed_assumptions_are_never_pushed_back
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_consistency_gate_uses_study_own_anchors
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_synopsis_projection_without_facts_has_no_case_defaults
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_synopsis_projection_follows_confirmed_facts
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_case_values_absent_from_generic_sources
+FAILED tests/protocol_v3/test_no_case_fitting.py::test_picos_option_templates_case_free
+7 failed, 2 passed in 0.63s

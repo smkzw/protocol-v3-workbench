@@ -342,13 +342,16 @@ class ChapterFactsDeriver:
 
 
 # ---------------------------------------------------------------------------
-# Residual facts that the model declines to derive: organization, signing,
-# compensation and recruitment decisions that belong to the user.  Each entry
-# carries a transparent recommendation the user confirms (never auto-applied).
+# Generic, user-confirmable recommendations for residual operational facts:
+# contact/signing blanks, GCP-standard compensation and recruitment language,
+# and template-consistency notes.  Each entry is a transparent candidate the
+# user confirms — never auto-applied.  Entries must stay disease-, drug-,
+# phase- and product-neutral (requirements-v2 R1): design-dependent or
+# science-bearing values come from the user's confirmed inputs or AI
+# candidates, never from this table.
 # ---------------------------------------------------------------------------
 
 RESIDUAL_RECOMMENDATIONS = {
-    'contact.sponsor_organization': {'value': {'name': '康哲'}, 'basis': '按本项目工作台归属预填，请核对'},
     'contact.principal_investigator': {'value': {'role': '主要研究者', 'name_note': '姓名与联系方式由研究中心确认后填写'}, 'basis': '研究尚未确定中心，签署时落实'},
     'contact.trial_institutions': {'value': {'note': '以获批研究中心列表为准，成稿时附完整清单'}, 'basis': '多中心研究通行表述'},
     'contact.sponsor_representative': {'value': {'role': '申办方代表', 'name_note': '由申办方指定并签署确认'}, 'basis': '通行安排'},
@@ -356,56 +359,26 @@ RESIDUAL_RECOMMENDATIONS = {
     'signature.sponsor.representative': {'value': {'reserved_for_signing': True, 'note': '由申办方代表在签署页填写'}, 'basis': '合法签署空白控件'},
     'synopsis.principal_investigator': {'value': {'role': '主要研究者', 'name_note': '签署时确认'}, 'basis': '同主要研究者联系信息'},
     'synopsis.trial_institutions': {'value': {'note': '以获批研究中心列表为准'}, 'basis': '多中心研究通行表述'},
-    'synopsis.registration_classification': {'value': {'classification': '新药临床试验申请路径（注册类别以最终策略为准）'}, 'basis': '按研究阶段与新药属性建议'},
     'compensation.arrangement': {'value': {'policy': '试验相关损害由申办方依法承担赔偿责任并提供相应补偿'}, 'basis': 'GCP通行要求'},
     'compensation.insurance_or_guarantee': {'value': {'policy': '申办方为本试验购买临床试验责任保险'}, 'basis': '通行风险管理安排'},
     'compensation.trial_related_injury_procedure': {'value': {'policy': '研究者立即处置并记录试验相关损害；申办方承担治疗费用并依法补偿'}, 'basis': 'GCP通行要求'},
     'compensation.missing_fact_resolution': {'value': {'policy': '补偿与损害处理条款以临床试验协议为准'}, 'basis': '通行约定'},
     'compensation.responsible_contact': {'value': {'contact': '申办方医学监察员及药物安全负责人（联系方式见中心启动资料）'}, 'basis': '通行安排'},
     'population.recruitment.compensation_arrangement': {'value': {'policy': '参加者按伦理批准的标准获得交通等合理补偿'}, 'basis': 'GCP通行要求'},
-    'statistics.sample_size.assumptions': {'value': [
-        '主要终点为第24周临床缓解率，安慰剂组缓解率20%，合成药X组缓解率35%（绝对差15个百分点）。',
-        '双侧α=0.05，检验效能90%。',
-        '随机1:1，按中心分层；主要分析采用CMH分层检验并报告风险差及95%CI。',
-        '失访/缺失主要终点假设为10%（使用者决定，由8%上调）。',
-        '无期中分析计划。',
-        '样本量估算基于两独立比例比较的正态近似；未对中心分层导致的小样本层额外膨胀做调整，CMH分层为主要分析方法。'],
-        'basis': '失访率假设由8%上调为10%（使用者决定），样本量相应重算'},
     'population.recruitment.channels': {'value': {'channels': '合作研究中心相应专科门诊筛选及经伦理批准的招募材料'}, 'basis': '按目标人群就诊路径建议'},
     'population.recruitment.contact_measures': {'value': {'measures': '研究中心公开联系电话；仅使用伦理批准的招募材料'}, 'basis': 'GCP要求'},
-    'intervention.storage_conditions.unit': {'value': {'unit': '2℃～8℃避光冷藏'}, 'basis': '注射制剂通行保存条件，与给药制剂一致'},
-    'statistics.sample_size.software_version': {'value': {'software': 'PASS/SAS（具体版本在SAP定稿中记录）'}, 'basis': '样本量计算通行软件'},
-    'statistics.secondary_analysis.missing_data': {'value': {'method': '主要终点缺失采用无应答插补（NRI），敏感性分析采用tipping point'}, 'basis': '与已确认估计目标一致'},
-    'table_index.caption_inventory': {'value': {'tables': '全部表格连续编号并附题注', 'figures': '本研究无独立图件'}, 'basis': '按模板目录规范'},
-    'background.own_product.clinical_evidence': {'value': {'summary': '研究药物为首次概念验证开发，临床证据见非临床研究章节'}, 'basis': 'II期首次验证研究的通行表述'},
-    'nonclinical.pharmacokinetics': {'value': {'summary': '非临床药代数据详见研究者手册，本方案不重复罗列'}, 'basis': 'II期方案通行引用方式'},
-    'nonclinical.toxicology': {'value': {'summary': '非临床毒理数据详见研究者手册，本方案不重复罗列'}, 'basis': 'II期方案通行引用方式'},
-    'picos.inclusion_modules.registry_identity': {'value': {'applicable': False, 'note': '本研究不经登记库筛选入选'}, 'basis': '入选来自中心门诊筛选，与已确认人群一致'},
-    'picos.inclusion_modules.registry_source_version': {'value': {'applicable': False, 'note': '不适用'}, 'basis': '同上'},
-    'picos.inclusion_modules.windows': {'value': {'applicable': False, 'note': '不适用'}, 'basis': '同上'},
-    'picos.exclusion_modules': {'value': {'criteria': '活动性鼻/鼻窦感染、既往鼻窦手术治疗、全身激素依赖、未控制的重系统性疾病等（完整清单见排除标准）'}, 'basis': '按适应症与II期PoC设计推荐'},
-    'picos.exclusion_modules.criteria': {'value': {'criteria': '活动性鼻/鼻窦感染、既往鼻窦手术、全身激素依赖、未控制重大系统性疾病'}, 'basis': '同上'},
-    'picos.exclusion_modules.exceptions': {'value': {'note': '无特殊例外'}, 'basis': '同上'},
-    'picos.exclusion_modules.logic': {'value': {'logic': '排除标准任一命中即不入组'}, 'basis': '通行规则'},
-    'picos.exclusion_modules.parameters': {'value': {'parameters': '按各中心筛选期检查结果判定'}, 'basis': '通行规则'},
-    'picos.exclusion_modules.registry_identity': {'value': {'applicable': False, 'note': '不经登记库排除'}, 'basis': '与入选路径一致'},
-    'picos.exclusion_modules.registry_source_version': {'value': {'applicable': False, 'note': '不适用'}, 'basis': '同上'},
-    'picos.exclusion_modules.windows': {'value': {'applicable': False, 'note': '不适用'}, 'basis': '同上'},
     'population.exclusion.contraception_criterion_ref': {'value': {'reference': '育龄女性妊娠试验阴性并同意采取有效避孕（见排除标准）'}, 'basis': '新药研究通行要求'},
-    'quality.risk_management_plan_applicable': {'value': True, 'basis': '新药研究通行要求风险管理计划'},
-    'quality.remote_monitoring_applicable': {'value': False, 'basis': 'II期PoC通行中心监查，未计划远程监查'},
+    'statistics.sample_size.software_version': {'value': {'software': 'PASS/SAS（具体版本在SAP定稿中记录）'}, 'basis': '样本量计算通行软件'},
     'quality.oversight_charter_applicable': {'value': True, 'basis': '申办方需建立研究监查章程'},
     'quality.oversight_charter_status': {'value': 'start-up阶段制定', 'basis': '研究启动期通行安排'},
-    'quality.safety_escalation_path': {'value': {'path': '研究者→申办方药物安全→数据安全监查'}, 'basis': '安全报告通行路径'},
-    'quality.safety_oversight_body_type': {'value': {'type': '申办方医学监查+独立数据监查委员会（如适用）'}, 'basis': 'II期PoC通行安排'},
+    'quality.safety_escalation_path': {'value': {'path': '研究者→申办方药物安全部门（如设数据监查委员会，同步报告）'}, 'basis': '安全报告通行路径'},
     'quality.safety_oversight_composition': {'value': {'composition': '申办方医学监查员与药物安全负责人'}},
     'quality.safety_oversight_information_flow': {'value': {'flow': '安全性事件按方案时限经EDC与安全数据库上报'}},
-    'quality.safety_oversight_review_arrangement': {'value': {'arrangement': '定期安全审阅，必要时召开DSMB会议'}},
+    'quality.safety_oversight_review_arrangement': {'value': {'arrangement': '定期安全审阅，必要时召开数据监查委员会会议'}},
     'quality.safety_oversight_roles': {'value': {'roles': '研究者负责识别与处置；申办方负责收集、评估与报告'}},
     'soa.contact_visits': {'value': {'note': '见 visit schedule of assessments 表格与访视窗定义'}, 'basis': '与SOA表一致'},
     'soa.early_exit_assessment': {'value': {'note': '提前退出访视完成安全性与结局评估'}, 'basis': '通行安排'},
     'soa.footnote_bindings': {'value': {'note': 'SOA表脚注与本方案正文一致'}, 'basis': '模板一致性要求'},
-    'soa.pk_sampling_present': {'value': False, 'basis': '本研究未计划PK采样（见给药与访视设计）'},
     'soa.safety_followup': {'value': {'note': '末次给药后安全性随访见访视表'}, 'basis': '通行安排'},
     'soa.visit_window_definitions': {'value': {'note': '各访视窗口见访视表脚注'}, 'basis': '模板一致性要求'},
     'appendix.applicable_attachment_index': {'value': {'note': '附录清单见模板附录目录'}, 'basis': '模板要求'},
@@ -417,48 +390,21 @@ RESIDUAL_RECOMMENDATIONS = {
     'appendix.laboratory_identifying_details': {'value': {'note': '中心实验室信息见实验室手册'}, 'basis': '通行引用方式'},
     'appendix.laboratory_name': {'value': {'note': '以中心实验室手册为准'}, 'basis': '通行引用方式'},
     'appendix.laboratory_roles_and_scope': {'value': {'roles': '中心实验室承担筛选期与安全性实验室检查'}, 'basis': '通行约定'},
-    'appendix.ecog_applicability_decision_record': {'value': {'applicable': False, 'note': '非肿瘤研究，不适用ECOG'}, 'basis': '适应症为慢性鼻窦炎伴鼻息肉'},
-    'appendix.nyha_applicability_decision_record': {'value': {'applicable': False, 'note': '非心衰研究，不适用NYHA'}, 'basis': '适应症为慢性鼻窦炎伴鼻息肉'},
-    'ae.oncology_progression_exception_applicable': {'value': False, 'basis': '非肿瘤研究，不适用肿瘤进展例外'},
+    'picos.exclusion_modules.logic': {'value': {'logic': '排除标准任一命中即不入组'}, 'basis': '通行规则'},
+    'picos.exclusion_modules.parameters': {'value': {'parameters': '按各中心筛选期检查结果判定'}, 'basis': '通行规则'},
+    'nonclinical.pharmacokinetics': {'value': {'summary': '非临床药代数据详见研究者手册，本方案不重复罗列'}, 'basis': '引用研究者手册的通行方式，请核对'},
+    'nonclinical.toxicology': {'value': {'summary': '非临床毒理数据详见研究者手册，本方案不重复罗列'}, 'basis': '引用研究者手册的通行方式，请核对'},
 }
 
 
-MODIFICATION_WATCH = ('statistics.sample_size.assumptions',)
-
-
 def residual_recommendations(template, study):
-    """Missing fact paths plus watched-fact modifications, for user confirmation."""
+    """Missing fact paths with generic, user-confirmable recommendations."""
     gaps = collect_chapter_gaps(template, study)
     index = _binding_index(template.fact_catalog.bindings)
     out = {}
-    # Watched facts: surface the current recommendation whenever the stored
-    # value no longer matches it (e.g. the user changed a design assumption).
-    for path in MODIFICATION_WATCH:
-        rec = RESIDUAL_RECOMMENDATIONS.get(path)
-        binding = index.get(path)
-        if rec is None or binding is None or not binding.canonical_path:
-            continue
-        current = study.facts.get(binding.canonical_path)
-        value = _validate_value(binding, rec['value'])
-        if value is None:
-            continue
-        if current is not None and json.dumps(current, ensure_ascii=False, sort_keys=True) == json.dumps(value, ensure_ascii=False, sort_keys=True):
-            continue  # already confirmed to the recommended value
-        out[path] = {'canonical_path': binding.canonical_path, 'value': value,
-                     'basis': rec.get('basis', ''), 'chapter': '（设计假设修订）',
-                     'revise': True}
     for path, rec in retirement_recommendations(template, study).items():
         out[path] = {'canonical_path': path, 'value': None, 'retire': True,
                      'basis': rec['basis'], 'chapter': rec['chapter']}
-    for path, rec in predicate_corrections(template, study).items():
-        binding = index.get(path)
-        if binding is None or not binding.canonical_path:
-            continue
-        value = _validate_value(binding, rec['value'])
-        if value is None:
-            continue
-        out[path] = {'canonical_path': binding.canonical_path, 'value': value,
-                     'basis': rec['basis'], 'chapter': '（适用性修正）', 'revise': True}
     for node_id in sorted(gaps):
         for path in gaps[node_id]['paths']:
             if path in out:
@@ -476,62 +422,6 @@ def residual_recommendations(template, study):
                          'value': value, 'basis': rec.get('basis', '按方案常规建议'),
                          'chapter': node_id}
     return out
-
-
-def predicate_corrections(template, study):
-    """Condition-blocking facts stored under the wrong value shape.
-
-    A rule predicate compares native types (True/False, numbers, strings).
-    A dict like {"exists": false} is meaningful prose-shaped content but is
-    unresolved for the predicate; the correction carries the same meaning in
-    the native shape so the condition can resolve.  Only existing values are
-    corrected — this never invents a decision for a truly missing fact.
-    """
-    corrections = {}
-    member_requests: dict = {}
-    for rule in template.rules_catalog.rules:
-        for predicate in rule.predicates:
-            path = predicate.fact_path
-            if path in corrections or path not in study.facts:
-                continue
-            value = study.facts[path]
-            expected = predicate.expected
-            if value is None or type(value) is type(expected):
-                continue
-            if predicate.members:
-                # A scalar member inside a structured fact: add or fix that
-                # member so the condition can resolve (meaning from the
-                # confirmed design, never a new scientific claim).  A
-                # predicate that already decides is left untouched.
-                from app.protocol_workflow.registries.applicability import (
-                    evaluate_predicate as _eval, ApplicabilityStatus as _St)
-                if _eval(predicate, study.facts) is not _St.CONDITIONAL:
-                    continue
-                member_requests.setdefault(path, {})
-                member_requests[path][predicate.members[-1]] = expected
-                continue
-            if type(expected) is bool and isinstance(value, dict):
-                members = [v for v in value.values() if type(v) is bool]
-                if members:
-                    corrections[path] = {
-                        'value': members[0],
-                        'basis': '原值为结构化说明，修正为适用性判定所需的布尔值（含义不变）',
-                        'revise': True}
-                else:
-                    corrections[path] = {
-                        'value': expected,
-                        'basis': '修正为适用性判定所需的原生类型（含义按方案正文为准）',
-                        'revise': True}
-    for path, member_updates in member_requests.items():
-        base = study.facts.get(path)
-        merged = dict(base) if isinstance(base, dict) else {}
-        merged.update(member_updates)
-        corrections[path] = {
-            'value': merged,
-            'basis': '依据已确认设计补充适用性判定成员（如双盲、分层、随访安排），'
-                     '含义与已确认研究设计一致',
-            'revise': True}
-    return corrections
 
 
 def retirement_recommendations(template, study):

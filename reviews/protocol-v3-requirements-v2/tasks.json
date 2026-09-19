@@ -1,0 +1,361 @@
+{
+  "schema_version": "protocol-v3-decisions-implementation.v2",
+  "repository": "https://github.com/smkzw/protocol-v3-workbench",
+  "reviewed_head": "dd2018e0aa7da0176066cedccdf2075f9ec57eb4",
+  "implementation_status": "PLAN_ONLY",
+  "test_execution": "NOT_RUN",
+  "tasks": [
+    {
+      "id": "T00",
+      "title": "读取需求修订并固定实现基线",
+      "priority": "P0",
+      "depends_on": [],
+      "requirements": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A01"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T01",
+      "title": "建立案例污染与跨研究反例",
+      "priority": "P0",
+      "depends_on": [
+        "T00"
+      ],
+      "requirements": [
+        "R1"
+      ],
+      "acceptance": [
+        "A07",
+        "A08",
+        "A26"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T02",
+      "title": "移除通用路径中的案例决策",
+      "priority": "P0",
+      "depends_on": [
+        "T01"
+      ],
+      "requirements": [
+        "R1"
+      ],
+      "acceptance": [
+        "A07",
+        "A08"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T03",
+      "title": "存量污染只读定位与修正候选",
+      "priority": "P1",
+      "depends_on": [
+        "T02"
+      ],
+      "requirements": [
+        "R1"
+      ],
+      "acceptance": [
+        "A26"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T04",
+      "title": "统一双入口和研究设计预填",
+      "priority": "P1",
+      "depends_on": [
+        "T00"
+      ],
+      "requirements": [
+        "R5"
+      ],
+      "acceptance": [
+        "A01",
+        "A02",
+        "A03",
+        "A08"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T05",
+      "title": "关键准备度与草稿缺口合同",
+      "priority": "P1",
+      "depends_on": [
+        "T00"
+      ],
+      "requirements": [
+        "R2"
+      ],
+      "acceptance": [
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T06",
+      "title": "前后端章节准备改造",
+      "priority": "P1",
+      "depends_on": [
+        "T02",
+        "T04",
+        "T05"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R5"
+      ],
+      "acceptance": [
+        "A03",
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T07",
+      "title": "真实GenOffice浏览器可行性及接线",
+      "priority": "P1",
+      "depends_on": [
+        "T00"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A21"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T08",
+      "title": "自由工作稿持久化与原子回执",
+      "priority": "P1",
+      "depends_on": [
+        "T05",
+        "T07"
+      ],
+      "requirements": [
+        "R3"
+      ],
+      "acceptance": [
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A20"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T09",
+      "title": "按快照分析/核对和显式设计同步",
+      "priority": "P1",
+      "depends_on": [
+        "T08"
+      ],
+      "requirements": [
+        "R3"
+      ],
+      "acceptance": [
+        "A09",
+        "A10",
+        "A11",
+        "A17",
+        "A18"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T10",
+      "title": "整稿工作区Office融合",
+      "priority": "P1",
+      "depends_on": [
+        "T06",
+        "T08"
+      ],
+      "requirements": [
+        "R2",
+        "R3",
+        "R5"
+      ],
+      "acceptance": [
+        "A01",
+        "A04",
+        "A21",
+        "A24"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T11",
+      "title": "摘要SOA的AI生成与编辑对象",
+      "priority": "P1",
+      "depends_on": [
+        "T10"
+      ],
+      "requirements": [
+        "R4"
+      ],
+      "acceptance": [
+        "A13",
+        "A14"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T12",
+      "title": "自然语言局部修订和目标重生成",
+      "priority": "P1",
+      "depends_on": [
+        "T09",
+        "T11"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A15",
+        "A16",
+        "A17"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T13",
+      "title": "导出只序列化当前版本与首块表格修复",
+      "priority": "P1",
+      "depends_on": [
+        "T08",
+        "T11"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A13",
+        "A14",
+        "A19",
+        "A23"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T14",
+      "title": "恢复哈希历史和输入持久化缺陷",
+      "priority": "P1",
+      "depends_on": [
+        "T08"
+      ],
+      "requirements": [
+        "R3"
+      ],
+      "acceptance": [
+        "A11",
+        "A12",
+        "A20",
+        "A24"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T15",
+      "title": "研究级任务隔离与旧分析过期判定",
+      "priority": "P1",
+      "depends_on": [
+        "T09"
+      ],
+      "requirements": [
+        "R3"
+      ],
+      "acceptance": [
+        "A11",
+        "A25"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T16",
+      "title": "原生文献基础与互操作范围说明",
+      "priority": "P1",
+      "depends_on": [
+        "T10"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A22"
+      ],
+      "status": "TODO"
+    },
+    {
+      "id": "T17",
+      "title": "独立多研究端到端验收与文档交付",
+      "priority": "P1",
+      "depends_on": [
+        "T03",
+        "T12",
+        "T13",
+        "T14",
+        "T15",
+        "T16"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A15",
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A21",
+        "A22",
+        "A23",
+        "A24",
+        "A25",
+        "A26"
+      ],
+      "status": "TODO"
+    }
+  ]
+}
