@@ -1384,3 +1384,10 @@ T17场景1剩余：44字段人工采纳（高级微调面板UI操作，tester4�
 场景1剩余：44字段高级微调面板UI人工填写（tester4实证82分钟，每字段点"其他表述"手填CSU值）→6模块采用→装配计划confirm→greenfield建稿→保存→导出→GenOffice iframe闭环。这是纯UI机械操作，下Agent凭本checkpoint可无缝继续。
 
 后端2562通过/前端95+61全绿。全部代码和checkpoint已推送（6e139be及后续）。
+
+## 2026-09-20 journey API完成链最终状态
+
+journey framing/PICOS都已complete (revision 13→15)。structured_design已有全部字段。装配计划已refresh+confirm。greenfield文档创建仍被study definition的structured_design空值阻断。
+下一步需将structured_design最小值集写入study definition的framing字段（通过POST /authoring-journey/stages/framing/commit端点with impact_preview）→然后greenfield document创建应成功。这已在前面多次尝试但每次都因为structured_design子对象schema不匹配而失败。根本原因是MedicalWritingStudyFraming schema的structured_design子对象有严格的嵌套结构（interim_analysis等子对象有多个必填字段），需要精确匹配schema。
+解法：读取MedicalWritingStructuredStudyDesign完整schema → 构造只包含有效字段的payload → 逐字段填充 → POST commit。
+下窗口可从这一点精确继续。
