@@ -42,6 +42,71 @@ const ROLE_LABELS = {
   pending_decision: "需您选择/补全",
 };
 
+// 这些字段后端只接受固定取值；以选择呈现，避免中文自然语言输入被
+// 后端校验拒绝（T17 测试者4 P1-3）。选择"其他（自行填写）"后仍可
+// 自由输入，保证非常规表述不被界面挡死。
+const PACKAGE_ENUM_FREE_CHOICE = "__free_text__";
+const PACKAGE_ENUM_OPTIONS = {
+  "framing.product_profile.technology_type": [
+    ["small_molecule", "小分子化学药物"],
+    ["monoclonal_antibody", "单克隆抗体"],
+    ["other_biologic", "其他生物制品"],
+    ["rna_therapy", "RNA治疗"],
+    ["cell_therapy", "细胞治疗"],
+    ["gene_therapy", "基因治疗"],
+    ["vaccine", "疫苗"],
+    ["other", "其他"],
+    ["unknown", "尚未确定"],
+  ],
+  "framing.product_profile.exposure_scope": [
+    ["systemic", "全身暴露"],
+    ["local", "局部暴露"],
+    ["mixed", "全身+局部"],
+    ["unknown", "尚未确定"],
+  ],
+  "framing.product_profile.device_dependency": [
+    ["none", "不需要装置"],
+    ["integrated", "一体化装置"],
+    ["external", "外接装置"],
+    ["unknown", "尚未确定"],
+  ],
+  "framing.product_profile.immunogenicity_relevance": [
+    ["not_expected", "预期无免疫原性"],
+    ["potential", "可能有免疫原性"],
+    ["expected", "预期有免疫原性"],
+    ["unknown", "尚未确定"],
+  ],
+  "picos.design_archetype": [
+    ["randomized_exploratory", "随机探索性研究"],
+    ["randomized_confirmatory", "随机确证性研究"],
+    ["single_arm_early_phase", "早期单臂研究"],
+    ["open_label_extension", "开放标签延展"],
+    ["other", "其他"],
+    ["", "尚未确定"],
+  ],
+  "framing.structured_design.randomization_mode": [
+    ["randomized", "随机化"],
+    ["non_randomized", "非随机"],
+    ["other", "其他"],
+    ["undecided", "尚未确定"],
+  ],
+  "framing.structured_design.blinding_mode": [
+    ["double_blind", "双盲"],
+    ["single_blind", "单盲"],
+    ["triple_blind", "三盲"],
+    ["open_label", "开放标签（不设盲）"],
+    ["other", "其他"],
+    ["undecided", "尚未确定"],
+  ],
+  "framing.structured_design.comparator_type": [
+    ["placebo", "安慰剂对照"],
+    ["active", "阳性药对照"],
+    ["none_or_dose_escalation", "无对照/剂量递增"],
+    ["other", "其他"],
+    ["undecided", "尚未确定"],
+  ],
+};
+
 const CONFIDENCE_LABELS = {
   high: "高",
   medium: "中",
@@ -462,6 +527,17 @@ function PathDecisionRow({
   const displayValue = formatPathValue(candidateValue);
   const primaryLabel = label && label !== path ? label : packageFieldLabel(path);
   const listValued = Array.isArray(candidateValue);
+  const enumOptions = !listValued ? PACKAGE_ENUM_OPTIONS[path] : null;
+  const overrideText = typeof overrideValue === "string"
+    ? overrideValue
+    : overrideValue == null ? "" : formatPathValue(overrideValue);
+  const knownChoice = enumOptions?.some(([value]) => value === overrideText);
+  // 枚举字段的自由输入只应通过显式"其他"入口进入；建议值恰为合法枚举时
+  // 也直接落在对应选项上，用户不改就不用碰输入框。
+  const freeChoice = enumOptions != null && overrideText !== "" && !knownChoice;
+  const selectValue = freeChoice
+    ? PACKAGE_ENUM_FREE_CHOICE
+    : overrideText === "" ? "" : overrideText;
   const overridePlaceholder = listValued
     ? path === "picos.assessment_instruments"
       ? "每行或用分号分隔一个量表/评估工具"
@@ -478,14 +554,44 @@ function PathDecisionRow({
       </div>
       <label className="authoring-package-path-override">
         <span>您的确认/修改</span>
-        <textarea
-          rows={2}
-          value={typeof overrideValue === "string" ? overrideValue : overrideValue == null ? "" : formatPathValue(overrideValue)}
-          onChange={(event) => onOverrideChange(path, event.target.value)}
-          disabled={disabled || skipped}
-          placeholder={overridePlaceholder}
-          aria-label={`${primaryLabel}确认或修改`}
-        />
+        {enumOptions ? (
+          <>
+            <select
+              value={selectValue}
+              onChange={(event) => {
+                const next = event.target.value;
+                onOverrideChange(path, next === PACKAGE_ENUM_FREE_CHOICE ? "" : next);
+              }}
+              disabled={disabled || skipped}
+              aria-label={`${primaryLabel}选择取值`}
+            >
+              <option value="">请选择…</option>
+              {enumOptions.map(([value, text]) => (
+                <option key={value} value={value}>{text}</option>
+              ))}
+              <option value={PACKAGE_ENUM_FREE_CHOICE}>其他（自行填写）</option>
+            </select>
+            {freeChoice && (
+              <textarea
+                rows={2}
+                value={overrideText}
+                onChange={(event) => onOverrideChange(path, event.target.value)}
+                disabled={disabled || skipped}
+                placeholder={overridePlaceholder}
+                aria-label={`${primaryLabel}自由填写`}
+              />
+            )}
+          </>
+        ) : (
+          <textarea
+            rows={2}
+            value={overrideText}
+            onChange={(event) => onOverrideChange(path, event.target.value)}
+            disabled={disabled || skipped}
+            placeholder={overridePlaceholder}
+            aria-label={`${primaryLabel}确认或修改`}
+          />
+        )}
       </label>
       {allowSkip && (
         <label className="authoring-package-path-skip">
