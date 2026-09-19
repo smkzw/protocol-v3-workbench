@@ -1251,3 +1251,13 @@ Plan A门控已在journey层解锁（design_recommendations_blocked消失），�
 ## 2026-09-20 补充：OCR配置快速路径发现
 
 检查e2e_runtime/ai_provider_settings.json已列出ocr_paddle_official profile（base=paddleocr.aistudio-app.com，需API key）。若owner可提供PaddleOCR API key并写入ai_provider_secrets.json的对应profile，文档OCR链即可在隔离环境跑通——场景1的NCT03436797扫描版Protocol（Prot_002.pdf已下载至准备批次）即可完成深度处理→译文→准入→corpus analysis→候选→初稿全链。该路径与结构化证据分支（①）并行可选，owner二选一或都配。
+
+## 2026-09-20 场景1 journey完成路径（API层，下窗口执行）
+
+当前状态（API实证）：CDC776FB journey revision=4、stage1_in_progress、framing已有药物/适应症/分期/标题/地区，缺intrinsic_objectives（空数组，P1-9确诊的真正卡点）与structured_design各字段（randomization_mode/blinding_mode/comparator_type均undecided）。
+完成路径（API序列）：
+①POST /authoring-journey/stages/framing/commit {expected_revision:4, stage:'framing', framing:{...现有framing+intrinsic_objectives填入+structured_design枚举字段填randomized_confirmatory等}, actor, idempotency_key}（端点main.py:8405；契约=MedicalWritingJourneyCommitRequest{expected_revision≥1, stage, framing:MedicalWritingStudyFraming完整模型, picos?, impact_preview_id可空}）。枚举字面量从packages/contracts/workbench_contracts/models.py的MedicalWritingStructuredStudyDesign/相关模型读取。
+②POST stages/picos/commit（PICOS五要素）→picos_complete。
+③corpus gate例外放行（ tester3已验证可达"例外允许写作"）→补齐intervention.investigational_product_dose_actions与intervention.placebo_regimen两个关键结构化字段（A05要求，场景1的剂量/安慰剂设计按场景设定填）。
+④greenfield-document创建→保存→导出→GenOffice。
+前置注意：后端重启后前端指纹需同步（已同步）；journey commit会级联失效PICOS（值保留仅标记失效，重提交即恢复）。
