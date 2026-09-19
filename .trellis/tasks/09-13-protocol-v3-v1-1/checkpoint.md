@@ -1229,3 +1229,12 @@ CDC776FB门禁已解锁但AI候选生成失败：authoring prefill AI call返回
 ## 2026-09-20 prefill空响应持续——输入窗口假说（头号待诊断）
 
 prefill thinking已禁用+32k预算+退避重试后仍provider_response_empty——指向**输入尺寸超出模型上下文窗口**：55项研究的语料分析上下文进入prefill prompt（_build_bulk_request），input+max_tokens=32768合计超出deepseek-v4-flash上下文时端点返回200空content。下窗口：①记录prefill实际payload字符数（日志一行）；②_build_bulk_request截断语料上下文至top-N相关研究（N=10-15）；③或MAX_TOTAL_PAYLOAD_CHARS下调强制截断。修复后更新建议→候选包真实生成→采用→初稿→导出→GenOffice闭环（恢复路径不变）。
+
+## 2026-09-20 T17场景1诚实收敛：零文档项目的产品级缺口确认
+
+64k预算后prefill调用无报错，但设计模块候选仍占位——确诊：设计候选由corpus analysis AI服务在语料准入阶段之后生成（pipeline stage awaiting_corpus_admission需文档深度处理链），零文档项目（纯公开检索）在当前产品设计中**无法自然到达候选生成阶段**。Plan A已解锁authoring门控与推荐包挂锁，但corpus analysis服务的阶段门是独立一层。
+需owner决策的产品缺口（P1，非快修）：
+A方案延伸：corpus analysis AI支持结构化证据输入（当前设计只接受文档深度处理产物）——改动corpus analysis的输入合同与stage门，工程量中等。
+B替代路径：零文档项目在语料准备步骤提供"上传本地竞品Protocol文档集"入口（复用CRSwNP本地语料成功模式），上传后走正常准入链。
+当前场景1已获成果：建项✓流水线分诊5/5✓部分建议就绪(55研究/14Protocol)✓标题/方案号候选生成✓——初稿生成需先过语料准入（产品缺口）。
+本轮全部修复已推送（最新4429d86→当前）。T17验收循环在下窗口以：①owner决策A/B→实施→场景1全链→场景2-4（同模式）→codex独立性轮次补齐。
