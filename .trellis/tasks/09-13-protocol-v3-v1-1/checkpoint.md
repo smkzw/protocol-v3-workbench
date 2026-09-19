@@ -1299,3 +1299,9 @@ CSU II期参考内容（随机双盲安慰剂对照，12周，ISS7主要终点�
  tester4实证：高级微调面板44字段逐个手填（design 13/intervention 6/outcomes 10/population 4/product 4/statistics 7）→每模块采用→6模块有采用记录→装配计划confirm→greenfield建稿→保存→导出。82分钟，点击≥64。
 T17剩余=场景1全链44字段手工采纳+场景2-4同模式+codex独立轮次。技术基础设施（身份链四层+方案A门控+空响应退避+prefill修复+Plan A分支）已全部就绪并验证，不需要进一步代码修改即可走通——剩余是纯UI操作时间。
 本会话在此收敛：下窗口从44字段手工采纳起继续场景1→场景2-4→codex轮次补齐→循环至零P0/P1。
+
+## 2026-09-20 最终状态确认：enrichment需pipeline stage非failed
+
+本轮验证：identity校验修复生效（不再有provider_response_empty/identity错误），但enrichment仍未派发。原因：journey层的"更新建议"触发recompute时，design_ready=True（Plan A门控通过），但enrichment dispatch需要pipeline stage非failed。CDC776FB的pipeline stage=failed（OCR失败导致），Stage failed→enrichment不dispatch→候选仍占位。
+结论：**零文档项目的场景1全链需要pipeline stage推进修复**——continue-after-triage在原文准备失败时应将stage推进为非failed（如awaiting_corpus_analysis），使enrichment dispatch得以触发。这是产品代码修改，非配置可解决。已入档为owner决策点。
+当前可用路径：场景2-4建项（项目已存在），journey已完成framing+PICOS（测试者2偏头痛项目已通过Greenfield路径验证）。场景1的初稿生成需等pipeline stage修复或owner拍板结构化证据分支。
