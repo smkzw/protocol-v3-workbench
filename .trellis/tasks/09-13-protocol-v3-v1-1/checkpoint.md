@@ -1193,3 +1193,9 @@ ai_gateway修复：HTTP 200空响应体纳入指数退避重试（_empty_complet
 对照结果：proj_user_158a4a0fbf64（荨麻疹）的ct_run_47423b9f status=**review_ready**（23:13 CST）——durable job的"分诊超时"判定提前于批次完成触发（job超时调参问题=P2），但工作成果已完成可审核。UI直接可继续：打开竞品处理抽屉→审阅AI分类结果→锁定竞品篮子→深度处理/译文/准入→候选生成→采用→初稿→导出→GenOffice。
 P2备注（不阻断）：durable job超时窗口（分钟级）短于4批次deepseek分诊实际耗时，调参或分批续跑映射为下轮P2修复。
 下窗口动作序列：ego选MW-II-CDC776FB→医学写作→打开竞品处理→审阅分类（55项已分类）→分诊定稿理由≥10字→锁定竞品篮子→文档与解析tab深度处理一份相关Protocol→结构与译文确认→已准入证据→设计候选AI生成→一键采用→初稿→保存→导出→GenOffice。
+
+## 2026-09-20 场景1重大突破：竞品分诊5/5完成，流水线stage=awaiting_triage_confirm(35%)
+
+pipeline状态API实证：mwpipe_369c4e6e stage=awaiting_triage_confirm、percent=35、child 5/5批全完成（"竞品分诊已完成"）——**分诊批次全部通过**（身份链+空响应重试+小分块三项修复联合生效，此前22%死点彻底打通）。triage run=review_ready。
+人工分诊标记已完成1项（NCT06927999标记直接竞品+理由），锁篮点击后抽屉关闭、页面回总览——**下一窗口第一动作**：进医学写作→打开竞品处理→确认篮子状态（若已锁）→continue-after-triage端点（/research-pipeline/continue-after-triage）推进流水线至深度处理/译文/准入阶段→设计候选生成→采用→初稿。
+诊断层经验：运行时失败先重跑一次（多重启竞态下首次执行的报错可能是旧进程残留），diagnostic pair给出确定对照后再修代码。
