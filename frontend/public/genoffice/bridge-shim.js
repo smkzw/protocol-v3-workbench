@@ -80,6 +80,11 @@
     return { ok: false, error: detail?.detail?.message || ('save failed: ' + response.status) }
   }
 
+  // The renderer consumes exactly one pending open at boot; without a docUrl
+  // it must fall back to a blank document. Deliver the query-passed docUrl as
+  // that one-shot pending open, or the embedded frame would always land on
+  // "已新建空白文档" regardless of the requested working copy.
+  const pendingOpen = docUrl ? openDocx() : null
   const precise = {
     getLanguage: async () => 'zh',
     getTheme: async () => 'system',
@@ -90,7 +95,11 @@
     saveDocx,
     saveDocxAs: async (defaultName, data) => ({ ok: true, path: defaultName, ...(await saveDocx(defaultName, data)) }),
     saveDocxNew: async (defaultName, data) => saveDocx(defaultName, data),
-    consumePendingOpenDocx: async () => null,
+    consumePendingOpenDocx: async () => {
+      const result = pendingOpen
+      if (!result) return null
+      return result
+    },
     consumeNewBlankDoc: async () => false,
     consumeAiDocContent: async () => null,
     consumeHeadlessExport: async () => null,
