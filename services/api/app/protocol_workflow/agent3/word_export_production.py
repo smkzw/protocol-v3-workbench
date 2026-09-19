@@ -226,10 +226,16 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     if in_landscape:
         _switch_orientation(doc, False)
 
-    # 4) ask Word to refresh fields (TOC/page numbers) on open
+    # 4) ask Word to refresh fields (TOC/page numbers) on open.  settings.xml
+    # has a strict child sequence — updateFields belongs before w:compat;
+    # appending at the end makes Word reject the whole file.
     settings = doc.settings.element
     update = settings.makeelement(qn('w:updateFields'), {qn('w:val'): 'true'})
-    settings.append(update)
+    compat = settings.find(qn('w:compat'))
+    if compat is not None:
+        compat.addprevious(update)
+    else:
+        settings.append(update)
 
     doc.save(str(output_path))
     document_sha = document_revision_hash_sha(document)
@@ -274,24 +280,37 @@ def _add_paragraph_with_table_refs(doc, content: str, max_table_no: int) -> int:
 
 
 def _attach_ref_field(run, bookmark: str) -> None:
-    """Wrap *run*'s text in a REF field pointing at *bookmark*."""
+    """Replace *run* with a REF field pointing at *bookmark*.
+
+    Every field element must live inside its own w:r run — bare w:fldChar /
+    w:instrText children of a paragraph are schema-invalid and Word refuses
+    the whole file (LibreOffice merely tolerates them).
+    """
     r = run._r
-    begin = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'begin'})
-    instr = r.makeelement(qn('w:instrText'), {qn('xml:space'): 'preserve'})
-    instr.text = f' REF {bookmark} \\h '
-    sep = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'separate'})
-    end = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'end'})
-    r_parent = r.getparent()
-    run_el = copy.deepcopy(r)
-    for child in list(run_el):
-        if child.tag == qn('w:fldChar') or child.tag == qn('w:instrText'):
-            run_el.remove(child)
-    r_parent.insert(list(r_parent).index(r), begin)
-    r_parent.insert(list(r_parent).index(begin) + 1, instr)
-    r_parent.insert(list(r_parent).index(instr) + 1, sep)
-    r_parent.insert(list(r_parent).index(sep) + 1, run_el)
-    r_parent.insert(list(r_parent).index(run_el) + 1, end)
-    r_parent.remove(r)
+
+    def field_run(child_tag: str, text: str | None = None):
+        fr = r.makeelement(qn('w:r'), {})
+        child = fr.makeelement(qn(child_tag), {})
+        if text is not None:
+            child.set(qn('xml:space'), 'preserve')
+            child.text = text
+        fr.append(child)
+        return fr
+
+    begin = field_run('w:fldChar')
+    begin[0].set(qn('w:fldCharType'), 'begin')
+    instr = field_run('w:instrText', f' REF {bookmark} \\h ')
+    sep = field_run('w:fldChar')
+    sep[0].set(qn('w:fldCharType'), 'separate')
+    cached = copy.deepcopy(r)
+    end = field_run('w:fldChar')
+    end[0].set(qn('w:fldCharType'), 'end')
+
+    parent = r.getparent()
+    idx = parent.index(r)
+    for offset, element in enumerate((begin, instr, sep, cached, end)):
+        parent.insert(idx + 1 + offset, element)
+    parent.remove(r)
 
 
 def _switch_orientation(doc, landscape: bool) -> None:
