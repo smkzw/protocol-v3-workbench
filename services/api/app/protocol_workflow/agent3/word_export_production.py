@@ -258,8 +258,10 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             in_landscape = want_landscape
         kind = block.get('block_kind')
         if kind == 'paragraph':
+            content_text = (block.get('content') or '').replace(
+                '受试者', '试验参与者')
             ref_count += _add_paragraph_with_table_refs(
-                doc, block.get('content') or '', total_tables)
+                doc, content_text, total_tables)
         elif kind == 'table':
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
