@@ -1114,3 +1114,8 @@ P0-6（采用丢设计）再判定：tester3在流水线失败态下被迫全跳
 3. P0-5例外放行流程：将intervention.investigational_product_dose_actions/intervention.placebo_regimen升格为例外流程中的结构化必答问句（阻断正确，引导缺失）。
 4. P1-7竞品抽屉关闭钮视口外CSS修复。
 5. 全部修完→重新走场景1全链→tester3/4报告到达即聚合→9/21后codex重派独立性轮次。
+
+## 2026-09-19 P1-3诊断反转+tester4重派
+
+P1-3收窄为消息修复：medical_writing_authoring_journey.py:1323明示framing提交使PICOS完成标记失效但值保留（"retaining the exact same committed PICOS values"），且后端专门支持零差异重提交（1323-1345重算完成门）。tester3的"PICOS全部回到待确认"是级联设计+UI未解释——修法=framing提交导致PICOS失效时UI显示"设计内容已保留，重新确认即可（内容未变直接点完成第二步）"。（待下窗口实施：AuthoringJourneySetup.jsx的"请先完成第一步变更"提示处加保留说明。）
+tester4（deepseek交叉）首轮11B卡死已超时；deepseek通道复测"就绪"后已重派（exec_2888bfb7，后台）。
