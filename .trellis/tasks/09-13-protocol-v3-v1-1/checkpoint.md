@@ -767,3 +767,14 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
 - 教训：kill单pid重启后端时旧进程仍占socket（errno 48静默失败 served stale code
   半小时）——重启必须kill $(lsof -ti :PORT) 全部并核对进程start time
 - 剩余细化：正文"见表N"→REF域、SOA横向节、Word GUI人工打开刷新目录
+
+## 2026-09-19 09:05 交叉引用REF域 + SOA横向节完成，重导出全量核对
+
+- word_export_production.py：正文"见表N"→REF tbl_N域（\h超链接、前向引用合法——
+  书签名按全文档表序位置确定，总表数预判定而非已写表数）；1.3研究流程表所在节
+  自动切换横向（WD_SECTION.NEW_PAGE+WD_ORIENT，节后恢复纵向）
+- 重导出实测：DOCX bookmarks=216、REF tbl_=2、题注~80、sections=4（1横向）；
+  LibreOffice PDF 138页，横向页=21-26（SOA表区），占位/示例命中=0，内容覆盖10项PASS
+- 导出回执新增cross_references计数
+- 剩余（如实）：Word GUI人工打开刷新目录/域（AppleScript授权已给，留用户双击核验）；
+  alias方向语义owner裁定

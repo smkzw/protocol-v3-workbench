@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from docx import Document as open_docx
+from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.oxml.ns import qn
 
@@ -187,10 +188,18 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             if reached and child.tag != qn('w:sectPr'):
                 body.remove(child)
 
-    # 3) our chapters with bookmarks + numbered table captions
+    # 3) our chapters with bookmarks + numbered table captions + REF cross-references
     doc.add_page_break()
     current_node = None
     table_no = 0
+    ref_count = 0
+    # Forward references are valid: bookmark names tbl_N are positional and
+    # their captions appear later in the same document.
+    total_tables = sum(1 for block in document.get('semantic_blocks', [])
+                       if block.get('block_kind') == 'table')
+    landscape_nodes = {node_id for node_id, info in titles.items()
+                       if '研究流程表' in info.get('title', '')}
+    in_landscape = False
     for block in document.get('semantic_blocks', []):
         node_id = block.get('semantic_node_id')
         if node_id != current_node:
@@ -201,14 +210,21 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
             if block.get('block_kind') != 'paragraph':
                 para = doc.add_paragraph('本节不适用于本研究。')
+        want_landscape = node_id in landscape_nodes and block.get('block_kind') == 'table'
+        if want_landscape != in_landscape:
+            _switch_orientation(doc, want_landscape)
+            in_landscape = want_landscape
         kind = block.get('block_kind')
         if kind == 'paragraph':
-            doc.add_paragraph(block.get('content') or '')
+            ref_count += _add_paragraph_with_table_refs(
+                doc, block.get('content') or '', total_tables)
         elif kind == 'table':
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
             _bookmark(caption, f'tbl_{table_no}')
             _add_table(doc, block.get('content') or '')
+    if in_landscape:
+        _switch_orientation(doc, False)
 
     # 4) ask Word to refresh fields (TOC/page numbers) on open
     settings = doc.settings.element
@@ -219,7 +235,8 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     document_sha = document_revision_hash_sha(document)
     output_sha = hashlib.sha256(open(output_path, 'rb').read()).hexdigest()
     return {'document_sha256': document_sha, 'output_sha256': output_sha,
-            'export_scope': 'production_docx', 'tables': table_no}
+            'export_scope': 'production_docx', 'tables': table_no,
+            'cross_references': ref_count}
 
 
 def document_revision_hash_sha(document: Mapping[str, Any]) -> str:
@@ -233,3 +250,55 @@ def document_revision_hash_sha(document: Mapping[str, Any]) -> str:
 def _add_table(doc, content: str) -> None:
     from app.protocol_workflow.agent3.word_export import _add_table as _append_table
     _append_table(doc, content)
+
+
+_TABLE_REF_RE = re.compile(r'(见表\s*(\d+)\s*[、，；）)]?)')
+
+
+def _add_paragraph_with_table_refs(doc, content: str, max_table_no: int) -> int:
+    """Write a paragraph, converting 见表N mentions into REF fields to tbl_N."""
+    para = doc.add_paragraph()
+    refs = 0
+    cursor = 0
+    for match in _TABLE_REF_RE.finditer(content):
+        n = int(match.group(2))
+        if n > max_table_no:
+            continue
+        para.add_run(content[cursor:match.start()])
+        run = para.add_run(f'表{n}')
+        _attach_ref_field(run, f'tbl_{n}')
+        refs += 1
+        cursor = match.end()
+    para.add_run(content[cursor:])
+    return refs
+
+
+def _attach_ref_field(run, bookmark: str) -> None:
+    """Wrap *run*'s text in a REF field pointing at *bookmark*."""
+    r = run._r
+    begin = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'begin'})
+    instr = r.makeelement(qn('w:instrText'), {qn('xml:space'): 'preserve'})
+    instr.text = f' REF {bookmark} \\h '
+    sep = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'separate'})
+    end = r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): 'end'})
+    r_parent = r.getparent()
+    run_el = copy.deepcopy(r)
+    for child in list(run_el):
+        if child.tag == qn('w:fldChar') or child.tag == qn('w:instrText'):
+            run_el.remove(child)
+    r_parent.insert(list(r_parent).index(r), begin)
+    r_parent.insert(list(r_parent).index(begin) + 1, instr)
+    r_parent.insert(list(r_parent).index(instr) + 1, sep)
+    r_parent.insert(list(r_parent).index(sep) + 1, run_el)
+    r_parent.insert(list(r_parent).index(run_el) + 1, end)
+    r_parent.remove(r)
+
+
+def _switch_orientation(doc, landscape: bool) -> None:
+    section = doc.add_section(WD_SECTION.NEW_PAGE)
+    if landscape:
+        section.orientation = WD_ORIENT.LANDSCAPE
+        section.page_width, section.page_height = section.page_height, section.page_width
+    else:
+        section.orientation = WD_ORIENT.PORTRAIT
+        section.page_width, section.page_height = section.page_height, section.page_width
