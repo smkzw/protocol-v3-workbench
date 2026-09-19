@@ -349,6 +349,38 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     if in_landscape:
         _switch_orientation(doc, False)
 
+    # 3b) strip engineering/process language that leaked from chapter generation
+    engineering_markers = (
+        'evidence_unit_id', '可追溯证据状态', '本候选未接收',
+        '容器义务边界', '本容器仅承担', '不构成附件适用性',
+        '不构成对医学、伦理、法律或审批事项的判断',
+        '不建立章内第二可编辑存储', '不构成对该等措辞的核验',
+        '进入待补/建议解决路径', '亦未收到可引用的',
+        '可追溯证据待后续内容核对补充',
+        '正式内容核对前需补充项目主要来源证据',
+        '不将其判定为不适用，也不以模板示例',
+        'provenance_lineage 与脚注', '由 StudyDefinition 统一承载',
+        '相关来源绑定和原文定位需在后续内容核对中补充',
+        '不构成对医学、伦理、法律或审批事项的判断；待补事实',
+        '不构成对该等措辞的核验。本章涉及的数据管理与伦理相关新事实根归属',
+        '本候选不建立章内第二可编辑存储',
+        '本候选不作合规断言',
+    )
+    removed = 0
+    for para in list(doc.paragraphs):
+        text = para.text
+        if any(marker in text for marker in engineering_markers):
+            para._p.getparent().remove(para._p)
+            removed += 1
+    # Also check table cells
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for para in list(cell.paragraphs):
+                    if any(marker in para.text for marker in engineering_markers):
+                        para._p.getparent().remove(para._p)
+                        removed += 1
+
     # 4) ask Word to refresh fields (TOC/page numbers) on open.  settings.xml
     # has a strict child sequence — updateFields belongs before w:compat;
     # appending at the end makes Word reject the whole file.
@@ -365,7 +397,8 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     output_sha = hashlib.sha256(open(output_path, 'rb').read()).hexdigest()
     return {'document_sha256': document_sha, 'output_sha256': output_sha,
             'export_scope': 'production_docx', 'tables': table_no,
-            'cross_references': ref_count, 'soa_replaced': soa_replaced}
+            'cross_references': ref_count, 'soa_replaced': soa_replaced,
+            'engineering_removed': removed}
 
 
 def header_rows_of(table_content: str) -> int:
