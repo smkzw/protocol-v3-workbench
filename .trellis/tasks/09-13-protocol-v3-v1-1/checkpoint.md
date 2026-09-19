@@ -1068,3 +1068,8 @@ ego浏览器实证：/genoffice/index.html在真实浏览器完整启动——ro
 
 ego实测5176：主页503仅监控小部件（不阻断）；"新建项目"对话框内置双入口（"从零开始"=入口B两阶段反问PICOS /"导入方案摘要"=入口A先解析后建项——T04/R5的UI原语已在）；"从零开始"建项成功：合成药T·斑秃·II期·MW-II-71C0F9C0，医学写作模块点亮"研究方案智能设计与写作"。**隔离环境闭环可用性证实**。
 派发波折与现状：codex exec 4名测试者于20:28-20:32全部死于ChatGPT配额（usage limit至9/21 06:20，非测试缺陷）；conference_session_runner zcode/pi会话建立失败；antigravity/opencode-go CLI缺失。4份场景提示词已备（t17_prompts/），9/21配额恢复后可直接重派；恢复前由主线程/子代理代行场景推进。轮询automation-ef2b353b继续每20分钟值守。
+
+## 2026-09-19 T17场景1推进+首个P1发现
+
+环境修复：5275重启并加WORKBENCH_RUNTIME_DIR隔离（根因修复——此前runtime_store落在共享目录，冒烟项目曾写入；已外科清除共享库中我们的2行[user_projects 1行+authoring_journeys 1行]，未触其他数据；重启后隔离实例仅9个内置演示项目）。ego复测：重开对话框→入口A→choosers上传synthetic-reference.docx成功（1KB）→点"导入并提取"→**卡在"正在准备文档内容"超60秒**（1KB文档不应如此；浏览器network记录显示202已接受+多次503监控调用交错）。P1发现#1：入口A建项"准备导入"阶段疑似等待某个不推进的异步任务（疑似监控503家族或任务完成端点缺失），需根因诊断App.jsx导入流程与对应后端端点。
+现状：场景1停在入口A建项步骤；codex配额9/21恢复后可重派外部测试者；轮询automation继续值守。ego空间t17-smoke(126)可复用，页面状态=导入对话框卡在spinner。
