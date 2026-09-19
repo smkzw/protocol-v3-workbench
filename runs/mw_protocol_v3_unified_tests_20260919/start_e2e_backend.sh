@@ -1,6 +1,6 @@
 #!/bin/zsh
 # 独立端到端测试后端：清洁数据库 + deepseek profile
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DB="$ROOT/runs/mw_protocol_v3_unified_tests_20260919/e2e_test.sqlite"
 rm -f "$DB" "$DB-wal" "$DB-shm" "$DB.artifacts" -rf 2>/dev/null
 mkdir -p "$(dirname "$DB")"

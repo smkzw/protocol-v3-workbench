@@ -28,7 +28,7 @@ else
 fi
 
 # 2) isolated backend health (5275)
-if curl -fsS "http://127.0.0.1:5275/healthz" >/dev/null 2>&1; then
+if curl -fsS "http://127.0.0.1:5275/api/health" >/dev/null 2>&1; then
   print "ok: backend 5275 healthy"
 else
   print -u2 "WARN: backend 5275 not responding — start the isolated backend before dispatch."

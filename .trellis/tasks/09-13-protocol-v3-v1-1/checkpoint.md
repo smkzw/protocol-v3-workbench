@@ -1050,3 +1050,16 @@ flow.png修复：word_export_production._prune_orphaned_media(doc)在保存前�
 T10主体落地（866e3a9+本批）：GenOffice docs渲染器成功浏览器化——apps/docs dev renderer用vite build --base=/genoffice/产出web bundle（约20MB含字体），build_genoffice_renderer.sh装进frontend/public/genoffice/并注入bridge-shim.js；shim实现desktop桥核心面（openDocx从工作台URL取字节/saveDocx→office snapshot POST/语言主题桩/Proxy兜底）；office/GenOfficeFrame.jsx一实例一iframe从ManuscriptWorkspace挂载（保存稿存在时出现，bundle存在性点击时探测+安装指引）。
 ego浏览器实证：/genoffice/index.html在真实浏览器完整启动——root挂载、window.desktop.openDocx=function、标题变"未命名文档.docx"、完整中文功能区（开始/插入/绘图/设计/布局/引用/审阅/视图+样式库+AI面板）；Page.captureScreenshot超时（canvas编辑器页截图CDP超时，boot状态三次独立文本探针证实）。证据链三层：引擎spike（字节级往返）+API集成测试+浏览器启动实证；完整打开→编辑→保存闭环留待T17 e2e（需真实文档链）。
 回归：后端关键面6/6；前端95/95+61/61。经验：vite build --base对子路径部署必须；多级../相对路径在cd后的脚本中会失效，一律顶部解析绝对路径；ego截图对canvas重页可能CDP超时，用文本探针代替。
+
+## 2026-09-19 T17发射（环境起+4测试者派发+静默轮询登记）
+
+环境：start_e2e_backend.sh ROOT层数修复（up3→up2）；后端5275健康（健康路径=/api/health，e2e_clean_env_check.sh已修正）；前端5176健康（VITE_API_PROXY_TARGET=http://127.0.0.1:5275）；清洁检查exit=0（DB空）。
+派发（codex exec独立会话并行4名，--dangerously-bypass-approvals-and-sandbox，日志/tmp/t17_*.log，提示词runs/requirements_v2_20260919/t17_prompts/）：
+- tester1斑秃II期入口A（上传synthetic-reference.docx夹具+GenOffice打开编辑）
+- tester2偏头痛III期入口B（零附件A03验证）
+- tester3 UC II期盲测（反拟合检索+缺失事实行为A04-A06）
+- tester4自选领域交叉验证（A07核心，禁四领域）
+主线程注入context：夹具路径/禁直连后端/耗时如实记录。
+首批观察：tester1/3开局撞 monitoring_principal_unavailable 503——宿主认证缝隙fail-closed设计（main.py 3399注释），非阻断写作链则不算缺陷；tester2在项目总览读取中。
+轮询：CronCreate automation-ef2b353b 每20分钟查/tmp/t17_*.log的EXIT标记，全齐或120分钟超时后聚合审阅（P0/P1/P2→修复→再派发换疾病领域→循环至零P0/P1）。
+已知缺口如实记录：conference_session_runner的zcode app-server会话建立失败（no usable session）；antigravity/opencode-go CLI本机不存在——外部harness通道待修复，本轮4名测试者以codex exec独立会话代行（模型多样性欠缺，独立性与场景差异保留）。
