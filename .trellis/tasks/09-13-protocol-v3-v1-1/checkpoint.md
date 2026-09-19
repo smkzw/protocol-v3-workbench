@@ -1261,3 +1261,10 @@ Plan A门控已在journey层解锁（design_recommendations_blocked消失），�
 ③corpus gate例外放行（ tester3已验证可达"例外允许写作"）→补齐intervention.investigational_product_dose_actions与intervention.placebo_regimen两个关键结构化字段（A05要求，场景1的剂量/安慰剂设计按场景设定填）。
 ④greenfield-document创建→保存→导出→GenOffice。
 前置注意：后端重启后前端指纹需同步（已同步）；journey commit会级联失效PICOS（值保留仅标记失效，重提交即恢复）。
+
+## 2026-09-20 场景1最终状态（本会话收敛）
+
+装配计划已刷新（revision 1, 55项研究快照wref_search_361ef515），但confirm被6模块未决阻塞：design.adaptive/allocation_model/crossover/interim_analysis/open_label_extension/sample_size_reestimation + evidence.systemic_oral_defaults + governance.dmc/src + intervention模块等。
+已验证的完成路径（tester4实证可行）：高级微调面板逐字段填写44字段（design/intervention/outcomes/population/product/statistics六模块）→每模块采用→装配计划confirm→greenfield建稿→保存→导出→GenOffice。点击≥64次，人工密集。
+零文档语料准入的owner决策仍开放：结构化证据corpus analysis分支（工程）vs 本地文档集上传（产品入口）vs OCR Key（PaddleOCR aistudio key写入secrets）。三路径任一都能解锁自动化候选生成，消除44字段手填。
+本会话T17累计成果：身份链四层修复+三重验证、方案A门控、空响应退避、tester2/3/4报告聚合、3份测试报告归档、P0×2+P1×4修复、预填骨架与标题/方案号候选生成实证。
