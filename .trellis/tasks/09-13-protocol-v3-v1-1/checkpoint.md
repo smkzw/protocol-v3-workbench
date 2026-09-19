@@ -1430,3 +1430,16 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 5. tester3/4报告聚合进正式记录；9/21 codex重派独立性轮。
 
 **e2e运维配方不变**（见记忆文件）：WORKBENCH_RUNTIME_DIR=e2e_runtime + WORKBENCH_PROTOCOL_V3_WORKFLOW_DB=e2e_test.sqlite + ai-runtime.env + AI契约环境变量 + PYTHONPATH；0字节e2e库需admit_project引导。manuscript source_run_id=chapter-sources run（非intake run）；design elements adopt必须带seed_run_id+非空selections。
+
+## 2026-09-20 06:40 T17多测试者轮询聚合：第一轮四进程全部无效（启动即中止）→ 重派第二轮（新疾病领域）
+
+**轮询结论**：/tmp/t17_tester{1..4}_*.log 四文件均无EXIT=标记，内容止步于开局第一屏快照（mtime 2026-09-19 20:28），超120分钟按超时处理。根因与"运维红线"吻合：nohup+& 派发随工具调用进程组被回收，四进程启动即死，**无报告体可聚合**。tester1/3开局见 monitoring_principal_unavailable 503 = 宿主认证缝隙预期fail-closed（按owner裁定不记缺陷，除非阻断写作链）。
+
+**第二轮重派（2026-09-20 06:36，zcode run_in_background保活，EXIT=标记由命令尾部追加）**：
+- tester1 入口A·中重度斑块状银屑病（合成药P，IL-23皮下，12周PASI-75）→ google-antigravity/gemini-3.8-flash → /tmp/t17_tester1_alopecia_entryA.log.2round（报告体在zcode任务call_a3a6dfa4的stdout.log，EXIT标记在/tmp文件）
+- tester2 入口B零附件·类风湿关节炎（合成药R，口服JAK1，24周ACR20，背景MTX）→ xai-oauth/grok-4.5 → /tmp/t17_tester2_migraine_entryB.log.2round
+- tester3 盲测一句话·MASH/NASH（合成药N，口服24周）→ opencode-go/deepseek-flash → /tmp/t17_tester3_uc_blind.log.2round
+- tester4 自选领域交叉（禁用清单含第一轮全部领域+CSU）→ deepseek/deepseek-v4-pro → /tmp/t17_tester4_cross_domain.log.2round
+- 四prompt均加：503已知非缺陷条款（避免重复误报）+消息卫生检查条款（内部ID/类名/Pydantic文本直出记P1）+EXIT=收尾标记。
+- 独立性：四 harness/model 组合互不相同；疾病领域与第一轮及主线程CSU场景全部错开。
+- 截图目录 /tmp/t17_tester{1..4}/ 已建。
