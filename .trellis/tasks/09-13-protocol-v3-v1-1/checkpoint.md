@@ -1212,3 +1212,10 @@ ego操作链已熟练：选CDC776FB→医学写作(待决策DOM click)→打开�
 ClinicalTrials.gov API实证：NCT03436797/05298215/01635127/03749135/00924534 全部 documents=[]——现代CTG记录不再附带Protocol PDF（结构化数据+申办方站点托管）。原文准备（拉取文档→解析）对纯公开检索项目**永远无文档可用**——语料准入门槛（要求文档深度处理+译文+准入）与公开检索数据源结构性不兼容。
 这是产品级设计缺口（P1升级）：零文档公开检索项目需要"结构化证据-only准入"路径（181/1304项已结构化分析完成即视为语料就绪），或引导用户上传本地竞品Protocol文档集（如CRSwNP项目的本地语料模式——181项+38份Protocol即来自本地文档集）。
 下窗口方案（owner拍板或按R2自主推进）：A. 语料准入门增加结构化证据替代路径（corpus_readiness接受"AI已完成结构化分析"分支）——符合R2零附件可推进；B. 场景1改用本地文档集模式重跑（上传CSU相关竞品Protocol文档集）。推荐A+B并行：A为产品正确性，B为场景多样性。
+
+## 2026-09-20 方案A落地：结构化证据-only门控分支上线（待候选生成验证）
+
+实施方案A：research_ready_for_design_recommendations终态failed分支——pipeline.snapshot_id非空（公开检索快照已保留=结构化分析完成）时解锁设计推荐（reason=research_pipeline_structured_evidence_only）。回归测试：test_no_case_fitting.py新增test_failed_pipeline_with_preserved_snapshot_unlocks_structured_evidence（1 passed）。
+ego验证：CDC776FB项目gate解锁（design_recommendations_blocked消失）✓；"更新建议"点击后AI候选生成已派发（durable reservation异步，处理中）。
+遗留：①等待候选生成完成后→采用→初稿→导出→GenOffice闭环（机械流程）；②流水线banner仍显示旧的"failed"状态文本（journey持久化的投影未随gate更新——展示层小缺陷P2）；③tester4重派报告已归档待正式聚合（其项目建于修复前）；④P1-3消息提示等修复队列。
+注意：后端源码每次变更后必须同时重启5275与5176（指纹门禁）；ego每次reload后重选项目。

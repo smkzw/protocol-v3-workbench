@@ -177,3 +177,26 @@ def test_picos_option_templates_case_free():
     scanned = table if marker else source
     for token in ('鼻息肉', '鼻窦', 'NPS', 'NCS', 'SNOT-22', '嗅觉', '慢性鼻窦炎'):
         assert token not in scanned, f'option template leaked case token {token!r}'
+
+
+def test_failed_pipeline_with_preserved_snapshot_unlocks_structured_evidence():
+    """Plan A: a zero-document project whose pipeline failed at triage still
+    unlocks design recommendations via the preserved search snapshot — the
+    structured evidence IS the corpus (requirements-v2 R2)."""
+    from types import SimpleNamespace
+
+    from app.medical_writing_research_pipeline import (
+        research_ready_for_design_recommendations,
+    )
+
+    journey = SimpleNamespace(
+        research_pipeline={
+            "stage": "failed",
+            "snapshot_id": "wref_search_361ef515",
+            "round1_material_ready": False,
+        },
+        corpus_gate=None,
+    )
+    ready, reason = research_ready_for_design_recommendations(journey)
+    assert ready is True
+    assert reason == "research_pipeline_structured_evidence_only"

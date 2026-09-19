@@ -434,6 +434,14 @@ def research_ready_for_design_recommendations(
             "corpus_ready",
             "round2_ready",
         }:
+            # Plan A (requirements-v2 R2): a zero-document project's public
+            # search snapshot IS its structured evidence — the preserved
+            # snapshot means the structured analysis completed, so
+            # evidence-bound design recommendations bind to it instead of
+            # staying permanently locked (modern ClinicalTrials.gov records
+            # ship no Protocol documents).
+            if str(pipeline.get("snapshot_id") or ""):
+                return True, "research_pipeline_structured_evidence_only"
             return False, f"research_pipeline_{stage}"
         return False, f"research_pipeline_in_progress:{stage or 'queued'}"
 
