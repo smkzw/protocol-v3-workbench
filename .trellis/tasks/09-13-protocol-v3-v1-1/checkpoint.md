@@ -1443,3 +1443,12 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - 四prompt均加：503已知非缺陷条款（避免重复误报）+消息卫生检查条款（内部ID/类名/Pydantic文本直出记P1）+EXIT=收尾标记。
 - 独立性：四 harness/model 组合互不相同；疾病领域与第一轮及主线程CSU场景全部错开。
 - 截图目录 /tmp/t17_tester{1..4}/ 已建。
+
+## 2026-09-20 06:50 T17第二轮聚合：四份报告全部BLOCKED（环境运维失误，非产品缺陷）→ 环境已修 → 第三轮已重派
+
+**第二轮结论**：四名测试者（银屑病入口A/RA入口B/MASH盲测/自选领域）全部在进入写作工作区前被 MedicalWritingRuntimeGate 拦截并如实判 BLOCKED：前端期望后端构建 api-586a2970daa58557，实际后端 api-fb2bb47bf32fcc4a（合同 medical-writing-api-2026-07-17.1）。根因=主线程 06:10 重启API（载入 manuscript_coordinator 修复）后未同步重启前端 dev server——**运维红线已知坑的又一次踩中**。版本门禁 fail-closed 是产品正确行为；四份报告的 BLOCKED 判定本身质量很高（tester4 还经浏览器读取 /api/runtime-readiness 佐证版本事实，并给出"重启前端或回退后端"的正确恢复建议）。报告归档 runs/requirements_v2_20260919/t17_round2_blocked/。
+**教训强化**：每次重启后端 API，必须同步重启前端 vite（同一运维事务），否则任何在跑/新派的测试者全部废轮。
+
+**环境修复（06:47）**：清掉全部本仓库 vite 实例（含占 5175 的残留 strictPort 实例），以 `VITE_API_PROXY_TARGET=http://127.0.0.1:5275 npm exec vite -- --port 5176 --strictPort --host 127.0.0.1` 重启；浏览器实测版本门禁通过（仅剩 monitoring_principal_unavailable 503 预期行为，可正常进入医学写作）。
+
+**第三轮重派（06:52，同场景同模型矩阵）**：/tmp/t17_tester1_psoriasis_r3.log（gemini-3.8-flash）/ tester2_ra_r3.log（grok-4.5）/ tester3_mash_r3.log（opencode-go/deepseek-flash）/ tester4_open_r3.log（deepseek-v4-pro），EXIT=标记命令尾部追加，四进程确认存活。
