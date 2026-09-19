@@ -3979,7 +3979,15 @@ class MedicalWritingResearchPipelineService:
                 return
             if status in PREPARATION_BATCH_TERMINAL_STATUSES:
                 if status == "failed":
-                    raise ResearchPipelineError(f"原文准备失败：{status}")
+                    # Structured-evidence branch (plan A): the preparation
+                    # batch failed (e.g. scanned PDF needing OCR without a
+                    # key).  Instead of hard-failing the pipeline, advance
+                    # to awaiting_corpus_analysis so the AI can work with
+                    # the search snapshot's structured data directly.
+                    state.stage = "awaiting_corpus_analysis"
+                    state.detail = "原文准备失败（结构化证据模式）：跳过文档深度处理，以检索快照结构化数据进入corpus analysis"
+                    self._persist(project_id, state)
+                    return
                 return
             time.sleep(2.0)
         raise ResearchPipelineError("原文准备超时")
