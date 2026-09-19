@@ -1129,3 +1129,11 @@ P1#1"准备导入卡死/流水线22%失败"根因链全线打通：
 4. **ai_runtime_settings.py profile_env缝隙（本轮新根因）**：base_env传入时丢弃进程env的THINKING/REASONING_EFFORT，而冻结路由捕获路径带着它们（thinking=enabled/effort=max）→ frozen durable route校验"identity"必败。修复=profile_env透传这两个部署级开关（已修，探针验证thinking='enabled'/effort='max'/expected='deepseek-flash'与冻结路由全字段一致）。
 验证状态：新项目MW-II-CDC776FB（合成药W·慢性自发性荨麻疹·II期）建项成功，流水线尚未入队（公开检索先行）；旧失败任务均为修复前入队（frozen expected=deepseek-flash与现解析一致性需重派验证——若仍失败需对照payload路由与解析provider逐字段）。durable job失败有attempt_count=3上限，重试可用jobs/recover。
 tester4报告已归档（t17_tester4_report.md）：T2DM交叉验证——检索适配性6/6经ClinicalTrials.gov独立核验为真T2DM试验（检索质量正向实证）；反拟合阴性；P0-1抽屉无重试控件、P0-2候选全空壳+跳过不推进、P1-3枚举字段自由文本直出Pydantic错误（小分子vs small_molecule）入修复队列；点击数≥64超3倍目标（44字段手填流程的UX问题）。
+
+## 2026-09-19 T17身份链最后一块：durable worker解析路径（诊断已就位）
+
+新增诊断（competitor_triage.py:4299 raise带resolved vs frozen全字段对照）已抓到精确对：
+resolved=(provider='deepseek', model='deepseek-v4-flash', base_url='https://api.deepseek.com/v1', transport='openai_compatible', expected='deepseek-v4-flash')
+frozen =(provider='deepseek', model='deepseek-v4-flash', base_url同, transport同, expected='deepseek-flash')
+→ 唯一差异=expected：durable worker解析出的provider.expected仍是旧硬编码值deepseek-v4-flash，未走我修的ai_gateway显式期望优先路径——**worker构建provider用了别的代码路径（非configured_ai_provider_from_env的env分支）**。下一步：读competitor_triage执行器（durable worker claim后）构建provider的调用点（_provider_for_profile/profile_env已是修过的，但worker可能用runtime_ai_env()+别的构造或直接OpenAICompatibleAiProvider(model, model)硬编码expected=model），把同样的显式期望优先语义带上；随后retry-triage（分类修复已就位，identity失败可恢复）。
+另注意：旧失败管道无法无损恢复（快照缺失422），恢复前需/start新管道（本次验证已用/start+diagnostic抓到对照对，方法可复用）。

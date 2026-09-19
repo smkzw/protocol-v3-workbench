@@ -1412,6 +1412,10 @@ class MedicalWritingResearchPipelineService:
                     # "CompetitorTriageError: ..." — treat it as a triage
                     # failure too, otherwise the offered retry 409-deadlocks.
                     or "CompetitorTriageError" in error_summary
+                    # Provider-contract failures at the triage node are also
+                    # recoverable from the triage entry (identity recalibration).
+                    or "frozen durable route" in error_summary
+                    or "provider identity" in error_summary
                 )
                 if not triage_failure:
                     raise ResearchPipelineConflictError(

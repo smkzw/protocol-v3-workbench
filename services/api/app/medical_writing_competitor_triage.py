@@ -4296,7 +4296,13 @@ class CompetitorTriageService:
             or expected_response_model != route.expected_response_model
         ):
             raise CompetitorTriageError(
-                "resolved provider identity does not match the frozen durable route"
+                "resolved provider identity does not match the frozen durable route: "
+                f"resolved=(provider={provider_name!r}, model={model_name!r}, "
+                f"base_url={base_url!r}, transport={transport!r}, "
+                f"expected={expected_response_model!r}) "
+                f"frozen=(provider={route.provider!r}, model={route.model!r}, "
+                f"base_url={route.base_url!r}, transport={getattr(route, 'transport', '')!r}, "
+                f"expected={route.expected_response_model!r})"
             )
 
     @staticmethod
