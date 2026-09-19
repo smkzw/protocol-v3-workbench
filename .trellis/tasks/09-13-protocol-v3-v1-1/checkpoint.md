@@ -1305,3 +1305,8 @@ T17剩余=场景1全链44字段手工采纳+场景2-4同模式+codex独立轮次
 本轮验证：identity校验修复生效（不再有provider_response_empty/identity错误），但enrichment仍未派发。原因：journey层的"更新建议"触发recompute时，design_ready=True（Plan A门控通过），但enrichment dispatch需要pipeline stage非failed。CDC776FB的pipeline stage=failed（OCR失败导致），Stage failed→enrichment不dispatch→候选仍占位。
 结论：**零文档项目的场景1全链需要pipeline stage推进修复**——continue-after-triage在原文准备失败时应将stage推进为非failed（如awaiting_corpus_analysis），使enrichment dispatch得以触发。这是产品代码修改，非配置可解决。已入档为owner决策点。
 当前可用路径：场景2-4建项（项目已存在），journey已完成framing+PICOS（测试者2偏头痛项目已通过Greenfield路径验证）。场景1的初稿生成需等pipeline stage修复或owner拍板结构化证据分支。
+
+## 2026-09-20 结构化证据分支上线
+
+continue_after_triage的_wait_for_preparation新增分支：preparation batch failed时不再硬失败整个pipeline，而是将stage推进至awaiting_corpus_analysis（结构化证据模式），使流水线可继续到corpus analysis。代码已推送。
+当前限制：enrichment（authoring prefill AI）仍需语料分析产物生成候选——零文档项目此产物为空，enrichment空响应问题持续。需要corpus analysis AI支持结构化证据输入（架构级改动）或owner提供OCR key。44字段人工路径（tester4实证）仍为当前唯一可走通场景1的路径。
