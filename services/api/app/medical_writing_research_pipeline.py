@@ -86,7 +86,13 @@ def authoring_writes_blocked_by_pipeline(stage: str) -> bool:
     """
 
     normalized = str(stage or "").strip()
-    return bool(normalized) and normalized not in TERMINAL_STAGES and normalized not in AUTHORING_WRITE_ALLOWED_WAITING_STAGES
+    if not normalized:
+        return False
+    # Cancelled/failed pipelines don't block authoring writes — they are
+    # terminal states that no longer consume frozen inputs.
+    if normalized in TERMINAL_STAGES:
+        return False
+    return normalized not in AUTHORING_WRITE_ALLOWED_WAITING_STAGES
 
 
 def authoring_write_blocker_detail(stage: str) -> str:
