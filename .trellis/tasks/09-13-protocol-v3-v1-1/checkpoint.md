@@ -1328,3 +1328,12 @@ continue_after_triage的_wait_for_preparation新增分支：preparation batch fa
 **零文档项目的结构性缺口明确**：journey写作允许✓→装配计划✓→但greenfield建稿需structured_design字段值→这些值通过设计卡片采纳（DesignElementsCards组件+design elements API）写入study definition→设计卡片需要corpus analysis AI候选（零文档无产物）→循环依赖。
 解锁路径（owner决策）：A. 提供PaddleOCR key→NCT03436797的PDF可OCR→原文准备成功→流水线推进→corpus analysis AI产出候选→设计卡片可采纳→循环解锁；B. 实现结构化证据corpus analysis分支（工程轮次）；C. 直接通过API将最小structured_design值写入study definition（绕过设计卡片流程——但需验证产品合同是否允许）。
 本会话T17已完成：全部基础设施修复+Plan A门控+结构化证据分支+装配计划confirm+CSU II期PICOS数据+所有测试。
+
+## 2026-09-20 T17结构性阻塞最终确认（零文档项目循环依赖）
+
+根因链完全确认：零文档项目→corpus analysis AI无文档可分析→无分类结果→retained_candidates=0→原文准备无候选→preparation失败→pipeline无法推进→设计候选无法生成→循环依赖。
+这不是代码bug，是产品对"文档型语料"的设计依赖与纯公开检索数据源的**结构性不兼容**。解决方案均需架构级开发或外部资源：
+1. PaddleOCR API Key（owner提供）→ 扫描PDF可OCR → 文档链可跑通
+2. 结构化证据corpus analysis（架构改造）→ AI接受结构化CTG数据为输入
+3. 本地文档集上传（产品入口）→ 用户上传竞品PDF
+在以上任一路径实现前，场景1-4的完整链路（语料准入→设计候选→初稿→导出）无法端到端走通。T00-T16的基础设施和修复工作不受影响。
