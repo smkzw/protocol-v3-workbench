@@ -363,6 +363,14 @@ RESIDUAL_RECOMMENDATIONS = {
     'compensation.missing_fact_resolution': {'value': {'policy': '补偿与损害处理条款以临床试验协议为准'}, 'basis': '通行约定'},
     'compensation.responsible_contact': {'value': {'contact': '申办方医学监察员及药物安全负责人（联系方式见中心启动资料）'}, 'basis': '通行安排'},
     'population.recruitment.compensation_arrangement': {'value': {'policy': '参加者按伦理批准的标准获得交通等合理补偿'}, 'basis': 'GCP通行要求'},
+    'statistics.sample_size.assumptions': {'value': [
+        '主要终点为第24周临床缓解率，安慰剂组缓解率20%，合成药X组缓解率35%（绝对差15个百分点）。',
+        '双侧α=0.05，检验效能90%。',
+        '随机1:1，按中心分层；主要分析采用CMH分层检验并报告风险差及95%CI。',
+        '失访/缺失主要终点假设为10%（使用者决定，由8%上调）。',
+        '无期中分析计划。',
+        '样本量估算基于两独立比例比较的正态近似；未对中心分层导致的小样本层额外膨胀做调整，CMH分层为主要分析方法。'],
+        'basis': '失访率假设由8%上调为10%（使用者决定），样本量相应重算'},
     'population.recruitment.channels': {'value': {'channels': '合作研究中心相应专科门诊筛选及经伦理批准的招募材料'}, 'basis': '按目标人群就诊路径建议'},
     'population.recruitment.contact_measures': {'value': {'measures': '研究中心公开联系电话；仅使用伦理批准的招募材料'}, 'basis': 'GCP要求'},
     'intervention.storage_conditions.unit': {'value': {'unit': '2℃～8℃避光冷藏'}, 'basis': '注射制剂通行保存条件，与给药制剂一致'},
@@ -415,11 +423,30 @@ RESIDUAL_RECOMMENDATIONS = {
 }
 
 
+MODIFICATION_WATCH = ('statistics.sample_size.assumptions',)
+
+
 def residual_recommendations(template, study):
-    """Missing fact paths plus type corrections, for user confirmation."""
+    """Missing fact paths plus watched-fact modifications, for user confirmation."""
     gaps = collect_chapter_gaps(template, study)
     index = _binding_index(template.fact_catalog.bindings)
     out = {}
+    # Watched facts: surface the current recommendation whenever the stored
+    # value no longer matches it (e.g. the user changed a design assumption).
+    for path in MODIFICATION_WATCH:
+        rec = RESIDUAL_RECOMMENDATIONS.get(path)
+        binding = index.get(path)
+        if rec is None or binding is None or not binding.canonical_path:
+            continue
+        current = study.facts.get(binding.canonical_path)
+        value = _validate_value(binding, rec['value'])
+        if value is None:
+            continue
+        if current is not None and json.dumps(current, ensure_ascii=False, sort_keys=True) == json.dumps(value, ensure_ascii=False, sort_keys=True):
+            continue  # already confirmed to the recommended value
+        out[path] = {'canonical_path': binding.canonical_path, 'value': value,
+                     'basis': rec.get('basis', ''), 'chapter': '（设计假设修订）',
+                     'revise': True}
     for path, rec in retirement_recommendations(template, study).items():
         out[path] = {'canonical_path': path, 'value': None, 'retire': True,
                      'basis': rec['basis'], 'chapter': rec['chapter']}
