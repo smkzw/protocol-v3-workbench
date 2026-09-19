@@ -8,7 +8,8 @@ from app.protocol_workflow.events.models import verify_event_integrity
 from app.protocol_workflow.events.unit_of_work import EventSourcedUnitOfWork
 from app.protocol_workflow.agent3.manuscript_document import assemble_working_manuscript
 from app.protocol_workflow.qc.manuscript_qc import run_manuscript_qc
-from .manuscript_edits import block_content_text, edit_intent_sha256, reclassify_edit
+from .manuscript_edits import (
+    _digit_bounded, _negated, block_content_text, edit_intent_sha256, reclassify_edit)
 
 
 def manuscript_document_id(project_id, study_id):
@@ -136,6 +137,133 @@ class ManuscriptDocumentService:
                     'operation_id': intent['operation_id'], 'replayed': True, 'status': 'working_draft'}
         return None
 
+    # ------------------------------------------------------------------
+    # Snapshot-bound reconciliation (T09/A09-A11): deterministic recomputation
+    # for the current saved revision only.  Analyses are never stored as
+    # state — the view recomputes from (document revision, confirmed facts,
+    # resolve events), so an old analysis can never mark a newer document
+    # clean, and a resolved difference stays bound to the revision it was
+    # acknowledged at.
+    # ------------------------------------------------------------------
+
+    def reconciliation(self, project_id, study_id, confirmed_facts, study_revision_sha256):
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            document = uow.semantic_document_repository.get_current(project_id, document_id)
+            if document is None:
+                return None
+            events = uow.event_stream_repository.read_events(project_id, document_id)
+        blocks = {block.semantic_block_id: block for block in document.semantic_blocks}
+        clues = {}
+        for event in events:
+            if event.event_type != 'manuscript_working_document_edited.v1':
+                continue
+            for clue in event.payload.get('edit_clues', []):
+                # Signals accumulate per block: a later edit must not erase an
+                # earlier deviation that still exists in the current text.
+                block_clue = clues.setdefault(clue['semantic_block_id'],
+                    {'semantic_block_id': clue['semantic_block_id'],
+                     'edit_class': clue.get('edit_class'),
+                     'affected_fact_paths': [], 'signals': [], 'reason': ''})
+                block_clue['signals'].extend(clue.get('signals') or ())
+                for path in clue.get('affected_fact_paths') or ():
+                    if path not in block_clue['affected_fact_paths']:
+                        block_clue['affected_fact_paths'].append(path)
+        resolutions = {(event.payload.get('semantic_block_id'), event.payload.get('document_revision'))
+                       for event in events
+                       if event.event_type == 'manuscript_reconciliation_resolved.v1'}
+        items, differences = [], 0
+        for block_id in sorted(clues):
+            clue = clues[block_id]
+            signals = clue.get('signals') or ()
+            block = blocks.get(block_id)
+            if block is None:
+                continue
+            text = block_content_text(block.model_dump(mode='json'))
+            paths = tuple(clue.get('affected_fact_paths') or ())
+            missing = []
+            for signal in signals:
+                value = signal.get('value_text') or ''
+                if not value:
+                    continue
+                present_now = _digit_bounded(text, value)
+                negated_now = _negated(text, value)
+                if signal.get('present_in_old') and not present_now:
+                    if signal.get('fact_path') not in missing:
+                        missing.append(signal['fact_path'])
+                elif present_now and signal.get('negated_in_old') != negated_now:
+                    if signal.get('fact_path') not in missing:
+                        missing.append(signal['fact_path'])
+            status = ('difference' if missing else 'consistent')
+            resolved = (block_id, document.revision) in resolutions
+            if status == 'difference' and not resolved:
+                differences += 1
+            items.append({'semantic_block_id': block_id,
+                'edit_class': clue.get('edit_class'),
+                'affected_fact_paths': list(paths),
+                'missing_fact_paths': missing,
+                'status': status, 'resolved': resolved})
+        return {'schema_version': 'manuscript-reconciliation.v1',
+            'document_revision': document.revision,
+            'document_sha256': document_revision_hash(document),
+            'study_revision_sha256': study_revision_sha256,
+            'study_matches_current': True,
+            'items': items, 'differences': differences,
+            'status': 'pending' if not clues else ('differences' if differences else 'consistent')}
+
+    def _resolve_intent(self, project_id, study_id, intent):
+        return hashlib.sha256(canonical_json([project_id, study_id, 'manuscript-reconcile',
+            intent['operation_id'], intent['expected_revision'],
+            intent.get('semantic_block_id'), intent.get('decision')]).encode()).hexdigest()
+
+    def resolve_reconciliation(self, project_id, study_id, intent):
+        """Acknowledge a difference for the current revision; idempotent replay."""
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_reconciliation_resolved.v1' \
+                        or event.payload.get('operation_id') != intent['operation_id']:
+                    continue
+                verify_event_integrity(event)
+                if event.payload['intent_sha256'] != self._resolve_intent(project_id, study_id, intent):
+                    raise ValueError('manuscript_reconcile_intent_changed')
+                return {'operation_id': intent['operation_id'], 'replayed': True,
+                        'status': 'reconciliation_resolved'}
+            current = uow.semantic_document_repository.get_current(project_id, document_id)
+            if current is None:
+                raise ValueError('manuscript_document_missing')
+            if current.revision != intent['expected_revision']:
+                raise ValueError('manuscript_document_revision_changed')
+            now = self.clock()
+            payload = {'operation_id': intent['operation_id'],
+                'intent_sha256': self._resolve_intent(project_id, study_id, intent),
+                'semantic_block_id': intent.get('semantic_block_id'),
+                'decision': intent.get('decision', 'accepted'),
+                'document_revision': current.revision,
+                'acceptance_scope': 'working_draft_only'}
+            # A resolution changes no document content: append the event to the
+            # stream only — the document CAS stays untouched.
+            params = {
+                'domain_event_id': 'manuscript-reconcile:' + hashlib.sha256(canonical_json(
+                    [document_id, intent['operation_id']]).encode()).hexdigest(),
+                'stream_id': document_id, 'event_type': 'manuscript_reconciliation_resolved.v1',
+                'payload_schema_version': 'mw_protocol_v3_event_v1', 'upcaster_id': 'noop:v1',
+                'actor_type': ActorType.USER, 'actor_id': intent['actor_id'],
+                'action': 'resolve_manuscript_reconciliation',
+                'reason': '用户确认该差异按当前工作稿保留；仅绑定本次文档版本。',
+                'payload': payload, 'emitted_at': now}
+            head = uow.event_stream_repository.get_stream_head(project_id, document_id)
+            if head is None:
+                built = self.atomic.builder.build(sequence=1, previous_event_sha256=None, **params)
+            else:
+                built = self.atomic.builder.continue_chain(
+                    head_sha256=head.last_event_sha256,
+                    head_sequence=head.last_sequence, **params)
+            uow.event_stream_repository.append_events(project_id, document_id, [built])
+            uow.commit()
+            return {'operation_id': intent['operation_id'], 'replayed': False,
+                    'status': 'reconciliation_resolved'}
+
     def edit(self, project_id, study_id, confirmed_facts, intent):
         """Apply free working-draft edits under CAS; nothing is refused on
         scientific grounds (R3/A09).
@@ -182,6 +310,7 @@ class ManuscriptDocumentService:
                 clues.append({'semantic_block_id': edit['semantic_block_id'],
                     'edit_class': ruling['edit_class'],
                     'affected_fact_paths': list(ruling['affected_fact_paths']),
+                    'signals': list(ruling.get('signals') or ()),
                     'reason': ruling['reason'] or ''})
             raw['semantic_blocks'] = [by_id[b['semantic_block_id']] for b in raw['semantic_blocks']]
             document = SemanticDocumentRevision.model_validate({

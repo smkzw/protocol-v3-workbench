@@ -111,6 +111,7 @@ def reclassify_edit(*, old_text: str, new_text: str, confirmed_facts: Mapping[st
         raise ValueError('manuscript_edit_class_invalid')
     affected = []
     negation_flips = []
+    signals = []
     old_norm, new_norm = old_text or '', new_text or ''
     for path, value_text in _fact_value_strings(confirmed_facts):
         if not value_text:
@@ -118,19 +119,25 @@ def reclassify_edit(*, old_text: str, new_text: str, confirmed_facts: Mapping[st
         in_old, in_new = _digit_bounded(old_norm, value_text), _digit_bounded(new_norm, value_text)
         if in_old and not in_new:
             affected.append(path)
+            signals.append({'fact_path': path, 'value_text': value_text,
+                            'present_in_old': True, 'negated_in_old': _negated(old_norm, value_text)})
         elif in_old and in_new and _negated(old_norm, value_text) != _negated(new_norm, value_text):
             negation_flips.append(path)
+            signals.append({'fact_path': path, 'value_text': value_text,
+                            'present_in_old': True, 'negated_in_old': _negated(old_norm, value_text)})
     if affected:
         return {'edit_class': 'fact_or_uncertain', 'affected_fact_paths': tuple(sorted(set(affected))),
+                'signals': signals,
                 'reason': '编辑改变了已确认研究事实的表述，显式核对时需与已确认设计比对。'}
     if negation_flips:
         return {'edit_class': 'fact_or_uncertain', 'affected_fact_paths': tuple(sorted(set(negation_flips))),
+                'signals': signals,
                 'reason': '编辑改变了事实表述的否定形式（如随机→不随机），显式核对时需比对。'}
     if new_norm.strip() == old_norm.strip():
-        return {'edit_class': 'format_only', 'affected_fact_paths': (),
+        return {'edit_class': 'format_only', 'affected_fact_paths': (), 'signals': [],
                 'reason': '内容未变化。'}
     return {'edit_class': 'wording_only' if claimed_class == 'wording_only' else 'fact_or_uncertain',
-            'affected_fact_paths': (),
+            'affected_fact_paths': (), 'signals': [],
             'reason': '' if claimed_class == 'wording_only'
             else '无法证明该编辑不触及研究事实；按事实相关处理。'}
 

@@ -229,3 +229,37 @@ def test_free_edit_saves_fact_edits_with_reconciliation_clues(saved_manuscript, 
                    'block': {'content': '本研究采用随机双盲设计，给药剂量为150mg，每21天为一个治疗周期。'},
                    'claimed_class': 'wording_only'}]})
     assert replay_dose['replayed'] is True and replay_dose['document']['revision'] == 3
+    # 6) Snapshot-bound reconciliation (T09/A18): the saved dose edit is a
+    # visible difference against the confirmed facts.
+    view = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
+    assert view['schema_version'] == 'manuscript-reconciliation.v1'
+    assert view['document_revision'] == 3 and view['status'] == 'differences'
+    design_item = next(item for item in view['items']
+                       if item['semantic_block_id'] == 'blk:design')
+    assert design_item['status'] == 'difference' and design_item['resolved'] is False
+    assert 'intervention.dose_regimen' in design_item['missing_fact_paths']
+    # 7) Resolving binds to revision 3 and replays idempotently.
+    first_ack = service.resolve_reconciliation(PROJECT, SD_ID, intent={
+        'operation_id': 'operation:reconcile:1', 'actor_id': 'user:example',
+        'expected_revision': 3, 'semantic_block_id': 'blk:design', 'decision': 'accepted'})
+    assert first_ack['replayed'] is False
+    replay_ack = service.resolve_reconciliation(PROJECT, SD_ID, intent={
+        'operation_id': 'operation:reconcile:1', 'actor_id': 'user:example',
+        'expected_revision': 3, 'semantic_block_id': 'blk:design', 'decision': 'accepted'})
+    assert replay_ack['replayed'] is True
+    resolved_view = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
+    assert resolved_view['status'] == 'consistent'
+    assert resolved_view['differences'] == 0
+    # 8) A later edit opens a new revision: the revision-3 acknowledgement
+    # must not mark the new difference clean (A11), and restoring the
+    # confirmed value closes the difference again.
+    changed = _edit('operation:edit:dose2', 'blk:design',
+                    '本研究采用随机双盲设计，给药剂量为200mg，每21天为一个治疗周期。')
+    assert changed['document']['revision'] == 4
+    reopened = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
+    assert reopened['status'] == 'differences', 'a new revision reopens reconciliation'
+    restored = _edit('operation:edit:dose3', 'blk:design',
+                     '本研究采用随机双盲设计，先给予200mg负荷剂量，随后每2周一次100mg维持，每21天评估为一个治疗周期。')
+    assert restored['document']['revision'] == 5
+    closed = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
+    assert closed['status'] == 'consistent', 'prose carrying every confirmed value closes it'

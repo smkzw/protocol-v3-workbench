@@ -362,6 +362,36 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             return result
         return _safe_call(lambda: checked(execute))
 
+    @router.get('/reconciliation')
+    def reconciliation_view(project_id: str, study_definition_id: str):
+        """Snapshot-bound reconciliation for the saved working draft (T09)."""
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        view = documents.reconciliation(project_id, study_definition_id,
+            current.definition.facts, current.revision_sha256)
+        if view is None:
+            raise HTTPException(404, detail={'message': '尚未保存完整工作初稿，先保存再核对。'})
+        return view
+
+    class ReconciliationResolveRequest(BaseModel):
+        model_config = ConfigDict(extra='forbid')
+        operation_id: NonEmptyText
+        actor_id: NonEmptyText
+        expected_revision: int
+        semantic_block_id: str = ''
+        decision: str = 'accepted'
+
+    @router.post('/reconciliation/resolve')
+    def resolve_reconciliation(project_id: str, study_definition_id: str,
+                               body: ReconciliationResolveRequest):
+        """Acknowledge a difference for the current document revision only."""
+        def execute():
+            return documents.resolve_reconciliation(project_id, study_definition_id,
+                body.model_dump(mode='json'))
+        return _safe_call(lambda: checked(execute))
+
     @router.post('/edits/recover')
     def recover_edits(project_id: str, study_definition_id: str, body: ManuscriptEditRequest):
         """Read-only replay lookup for a lost edit acknowledgement (B05).
