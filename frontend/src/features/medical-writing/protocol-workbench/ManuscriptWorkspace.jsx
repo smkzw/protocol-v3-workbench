@@ -12,6 +12,22 @@ function readableError(error) {
     ? message : '本次写作结果尚未核对清楚，原资料和操作记录已保留。';
 }
 
+// One-line readable preview of a residual recommendation value, so the user
+// can see every item's actual content before committing it (R-C05).
+function summarizeResidualValue(value) {
+  if (value === true) return '适用';
+  if (value === false) return '不适用';
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.map(item => summarizeResidualValue(item)).join('；');
+  if (value && typeof value === 'object') {
+    return Object.entries(value)
+      .filter(([, item]) => item !== null && item !== undefined && item !== '')
+      .map(([key, item]) => `${key}：${summarizeResidualValue(item)}`)
+      .join('；');
+  }
+  return '（空）';
+}
+
 function savedChapter(document, nodeId) {
   const blocks = document?.semantic_blocks?.filter(block => block.semantic_node_id === nodeId);
   if (!blocks?.length) return null;
@@ -44,7 +60,9 @@ function historyEntries(key) {
 
 function HistoryVersions({ storageKey, onRestore, busy }) {
   const [open, setOpen] = useState(false);
-  const entries = open ? historyEntries(storageKey) : [];
+  // Existence is computed eagerly: gating the button on an `open`-gated list
+  // hid the only entry point forever (B06).
+  const entries = historyEntries(storageKey);
   return <div>
     {entries.length > 0 && <button type="button" disabled={busy} aria-expanded={open}
       onClick={() => setOpen(value => !value)}>查看历史写作记录（{entries.length}）</button>}
@@ -83,20 +101,39 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   const [busy, setBusy] = useState(false), [refresh, setRefresh] = useState(0);
   const [factsBusy, setFactsBusy] = useState(false);
   const [residual, setResidual] = useState(null);
+  const [readiness, setReadiness] = useState(null);
+  const [showAllResidual, setShowAllResidual] = useState(false);
   const apiRef = useRef(api); apiRef.current = api;
   const request = useRef(null), flight = useRef(false);
+  // R2 admission: critical design confirmed and no applicability contradiction
+  // generate the draft; non-key gaps ride along as explicit gap objects.
+  const canGenerate = readiness
+    ? Boolean(readiness.can_generate_working_draft)
+    : Boolean(plan?.all_applicable_inputs_ready);
 
   useEffect(() => {
-    // Once drafting is otherwise blocked, offer the residual user-decidable
-    // facts (organization/signing facts with transparent recommendations).
+    // Versioned readiness (draft-readiness.v1): admission plus gap map. An
+    // older api surface degrades to the plan's all-ready flag above.
+    if (!apiRef.current?.getDraftReadiness) return undefined;
+    const controller = new AbortController();
+    Promise.resolve().then(() => apiRef.current.getDraftReadiness(projectId, studyDefinitionId, { signal: controller.signal }))
+      .then(value => { if (!controller.signal.aborted) setReadiness(value); })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [projectId, studyDefinitionId, refresh, planRefresh]);
+
+  useEffect(() => {
+    // Residual organization facts are optional one-click enrichment once the
+    // critical design is confirmed; they never gate generation (R2/R-C05).
     if (!apiRef.current?.getChapterFactsResidual) return undefined;
-    if (plan?.all_applicable_inputs_ready || factsBusy) return undefined;
+    if (readiness && !readiness.critical_design_confirmed) return undefined;
+    if (factsBusy) return undefined;
     const controller = new AbortController();
     Promise.resolve().then(() => apiRef.current.getChapterFactsResidual(projectId, studyDefinitionId, { signal: controller.signal }))
       .then(value => { if (!controller.signal.aborted) setResidual(value?.residual || null); })
       .catch(() => {});
     return () => controller.abort();
-  }, [projectId, studyDefinitionId, plan, factsBusy, refresh]);
+  }, [projectId, studyDefinitionId, readiness, factsBusy, refresh]);
 
   async function confirmResidual() {
     if (factsBusy || !residual || !actorId) return;
@@ -114,6 +151,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       const next = await apiRef.current.getManuscriptPlan(projectId, studyDefinitionId);
       if (next?.plan || next?.chapters) setPlan(next?.plan || next);
       setResidual(null);
+      setRefresh(v => v + 1);
     } catch (reason) { setError(readableError(reason)); }
     finally { setFactsBusy(false); }
   }
@@ -435,23 +473,36 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       <p>保留已确认的研究选择，按模板撰写全部适用章节。</p></header>
     {!packet && <>
       <button className="kz-manuscript-primary" type="button" onClick={() => begin()}
-        disabled={busy || !plan?.all_applicable_inputs_ready}>生成完整初稿</button>
-      {plan && !plan.all_applicable_inputs_ready && <p>请先完成研究建议中的未决内容，已有确认会保留。</p>}
-      {plan && !plan.all_applicable_inputs_ready && apiRef.current?.deriveChapterFacts && <>
-        <button type="button" disabled={factsBusy} onClick={deriveFacts}>
-          {factsBusy ? '正在按已确认设计补齐章节事实…' : '按已确认设计补齐章节事实（AI建议）'}</button>
-        <p>缺失的章节级事实由模型按已确认研究设计起草并标为AI建议；初稿与受控编辑中可逐条核对修改。设计变化后需重新补齐。</p>
+        disabled={busy || !canGenerate}>生成完整初稿</button>
+      {readiness && !readiness.can_generate_working_draft && <>
+        {!readiness.critical_design_confirmed
+          ? <p>关键研究设计确认后即可生成初稿，已有确认会保留。</p>
+          : <p role="alert">部分章节与已确认设计存在矛盾（{(readiness.blocking_design_conflicts || []).map(item => item.title).join('、')}）。处理后即可生成；缺口与未决章节不会阻止其余内容。</p>}
       </>}
-      {plan && !plan.all_applicable_inputs_ready && residual && Object.keys(residual).length > 0 && <>
-        <div className="kz-manuscript-residual" role="group" aria-label="待确认的研究组织信息">
-          <p>还有 {Object.keys(residual).length} 项研究组织与执行信息需要你确认（已按常规给出建议，全部确认后即可生成初稿；正文中可继续修改）：</p>
+      {readiness?.can_generate_working_draft && (() => {
+        const counts = { write: 0, write_with_gaps: 0, pending_decision: 0, not_applicable: 0 };
+        for (const item of readiness.chapter_dispositions || []) counts[item.disposition] = (counts[item.disposition] || 0) + 1;
+        return <p>关键设计已确认：{counts.write} 章直接撰写，{counts.write_with_gaps} 章带显式缺口成文（缺口在正文中有标注，可随时补），{counts.pending_decision} 章待判定，{counts.not_applicable} 章不适用。</p>;
+      })()}
+      {!canGenerate && apiRef.current?.deriveChapterFacts && readiness?.critical_design_confirmed && <>
+        <button type="button" disabled={factsBusy} onClick={deriveFacts}>
+          {factsBusy ? '正在按已确认设计补齐章节事实…' : '先按已确认设计补齐章节事实，减少缺口（可选）'}</button>
+        <p>缺失的章节级事实由模型按已确认研究设计起草并标为AI建议；也可以直接生成初稿，缺口会在正文显式标注。设计变化后需重新补齐。</p>
+      </>}
+      {readiness?.critical_design_confirmed && residual && Object.keys(residual).length > 0 && <>
+        <div className="kz-manuscript-residual" role="group" aria-label="可选的研究组织信息确认">
+          <p>还有 {Object.keys(residual).length} 项组织与执行信息可确认（可选：现在一键采纳常规建议，或生成初稿后直接在正文修改）：</p>
           <ul>
-            {Object.entries(residual).slice(0, 6).map(([path, rec]) => (
-              <li key={path}>{rec.basis || '按方案常规建议'}</li>
+            {(showAllResidual ? Object.entries(residual) : Object.entries(residual).slice(0, 6)).map(([path, rec]) => (
+              <li key={path}>{summarizeResidualValue(rec.value)}——{rec.basis || '按方案常规建议'}</li>
             ))}
-            {Object.keys(residual).length > 6 && <li>… 其余 {Object.keys(residual).length - 6} 项同类信息</li>}
           </ul>
-          <button type="button" disabled={factsBusy || !actorId} onClick={confirmResidual}>确认以上建议</button>
+          {Object.keys(residual).length > 6 && <>
+            <button type="button" onClick={() => setShowAllResidual(v => !v)}>
+              {showAllResidual ? '收起明细' : `展开全部 ${Object.keys(residual).length} 项明细`}</button>
+            {!showAllResidual && <p>确认前可展开逐项查看每条建议的内容和依据；确认操作会把以上全部 {Object.keys(residual).length} 项写入研究事实（历史可回溯）。</p>}
+          </>}
+          <button type="button" disabled={factsBusy || !actorId} onClick={confirmResidual}>确认以上全部 {Object.keys(residual).length} 项（可跳过）</button>
         </div>
       </>}
     </>}
@@ -461,11 +512,12 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     {job?.status === 'blocked' && <p>尚未完成：{chapters.filter(chapter => !['not_applicable', 'needs_content_review'].includes(chapter.status)).map(chapter => chapter.title).join('、')}</p>}
     {packet && plan?.study_sha256 && plan.study_sha256 !== packet.studySha && <>
       <button type="button"
-        disabled={busy || !plan.all_applicable_inputs_ready} onClick={() => begin(true)}>按当前研究准备新稿，保留原记录</button>
-      {!plan.all_applicable_inputs_ready && <p role="status">研究信息更新后，部分章节的建议尚未重新确认（
-        {(plan.chapters || []).filter(chapter => chapter.status === 'needs_information')
-          .map(chapter => chapter.title).join('、') || '见研究建议页提示'}）。
-        确认完成后即可准备新稿；原稿与已保存版本不受影响。</p>}
+        disabled={busy || !canGenerate} onClick={() => begin(true)}>按当前研究准备新稿，保留原记录</button>
+      {!canGenerate && <p role="status">研究信息更新后，本次初稿尚未与当前研究核对（
+        {(readiness?.blocking_design_conflicts || []).map(item => item.title).join('、')
+          || (plan.chapters || []).filter(chapter => chapter.status === 'needs_information')
+            .map(chapter => chapter.title).join('、') || '见研究建议页提示'}）。
+        处理完成后即可准备新稿；原稿与已保存版本不受影响。</p>}
     </>}
     {packet && <HistoryVersions storageKey={key} onRestore={entry => { remember(entry); setJob(null); setSavedDocument(null); setSourceState(null); setRefresh(v => v + 1); }} busy={busy}/>}
     {job?.complete_candidate && <p role="status">全部适用章节初稿已生成，可开始逐章阅读核对。</p>}

@@ -365,13 +365,19 @@ def diagnose_applicable_input(study, contract, bindings, *, rules):
     return findings,diagnose_chapter_facts(study,effective,bindings)
 
 
-def bind_applicable_chapter(study, contract, bindings, *, rules, source_format="native_json"):
-    """Return the effective contract and its input from one applicability resolution."""
+def bind_applicable_chapter(study, contract, bindings, *, rules, source_format="native_json",
+                            deferred_required_paths=()):
+    """Return the effective contract and its input from one applicability resolution.
+
+    ``deferred_required_paths`` names required facts the caller turns into
+    explicit draft gap objects (R2); they are never silently dropped.
+    """
     from app.protocol_workflow.registries.fact_bindings import bind_chapter_input
     bindings = tuple(bindings)
     effective, active_ids, digest = _resolved_input_contract(study, contract, bindings, rules)
     bound = bind_chapter_input(study, effective, bindings, source_format=source_format,
-                              active_conditional_rule_ids=active_ids, applicability_rules_sha256=digest)
+                               active_conditional_rule_ids=active_ids, applicability_rules_sha256=digest,
+                               deferred_required_paths=deferred_required_paths)
     return effective, bound
 
 

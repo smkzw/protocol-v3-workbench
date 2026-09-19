@@ -323,6 +323,12 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
         signal,
       );
     },
+    getDraftReadiness(projectId, studyDefinitionId, { signal } = {}) {
+      return get(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/draft-readiness`,
+        signal,
+      );
+    },
     deriveChapterFacts(projectId, studyDefinitionId, { signal } = {}) {
       return post(
         `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/derive`,

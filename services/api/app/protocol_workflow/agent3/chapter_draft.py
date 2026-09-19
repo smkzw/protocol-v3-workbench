@@ -22,7 +22,8 @@ source_material如存在，包含完整源结构与解析警告；目录、标�
 不要把结构化表格写成正文中的JSON字符串，不用occurrences计数代替真实表格。
 完整保留原文单位、表格脚注和引用定位；不要用概述或占位文字代替实际章节内容。
 输入不足时不要编造研究参数；候选后续仍需内容核对，不代表已完成医学或Word验收。
-行文基准（对齐事例成品方案）：全文使用"试验参与者"（不写"受试者"）；客观义务式陈述（"应…"），具体到数字与时间窗（如"末次给药后28天（±3天）"）；缩略语首次出现时给出定义（如"AE=不良事件"）；方案概要章为"研究流程表（SOA）+缩略语行+注释式要点"，不写成叙述长文。"""
+chapter_input.gap_fact_paths 列出本章已确认缺失的事实路径：在对应内容位置用"【缺口：<fact_path>：该项待研究团队确认后补充】"的格式显式标注缺口；不得编造数值或结论，不得把缺口写成"不适用"或"TBD"，不得用模板示例或参考资料数值冒充本研究事实。缺口属于工作稿的显式组成部分，后续核对会逐项追踪。
+行文基准（对齐事例成品方案）：全文使用"试验参与者"（不写"受试者"）；客观义务式陈述（"应…"），具体到数字与时间窗（数值一律取自已确认事实）；缩略语首次出现时给出定义（如"AE=不良事件"）；方案概要章为"研究流程表（SOA）+缩略语行+注释式要点"，不写成叙述长文。"""
 
 
 class ChapterDraftReferenceError(ValueError):
@@ -112,8 +113,13 @@ def read_chapter_draft(prepared: PreparedChapterDraftRequest, output: dict) -> O
     return candidate
 
 
-def prepare_study_chapter(template, study, node_id, evidence, *, source_material=None):
-    """Compile a server-owned study and catalog; callers cannot splice facts."""
+def prepare_study_chapter(template, study, node_id, evidence, *, source_material=None,
+                          deferred_required_paths=()):
+    """Compile a server-owned study and catalog; callers cannot splice facts.
+
+    ``deferred_required_paths`` turns listed required facts into explicit gap
+    objects carried on the bound input; they are never treated as confirmed.
+    """
     from app.protocol_workflow.registries.applicability import bind_applicable_chapter, build_applicability_snapshot
     entry = next((entry for entry in template.registry.chapters if entry.node_id == node_id), None)
     if entry is None:
@@ -123,5 +129,6 @@ def prepare_study_chapter(template, study, node_id, evidence, *, source_material
     if snapshot.entries[0].status.value == 'not_applicable':
         raise ValueError('chapter_not_applicable')
     effective, bound = bind_applicable_chapter(study, entry.contract,
-        template.fact_catalog.bindings, rules=template.rules_catalog.rules)
+        template.fact_catalog.bindings, rules=template.rules_catalog.rules,
+        deferred_required_paths=deferred_required_paths)
     return prepare_chapter_draft(effective, bound, tuple(evidence), source_material=source_material)

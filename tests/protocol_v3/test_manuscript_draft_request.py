@@ -28,15 +28,30 @@ def inputs(tmp_path):
     return load_current_template(REAL_TEMPLATE_DIR),study,owner,run
 
 
-def test_incomplete_full_template_returns_all_carriers_not_a_ready_subset(tmp_path):
-    from app.protocol_workflow.agent3.manuscript_request import prepare_manuscript_request,ManuscriptInputsIncomplete
+def test_incomplete_full_template_admits_draft_with_explicit_gaps(tmp_path):
+    """R2: a confirmed design admits the request; gaps become explicit objects.
+
+    The old rule raised until every carrier was facts_ready; requirements-v2
+    replaces it with critical-design admission plus a versioned readiness map.
+    """
+    from app.protocol_workflow.agent3.manuscript_request import prepare_manuscript_request
     template,study,owner,run=inputs(tmp_path)
     before=_dump(tmp_path/'manuscript.sqlite')
-    with pytest.raises(ManuscriptInputsIncomplete) as error:
-        prepare_manuscript_request(template,study,source_preparation=owner,source_run_id=run)
-    assert len(error.value.plan['chapters'])==111
-    assert any(c['status']=='facts_ready' for c in error.value.plan['chapters'])
-    assert any(c['status']=='needs_information' for c in error.value.plan['chapters'])
+    prepared=prepare_manuscript_request(template,study,source_preparation=owner,source_run_id=run)
+    payload=prepared.to_payload()
+    assert len(payload['plan']['chapters'])==111
+    readiness=payload['readiness']
+    assert readiness['schema_version']=='draft-readiness.v1'
+    assert readiness['critical_design_confirmed'] is True
+    assert readiness['can_generate_working_draft'] is True
+    dispositions={item['node_id']:item for item in readiness['chapter_dispositions']}
+    assert any(item['disposition']=='write' for item in dispositions.values())
+    gaps=[item for item in dispositions.values() if item['disposition']=='write_with_gaps']
+    assert gaps and all(item['gap_fact_paths'] for item in gaps)
+    dispatched={r.to_payload()['chapter_input']['node_id'] for r in prepared.chapter_requests()}
+    gap_only={item['node_id'] for item in dispositions.values()
+              if item['disposition']=='write_with_gaps'} - dispatched
+    assert gap_only, 'fact-free chapters must stay out of dispatch'
     assert _dump(tmp_path/'manuscript.sqlite')==before
 
 

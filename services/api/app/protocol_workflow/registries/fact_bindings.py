@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import math
 import hashlib
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Literal
 
@@ -57,6 +57,19 @@ class BoundChapterSkillInput(ChapterSkillInput):
     fact_bindings_sha256: Sha256
     applicability_rules_sha256: Sha256 | None = None
     source_format: Literal["native_json", "legacy_strings_v1"] = "native_json"
+    #: Required paths the caller explicitly defers to draft gap objects
+    #: (requirements-v2 R2).  They stay unresolved and must never be written
+    #: as confirmed facts; the writer marks them as explicit gaps.
+    gap_fact_paths: tuple[NonEmptyText, ...] = ()
+    #: A gap-aware bound input may carry zero resolved facts when every
+    #: missing requirement is explicitly deferred (complete gap structure).
+    resolved_facts: Mapping[str, JsonValue] = Field(min_length=0)
+
+    @model_validator(mode="after")
+    def _facts_or_gaps(self):
+        if not self.resolved_facts and not self.gap_fact_paths:
+            raise ValueError("bound chapter input requires resolved facts or explicit gaps")
+        return self
 
 
 class FactBindingCatalog(BaseModel):
@@ -236,8 +249,9 @@ def _chapter_binding_paths(contract):
     return paths, required
 
 
-def _resolve_fact_values(study, paths, required, index, source_format):
+def _resolve_fact_values(study, paths, required, index, source_format, deferred=()):
     resolved, missing, unsupported, errors = {}, [], [], []
+    deferred_missing = []
     for path in sorted(paths):
         binding = index.get(path)
         if binding is None or binding.canonical_path is None:
@@ -248,6 +262,8 @@ def _resolve_fact_values(study, paths, required, index, source_format):
         if not available:
             if path in required:
                 missing.append(path)
+            elif path in deferred:
+                deferred_missing.append(path)
             continue
         try:
             value = _typed_value(binding, study.facts[available[0]], source_format)
@@ -264,15 +280,17 @@ def _resolve_fact_values(study, paths, required, index, source_format):
         if not _is_resolved_fact(value):
             if path in required:
                 missing.append(path)
+            elif path in deferred:
+                deferred_missing.append(path)
             continue
         resolved[path] = value
     if unsupported:
         errors.append(FactBindingError("unsupported_required_fact", unsupported))
     if missing:
         errors.append(FactBindingError("missing_required_fact", missing))
-    if not resolved and not errors:
+    if not resolved and not errors and not deferred_missing:
         errors.append(FactBindingError("chapter_has_no_resolved_facts", paths))
-    return resolved, errors
+    return resolved, errors, tuple(sorted(set(deferred_missing)))
 
 
 def diagnose_chapter_facts(study, contract, bindings, *, deferred_required_paths=()):
@@ -285,7 +303,7 @@ def diagnose_chapter_facts(study, contract, bindings, *, deferred_required_paths
         return (FactBindingError("study_not_confirmed"),)
     paths, required = _chapter_binding_paths(contract)
     index = {binding.fact_path: binding for binding in bindings}
-    _, errors = _resolve_fact_values(study, paths, required-set(deferred_required_paths), index, "native_json")
+    _, errors, _ = _resolve_fact_values(study, paths, required-set(deferred_required_paths), index, "native_json")
     return tuple(errors)
 
 
@@ -297,12 +315,16 @@ def bind_chapter_input(
     source_format: Literal["native_json", "legacy_strings_v1"] = "native_json",
     active_conditional_rule_ids: tuple[StableId, ...] = (),
     applicability_rules_sha256: Sha256 | None = None,
+    deferred_required_paths: Iterable[str] = (),
 ) -> BoundChapterSkillInput:
     """Read literal canonical dictionary keys; never split dotted paths.
 
     Required/conditional applicability remains the contract's responsibility.
-    This boundary fails with exact paths when a required value cannot be read.
-    Legacy conversion is opt-in and does not rewrite the original study.
+    This boundary fails with exact paths when a required value cannot be read,
+    unless the caller explicitly defers the path to a draft gap object (R2):
+    deferred-missing paths travel as gap_fact_paths and are never written as
+    confirmed facts.  Legacy conversion is opt-in and does not rewrite the
+    original study.
     """
     if study.canonical_state not in (CanonicalState.CONFIRMED, CanonicalState.FROZEN):
         raise FactBindingError("study_not_confirmed")
@@ -314,7 +336,9 @@ def bind_chapter_input(
             raise FactBindingError("duplicate_fact_binding", (binding.fact_path,))
         index[binding.fact_path] = binding
     paths, required = _chapter_binding_paths(contract)
-    resolved, errors = _resolve_fact_values(study, paths, required, index, source_format)
+    deferred = tuple(sorted(set(deferred_required_paths)))
+    resolved, errors, gaps = _resolve_fact_values(
+        study, paths, required - set(deferred), index, source_format, deferred=deferred)
     if errors:
         raise errors[0]
     return BoundChapterSkillInput(
@@ -335,6 +359,7 @@ def bind_chapter_input(
         source_format=source_format,
         active_conditional_rule_ids=active_conditional_rule_ids,
         applicability_rules_sha256=applicability_rules_sha256,
+        gap_fact_paths=gaps,
     )
 
 
@@ -362,6 +387,7 @@ def validate_output_facts(
         current_study, contract, bindings, source_format=bound.source_format,
         active_conditional_rule_ids=active_conditional_rule_ids,
         applicability_rules_sha256=applicability_rules_sha256,
+        deferred_required_paths=bound.gap_fact_paths,
     )
     if _json(bound.model_dump(mode="json")) != _json(expected.model_dump(mode="json")):
         raise FactBindingError("chapter_input_binding_mismatch")

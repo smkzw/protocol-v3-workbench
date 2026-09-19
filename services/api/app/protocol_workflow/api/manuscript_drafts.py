@@ -38,8 +38,14 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         try:
             return fn()
         except ManuscriptInputsIncomplete as exc:
-            raise HTTPException(409, detail={'message': '研究建议尚未全部确认，本次尚未开始整稿写作。',
-                'next_step': '请先处理研究建议中未决或冲突的内容，已完成的确认会保留。'}) from exc
+            readiness = exc.readiness
+            if not readiness['critical_design_confirmed']:
+                message = '关键研究设计尚未确认，确认后即可生成完整工作初稿。'
+            else:
+                message = '存在与已确认设计矛盾的章节，处理后即可生成；缺口与未决章节不会阻止其余内容。'
+            raise HTTPException(409, detail={'message': message,
+                'next_step': '请先处理研究建议中未决或冲突的内容，已完成的确认会保留。',
+                'readiness': readiness}) from exc
         except SourcePreparationIncomplete as exc:
             raise HTTPException(409, detail={'message': '原写作资料尚未准备完成，请查看资料整理进度。'}) from exc
         except GraphRunError as exc:
@@ -98,6 +104,16 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                 or payload['source_run_id'] != body.source_run_id):
             raise ValueError('manuscript_request_changed')
         return owner.read(body.expected_workflow_run_id)
+
+    @router.get('/draft-readiness')
+    def draft_readiness_view(project_id: str, study_definition_id: str):
+        """Versioned working-draft readiness: critical admission + gap map (R2)."""
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        from app.protocol_workflow.agent3.draft_readiness import draft_readiness
+        return draft_readiness(template_loader(), current.definition)
 
     @router.post('/prepare')
     def prepare(project_id: str, study_definition_id: str, body: ChapterPreparationRequest):
