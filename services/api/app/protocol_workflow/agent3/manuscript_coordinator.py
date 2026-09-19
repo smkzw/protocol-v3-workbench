@@ -72,7 +72,15 @@ class ManuscriptDraftCoordinator:
             if item['status'] == 'not_applicable':
                 chapters.append(dict(item))
                 continue
-            child_id = owner.run_id(requests[item['node_id']])
+            request = requests.get(item['node_id'])
+            if request is None:
+                # prepare_manuscript_request keeps zero-resolved-fact and
+                # structure-unknown chapters as explicit gap structures and
+                # never dispatches them; report them outside the completion
+                # math instead of treating them as lost child runs.
+                chapters.append({**item, 'status': 'kept_as_gap', 'can_resume': False})
+                continue
+            child_id = owner.run_id(request)
             try:
                 outcome = owner.read(child_id)
             except GraphRunError as exc:
@@ -81,7 +89,8 @@ class ManuscriptDraftCoordinator:
                 outcome = {'workflow_run_id': child_id, 'status': 'not_started',
                     'validation': None, 'can_resume': True}
             chapters.append({**item, **outcome})
-        applicable = [item for item in chapters if item['status'] != 'not_applicable']
+        applicable = [item for item in chapters
+            if item['status'] not in {'not_applicable', 'kept_as_gap'}]
         complete = bool(applicable) and all(item['status'] == 'needs_content_review'
             and (item.get('validation') or {}).get('valid') is True for item in applicable)
         stopped = any(item['status'] not in {'not_started', 'running', 'needs_content_review'}

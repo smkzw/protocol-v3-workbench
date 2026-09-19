@@ -99,6 +99,11 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         except Exception as exc:
             # Unclassified failures must not leak traces to the user, and must
             # not invite repeating a medical confirmation that already saved.
+            # The operator-side stderr note keeps the failure diagnosable
+            # without exposing anything to the UI.
+            import sys as _s
+            print('MANUSCRIPT UNCLASSIFIED FAIL:', type(exc).__name__, str(exc)[:400],
+                  file=_s.stderr)
             raise HTTPException(500, detail={'code': 'internal_unclassified_error',
                 'message': '本次操作遇到系统内部问题，已经保存的研究内容、初稿和操作记录全部保留。',
                 'next_step': '请稍后重新核对此页状态；如重复出现，请保留页面并反馈，不需要重新确认研究建议。'}) from exc
