@@ -1342,3 +1342,14 @@ continue_after_triage的_wait_for_preparation新增分支：preparation batch fa
 
 根因：framing/PICOS commit时corpus_gate被全新MedicalWritingCorpusGate替换，丢失之前的override。修复：所有corpus gate创建点均保留前一状态的override（仅当active时）。这样一旦medical manager应用了corpus gate override，后续任何stage commit都不会丢失该override。
 覆盖路径：journey所有corpus gate创建点（1340 PICOS commit、1512 其他PICOS commit路径）。修复后journey的corpus_gate.override在framing/PICOS commit间持续有效。
+
+## 2026-09-20 T17本会话最终收敛（全部基础设施就绪，44字段手工填为剩余项）
+
+T17在途的精确状态：
+- 已完成：建项✓ 检索(55项)✓ 分诊5/5✓ review_ready✓ 篮子锁定✓ 例外放行✓ writing_allowed✓ framing_complete✓ picos_complete✓ 装配计划refresh+confirm(rev2)✓
+- 阻塞：greenfield建稿需structured_design字段值→这些值由设计卡片采纳写入→设计卡片需corpus analysis AI候选→零文档项目无产物→循环依赖
+- 三条解锁路径已入档（OCR key/结构化证据分支/44字段手填）
+- 下窗口最优路径：直接API写入structured_design最小值集→绕过设计卡片→解锁greenfield→走完剩余链
+- 或按tester4实证的高级微调面板UI路径逐字段手填（82分钟）
+
+本会话T17累计：8个代码修复提交+10个checkpoint提交+4份测试报告归档+全部基础设施验证
