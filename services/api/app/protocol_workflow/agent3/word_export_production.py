@@ -56,9 +56,20 @@ def _real_values(study_facts: Mapping[str, Any], document: Mapping[str, Any]) ->
         sponsor = sponsor
     version = str(study_facts.get('framing.version') or '1.0')
     date = str(datetime.date.today().isoformat())
-    return {'申办者名称': sponsor, 'vX.X 版': f'{version} 版', 'vX.X': version,
+    title_fact = study_facts.get('framing.document_title')
+    if isinstance(title_fact, dict):
+        title_fact = title_fact.get('text') or title_fact.get('title') or '临床研究方案'
+    real_title = str(title_fact or '临床研究方案')
+    return {'title': real_title,
+            '申办者名称': sponsor, 'vX.X 版': f'{version} 版', 'vX.X': version,
             'XXXXXX': protocol_id, 'XXXX/0X/XX': date,
-            'XXX/0X/XX': date, 'XXXXXXXXXX': '', 'XXX': ''}
+            'XXX/0X/XX': date, 'XXXXXXXXXX': '', 'XXX': '',
+        '<编号>': protocol_id, '<年月日>': date,
+        '<主要研究者姓名>': '＿＿＿＿＿＿', '<医院名称>': '＿＿＿＿＿＿＿＿',
+        '<申办者名称>': sponsor, '<供应商名称>': '＿＿＿＿＿＿',
+        '<合同研究组织名称>': '＿＿＿＿＿＿', 'v <x.x>': f'v{version}',
+        'v<x.x>': f'v{version}', '<x.x>': version,
+        }
 
 
 def _replace_text_in_part(part, replacements: dict[str, str]) -> int:
@@ -138,6 +149,29 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     front_limit = _find_toc_end(doc)
     if front_limit is None:
         raise ValueError('production_export_front_matter_unresolved')
+
+    # 0) front-matter surgery: the template instruction block (模板说明 /
+    # 如何使用此模板 / 删除说明) is authoring guidance — it never ships.  The
+    # example title becomes the real study title; cover <字段> become values.
+    title_fact = study_facts.get('framing.document_title')
+    if isinstance(title_fact, dict):
+        title_fact = title_fact.get('text') or title_fact.get('title') or '临床研究方案'
+    real_title = str(title_fact or replacements.get('title') or '临床研究方案')
+    paras = doc.paragraphs
+    title_idx = next((i for i, para in enumerate(paras[:40])
+                      if '临床研究' in para.text and ('XXXXXX' in para.text or '安全性的' in para.text)), None)
+    if title_idx is not None:
+        title_para = paras[title_idx]
+        for para in paras[:title_idx]:
+            if para.text.strip():
+                para._p.getparent().remove(para._p)
+        for run in title_para.runs[1:]:
+            run.text = ''
+        if title_para.runs:
+            title_para.runs[0].text = real_title
+        else:
+            title_para.add_run(real_title)
+        front_limit -= title_idx
     for para in doc.paragraphs[:front_limit + 1]:
         _replace_in_paragraph(para, replacements)
     for table in doc.tables:
