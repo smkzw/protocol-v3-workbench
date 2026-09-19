@@ -371,6 +371,39 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             return result
         return _safe_call(lambda: checked(execute))
 
+    @router.get('/synopsis-candidate')
+    def synopsis_candidate(project_id: str, study_definition_id: str):
+        """Deterministic synopsis projection as a visible candidate (T11/R4).
+
+        Initial-generation aid and explicit refresh only — nothing here
+        writes into the working draft by itself; applying goes through the
+        user's edit or a scoped object revision.
+        """
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        from app.protocol_workflow.agent3.synopsis_projection import build_synopsis_blocks
+        blocks = build_synopsis_blocks(current.definition.facts)
+        return {'schema_version': 'synopsis-candidate.v1',
+            'basis': '按已确认事实确定性投影，供初次生成或显式刷新核对；不自动写入正文。',
+            'blocks': blocks}
+
+    @router.get('/soa-candidate')
+    def soa_candidate(project_id: str, study_definition_id: str):
+        """Deterministic visit×assessment matrix as a visible candidate (T11)."""
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        from app.protocol_workflow.agent3.soa_matrix import soa_table_content, soa_summary
+        content = soa_table_content(current.definition.facts)
+        return {'schema_version': 'soa-candidate.v1',
+            'basis': '访视×评估矩阵按已确认事实确定性投影；可应用于SOA章或用于一致性核对。',
+            'available': content is not None,
+            'summary': soa_summary(current.definition.facts),
+            'content': content}
+
     @router.get('/reconciliation')
     def reconciliation_view(project_id: str, study_definition_id: str):
         """Snapshot-bound reconciliation for the saved working draft (T09)."""
