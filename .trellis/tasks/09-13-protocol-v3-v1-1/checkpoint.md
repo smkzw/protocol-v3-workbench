@@ -1405,3 +1405,28 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 
 审阅包18项任务中T00-T16全部完成并验证（17/18）。T17场景1推进至journey writing_allowed+framing/PICOS complete，但greenfield建稿被21个structured_design driver阻断——零文档项目的循环依赖需要owner拍板（OCR key/结构化证据分支/44字段手填）。
 全部基础设施、修复、测试、checkpoint已推送（140+提交）。下一Agent凭checkpoint可无缝接手剩余项。
+
+## 2026-09-20晨 场景1双链全闭环贯通（循环依赖已被API直填路径打破）+ 无损暂停点
+
+**上条"循环依赖需owner拍板"已被绕过**：不经设计卡片，直接走 journey API 结构化提交（impact-preview→commit）补齐 framing.structured_design（assignment_model/src_planned/dmc_planned）+ picos.intervention_rules 结构化授权 + product_profile 枚举四件套，15+4 驱动点全清，greenfield 建稿成功。此前失败根因不是 schema 玄学而是三个真 bug（已修，见下）。
+
+**双链最终证据**：
+- journey链：framing/PICOS结构化 → 装配计划confirm → greenfield建稿 → AI全稿94/94章(12批) → adopt → document-exports导出 docx 33,158字/209段/5表/零占位符 → GenOffice渲染44页/32,433字截图实证（/tmp/t17_genoffice_render3.png）。
+- UI链：intake v4(写作说明完备) → study-context → research-information 4字段+2张seed-card → regimen v3 ready_for_review(零问题)→adopt → design elements 3卡采纳 → manuscript-sources → manuscript 111章(10可写+101 kept_as_gap) → AI写作10/10 → save rev1 → 导出docx 25,574字/12表/零占位符 → GenOffice office快照往返持久化成功。
+- 零文档修正循环实证：intake v1缺剂量/机制被needs_information正确拦截→补全→ready_for_review；regimen v1/v2各提出2-3个医学问题(安慰剂匹配/片数规格/来源)→brief补全+来源声明→v3零问题。AI提问-用户确认语义全程正确。
+
+**本会话修复提交（4个，全部已验证）**：
+- deab516：①R3——stage commit重建corpus_gate保留access_permitted（此前override提交后静默失效）②framing非失效性编辑不再降级已提交PICOS事实③picos no-op reconcile可自愈脏态④full-draft locator剔除section_ids（94章撑破2000上限→completed任务500）。
+- 87fc1e8：GenOffice bridge-shim把docUrl作为boot一次性pending open投递（此前consumePendingOpenDocx硬编码null→嵌入编辑永远空白文档）。
+- 451e7fe：ManuscriptDraftCoordinator.read()对未派发章节(零事实/结构未知)kept_as_gap（此前KeyError'v2_front_block'→start 500）+manuscript router catch-all加stderr诊断。
+- 4b52bbb：AuthoringCandidatePackagePanel枚举字段select化（tester4 P1-3，八组枚举+自由填写回退），前端基线95/95+61/61。
+- 回归基线：后端2563过/2败（HEAD历史遗留：main.py composition引用约束+verifier纯净性，与本会话改动无关）。
+
+**无损暂停点（下一窗口精确继续）**：
+1. P1消息卫生族【进行中】：MedicalWritingAuthoringJourneySetup.jsx——:1333`组合采用失败：${error.message}`、:510标题推荐、:552 error.message被detail.message覆写直通UI。需写映射函数：Pydantic literal_error→"该字段请从下拉选择（允许值已列在界面上）"；工程ID(ct_chunk_/wref_search_/mwprefillcand_等)→剥离；内部类名(MedicalWritingStudyFraming等)→剥离；缺失字段指名（tester3 P1-9模式：报"内在研究目的"而非"1项必填"）。
+2. 失败态重试控件（tester4 P0-1遗留）：竞品抽屉文案"可直接重试"但无按钮→加按钮调既有retry端点。
+3. 抽屉关闭钮视口外CSS（tester3 P1-7，关闭钮x≈2422）。
+4. 计数矛盾（分块13/20 vs 3/20·15%，tester3 P1-5/tester4 P1-4）。
+5. tester3/4报告聚合进正式记录；9/21 codex重派独立性轮。
+
+**e2e运维配方不变**（见记忆文件）：WORKBENCH_RUNTIME_DIR=e2e_runtime + WORKBENCH_PROTOCOL_V3_WORKFLOW_DB=e2e_test.sqlite + ai-runtime.env + AI契约环境变量 + PYTHONPATH；0字节e2e库需admit_project引导。manuscript source_run_id=chapter-sources run（非intake run）；design elements adopt必须带seed_run_id+非空selections。
