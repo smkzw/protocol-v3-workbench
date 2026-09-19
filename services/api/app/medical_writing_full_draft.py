@@ -476,7 +476,14 @@ class MedicalWritingFullDraftService:
                     "artifact_relpath": relative.as_posix(),
                     "artifact_sha256": artifact_sha,
                     "precondition_digest": expected["digest"],
-                    "coverage": existing_final["coverage"],
+                    # section_ids 列表随章节增长，会把 locator 撑破
+                    # DurableJobRecord.artifact_locator 的 2000 字符上限；
+                    # 定位器只需要路径与哈希，覆盖明细保留在工件内。
+                    "coverage": {
+                        key: value
+                        for key, value in (existing_final.get("coverage") or {}).items()
+                        if key != "section_ids"
+                    },
                 }
             )
             return DurableJobResult(
@@ -626,7 +633,11 @@ class MedicalWritingFullDraftService:
                 "artifact_relpath": relative.as_posix(),
                 "artifact_sha256": artifact_sha,
                 "precondition_digest": expected["digest"],
-                "coverage": artifact["coverage"],
+                "coverage": {
+                    key: value
+                    for key, value in artifact["coverage"].items()
+                    if key != "section_ids"
+                },
             }
         )
         return DurableJobResult(

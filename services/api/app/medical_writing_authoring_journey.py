@@ -1270,6 +1270,26 @@ class MedicalWritingAuthoringJourneyService:
             requires_confirmation=bool(changed_fields and dependents and downstream_exists),
         )
 
+    def _carry_forward_corpus_gate(self, current) -> MedicalWritingCorpusGate:
+        """Rebuild the corpus gate for a stage commit.
+
+        Requirements-v2 R3: an active override stays valid across requirement
+        changes, so the rebuilt gate keeps the writing access the override
+        already granted instead of silently re-blocking the author.
+        """
+        override = (
+            current.corpus_gate.override
+            if current.corpus_gate
+            and current.corpus_gate.override
+            and current.corpus_gate.override.active
+            else None
+        )
+        return MedicalWritingCorpusGate(
+            missing_requirements=list(self._CORPUS_REQUIREMENTS),
+            override=override,
+            access_permitted=override is not None,
+        )
+
     def commit_stage(
         self,
         project_id: str,
@@ -1326,8 +1346,22 @@ class MedicalWritingAuthoringJourneyService:
                 # no field diff, but it is still a meaningful state
                 # transition: recompute the completion gate and rebuild the
                 # versioned StudyDefinition instead of returning the stale
-                # incomplete state as a no-op.
-                if request.stage == "picos" and not current.picos_complete:
+                # incomplete state as a no-op.  The same reconcile also
+                # repairs a definition whose committed PICOS facts were
+                # demoted to manual candidates while the completion flag
+                # stayed true — such a formal/field-state split blocks all
+                # downstream fact-bound writing.
+                picos_states_unconfirmed = (
+                    current.study_definition is not None
+                    and any(
+                        state.status not in {"confirmed", "not_applicable"}
+                        for path, state in current.study_definition.field_states.items()
+                        if path.startswith("picos.")
+                    )
+                )
+                if request.stage == "picos" and (
+                    not current.picos_complete or picos_states_unconfirmed
+                ):
                     now = datetime.now(timezone.utc)
                     updated = current.model_copy(
                         update={
@@ -1337,10 +1371,7 @@ class MedicalWritingAuthoringJourneyService:
                             "picos_complete": True,
                             "status": "corpus_not_ready",
                             "current_stage": "corpus",
-                            "corpus_gate": MedicalWritingCorpusGate(
-                                missing_requirements=list(self._CORPUS_REQUIREMENTS),
-                                override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
-                            ),
+                            "corpus_gate": self._carry_forward_corpus_gate(current),
                             "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
                             "updated_at": now,
                             "updated_by": request.actor,
@@ -1481,13 +1512,22 @@ class MedicalWritingAuthoringJourneyService:
                     # decision over both extracted stages. Promoting the
                     # framing stage must not demote its non-empty PICOS facts
                     # back to extracted candidates merely because PICOS still
-                    # has genuinely missing fields.
+                    # has genuinely missing fields.  The same protection keeps
+                    # committed PICOS facts confirmed when this framing change
+                    # does not require re-confirmation of the PICOS stage:
+                    # only an invalidating framing edit may demote them.
                     confirmed_stages=(
                         {"framing", "picos"}
                         if (
-                            current.entry_mode == "synopsis_import"
-                            and current.synopsis_import.status == "confirmed"
-                            and current.picos_draft is not None
+                            (
+                                current.entry_mode == "synopsis_import"
+                                and current.synopsis_import.status == "confirmed"
+                                and current.picos_draft is not None
+                            )
+                            or (
+                                bool(current.picos_complete)
+                                and not preview.requires_confirmation
+                            )
                         )
                         else {"framing"}
                     ),
@@ -1509,10 +1549,7 @@ class MedicalWritingAuthoringJourneyService:
                             # work. Keep it visible for review instead of forcing
                             # the author to recreate imported or edited content.
                             "picos_draft": current.picos_draft,
-                            "corpus_gate": MedicalWritingCorpusGate(
-                                missing_requirements=list(self._CORPUS_REQUIREMENTS),
-                                override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
-                            ),
+                            "corpus_gate": self._carry_forward_corpus_gate(current),
                             "corpus_triage": MedicalWritingCorpusTriage(),
                             "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
                         }
@@ -1527,10 +1564,7 @@ class MedicalWritingAuthoringJourneyService:
                     "picos_complete": picos_complete,
                     "status": "corpus_not_ready" if picos_complete else "stage2_in_progress",
                     "current_stage": "corpus" if picos_complete else "picos",
-                    "corpus_gate": MedicalWritingCorpusGate(
-                        missing_requirements=list(self._CORPUS_REQUIREMENTS),
-                        override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
-                    ),
+                    "corpus_gate": self._carry_forward_corpus_gate(current),
                     "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
                     "invalidated_dependents": invalidated,
                     "updated_at": now,
