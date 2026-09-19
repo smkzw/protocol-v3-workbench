@@ -222,11 +222,19 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             if reached and child.tag != qn('w:sectPr'):
                 body.remove(child)
 
-    # 3) our chapters with bookmarks + numbered table captions + REF cross-references
+    # 3) our chapters with bookmarks + numbered table captions + REF cross-references.
+    # The SOA chapter's table is a deterministic projection of the confirmed
+    # visit×assessment facts, replacing whatever prose-shaped table the model
+    # drafted for it.
+    from app.protocol_workflow.agent3.soa_matrix import soa_table_content
+    soa_content = soa_table_content(study_facts)
+    soa_nodes = {node_id for node_id, info in titles.items()
+                 if '研究流程表' in info.get('title', '')}
     doc.add_page_break()
     current_node = None
     table_no = 0
     ref_count = 0
+    soa_replaced = 0
     # Forward references are valid: bookmark names tbl_N are positional and
     # their captions appear later in the same document.
     total_tables = sum(1 for block in document.get('semantic_blocks', [])
@@ -256,7 +264,11 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
             _bookmark(caption, f'tbl_{table_no}')
-            _add_table(doc, block.get('content') or '')
+            content = block.get('content') or ''
+            if soa_content and node_id in soa_nodes:
+                content = soa_content
+                soa_replaced += 1
+            _add_table(doc, content, repeat_header=header_rows_of(content))
     if in_landscape:
         _switch_orientation(doc, False)
 
@@ -276,7 +288,15 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     output_sha = hashlib.sha256(open(output_path, 'rb').read()).hexdigest()
     return {'document_sha256': document_sha, 'output_sha256': output_sha,
             'export_scope': 'production_docx', 'tables': table_no,
-            'cross_references': ref_count}
+            'cross_references': ref_count, 'soa_replaced': soa_replaced}
+
+
+def header_rows_of(table_content: str) -> int:
+    try:
+        table = json.loads(table_content).get('table', {})
+        return int(table.get('header_row_count') or 0)
+    except (ValueError, TypeError):
+        return 0
 
 
 def document_revision_hash_sha(document: Mapping[str, Any]) -> str:
@@ -287,9 +307,16 @@ def document_revision_hash_sha(document: Mapping[str, Any]) -> str:
         return hashlib.sha256(canonical_json(document).encode()).hexdigest()
 
 
-def _add_table(doc, content: str) -> None:
+def _add_table(doc, content: str, repeat_header: int = 0) -> None:
     from app.protocol_workflow.agent3.word_export import _add_table as _append_table
     _append_table(doc, content)
+    # Cross-page tables repeat their header rows on every page (w:tblHeader).
+    if repeat_header and doc.tables:
+        table = doc.tables[-1]
+        for row in table.rows[:repeat_header]:
+            tr_pr = row._tr.get_or_add_trPr()
+            if tr_pr.find(qn('w:tblHeader')) is None:
+                tr_pr.append(tr_pr.makeelement(qn('w:tblHeader'), {qn('w:val'): 'true'}))
 
 
 _TABLE_REF_RE = re.compile(r'(见表\s*(\d+)\s*[、，；）)]?)')
