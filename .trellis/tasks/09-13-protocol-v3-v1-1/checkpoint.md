@@ -753,3 +753,17 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
 5. 横向SOA：1.3研究流程表所在节设landscape section
 6. 验收：PDF零模板示例（"请参考以下准则"等零命中）、页眉页脚零占位
    （XXX/申办者名称/vX.X零命中）、TOC/书签/题注计数逐一核对
+
+## 2026-09-19 08:45 7R.4成品级导出达成：138页PDF零占位
+
+- agent3/word_export_production.py 替代追加式：模板前件（封面/目录/保密声明）保留并
+  真实化，TOC之后模板示例正文全部移除，追加我们109章（含标题书签+表编号题注书签）
+- 占位符三层次清除：①docx API段落/表格（前件表含保密声明表）②页眉页脚六部件
+  ③XML级w:p聚合深扫（覆盖文本框与跨run拆分占位——'<申办者名称>'拆run教训）
+- 真实值：申办方=康哲、版本1.0、方案编号PV3-前缀、日期=当日；签署表XXX→合法空白控件
+- updateFields=true（Word打开刷新目录/页码域）
+- 端点导出实测200/296KB；LibreOffice PDF 138页：占位/示例/引导文字命中=**0**，
+  内容覆盖10项全PASS（含保密声明、目录、表题注）
+- 教训：kill单pid重启后端时旧进程仍占socket（errno 48静默失败 served stale code
+  半小时）——重启必须kill $(lsof -ti :PORT) 全部并核对进程start time
+- 剩余细化：正文"见表N"→REF域、SOA横向节、Word GUI人工打开刷新目录

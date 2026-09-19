@@ -155,7 +155,7 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
     def export_docx(project_id: str, study_definition_id: str):
         """Render the saved working draft as an ordered DOCX on the clean template."""
         from fastapi.responses import FileResponse
-        from app.protocol_workflow.agent3.word_export import render_manuscript_docx
+        from app.protocol_workflow.agent3.word_export_production import render_production_docx
         from app.protocol_workflow.registries.template_runtime import default_template_root
         import json as _json
         import tempfile as _tempfile
@@ -169,7 +169,10 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         out_dir = _Path(_tempfile.gettempdir()) / 'mw_protocol_v3_exports'
         out_dir.mkdir(parents=True, exist_ok=True)
         output_path = out_dir / f'manuscript-{study_definition_id.replace(":", "-")}-rev{saved["revision"]}.docx'
-        result = render_manuscript_docx(template_path, template_dir, saved['document'], output_path)
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        result = render_production_docx(template_path, template_dir, saved['document'],
+            output_path, current.definition.facts if current.definition else {})
         return FileResponse(output_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             filename=output_path.name, headers={'X-Document-Sha256': result['document_sha256'],
                 'X-Output-Sha256': result['output_sha256'], 'X-Export-Scope': result['export_scope']})
