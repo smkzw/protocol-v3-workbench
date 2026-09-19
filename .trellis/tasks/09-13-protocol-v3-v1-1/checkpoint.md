@@ -1353,3 +1353,14 @@ T17在途的精确状态：
 - 或按tester4实证的高级微调面板UI路径逐字段手填（82分钟）
 
 本会话T17累计：8个代码修复提交+10个checkpoint提交+4份测试报告归档+全部基础设施验证
+
+## 2026-09-20 T17场景1最终收敛（会话上下文极限）
+
+当前状态：CDC776FB journey writing_allowed、framing/PICOS已提交、corpus gate override已应用（但后续framing commit可能重置了它——需要重新应用）。装配计划已refresh并confirmed(rev 2)。greenfield建稿需解决21个structured_design driver的值——这些值需要通过设计卡片采纳或journey framing commit写入study definition。
+剩余操作（需独立窗口+完整上下文）：
+①framing commit with full structured_design（枚举值从MedicalWritingStructuredStudyDesign schema读取）
+②corpus gate override重新应用
+③greenfield document创建
+④保存→导出Word→GenOffice iframe闭环
+⑤场景2-4同模式
+全部修复（17项T00-T16）+测试+基础设施已推送。下Agent凭checkpoint可无缝接手。
