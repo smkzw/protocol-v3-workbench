@@ -156,7 +156,8 @@ class ManuscriptDocumentService:
         blocks = {block.semantic_block_id: block for block in document.semantic_blocks}
         clues = {}
         for event in events:
-            if event.event_type != 'manuscript_working_document_edited.v1':
+            if event.event_type not in ('manuscript_working_document_edited.v1',
+                                        'manuscript_object_revised.v1'):
                 continue
             for clue in event.payload.get('edit_clues', []):
                 # Signals accumulate per block: a later edit must not erase an
@@ -263,6 +264,171 @@ class ManuscriptDocumentService:
             uow.commit()
             return {'operation_id': intent['operation_id'], 'replayed': False,
                     'status': 'reconciliation_resolved'}
+
+    # ------------------------------------------------------------------
+    # Scoped AI object revisions (T12/A15/A16): replace_object /
+    # patch_object on ONE anchored block.  Every operation binds target
+    # block, document revision and expected content hash; if the user
+    # edited the block while the candidate was being prepared, the anchor
+    # no longer matches and the apply refuses instead of overwriting.
+    # Nothing outside the anchored block changes, so "只改流程表" can never
+    # become a whole-draft rewrite.
+    # ------------------------------------------------------------------
+
+    OBJECT_EDITABLE_KINDS = ('paragraph', 'table')
+    OBJECT_REVISION_SCOPES = ('replace_object', 'patch_object')
+
+    def _object_revision_intent(self, project_id, study_id, intent):
+        return hashlib.sha256(canonical_json([project_id, study_id, 'object-revision',
+            intent['operation_id'], intent['expected_revision'],
+            intent['semantic_block_id'], intent.get('expected_content_sha256'),
+            intent.get('scope'), intent.get('instruction')]).encode()).hexdigest()
+
+    def prepare_object_revision(self, project_id, study_id, intent):
+        """Freeze the anchor and material for one AI object revision."""
+        if intent.get('scope') not in self.OBJECT_REVISION_SCOPES:
+            raise ValueError('manuscript_object_scope_invalid')
+        if not str(intent.get('instruction') or '').strip():
+            raise ValueError('manuscript_object_instruction_missing')
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            current = uow.semantic_document_repository.get_current(project_id, document_id)
+            if current is None:
+                raise ValueError('manuscript_document_missing')
+            if current.revision != intent['expected_revision'] or \
+                    document_revision_hash(current) != intent['expected_document_sha256']:
+                raise ValueError('manuscript_document_revision_changed')
+            block = next((b for b in current.semantic_blocks
+                          if b.semantic_block_id == intent['semantic_block_id']), None)
+            if block is None:
+                raise ValueError('manuscript_edit_block_unknown')
+            if block.block_kind.value not in self.OBJECT_EDITABLE_KINDS:
+                raise ValueError('manuscript_object_kind_unsupported')
+            content_sha = hashlib.sha256((block.content or '').encode()).hexdigest()
+            expected = intent.get('expected_content_sha256')
+            if expected and expected != content_sha:
+                raise ValueError('manuscript_object_anchor_changed')
+        return {'schema_version': 'object-revision-request.v1',
+            'scope': intent['scope'],
+            'instruction': intent['instruction'],
+            'semantic_block_id': intent['semantic_block_id'],
+            'block_kind': block.block_kind.value,
+            'current_content': block.content,
+            'current_content_sha256': content_sha,
+            'document_revision': current.revision,
+            'document_sha256': document_revision_hash(current)}
+
+    def recover_object_revision(self, project_id, study_id, intent):
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_object_revised.v1' \
+                        or event.payload.get('operation_id') != intent['operation_id']:
+                    continue
+                verify_event_integrity(event)
+                if event.payload['intent_sha256'] != self._object_revision_intent(project_id, study_id, intent):
+                    raise ValueError('manuscript_object_intent_changed')
+                document = SemanticDocumentRevision.model_validate(event.payload['document'])
+                return {'document': document.model_dump(mode='json'),
+                    'document_sha256': document_revision_hash(document),
+                    'operation_id': intent['operation_id'], 'replayed': True,
+                    'status': 'working_draft', 'scope': event.payload.get('scope')}
+        return None
+
+    def apply_object_revision(self, project_id, study_id, confirmed_facts, intent):
+        """Apply the candidate to exactly the anchored block under CAS (A15)."""
+        existing = self.recover_object_revision(project_id, study_id, intent)
+        if existing is not None:
+            return existing
+        if intent.get('scope') not in self.OBJECT_REVISION_SCOPES:
+            raise ValueError('manuscript_object_scope_invalid')
+        candidate = intent.get('candidate_content')
+        if not isinstance(candidate, str) or not candidate.strip():
+            raise ValueError('manuscript_object_candidate_invalid')
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            current = uow.semantic_document_repository.get_current(project_id, document_id)
+            if current is None:
+                raise ValueError('manuscript_document_missing')
+            if current.revision != intent['expected_revision'] or \
+                    document_revision_hash(current) != intent['expected_document_sha256']:
+                raise ValueError('manuscript_document_revision_changed')
+            block = next((b for b in current.semantic_blocks
+                          if b.semantic_block_id == intent['semantic_block_id']), None)
+            if block is None:
+                raise ValueError('manuscript_edit_block_unknown')
+            if block.block_kind.value not in self.OBJECT_EDITABLE_KINDS:
+                raise ValueError('manuscript_object_kind_unsupported')
+            content_sha = hashlib.sha256((block.content or '').encode()).hexdigest()
+            expected = intent.get('expected_content_sha256')
+            if expected and expected != content_sha:
+                # The user touched this object while the candidate was being
+                # prepared: surface the conflict, never overwrite silently.
+                raise ValueError('manuscript_object_anchor_changed')
+            if block.block_kind.value == 'table':
+                import json as _json
+                try:
+                    parsed = _json.loads(candidate)
+                    table = parsed.get('table') if isinstance(parsed, dict) else None
+                    if not isinstance(table, dict) or not table.get('rows') or not table.get('columns'):
+                        raise ValueError('manuscript_object_table_content_invalid')
+                except (TypeError, ValueError) as exc:
+                    if str(exc) == 'manuscript_object_table_content_invalid':
+                        raise
+                    raise ValueError('manuscript_object_table_content_invalid') from exc
+            now = self.clock()
+            old_text = block_content_text(block.model_dump(mode='json'))
+            merged = {**block.model_dump(mode='json'), 'content': candidate,
+                'content_sha256': hashlib.sha256(candidate.encode()).hexdigest()}
+            new_text = block_content_text(merged)
+            ruling = reclassify_edit(old_text=old_text, new_text=new_text,
+                confirmed_facts=confirmed_facts, claimed_class=None)
+            raw = current.model_dump(mode='json')
+            by_id = {b['semantic_block_id']: b for b in raw['semantic_blocks']}
+            by_id[block.semantic_block_id] = merged
+            raw['semantic_blocks'] = [by_id[b['semantic_block_id']] for b in raw['semantic_blocks']]
+            document = SemanticDocumentRevision.model_validate({
+                **raw, 'revision': current.revision + 1,
+                'previous_revision_sha256': document_revision_hash(current),
+                'updated_at': now, 'canonical_state': 'proposed'})
+            payload = {'operation_id': intent['operation_id'],
+                'intent_sha256': self._object_revision_intent(project_id, study_id, intent),
+                'document': document.model_dump(mode='json'),
+                'document_sha256': document_revision_hash(document),
+                'scope': intent['scope'],
+                'semantic_block_id': block.semantic_block_id,
+                'expected_content_sha256': content_sha,
+                'edit_clues': [{'semantic_block_id': block.semantic_block_id,
+                    'edit_class': ruling['edit_class'],
+                    'affected_fact_paths': list(ruling['affected_fact_paths']),
+                    'signals': list(ruling.get('signals') or ()),
+                    'reason': ruling['reason'] or ''}],
+                'reconciliation_status': 'pending',
+                'undo': {'semantic_block_id': block.semantic_block_id,
+                    'previous_revision': current.revision,
+                    'previous_content_sha256': content_sha,
+                    'previous_content': block.content},
+                'acceptance_scope': 'working_draft_only'}
+            self.atomic.build_and_apply(uow, project_id=project_id, stream_id=document_id,
+                aggregate=document, cas_repository_handle_name='semantic_document_cas_repository',
+                expected_revision=intent['expected_revision'], event={
+                    'domain_event_id': 'manuscript-object:' + hashlib.sha256(canonical_json(
+                        [document_id, intent['operation_id']]).encode()).hexdigest(),
+                    'stream_id': document_id, 'event_type': 'manuscript_object_revised.v1',
+                    'payload_schema_version': 'mw_protocol_v3_event_v1', 'upcaster_id': 'noop:v1',
+                    'actor_type': ActorType.USER, 'actor_id': intent['actor_id'],
+                    'action': 'apply_object_revision',
+                    'reason': '范围受限的AI对象修订：仅替换锚定对象，保留撤销信息。',
+                    'payload': payload, 'emitted_at': now})
+            return {'document': document.model_dump(mode='json'),
+                'document_sha256': document_revision_hash(document),
+                'operation_id': intent['operation_id'], 'replayed': False,
+                'status': 'working_draft', 'scope': intent['scope'],
+                'semantic_block_id': block.semantic_block_id,
+                'reconciliation_status': 'pending',
+                'undo': payload['undo'],
+                'qc': run_manuscript_qc(document.model_dump(mode='json'))}
+
 
     def edit(self, project_id, study_id, confirmed_facts, intent):
         """Apply free working-draft edits under CAS; nothing is refused on

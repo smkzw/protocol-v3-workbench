@@ -253,6 +253,24 @@ def _make_admission_dependency(
     return _admission_gate
 
 
+def _object_revision_worker_factory(adapter_config):
+    """Per-study AI object-revision workers (T12), sharing the artifact store."""
+    from app.protocol_workflow.agent3.object_revision import ObjectRevisionWorker
+    instances = {}
+
+    def build(project_id: str, study_definition_id: str):
+        key = (project_id, study_definition_id)
+        instance = instances.get(key)
+        if instance is None:
+            instance = ObjectRevisionWorker(
+                storage_path=adapter_config['path'],
+                product_profile=resolve_product_profile())
+            instances[key] = instance
+        return instance
+
+    return build
+
+
 def _chapter_facts_deriver_factory(adapter_config):
     """Per-study deriver registry (B09): progress, locks and restart recovery
     are study-scoped.  The receipt artifact store stays shared so idempotent
@@ -374,6 +392,7 @@ def create_mounted_protocol_workflow_router(
             application_service=service, template_loader=lambda: load_current_template(default_template_root()),
             documents=ManuscriptDocumentService(uow_factory, lambda: datetime.now(timezone.utc)),
             chapter_facts_deriver_factory=_chapter_facts_deriver_factory(adapter_config),
+            object_revision_worker_factory=_object_revision_worker_factory(adapter_config),
             route_class=_ValidationEnvelopeRoute),
         dependencies=[Depends(_make_admission_dependency(adapter_config))],
     )

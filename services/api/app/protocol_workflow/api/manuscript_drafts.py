@@ -31,7 +31,7 @@ class ManuscriptSaveRequest(ChapterStartRequest):
 
 def create_manuscript_draft_router(manuscripts, preparations, *, application_service,
         template_loader, documents, route_class, chapter_facts_deriver=None,
-        chapter_facts_deriver_factory=None):
+        chapter_facts_deriver_factory=None, object_revision_worker_factory=None):
     router = APIRouter(prefix='/api/projects/{project_id}/protocol-workflow/study-definitions/{study_definition_id}/manuscript-draft',
         tags=['研究方案写作'], route_class=route_class)
 
@@ -80,6 +80,15 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                             'manuscript_save_intent_changed'}:
                 raise HTTPException(409, detail={'message': '研究内容或所选资料已变化，原初稿记录仍然保留。',
                     'next_step': '请先核对当前研究建议，再开始新的整稿写作。'}) from exc
+            if str(exc) == 'manuscript_object_anchor_changed':
+                raise HTTPException(409, detail={'code': 'manuscript_object_anchor_changed',
+                    'message': '这段内容在AI准备候选期间又被您编辑过，本次候选没有覆盖您的最新修改。',
+                    'next_step': '请基于当前内容重新发起本次AI修改，或先撤销您刚才的编辑再应用候选。'}) from exc
+            if str(exc) in {'manuscript_object_scope_invalid', 'manuscript_object_instruction_missing',
+                            'manuscript_object_candidate_invalid', 'manuscript_object_kind_unsupported',
+                            'manuscript_object_table_content_invalid', 'manuscript_object_intent_changed'}:
+                raise HTTPException(422, detail={'message': '本次AI对象修改的请求不完整或目标不支持，原稿未被改动。',
+                    'next_step': '请重新描述修改要求；表格内容须保持完整表格结构。'}) from exc
             if str(exc) == 'manuscript_document_incomplete':
                 raise HTTPException(409, detail={'message': '完整初稿尚未生成，本次没有保存部分章节覆盖原稿。'}) from exc
             raise
@@ -390,6 +399,87 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         def execute():
             return documents.resolve_reconciliation(project_id, study_definition_id,
                 body.model_dump(mode='json'))
+        return _safe_call(lambda: checked(execute))
+
+    class ObjectRevisionRequest(BaseModel):
+        model_config = ConfigDict(extra='forbid')
+        operation_id: NonEmptyText
+        actor_id: NonEmptyText
+        expected_revision: int
+        expected_document_sha256: Sha256
+        semantic_block_id: NonEmptyText
+        expected_content_sha256: str = ''
+        scope: str = 'replace_object'
+        instruction: str = ''
+        candidate_content: str = ''
+
+    def _object_target(project_id, study_definition_id, block_id, body):
+        intent = body.model_dump(mode='json')
+        intent['semantic_block_id'] = block_id
+        return intent
+
+    @router.post('/objects/{block_id}/ai-revisions/prepare', status_code=202)
+    def prepare_object_revision(project_id: str, study_definition_id: str, block_id: str,
+                                body: ObjectRevisionRequest, tasks: BackgroundTasks):
+        """Freeze the anchor, dispatch the model, apply within scope (T12)."""
+        def execute():
+            current = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if current.definition is None:
+                raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+            worker = (object_revision_worker_factory(project_id, study_definition_id)
+                      if object_revision_worker_factory else None)
+            intent = _object_target(project_id, study_definition_id, block_id, body)
+            material = documents.prepare_object_revision(project_id, study_definition_id, intent)
+
+            def run():
+                try:
+                    candidate = worker.run(material, operation_id=intent['operation_id'])
+                    study = application_service.get_study_definition(
+                        GetStudyDefinitionQuery(project_id, study_definition_id))
+                    documents.apply_object_revision(project_id, study_definition_id,
+                        study.definition.facts, {**intent,
+                        'expected_revision': material['document_revision'],
+                        'expected_document_sha256': material['document_sha256'],
+                        'expected_content_sha256': material['current_content_sha256'],
+                        'candidate_content': candidate['replacement_content']})
+                except Exception as exc:  # noqa: BLE001 — surfaced via recover/poll
+                    worker.progress['errors'].append(str(exc)[:200])
+
+            if worker is not None:
+                tasks.add_task(run)
+            return {'schema_version': 'object-revision-request.v1',
+                'operation_id': intent['operation_id'],
+                'status': 'dispatched' if worker is not None else 'prepared_no_worker',
+                'anchor': {'semantic_block_id': material['semantic_block_id'],
+                    'document_revision': material['document_revision'],
+                    'current_content_sha256': material['current_content_sha256']}}
+        return _safe_call(lambda: checked(execute))
+
+    @router.post('/objects/{block_id}/ai-revisions')
+    def apply_object_revision(project_id: str, study_definition_id: str, block_id: str,
+                              body: ObjectRevisionRequest):
+        """Apply the scoped candidate to exactly the anchored block (A15)."""
+        def execute():
+            study = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if study.definition is None:
+                raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+            return documents.apply_object_revision(project_id, study_definition_id,
+                study.definition.facts,
+                _object_target(project_id, study_definition_id, block_id, body))
+        return _safe_call(lambda: checked(execute))
+
+    @router.post('/objects/{block_id}/ai-revisions/recover')
+    def recover_object_revision(project_id: str, study_definition_id: str, block_id: str,
+                                body: ObjectRevisionRequest):
+        """Read-only replay lookup for a lost object-revision acknowledgement."""
+        def execute():
+            result = documents.recover_object_revision(project_id, study_definition_id,
+                _object_target(project_id, study_definition_id, block_id, body))
+            if result is None:
+                raise HTTPException(404, detail={'message': '没有找到该操作记录，可安全重试或重新发起修改。'})
+            return result
         return _safe_call(lambda: checked(execute))
 
     @router.post('/edits/recover')
