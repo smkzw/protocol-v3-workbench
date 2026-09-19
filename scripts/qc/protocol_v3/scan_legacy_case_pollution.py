@@ -27,22 +27,6 @@ CRSWNP_TOKENS = ('慢性鼻窦炎', '鼻息肉', '鼻窦', 'SNOT-22')
 CRSWNP_MARKERS = ('慢性鼻窦炎', '鼻息肉', 'CRSwNP')
 
 
-def _classify(text: str, project_hint: str) -> list[tuple[str, str]]:
-    hits = []
-    is_crswnp_project = any(marker in project_hint for marker in CRSWNP_MARKERS)
-    for token in LEAKED_TOKENS:
-        if token in text:
-            hits.append(('leaked', token))
-    for token in CRSWNP_TOKENS:
-        if token in text:
-            hits.append(('note' if is_crswnp_project else 'cross_hit', token))
-    return hits
-
-
-def _project_hint(body: dict) -> str:
-    return json.dumps(body, ensure_ascii=False)[:4000]
-
-
 def _snippet(text: str, token: str, span: int = 60) -> str:
     at = text.find(token)
     if at < 0:
