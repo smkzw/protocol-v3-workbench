@@ -56,7 +56,10 @@ logger = logging.getLogger(__name__)
 # Bounded payload limits
 # ---------------------------------------------------------------------------
 
-MAX_TOTAL_EVIDENCE_CHARS = 120_000
+# Calibrated against deepseek-v4-flash's usable window: evidence chars
+# + 32k output tokens + reasoning must fit, or the endpoint returns
+# empty content (T17 round-1 finding).  30k chars ≈ 15-20k tokens.
+MAX_TOTAL_EVIDENCE_CHARS = 30_000
 MAX_QUOTE_CHARS_PER_ENTRY = 2_000
 MAX_ENTRIES_PROJECTED = 200
 MAX_PACKAGE_CANDIDATES_PER_KEY = 5

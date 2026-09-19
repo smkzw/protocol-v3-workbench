@@ -591,7 +591,13 @@ class AiRoleRuntimeSettingsStore:
             raise ValueError(f"{role_id} binding model does not match provider profile")
         values = self.provider_store.profile_env(profile, base_env)
         values["WORKBENCH_AI_MODEL"] = binding.model
-        values["WORKBENCH_AI_EXPECTED_RESPONSE_MODEL"] = binding.model
+        # The response-model expectation is the profile's calibrated identity
+        # (providers may rename served ids — DeepSeek v4-flash now responds as
+        # deepseek-flash).  The binding model is the REQUEST name; collapsing
+        # the expectation onto it made every frozen-route check fail.
+        values["WORKBENCH_AI_EXPECTED_RESPONSE_MODEL"] = (
+            profile.expected_response_model or profile.model
+        )
         values["WORKBENCH_AI_ROLE"] = role_id
         values["WORKBENCH_AI_THINKING"] = binding.thinking
         values["WORKBENCH_AI_REASONING_EFFORT"] = binding.reasoning_effort
