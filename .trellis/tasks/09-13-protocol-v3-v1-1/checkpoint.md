@@ -1391,3 +1391,12 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 下一步需将structured_design最小值集写入study definition的framing字段（通过POST /authoring-journey/stages/framing/commit端点with impact_preview）→然后greenfield document创建应成功。这已在前面多次尝试但每次都因为structured_design子对象schema不匹配而失败。根本原因是MedicalWritingStudyFraming schema的structured_design子对象有严格的嵌套结构（interim_analysis等子对象有多个必填字段），需要精确匹配schema。
 解法：读取MedicalWritingStructuredStudyDesign完整schema → 构造只包含有效字段的payload → 逐字段填充 → POST commit。
 下窗口可从这一点精确继续。
+
+## T17场景1greenfield建稿循环依赖最终确认
+
+零文档项目的greenfield建稿被21个structured_design driver阻断。这些driver需要study definition的structured_design字段值。但study definition的这些值通过设计卡片采纳（corpus analysis AI→设计卡片→apply_decision）写入——零文档项目没有corpus analysis产物→无法通过设计卡片写入→循环依赖。
+三条解锁路径（已在checkpoint记录，需owner拍板或提供资源）：
+1. PaddleOCR API Key → 使扫描版Protocol可OCR → 原文准备成功 → structured_design值填充
+2. 结构化证据corpus analysis分支（架构改造）
+3. 本地文档集上传（产品入口增强）
+本会话T17已完成的所有基础设施和修复（17/18项任务+全部代码修复+测试通过）已推送。
