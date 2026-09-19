@@ -1023,3 +1023,9 @@ owner指出五问题，共同根因=用工程指标（占位零命中/测试绿�
 回归基线：后端2553过/1败=已知verifier隔离环境性（单跑过，两次复现确认顺序性）；前端vitest 95/95+node 61/61。测试venv=runs/mw_protocol_v3_1r_integration_20260905/venv，PYTHONPATH须含tests:tests/protocol_v3:tests/protocol_v3/integration；全套只跑tests/protocol_v3（顶层tests有cryptography缺失）。
 经验：Edit工具对by_id引用替换须写回原列表（集成测试抓到）；集成测试fixture事实含200mg负荷+100mg维持双值，恢复文须含全部确认值才closed。
 剩余：T04双入口收口/T11 SOA与概要初次生成+显式刷新边界（soa_matrix/synopsis_projection保留为初次生成能力，导出侧已剥离）/T12 replace_object+patch_object局部AI修订/T16文献范围说明；T07/T10 GenOffice（基线316ded6f，独立大项）；T17独立多研究e2e+多测试者LOOP。报告：runs/requirements_v2_20260919/。
+
+## 2026-09-19 requirements-v2 第二批（T04+T12，ZCode，已推GitHub）
+
+faac3f0=T04：双入口统一合同测试（test_dual_entry_unification 4项）——入口A(资料)与入口B(零附件简述)共用seed链/同一StudyDefinition命令形状/同一事实库（genesis只带research.input_context，医学事实不自动采纳A01/A08）；零附件起步钉真实用户简述无伪造来源（A03）；预填=候选索引点选非重打（A02，research_intent_adoption selections=索引）。UI维持合并入口（三步指引已说明无文件可开始）。
+9c59f1a=T12：agent3/object_revision.py（ObjectRevisionWorker复用deriver传输模式，receipt工件+内容哈希幂等回放，按study注册）；ManuscriptDocumentService.prepare/apply/recover_object_revision——锚点冻结(块ID+文档版本+内容sha)+范围强制(replace_object/patch_object)+冲突不强写(文档移动→409 conflict,anchor sha不匹配→anchor_changed)+仅替换锚定块+表格候选结构校验+核对线索贯通T09信号流+undo携带被替换内容与版本；API POST /objects/{block_id}/ai-revisions[/prepare|/recover]，prepare后台派发模型并按授权范围自动应用（同一局部意图不强制二次确认P4）；集成测试覆盖A15/A16。经验：apply的锚点sha守卫仅在调用方显式提供时生效（None=由服务端按当前内容计算）；fixture事实含双剂量值，恢复文必须含全部确认值。
+回归：后端2558过/1已知环境性败；前端未动。剩余：T11（摘要/SOA初次生成+显式刷新边界，导出侧已剥离）、T16文献范围说明、T07/T10 GenOffice（独立大项）、T17多测试者e2e LOOP、T12前端按钮接线（API已备）。
