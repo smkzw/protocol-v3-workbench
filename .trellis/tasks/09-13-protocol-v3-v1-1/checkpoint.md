@@ -1268,3 +1268,10 @@ Plan A门控已在journey层解锁（design_recommendations_blocked消失），�
 已验证的完成路径（tester4实证可行）：高级微调面板逐字段填写44字段（design/intervention/outcomes/population/product/statistics六模块）→每模块采用→装配计划confirm→greenfield建稿→保存→导出→GenOffice。点击≥64次，人工密集。
 零文档语料准入的owner决策仍开放：结构化证据corpus analysis分支（工程）vs 本地文档集上传（产品入口）vs OCR Key（PaddleOCR aistudio key写入secrets）。三路径任一都能解锁自动化候选生成，消除44字段手填。
 本会话T17累计成果：身份链四层修复+三重验证、方案A门控、空响应退避、tester2/3/4报告聚合、3份测试报告归档、P0×2+P1×4修复、预填骨架与标题/方案号候选生成实证。
+
+## 2026-09-20 场景1 AI候选生成确认被语料准入阻断——人工路径为唯一即时通道
+
+更新建议重试确认：零文档项目（纯公开检索无文档）的design模块候选无法由AI生成——corpus analysis AI的输入来自文档深度处理产物，而NCT03436797的Prot_002.pdf是扫描版需OCR（无key），其他54项无文档。语料准入门结构性阻断AI生成（非bug，是产品对"文档型语料"的依赖设计）。
+场景1剩余唯一即时路径（tester4已实证82分钟内可完成）：高级微调面板逐字段人工填写44字段→6模块逐个采用→装配计划confirm→greenfield建稿→保存→导出Word→GenOffice打开验证。
+下窗口执行该机械路径（预计30-60分钟UI自动化）；零文档语料准入的产品级修复（结构化证据corpus analysis分支）列为owner决策项继续开放。
+本轮T17累计已达：分诊5/5批AI执行完成（身份链修复实证）、篮子锁定、原文准备推进至OCR阻断点（NCT03436797有扫描PDF无OCR key）、Plan A门控+回归测试上线、 tester4报告归档。
