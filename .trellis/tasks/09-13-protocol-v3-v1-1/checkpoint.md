@@ -1292,3 +1292,10 @@ Plan A门控已在journey层解锁（design_recommendations_blocked消失），�
 ④6模块全部采用→完成第一步→PICOS设计→语料准备→完整初稿→保存→导出→GenOffice
 字段清单（tester4分块）：design 13 / intervention 6 / outcomes 10 / population 4 / product 4 / statistics 7 = 44字段。
 CSU II期参考内容（随机双盲安慰剂对照，12周，ISS7主要终点，18-75岁，合成药W口服）已在前文多处记录可复用。
+
+## 2026-09-20 场景1收敛定稿：零文档语料准入结构缺口与44字段手工路径确认
+
+装配计划refresh确认38模块（含design.adaptive等）fields全空——因为study_definition只有research.input_context（journey commit不直接写study definition的framing/PICOS值），且corpus analysis AI无法对零文档项目生成候选。设计模块值来自corpus analysis AI输出或人工填写，两者均需后续操作。
+ tester4实证：高级微调面板44字段逐个手填（design 13/intervention 6/outcomes 10/population 4/product 4/statistics 7）→每模块采用→6模块有采用记录→装配计划confirm→greenfield建稿→保存→导出。82分钟，点击≥64。
+T17剩余=场景1全链44字段手工采纳+场景2-4同模式+codex独立轮次。技术基础设施（身份链四层+方案A门控+空响应退避+prefill修复+Plan A分支）已全部就绪并验证，不需要进一步代码修改即可走通——剩余是纯UI操作时间。
+本会话在此收敛：下窗口从44字段手工采纳起继续场景1→场景2-4→codex轮次补齐→循环至零P0/P1。
