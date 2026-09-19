@@ -17,10 +17,11 @@ def manuscript_document_id(project_id, study_id):
 
 
 class ManuscriptDocumentService:
-    def __init__(self, uow_factory, clock):
+    def __init__(self, uow_factory, clock, office_store=None):
         self.uow_factory = uow_factory
         self.clock = clock
         self.atomic = EventSourcedUnitOfWork(clock=clock)
+        self.office_store = office_store
 
     def current(self, project_id, study_id):
         document_id = manuscript_document_id(project_id, study_id)
@@ -428,6 +429,127 @@ class ManuscriptDocumentService:
                 'reconciliation_status': 'pending',
                 'undo': payload['undo'],
                 'qc': run_manuscript_qc(document.model_dump(mode='json'))}
+
+
+    # ------------------------------------------------------------------
+    # Office working copies (T10): immutable DOCX snapshots persisted in the
+    # artifact store and bound to the current semantic revision + study
+    # revision.  The bytes never enter the event stream — the event carries
+    # the content hash and artifact revision; the store deduplicates bytes.
+    # ------------------------------------------------------------------
+
+    def _office_snapshot_intent(self, project_id, study_id, intent):
+        import base64 as _base64
+        content_sha = hashlib.sha256(_base64.b64decode(intent.get('content_base64') or b'')).hexdigest()
+        return hashlib.sha256(canonical_json([project_id, study_id, 'office-snapshot',
+            intent['operation_id'], intent['expected_revision'], content_sha]).encode()).hexdigest()
+
+    def _office_event(self, project_id, study_id, document_id, intent, payload_extra):
+        params = {
+            'domain_event_id': 'manuscript-office:' + hashlib.sha256(canonical_json(
+                [document_id, intent['operation_id']]).encode()).hexdigest(),
+            'stream_id': document_id, 'event_type': 'manuscript_office_snapshot.v1',
+            'payload_schema_version': 'mw_protocol_v3_event_v1', 'upcaster_id': 'noop:v1',
+            'actor_type': ActorType.USER, 'actor_id': intent['actor_id'],
+            'action': 'save_office_snapshot',
+            'reason': '持久化不可变Office工作副本，绑定当前语义版本与研究版本。',
+            'payload': payload_extra, 'emitted_at': self.clock()}
+        return params
+
+    def office_snapshot(self, project_id, study_id, intent):
+        """Persist one immutable Office snapshot; idempotent by operation_id."""
+        import base64 as _base64
+        existing = self.recover_office_snapshot(project_id, study_id, intent)
+        if existing is not None:
+            return existing
+        if self.office_store is None:
+            raise ValueError('manuscript_office_store_missing')
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            current = uow.semantic_document_repository.get_current(project_id, document_id)
+            if current is None:
+                raise ValueError('manuscript_document_missing')
+            if current.revision != intent['expected_revision'] or \
+                    document_revision_hash(current) != intent['expected_document_sha256']:
+                raise ValueError('manuscript_document_revision_changed')
+            try:
+                content = _base64.b64decode(intent.get('content_base64') or '', validate=True)
+            except Exception as exc:
+                raise ValueError('manuscript_office_content_invalid') from exc
+            if not content.startswith(b'PK'):
+                raise ValueError('manuscript_office_content_invalid')
+            meta = self.office_store.store(
+                f'office-draft:{project_id}:{study_id}', content,
+                media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                created_at=self.clock())
+            payload = {'operation_id': intent['operation_id'],
+                'intent_sha256': self._office_snapshot_intent(project_id, study_id, intent),
+                'snapshot_id': 'office-snapshot:' + meta.content_sha256,
+                'content_sha256': meta.content_sha256,
+                'artifact_revision': meta.revision,
+                'size_bytes': meta.size_bytes,
+                'document_revision': current.revision,
+                'document_sha256': document_revision_hash(current),
+                'study_revision_sha256': intent.get('study_revision_sha256'),
+                'mapping_status': 'pending',
+                'acceptance_scope': 'working_draft_only'}
+            params = self._office_event(project_id, study_id, document_id, intent, payload)
+            head = uow.event_stream_repository.get_stream_head(project_id, document_id)
+            if head is None:
+                built = self.atomic.builder.build(sequence=1, previous_event_sha256=None, **params)
+            else:
+                built = self.atomic.builder.continue_chain(
+                    head_sha256=head.last_event_sha256,
+                    head_sequence=head.last_sequence, **params)
+            uow.event_stream_repository.append_events(project_id, document_id, [built])
+            uow.commit()
+        return {'snapshot_id': payload['snapshot_id'],
+            'content_sha256': payload['content_sha256'],
+            'artifact_revision': payload['artifact_revision'],
+            'document_revision': payload['document_revision'],
+            'study_revision_sha256': payload['study_revision_sha256'],
+            'mapping_status': 'pending', 'persisted': True,
+            'operation_id': intent['operation_id'], 'replayed': False}
+
+    def recover_office_snapshot(self, project_id, study_id, intent):
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_office_snapshot.v1' \
+                        or event.payload.get('operation_id') != intent['operation_id']:
+                    continue
+                verify_event_integrity(event)
+                if event.payload['intent_sha256'] != self._office_snapshot_intent(project_id, study_id, intent):
+                    raise ValueError('manuscript_office_snapshot_intent_changed')
+                payload = dict(event.payload)
+                payload['replayed'] = True
+                payload['persisted'] = True
+                return payload
+        return None
+
+    def latest_office_snapshot(self, project_id, study_id):
+        document_id = manuscript_document_id(project_id, study_id)
+        latest = None
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_office_snapshot.v1':
+                    continue
+                latest = event.payload
+        return latest
+
+    def office_snapshot_content(self, project_id, study_id, operation_id):
+        """Read-only byte lookup by operation_id; no intent recomputation."""
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_office_snapshot.v1' \
+                        or event.payload.get('operation_id') != operation_id:
+                    continue
+                verify_event_integrity(event)
+                if self.office_store is None:
+                    return None
+                return self.office_store.read_by_sha256(event.payload['content_sha256'])
+        return None
 
 
     def edit(self, project_id, study_id, confirmed_facts, intent):

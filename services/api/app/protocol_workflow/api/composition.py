@@ -253,6 +253,12 @@ def _make_admission_dependency(
     return _admission_gate
 
 
+def _office_artifact_store(adapter_config):
+    """Shared content-addressed store for immutable Office working copies."""
+    from app.protocol_workflow.artifacts.local_store import LocalArtifactStore
+    return LocalArtifactStore(str(adapter_config['path']) + '.office-artifacts')
+
+
 def _object_revision_worker_factory(adapter_config):
     """Per-study AI object-revision workers (T12), sharing the artifact store."""
     from app.protocol_workflow.agent3.object_revision import ObjectRevisionWorker
@@ -390,7 +396,8 @@ def create_mounted_protocol_workflow_router(
     outer.include_router(
         create_manuscript_draft_router(manuscripts, preparations,
             application_service=service, template_loader=lambda: load_current_template(default_template_root()),
-            documents=ManuscriptDocumentService(uow_factory, lambda: datetime.now(timezone.utc)),
+            documents=ManuscriptDocumentService(uow_factory, lambda: datetime.now(timezone.utc),
+                office_store=_office_artifact_store(adapter_config)),
             chapter_facts_deriver_factory=_chapter_facts_deriver_factory(adapter_config),
             object_revision_worker_factory=_object_revision_worker_factory(adapter_config),
             route_class=_ValidationEnvelopeRoute),

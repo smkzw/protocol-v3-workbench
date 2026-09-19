@@ -142,6 +142,32 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     recoverManuscriptSave(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/save/recover`, intent, signal);
     },
+    async saveOfficeSnapshot(projectId, studyId, { operationId, actorId, expectedRevision, expectedDocumentSha256, file }, { signal } = {}) {
+      // Binary read branch (P3): a DOCX File/ArrayBuffer is base64-framed
+      // into the same JSON error contract every other endpoint uses.
+      const buffer = file instanceof ArrayBuffer ? file : await file.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      return post(`${manuscriptPath(projectId, studyId)}/office-draft/snapshots`, {
+        operation_id: operationId, actor_id: actorId,
+        expected_revision: expectedRevision,
+        expected_document_sha256: expectedDocumentSha256,
+        content_base64: btoa(binary),
+      }, signal);
+    },
+    recoverOfficeSnapshot(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/office-draft/snapshots/${encodeURIComponent(String(intent.operation_id))}/recover`, intent, signal);
+    },
+    latestOfficeSnapshot(projectId, studyId, { signal } = {}) {
+      return get(`${manuscriptPath(projectId, studyId)}/office-draft/snapshots/latest`, signal);
+    },
+    officeSnapshotContentUrl(projectId, studyId, operationId) {
+      return `${manuscriptPath(projectId, studyId)}/office-draft/snapshots/${encodeURIComponent(String(operationId))}/content`;
+    },
     editManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/edits`, intent, signal);
     },

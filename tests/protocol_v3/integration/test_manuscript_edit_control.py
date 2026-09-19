@@ -344,3 +344,47 @@ def test_object_revision_is_scoped_anchored_and_undoable(saved_manuscript, tmp_p
         service.prepare_object_revision(PROJECT, SD_ID, _intent(
             'operation:object:3', moved['document']['revision'], moved['document_sha256'],
             scope='rewrite_everything'))
+
+
+def test_office_snapshot_persists_immutable_copy_bound_to_revision(saved_manuscript, tmp_path):
+    """T10/A12: an Office working copy persists as an immutable, content-
+    addressed snapshot bound to the current revision; replay is idempotent
+    and the bytes read back are identical."""
+    import base64
+    from app.protocol_workflow.storage.sqlite import build_unit_of_work_factory
+    from app.protocol_workflow.application.manuscript_documents import ManuscriptDocumentService
+    from app.protocol_workflow.artifacts.local_store import LocalArtifactStore
+    from datetime import datetime, timezone as _tz
+    db, designs, run = saved_manuscript
+    office_store = LocalArtifactStore(str(tmp_path / 'office-artifacts'))
+    service = ManuscriptDocumentService(
+        build_unit_of_work_factory({'backend': 'sqlite', 'path': str(db)}),
+        clock=lambda: datetime.now(_tz.utc), office_store=office_store)
+    seed_working_document(service, {})
+    current = service.current(PROJECT, SD_ID)
+    docx_bytes = 'PK\x03\x04合成方案内容-fixture-bytes'.encode('utf-8')
+    intent = {'operation_id': 'operation:office:1', 'actor_id': 'user:example',
+        'expected_revision': current['expected_revision'],
+        'expected_document_sha256': current['expected_document_sha256'],
+        'content_base64': base64.b64encode(docx_bytes).decode('ascii'),
+        'study_revision_sha256': 'sha:study'}
+
+    receipt = service.office_snapshot(PROJECT, SD_ID, intent)
+    assert receipt['persisted'] is True and receipt['replayed'] is False
+    assert receipt['mapping_status'] == 'pending'
+    assert receipt['document_revision'] == current['expected_revision']
+    assert receipt['content_sha256'] == __import__('hashlib').sha256(docx_bytes).hexdigest()
+
+    replay = service.office_snapshot(PROJECT, SD_ID, intent)
+    assert replay['replayed'] is True
+
+    latest = service.latest_office_snapshot(PROJECT, SD_ID)
+    assert latest['operation_id'] == 'operation:office:1'
+    artifact = service.office_snapshot_content(PROJECT, SD_ID, 'operation:office:1')
+    assert artifact.content == docx_bytes, 'bytes must round-trip unchanged'
+
+    # A stale revision binding is refused: snapshots bind to a real version.
+    import pytest
+    with pytest.raises(ValueError):
+        service.office_snapshot(PROJECT, SD_ID, {**intent,
+            'operation_id': 'operation:office:2', 'expected_revision': 99})

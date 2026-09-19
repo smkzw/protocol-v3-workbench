@@ -80,6 +80,10 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                             'manuscript_save_intent_changed'}:
                 raise HTTPException(409, detail={'message': '研究内容或所选资料已变化，原初稿记录仍然保留。',
                     'next_step': '请先核对当前研究建议，再开始新的整稿写作。'}) from exc
+            if str(exc) == 'manuscript_office_content_invalid':
+                raise HTTPException(422, detail={'message': '提交的内容不是有效的Word文档，未做任何保存。'}) from exc
+            if str(exc) == 'manuscript_office_store_missing':
+                raise HTTPException(501, detail={'message': '本部署未启用Office工作副本存储。'}) from exc
             if str(exc) == 'manuscript_object_anchor_changed':
                 raise HTTPException(409, detail={'code': 'manuscript_object_anchor_changed',
                     'message': '这段内容在AI准备候选期间又被您编辑过，本次候选没有覆盖您的最新修改。',
@@ -450,6 +454,56 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         intent = body.model_dump(mode='json')
         intent['semantic_block_id'] = block_id
         return intent
+
+    class OfficeSnapshotRequest(BaseModel):
+        model_config = ConfigDict(extra='forbid')
+        operation_id: NonEmptyText
+        actor_id: NonEmptyText
+        expected_revision: int
+        expected_document_sha256: Sha256
+        content_base64: str = ''
+
+    @router.post('/office-draft/snapshots', status_code=201)
+    def save_office_snapshot(project_id: str, study_definition_id: str,
+                             body: OfficeSnapshotRequest):
+        """Persist one immutable Office working copy bound to this revision (T10)."""
+        def execute():
+            current = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if current.definition is None:
+                raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+            intent = body.model_dump(mode='json')
+            intent['study_revision_sha256'] = current.revision_sha256
+            return documents.office_snapshot(project_id, study_definition_id, intent)
+        return _safe_call(lambda: checked(execute))
+
+    @router.post('/office-draft/snapshots/{operation_id}/recover')
+    def recover_office_snapshot(project_id: str, study_definition_id: str,
+                                operation_id: str, body: OfficeSnapshotRequest):
+        def execute():
+            intent = body.model_dump(mode='json')
+            receipt = documents.recover_office_snapshot(project_id, study_definition_id, intent)
+            if receipt is None:
+                raise HTTPException(404, detail={'message': '没有找到该快照操作记录，可安全重试。'})
+            return receipt
+        return _safe_call(lambda: checked(execute))
+
+    @router.get('/office-draft/snapshots/latest')
+    def latest_office_snapshot(project_id: str, study_definition_id: str):
+        latest = documents.latest_office_snapshot(project_id, study_definition_id)
+        if latest is None:
+            raise HTTPException(404, detail={'message': '尚无Office工作副本，先在编辑器中保存一次。'})
+        return latest
+
+    @router.get('/office-draft/snapshots/{operation_id}/content')
+    def office_snapshot_content(project_id: str, study_definition_id: str, operation_id: str):
+        from fastapi.responses import Response
+        artifact = documents.office_snapshot_content(project_id, study_definition_id, operation_id)
+        if artifact is None:
+            raise HTTPException(404, detail={'message': '没有找到该Office工作副本。'})
+        return Response(content=artifact.content,
+            media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            headers={'X-Content-Sha256': artifact.metadata.content_sha256})
 
     @router.post('/objects/{block_id}/ai-revisions/prepare', status_code=202)
     def prepare_object_revision(project_id: str, study_definition_id: str, block_id: str,
