@@ -1,0 +1,50 @@
+{
+ "schema_version": "cross-chapter-consistency.v1",
+ "findings": [
+  {
+   "item": "主要终点时点",
+   "status": "consistent",
+   "left": "picos.primary_endpoint",
+   "right": "statistics.primary_analysis.soa_consistency"
+  },
+  {
+   "item": "关键次要终点SNOT-22",
+   "status": "unknown",
+   "detail": "picos.key_secondary_endpoints 或 statistics.secondary_analysis.endpoint_definitions 缺失"
+  },
+  {
+   "item": "给药频次",
+   "status": "unknown",
+   "detail": "intervention.dose_regimen 或 statistics.sample_size.soa_alignment 缺失"
+  },
+  {
+   "item": "ICE治疗策略",
+   "status": "unknown",
+   "detail": "estimand.primary.ice_strategy 或 soa.footnote_bindings 缺失"
+  },
+  {
+   "item": "样本量对齐",
+   "status": "unknown",
+   "detail": "statistics.sample_size.planned_n 或 statistics.sample_size.soa_alignment 缺失"
+  },
+  {
+   "item": "无期中分析一致性",
+   "status": "consistent",
+   "detail": "interim.planned=False"
+  },
+  {
+   "item": "目标人群",
+   "status": "unknown",
+   "detail": "picos.population_summary 或 picos.intervention_dose_regimen.population_link 缺失"
+  },
+  {
+   "item": "访视窗口",
+   "status": "unknown",
+   "detail": "soa.assessment_cells 或 procedure.followup_visit_windows 缺失"
+  }
+ ],
+ "status": "consistent",
+ "contradictions": 0,
+ "unknown": 6,
+ "checked": 8
+}

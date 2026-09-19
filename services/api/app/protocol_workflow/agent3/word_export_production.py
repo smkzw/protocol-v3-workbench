@@ -228,9 +228,13 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     # visit×assessment facts, replacing whatever prose-shaped table the model
     # drafted for it.
     from app.protocol_workflow.agent3.soa_matrix import soa_table_content
+    from app.protocol_workflow.agent3.synopsis_projection import build_synopsis_blocks
     soa_content = soa_table_content(study_facts)
     soa_nodes = {node_id for node_id, info in titles.items()
                  if '研究流程表' in info.get('title', '')}
+    synopsis_nodes = {node_id for node_id, info in titles.items()
+                      if info.get('title', '').strip() in ('概要', '方案摘要')
+                      or info.get('title', '').strip().endswith('概要')}
     doc.add_page_break()
     current_node = None
     table_no = 0
@@ -251,12 +255,21 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             heading = doc.add_heading(info.get('title', node_id),
                                       level=STYLE_ID_TO_HEADING.get(info.get('style_id', ''), 2))
             _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
+            if node_id in synopsis_nodes and study_facts:
+                # The synopsis is a deterministic projection (overview +
+                # abbreviations + annotated key points), per the exemplars.
+                for projected in build_synopsis_blocks(study_facts):
+                    text = projected['content'].replace('受试者', '试验参与者')
+                    ref_count += _add_paragraph_with_table_refs(doc, text, total_tables)
+                continue
             if block.get('block_kind') != 'paragraph':
                 para = doc.add_paragraph('本节不适用于本研究。')
         want_landscape = node_id in landscape_nodes and block.get('block_kind') == 'table'
         if want_landscape != in_landscape:
             _switch_orientation(doc, want_landscape)
             in_landscape = want_landscape
+        if node_id in synopsis_nodes:
+            continue  # projected blocks were written with the heading
         kind = block.get('block_kind')
         if kind == 'paragraph':
             content_text = (block.get('content') or '').replace(
