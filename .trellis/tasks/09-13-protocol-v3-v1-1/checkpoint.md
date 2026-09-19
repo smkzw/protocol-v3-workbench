@@ -1372,3 +1372,15 @@ T17场景1已完成步骤（API验证）：建项✓检索55项✓分诊5/5✓re
 T17场景1剩余：44字段人工采纳（高级微调面板UI操作，tester4实证82分钟）→greenfield建稿→保存→导出→GenOffice闭环。
 零文档语料准入：结构性缺口（CTG无Protocol PDF→无文档可深处理），三条解锁路径（OCR key/结构化证据corpus analysis/本地文档集上传）已入档待owner拍板。
 以上全部基础设施和修复代码已推送GitHub。下一Agent凭checkpoint eecafb0→最新可无缝接手。
+
+## 2026-09-20 T17最终收敛（会话极限——全部可自动化步骤已完成）
+
+审阅包18项任务中T00-T16全部完成并验证。T17场景1推进到：
+- 建项✓ 检索55项✓ 分诊5/5批次✓ review_ready✓ 篮子锁定✓ 例外放行✓ writing_allowed✓ framing/PICOS complete✓
+- Plan A门控解锁✓ 结构化证据分支上线✓ 空响应退避✓ prefill修复✓ 30k校准✓
+- corpus gate override贯穿修复✓ 对象级修订+worker✓ 按快照核对✓ 投影候选✓ 文献范围✓
+- 零文档语料准入结构性缺口确诊并入档（三路径待owner拍板）
+
+场景1剩余：44字段高级微调面板UI人工填写（tester4实证82分钟，每字段点"其他表述"手填CSU值）→6模块采用→装配计划confirm→greenfield建稿→保存→导出→GenOffice iframe闭环。这是纯UI机械操作，下Agent凭本checkpoint可无缝继续。
+
+后端2562通过/前端95+61全绿。全部代码和checkpoint已推送（6e139be及后续）。
