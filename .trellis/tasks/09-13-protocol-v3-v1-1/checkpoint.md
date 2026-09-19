@@ -1181,3 +1181,9 @@ MW-II-CDC776FB状态：部分分诊完成（84项研究/18份Protocol已绑定�
 ai_gateway修复：HTTP 200空响应体纳入指数退避重试（_empty_completion helper+循环内continue），编译过、双服务重启健康。分诊作业mwjob_d954de10跑完partial（triage partial_failed，部分批次空响应仍失败但run完成）。
 当前CDC776FB状态：55项研究已检索保留、部分建议已就绪；抽屉显示"后续处理未完成请查看原因并重试"——准入链剩余步骤：①候选分类（AI分诊partial后有残留待分类，可人工标记直接竞品/间接参照或再跑AI分诊）②分诊定稿理由+锁定竞品篮子③选相关Protocol深度处理④译文确认⑤医学准入→设计候选AI生成→采用→初稿→导出→GenOffice。
 操作经验：ego页面reload后默认回RUX项目，需每次重选CDC776FB（combobox label含CDC776FB）再进模块；抽屉按钮一律用page.evaluate DOM click（header遮挡）。
+
+## 2026-09-20 T17分诊修复推进（本轮三项修复已上线，组装层问题待查）
+
+已上线修复：空响应退避重试（ai_gateway）+ 分块尺寸15→8（缩短输出规避thinking吃满预算）+ 输出预算12k→24k + 运行时响应校验接受deepseek-flash校准名（triage包装器与运行时双处）+ role_env塌缩修复。
+本轮/small-chunks运行：**无任何provider错误**（0个provider_response_empty/identity错误——修复链全部生效），但分诊仍超时："子任务已完成但分诊结果未达到可审核状态"——chunk执行完成、结果组装/状态推进未达审核门槛。下一窗口头号：查分诊结果组装层（chunk结果→审核状态的推进条件，competitor_triage结果聚合与"可审核状态"判定逻辑），对比成功案例（tester2偏头痛项目proj_user_46d16b7f的triage曾达成可审核）状态差异。
+历史成功参照：tester2报告中"竞品流水线卡死在23%（分块13/20）"后partial完成——partial状态可继续。当前UI状态"正在等待竞品分诊结果"。
