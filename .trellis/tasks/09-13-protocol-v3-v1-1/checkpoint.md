@@ -1238,3 +1238,12 @@ A方案延伸：corpus analysis AI支持结构化证据输入（当前设计只�
 B替代路径：零文档项目在语料准备步骤提供"上传本地竞品Protocol文档集"入口（复用CRSwNP本地语料成功模式），上传后走正常准入链。
 当前场景1已获成果：建项✓流水线分诊5/5✓部分建议就绪(55研究/14Protocol)✓标题/方案号候选生成✓——初稿生成需先过语料准入（产品缺口）。
 本轮全部修复已推送（最新4429d86→当前）。T17验收循环在下窗口以：①owner决策A/B→实施→场景1全链→场景2-4（同模式）→codex独立性轮次补齐。
+
+## 2026-09-20 T17场景1架构级缺口最终确认（会话收敛记录）
+
+Plan A门控已在journey层解锁（design_recommendations_blocked消失），但设计候选由corpus analysis AI服务生成，该服务由**流水线阶段推进**派发——零文档项目的流水线无法通过prepare节点（Paddle OCR无API Key：NCT03436797有扫描版Prot_002.pdf但隔离环境未配OCR密钥；原文准备failed→无法推进到corpus analysis阶段）。
+架构级修复方案（下窗口独立开发轮次，非快修）：
+①continue-after-triage增加结构化证据分支：retained候选原文准备失败时，pipeline stage推进至awaiting_corpus_analysis（跳过文档深度处理），corpus analysis AI以检索快照的结构化数据（标题/条件/分期/来源）为输入生成设计候选——需改corpus analysis AI输入合同（接受结构化entries而非仅文档解析产物）；
+②或配置Paddle OCR API Key（e2e_runtime Paddle provider需要key）走文档OCR链。
+另：preparation失败前确认NCT03436797文档存在（Prot_002.pdf已下载）——此前CTG API documents=[]的诊断有误，文档在但需OCR（扫描版）。
+场景1当前可达终点：设计模块结构就绪（6模块/44字段框架），占位候选卡可见，人工可逐字段填写设计（tester3路径证明可行但点击超标）。
