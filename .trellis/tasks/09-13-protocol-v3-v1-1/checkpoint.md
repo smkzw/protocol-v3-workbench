@@ -1142,3 +1142,8 @@ frozen =(provider='deepseek', model='deepseek-v4-flash', base_url同, transport�
 
 factory=_independent_ai_provider_for_profile（main.py:1609）：profile_env(profile)→values.update(THINKING=binding.thinking, EFFORT=binding.reasoning_effort)→configured_ai_provider_from_env。e2e_runtime/ai_role_bindings.json的independent_ai绑定=thinking'enabled'/effort'max'/model deepseek-v4-flash/profile正确——静态读数与冻结路由完全一致。当前后端已带全修复+诊断，下一次分诊执行时诊断将记录运行时精确5元组（若仍失败）或直接通过（若22:21的失败源于当时缺失seam修复的profile_env）。
 下一步动作序列（下窗口）：①page.fetch重试分诊或新建项目触发→看durable job结果；②若成功→继续场景1全链（候选生成→采用→初稿→保存→导出→GenOffice）；③若失败→按诊断5元组直接对齐。
+
+## 2026-09-19 T17身份链运行时诊断捕获（修复队列头号条目精确定位）
+
+带诊断的运行捕获：resolved=(provider='deepseek', model='deepseek-v4-flash', expected='deepseek-v4-flash') vs frozen=(... expected='deepseek-flash')——解析侧expected塌缩=model值。即：durable worker构建provider的env合并中EXPECTED被MODEL覆写或未读（诊断确切证明expected==model处存在），而请求路径（profile_env+显式期望优先）已正确。下窗口头号任务：定位worker构建provider的确切调用点（grep durable worker claim→triage provider构建；runtime_ai_env()的EXPECTED/MODEL合并逻辑），使expected=deepseek-flash透传至provider；随后分诊应通过（包装器家族检查已接受v4-flash↔deepseek-flash）。
+其余状态：tester4重派报告已到（归档t17_tester4_report.md外的call_506eed16版本待查）；前端5176与后端5275运行中（指纹已同步23:00版）；新项目MW-II-CDC776FB与MW-II-F36943B9等待流水线验证。
