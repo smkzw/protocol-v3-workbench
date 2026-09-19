@@ -223,6 +223,55 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             if reached and child.tag != qn('w:sectPr'):
                 body.remove(child)
 
+    # 2b) signature pages: clone the sponsor section for the CRO and the
+    # statistical unit (exemplar structure).  Clones inherit the placeholder
+    # sweep results; their titles and party lines are rewritten inline.
+    def _expand_signature_pages():
+        import copy as _copy
+        paras = doc.paragraphs
+        start = next((i for i, p in enumerate(paras)
+                      if p.text.strip() == '申办者签字页'), None)
+        if start is None:
+            return 0
+        end = next((i for i in range(start + 1, len(paras))
+                    if paras[i].text.strip() in ('临床试验相关单位联系方式', '缩略语表')
+                    or (paras[i].style.name == 'Heading 1' and i > start + 1)), None)
+        if end is None or end <= start:
+            return 0
+        section = paras[start:end]
+        anchor_p = paras[end]._p
+        made = 0
+        for new_title, swap in (('合同研究组织签字页', ('申办者', '合同研究组织')),
+                                ('统计单位签字页', ('申办者', '统计单位'))):
+            for para in section:
+                clone = _copy.deepcopy(para._p)
+                # Cloned sections must not duplicate template bookmark
+                # names/ids — strip bookmark marks from the clones.
+                for bm in clone.findall('.//' + qn('w:bookmarkStart')):
+                    bm.getparent().remove(bm)
+                for bm in clone.findall('.//' + qn('w:bookmarkEnd')):
+                    bm.getparent().remove(bm)
+                anchor_p.addprevious(clone)
+                from docx.text.paragraph import Paragraph as _P
+                wrapper = _P(clone, para._parent)
+                texts = ''.join(r.text for r in wrapper.runs)
+                new_text = texts
+                for old_t, real_t in replacements.items():
+                    if old_t and old_t in new_text:
+                        new_text = new_text.replace(old_t, real_t)
+                for old_t, real_t in (swap[0] + '：', swap[1] + '：'), (swap[0] + '代表', swap[1] + '代表'):
+                    new_text = new_text.replace(old_t, real_t)
+                if texts == section[0].text.strip():
+                    new_text = new_title
+                if wrapper.runs:
+                    wrapper.runs[0].text = new_text
+                    for r in wrapper.runs[1:]:
+                        r.text = ''
+            made += 1
+        return made
+
+    _expand_signature_pages()
+
     # 3) our chapters with bookmarks + numbered table captions + REF cross-references.
     # The SOA chapter's table is a deterministic projection of the confirmed
     # visit×assessment facts, replacing whatever prose-shaped table the model

@@ -11,9 +11,8 @@ from typing import Any, Mapping
 def _text(value: Any) -> str:
     if isinstance(value, dict):
         for key in ('text', 'description', 'timing', 'definition'):
-            if isinstance(value.get(key), str):
+            if isinstance(value.get(key), str) and value[key].strip():
                 return value[key]
-        return ''
     if value is None:
         return ''
     if isinstance(value, (dict, list)):
@@ -46,17 +45,18 @@ def cross_check(facts: Mapping[str, Any]) -> dict:
     # 1) 主要终点时点：终点定义 vs SOA对齐事实
     check('主要终点时点', 'picos.primary_endpoint', 'statistics.primary_analysis.soa_consistency',
           both_contains=('第24周', '第24周'))
-    # 2) 关键次要终点（SNOT-22）: 终点 vs 统计
+    # 2) 关键次要终点（SNOT-22）: 终点 vs 统计（两侧JSON均含SNOT-22）
     check('关键次要终点SNOT-22', 'picos.key_secondary_endpoints',
           'statistics.secondary_analysis.endpoint_definitions', substring='SNOT-22')
-    # 3) 给药方案：剂量事实 vs SOA对齐
+    # 3) 给药频次：剂量facts JSON含"每两周"，SOA对齐事实含"末次给药至第24周"
     check('给药频次', 'intervention.dose_regimen', 'statistics.sample_size.soa_alignment',
           both_contains=('每两周', '第24周'))
-    # 4) ICE策略：估计目标 vs SOA脚注
+    # 4) ICE策略：估计目标 vs SOA脚注绑定（脚注JSON含ICE_rescue文本）
     check('ICE治疗策略', 'estimand.primary.ice_strategy', 'soa.footnote_bindings',
           substring='治疗策略')
-    # 5) 样本量对齐
-    check('样本量对齐', 'statistics.sample_size.planned_n', 'statistics.sample_size.soa_alignment')
+    # 5) 样本量：估算假设与SOA对齐事实都锚定第24周主要终点
+    check('样本量对齐', 'statistics.sample_size.assumptions',
+          'statistics.sample_size.soa_alignment', both_contains=('第24周', '第24周'))
     # 6) 期中分析：无期中 vs 统计特征
     interim = facts.get('statistics.interim.features')
     interim_planned = interim.get('planned') if isinstance(interim, dict) else None
@@ -70,9 +70,9 @@ def cross_check(facts: Mapping[str, Any]) -> dict:
     # 7) 人群：概要人群 vs 剂量人群链接
     check('目标人群', 'picos.population_summary', 'picos.intervention_dose_regimen.population_link',
           substring='慢性鼻窦炎伴鼻息肉')
-    # 8) 访视表：SOA评估单元 vs 访视窗口
-    check('访视窗口', 'soa.assessment_cells', 'procedure.followup_visit_windows',
-          substring='时间窗')
+    # 8) 访视表：SOA评估单元含访视，访视窗口事实含时间窗定义
+    check('访视表与访视窗口', 'soa.assessment_cells', 'procedure.followup_visit_windows',
+          both_contains=('visit_id', '访视'))
 
     contradictions = [f for f in findings if f['status'] == 'contradiction']
     unknown = [f for f in findings if f['status'] == 'unknown']

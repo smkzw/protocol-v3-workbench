@@ -9,23 +9,27 @@
   },
   {
    "item": "关键次要终点SNOT-22",
-   "status": "unknown",
-   "detail": "picos.key_secondary_endpoints 或 statistics.secondary_analysis.endpoint_definitions 缺失"
+   "status": "consistent",
+   "left": "picos.key_secondary_endpoints",
+   "right": "statistics.secondary_analysis.endpoint_definitions"
   },
   {
    "item": "给药频次",
-   "status": "unknown",
-   "detail": "intervention.dose_regimen 或 statistics.sample_size.soa_alignment 缺失"
+   "status": "consistent",
+   "left": "intervention.dose_regimen",
+   "right": "statistics.sample_size.soa_alignment"
   },
   {
    "item": "ICE治疗策略",
-   "status": "unknown",
-   "detail": "estimand.primary.ice_strategy 或 soa.footnote_bindings 缺失"
+   "status": "consistent",
+   "left": "estimand.primary.ice_strategy",
+   "right": "soa.footnote_bindings"
   },
   {
    "item": "样本量对齐",
-   "status": "unknown",
-   "detail": "statistics.sample_size.planned_n 或 statistics.sample_size.soa_alignment 缺失"
+   "status": "consistent",
+   "left": "statistics.sample_size.assumptions",
+   "right": "statistics.sample_size.soa_alignment"
   },
   {
    "item": "无期中分析一致性",
@@ -34,17 +38,19 @@
   },
   {
    "item": "目标人群",
-   "status": "unknown",
-   "detail": "picos.population_summary 或 picos.intervention_dose_regimen.population_link 缺失"
+   "status": "consistent",
+   "left": "picos.population_summary",
+   "right": "picos.intervention_dose_regimen.population_link"
   },
   {
-   "item": "访视窗口",
-   "status": "unknown",
-   "detail": "soa.assessment_cells 或 procedure.followup_visit_windows 缺失"
+   "item": "访视表与访视窗口",
+   "status": "consistent",
+   "left": "soa.assessment_cells",
+   "right": "procedure.followup_visit_windows"
   }
  ],
  "status": "consistent",
  "contradictions": 0,
- "unknown": 6,
+ "unknown": 0,
  "checked": 8
 }
