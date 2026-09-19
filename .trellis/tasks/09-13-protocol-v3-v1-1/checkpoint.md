@@ -1219,3 +1219,9 @@ ClinicalTrials.gov API实证：NCT03436797/05298215/01635127/03749135/00924534 �
 ego验证：CDC776FB项目gate解锁（design_recommendations_blocked消失）✓；"更新建议"点击后AI候选生成已派发（durable reservation异步，处理中）。
 遗留：①等待候选生成完成后→采用→初稿→导出→GenOffice闭环（机械流程）；②流水线banner仍显示旧的"failed"状态文本（journey持久化的投影未随gate更新——展示层小缺陷P2）；③tester4重派报告已归档待正式聚合（其项目建于修复前）；④P1-3消息提示等修复队列。
 注意：后端源码每次变更后必须同时重启5275与5176（指纹门禁）；ego每次reload后重选项目。
+
+## 2026-09-20 候选生成阻塞点确诊（enrichment空响应——下窗口头号）
+
+CDC776FB门禁已解锁但AI候选生成失败：authoring prefill AI call返回provider_response_empty（退避重试4次全空）。根因判定：enrichment提示词包含55项研究的语料分析上下文（大输入）+ thinking=enabled吃满24k输出预算→content为空。经典reasoner大上下文失败模式。
+下窗口修复三选一（按序尝试）：①enrichment调用关闭thinking（WORKBENCH_AI_THINKING对enrichment角色单独配置为disabled——结构化分析上下文已在提示词中，无需推理预算）；②max_output_tokens提升至48k；③语料上下文截断（只传top-N相关研究摘要）。
+验证：更新建议→候选包占位文案消失→出现3-5个候选→一键采用→初稿→导出→GenOffice。
