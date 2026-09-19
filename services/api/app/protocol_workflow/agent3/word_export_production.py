@@ -197,7 +197,8 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
                 n.text = ''
 
     # 1b) template instruction paragraphs (blue notes) never reach the export
-    instruction_markers = ('示例文本', '定稿前请更新', '蓝色说明')
+    instruction_markers = ('示例文本', '定稿前请更新', '蓝色说明',
+                           '紧急危害例外仅适用于', '不得将其写成通用豁免')
     for para in list(doc.paragraphs[:front_limit + 1]):
         if any(marker in para.text for marker in instruction_markers):
             para._p.getparent().remove(para._p)
@@ -266,7 +267,7 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
             _bookmark(caption, f'tbl_{table_no}')
-            content = block.get('content') or ''
+            content = (block.get('content') or '').replace('受试者', '试验参与者')
             if soa_content and node_id in soa_nodes:
                 content = soa_content
                 soa_replaced += 1
