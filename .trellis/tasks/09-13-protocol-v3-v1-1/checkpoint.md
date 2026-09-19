@@ -1400,3 +1400,8 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 2. 结构化证据corpus analysis分支（架构改造）
 3. 本地文档集上传（产品入口增强）
 本会话T17已完成的所有基础设施和修复（17/18项任务+全部代码修复+测试通过）已推送。
+
+## T17会话收敛总结（所有可自动化步骤已完成，剩余为需要owner决策或独立开发窗口的项）
+
+审阅包18项任务中T00-T16全部完成并验证（17/18）。T17场景1推进至journey writing_allowed+framing/PICOS complete，但greenfield建稿被21个structured_design driver阻断——零文档项目的循环依赖需要owner拍板（OCR key/结构化证据分支/44字段手填）。
+全部基础设施、修复、测试、checkpoint已推送（140+提交）。下一Agent凭checkpoint可无缝接手剩余项。
