@@ -330,10 +330,13 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
             _bookmark(caption, f'tbl_{table_no}')
             content = (block.get('content') or '').replace('受试者', '试验参与者')
-            if soa_content and node_id in soa_nodes:
+            is_soa = bool(soa_content and node_id in soa_nodes)
+            if is_soa:
                 content = soa_content
                 soa_replaced += 1
             _add_table(doc, content, repeat_header=header_rows_of(content))
+            if is_soa:
+                _tune_wide_table(doc.tables[-1])
     if in_landscape:
         _switch_orientation(doc, False)
 
@@ -370,6 +373,28 @@ def document_revision_hash_sha(document: Mapping[str, Any]) -> str:
         return document_revision_hash(SemanticDocumentRevision.model_validate(document))
     except Exception:
         return hashlib.sha256(canonical_json(document).encode()).hexdigest()
+
+
+def _tune_wide_table(table) -> None:
+    """Wide-matrix readability on a landscape page: fixed layout, a wide
+    label column, equal narrow visit columns, and 8pt cell text."""
+    from docx.shared import Cm, Pt
+    table.autofit = False
+    n_cols = len(table.columns)
+    if n_cols < 8:
+        return
+    label_cm = 4.0
+    visit_cm = round((25.7 - label_cm) / (n_cols - 1), 2)
+    for i, column in enumerate(table.columns):
+        width = Cm(label_cm if i == 0 else visit_cm)
+        column.width = width
+        for cell in column.cells:
+            cell.width = width
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                for run in paragraph.runs:
+                    run.font.size = Pt(8)
 
 
 def _add_table(doc, content: str, repeat_header: int = 0) -> None:
