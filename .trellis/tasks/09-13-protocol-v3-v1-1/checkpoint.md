@@ -1187,3 +1187,9 @@ ai_gateway修复：HTTP 200空响应体纳入指数退避重试（_empty_complet
 已上线修复：空响应退避重试（ai_gateway）+ 分块尺寸15→8（缩短输出规避thinking吃满预算）+ 输出预算12k→24k + 运行时响应校验接受deepseek-flash校准名（triage包装器与运行时双处）+ role_env塌缩修复。
 本轮/small-chunks运行：**无任何provider错误**（0个provider_response_empty/identity错误——修复链全部生效），但分诊仍超时："子任务已完成但分诊结果未达到可审核状态"——chunk执行完成、结果组装/状态推进未达审核门槛。下一窗口头号：查分诊结果组装层（chunk结果→审核状态的推进条件，competitor_triage结果聚合与"可审核状态"判定逻辑），对比成功案例（tester2偏头痛项目proj_user_46d16b7f的triage曾达成可审核）状态差异。
 历史成功参照：tester2报告中"竞品流水线卡死在23%（分块13/20）"后partial完成——partial状态可继续。当前UI状态"正在等待竞品分诊结果"。
+
+## 2026-09-20 分诊状态对照结论：CDC776FB已达review_ready（无需再修代码）
+
+对照结果：proj_user_158a4a0fbf64（荨麻疹）的ct_run_47423b9f status=**review_ready**（23:13 CST）——durable job的"分诊超时"判定提前于批次完成触发（job超时调参问题=P2），但工作成果已完成可审核。UI直接可继续：打开竞品处理抽屉→审阅AI分类结果→锁定竞品篮子→深度处理/译文/准入→候选生成→采用→初稿→导出→GenOffice。
+P2备注（不阻断）：durable job超时窗口（分钟级）短于4批次deepseek分诊实际耗时，调参或分批续跑映射为下轮P2修复。
+下窗口动作序列：ego选MW-II-CDC776FB→医学写作→打开竞品处理→审阅分类（55项已分类）→分诊定稿理由≥10字→锁定竞品篮子→文档与解析tab深度处理一份相关Protocol→结构与译文确认→已准入证据→设计候选AI生成→一键采用→初稿→保存→导出→GenOffice。
