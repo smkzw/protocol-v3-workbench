@@ -307,9 +307,18 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             if node_id in synopsis_nodes and study_facts:
                 # The synopsis is a deterministic projection (overview +
                 # abbreviations + annotated key points), per the exemplars.
+                # Key points get a bold lead-in label for scanability.
                 for projected in build_synopsis_blocks(study_facts):
                     text = projected['content'].replace('受试者', '试验参与者')
-                    ref_count += _add_paragraph_with_table_refs(doc, text, total_tables)
+                    para = doc.add_paragraph()
+                    lead, sep, rest = text.partition('：')
+                    if sep and lead in ('主要终点', '伴发事件按治疗策略处理',
+                                        'ICE事件包括', '安全性随访', '缩略语'):
+                        bold_run = para.add_run(lead + '：')
+                        bold_run.bold = True
+                        para.add_run(rest)
+                    else:
+                        para.add_run(text)
                 continue
             if block.get('block_kind') != 'paragraph':
                 para = doc.add_paragraph('本节不适用于本研究。')
