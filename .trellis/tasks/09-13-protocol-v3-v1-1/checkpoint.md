@@ -778,3 +778,14 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
 - 导出回执新增cross_references计数
 - 剩余（如实）：Word GUI人工打开刷新目录/域（AppleScript授权已给，留用户双击核验）；
   alias方向语义owner裁定
+
+## 2026-09-19 09:35 验收闭环状态
+
+- computed style实测：正文段落16px、状态/导航16px、按钮14px（达标16/14目标）
+- 关键点击实测：14次 ≤ 20（清单见acceptance_evidence/BROWSER_ACCEPTANCE_20260919.md）
+- 必填自由文本：1项（brief）≤ 5
+- Word GUI：修复版文件已被Word成功打开（updateFields提示触发、目录更新执行、
+  页眉真实值渲染）；Word内"另存PDF"脚本导出被沙盒授权框循环阻塞——
+  按规则如实记录为用户人工步骤（文件→另存为→PDF，约10秒），不冒称通过
+- alias方向语义裁定：已用原生提问机制向owner提出（两规则+推荐=规则B投影刷新不重开），
+  未获答复；保持无损待决——不改任何测试期望，两测试维持现状直至裁定
