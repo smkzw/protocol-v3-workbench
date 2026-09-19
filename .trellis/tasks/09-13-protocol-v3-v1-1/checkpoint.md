@@ -1206,3 +1206,9 @@ pipeline状态API实证：mwpipe_369c4e6e stage=awaiting_triage_confirm、percen
 头号待诊断：NCT03436797的Protocol原文文档是否存在于ClinicalTrials.gov（该NCT可能无sponsor上传的Protocol附件→原文准备永远无文档可解析）。修法二选一：①换/增加retained候选（从55项中挑有Protocol文档的CSU II期研究，如NCT05298215 UB-221）；②诊断preparation失败的确切错误（preparation batch表无error列，需查durable job或preparation items表）。
 经验：retry-triage需idempotency_key；preparation retry需idempotency_key；continue-after-triage失败原文="原文准备失败：failed"。
 ego操作链已熟练：选CDC776FB→医学写作(待决策DOM click)→打开竞品处理(DOM click)。
+
+## 2026-09-20 准备失败根因确诊：ClinicalTrials.gov现代记录无Protocol文档（结构性）
+
+ClinicalTrials.gov API实证：NCT03436797/05298215/01635127/03749135/00924534 全部 documents=[]——现代CTG记录不再附带Protocol PDF（结构化数据+申办方站点托管）。原文准备（拉取文档→解析）对纯公开检索项目**永远无文档可用**——语料准入门槛（要求文档深度处理+译文+准入）与公开检索数据源结构性不兼容。
+这是产品级设计缺口（P1升级）：零文档公开检索项目需要"结构化证据-only准入"路径（181/1304项已结构化分析完成即视为语料就绪），或引导用户上传本地竞品Protocol文档集（如CRSwNP项目的本地语料模式——181项+38份Protocol即来自本地文档集）。
+下窗口方案（owner拍板或按R2自主推进）：A. 语料准入门增加结构化证据替代路径（corpus_readiness接受"AI已完成结构化分析"分支）——符合R2零附件可推进；B. 场景1改用本地文档集模式重跑（上传CSU相关竞品Protocol文档集）。推荐A+B并行：A为产品正确性，B为场景多样性。
