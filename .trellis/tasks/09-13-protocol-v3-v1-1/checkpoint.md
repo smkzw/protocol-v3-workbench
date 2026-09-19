@@ -1063,3 +1063,8 @@ ego浏览器实证：/genoffice/index.html在真实浏览器完整启动——ro
 首批观察：tester1/3开局撞 monitoring_principal_unavailable 503——宿主认证缝隙fail-closed设计（main.py 3399注释），非阻断写作链则不算缺陷；tester2在项目总览读取中。
 轮询：CronCreate automation-ef2b353b 每20分钟查/tmp/t17_*.log的EXIT标记，全齐或120分钟超时后聚合审阅（P0/P1/P2→修复→再派发换疾病领域→循环至零P0/P1）。
 已知缺口如实记录：conference_session_runner的zcode app-server会话建立失败（no usable session）；antigravity/opencode-go CLI本机不存在——外部harness通道待修复，本轮4名测试者以codex exec独立会话代行（模型多样性欠缺，独立性与场景差异保留）。
+
+## 2026-09-19 T17环境闭环验证（主线程ego冒烟）
+
+ego实测5176：主页503仅监控小部件（不阻断）；"新建项目"对话框内置双入口（"从零开始"=入口B两阶段反问PICOS /"导入方案摘要"=入口A先解析后建项——T04/R5的UI原语已在）；"从零开始"建项成功：合成药T·斑秃·II期·MW-II-71C0F9C0，医学写作模块点亮"研究方案智能设计与写作"。**隔离环境闭环可用性证实**。
+派发波折与现状：codex exec 4名测试者于20:28-20:32全部死于ChatGPT配额（usage limit至9/21 06:20，非测试缺陷）；conference_session_runner zcode/pi会话建立失败；antigravity/opencode-go CLI缺失。4份场景提示词已备（t17_prompts/），9/21配额恢复后可直接重派；恢复前由主线程/子代理代行场景推进。轮询automation-ef2b353b继续每20分钟值守。
