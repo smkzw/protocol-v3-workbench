@@ -1043,3 +1043,10 @@ owner提供GenOffice来源=genspark-ai/genoffice；克隆于implementation/genof
 7149fa2=T07可行性+T10第一片：docx-engine在真实140页成品（12_final_clean.docx,293763B）上三关全过——解析(814块/83表/2TOC域/214书签/4分节/6页眉页脚/中英文)；未变更往返字节级不变；段落补丁保存只重写目标段、其余zip部件字节级相同。**附带发现**：12_final_clean的word/media/flow.png为孤儿部件（rId16关系无任何r:embed/v:imagedata r:id引用）——我们导出管线既有缺陷，流程图在Word中本就不显示，已记录待修。spike=scripts/qc/protocol_v3/genoffice_feasibility.spike.test.ts（genoffice-upstream内运行，vitest）+证据JSON。T10第一片：office_snapshot/recover/latest/content四服务方法（字节入内容寻址LocalArtifactStore不入事件流；快照事件绑定operation_id/内容sha/工件revision/语义文档版本/研究版本；mapping_status=pending）；API /office-draft/snapshots[POST|recover|latest|content]；composition接store；前端api二进制分支（File→base64同错误合同）。集成测试3/3。
 回归：后端2562过/1已知环境性败；前端95/95+61/61。
 剩余：T10主体=GenOffice docs渲染器浏览器化（apps/docs dev:renderer vite配置→web bundle）+iframe一实例挂载+快照mapping（语义投影绑定）；T17发射（计划/场景/脚本就绪，启动5275/5176+init-execution派发）；flow.png孤儿缺陷修复（流程图应真正嵌入）。测试GenOffice需在genoffice-upstream内跑vitest（node 22.22.3满足engines>=22.12）。
+
+## 2026-09-19 requirements-v2 第五批（T07浏览器实证+T10嵌入主体+flow.png修复，已推GitHub）
+
+flow.png修复：word_export_production._prune_orphaned_media(doc)在保存前清理无引用图片部件（模板flow.png关系仅被其示例正文引用，正文被替换后成死重）；回执新增orphaned_media_pruned；test_template_orphan_media_never_ships钉死（3/3）。注意：这是孤儿清理，不是流程图生成器——流程图可视化呈现仍是owner待明确项（见02*批次遗留）。
+T10主体落地（866e3a9+本批）：GenOffice docs渲染器成功浏览器化——apps/docs dev renderer用vite build --base=/genoffice/产出web bundle（约20MB含字体），build_genoffice_renderer.sh装进frontend/public/genoffice/并注入bridge-shim.js；shim实现desktop桥核心面（openDocx从工作台URL取字节/saveDocx→office snapshot POST/语言主题桩/Proxy兜底）；office/GenOfficeFrame.jsx一实例一iframe从ManuscriptWorkspace挂载（保存稿存在时出现，bundle存在性点击时探测+安装指引）。
+ego浏览器实证：/genoffice/index.html在真实浏览器完整启动——root挂载、window.desktop.openDocx=function、标题变"未命名文档.docx"、完整中文功能区（开始/插入/绘图/设计/布局/引用/审阅/视图+样式库+AI面板）；Page.captureScreenshot超时（canvas编辑器页截图CDP超时，boot状态三次独立文本探针证实）。证据链三层：引擎spike（字节级往返）+API集成测试+浏览器启动实证；完整打开→编辑→保存闭环留待T17 e2e（需真实文档链）。
+回归：后端关键面6/6；前端95/95+61/61。经验：vite build --base对子路径部署必须；多级../相对路径在cd后的脚本中会失效，一律顶部解析绝对路径；ego截图对canvas重页可能CDP超时，用文本探针代替。
