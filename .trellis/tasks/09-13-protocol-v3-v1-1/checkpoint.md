@@ -809,3 +809,14 @@ owner指出五问题，共同根因=用工程指标（占位零命中/测试绿�
 5. 登录/指引：本地单用户工作台，无需登录——浏览器打开 vite 地址即用
    （启动脚本 runs/mw_protocol_v3_unified_tests_20260919/start_browser_backend.sh
    + frontend `npx vite --port 5175`）。每迭代给非工程化总结=新增硬性要求（已记）。
+
+## 2026-09-19 10:00 alias方向语义裁定落地（owner：只有正式名变了才翻开重确认）
+
+- owner拍板=规则B。注册表真相：正式名(intervention.dose_regimen)的两个曾用名
+  picos.intervention_dose_regimen与synopsis.interventions均为alias。
+- 实现本就符合规则B（canonical变→重开；曾用名变→ProjectionRefresh不重开），
+  缺的是测试的forward半段用了曾用名路径当canonical——已按裁定改写：
+  forward改用intervention.dose_regimen并断言synopsis/剂量卡重开；
+  legacy任一拼写变化断言entries==()仅投影刷新。
+- 全量回归2527 passed/1 failed（唯一=已归因的verifier隔离脆弱，单跑通过）。
+  此前待裁定的两个失败项至此全部清零。

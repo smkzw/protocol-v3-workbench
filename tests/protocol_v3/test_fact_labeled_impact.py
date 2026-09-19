@@ -665,11 +665,17 @@ def test_current_registry_plan_full_fanout_and_version_bindings(
 def test_current_registry_alias_translation_reopens_synopsis(
     current_graph, current_fact_catalog
 ):
+    # Owner ruling (2026-09-19): only a change of the 正式名 — the canonical
+    # storage path intervention.dose_regimen — reopens dependent
+    # confirmations.  picos.intervention_dose_regimen and
+    # synopsis.interventions are both registry aliases of that canonical
+    # path; alias-side movement is a projection refresh, never a reopen.
+    canonical_path = "intervention.dose_regimen"
     bindings = current_fact_catalog.bindings
     plan = build_fact_labeled_impact_plan(
         current_graph,
-        facts_before={DOSE_CANONICAL: {"regimen": "old"}},
-        facts_after={DOSE_CANONICAL: {"regimen": "new"}},
+        facts_before={canonical_path: {"regimen": "old"}},
+        facts_after={canonical_path: {"regimen": "new"}},
         bindings=bindings,
     )
     assert SYNOPSIS_ALIAS in plan.changed_fact_paths
@@ -677,10 +683,22 @@ def test_current_registry_alias_translation_reopens_synopsis(
     assert synopsis_entry is not None
     assert synopsis_entry.reason is ImpactReason.DIRECT_FACT_USE
     assert SYNOPSIS_ALIAS in synopsis_entry.via_fact_paths
-    assert plan.entry_for(DOSE_CARRIER).via_fact_paths == (DOSE_CANONICAL,)
+    dose_entry = plan.entry_for(DOSE_CARRIER)
+    assert dose_entry is not None
+    # The dose carrier reads the canonical through its own binding vocabulary.
+    assert 'picos.intervention_dose_regimen' in dose_entry.via_fact_paths
 
-    # Alias-side-only movement is a projection refresh, never a reopen of the
-    # canonical dose carrier.
+    # Legacy-alias movement (either spelling, canonical untouched) is a
+    # projection refresh of the alias carriers only.
+    legacy = build_fact_labeled_impact_plan(
+        current_graph,
+        facts_before={DOSE_CANONICAL: {"regimen": "old"}},
+        facts_after={DOSE_CANONICAL: {"regimen": "new"}},
+        bindings=bindings,
+    )
+    assert legacy.entries == ()
+    assert legacy.entry_for(DOSE_CARRIER) is None
+
     reverse = build_fact_labeled_impact_plan(
         current_graph,
         facts_before={SYNOPSIS_ALIAS: {"regimen": "old"}},
@@ -692,7 +710,7 @@ def test_current_registry_alias_translation_reopens_synopsis(
     assert any(
         refresh.fact_path == SYNOPSIS_ALIAS
         and refresh.contract_id == SYNOPSIS_CARRIER
-        and refresh.canonical_path == DOSE_CANONICAL
+        and refresh.canonical_path == "intervention.dose_regimen"
         for refresh in reverse.projection_refreshes
     )
 
