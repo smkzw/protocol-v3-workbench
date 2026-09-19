@@ -420,11 +420,15 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       }
     } catch (reason) {
       if (!controller.signal.aborted) {
-        if (reason?.status === 409) { setEditNotice('文档已有更新版本，本次修改没有覆盖它。请刷新后基于最新版本重试。'); setRefresh(v => v + 1); }
-        else setError(readableError(reason));
+        // A failed save must never lose the user's typing: keep the editor
+        // open with the draft, and say what happened and what to do next.
+        stashDraft(blockId, newText);
+        setEditingBlockId(blockId);
+        if (reason?.status === 409) { setEditNotice('文档已有更新版本，本次修改没有覆盖它。您输入的内容仍在本页编辑框中，请刷新后基于最新版本重试。'); setRefresh(v => v + 1); }
+        else setError(readableError(reason) + ' 您输入的内容仍保留在本页编辑框中，可直接再次保存。');
       }
     }
-    finally { flight.current = false; setEditBusy(false); setEditingBlockId(null); }
+    finally { flight.current = false; setEditBusy(false); }
   }
   return <section className="kz-protocol kz-manuscript" aria-label="完整方案初稿">
     <header><p className="kz-manuscript-eyebrow">阅读与修改</p><h2>把研究建议写成完整方案</h2>
