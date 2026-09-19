@@ -1321,3 +1321,10 @@ continue_after_triage的_wait_for_preparation新增分支：preparation batch fa
 3. codex配额9/21恢复后重派独立性轮次
 4. P1-3消息提示等UX修复
 5. OCR key或结构化证据分支→自动化候选生成
+
+## 2026-09-20 场景1全链最终阻塞点确认（greenfield 21个driver未解析）
+
+装配计划confirm已通过（revision 2），greenfield建稿被21个projection driver阻断——这些driver需要study_definition的structured_design字段值（由设计卡片采纳写入）。CDC776FB通过corpus gate override进入writing_allowed，但study definition的structured_design字段仍为undecided。
+**零文档项目的结构性缺口明确**：journey写作允许✓→装配计划✓→但greenfield建稿需structured_design字段值→这些值通过设计卡片采纳（DesignElementsCards组件+design elements API）写入study definition→设计卡片需要corpus analysis AI候选（零文档无产物）→循环依赖。
+解锁路径（owner决策）：A. 提供PaddleOCR key→NCT03436797的PDF可OCR→原文准备成功→流水线推进→corpus analysis AI产出候选→设计卡片可采纳→循环解锁；B. 实现结构化证据corpus analysis分支（工程轮次）；C. 直接通过API将最小structured_design值写入study definition（绕过设计卡片流程——但需验证产品合同是否允许）。
+本会话T17已完成：全部基础设施修复+Plan A门控+结构化证据分支+装配计划confirm+CSU II期PICOS数据+所有测试。
