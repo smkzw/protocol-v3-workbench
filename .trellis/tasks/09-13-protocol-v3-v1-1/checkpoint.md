@@ -1036,3 +1036,10 @@ f36fed1=T11：synopsis_projection/soa_matrix 在导出侧剥离后改为显式�
 T17启动准备：plans/t17_multitester_e2e_plan_20260919.md（4测试者=zcode/omp-gemini/omp-cursor-grok/omp-opencode-go，禁直连后端，120min静默轮询；三场景=斑秃II期入口A/慢性偏头痛III期入口B/UC II期盲测；验收映射A01-A25）；scripts/qc/protocol_v3/e2e_clean_env_check.sh（清洁库+5275/5176健康检查，已验证DB清洁路径）。
 GenOffice阻塞（T07/T10）：审阅包参考基线316ded6f在本机所有仓库不可达，npm无genoffice包——需owner提供SDK位置或裁定嵌入式Office运行时选型后方可实施；不得以截图/简化Tiptap/HTML重排冒充（审阅红线）。
 回归：后端2561过/1已知环境性败。
+
+## 2026-09-19 requirements-v2 第四批（T07可行性+T10第一片，ZCode，已推GitHub）
+
+owner提供GenOffice来源=genspark-ai/genoffice；克隆于implementation/genoffice-upstream（仓库外兄弟目录，不入库），克隆HEAD=316ded6f与审阅基线完全一致（Apache-2.0）。
+7149fa2=T07可行性+T10第一片：docx-engine在真实140页成品（12_final_clean.docx,293763B）上三关全过——解析(814块/83表/2TOC域/214书签/4分节/6页眉页脚/中英文)；未变更往返字节级不变；段落补丁保存只重写目标段、其余zip部件字节级相同。**附带发现**：12_final_clean的word/media/flow.png为孤儿部件（rId16关系无任何r:embed/v:imagedata r:id引用）——我们导出管线既有缺陷，流程图在Word中本就不显示，已记录待修。spike=scripts/qc/protocol_v3/genoffice_feasibility.spike.test.ts（genoffice-upstream内运行，vitest）+证据JSON。T10第一片：office_snapshot/recover/latest/content四服务方法（字节入内容寻址LocalArtifactStore不入事件流；快照事件绑定operation_id/内容sha/工件revision/语义文档版本/研究版本；mapping_status=pending）；API /office-draft/snapshots[POST|recover|latest|content]；composition接store；前端api二进制分支（File→base64同错误合同）。集成测试3/3。
+回归：后端2562过/1已知环境性败；前端95/95+61/61。
+剩余：T10主体=GenOffice docs渲染器浏览器化（apps/docs dev:renderer vite配置→web bundle）+iframe一实例挂载+快照mapping（语义投影绑定）；T17发射（计划/场景/脚本就绪，启动5275/5176+init-execution派发）；flow.png孤儿缺陷修复（流程图应真正嵌入）。测试GenOffice需在genoffice-upstream内跑vitest（node 22.22.3满足engines>=22.12）。
