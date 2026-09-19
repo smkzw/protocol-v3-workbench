@@ -1153,3 +1153,8 @@ factory=_independent_ai_provider_for_profile（main.py:1609）：profile_env(pro
 决定性验证：role_env塌缩修复+重启后，新流水线作业mwjob_e730f2f8跑完——status=completed、无identity错误、phase=partial("triage partial_failed"，部分deepseek批次失败但整体完成，产品支持partial继续）。22%硬失败→可继续状态=身份链闭环证实。
 修复全链（本日累计，全推送）：gateway显式期望优先+role_env塌缩修复+profile_env透传thinking/effort+设置校准deepseek-flash+active profile选定+settings path隔离+runtime dir隔离+重试分类修复。
 下窗口：场景1继续（选MW-II-CDC776FB慢性自发性荨麻疹项目→语料准备→部分失败分诊可按产品机制继续/重试单批→建议包应含真实候选→一键采用→设计卡片→初稿生成→保存→导出→GenOffice闭环）；tester4重派报告已到待查；tester2/3报告已聚合。
+
+## 2026-09-19 轮询处置：场景1推进至语料准入门槛（设计候选待生成）
+
+MW-II-CDC776FB状态：部分分诊完成（84项研究/18份Protocol已绑定），"部分建议已就绪"；设计模块候选生成被corpus_not_ready门拦截——需完成语料准入链（人工分诊定稿→至少一份相关Protocol深度处理→结构化解析→监管中文译文→中文语料医学准入→PICOS冲突处置），该链在"语料准备"步骤(03)/竞品处理抽屉内操作。这是产品设计门槛（design_recommendations_blocked:corpus_not_ready），非缺陷。
+下窗口动作：进入03语料准备→按抽屉引导完成准入链（分诊定稿锁定篮子→选择相关Protocol深度处理→译文确认→医学准入）→语料准入完成→设计候选AI生成→一键采用→完成第一步/第二步→初稿生成→保存→导出→GenOffice闭环。
