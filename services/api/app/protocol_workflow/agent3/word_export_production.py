@@ -373,7 +373,10 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     return {'document_sha256': document_sha, 'output_sha256': output_sha,
             'export_scope': 'production_docx', 'tables': table_no,
             'cross_references': ref_count,
-            'engineering_marker_hits': marker_hits}
+            'engineering_marker_hits': marker_hits,
+            'field_diagnostics': {'cross_reference_fields': ref_count,
+                'update_fields_on_open': True,
+                'third_party_citation_interop': 'not_claimed'}}
 
 
 def header_rows_of(table_content: str) -> int:
