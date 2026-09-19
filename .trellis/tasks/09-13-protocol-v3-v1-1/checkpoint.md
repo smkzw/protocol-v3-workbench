@@ -1029,3 +1029,10 @@ owner指出五问题，共同根因=用工程指标（占位零命中/测试绿�
 faac3f0=T04：双入口统一合同测试（test_dual_entry_unification 4项）——入口A(资料)与入口B(零附件简述)共用seed链/同一StudyDefinition命令形状/同一事实库（genesis只带research.input_context，医学事实不自动采纳A01/A08）；零附件起步钉真实用户简述无伪造来源（A03）；预填=候选索引点选非重打（A02，research_intent_adoption selections=索引）。UI维持合并入口（三步指引已说明无文件可开始）。
 9c59f1a=T12：agent3/object_revision.py（ObjectRevisionWorker复用deriver传输模式，receipt工件+内容哈希幂等回放，按study注册）；ManuscriptDocumentService.prepare/apply/recover_object_revision——锚点冻结(块ID+文档版本+内容sha)+范围强制(replace_object/patch_object)+冲突不强写(文档移动→409 conflict,anchor sha不匹配→anchor_changed)+仅替换锚定块+表格候选结构校验+核对线索贯通T09信号流+undo携带被替换内容与版本；API POST /objects/{block_id}/ai-revisions[/prepare|/recover]，prepare后台派发模型并按授权范围自动应用（同一局部意图不强制二次确认P4）；集成测试覆盖A15/A16。经验：apply的锚点sha守卫仅在调用方显式提供时生效（None=由服务端按当前内容计算）；fixture事实含双剂量值，恢复文必须含全部确认值。
 回归：后端2558过/1已知环境性败；前端未动。剩余：T11（摘要/SOA初次生成+显式刷新边界，导出侧已剥离）、T16文献范围说明、T07/T10 GenOffice（独立大项）、T17多测试者e2e LOOP、T12前端按钮接线（API已备）。
+
+## 2026-09-19 requirements-v2 第三批（T11+T16+T17启动准备，ZCode，已推GitHub）
+
+f36fed1=T11：synopsis_projection/soa_matrix 在导出侧剥离后改为显式候选边界——GET /synopsis-candidate、GET /soa-candidate（含可用性与形状摘要），只读不自动写入，应用走自由编辑或T12对象修订；test_projection_candidates 3项。c11e0ef=T16：plans/reference_interop_scope_20260919.md（已实现=REF交叉引用域/TOC域+updateFields/表格题注书签/证据单元引用身份/参考文献章受控编辑；不声称=EndNote/Zotero互操作未选未测、外部Word回导未验收；静态文字文献不替代域能力）；导出回执新增field_diagnostics。
+T17启动准备：plans/t17_multitester_e2e_plan_20260919.md（4测试者=zcode/omp-gemini/omp-cursor-grok/omp-opencode-go，禁直连后端，120min静默轮询；三场景=斑秃II期入口A/慢性偏头痛III期入口B/UC II期盲测；验收映射A01-A25）；scripts/qc/protocol_v3/e2e_clean_env_check.sh（清洁库+5275/5176健康检查，已验证DB清洁路径）。
+GenOffice阻塞（T07/T10）：审阅包参考基线316ded6f在本机所有仓库不可达，npm无genoffice包——需owner提供SDK位置或裁定嵌入式Office运行时选型后方可实施；不得以截图/简化Tiptap/HTML重排冒充（审阅红线）。
+回归：后端2561过/1已知环境性败。
