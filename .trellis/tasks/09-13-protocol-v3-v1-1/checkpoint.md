@@ -1119,3 +1119,13 @@ P0-6（采用丢设计）再判定：tester3在流水线失败态下被迫全跳
 
 P1-3收窄为消息修复：medical_writing_authoring_journey.py:1323明示framing提交使PICOS完成标记失效但值保留（"retaining the exact same committed PICOS values"），且后端专门支持零差异重提交（1323-1345重算完成门）。tester3的"PICOS全部回到待确认"是级联设计+UI未解释——修法=framing提交导致PICOS失效时UI显示"设计内容已保留，重新确认即可（内容未变直接点完成第二步）"。（待下窗口实施：AuthoringJourneySetup.jsx的"请先完成第一步变更"提示处加保留说明。）
 tester4（deepseek交叉）首轮11B卡死已超时；deepseek通道复测"就绪"后已重派（exec_2888bfb7，后台）。
+
+## 2026-09-19 T17流水线身份修复链完成（三层冻结路由对齐，待闭环验证）
+
+P1#1"准备导入卡死/流水线22%失败"根因链全线打通：
+1. ai_gateway.py:1610 deepseek硬编码expected=model无视显式期望（DeepSeek改名v4-flash→deepseek-flash）→ 显式期望优先（已修）。
+2. e2e_runtime/ai_provider_settings.json profile expected校准为deepseek-flash（已修）+ active_profile_id=independent_ai__deepseek_v4_flash。
+3. start_e2e_backend.sh钉定deepseek契约+WORKBENCH_AI_THINKING=enabled+WORKBENCH_AI_REASONING_EFFORT=max（已修）。
+4. **ai_runtime_settings.py profile_env缝隙（本轮新根因）**：base_env传入时丢弃进程env的THINKING/REASONING_EFFORT，而冻结路由捕获路径带着它们（thinking=enabled/effort=max）→ frozen durable route校验"identity"必败。修复=profile_env透传这两个部署级开关（已修，探针验证thinking='enabled'/effort='max'/expected='deepseek-flash'与冻结路由全字段一致）。
+验证状态：新项目MW-II-CDC776FB（合成药W·慢性自发性荨麻疹·II期）建项成功，流水线尚未入队（公开检索先行）；旧失败任务均为修复前入队（frozen expected=deepseek-flash与现解析一致性需重派验证——若仍失败需对照payload路由与解析provider逐字段）。durable job失败有attempt_count=3上限，重试可用jobs/recover。
+tester4报告已归档（t17_tester4_report.md）：T2DM交叉验证——检索适配性6/6经ClinicalTrials.gov独立核验为真T2DM试验（检索质量正向实证）；反拟合阴性；P0-1抽屉无重试控件、P0-2候选全空壳+跳过不推进、P1-3枚举字段自由文本直出Pydantic错误（小分子vs small_molecule）入修复队列；点击数≥64超3倍目标（44字段手填流程的UX问题）。

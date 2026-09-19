@@ -589,6 +589,15 @@ class AiRuntimeSettingsStore:
         )
         if profile.api_key_env and api_key:
             values[profile.api_key_env] = api_key
+        # Thinking/effort are deployment-level switches, not profile fields:
+        # carry the process-env choices through so profile-scoped providers
+        # resolve the same thinking contract the frozen routes captured
+        # (a narrow base_env would otherwise silently drop them and every
+        # frozen-route check would fail on 'enabled' vs None).
+        for _name in ("WORKBENCH_AI_THINKING", "WORKBENCH_AI_REASONING_EFFORT"):
+            _value = os.environ.get(_name, "").strip()
+            if _value:
+                values[_name] = _value
         return values
 
 
