@@ -177,6 +177,15 @@ function IntakeProject({ projectId, api, studyDefinitionId, actorId }) {
       <h2>{confirming ? '确认研究信息' : '准备研究资料'}</h2>
       <p>{confirming ? '资料已整理。核对本次研究的建议，必要时直接修改。' : '添加已有方案、研究者手册或参考资料，整理研究信息和需要补充的内容。'}</p>
     </header>
+    <details className="pvi-howto">
+      <summary>整套流程怎么做？（三步）</summary>
+      <ol>
+        <li><b>整理资料</b>：把研究简述写/粘贴在说明框里，点"准备写作材料"。没有正式文件也能开始。</li>
+        <li><b>逐项确认</b>：系统逐项给建议（含推荐理由），您逐张卡片点"确认"；红色标识的内容重点核对。</li>
+        <li><b>生成初稿并导出</b>：全部确认后点"生成完整初稿"，阅读修改后"保存"，最后"导出Word"。</li>
+      </ol>
+      <p>任何一步出问题，已保存的内容都不会丢失；按页面提示继续即可。</p>
+    </details>
     {storageError && <p role="alert">{storageError}</p>}
     <details className="pvi-source-disclosure" open={!confirming}>
     <summary>{confirming ? '已保存的研究资料与写作说明' : '研究资料与写作说明'}</summary>
