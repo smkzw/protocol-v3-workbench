@@ -1147,3 +1147,9 @@ factory=_independent_ai_provider_for_profile（main.py:1609）：profile_env(pro
 
 带诊断的运行捕获：resolved=(provider='deepseek', model='deepseek-v4-flash', expected='deepseek-v4-flash') vs frozen=(... expected='deepseek-flash')——解析侧expected塌缩=model值。即：durable worker构建provider的env合并中EXPECTED被MODEL覆写或未读（诊断确切证明expected==model处存在），而请求路径（profile_env+显式期望优先）已正确。下窗口头号任务：定位worker构建provider的确切调用点（grep durable worker claim→triage provider构建；runtime_ai_env()的EXPECTED/MODEL合并逻辑），使expected=deepseek-flash透传至provider；随后分诊应通过（包装器家族检查已接受v4-flash↔deepseek-flash）。
 其余状态：tester4重派报告已到（归档t17_tester4_report.md外的call_506eed16版本待查）；前端5176与后端5275运行中（指纹已同步23:00版）；新项目MW-II-CDC776FB与MW-II-F36943B9等待流水线验证。
+
+## 2026-09-19 身份链修复验证通过（P1#1根因链闭环）
+
+决定性验证：role_env塌缩修复+重启后，新流水线作业mwjob_e730f2f8跑完——status=completed、无identity错误、phase=partial("triage partial_failed"，部分deepseek批次失败但整体完成，产品支持partial继续）。22%硬失败→可继续状态=身份链闭环证实。
+修复全链（本日累计，全推送）：gateway显式期望优先+role_env塌缩修复+profile_env透传thinking/effort+设置校准deepseek-flash+active profile选定+settings path隔离+runtime dir隔离+重试分类修复。
+下窗口：场景1继续（选MW-II-CDC776FB慢性自发性荨麻疹项目→语料准备→部分失败分诊可按产品机制继续/重试单批→建议包应含真实候选→一键采用→设计卡片→初稿生成→保存→导出→GenOffice闭环）；tester4重派报告已到待查；tester2/3报告已聚合。
