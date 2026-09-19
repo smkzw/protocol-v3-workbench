@@ -1,4 +1,9 @@
-"""Production-grade export: template front matter + our body, zero placeholders.
+"""Production-grade export: template front matter + the current version's body.
+
+The export owns layout only — it serializes the saved working version
+verbatim (R4/A13/A14): no synopsis re-projection, no SOA replacement, no
+silent term replacement, no marker-hit paragraph deletion, and no
+"不适用" written from block shape (B01).
 
 Differences from the append-style working draft (word_export.py):
 - the template's example/guidance body after the front matter is removed, not
@@ -272,23 +277,12 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
 
     _expand_signature_pages()
 
-    # 3) our chapters with bookmarks + numbered table captions + REF cross-references.
-    # The SOA chapter's table is a deterministic projection of the confirmed
-    # visit×assessment facts, replacing whatever prose-shaped table the model
-    # drafted for it.
-    from app.protocol_workflow.agent3.soa_matrix import soa_table_content
-    from app.protocol_workflow.agent3.synopsis_projection import build_synopsis_blocks
-    soa_content = soa_table_content(study_facts)
-    soa_nodes = {node_id for node_id, info in titles.items()
-                 if '研究流程表' in info.get('title', '')}
-    synopsis_nodes = {node_id for node_id, info in titles.items()
-                      if info.get('title', '').strip() in ('概要', '方案摘要')
-                      or info.get('title', '').strip().endswith('概要')}
+    # 3) our chapters with bookmarks + numbered table captions + REF
+    # cross-references, serialized exactly as saved (R4/A13/A14).
     doc.add_page_break()
     current_node = None
     table_no = 0
     ref_count = 0
-    soa_replaced = 0
     # Forward references are valid: bookmark names tbl_N are positional and
     # their captions appear later in the same document.
     total_tables = sum(1 for block in document.get('semantic_blocks', [])
@@ -304,52 +298,32 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             heading = doc.add_heading(info.get('title', node_id),
                                       level=STYLE_ID_TO_HEADING.get(info.get('style_id', ''), 2))
             _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
-            if node_id in synopsis_nodes and study_facts:
-                # The synopsis is a deterministic projection (overview +
-                # abbreviations + annotated key points), per the exemplars.
-                # Key points get a bold lead-in label for scanability.
-                for projected in build_synopsis_blocks(study_facts):
-                    text = projected['content'].replace('受试者', '试验参与者')
-                    para = doc.add_paragraph()
-                    lead, sep, rest = text.partition('：')
-                    if sep and lead in ('主要终点', '伴发事件按治疗策略处理',
-                                        'ICE事件包括', '安全性随访', '缩略语'):
-                        bold_run = para.add_run(lead + '：')
-                        bold_run.bold = True
-                        para.add_run(rest)
-                    else:
-                        para.add_run(text)
-                continue
-            if block.get('block_kind') != 'paragraph':
-                para = doc.add_paragraph('本节不适用于本研究。')
+            # R4: no re-projection here.  The synopsis chapter ships the
+            # user's current blocks verbatim; re-projecting from facts or
+            # writing "不适用" from block shape (B01) are export bugs.
         want_landscape = node_id in landscape_nodes and block.get('block_kind') == 'table'
         if want_landscape != in_landscape:
             _switch_orientation(doc, want_landscape)
             in_landscape = want_landscape
-        if node_id in synopsis_nodes:
-            continue  # projected blocks were written with the heading
         kind = block.get('block_kind')
         if kind == 'paragraph':
-            content_text = (block.get('content') or '').replace(
-                '受试者', '试验参与者')
             ref_count += _add_paragraph_with_table_refs(
-                doc, content_text, total_tables)
+                doc, block.get('content') or '', total_tables)
         elif kind == 'table':
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
             _bookmark(caption, f'tbl_{table_no}')
-            content = (block.get('content') or '').replace('受试者', '试验参与者')
-            is_soa = bool(soa_content and node_id in soa_nodes)
-            if is_soa:
-                content = soa_content
-                soa_replaced += 1
+            content = block.get('content') or ''
             _add_table(doc, content, repeat_header=header_rows_of(content))
-            if is_soa:
+            # Layout-only readability for wide matrices, regardless of origin.
+            if len(doc.tables[-1].columns) >= 8:
                 _tune_wide_table(doc.tables[-1])
     if in_landscape:
         _switch_orientation(doc, False)
 
-    # 3b) strip engineering/process language that leaked from chapter generation
+    # 3b) engineering/process language is REPORTED, never deleted here
+    # (R-C04): cleaning is a visible candidate applied to a document version,
+    # not a silent export behavior.
     engineering_markers = (
         'evidence_unit_id', '可追溯证据状态', '本候选未接收',
         '容器义务边界', '本容器仅承担', '不构成附件适用性',
@@ -369,20 +343,18 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
         '参考文献列表为空',
         '实际使用来源登记为空',
     )
-    removed = 0
-    for para in list(doc.paragraphs):
-        text = para.text
-        if any(marker in text for marker in engineering_markers):
-            para._p.getparent().remove(para._p)
-            removed += 1
-    # Also check table cells
+    marker_hits = []
+    for para in doc.paragraphs:
+        hit = next((marker for marker in engineering_markers if marker in para.text), None)
+        if hit:
+            marker_hits.append(hit)
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
-                for para in list(cell.paragraphs):
-                    if any(marker in para.text for marker in engineering_markers):
-                        para._p.getparent().remove(para._p)
-                        removed += 1
+                for para in cell.paragraphs:
+                    hit = next((marker for marker in engineering_markers if marker in para.text), None)
+                    if hit:
+                        marker_hits.append(hit)
 
     # 4) ask Word to refresh fields (TOC/page numbers) on open.  settings.xml
     # has a strict child sequence — updateFields belongs before w:compat;
@@ -400,8 +372,8 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     output_sha = hashlib.sha256(open(output_path, 'rb').read()).hexdigest()
     return {'document_sha256': document_sha, 'output_sha256': output_sha,
             'export_scope': 'production_docx', 'tables': table_no,
-            'cross_references': ref_count, 'soa_replaced': soa_replaced,
-            'engineering_removed': removed}
+            'cross_references': ref_count,
+            'engineering_marker_hits': marker_hits}
 
 
 def header_rows_of(table_content: str) -> int:

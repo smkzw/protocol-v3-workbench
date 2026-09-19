@@ -105,10 +105,16 @@ class ManuscriptDocumentService:
                 'qc': run_manuscript_qc(document.model_dump(mode='json'))}
 
     # ------------------------------------------------------------------
-    # Controlled edits: server reclassifies every edit; a single fact-class
-    # edit rejects the whole batch (never a partial silent apply) and returns
-    # the fact proposals for the StudyDefinition confirmation path.
+    # Free working-draft edits (requirements-v2 R3): every edit persists as
+    # a new version.  The deterministic classifier no longer gates saving;
+    # its ruling rides on each saved edit as a reconciliation clue for the
+    # explicit snapshot-based reconciliation stage.  Technical checks
+    # (identity, revision, structure, server-owned hashes) still apply.
     # ------------------------------------------------------------------
+
+    #: Editors may replace only these block fields; anything else in the
+    #: incoming dict is ignored instead of blindly merged (R-C03).
+    EDITABLE_BLOCK_FIELDS = ('content', 'block_kind')
 
     def _edit_intent(self, project_id, study_id, intent):
         return hashlib.sha256(canonical_json([project_id, study_id, 'manuscript-edit',
@@ -131,11 +137,14 @@ class ManuscriptDocumentService:
         return None
 
     def edit(self, project_id, study_id, confirmed_facts, intent):
-        """Apply wording-level edits under CAS; fact edits become proposals.
+        """Apply free working-draft edits under CAS; nothing is refused on
+        scientific grounds (R3/A09).
 
-        ``confirmed_facts`` are the caller's authoritative read of the current
-        StudyDefinition facts; reclassification never trusts the client's
-        claimed edit class.
+        ``confirmed_facts`` feed the deterministic edit classifier, whose
+        ruling is saved as a per-edit reconciliation clue — it never rejects
+        the batch.  Identity, revision and structure checks still fail loudly;
+        the saved version carries recomputed block hashes and an updated
+        timestamp (B04) for the reconciliation stage to bind against.
         """
         existing = self.recover_edit(project_id, study_id, intent)
         if existing is not None:
@@ -149,45 +158,45 @@ class ManuscriptDocumentService:
                     document_revision_hash(current) != intent['expected_document_sha256']:
                 raise ValueError('manuscript_document_revision_changed')
             blocks = {block.semantic_block_id: block for block in current.semantic_blocks}
-            proposals = []
-            applied = []
+            now = self.clock()
+            raw = current.model_dump(mode='json')
+            by_id = {b['semantic_block_id']: b for b in raw['semantic_blocks']}
+            clues = []
             for edit in intent['edits']:
                 block = blocks.get(edit.get('semantic_block_id'))
                 if block is None:
                     raise ValueError('manuscript_edit_block_unknown')
+                replacement = edit.get('block') or {}
+                allowed = {key: replacement[key] for key in self.EDITABLE_BLOCK_FIELDS
+                           if key in replacement}
                 old_text = block_content_text(block.model_dump(mode='json'))
-                new_block = edit.get('block') or {}
-                new_text = block_content_text({**block.model_dump(mode='json'), **new_block})
+                merged = {**block.model_dump(mode='json'), **allowed}
+                new_text = block_content_text(merged)
                 ruling = reclassify_edit(old_text=old_text, new_text=new_text,
                     confirmed_facts=confirmed_facts, claimed_class=edit.get('claimed_class'))
-                if ruling['edit_class'] == 'fact_or_uncertain':
-                    proposals.append({'semantic_block_id': edit['semantic_block_id'],
-                        'affected_fact_paths': list(ruling['affected_fact_paths']),
-                        'reason': ruling['reason'] or '按事实相关编辑处理。',
-                        'proposed_text': new_text})
-                    continue
-                applied.append((edit, ruling))
-            if proposals:
-                return {'status': 'needs_fact_confirmation', 'fact_proposals': proposals,
-                    'operation_id': intent['operation_id'], 'document': None}
-            updated_blocks = []
-            for edit, _ruling in applied:
-                new_block = edit.get('block') or {}
-                updated_blocks.append((edit['semantic_block_id'], new_block))
-            now = self.clock()
-            raw = current.model_dump(mode='json')
-            by_id = {b['semantic_block_id']: b for b in raw['semantic_blocks']}
-            for block_id, replacement in updated_blocks:
-                by_id[block_id].update(replacement)
+                # Server-owned derived fields, recomputed from the merged content.
+                content = merged.get('content')
+                if isinstance(content, str):
+                    merged['content_sha256'] = hashlib.sha256(content.encode()).hexdigest()
+                by_id[edit['semantic_block_id']] = merged
+                clues.append({'semantic_block_id': edit['semantic_block_id'],
+                    'edit_class': ruling['edit_class'],
+                    'affected_fact_paths': list(ruling['affected_fact_paths']),
+                    'reason': ruling['reason'] or ''})
+            raw['semantic_blocks'] = [by_id[b['semantic_block_id']] for b in raw['semantic_blocks']]
             document = SemanticDocumentRevision.model_validate({
                 **raw, 'revision': current.revision + 1,
                 'previous_revision_sha256': document_revision_hash(current),
+                'updated_at': now,
                 'canonical_state': 'proposed'})
+            fact_clues = [clue for clue in clues if clue['edit_class'] == 'fact_or_uncertain']
             payload = {'operation_id': intent['operation_id'],
                 'intent_sha256': self._edit_intent(project_id, study_id, intent),
                 'document': document.model_dump(mode='json'),
                 'document_sha256': document_revision_hash(document),
-                'edit_count': len(applied),
+                'edit_count': len(clues),
+                'edit_clues': clues,
+                'reconciliation_status': 'pending',
                 'acceptance_scope': 'working_draft_only'}
             self.atomic.build_and_apply(uow, project_id=project_id, stream_id=document_id,
                 aggregate=document, cas_repository_handle_name='semantic_document_cas_repository',
@@ -198,9 +207,11 @@ class ManuscriptDocumentService:
                     'payload_schema_version': 'mw_protocol_v3_event_v1', 'upcaster_id': 'noop:v1',
                     'actor_type': ActorType.USER, 'actor_id': intent['actor_id'],
                     'action': 'edit_working_manuscript',
-                    'reason': '受控措辞编辑；事实相关修改走研究事实确认流程。',
+                    'reason': '自由工作稿编辑已保存为新版本；事实相关修改作为核对线索留待显式核对。',
                     'payload': payload, 'emitted_at': now})
             return {'document': document.model_dump(mode='json'),
                 'document_sha256': document_revision_hash(document),
                 'operation_id': intent['operation_id'], 'replayed': False, 'status': 'working_draft',
+                'reconciliation_status': 'pending', 'edit_clues': clues,
+                'fact_clue_count': len(fact_clues),
                 'qc': run_manuscript_qc(document.model_dump(mode='json'))}

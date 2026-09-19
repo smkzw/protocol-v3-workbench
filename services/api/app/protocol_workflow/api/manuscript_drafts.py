@@ -30,9 +30,17 @@ class ManuscriptSaveRequest(ChapterStartRequest):
 
 
 def create_manuscript_draft_router(manuscripts, preparations, *, application_service,
-        template_loader, documents, route_class, chapter_facts_deriver=None):
+        template_loader, documents, route_class, chapter_facts_deriver=None,
+        chapter_facts_deriver_factory=None):
     router = APIRouter(prefix='/api/projects/{project_id}/protocol-workflow/study-definitions/{study_definition_id}/manuscript-draft',
         tags=['研究方案写作'], route_class=route_class)
+
+    def deriver_for(project_id: str, study_definition_id: str):
+        """One deriver per study (B09): progress, locks and restart scope are
+        study-scoped; a shared instance would cross-talk between studies."""
+        if chapter_facts_deriver_factory is not None:
+            return chapter_facts_deriver_factory(project_id, study_definition_id)
+        return chapter_facts_deriver
 
     def checked(fn):
         try:
@@ -126,7 +134,8 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
     @router.post('/chapter-facts/derive', status_code=202)
     def derive_chapter_facts(project_id: str, study_definition_id: str, tasks: BackgroundTasks):
         """Derive missing chapter facts from the confirmed design (AI actor)."""
-        if chapter_facts_deriver is None:
+        deriver = deriver_for(project_id, study_definition_id)
+        if deriver is None:
             raise HTTPException(501, detail={'message': '本部署未启用章节事实派生。'})
         current = application_service.get_study_definition(
             GetStudyDefinitionQuery(project_id, study_definition_id))
@@ -136,9 +145,9 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         gaps = collect_chapter_gaps(template_loader(), current.definition)
         if not gaps:
             return {'status': 'nothing_to_derive', 'gaps': 0}
-        if chapter_facts_deriver.progress.get('running'):
+        if deriver.progress.get('running'):
             return {'status': 'running', 'gaps': len(gaps),
-                    **{k: chapter_facts_deriver.progress[k]
+                    **{k: deriver.progress[k]
                        for k in ('batches_done', 'batches_total')}}
         snapshot = current.revision_sha256
         revision = current.revision
@@ -146,7 +155,7 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         study = current.definition
         operation_id = 'chapter-facts:' + snapshot
         def run():
-            outcome = chapter_facts_deriver.run(template, study,
+            outcome = deriver.run(template, study,
                 operation_id=operation_id, expected_revision=revision,
                 snapshot_sha256=snapshot)
             command = outcome.get('command')
@@ -154,11 +163,11 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                 try:
                     application_service.apply_decision(command)
                 except Exception as exc:  # noqa: BLE001 — surfaced via progress poll
-                    chapter_facts_deriver.progress['errors'].append(
+                    deriver.progress['errors'].append(
                         f'apply_failed:{type(exc).__name__}:{str(exc)[:180]}')
         tasks.add_task(run)
         return {'status': 'started', 'gaps': len(gaps),
-                'batches_total': chapter_facts_deriver.progress['batches_total']}
+                'batches_total': deriver.progress['batches_total']}
 
     @router.get('/saved')
     def saved_document(project_id: str, study_definition_id: str):
@@ -195,8 +204,8 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
 
     @router.get('/chapter-facts/derive')
     def chapter_facts_status(project_id: str, study_definition_id: str):
-        progress = dict(chapter_facts_deriver.progress) if chapter_facts_deriver else None
-        return {'progress': progress}
+        deriver = deriver_for(project_id, study_definition_id)
+        return {'progress': dict(deriver.progress) if deriver else None}
 
     @router.get('/chapter-facts/residual')
     def chapter_facts_residual(project_id: str, study_definition_id: str):
@@ -340,9 +349,9 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
     class ManuscriptEditRequest(ManuscriptSaveRequest):
         edits: list[dict] = Field(min_length=1)
 
-    @router.post('/edits', )
+    @router.post('/edits')
     def apply_edits(project_id: str, study_definition_id: str, body: ManuscriptEditRequest):
-        """Controlled wording edits; fact-class edits return proposals, never apply."""
+        """Free working-draft edits (R3): every edit saves as a new version."""
         def execute():
             study = application_service.get_study_definition(
                 GetStudyDefinitionQuery(project_id, study_definition_id))
@@ -350,6 +359,21 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                 raise HTTPException(404, detail={'message': '没有找到本次研究。'})
             result = documents.edit(project_id, study_definition_id,
                 study.definition.facts, body.model_dump(mode='json'))
+            return result
+        return _safe_call(lambda: checked(execute))
+
+    @router.post('/edits/recover')
+    def recover_edits(project_id: str, study_definition_id: str, body: ManuscriptEditRequest):
+        """Read-only replay lookup for a lost edit acknowledgement (B05).
+
+        Same operation_id plus identical payload returns the original receipt;
+        an unknown operation is a 404, never a new apply.
+        """
+        def execute():
+            result = documents.recover_edit(project_id, study_definition_id,
+                body.model_dump(mode='json'))
+            if result is None:
+                raise HTTPException(404, detail={'message': '没有找到该操作记录，可安全重试或重新编辑。'})
             return result
         return _safe_call(lambda: checked(execute))
     return router

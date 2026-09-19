@@ -1,18 +1,43 @@
-"""Controlled manuscript edits: server-side EditClass reclassification.
+"""Manuscript edit classification: explainable reconciliation clues (R3/B03).
 
-The client's claimed edit class is never trusted. Before a block edit is
-applied, the server re-derives the classification from the confirmed facts:
-if the replaced text carried a confirmed fact value that the new text no
-longer carries (or introduces a conflicting value for), the edit is
-FACT_OR_UNCERTAIN — it cannot be applied as wording; it returns a fact
-proposal for the StudyDefinition confirmation path instead. Local working
-drafts (PROPOSED) may take wording edits directly through the same CAS
-discipline as the original save.
+The client's claimed edit class is never trusted, but since requirements-v2
+the classifier no longer gates saving — every edit persists and the ruling
+travels with it as a reconciliation clue for the explicit snapshot check.
+Signals stay deterministic and explainable: confirmed-fact value presence
+with digit boundaries, and negation flips; they can never prove full
+semantic equivalence, which the reconciliation stage supplements.
 """
 import hashlib
+import re
 from typing import Any, Mapping
 
 from app.protocol_workflow.canonical.hashing import canonical_json
+
+_NEGATORS = ('不', '非', '无', '未')
+
+
+def _digit_bounded(text: str, needle: str) -> bool:
+    """A number fact counts as present only at digit boundaries (B03).
+
+    '100' remains present in '100mg' but not in '1000mg', so a 100→1000 dose
+    change is detected instead of hidden by substring containment.
+    """
+    if not needle:
+        return False
+    if needle.isdigit():
+        return re.search(rf'(?<![0-9.]){re.escape(needle)}(?![0-9])', text) is not None
+    return needle in text
+
+
+def _negated(text: str, needle: str) -> bool:
+    """True when every occurrence of *needle* sits behind a negator."""
+    at = text.find(needle)
+    while at >= 0:
+        prefix = text[max(0, at - 2):at]
+        if not any(negator in prefix for negator in _NEGATORS):
+            return False
+        at = text.find(needle, at + 1)
+    return needle in text
 
 
 def _text_of(value: Any) -> str:
@@ -71,26 +96,36 @@ def _fact_value_strings(facts: Mapping[str, Any]) -> list[tuple[str, str]]:
 
 def reclassify_edit(*, old_text: str, new_text: str, confirmed_facts: Mapping[str, Any],
                     claimed_class: str | None = None) -> dict:
-    """Re-derive the edit class from content and confirmed facts.
+    """Re-derive the edit class from content and confirmed facts (clue only).
 
-    Returns ``{'edit_class', 'affected_fact_paths', 'reason'}``.  Anything not
-    provably wording/format is FACT_OR_UNCERTAIN — the safe default (design
-    §14).  A fact "touch" means a confirmed fact value string present in the
-    old text disappeared from the new text, or a different confirmed value of
-    the same fact appeared; pure additions of new text are uncertain by
-    default, never silently accepted as wording.
+    Returns ``{'edit_class', 'affected_fact_paths', 'reason'}``.  Since R3 the
+    result never blocks saving; it marks whether the explicit reconciliation
+    stage should compare this snapshot against the confirmed design.  Signals:
+    a confirmed fact value that disappears with digit boundaries, or whose
+    negation flips (随机→不随机), marks the edit fact_or_uncertain.  These
+    signals cannot prove full semantic equivalence — pure additions stay
+    wording when claimed, flagged for the semantic check.
     """
     if claimed_class not in (None, 'wording_only', 'format_only',
                              'structure_or_word_object', 'fact_or_uncertain'):
         raise ValueError('manuscript_edit_class_invalid')
     affected = []
+    negation_flips = []
     old_norm, new_norm = old_text or '', new_text or ''
     for path, value_text in _fact_value_strings(confirmed_facts):
-        if value_text in old_norm and value_text not in new_norm:
+        if not value_text:
+            continue
+        in_old, in_new = _digit_bounded(old_norm, value_text), _digit_bounded(new_norm, value_text)
+        if in_old and not in_new:
             affected.append(path)
+        elif in_old and in_new and _negated(old_norm, value_text) != _negated(new_norm, value_text):
+            negation_flips.append(path)
     if affected:
         return {'edit_class': 'fact_or_uncertain', 'affected_fact_paths': tuple(sorted(set(affected))),
-                'reason': '编辑改变了已确认研究事实的表述，需要通过研究事实确认流程处理。'}
+                'reason': '编辑改变了已确认研究事实的表述，显式核对时需与已确认设计比对。'}
+    if negation_flips:
+        return {'edit_class': 'fact_or_uncertain', 'affected_fact_paths': tuple(sorted(set(negation_flips))),
+                'reason': '编辑改变了事实表述的否定形式（如随机→不随机），显式核对时需比对。'}
     if new_norm.strip() == old_norm.strip():
         return {'edit_class': 'format_only', 'affected_fact_paths': (),
                 'reason': '内容未变化。'}
@@ -111,12 +146,23 @@ def block_content_text(block: Mapping[str, Any]) -> str:
         except (TypeError, ValueError):
             return ''
         table = value.get('table') if isinstance(value, dict) else None
-        if isinstance(table, Mapping):
-            cells = []
-            for row in table.get('rows', []):
-                for cell in row.get('cells', []):
-                    cells.append(_text_of(cell.get('value') if isinstance(cell, Mapping) else cell))
-            return ' '.join(cells)
+        if not isinstance(table, Mapping):
+            # Unknown table shape: fall back to the raw payload so fact
+            # strings stay detectable instead of silently reading empty (B02).
+            return _text_of(block.get('content'))
+        cells = []
+        for row in table.get('rows', []):
+            for cell in row.get('cells', []):
+                if isinstance(cell, Mapping):
+                    # Current schema stores text; historical drafts may carry
+                    # value. Read whichever exists — never force one shape.
+                    cells.append(_text_of(cell.get('text', cell.get('value'))))
+                else:
+                    cells.append(_text_of(cell))
+        for note in table.get('notes', []) or []:
+            if isinstance(note, Mapping):
+                cells.append(_text_of(note.get('text', note.get('value'))))
+        return ' '.join(cells)
     return _text_of(block.get('content'))
 
 

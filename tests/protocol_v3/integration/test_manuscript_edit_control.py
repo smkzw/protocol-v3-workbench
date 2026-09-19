@@ -96,7 +96,7 @@ def _documents_api(db, designs):
     return service, designs(PROJECT)
 
 
-def test_edit_wording_applies_and_fact_edit_becomes_proposal(saved_manuscript, tmp_path):
+def test_free_edit_saves_fact_edits_with_reconciliation_clues(saved_manuscript, tmp_path):
     """Wording edit applies under CAS; a dose-value edit is reclassified
     server-side as fact_or_uncertain even when the client claims wording."""
     from app.protocol_workflow.storage.sqlite import build_unit_of_work_factory
@@ -198,13 +198,34 @@ def test_edit_wording_applies_and_fact_edit_becomes_proposal(saved_manuscript, t
                    'block': {'content': '参与者按计划接受研究治疗，并如实记录全部伴随用药与合并治疗。'},
                    'claimed_class': 'wording_only'}]})
     assert replay['replayed'] is True and replay['document']['revision'] == 2
-    # 3) Dose-value edit claiming wording: server reclassifies and refuses.
-    blocked = _edit('operation:edit:dose', 'blk:design',
-                    '本研究采用随机双盲设计，给药剂量为150mg，每21天为一个治疗周期。')
-    assert blocked['status'] == 'needs_fact_confirmation'
-    paths = {p for proposal in blocked['fact_proposals']
-             for p in proposal['affected_fact_paths']}
-    assert 'intervention.dose_regimen' in paths, 'the dose fact is the affected one'
-    # 4) The document was not partially modified by the rejected batch.
-    current = service.current(PROJECT, SD_ID)
-    assert current['expected_revision'] == 2, 'rejected fact edit must not bump the revision'
+    # 3) Dose-value edit claiming wording: still saved (R3/A09), with the
+    # deterministic ruling kept as a reconciliation clue on the receipt.
+    dose = _edit('operation:edit:dose', 'blk:design',
+                 '本研究采用随机双盲设计，给药剂量为150mg，每21天为一个治疗周期。')
+    assert dose['status'] == 'working_draft' and dose['replayed'] is False
+    assert dose['reconciliation_status'] == 'pending'
+    assert dose['fact_clue_count'] == 1
+    dose_clue = next(clue for clue in dose['edit_clues']
+                     if clue['edit_class'] == 'fact_or_uncertain')
+    assert 'intervention.dose_regimen' in dose_clue['affected_fact_paths'], \
+        'the dose fact stays the reconciliation lead'
+    # 4) The saved version is a new revision with recomputed derived fields
+    # (B04): block hash from the new content, timestamp advanced, and the
+    # confirmed facts untouched by the free edit.
+    assert dose['document']['revision'] == 3
+    edited_block = next(block for block in dose['document']['semantic_blocks']
+                        if block['semantic_block_id'] == 'blk:design')
+    assert edited_block['content'].endswith('150mg，每21天为一个治疗周期。')
+    import hashlib as _hashlib
+    assert edited_block['content_sha256'] == _hashlib.sha256(
+        edited_block['content'].encode()).hexdigest()
+    assert dose['document']['updated_at'] >= str(revision.updated_at)
+    assert 'intervention.dose_regimen' in facts, 'StudyDefinition facts stay unchanged'
+    # 5) Replay of the fact edit returns the same receipt without re-applying.
+    replay_dose = service.edit(PROJECT, SD_ID, facts, intent={
+        'operation_id': 'operation:edit:dose', 'actor_id': 'user:example',
+        'expected_revision': 2, 'expected_document_sha256': dose['document']['previous_revision_sha256'],
+        'edits': [{'semantic_block_id': 'blk:design',
+                   'block': {'content': '本研究采用随机双盲设计，给药剂量为150mg，每21天为一个治疗周期。'},
+                   'claimed_class': 'wording_only'}]})
+    assert replay_dose['replayed'] is True and replay_dose['document']['revision'] == 3

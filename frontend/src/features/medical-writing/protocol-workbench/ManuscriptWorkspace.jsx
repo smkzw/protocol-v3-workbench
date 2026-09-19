@@ -28,6 +28,18 @@ function summarizeResidualValue(value) {
   return '（空）';
 }
 
+// One normalization at the client boundary (B08): server receipts name the
+// document hash differently per endpoint; every consumer reads the single
+// normalized field, and an absent hash blocks the commit instead of racing on.
+function normalizeSavedDocument(value) {
+  if (!value) return value;
+  const hash = value.document_sha256 ?? value.revision_sha256
+    ?? value.document_revision_hash ?? value.documentSha256;
+  if (!hash) throw new Error('保存回执缺少文档哈希，系统已拦截本次提交以保护已保存内容。');
+  return { ...value, document_sha256: hash,
+    revision: value.revision ?? value.document?.revision };
+}
+
 function savedChapter(document, nodeId) {
   const blocks = document?.semantic_blocks?.filter(block => block.semantic_node_id === nodeId);
   if (!blocks?.length) return null;
@@ -90,8 +102,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     const controller = new AbortController();
     Promise.resolve().then(() => apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId, { signal: controller.signal }))
       .then(value => { if (!controller.signal.aborted && value?.document) {
-        setSavedDocument({ document: value.document, revision: value.revision,
-          documentSha256: value.document_sha256 });
+        setSavedDocument(normalizeSavedDocument(value));
       } })
       .catch(() => {});
     return () => controller.abort();
@@ -271,7 +282,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     // A recovered receipt proves the old save, not the current editable revision.
     const current = await apiRef.current.getSemanticDocument(projectId, studyDefinitionId,
       receipt.document.semantic_document_revision_id, { signal: controller.signal });
-    if (!controller.signal.aborted) setSavedDocument(current);
+    if (!controller.signal.aborted) setSavedDocument(normalizeSavedDocument(current));
   }
 
   useEffect(() => {
@@ -279,7 +290,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     const controller = new AbortController();
     const loading = packet.savedDocumentId
       ? apiRef.current.getSemanticDocument(projectId, studyDefinitionId, packet.savedDocumentId, { signal: controller.signal })
-        .then(current => { if (!controller.signal.aborted) setSavedDocument(current); })
+        .then(current => { if (!controller.signal.aborted) setSavedDocument(normalizeSavedDocument(current)); })
       : loadSavedDocument(packet.saveIntent, controller);
     loading.catch(reason => {
       if (!controller.signal.aborted && reason?.status !== 404) setError(readableError(reason));
@@ -320,7 +331,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
               // Do not silently mint another operation and overwrite a competing save.
               localStorage.setItem(key + ':save:' + intent.operation_id, JSON.stringify({ ...packet, saveIntent: intent }));
               remember({ ...packet, saveIntent: null, savedDocumentId: latest.semantic_document_revision_id, saveConflict: true });
-              setSavedDocument(current);
+              setSavedDocument(normalizeSavedDocument(current));
               setError('已读取更新的文档，本次初稿没有覆盖它。需要保留本次初稿时，可另存为新版本。');
             }
           } catch (recoveryError) { if (!controller.signal.aborted) setError(readableError(recoveryError)); }
@@ -436,8 +447,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
         operation_id: 'manuscript-edit:' + crypto.randomUUID(),
         actor_id: actorId,
         expected_revision: savedDocument.document.revision,
-        expected_document_sha256: savedDocument.revision_sha256
-          || savedDocument.document_revision_hash || savedDocument.document_sha256,
+        expected_document_sha256: savedDocument.document_sha256,
         edits: [{ semantic_block_id: blockId, block: { content: newText }, claimed_class: 'wording_only' }] };
       localStorage.setItem(key + ':edit:' + intent.operation_id, JSON.stringify(intent));
       let receipt;
@@ -447,13 +457,16 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
         receipt = await apiRef.current.editManuscriptDraft(projectId, studyDefinitionId, intent, { signal: controller.signal });
       }
       if (!controller.signal.aborted && receipt) {
-        if (receipt.status === 'needs_fact_confirmation') {
-          const paths = (receipt.fact_proposals || []).flatMap(proposal => proposal.affected_fact_paths);
-          setEditNotice(`这段修改涉及研究事实（${[...new Set(paths)].join('、') || '研究信息'}），已转为研究信息确认建议，未直接改正文。`);
-        } else {
-          setSavedDocument(receipt);
-          setEditNotice('');
-          stashDraft(blockId, newText);
+        // R3: every edit saves.  Fact-touching edits persist too; the receipt
+        // only carries reconciliation clues for the explicit check stage.
+        setSavedDocument(normalizeSavedDocument(receipt));
+        setEditNotice('');
+        stashDraft(blockId, newText);
+        if ((receipt.fact_clue_count || 0) > 0) {
+          const paths = [...new Set((receipt.edit_clues || [])
+            .filter(clue => clue.edit_class === 'fact_or_uncertain')
+            .flatMap(clue => clue.affected_fact_paths))];
+          setEditNotice(`本段修改已保存为新版本。它涉及研究事实（${[...new Set(paths)].join('、') || '研究信息'}），显式核对时会列出与已确认设计的差异；研究事实本身保持不变。`);
         }
       }
     } catch (reason) {
@@ -543,7 +556,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       <div>{current && <ChapterDraftPreview title={current.title} candidate={persistedChapter || current.validation.proposal} saved={Boolean(persistedChapter)}
         edit={savedDocument ? { busy: editBusy, composingRef, localDrafts,
           editingBlockId, onStartEdit: setEditingBlockId, onCancelEdit: () => setEditingBlockId(null),
-          onSave: saveBlockEdit } : undefined}/>}</div>
+          onSave: saveBlockEdit, onDraft: stashDraft } : undefined}/>}</div>
     </div>}
     {editNotice && <p role="status">{editNotice}</p>}
   </section>;

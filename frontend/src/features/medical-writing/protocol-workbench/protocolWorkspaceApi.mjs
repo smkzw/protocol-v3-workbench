@@ -145,6 +145,11 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     editManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/edits`, intent, signal);
     },
+    recoverEdit(projectId, studyId, intent, { signal } = {}) {
+      // Same operation_id + identical payload → original receipt; unknown
+      // operation → 404 so the caller may safely apply instead (B05).
+      return post(`${manuscriptPath(projectId, studyId)}/edits/recover`, intent, signal);
+    },
     prepareManuscriptSourceIdentity(projectId, studyId, seedRunId, { signal } = {}) {
       return post(`/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/manuscript-sources/prepare`,
         { seed_run_id: seedRunId }, signal);

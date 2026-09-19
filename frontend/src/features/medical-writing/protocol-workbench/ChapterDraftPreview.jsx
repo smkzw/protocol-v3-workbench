@@ -58,18 +58,23 @@ function DraftTable({ table }) {
   </>;
 }
 
-function ParagraphEditor({ initialText, composingRef, busy, onSave, onCancel }) {
+function ParagraphEditor({ initialText, composingRef, busy, onSave, onCancel, onDraft }) {
   const [text, setText] = useState(initialText);
   return <div className="pcd-edit-shell">
     <textarea className="pcd-edit-area" aria-label="编辑段落内容" value={text} disabled={busy}
       onCompositionStart={() => { composingRef.current = true; }}
       onCompositionEnd={() => { composingRef.current = false; }}
-      onChange={event => setText(event.target.value)}/>
+      onChange={event => {
+        // Version-bound keystroke buffer (B07): unsubmitted typing survives
+        // refresh, chapter switches and save failures, IME composition included.
+        setText(event.target.value);
+        onDraft?.(event.target.value);
+      }}/>
     <div className="pcd-edit-actions">
       <button type="button" className="pcd-edit-save" disabled={busy}
         onClick={() => { if (!composingRef.current) onSave(text); }}>保存修改</button>
       <button type="button" disabled={busy} onClick={onCancel}>取消</button>
-      <small>涉及研究事实的修改会转入研究信息确认，不会直接写入正文。</small>
+      <small>修改会保存为新版本；涉及研究事实的内容会在显式核对中提示，研究事实本身保持不变。</small>
     </div>
   </div>;
 }
@@ -86,6 +91,7 @@ export function ChapterDraftPreview({ title, candidate, saved = false, edit = nu
           <ParagraphEditor initialText={edit.localDrafts?.[block.block_id] ?? block.text}
             composingRef={edit.composingRef} busy={edit.busy}
             onSave={text => edit.onSave(block.block_id, text)}
+            onDraft={text => edit.onDraft?.(block.block_id, text)}
             onCancel={edit.onCancelEdit}/>
         ) : <p className="pcd-paragraph">
           {editable ? <button type="button" className="pcd-edit-link"
