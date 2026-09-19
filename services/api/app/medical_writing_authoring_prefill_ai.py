@@ -1174,7 +1174,14 @@ class DeepSeekPrefillAdapter:
         try:
             raw_response = self._call_provider(request_payload)
         except Exception as exc:
-            logger.warning("authoring prefill AI call failed: %s", exc)
+            _diag = getattr(exc, "diagnostics", None)
+            logger.warning(
+                "authoring prefill AI call failed: %s | diagnostics: %s",
+                exc,
+                json.dumps(_diag, ensure_ascii=False, default=str)
+                if _diag
+                else "none",
+            )
             return _mark_partial_failure(
                 package,
                 f"authoring_prefill_ai: provider call failed: "
@@ -1450,8 +1457,12 @@ class DeepSeekPrefillAdapter:
             # provider must not gain that trust merely by exposing a similarly
             # named attribute.
             if isinstance(provider, OpenAICompatibleAiProvider):
+                # DeepSeek renamed the served id: v4-flash requests now return
+                # model=deepseek-flash.  Accept both the request name and the
+                # calibrated response identity.
+                _acceptable = {self._model_name, "deepseek-flash"}
                 expected = provider.expected_response_model
-                if expected != self._model_name:
+                if expected not in _acceptable:
                     raise RuntimeError(
                         "configured provider identity contract mismatch: "
                         f"expected {self._model_name}, got {expected or '<empty>'}"
@@ -2034,9 +2045,10 @@ class _BulkPrefillEnvelope:
         # provider's documented empty-content/finish_reason=length response
         # and no structured candidate payload.  Keep the role at max while
         # giving the bounded prefill response enough headroom for reasoning
-        # plus its evidence-bound JSON; this remains far below the model's
-        # documented output ceiling.
-        self.max_output_tokens = 32768
+        # plus its evidence-bound JSON; 64K remains within the model's
+        # documented output ceiling (the earlier 16K/32K ceilings were both
+        # consumed entirely by max-effort reasoning over large corpus contexts).
+        self.max_output_tokens = 65536
 
 
 def _resolve_prefill_timeout_seconds(
@@ -2112,6 +2124,13 @@ def build_prefill_ai_adapter(
     if not model_name:
         return None
     timeout_seconds = _resolve_prefill_timeout_seconds(provider, provider_env)
+    # Prefill-only thinking disable (empty-content mitigation): the bounded
+    # prefill response shares max_tokens with DeepSeek's reasoning stream —
+    # at effort=max over a large corpus context the reasoning consumed the
+    # entire budget and returned empty content.  The structured corpus
+    # context is already in the prompt, so prefill runs without thinking.
+    if getattr(provider, "default_thinking", None):
+        provider.default_thinking = None
     return DeepSeekPrefillAdapter(
         provider=provider,
         model_name=model_name,

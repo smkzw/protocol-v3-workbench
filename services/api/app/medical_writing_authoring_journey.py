@@ -1338,7 +1338,8 @@ class MedicalWritingAuthoringJourneyService:
                             "status": "corpus_not_ready",
                             "current_stage": "corpus",
                             "corpus_gate": MedicalWritingCorpusGate(
-                                missing_requirements=list(self._CORPUS_REQUIREMENTS)
+                                missing_requirements=list(self._CORPUS_REQUIREMENTS),
+                                override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
                             ),
                             "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
                             "updated_at": now,
@@ -1509,7 +1510,8 @@ class MedicalWritingAuthoringJourneyService:
                             # the author to recreate imported or edited content.
                             "picos_draft": current.picos_draft,
                             "corpus_gate": MedicalWritingCorpusGate(
-                                missing_requirements=list(self._CORPUS_REQUIREMENTS)
+                                missing_requirements=list(self._CORPUS_REQUIREMENTS),
+                                override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
                             ),
                             "corpus_triage": MedicalWritingCorpusTriage(),
                             "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
@@ -1526,7 +1528,8 @@ class MedicalWritingAuthoringJourneyService:
                     "status": "corpus_not_ready" if picos_complete else "stage2_in_progress",
                     "current_stage": "corpus" if picos_complete else "picos",
                     "corpus_gate": MedicalWritingCorpusGate(
-                        missing_requirements=list(self._CORPUS_REQUIREMENTS)
+                        missing_requirements=list(self._CORPUS_REQUIREMENTS),
+                        override=(current.corpus_gate.override if current.corpus_gate and current.corpus_gate.override and current.corpus_gate.override.active else None),
                     ),
                     "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
                     "invalidated_dependents": invalidated,
@@ -2774,8 +2777,13 @@ class MedicalWritingAuthoringJourneyService:
         covered = [item.label for item in requirements if item.satisfied]
         ready = not missing
         acknowledged = set(state.corpus_gate.override.acknowledged_missing_requirements)
-        override_still_valid = (
-            state.corpus_gate.override.active and acknowledged == set(missing)
+        # The override stays valid once active (requirements-v2 R3): the
+        # medical manager explicitly decided to proceed with acknowledged
+        # gaps.  Requirement changes after the override don't invalidate it —
+        # that would re-block the writing workflow the author already
+        # unlocked.
+        override_still_valid = bool(
+            state.corpus_gate.override.active
         )
         access_permitted = ready or override_still_valid
         now = datetime.now(timezone.utc)

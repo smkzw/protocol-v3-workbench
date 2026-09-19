@@ -1156,6 +1156,13 @@ class OpenAICompatibleAiProvider:
                     response_status = _response_status(response)
                     response_content_type = _response_content_type(response)
                     response_body = response.read().decode("utf-8")
+                # Some providers intermittently answer HTTP 200 with an empty
+                # completion body (throttling).  Retry with the same backoff
+                # before surfacing provider_response_empty to the job.
+                if _empty_completion(response_body) and attempt < self.max_attempts - 1:
+                    backoff_seconds = (0.5 * (2**attempt)) + random.uniform(0.0, 0.25)
+                    time.sleep(backoff_seconds)
+                    continue
                 break
             except urllib.error.HTTPError as exc:
                 if (
@@ -1490,6 +1497,14 @@ def _completion_response_diagnostics(
                 for choice in choices:
                     observe_choice(choice)
     return diagnostics
+
+
+def _empty_completion(response_body: str) -> bool:
+    """True when an HTTP-200 body carries no completion content (throttle)."""
+    try:
+        return not _chat_completion_content(response_body).strip()
+    except Exception:
+        return False
 
 
 def _completion_response_model(response_body: str) -> str:

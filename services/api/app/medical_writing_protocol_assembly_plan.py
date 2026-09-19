@@ -2141,16 +2141,10 @@ class MedicalWritingProtocolAssemblyPlanService:
                 raise MedicalWritingProtocolAssemblyPlanStaleError(
                     "StudyDefinition changed; the prior plan and confirmation are not current"
                 )
-            blockers = [
-                module.module_id
-                for module in current.modules
-                if not module.deterministic_projection_allowed
-            ]
-            if blockers:
-                raise MedicalWritingProtocolAssemblyPlanBlockedError(
-                    "protocol assembly plan has unresolved blockers: "
-                    + ", ".join(blockers)
-                )
+            # Blockers are informational: modules without deterministic
+            # projection are visible to the author as 待审阅, but don't
+            # block confirmation (zero-document projects legitimately have
+            # all modules blocked — requirements-v2 R3 / T17).
             now = self.now_factory()
             if current.confirmation_status == "author_confirmed":
                 self._require_definition_unchanged(project_id, definition)

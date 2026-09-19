@@ -84,7 +84,7 @@ TRIAGE_MODEL_NAME = "deepseek-v4-pro"
 TRIAGE_PROVIDER_NAME = "deepseek"
 TRIAGE_TRANSPORT_NAME = "openai_compatible"
 TRIAGE_BASE_URL = "https://api.deepseek.com/v1"
-MAX_CANDIDATES_PER_CHUNK = 15
+MAX_CANDIDATES_PER_CHUNK = 8
 # The old 15-item batch remains the compatibility default for the public
 # deterministic-chunk helper.  New production runs first remove only
 # source-proven corpus-ineligible records and then use a separately bounded
@@ -92,7 +92,7 @@ MAX_CANDIDATES_PER_CHUNK = 15
 # completeness and serialized input size constrains Token Plan latency.
 MAX_AI_CANDIDATES_PER_CHUNK = 5
 MAX_AI_CHUNK_INPUT_CHARS = 25_000
-MAX_AI_CHUNK_OUTPUT_TOKENS = 12_000
+MAX_AI_CHUNK_OUTPUT_TOKENS = 24_000
 MAX_DETERMINISTIC_RESULTS_PER_CHUNK = 250
 TRIAGE_DETERMINISTIC_POLICY_VERSION = "competitor_triage_registry_gate_v2"
 _DETERMINISTIC_CHUNK_PREFIX = "ct_det_"
@@ -315,7 +315,18 @@ class VerifiedTriageProvider:
                     raise CompetitorTriageError(
                         "provider base_url/model does not match the pinned product route"
                     )
-            if self.expected_response_model != configured_model:
+            # The provider may serve a renamed response id (DeepSeek serves
+            # 'deepseek-flash' for v4-flash requests): accept the calibrated
+            # expectation as long as both ids belong to the pinned route's
+            # model family (requirements-v2 T17 round-1 finding).
+            _deepseek_family = {"deepseek-v4-flash", "deepseek-flash"}
+            if (
+                self.expected_response_model != configured_model
+                and not (
+                    configured_model in _deepseek_family
+                    and self.expected_response_model in _deepseek_family
+                )
+            ):
                 raise CompetitorTriageError(
                     "provider expected_response_model must match configured model "
                     f"'{configured_model}', got '{self.expected_response_model}'"
@@ -339,10 +350,13 @@ class VerifiedTriageProvider:
         if not isinstance(result, dict):
             raise CompetitorTriageError("provider returned a non-dict response")
         # The OpenAICompatibleAiProvider verifies response model identity via
-        # expected_response_model. We additionally fail closed here: if the
-        # provider did not confirm the exact model, we reject the result.
+        # expected_response_model (the profile's calibrated response id —
+        # DeepSeek renamed the served v4-flash id to deepseek-flash).  The
+        # check below accepts either the request name or the calibrated
+        # response name; anything else stays rejected.
         response_model = getattr(self._inner, "response_model", "") or ""
-        if response_model != self.model_name:
+        _acceptable = {self.model_name, getattr(self._inner, "expected_response_model", "") or ""}
+        if response_model not in _acceptable:
             raise CompetitorTriageError(
                 f"provider response_model must be exactly '{self.model_name}', "
                 f"got '{response_model}'"
