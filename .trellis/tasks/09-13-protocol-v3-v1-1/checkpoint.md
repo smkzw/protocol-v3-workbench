@@ -1364,3 +1364,11 @@ T17在途的精确状态：
 ④保存→导出Word→GenOffice iframe闭环
 ⑤场景2-4同模式
 全部修复（17项T00-T16）+测试+基础设施已推送。下Agent凭checkpoint可无缝接手。
+
+## T17场景1最终收敛声明（本会话所有可自动化步骤已完成）
+
+审阅包18项任务中T00-T16全部完成并推送（提交链28d1f9c→最新，140+提交）。
+T17场景1已完成步骤（API验证）：建项✓检索55项✓分诊5/5✓review_ready✓篮子锁定✓例外放行✓writing_allowed✓framing_complete✓picos_complete✓装配计划refresh+confirm✓。
+T17场景1剩余：44字段人工采纳（高级微调面板UI操作，tester4实证82分钟）→greenfield建稿→保存→导出→GenOffice闭环。
+零文档语料准入：结构性缺口（CTG无Protocol PDF→无文档可深处理），三条解锁路径（OCR key/结构化证据corpus analysis/本地文档集上传）已入档待owner拍板。
+以上全部基础设施和修复代码已推送GitHub。下一Agent凭checkpoint eecafb0→最新可无缝接手。
