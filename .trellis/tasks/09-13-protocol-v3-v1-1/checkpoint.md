@@ -1073,3 +1073,14 @@ ego实测5176：主页503仅监控小部件（不阻断）；"新建项目"对�
 
 环境修复：5275重启并加WORKBENCH_RUNTIME_DIR隔离（根因修复——此前runtime_store落在共享目录，冒烟项目曾写入；已外科清除共享库中我们的2行[user_projects 1行+authoring_journeys 1行]，未触其他数据；重启后隔离实例仅9个内置演示项目）。ego复测：重开对话框→入口A→choosers上传synthetic-reference.docx成功（1KB）→点"导入并提取"→**卡在"正在准备文档内容"超60秒**（1KB文档不应如此；浏览器network记录显示202已接受+多次503监控调用交错）。P1发现#1：入口A建项"准备导入"阶段疑似等待某个不推进的异步任务（疑似监控503家族或任务完成端点缺失），需根因诊断App.jsx导入流程与对应后端端点。
 现状：场景1停在入口A建项步骤；codex配额9/21恢复后可重派外部测试者；轮询automation继续值守。ego空间t17-smoke(126)可复用，页面状态=导入对话框卡在spinner。
+
+
+## 2026-09-19 T17测试者2报告聚合+三项修复（P0x2+P1x1已修，已推GitHub）
+
+tester2(omp/gemini,偏头痛入口B)完成并交出高质量报告：反拟合检索全过（无跨疾病串入/无模板硬编码）；抓到4缺陷。
+修复1（P0#1 PlanUnconfirmedError）：MedicalWritingAuthoringJourneySetup.jsx createDocument在greenfield-document前新增装配计划确认（GET plan→POST confirm按CAS契约expected_plan_revision/sha256），进入写作平台点击即作者确认动作，建稿阻断解除。
+修复2（P0#2 prepareDisabled恒真）：main.py create_project后自动admit_project进protocol_workflow_project_allowlist（workflow启用时），新项目资料整合立即可用。
+修复3（P1#3 DeepSeek身份校验）：root cause=ai_gateway.py:1610对deepseek硬编码expected=model，无视profile显式expected配置；DeepSeek线上已改名v4-flash→deepseek-flash。修复=显式WORKBENCH_AI_EXPECTED_RESPONSE_MODEL优先，旧硬编码降为缺省；e2e_runtime配置同步改expected=deepseek-flash。
+遗留P1#4（竞品分诊重试409死锁，CompetitorTriageError前缀不匹配）已修复（research_pipeline:1410加入CompetitorTriageError匹配）；P2#5 vite代理默认值问题已记录（低危）。
+注：修复1-3落地前tester2的偏头痛项目冻结路由绑定了旧坏配置，其项目需重建后才能走通流水线；tester3/4仍在跑。
+回归：前端95/95+61/61；后端关键面语法/健康检查过。

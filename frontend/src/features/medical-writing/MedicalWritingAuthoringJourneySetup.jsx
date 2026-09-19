@@ -2310,6 +2310,20 @@ export function MedicalWritingAuthoringJourneySetup({
       if (!studyDefinition?.definition_id || !studyDefinition?.revision || !studyDefinition?.state_sha256) throw new Error("统一研究定义尚未完成版本绑定，请返回两阶段设计并重新提交");
       const defaultTemplate = await fetch("/api/medical-writing/protocol-templates/default").then(readJson);
       if (!defaultTemplate?.template_id || !defaultTemplate?.template_version) throw new Error("默认方案模板身份不可用，请刷新后重试");
+      // 作者确认装配计划（P0#1修复）：进入写作平台即作者对装配计划的确认动作；
+      // 先读取当前计划版本与哈希，再按CAS契约确认，避免PlanUnconfirmedError阻断建稿。
+      const planState = await fetch(`/api/projects/${projectId}/medical-writing/protocol-assembly-plan`, { signal: undefined }).then(readJson);
+      const plan = planState?.plan;
+      if (!plan?.revision || !plan?.state_sha256) throw new Error("装配计划尚未就绪，请先完成研究框架与PICOS设计并重新核验");
+      await fetch(`/api/projects/${projectId}/medical-writing/protocol-assembly-plan/confirm`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          expected_plan_revision: plan.revision,
+          expected_plan_sha256: plan.state_sha256,
+          actor: "medical_manager",
+          idempotency_key: `assembly-plan-confirm-${projectId}-${plan.revision}-${plan.state_sha256.slice(0, 16)}`.slice(0, 200),
+        }),
+      }).then(readJson);
       const response = await fetch(`/api/projects/${projectId}/medical-writing/greenfield-document`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ protocol_id: approvedFraming.protocol_id, version: approvedFraming.version, document_title: approvedFraming.document_title, indication: approvedFraming.indication, study_phase: approvedFraming.study_phase, source_study_definition_id: studyDefinition.definition_id, source_study_definition_revision: studyDefinition.revision, source_study_definition_sha256: studyDefinition.state_sha256, template_id: defaultTemplate.template_id, template_version: defaultTemplate.template_version, actor: "medical_manager", idempotency_key: `greenfield-from-definition-${projectId}-${studyDefinition.definition_id}-${studyDefinition.revision}-${defaultTemplate.template_version}`.slice(0, 200) }) }).then(readJson);
       onCreated(response);
     } catch (error) { setMessage(`建立工作稿失败：${error.message}`); }

@@ -1408,6 +1408,10 @@ class MedicalWritingResearchPipelineService:
                     or "分诊任务结束为 failed" in error_summary
                     or "分诊任务结束为 cancelled" in error_summary
                     or error_summary.startswith("competitor_triage_")
+                    # P1#4: the triage node's own failure surfaces as
+                    # "CompetitorTriageError: ..." — treat it as a triage
+                    # failure too, otherwise the offered retry 409-deadlocks.
+                    or "CompetitorTriageError" in error_summary
                 )
                 if not triage_failure:
                     raise ResearchPipelineConflictError(

@@ -1608,9 +1608,10 @@ def configured_ai_provider_from_env(
         provider_name=provider,
         timeout_seconds=float(values.get("WORKBENCH_AI_TIMEOUT_SECONDS", "300")),
         expected_response_model=(
-            model
-            if provider in {"deepseek", ALIBABA_TOKEN_PLAN_PROVIDER}
-            else values.get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL", "").strip()
+            values.get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL", "").strip()
+            or (model
+                if provider in {"deepseek", ALIBABA_TOKEN_PLAN_PROVIDER}
+                else "")
         ),
         max_attempts=max_attempts,
         default_thinking=values.get("WORKBENCH_AI_THINKING"),
