@@ -1199,3 +1199,10 @@ P2备注（不阻断）：durable job超时窗口（分钟级）短于4批次dee
 pipeline状态API实证：mwpipe_369c4e6e stage=awaiting_triage_confirm、percent=35、child 5/5批全完成（"竞品分诊已完成"）——**分诊批次全部通过**（身份链+空响应重试+小分块三项修复联合生效，此前22%死点彻底打通）。triage run=review_ready。
 人工分诊标记已完成1项（NCT06927999标记直接竞品+理由），锁篮点击后抽屉关闭、页面回总览——**下一窗口第一动作**：进医学写作→打开竞品处理→确认篮子状态（若已锁）→continue-after-triage端点（/research-pipeline/continue-after-triage）推进流水线至深度处理/译文/准入阶段→设计候选生成→采用→初稿。
 诊断层经验：运行时失败先重跑一次（多重启竞态下首次执行的报错可能是旧进程残留），diagnostic pair给出确定对照后再修代码。
+
+## 2026-09-20 场景1准备批次失败（数据层）——头号待诊断
+
+状态：分诊5/5完成+review_ready ✓；continue-after-triage推进到原文准备→准备批次两次失败（retry端点可用，202接受但再次failed）；retained候选仅1项=NCT03436797。
+头号待诊断：NCT03436797的Protocol原文文档是否存在于ClinicalTrials.gov（该NCT可能无sponsor上传的Protocol附件→原文准备永远无文档可解析）。修法二选一：①换/增加retained候选（从55项中挑有Protocol文档的CSU II期研究，如NCT05298215 UB-221）；②诊断preparation失败的确切错误（preparation batch表无error列，需查durable job或preparation items表）。
+经验：retry-triage需idempotency_key；preparation retry需idempotency_key；continue-after-triage失败原文="原文准备失败：failed"。
+ego操作链已熟练：选CDC776FB→医学写作(待决策DOM click)→打开竞品处理(DOM click)。
