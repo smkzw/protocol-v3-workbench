@@ -144,6 +144,13 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         return {'status': 'started', 'gaps': len(gaps),
                 'batches_total': chapter_facts_deriver.progress['batches_total']}
 
+    @router.get('/saved')
+    def saved_document(project_id: str, study_definition_id: str):
+        saved = documents.saved(project_id, study_definition_id)
+        if saved is None:
+            raise HTTPException(404, detail={'message': '尚未保存完整工作初稿。'})
+        return saved
+
     @router.get('/export/docx')
     def export_docx(project_id: str, study_definition_id: str):
         """Render the saved working draft as an ordered DOCX on the clean template."""

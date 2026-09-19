@@ -65,6 +65,19 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   const [plan, setPlan] = useState(null), [job, setJob] = useState(null);
   const [selected, setSelected] = useState(null), [error, setError] = useState('');
   const [savedDocument, setSavedDocument] = useState(null);
+  // A saved working draft survives reloads: restore it once the packet is
+  // back so the read/edit preview (and export link) reappear without a save.
+  useEffect(() => {
+    if (!packet || savedDocument || !apiRef.current?.getSavedManuscriptDocument) return;
+    const controller = new AbortController();
+    Promise.resolve().then(() => apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId, { signal: controller.signal }))
+      .then(value => { if (!controller.signal.aborted && value?.document) {
+        setSavedDocument({ document: value.document, revision: value.revision,
+          documentSha256: value.document_sha256 });
+      } })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [packet, projectId, studyDefinitionId, savedDocument]);
   const [sourceState, setSourceState] = useState(null);
   const [planRefresh, setPlanRefresh] = useState(0);
   const [busy, setBusy] = useState(false), [refresh, setRefresh] = useState(0);
@@ -376,12 +389,17 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     setEditBusy(true); setError('');
     const controller = new AbortController(); request.current = controller;
     try {
-      const intent = { study_definition_id: studyDefinitionId,
+      // The schema forbids extra fields (study id lives in the URL) and
+      // requires the run's source pins alongside the document CAS pair.
+      const intent = {
+        source_run_id: packet.sourceRunId,
+        study_revision_sha256: packet.studySha,
         expected_workflow_run_id: packet.intent?.expected_workflow_run_id,
         operation_id: 'manuscript-edit:' + crypto.randomUUID(),
         actor_id: actorId,
         expected_revision: savedDocument.document.revision,
-        expected_document_sha256: savedDocument.document_sha256,
+        expected_document_sha256: savedDocument.revision_sha256
+          || savedDocument.document_revision_hash || savedDocument.document_sha256,
         edits: [{ semantic_block_id: blockId, block: { content: newText }, claimed_class: 'wording_only' }] };
       localStorage.setItem(key + ':edit:' + intent.operation_id, JSON.stringify(intent));
       let receipt;

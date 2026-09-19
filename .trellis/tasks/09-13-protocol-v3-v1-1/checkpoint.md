@@ -729,3 +729,27 @@ start_browser_backend.sh；ego页localStorage绑seedRunId/runId，改brief必须
   可由用户双击导出文件人工核验）②savedDocument不随刷新恢复（导出链接仅保存当轮可见）
   ③受控编辑浏览器走查细节（端点/服务端逻辑已有测试）
 - 测试：test_chapter_facts_derivation 3/3；前端95/95
+
+## 2026-09-19 08:10 受控编辑ego走查完成（v1→v2实证）
+
+- 修复两处客户端载荷缺陷：edit intent多带study_definition_id（schema extra=forbid拒绝）
+  且缺source_run_id/study_revision_sha256；文档CAS字段名实为revision_sha256
+  （CurrentSemanticDocumentResponse）而非document_sha256
+- 另发现1.1概要章仅表格块（段落编辑不覆盖表格——本期边界，非缺陷）
+- 走查实证：ego打开2.2.3同类药物研究概述→点编辑→textarea IME安全输入追加句子→
+  保存修改→服务端EditClass重分类→CAS提交→UI「已保存第2版」+ /saved 实测revision=2
+  且段落尾部含新增句；截图 acceptance_evidence/04_controlled_edit_v2.png
+- 新增 GET manuscript-draft/saved（savedDocument刷新恢复用）
+
+## 下一阶段设计要点（7R.4成品级导出）
+1. 模板正文逐节替换：按node_tree标题定位模板正文段落/表格，删除模板示例与引导文字，
+   在标题后插入semantic_blocks内容；not_applicable章保留标题+"本节不适用于本研究。"
+2. 页眉页脚替换：申办者名称→已确认申办方、vX.X→1.0、方案编号XXXXXX→PV3前缀编号、
+   日期XXXX/0X/XX→version_date（真实值，拒绝占位）
+3. 书签+交叉引用：标题插w:bookmarkStart/End；表格题注（表1…）+REF域；正文中"见表N"
+   改REF引用
+4. TOC：保留模板TOC域+settings.xml updateFields=true（Word打开刷新）；PDF验收用
+   两遍法——首遍渲染后按标题定位页码，回填TOC域缓存条目，二遍出PDF
+5. 横向SOA：1.3研究流程表所在节设landscape section
+6. 验收：PDF零模板示例（"请参考以下准则"等零命中）、页眉页脚零占位
+   （XXX/申办者名称/vX.X零命中）、TOC/书签/题注计数逐一核对
