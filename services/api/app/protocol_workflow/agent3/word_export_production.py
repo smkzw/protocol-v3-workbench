@@ -367,6 +367,7 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     else:
         settings.append(update)
 
+    pruned_media = _prune_orphaned_media(doc)
     doc.save(str(output_path))
     document_sha = document_revision_hash_sha(document)
     output_sha = hashlib.sha256(open(output_path, 'rb').read()).hexdigest()
@@ -374,9 +375,38 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             'export_scope': 'production_docx', 'tables': table_no,
             'cross_references': ref_count,
             'engineering_marker_hits': marker_hits,
+            'orphaned_media_pruned': pruned_media,
             'field_diagnostics': {'cross_reference_fields': ref_count,
                 'update_fields_on_open': True,
                 'third_party_citation_interop': 'not_claimed'}}
+
+
+
+def _prune_orphaned_media(doc) -> list[str]:
+    """Drop image parts the rewritten body no longer references (T07 spike).
+
+    The clean template ships a flow-diagram image referenced only by its own
+    example body; once that body is replaced the media part and relationship
+    would ship as dead weight.  Header/footer/styles rels are referenced from
+    sectPr r:id attributes, which the scan below collects too, so they stay.
+    """
+    rns = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    referenced = set()
+    for element in doc.element.body.iter():
+        for attr in (f'{{{rns}}}embed', f'{{{rns}}}id', f'{{{rns}}}link',
+                     f'{{{rns}}}pict', f'{{{rns}}}dm', f'{{{rns}}}lo',
+                     f'{{{rns}}}qs', f'{{{rns}}}cs'):
+            value = element.get(attr)
+            if value:
+                referenced.add(value)
+    pruned = []
+    for r_id in list(doc.part.rels):
+        rel = doc.part.rels[r_id]
+        if rel.reltype.endswith('/image') and not rel.is_external and r_id not in referenced:
+            target = getattr(rel, 'target_ref', '')
+            doc.part.drop_rel(r_id)
+            pruned.append(str(target))
+    return pruned
 
 
 def header_rows_of(table_content: str) -> int:

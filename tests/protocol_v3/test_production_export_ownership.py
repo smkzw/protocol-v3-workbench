@@ -91,3 +91,29 @@ def test_export_preserves_user_content_without_reprojection_or_rewriting(tmp_pat
                                      _document(blocks), tmp_path / 'out2.docx',
                                      {'research.input_context': {}})
     assert receipt['export_scope'] == 'production_docx'
+
+
+def test_template_orphan_media_never_ships(tmp_path):
+    """The clean template's flow-diagram image is referenced only by its
+    example body; after body replacement it must not ship as dead weight
+    (T07 spike finding), while real content parts stay."""
+    import zipfile
+    template_path, template_dir = _template_paths()
+    with zipfile.ZipFile(template_path) as template_zip:
+        template_media = [name for name in template_zip.namelist() if 'word/media/' in name]
+    assert template_media, 'precondition: the template ships media parts'
+    blocks = [_para('v2_n_11_1_1', '第一章正文。')]
+    out = tmp_path / 'out.docx'
+    receipt = render_production_docx(template_path, template_dir, _document(blocks),
+                                     out, {'research.input_context': {}})
+    with zipfile.ZipFile(out) as exported:
+        exported_media = [name for name in exported.namelist() if 'word/media/' in name]
+    assert exported_media == []
+    assert [name.split('/')[-1] for name in receipt['orphaned_media_pruned']] == \
+        [name.split('/')[-1] for name in template_media]
+    # Header/footer/style parts are untouched by the pruning.
+    with zipfile.ZipFile(out) as exported:
+        kept = [name for name in exported.namelist()
+                if name.startswith('word/header') or name.startswith('word/footer')
+                or name == 'word/styles.xml']
+    assert kept, 'headers, footers and styles must survive pruning'
