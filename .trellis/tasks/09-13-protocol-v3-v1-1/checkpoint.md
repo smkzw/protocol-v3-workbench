@@ -1016,3 +1016,10 @@ owner指出五问题，共同根因=用工程指标（占位零命中/测试绿�
 - 内容质量：具体到操作细节（如SAE报告24小时时限、CMH分层检验、NRI缺失处理、
   CDISC SDTM标准、注射部位反应CTCAE 5.0分级等）
 - 这证明真实deepseek生成的章节内容质量是实质性的医学写作产出
+
+## 2026-09-19 requirements-v2 审阅包落地（ZCode，已推GitHub）
+
+权威=reviews/protocol-v3-requirements-v2/（已入库）。基线dd2018e。五提交：28d1f9c(T01/T02反拟合：RESIDUAL瘦身/一致性门事实锚点/概要投影去兜底/PICOS选项模板删除；test_no_case_fitting 9项含源码tripwire)；ae5bb3a(T03只读存量扫描：当前快照零泄漏，106条leaked仅在事件历史，A26不重写)；ee7cbfe(T05/T06：draft-readiness.v1五态处置+gap_fact_paths延迟绑定+manuscript-request.v2按can_generate准入+装配合成【缺口】/【待判定】块+GET /draft-readiness+前端readiness门控/残差可选全展开R-C05)；ac366ff(T08/T13/T14/T15：edit自由保存永不拒+edit_clues+白名单+B04哈希时间重算；block_content_text读text/value+脚注+数字边界100vs1000+否定翻转A18；导出只管版式删重投影/SOA替换/术语替换/标记删段+B01首块表格+marker_hits；B05 recoverEdit接线/B08回执normalize/B07逐键暂存/B06历史入口；B09派生器按(project,study)注册表)；c099fbc(T09：GET /reconciliation按当前版本重算+信号累积+POST resolve绑版本幂等回放，纯事件追加不动文档CAS)。
+回归基线：后端2553过/1败=已知verifier隔离环境性（单跑过，两次复现确认顺序性）；前端vitest 95/95+node 61/61。测试venv=runs/mw_protocol_v3_1r_integration_20260905/venv，PYTHONPATH须含tests:tests/protocol_v3:tests/protocol_v3/integration；全套只跑tests/protocol_v3（顶层tests有cryptography缺失）。
+经验：Edit工具对by_id引用替换须写回原列表（集成测试抓到）；集成测试fixture事实含200mg负荷+100mg维持双值，恢复文须含全部确认值才closed。
+剩余：T04双入口收口/T11 SOA与概要初次生成+显式刷新边界（soa_matrix/synopsis_projection保留为初次生成能力，导出侧已剥离）/T12 replace_object+patch_object局部AI修订/T16文献范围说明；T07/T10 GenOffice（基线316ded6f，独立大项）；T17独立多研究e2e+多测试者LOOP。报告：runs/requirements_v2_20260919/。
