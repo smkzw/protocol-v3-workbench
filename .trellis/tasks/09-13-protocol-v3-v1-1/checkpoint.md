@@ -1337,3 +1337,8 @@ continue_after_triage的_wait_for_preparation新增分支：preparation batch fa
 2. 结构化证据corpus analysis（架构改造）→ AI接受结构化CTG数据为输入
 3. 本地文档集上传（产品入口）→ 用户上传竞品PDF
 在以上任一路径实现前，场景1-4的完整链路（语料准入→设计候选→初稿→导出）无法端到端走通。T00-T16的基础设施和修复工作不受影响。
+
+## 2026-09-20 corpus gate override preservation fix（e774ce2）
+
+根因：framing/PICOS commit时corpus_gate被全新MedicalWritingCorpusGate替换，丢失之前的override。修复：所有corpus gate创建点均保留前一状态的override（仅当active时）。这样一旦medical manager应用了corpus gate override，后续任何stage commit都不会丢失该override。
+覆盖路径：journey所有corpus gate创建点（1340 PICOS commit、1512 其他PICOS commit路径）。修复后journey的corpus_gate.override在framing/PICOS commit间持续有效。
