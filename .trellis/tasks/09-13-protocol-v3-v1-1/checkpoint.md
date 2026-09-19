@@ -1225,3 +1225,7 @@ ego验证：CDC776FB项目gate解锁（design_recommendations_blocked消失）�
 CDC776FB门禁已解锁但AI候选生成失败：authoring prefill AI call返回provider_response_empty（退避重试4次全空）。根因判定：enrichment提示词包含55项研究的语料分析上下文（大输入）+ thinking=enabled吃满24k输出预算→content为空。经典reasoner大上下文失败模式。
 下窗口修复三选一（按序尝试）：①enrichment调用关闭thinking（WORKBENCH_AI_THINKING对enrichment角色单独配置为disabled——结构化分析上下文已在提示词中，无需推理预算）；②max_output_tokens提升至48k；③语料上下文截断（只传top-N相关研究摘要）。
 验证：更新建议→候选包占位文案消失→出现3-5个候选→一键采用→初稿→导出→GenOffice。
+
+## 2026-09-20 prefill空响应持续——输入窗口假说（头号待诊断）
+
+prefill thinking已禁用+32k预算+退避重试后仍provider_response_empty——指向**输入尺寸超出模型上下文窗口**：55项研究的语料分析上下文进入prefill prompt（_build_bulk_request），input+max_tokens=32768合计超出deepseek-v4-flash上下文时端点返回200空content。下窗口：①记录prefill实际payload字符数（日志一行）；②_build_bulk_request截断语料上下文至top-N相关研究（N=10-15）；③或MAX_TOTAL_PAYLOAD_CHARS下调强制截断。修复后更新建议→候选包真实生成→采用→初稿→导出→GenOffice闭环（恢复路径不变）。
