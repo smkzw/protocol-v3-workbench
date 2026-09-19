@@ -1247,3 +1247,7 @@ Plan A门控已在journey层解锁（design_recommendations_blocked消失），�
 ②或配置Paddle OCR API Key（e2e_runtime Paddle provider需要key）走文档OCR链。
 另：preparation失败前确认NCT03436797文档存在（Prot_002.pdf已下载）——此前CTG API documents=[]的诊断有误，文档在但需OCR（扫描版）。
 场景1当前可达终点：设计模块结构就绪（6模块/44字段框架），占位候选卡可见，人工可逐字段填写设计（tester3路径证明可行但点击超标）。
+
+## 2026-09-20 补充：OCR配置快速路径发现
+
+检查e2e_runtime/ai_provider_settings.json已列出ocr_paddle_official profile（base=paddleocr.aistudio-app.com，需API key）。若owner可提供PaddleOCR API key并写入ai_provider_secrets.json的对应profile，文档OCR链即可在隔离环境跑通——场景1的NCT03436797扫描版Protocol（Prot_002.pdf已下载至准备批次）即可完成深度处理→译文→准入→corpus analysis→候选→初稿全链。该路径与结构化证据分支（①）并行可选，owner二选一或都配。
