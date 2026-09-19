@@ -365,6 +365,9 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
         '不构成对该等措辞的核验。本章涉及的数据管理与伦理相关新事实根归属',
         '本候选不建立章内第二可编辑存储',
         '本候选不作合规断言',
+        '本研究暂无正式来源文件',
+        '参考文献列表为空',
+        '实际使用来源登记为空',
     )
     removed = 0
     for para in list(doc.paragraphs):
