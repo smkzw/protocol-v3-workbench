@@ -1574,3 +1574,11 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **恢复条件（需owner）**：①充值/换新DeepSeek key 更新 ai-runtime.env；或②指定其他provider（如owner改默认的alibaba_token_plan/qwen——需同步改产品契约 PROFILE 与 independent_ai profile）。恢复后：重启前后端（同事务）→直接重派第九轮同场景（四测试者未产出任何有效数据，场景无损耗）。
 
 **当前代码状态**：c2ed35c+void=主线程最新（含初稿失败隔离修复），回归2577过，前端95/95+61/61。仓库已推GitHub（5afa323→c2ed35c）。
+
+## 2026-09-20 19:55 【环境已由并行进程接管】本会话停止环境操作
+
+**取证**：19:43:47 一个新 uvicorn 进程重启了 5275 API（env 正确=e2e_test.sqlite+e2e_runtime），19:31 vite 被重启，18:16-18:24 e2e_test.sqlite 被"清理重置"（38MB 八轮真库被移走，现存 315KB 新库——本会话 probe3 的验证数据因此消失，identity mismatch/404 由此而来）。**这不是本会话的操作**：本会话最后环境动作是 16:4x。推断=owner 或另一 Agent 已在同一环境并行工作。
+
+**本会话就此停止一切环境操作（重启/清库/派发），避免与并行进程互相破坏。**
+
+**已交付并推送（5afa323→c2ed35c→3ee7db1）**：cms-router 切换（settings+role_bindings+env 配方：WORKBENCH_AI_PROVIDER=openai_compatible/BASE_URL=http://localhost:20128/v1/MODEL=deepseek-flash/API_KEY=CMS_ROUTER_API_KEY，key在~/.omp/agent/.env；chat实测通过）；初稿失败每章隔离；probe 验证方法论。cms-router 切换**未被并行进程的 19:43 重启保留的风险**：若对方未带相同 env 重启，AI 通道会回退直连旧 deepseek key（已失效401）——接手方需核对 ai_provider_settings.json active_profile=independent_ai__cms_router_deepseek_flash 且 API env 含 CMS_ROUTER_API_KEY。
