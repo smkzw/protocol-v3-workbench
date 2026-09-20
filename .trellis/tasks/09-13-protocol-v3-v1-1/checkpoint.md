@@ -1821,3 +1821,23 @@ npm exec vite -- --port 5186 --strictPort --host 127.0.0.1
 2. 清洁空间重置必须同时清 runtime 和 workflow DB
 3. fresh DB 需要显式 admit_project 引导
 4. graph runtime 在 fresh DB 上需要额外初始化（seed-generate dispatch 挂起问题）
+
+## 2026-09-21 02:15 会话最终收尾——46 提交推送，所有可自动化修复完成
+
+### 本会话完成统计
+- 46 个提交（deab516 到 e6817b9）
+- 71 个文件变更，+4272/-172 行
+- 12 项代码修复 + 20 项文档/记录提交
+- 回归基线：2577 过 / 前端 95/95 + 61/61 全绿
+
+### 核心成果
+1. **场景1双链端到端验证**：journey链(33k字) + UI链(21k字) → GenOffice渲染44页
+2. **审计G0-G4整改12项**：Office闭环/核对诚实/surgical范围/文控真实值/REF保留/导出隔离/枚举select化/键名映射/失败隔离/传输覆盖/blocked出口/虚假完成口径
+3. **基础设施搭好**：5285独立环境(前端5186+API 5285)运行中
+
+### 接手者入口
+1. **环境恢复**：杀掉所有 5285/5186 进程→重启 API 和前端→admit_project 引导新项目
+2. **seed-generate dispatch 挂起**：需要 graph runtime 团队检查 fresh DB 上 reservation 状态初始化链
+3. **修复队列**（按优先级）：虚假完成口径(消息卫生)/义务声明体提示词/Office导出桥接/流程图层/F09/F13/F15
+4. **运维配方**：API 启动需 WORKBENCH_PROTOCOL_V3_AI_ENDPOINT + WORKBENCH_PROTOCOL_V3_AI_KEY + WORKBENCH_PROTOCOL_V3_AI_MODEL + WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL + WORKBENCH_RUNTIME_DIR + WORKBENCH_AI_SETTINGS_PATH + WORKBENCH_PROTOCOL_V3_WORKFLOW_DB + WORKBENCH_PROTOCOL_V3_PRODUCT_PROFILE + WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED=1 + WORKBENCH_PROTOCOL_V3_MAX_INPUT_BYTES + CMS_ROUTER_API_KEY
+5. **前端启动**：VITE_API_PROXY_TARGET=http://127.0.0.1:5285 + VITE_PROTOCOL_V3_WORKFLOW_ENABLED=1 + port 5186
