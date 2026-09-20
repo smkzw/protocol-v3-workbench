@@ -1,5 +1,6 @@
 """Save one complete working document through the product's existing UoW."""
 import hashlib
+import re
 
 from packages.contracts.workbench_contracts.protocol_v3 import ActorType, SemanticDocumentRevision
 from app.protocol_workflow.canonical.hashing import canonical_json
@@ -9,7 +10,8 @@ from app.protocol_workflow.events.unit_of_work import EventSourcedUnitOfWork
 from app.protocol_workflow.agent3.manuscript_document import assemble_working_manuscript
 from app.protocol_workflow.qc.manuscript_qc import run_manuscript_qc
 from .manuscript_edits import (
-    _digit_bounded, _negated, block_content_text, edit_intent_sha256, reclassify_edit)
+    _digit_bounded, _fact_display_text, _negated, _norm_fact_text,
+    block_content_text, edit_intent_sha256, reclassify_edit)
 
 
 def manuscript_document_id(project_id, study_id):
@@ -160,6 +162,26 @@ class ManuscriptDocumentService:
     # ------------------------------------------------------------------
 
     def reconciliation(self, project_id, study_id, confirmed_facts, study_revision_sha256):
+        """Snapshot-bound reconciliation bound to the *current* study (audit G2/F06).
+
+        The confirmed facts are actually read here: every edit signal is
+        compared against the fact value now in ``confirmed_facts`` — a study
+        value that changed after the draft was written (100例 → 1000例) is a
+        difference, not a pass.  Status vocabulary is honest about coverage:
+
+        - ``differences``: at least one unresolved deviation (missing text or
+          a fact that drifted from the confirmed value).
+        - ``consistent_within_checked_scope``: every checked deviation was
+          re-verified against the current text AND current facts; this never
+          claims the whole document is consistent.
+        - ``not_checked``: no machine-checkable signals exist for this
+          revision; nothing was verified and nothing is being blessed.
+
+        ``checked_block_count``/``content_block_count`` expose the coverage so
+        a UI can never render "not checked" as "verified consistent".
+        Resolutions only close differences for the study version they were
+        acknowledged on (F06/RC-08).
+        """
         document_id = manuscript_document_id(project_id, study_id)
         with self.uow_factory() as uow:
             document = uow.semantic_document_repository.get_current(project_id, document_id)
@@ -183,9 +205,24 @@ class ManuscriptDocumentService:
                 for path in clue.get('affected_fact_paths') or ():
                     if path not in block_clue['affected_fact_paths']:
                         block_clue['affected_fact_paths'].append(path)
-        resolutions = {(event.payload.get('semantic_block_id'), event.payload.get('document_revision'))
-                       for event in events
-                       if event.event_type == 'manuscript_reconciliation_resolved.v1'}
+        # A resolution closes a difference only on the study version it was
+        # acknowledged against; legacy resolutions recorded before the study
+        # binding existed stay accepted but are counted honestly.
+        resolutions, legacy_resolutions = set(), 0
+        for event in events:
+            if event.event_type != 'manuscript_reconciliation_resolved.v1':
+                continue
+            bound_study = event.payload.get('study_revision_sha256')
+            if bound_study is None:
+                legacy_resolutions += 1
+                resolutions.add((event.payload.get('semantic_block_id'),
+                                 event.payload.get('document_revision')))
+            elif bound_study == study_revision_sha256:
+                resolutions.add((event.payload.get('semantic_block_id'),
+                                 event.payload.get('document_revision')))
+        content_block_count = sum(
+            1 for block in document.semantic_blocks if block_content_text(
+                block.model_dump(mode='json')).strip())
         items, differences = [], 0
         for block_id in sorted(clues):
             clue = clues[block_id]
@@ -194,8 +231,14 @@ class ManuscriptDocumentService:
             if block is None:
                 continue
             text = block_content_text(block.model_dump(mode='json'))
-            paths = tuple(clue.get('affected_fact_paths') or ())
+            # 绑定路径 = 编辑线索路径 ∪ 块自身声明的 fact 绑定（后者是
+            # 权威：即使本次编辑未触碰事实，研究事实更新后块仍需重核）。
+            paths = tuple(dict.fromkeys(
+                list(clue.get('affected_fact_paths') or [])
+                + list(getattr(block, 'fact_paths', ()) or ())))
             missing = []
+            stale_fact_paths = []
+            deep_fact_paths = []
             for signal in signals:
                 value = signal.get('value_text') or ''
                 if not value:
@@ -208,7 +251,50 @@ class ManuscriptDocumentService:
                 elif present_now and signal.get('negated_in_old') != negated_now:
                     if signal.get('fact_path') not in missing:
                         missing.append(signal['fact_path'])
-            status = ('difference' if missing else 'consistent')
+                # F06/RC-07: the fact itself moved on after this text was
+                # written — the confirmed value no longer matches the value
+                # this block was written against.
+                current_value = confirmed_facts.get(signal.get('fact_path')) if confirmed_facts else None
+                current_text = _fact_display_text(current_value)
+                if current_text and signal.get('present_in_old') \
+                        and not _digit_bounded(_fact_display_text(current_value), value) \
+                        and _norm_fact_text(current_text) != _norm_fact_text(value):
+                    if signal.get('fact_path') not in stale_fact_paths and \
+                            signal.get('fact_path') not in missing:
+                        stale_fact_paths.append(signal['fact_path'])
+            for path in paths:
+                # F06/RC-07 fact drift: compare the block text against the
+                # fact value *now* in the confirmed set. Scalar facts only:
+                # a structured regimen projection cannot be checked by text
+                # matching, so it is declared as deep-unverified instead of
+                # guessed at (honest coverage beats false assurance). The
+                # comparison only fires when the block carries numbers from
+                # the fact's topic, so prose bound to a fact without
+                # restating its values is not a contradiction.
+                if not isinstance(confirmed_facts, dict):
+                    continue
+                current_value = confirmed_facts.get(path)
+                if isinstance(current_value, (dict, list)):
+                    if path not in deep_fact_paths:
+                        deep_fact_paths.append(path)
+                    continue
+                current_text = _fact_display_text(current_value)
+                if not current_text:
+                    continue
+                fact_digits = re.findall(r'\d+(?:\.\d+)?', current_text)
+                text_digits = re.findall(r'\d+(?:\.\d+)?', text)
+                if fact_digits and text_digits:
+                    if not set(fact_digits) & set(text_digits):
+                        continue  # 块不承载该事实的数值话题
+                    drifted = any(not _digit_bounded(text, digit) for digit in fact_digits)
+                elif not fact_digits:
+                    drifted = bool(_norm_fact_text(current_text)) and \
+                        _norm_fact_text(current_text) not in _norm_fact_text(text)
+                else:
+                    continue  # 事实有数字而块全文无数字：不适用数字 drift
+                if drifted and path not in stale_fact_paths and path not in missing:
+                    stale_fact_paths.append(path)
+            status = ('difference' if (missing or stale_fact_paths) else 'consistent')
             resolved = (block_id, document.revision) in resolutions
             if status == 'difference' and not resolved:
                 differences += 1
@@ -216,14 +302,30 @@ class ManuscriptDocumentService:
                 'edit_class': clue.get('edit_class'),
                 'affected_fact_paths': list(paths),
                 'missing_fact_paths': missing,
+                'stale_fact_paths': stale_fact_paths,
+                'deep_fact_paths': deep_fact_paths,
                 'status': status, 'resolved': resolved})
-        return {'schema_version': 'manuscript-reconciliation.v1',
+        checked_block_count = len(items)
+        if differences:
+            status = 'differences'
+        elif checked_block_count:
+            status = 'consistent_within_checked_scope'
+        else:
+            status = 'not_checked'
+        return {'schema_version': 'manuscript-reconciliation.v2',
             'document_revision': document.revision,
             'document_sha256': document_revision_hash(document),
+            'checked_study_revision_sha256': study_revision_sha256,
             'study_revision_sha256': study_revision_sha256,
             'study_matches_current': True,
+            'checked_block_count': checked_block_count,
+            'content_block_count': content_block_count,
+            'legacy_resolution_count': legacy_resolutions,
             'items': items, 'differences': differences,
-            'status': 'pending' if not clues else ('differences' if differences else 'consistent')}
+            'coverage_note': ('机器核对仅覆盖有编辑线索的章节；'
+                f'已核对 {checked_block_count}/{content_block_count} 个内容块，'
+                '其余内容未经机器核对，不因本次结果被视为一致。'),
+            'status': status}
 
     def _resolve_intent(self, project_id, study_id, intent):
         return hashlib.sha256(canonical_json([project_id, study_id, 'manuscript-reconcile',
@@ -254,6 +356,9 @@ class ManuscriptDocumentService:
                 'semantic_block_id': intent.get('semantic_block_id'),
                 'decision': intent.get('decision', 'accepted'),
                 'document_revision': current.revision,
+                # F06/RC-08: the acknowledgement binds to the study version it
+                # was given on; a later study change reopens the difference.
+                'study_revision_sha256': intent.get('study_revision_sha256'),
                 'acceptance_scope': 'working_draft_only'}
             # A resolution changes no document content: append the event to the
             # stream only — the document CAS stays untouched.

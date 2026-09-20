@@ -440,8 +440,15 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                                body: ReconciliationResolveRequest):
         """Acknowledge a difference for the current document revision only."""
         def execute():
-            return documents.resolve_reconciliation(project_id, study_definition_id,
-                body.model_dump(mode='json'))
+            current = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if current.definition is None:
+                raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+            intent = body.model_dump(mode='json')
+            # F06: the acknowledgement binds to the study version it was
+            # given on — a later study change reopens the difference.
+            intent['study_revision_sha256'] = current.revision_sha256
+            return documents.resolve_reconciliation(project_id, study_definition_id, intent)
         return _safe_call(lambda: checked(execute))
 
     class ObjectRevisionRequest(BaseModel):

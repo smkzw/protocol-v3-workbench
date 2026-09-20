@@ -177,3 +177,23 @@ def edit_intent_sha256(project_id: str, document_id: str, *, operation_id: str,
                        expected_revision: int, edits: list[dict]) -> str:
     return hashlib.sha256(canonical_json([project_id, document_id, operation_id,
         expected_revision, edits]).encode()).hexdigest()
+
+
+def _fact_display_text(value) -> str:
+    """Flatten a confirmed-fact value (str | number | list | dict) to text."""
+    if value is None:
+        return ''
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, (list, tuple)):
+        return '；'.join(filter(None, (_fact_display_text(item) for item in value)))
+    if isinstance(value, Mapping):
+        return '；'.join(filter(None, (_fact_display_text(item) for item in value.values())))
+    return str(value)
+
+
+def _norm_fact_text(text: str) -> str:
+    """Whitespace/punctuation-insensitive comparison key for fact drift."""
+    return ''.join(char for char in (text or '').strip() if char.isalnum())

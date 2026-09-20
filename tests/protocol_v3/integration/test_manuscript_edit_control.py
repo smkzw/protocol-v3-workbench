@@ -235,7 +235,7 @@ def test_free_edit_saves_fact_edits_with_reconciliation_clues(saved_manuscript, 
     # 6) Snapshot-bound reconciliation (T09/A18): the saved dose edit is a
     # visible difference against the confirmed facts.
     view = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
-    assert view['schema_version'] == 'manuscript-reconciliation.v1'
+    assert view['schema_version'] == 'manuscript-reconciliation.v2'
     assert view['document_revision'] == 3 and view['status'] == 'differences'
     design_item = next(item for item in view['items']
                        if item['semantic_block_id'] == 'blk:design')
@@ -251,7 +251,7 @@ def test_free_edit_saves_fact_edits_with_reconciliation_clues(saved_manuscript, 
         'expected_revision': 3, 'semantic_block_id': 'blk:design', 'decision': 'accepted'})
     assert replay_ack['replayed'] is True
     resolved_view = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
-    assert resolved_view['status'] == 'consistent'
+    assert resolved_view['status'] == 'consistent_within_checked_scope'
     assert resolved_view['differences'] == 0
     # 8) A later edit opens a new revision: the revision-3 acknowledgement
     # must not mark the new difference clean (A11), and restoring the
@@ -265,7 +265,7 @@ def test_free_edit_saves_fact_edits_with_reconciliation_clues(saved_manuscript, 
                      '本研究采用随机双盲设计，先给予200mg负荷剂量，随后每2周一次100mg维持，每21天评估为一个治疗周期。')
     assert restored['document']['revision'] == 5
     closed = service.reconciliation(PROJECT, SD_ID, facts, study_revision_sha256='sha:test')
-    assert closed['status'] == 'consistent', 'prose carrying every confirmed value closes it'
+    assert closed['status'] == 'consistent_within_checked_scope', 'prose carrying every confirmed value closes it'
 
 
 def test_object_revision_is_scoped_anchored_and_undoable(saved_manuscript, tmp_path):
