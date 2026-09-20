@@ -1653,3 +1653,22 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 
 ### 接手Agent注意
 5285/5186环境运行中（API代码=f0a9687+，前端=vite最新），DeepSeek key已失效需用cms-router通道（已配置）。第九轮r9 prompts已就绪。接手后先解决seed-generate dispatch问题再派测试。
+
+## 2026-09-20 22:30 seed-generate dispatch_exception 根因深挖进展
+
+**已确认**：所有 23 个 seed-generate dispatch 都是 `dispatch_exception` → `unknown_outcome`。transport_adapter 抛出了未预期的异常。
+
+**已排除**：
+- OmniRoute 网关：小请求 0.5s 通过 ✅
+- Direct AI 调用（curl 等量 payload）：1.2s 通过 ✅
+- WORKBENCH_PROTOCOL_V3_AI_ENDPOINT/KEY 环境变量：已确认设置 ✅
+
+**仍需排查**：
+1. build_deepseek_api_adapter 内部 env 读取时机 vs 调用方（5285 API 进程）env 传递
+2. zhipu_api transport 中 urllib 超时行为（600s 超时是否太长导致后台任务被系统杀掉）
+3. seed_product 的 `prepare` 函数在 graph node 执行时的完整调用链
+
+**建议下一步**：
+1. 在 build_deepseek_api_adapter 的 dispatch 异常 catch 块中添加 stderr 日志输出
+2. 或者用 `WORKBENCH_PROTOCOL_V3_AI_TIMEOUT_SECONDS=120` 缩短超时以快速失败
+3. 或者用 strace/dtrace 跟踪 5285 API 进程的 HTTP 出站连接
