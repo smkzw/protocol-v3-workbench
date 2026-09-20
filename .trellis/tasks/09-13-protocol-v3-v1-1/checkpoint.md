@@ -1530,3 +1530,14 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **subagent通道**：仍reasoning-level-missing（ZCode运行时配置要求为账号选择思考档位——工具参数无法绕过）。tester4继续zai/glm-5.2兜底；**需owner在ZCode设置选择思考档位后恢复指定矩阵**。
 
 **第七轮派发（12:30，清洁空间三次重置cleared_1223，前后端同事务重启带flag）**：慢性乙型肝炎II期入口A（合成药H，48周）/晚期胃癌II期入口B（合成药G CLDN18.2 ADC，ORR）/特发性肺纤维化II期盲测+OCR（合成药D）/多发性骨髓瘤II期自选交叉（合成药K BCMA ADC）。四模型矩阵同前。EXIT轮询已挂。
+
+## 2026-09-20 14:20 第七轮聚合（新P0已修 793ad41）+ 第八轮派发
+
+**第七轮结果**：tester1（HBV入口A）EXIT=OK；tester2（胃癌入口B）端到端走通（入口B→整理→确认→初稿→保存→导出→Office编辑，61点击/53分钟；报告体再次截断=omp --no-session输出截断，证据齐全于/tmp/t17_tester2/）；tester4（骨髓瘤自选）EXIT=OK——**(a)文献引用首次PASS**（编辑器内插入引文"(Palumbo, A, 2026)"+书目自动生成；**greenfield文献栏修复dd71c70生效**）、**(b)目录首次PASS**（119条dot-leader+页码）；(c)流程图诚实占位未生成。tester3（IPF盲测）EXIT=BLOCKED报**新P0**。
+- **新P0（已修 793ad41）**：生成完整初稿在7/111章永久停止（模型调用400致一章failed→stopped语义锁死全局→104章冻结无任何恢复入口）。修=①失败章保持can_resume=True不再触发全局停止②resume循环一章失败continue不break（章节独立）③UI blocked状态新增"继续写作（重试未完成的章节）"按钮（重跑恢复effect→幂等start→服务端续写）。
+- tester3反拟合全阴性（生成文本0禁语，仅下拉列表环境项目名1次）。
+- P1-1（已记录）：写作历史面板直出内部ID（chapter-sources:*/manuscript-draft:*）——消息卫生族待修。
+- P1-D5（tester2/4印证）：Office编辑器内引用与目录在docx导出中丢失（编辑器HTML引文体系与导出引擎未桥接）——较大改动列入下一批。
+- (c)研究流程图：语义稿诚实占位（【待判定】），两轮生成未覆盖——流程图生成层待实现。
+
+**第八轮派发（14:15，清洁空间四次重置cleared_1223后的新重置，前后端同事务重启带flag）**：COPD II期入口A（合成药M2 PDE3/4，24周FEV1谷值）/SLE II期入口B（合成药U2 TYK2，52周SRI-4）/AML II期盲测+OCR（合成药V2 FLT3）/白癜风II期自选交叉（合成药R2外用JAK软膏）。四模型矩阵同前，8进程存活。
