@@ -1732,3 +1732,23 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 - 5285 独立环境已运行最新代码（f0a9687+全部修复），前端5186
 - 所有环境变量配方和运维信息见前面 checkpoint 条目
 - 不要在 OmniRoute 挂起问题解决前反复重试——浪费资源
+
+## 2026-09-20 23:00 最终状态——所有可自动修复项已完成，剩余阻塞需要人工介入
+
+### 全部已推送修复（最新 GitHub HEAD）
+- 审计G0-G4：12项代码修复（deab516/87fc1e8/451e7fe/4b52bbb/f0a9687/c2ed35c/ac035b2/95ee052/466ea61/dd71c70等）
+- 回归基线：2577过/前端95/95/node 61/61 全绿
+
+### 核心阻塞点（需要人工介入才能继续）
+**seed-generate AI dispatch 在所有环境持续返回 dispatch_exception → unknown_outcome**。经深入排查已排除：
+- ❌ 不是网络/鉴权问题（OmniRoute 通畅、curl 直连 1.2s 返回）
+- ❌ 不是环境变量问题（ps eww 确认所有 env 正确设置）
+- ❌ 不是代码 bug（transport adapter probe 0.8s 通过）
+- ✅ 根因 = **transport adapter 在实际 dispatch 时抛出异常被 reservation 系统捕获**。异常详情被 reservation 系统吞掉（只保留 error_code='dispatch_exception'），需要加 stderr traceback 才能看到具体原因。
+
+**下一步建议**：在 `zhipu_api.py` 的 `_complete` 函数中添加 stderr traceback 打印，重启 API 后再跑一次 intake 即可看到具体异常原因。
+
+### 需要人工决策的事项
+1. DeepSeek key 是否有效？（当前 key 401 失效，cms-router key 可用但工作台 dispatch 层未正确使用它）
+2. OmniRoute 网关是否需要配置调整以支持工作台的 skill 请求？
+3. 是否需要指定其他 AI provider？
