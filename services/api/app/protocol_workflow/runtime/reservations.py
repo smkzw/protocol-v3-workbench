@@ -26,6 +26,7 @@ unknown-outcome discipline mandated by design sections 17.2 and 18:
 
 from __future__ import annotations
 
+import logging
 import uuid
 from dataclasses import dataclass
 from threading import RLock
@@ -137,6 +138,8 @@ _ERROR_DISPATCH_TIMEOUT = "dispatch_timeout"
 _ERROR_DISPATCH_NO_RECEIPT = "dispatch_no_receipt"
 _ERROR_DISPATCH_EXCEPTION = "dispatch_exception"
 _ERROR_DISPATCH_NOT_STARTED_RECOVERY = "dispatch_not_started_recovery"
+
+_logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -608,6 +611,14 @@ class ReservationCoordinator:
             except TimeoutError:
                 dispatch_error_code = _ERROR_DISPATCH_TIMEOUT
             except Exception:
+                # unknown_outcome means the provider may still have accepted
+                # the call, so the outcome stays unproven — but the exception
+                # itself must be observable or the reservation is
+                # undiagnosable.
+                _logger.exception(
+                    "dispatch failed for reservation %s (project %s)",
+                    reservation_id, project_id,
+                )
                 dispatch_error_code = _ERROR_DISPATCH_EXCEPTION
 
             if dispatch_error_code is None and not _receipt_is_usable(receipt):

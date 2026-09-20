@@ -1357,6 +1357,16 @@ class HarnessDispatcher:
         #    dispatch proceeds without a lease.
         session_id = request.provider_session_id
 
+        # Deployment-level gateways (OmniRoute key pools) may rewrite the
+        # response ``model`` field.  An adapter that explicitly declares its
+        # expected exit identity (``expected_response_model``) has that
+        # declaration validated instead of the request model.  Receipts still
+        # record the API-observed identity verbatim; without a declaration
+        # the strict request-model equality is unchanged.
+        expected_model = (
+            getattr(adapter, "expected_response_model", None) or request.model
+        )
+
         if request.role_kind in _GATE_ROLE_KINDS:
             return self._dispatch_gated(
                 request=request,
@@ -1366,7 +1376,7 @@ class HarnessDispatcher:
                 session_id=session_id,
                 expected_output_schema=request.output_schema_ref,
                 expected_provider=request.provider,
-                expected_model=request.model,
+                expected_model=expected_model,
             )
 
         # Non-gated dispatch (LLM, ocr_translation_support).
@@ -1377,7 +1387,7 @@ class HarnessDispatcher:
             session_id=session_id,
             expected_output_schema=request.output_schema_ref,
             expected_provider=request.provider,
-            expected_model=request.model,
+            expected_model=expected_model,
         )
 
     # ------------------------------------------------------------------

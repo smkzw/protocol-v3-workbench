@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import urllib.error
 import urllib.request
 from collections.abc import Callable
@@ -356,7 +357,8 @@ def build_zhipu_api_adapter(
         try:
             parsed = _complete(body)
             response_id, observed_model, _ = _validated_completion(
-                parsed, requested_model=model
+                parsed, requested_model=model,
+                expected_response_model_override=expected_response_model_override,
             )
         except ZhipuTransportError as exc:
             return ZhipuProbeReceipt(
@@ -385,4 +387,13 @@ def build_zhipu_api_adapter(
         probe_fn=_probe,
     )
     adapter.probe_state = probe_state  # type: ignore[attr-defined]
+    # Deployment-level gateway declaration (OmniRoute 等网关会重写响应 model
+    # 字段)。Harness 回执身份校验优先采用该声明，回执仍如实记录 API 观察
+    # 身份；未声明时保持 request.model 严格相等。
+    resolved_override = (
+        os.environ.get("WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip()
+        or (expected_response_model_override or "")
+    ).strip()
+    if resolved_override:
+        adapter.expected_response_model = resolved_override  # type: ignore[attr-defined]
     return adapter

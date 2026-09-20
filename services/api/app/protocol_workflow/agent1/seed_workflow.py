@@ -95,8 +95,13 @@ def build_seed_runtime(*, project_id, uow_factory, reservation_repository_factor
         result = dispatcher.dispatch(request=harness_request, adapter=adapter)
         if not result.success or result.receipt is None:
             # An unproven provider outcome stays under existing reconciliation;
-            # this service never repeats a call or invents a receipt.
-            raise RuntimeError(result.error_code or 'seed_dispatch_failed')
+            # this service never repeats a call or invents a receipt.  The
+            # harness error_message (transport exception text) must survive:
+            # dropping it made unknown_outcome reservations undiagnosable.
+            raise RuntimeError(
+                f"{result.error_code or 'seed_dispatch_failed'}: "
+                f"{result.error_message or 'no harness error message'}"
+            )
         receipt = result.receipt
         return ConfiguredNodeServiceResult(
             payload={'artifact_ref': receipt.output_artifact_ref, 'output_sha256': receipt.output_sha256},

@@ -42,11 +42,24 @@ def build_deepseek_api_adapter(
     injected openers for tests) is inherited unchanged.  The transport error
     strings carry the deepseek label; receipts carry the API-observed identity.
     """
+    # 部署级覆盖必须三者同源生效：端点、凭证、出口模型声明。此前
+    # KEY/EXPECTED_MODEL 已实现而 ENDPOINT/MODEL 缺失，导致网关凭证被
+    # 发往直连端点（401→probe_failed→unknown_outcome 且不可诊断）。
+    endpoint_override = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_ENDPOINT", "").strip()
+    if endpoint_override:
+        endpoint = endpoint_override
+    model_override = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_MODEL", "").strip()
+    if model_override:
+        model = model_override
     key_override = os.environ.get("WORKBENCH_PROTOCOL_V3_AI_KEY", "").strip()
     if key_override:
         credential_resolver = lambda: key_override  # noqa: E731 — 部署级覆盖
     expected_model = os.environ.get(
-        "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip() or None
+        "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip()
+    if expected_model:
+        expected_response_model_override = expected_model
 
     return build_zhipu_api_adapter(
         model=model,
@@ -54,6 +67,6 @@ def build_deepseek_api_adapter(
         provider_label="deepseek",
         credential_resolver=credential_resolver,
         endpoint=endpoint,
-        expected_response_model_override=expected_model,
+        expected_response_model_override=expected_response_model_override,
         **kwargs,
     )

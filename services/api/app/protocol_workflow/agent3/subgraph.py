@@ -78,7 +78,10 @@ def build_chapter_draft_runtime(*, project_id, uow_factory, reservation_reposito
             artifacts=tuple(sorted(artifacts, key=lambda artifact: artifact.sha256)), selected_region=role_entry.target_profile.regions[0])
         result = dispatcher.dispatch(request=harness_request, adapter=adapter)
         if not result.success or result.receipt is None:
-            raise RuntimeError(result.error_code or "chapter_dispatch_failed")
+            raise RuntimeError(
+                f"{result.error_code or 'chapter_dispatch_failed'}: "
+                f"{result.error_message or 'no harness error message'}"
+            )
         receipt = result.receipt
         return ConfiguredNodeServiceResult(payload={"artifact_ref": receipt.output_artifact_ref,
             "output_sha256": receipt.output_sha256}, provider_session_id=receipt.provider_session_id)
