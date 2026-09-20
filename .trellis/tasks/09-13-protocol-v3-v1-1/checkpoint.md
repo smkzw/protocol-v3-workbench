@@ -1582,3 +1582,13 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **本会话就此停止一切环境操作（重启/清库/派发），避免与并行进程互相破坏。**
 
 **已交付并推送（5afa323→c2ed35c→3ee7db1）**：cms-router 切换（settings+role_bindings+env 配方：WORKBENCH_AI_PROVIDER=openai_compatible/BASE_URL=http://localhost:20128/v1/MODEL=deepseek-flash/API_KEY=CMS_ROUTER_API_KEY，key在~/.omp/agent/.env；chat实测通过）；初稿失败每章隔离；probe 验证方法论。cms-router 切换**未被并行进程的 19:43 重启保留的风险**：若对方未带相同 env 重启，AI 通道会回退直连旧 deepseek key（已失效401）——接手方需核对 ai_provider_settings.json active_profile=independent_ai__cms_router_deepseek_flash 且 API env 含 CMS_ROUTER_API_KEY。
+
+## 2026-09-20 20:20 独立环境（5285/5186）AI 链验证：小请求通、大请求挂起——需 OmniRoute 池确认
+
+**独立写作环境已搭**：API 5285 / 前端 5186 / runtime=e2e_runtime_mw（AI三件套含cms-router profile）/ DB=e2e_test_mw.sqlite——与医学监查子系统（sess_a23392d7，共享 e2e_runtime+5275）完全隔离，可并行。
+
+**AI 通道验证结果**：cms-router（OmniRoute :20128，key=CMS_ROUTER_API_KEY 在 ~/.omp/agent/.env）deepseek-flash **小请求秒回**（chat 实测通过）；但工作台 research-intake 的**大体量 prompt dispatch 后 >4 分钟无 node_result**（event_stream 仅3条：started/checkpoint/dispatch，无result）——上游池对长请求疑似限速/排队/挂起。此前第六轮"导入卡死270s+"同族。
+
+**需owner确认**：OmniRoute 池（员工key轮转）是否限制长请求/大payload？或提供一个支持长上下文大请求的稳定直连key。确认后无需改代码，仅换 env 重启即可。
+
+**本轮已完成**：per-chapter失败隔离（初稿停滞修复）；独立环境搭建；cms-router接入全链配置。等待AI大请求能力确认后即可派发第九轮。
