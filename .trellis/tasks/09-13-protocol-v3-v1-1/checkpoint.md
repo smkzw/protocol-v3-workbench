@@ -1452,3 +1452,20 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **环境修复（06:47）**：清掉全部本仓库 vite 实例（含占 5175 的残留 strictPort 实例），以 `VITE_API_PROXY_TARGET=http://127.0.0.1:5275 npm exec vite -- --port 5176 --strictPort --host 127.0.0.1` 重启；浏览器实测版本门禁通过（仅剩 monitoring_principal_unavailable 503 预期行为，可正常进入医学写作）。
 
 **第三轮重派（06:52，同场景同模型矩阵）**：/tmp/t17_tester1_psoriasis_r3.log（gemini-3.8-flash）/ tester2_ra_r3.log（grok-4.5）/ tester3_mash_r3.log（opencode-go/deepseek-flash）/ tester4_open_r3.log（deepseek-v4-pro），EXIT=标记命令尾部追加，四进程确认存活。
+
+## 2026-09-20 08:10 资深程序员审计包整改：G0-G3+G4部分完成（6提交），重派第四轮测试
+
+**审计包**（/Users/smkzw/Downloads/protocol-v3-audit-current.zip，基线e3690de）：16 findings（F01-F16）+ 整改指令G0-G6。核心裁定：方向部分纠正，但"跑通一次"≠"满足产品需求"；优先级=交付快照→Office当前稿→核对诚实→surgical范围→缺口/文献→双入口验收；不推倒重写。
+
+**已完成提交（全部红转绿，格式按指令）**：
+- c77d023 G0交付快照（DELIVERY_SNAPSHOT_G0.md：HEAD/dirty/GenOffice HEAD/依赖锁/迁移版本/测试库范围+F系列新旧核验状态）。
+- e16f027 G1（F01-F05/F12/F02部分）：Office当前稿闭环——content端点X-Artifact-Revision、保存条件写base_artifact_revision（409带latest回执=OfficeWorkingCopyConflictError）、同operation_id恢复5xx未知、研究基线双记录（opened vs current_observed，旧稿不贴新版本）、真实DOCX门（zipfile+word/document.xml，假PK拒绝）、shim能力矩阵（未知能力typed unsupported不伪造ok:true）、Frame打开=最新快照/下载同源/iframe会话冻结/关闭二次确认。测试test_office_working_copy_closure.py×4。
+- f5f388c G2（F06）：reconciliation v2——confirmed_facts真正使用（块绑定=clue∪块fact_paths，标量fact数字/文本drift→stale_fact_paths；结构化投影声明deep_fact_paths不猜）；resolve绑定study_revision_sha256（S1确认不关闭S2差异；legacy计数）；状态=differences/consistent_within_checked_scope/not_checked+checked/content_block_count+coverage_note——"未核对"不再可渲染成"已验证一致"。测试test_reconciliation_honest_binding.py×5（RC-06/07/08全覆盖）。
+- 8024c50 G3（F07/F08）：patch_object子范围约束（table_cell/text_range；mask校验非授权区域逐字保留；prepare拒target/块类型不匹配）；意图身份排除expected_content_sha256+prepare持久化冻结意图事件+GET status端点（completed/running_or_unknown/unknown——404盲重试消灭）。测试test_object_revision_scope_and_recovery.py×5。
+- 95ee052 G4部分（F10/F11/F16）：文控值只来自确认事实（申办者/编号/日期不再硬编码/哈希造号/浮动日期，未确认=显式空白）；REF转换保留"见"与标点（只换表N为域）；导出临时工件项目作用域+内容寻址（并发覆盖消灭）。导出26测试全过。
+
+**回归基线**：2577 passed / 2 failed（HEAD历史遗留，与本轮无关）+前端95/95+61/61（G1时点验证）。
+
+**未完成（下一窗口）**：F09缺口账本闭环（版本绑定锚点+逐项补写+AI局部补写不回退44字段）、F13文献功能（先追踪既有文献模块复用，验证引文ID/重编号/列表联动）、F15构建身份可复现（G0快照是手动版，需runtime端点化）、F14双入口同版本验收证据（本轮重派测试=证据采集）、F02渲染器侧能力入口隐藏（需改genoffice渲染器源码）。
+
+**运维**：前后端已同事务重启（08:05）；第四轮测试已重派（r4_tester{1..4}.log，setsid脱离会话，EXIT=标记）：银屑病入口A/RA入口B/MASH盲测/自选领域，模型矩阵同前轮。
