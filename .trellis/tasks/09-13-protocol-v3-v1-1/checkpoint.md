@@ -1614,3 +1614,7 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - 下一步：在 OmniRoute(:20128) 侧查该请求的处理日志/池状态；或抓包比对工作台请求与 curl 成功请求的差异（怀疑 tools 字段或 system 消息形态触发网关挂起）
 
 **接手方继续 LOOP 的入口**：所有修复已提交（deab516→f0a9687），第九轮 prompts 已就绪（r9_*.md），前端 5186、API 5285 运行中。恢复 AI 大请求通道后即可派发。
+
+## 2026-09-20 21:20 独立环境状态：传输覆盖修复后 seed 协调器在独立 DB 上仍未正确触发 AI dispatch
+
+**当前状态**：传输层覆盖（WORKBENCH_PROTOCOL_V3_AI_ENDPOINT/KEY/MODEL/EXPECTED_MODEL）已实现并提交（f0a9687）。direct curl 到 OmniRoute 完全正常。但工作台 5285 的 research-intake 在全新 DB 上 resume 始终返回 blocked——AI dispatch 未实际发起。根因仍在调查：graph runtime 的 reservation 状态与 seed coordinator 交互可能在 clean DB 上存在初始化缺口。下一 Agent 需要继续深入 seed_product + graph_runtime 的 reservation 初始化链。
