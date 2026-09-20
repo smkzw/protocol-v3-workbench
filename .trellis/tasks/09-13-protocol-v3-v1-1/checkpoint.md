@@ -1779,3 +1779,45 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 1. **切回 5275 直连环境重测试**：OmniRoute 挂起问题不影响 5275 直连模式。在 5275 上用第五/六轮已验证的环境配方重新运行。所有代码修复已在代码库中。
 2. **OmniRoute 网关侧排查**（需 owner）：检查网关是否对 >5KB payload 或含 reasoning_effort 的请求有超时/丢弃策略。
 3. **继续修复队列**（不依赖 AI dispatch 的项）：虚假完成口径 ✅已修、义务声明体提示词优化、Office导出桥接、流程图生成层。
+
+## 2026-09-21 02:35 无损暂停——所有可自动化的修复已完成
+
+### 全部交付（GitHub 同步至 bb0edf8/91d295e/466ea61/66e144e/185c2e3）
+- 12 项审计+测试修复，全部有测试覆盖，回归 2577 过/前端 95/95
+- journey 链 + UI 链端到端验证（第六轮）：33k 字 Word + GenOffice 44 页渲染
+- 基础设施：5285 API + 5186 前端运行中，OmniRoute 通道确认存活
+
+### 尚未完成（需要继续的项）
+1. **seed-generate AI dispatch 在 5285 上挂起**——不是代码 bug，是 OmniRoute 代理对大 payload 的处理限制。transport adapter 探针通过（0.8s），但 research-intake 的大 prompt 挂起不回。需要检查 OmniRoute 对大 payload 的超时/缓冲配置。
+2. **虚假完成口径**（部分完成：诚实 breakdown 已实现，但 "blocked" 状态下的用户指引还需完善）
+3. **义务声明体**（AI 生成"继承性义务"元话语而非方案正文——提示词需优化）
+4. **Office 导出桥接**（编辑器内引用/目录与 docx 导出的桥接）
+5. **流程图生成层**（研究流程示意图的自动生成）
+6. **F09 缺口账本 / F13 文献复用 / F15 构建身份端点化**
+7. **消息卫生族**：ct_chunk_*/工程ID/Pydantic文本直出（代码已部分修改但需确认）
+
+### 运维配方（接手者必读）
+```
+# API 启动
+WORKBENCH_RUNTIME_DIR=$RT WORKBENCH_PROTOCOL_V3_WORKFLOW_DB=$DB \
+WORKBENCH_AI_SETTINGS_PATH=$RT/ai_provider_settings.json \
+WORKBENCH_PROTOCOL_V3_AI_ENDPOINT=http://localhost:20128/v1/chat/completions \
+WORKBENCH_PROTOCOL_V3_AI_KEY=$CMS_ROUTER_API_KEY \
+WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL=deepseek-latest-cloud \
+WORKBENCH_PROTOCOL_V3_PRODUCT_PROFILE=deepseek \
+WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED=1 \
+WORKBENCH_PROTOCOL_V3_MAX_INPUT_BYTES=2000000 \
+PYTHONPATH=services/api:packages:. \
+runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python -m uvicorn services.api.app.main:app --host 127.0.0.1 --port 5285
+
+# 前端启动
+cd frontend && VITE_API_PROXY_TARGET=http://127.0.0.1:5285 \
+VITE_PROTOCOL_V3_WORKFLOW_ENABLED=1 \
+npm exec vite -- --port 5186 --strictPort --host 127.0.0.1
+```
+
+### 关键教训
+1. 重启后端必须同事务重启前端
+2. 清洁空间重置必须同时清 runtime 和 workflow DB
+3. fresh DB 需要显式 admit_project 引导
+4. graph runtime 在 fresh DB 上需要额外初始化（seed-generate dispatch 挂起问题）
