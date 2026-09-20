@@ -553,7 +553,12 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
         处理完成后即可准备新稿；原稿与已保存版本不受影响。</p>}
     </>}
     {packet && <HistoryVersions storageKey={key} onRestore={entry => { remember(entry); setJob(null); setSavedDocument(null); setSourceState(null); setRefresh(v => v + 1); }} busy={busy}/>}
-    {job?.complete_candidate && <p role="status">全部适用章节初稿已生成，可开始逐章阅读核对。</p>}
+    {job?.complete_candidate && (() => {
+      const chapters = job?.chapters || [];
+      const written = chapters.filter(c => c.status === 'needs_content_review' && (c.validation || {}).valid).length;
+      const gaps = chapters.filter(c => c.status === 'kept_as_gap').length;
+      return <p role="status">初稿已生成：{written} 个章节已完成撰写{gaps > 0 ? `，另有 ${gaps} 个章节因研究信息尚未确认而保留为显式缺口（确认相关设计后可补充撰写）` : ''}。可开始逐章阅读核对。</p>;
+    })()}
     {job?.complete_candidate && !savedDocument && <button type="button" className="kz-manuscript-primary"
       disabled={busy || !actorId} onClick={saveCompleteDraft}>{packet?.saveIntent ? '核对并完成原稿保存' : '保存完整初稿'}</button>}
     {savedDocument && <p role="status">完整工作初稿已保存，第 {savedDocument.document.revision} 版。
