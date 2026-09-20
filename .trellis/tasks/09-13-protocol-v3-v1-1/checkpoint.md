@@ -1555,3 +1555,11 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **LOOP状态**：第六轮3份+第七轮4份+第八轮3份报告=10份实测证据；P0修了4个（override崩溃/入口A门禁/初稿停滞UI面/虚假完成待修），深层2项（AI生成停滞、导入链）在途。会商机制运转正常（conf2高质量意见书）。
 
 **第八轮补记（14:59）**：tester4（白癜风/ glm-5.2）派发失败——omp 返回 `404 Combo has no executable targets (model_not_found)`，zai/glm-5.2 组合在 omp 侧已失效。下窗口重派该场景时改用可用模型（候选：opencode-go/glm-5.2 或 deepseek-v4-flash；派发前 `omp models` 探测）。至此第八轮 3/4 有效报告，白癜风场景待下窗口补测。tester4 runner进程已随模型失效退出，无残留。
+
+## 2026-09-20 16:50 停滞根因深挖 + 初稿失败隔离修复 + 第九轮派发（真·清洁空间）
+
+**重大取证发现：历次"清洁空间重置"从未生效**——4 个 cleared_*/e2e_test.sqlite 全部 0 字节（mv 走的是 0 字节影子文件），38MB 真库（八轮 17 个项目全历史）一直在原路径被 API 持续写入。tester3"项目下拉14个项目"由此完全解释。本轮改用严格流程：杀净进程（lsof 验证 0）→ cp 备份 38MB 真库（e2e_test.sqlite.round8-backup-38MB）→ mv 真库进 cleared_1824 → **ls 验证原路径 GONE** → 重启空库。
+
+**初稿停滞根因与修复（代码提交见下）**：e2e_test.sqlite 事件流显示 tester3 AML 项目仅 start 了 8 个 chapter-draft 流（111 章计划）——resume 循环在**单章模型调用 400 时异常冒泡崩掉整个 resume**（无 per-chapter 隔离），后续 103 章永远没有 start 机会。修复=resume 循环每章 try/except 隔离（一章失败打 stderr 诊断并继续其余章节）。回归 2577 过/2 历史遗留。
+
+**第九轮派发（16:50，真清洁空间）**：矩阵按 owner 更新——tester1=opencode-go/muse-spark-1.3-contributor(max) 慢性淋巴细胞白血病入口A（合成药C2 BTK口服）/ tester2=gemini-3.8-flash(high) 慢性冠脉综合征入口B（合成药X2）/ tester3=cursor-grok-4.6(high) 功能性便秘盲测+OCR（合成药P2）/ tester4=opencode-go/deepseek-v4.1-flash(max) 镰状细胞病自选交叉（合成药G2）。8进程确认存活。probe 项目已从 allowlist 移除。

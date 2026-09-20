@@ -116,19 +116,30 @@ class ManuscriptDraftCoordinator:
         owner = self._owner(prepared)
         # Sequential within a single pinned request: healthy active or unknown
         # children keep their identity and are not re-dispatched by another owner.
+        # 一章的模型调用异常（如上游400）只标记该章失败并继续其余章节——
+        # 异常冒泡会让整个resume崩溃，剩余章节永远没有派发机会（round-7 P0）。
+        import sys as _sys
         for request in prepared.chapter_requests():
             child_id = owner.run_id(request)
             try:
-                outcome = owner.read(child_id)
-            except GraphRunError as exc:
-                if exc.code != 'graph_run_unknown':
-                    raise
-                owner.start(request)
-                outcome = owner.read(child_id)
-            if outcome['can_resume']:
-                outcome = owner.resume(child_id)
-            # 一章失败（模型调用错误等）不阻塞其余章节：章节相互独立，
-            # 失败章在 read() 里标记可重试，用户可继续触发下一轮 resume。
+                try:
+                    outcome = owner.read(child_id)
+                except GraphRunError as exc:
+                    if exc.code != 'graph_run_unknown':
+                        raise
+                    owner.start(request)
+                    outcome = owner.read(child_id)
+                if outcome['can_resume']:
+                    outcome = owner.resume(child_id)
+                if outcome['status'] != 'needs_content_review':
+                    print('MANUSCRIPT CHAPTER INCOMPLETE:', request.to_payload()
+                        ['chapter_input']['node_id'], outcome['status'],
+                        str((outcome.get('validation') or {}).get('errors'))[:200],
+                        file=_sys.stderr)
+            except Exception as exc:  # noqa: BLE001 — 一章失败不拖垮全稿
+                print('MANUSCRIPT CHAPTER FAILED:', request.to_payload()
+                    ['chapter_input']['node_id'], type(exc).__name__, str(exc)[:300],
+                    file=_sys.stderr)
         return self.read(run_id)
 
 
