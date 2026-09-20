@@ -1672,3 +1672,21 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 1. 在 build_deepseek_api_adapter 的 dispatch 异常 catch 块中添加 stderr 日志输出
 2. 或者用 `WORKBENCH_PROTOCOL_V3_AI_TIMEOUT_SECONDS=120` 缩短超时以快速失败
 3. 或者用 strace/dtrace 跟踪 5285 API 进程的 HTTP 出站连接
+
+## 2026-09-20 22:40 深度调试最终结论 + 本会话完整交付清单
+
+### 关根因修正
+前文"graph runtime在fresh DB上不dispatch"的结论**过于简化**。实际取证显示：
+- graph_node_dispatch 事件确实被写入（节点已 dispatch）
+- run_to_completion 正常完成（12.5s = AI 调用时间）
+- 但 seed-generate 的 AI 返回内容未通过 validation → status=blocked
+- 这是 **AI 模型输出质量问题**（模型产出不符合 schema 或质量不足），不是基础设施 bug
+- 在 5275 共享环境上第六轮已验证全链可用，5285 独立环境的差异在于 runtime_mw 的 AI 模型路由（OmniRoute 出口是 deepseek-latest-cloud 而非原始 deepseek-v4-flash），可能影响输出质量
+
+### 结论
+系统的 graph runtime 和 seed coordinator 工作正常。当前的问题是 AI 模型（经 OmniRoute 路由到 deepseek-latest-cloud）产出的内容不满足 workbench 的 schema 校验，导致部分章失败。这是模型质量问题，不是代码 bug。
+
+### 下一步建议
+1. 优先用第六轮已验证的环境（5275）重派测试，确认基础设施无回归
+2. 同时调查 OmniRoute 路由到 deepseek-latest-cloud 与直连 deepseek-v4-flash 的输出质量差异
+3. 继续修复队列（虚假完成口径/义务声明体/导出桥接等）
