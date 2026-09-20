@@ -1592,3 +1592,13 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **需owner确认**：OmniRoute 池（员工key轮转）是否限制长请求/大payload？或提供一个支持长上下文大请求的稳定直连key。确认后无需改代码，仅换 env 重启即可。
 
 **本轮已完成**：per-chapter失败隔离（初稿停滞修复）；独立环境搭建；cms-router接入全链配置。等待AI大请求能力确认后即可派发第九轮。
+
+## 2026-09-20 20:40 独立环境探针：cms-router 小请求通、工作台大请求挂起 ≥25 分钟（需 owner 确认 OmniRoute）
+
+**独立写作环境（5285/5186，runtime=e2e_runtime_mw，DB=e2e_test_mw.sqlite）AI 链验证**：
+- 直连 OmniRoute 小请求（curl chat，max_tokens=10）→ 秒回 ✅
+- 工作台 research-intake 大 payload dispatch → 事件流停在 graph_node_dispatch（seed-generate attempt 1），**>25 分钟无 node_result**，两个 run 同样表现。
+- transport REQUEST_TIMEOUT_SECONDS=600 应在 10 分钟超时——但事件流连失败记录都没有，指向 dispatch 协程挂起于更底层（OmniRoute 不回包且 urllib timeout 未触发？或超时后异常被吞）。
+- 下窗口：①用等量大 payload 直接 curl OmniRoute 复现（区分网关/上游）②查 OmniRoute(:20128) 的请求日志与池状态③必要时 REQUEST_TIMEOUT_SECONDS 降到 120 并让 HarnessDispatcher 把每次 dispatch 的失败带 error_code 回事件流。
+
+**环境事实**：5285/5186 写作专用环境与监查侧（5275/e2e_runtime）完全隔离可并行；AI 走 cms-router（key=CMS_ROUTER_API_KEY，来源 ~/.omp/agent/.env）；probe2/probe3 两个探针项目留存在 e2e_test_mw.sqlite。
