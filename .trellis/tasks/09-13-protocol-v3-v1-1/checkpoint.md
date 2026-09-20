@@ -1469,3 +1469,17 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **未完成（下一窗口）**：F09缺口账本闭环（版本绑定锚点+逐项补写+AI局部补写不回退44字段）、F13文献功能（先追踪既有文献模块复用，验证引文ID/重编号/列表联动）、F15构建身份可复现（G0快照是手动版，需runtime端点化）、F14双入口同版本验收证据（本轮重派测试=证据采集）、F02渲染器侧能力入口隐藏（需改genoffice渲染器源码）。
 
 **运维**：前后端已同事务重启（08:05）；第四轮测试已重派（r4_tester{1..4}.log，setsid脱离会话，EXIT=标记）：银屑病入口A/RA入口B/MASH盲测/自选领域，模型矩阵同前轮。
+
+## 2026-09-20 09:45 第五轮（新目标激活）：清洁空间重置 + 新重点模块测试矩阵派发
+
+**目标更新**：owner 激活测试-审阅-会商-修复 LOOP，重点模块=(a)文献引用与管理 (b)目录与图表呈现（跳转目录/表目录/图目录）(c)研究流程示意图（呈现形式与融合度，非SOA）；端到端要求真实用户路径（选题→文献下载→OCR翻译→语义理解→设计→初稿→修订→导出）；测试前必须删除全部旧项目（清洁空间）；测试者矩阵=omp三模型+主线程subagent。
+
+**已执行**：
+1. 第四轮（旧prompt）停止归档 t17_round4_interrupted/。
+2. 清洁空间重置：e2e_runtime 写作链库全部移入 cleared_0934/（user_projects/workbench_runtime/authoring_journey/greenfield/assembly_plan/durable_jobs/fact_intake/shared_corpus/synopsis_import/writing_reference/literature/source_content_validations/e2e_test + artifacts目录 + ai_task_runs.jsonl）；AI配置三件（settings/secrets/role_bindings）与medical_monitoring_*保留。前后端同事务重启（09:35），api/front 200；空库自动seed演示项目（proj_rux等出厂demo，非旧测试项目）。
+3. 第五轮 prompt（r5_*.md，均含新重点模块三项(a)(b)(c)结论表要求+端到端全步骤+EXIT标记+503已知非缺陷）：
+   - r5_tester1_as_entryA：强直性脊柱炎II期（合成药Q IL-17皮下，12周ASAS20），入口A带夹具 → google-antigravity/gemini-3.8-flash
+   - r5_tester2_mcrpc_entryB：mCRPC II期（合成药F口服AR抑制剂，24周rPFS），入口B零附件+文献检索重点 → cursor/cursor-grok-4.6
+   - r5_tester3_crc_ocr：转移性结直肠癌II期（合成药Y）盲测+OCR/翻译/语义理解重点（公开英文文献下载，失败如实记录） → opencode-go/deepseek-v4.1-flash
+   - r5_tester4_dryeye_open：干眼症II期自选领域交叉（合成药E环孢素滴眼液）→ zai/glm-5.2（主线程subagent派发因reasoning-level未配置不可用，omp zai兜底保持四模型多样性；subagent通道修复后下一轮恢复）
+4. setsid 脱离会话派发，EXIT=标记由命令尾部追加；四进程确认存活（8 omp processes）。
