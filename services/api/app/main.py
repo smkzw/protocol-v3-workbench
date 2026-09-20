@@ -8378,7 +8378,17 @@ def adopt_medical_writing_authoring_prefill_composite(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
+
+
+def _mw_journey_error_detail(exc: Exception) -> str:
+    """消息卫生（T17 P1）：pydantic 校验细节（模型名/字段路径/外部链接）
+    不进入用户界面，转换为可操作的人话；其余原样返回。"""
+    text = str(exc)
+    if "validation error for" in text or "errors.pydantic.dev" in text:
+        return ("本次提交未通过系统数据校验，页面与服务器状态可能不同步；"
+                "请刷新页面后重新操作。如重复出现，请保留页面并反馈。")
+    return text
 
 
 @app.post(
@@ -8398,7 +8408,7 @@ def preview_medical_writing_authoring_impact(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 @app.post(
@@ -8483,7 +8493,7 @@ def commit_medical_writing_authoring_stage(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 @app.post(
@@ -8518,7 +8528,7 @@ def save_medical_writing_authoring_stage_draft(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 @app.post(
@@ -8538,7 +8548,7 @@ def override_medical_writing_corpus_gate(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 @app.post(
@@ -8558,7 +8568,7 @@ def finalize_medical_writing_corpus_triage(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 def _resolve_triage_provider():
@@ -8607,7 +8617,7 @@ def create_competitor_triage_run(
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except CompetitorTriageError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
 
 @app.get(

@@ -1200,10 +1200,10 @@ class MedicalWritingResearchPipelineService:
         if status in {"review_ready", "confirmed"}:
             label = "竞品分诊已完成"
         elif active_chunk is not None:
-            object_label = (
-                f" · {current_study or current_chunk_id or '待处理研究'}"
-            )
-            label = f"正在处理竞品分块 {active_index}/{total}{object_label}"
+            # 消息卫生（T17 P1）：内部分块ID（ct_chunk_*）不进入用户界面；
+            # 仅展示人类可读的研究名称，缺失时用批次序号。
+            object_label = f" · {current_study or f'第 {active_index} 批'}"
+            label = f"正在处理竞品文献 {active_index}/{total}{object_label}"
         else:
             label = "正在等待竞品分诊结果"
         return {

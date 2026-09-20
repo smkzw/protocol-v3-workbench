@@ -2434,3 +2434,53 @@ class MedicalWritingAuthoringJourneyApiTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CarryForwardCorpusGateTests(unittest.TestCase):
+    """Round-5 P0 regression: rebuilding the gate on a fresh project (override
+    inactive) must not pass override=None to pydantic — that crashed every
+    first-step commit with a validation error surfaced to the user."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.service = MedicalWritingAuthoringJourneyService(
+            Path(self.tmpdir.name) / "authoring_journey.sqlite3"
+        )
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def test_inactive_override_is_carried_as_object_not_none(self):
+        from packages.contracts.workbench_contracts.models import (
+            MedicalWritingCorpusGate,
+            MedicalWritingCorpusGateOverride,
+        )
+        state = SimpleNamespace(
+            corpus_gate=MedicalWritingCorpusGate(
+                override=MedicalWritingCorpusGateOverride(active=False))
+        )
+        gate = self.service._carry_forward_corpus_gate(state)
+        self.assertIsInstance(gate.override, MedicalWritingCorpusGateOverride)
+        self.assertFalse(gate.override.active)
+        self.assertFalse(gate.access_permitted)
+
+    def test_active_override_keeps_access(self):
+        from packages.contracts.workbench_contracts.models import (
+            MedicalWritingCorpusGate,
+            MedicalWritingCorpusGateOverride,
+        )
+        state = SimpleNamespace(
+            corpus_gate=MedicalWritingCorpusGate(
+                override=MedicalWritingCorpusGateOverride(active=True))
+        )
+        gate = self.service._carry_forward_corpus_gate(state)
+        self.assertTrue(gate.override.active)
+        self.assertTrue(gate.access_permitted)
+
+    def test_missing_gate_defaults_to_inactive_override(self):
+        from packages.contracts.workbench_contracts.models import (
+            MedicalWritingCorpusGateOverride,
+        )
+        gate = self.service._carry_forward_corpus_gate(SimpleNamespace(corpus_gate=None))
+        self.assertIsInstance(gate.override, MedicalWritingCorpusGateOverride)
+        self.assertFalse(gate.access_permitted)

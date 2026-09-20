@@ -1275,19 +1275,19 @@ class MedicalWritingAuthoringJourneyService:
 
         Requirements-v2 R3: an active override stays valid across requirement
         changes, so the rebuilt gate keeps the writing access the override
-        already granted instead of silently re-blocking the author.
+        already granted instead of silently re-blocking the author.  The
+        override object is always carried as-is: ``None`` is not a valid
+        MedicalWritingCorpusGateOverride instance, and passing it crashed
+        every fresh-project commit at step one (round-5 P0).
         """
-        override = (
-            current.corpus_gate.override
-            if current.corpus_gate
-            and current.corpus_gate.override
-            and current.corpus_gate.override.active
-            else None
-        )
+        if current.corpus_gate is not None and current.corpus_gate.override is not None:
+            override = current.corpus_gate.override
+        else:
+            override = MedicalWritingCorpusGateOverride()
         return MedicalWritingCorpusGate(
             missing_requirements=list(self._CORPUS_REQUIREMENTS),
             override=override,
-            access_permitted=override is not None,
+            access_permitted=bool(override.active),
         )
 
     def commit_stage(
@@ -1351,16 +1351,16 @@ class MedicalWritingAuthoringJourneyService:
                 # demoted to manual candidates while the completion flag
                 # stayed true — such a formal/field-state split blocks all
                 # downstream fact-bound writing.
-                picos_states_unconfirmed = (
+                picos_states_demoted = (
                     current.study_definition is not None
                     and any(
-                        state.status not in {"confirmed", "not_applicable"}
+                        state.status in {"manual_candidate", "extracted_candidate"}
                         for path, state in current.study_definition.field_states.items()
                         if path.startswith("picos.")
                     )
                 )
                 if request.stage == "picos" and (
-                    not current.picos_complete or picos_states_unconfirmed
+                    not current.picos_complete or picos_states_demoted
                 ):
                     now = datetime.now(timezone.utc)
                     updated = current.model_copy(
