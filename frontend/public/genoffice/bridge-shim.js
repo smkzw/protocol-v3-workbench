@@ -1,11 +1,13 @@
 /**
- * GenOffice docs renderer bridge shim (T10/P3).
+ * GenOffice docs renderer bridge shim (T10/P3; audit G1 rework).
  *
  * Loaded inside the iframe BEFORE the renderer module script.  Implements the
  * slice of the Electron desktop bridge that a browser-embedded working copy
  * needs — open from the protocol-v3 workbench, save back as an immutable
- * office snapshot — and stubs everything else so the renderer boots exactly
- * as in its supported "dev renderer without the preload bridge" mode.
+ * office snapshot — and reports every other desktop capability as an explicit
+ * typed `unsupported` instead of a fake success (audit F02): pretending
+ * writeRecoveryCopy/exportPdf/password succeeded would lie to the user about
+ * durability of their document.
  *
  * Host passes parameters via the iframe query string:
  *   docUrl     absolute-path URL of the DOCX bytes to open
@@ -14,6 +16,12 @@
  *   rev        expected semantic document revision for saves
  *   sha        expected document sha256 for saves
  *   actor      actor id
+ *   studySha   study-definition baseline sha the document was opened against
+ *
+ * Save flow (audit F04): the open receipt carries the Office artifact
+ * revision (X-Artifact-Revision); each save pins it as base_artifact_revision
+ * so a second editor window cannot silently become the new head.  A 409
+ * base-conflict keeps the editor dirty and surfaces the latest version.
  */
 ;(function () {
   'use strict'
@@ -22,10 +30,14 @@
   const docName = query.get('docName') || '研究方案工作稿.docx'
   const saveUrl = query.get('saveUrl')
   const actor = query.get('actor') || 'medical_manager'
+  const studySha = query.get('sha') || ''
 
   const noop = () => {}
-  const asyncOk = async () => ({ ok: true })
   const unsubscribe = () => () => {}
+
+  // The Office working-copy revision this editor session opened against; the
+  // save receipt refreshes it so consecutive saves chain correctly.
+  let baseArtifactRevision = null
 
   function bytesToBase64(bytes) {
     let binary = ''
@@ -40,6 +52,8 @@
   async function fetchDocBytes() {
     const response = await fetch(docUrl, { credentials: 'same-origin' })
     if (!response.ok) throw new Error('doc fetch failed: ' + response.status)
+    const revisionHeader = response.headers.get('X-Artifact-Revision')
+    if (revisionHeader) baseArtifactRevision = Number(revisionHeader)
     return response.arrayBuffer()
   }
 
@@ -60,23 +74,54 @@
     }
   }
 
-  async function saveDocx(path, data) {
-    if (!saveUrl) return { ok: false, error: 'no-save-url' }
-    const response = await fetch(saveUrl, {
+  async function postSnapshot(operationId, data) {
+    return fetch(saveUrl, {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        operation_id: 'office-save:' + crypto.randomUUID(),
+        operation_id: operationId,
         actor_id: actor,
         expected_revision: Number(query.get('rev') || 0),
-        expected_document_sha256: query.get('sha') || '',
+        expected_document_sha256: studySha,
         content_base64: bytesToBase64(data),
+        base_artifact_revision: baseArtifactRevision,
+        opened_study_revision_sha256: studySha || null,
       }),
     })
-    if (response.ok) return { ok: true }
+  }
+
+  async function saveDocx(path, data) {
+    if (!saveUrl) return { ok: false, error: 'no-save-url' }
+    // One save = one operation identity. A lost receipt is recovered with the
+    // same id instead of re-posting a new snapshot (audit F04).
+    if (!saveDocx.operationId) saveDocx.operationId = 'office-save:' + crypto.randomUUID()
+    const operationId = saveDocx.operationId
+    const response = await postSnapshot(operationId, data)
+    if (response.ok) {
+      const receipt = await response.json().catch(() => ({}))
+      if (receipt.artifact_revision) baseArtifactRevision = receipt.artifact_revision
+      saveDocx.operationId = null
+      return { ok: true, snapshot: receipt }
+    }
     let detail = {}
     try { detail = await response.json() } catch { /* opaque error body */ }
+    if (response.status === 409 && detail?.detail?.code === 'manuscript_office_base_conflict') {
+      // Keep the editor dirty; the user decides how to merge with the
+      // version that arrived while they were editing.
+      const latest = detail.detail.latest_snapshot || {}
+      if (latest.artifact_revision) baseArtifactRevision = latest.artifact_revision
+      return { ok: false, conflict: true,
+        error: detail.detail.message || '另一窗口已保存新版本',
+        latest_snapshot: latest }
+    }
+    if (response.status >= 500) {
+      // Unknown outcome: keep the operation id so a retry recovers the same
+      // save instead of creating a second snapshot.
+      return { ok: false, retryable: true,
+        error: detail?.detail?.message || ('save failed: ' + response.status) }
+    }
+    saveDocx.operationId = null
     return { ok: false, error: detail?.detail?.message || ('save failed: ' + response.status) }
   }
 
@@ -93,7 +138,11 @@
     openDocxPath: openDocx,
     openDocxDecrypt: async () => ({ ok: false, reason: 'unsupported' }),
     saveDocx,
-    saveDocxAs: async (defaultName, data) => ({ ok: true, path: defaultName, ...(await saveDocx(defaultName, data)) }),
+    saveDocxAs: async (defaultName, data) => {
+      // 浏览器嵌入内"另存为"无法写本地文件系统：沿用同一保存管道并如实回执。
+      const result = await saveDocx(defaultName, data)
+      return { path: defaultName, ...result }
+    },
     saveDocxNew: async (defaultName, data) => saveDocx(defaultName, data),
     consumePendingOpenDocx: async () => {
       const result = pendingOpen
@@ -106,18 +155,28 @@
     headlessExportDone: noop,
     respellKick: async () => {},
     spellDiag: noop,
-    setDocPassword: async () => ({ ok: true }),
     docPasswordIntentRevision: async () => 0,
-    discardDocPasswordIntents: async () => ({ ok: true }),
-    createDocument: async () => ({ ok: false, error: 'not-supported-in-embed' }),
     convertAltChunkHtml: async () => null,
+  }
+
+  // 能力矩阵（audit F02）：未知/未实现的桌面能力一律显式 unsupported，
+  // 决不伪造 {ok:true}。渲染器据此隐藏或禁用对应入口。
+  const unsupported = (prop) => async () => ({
+    ok: false, unsupported: true, capability: prop,
+    error: `浏览器嵌入版不支持「${prop}」，该操作未执行。`,
+  })
+  // 这些能力在嵌入环境明确不可用且涉及数据安全（恢复副本/导出/加密）。
+  for (const name of ['writeRecoveryCopy', 'exportPdf', 'setDocPassword',
+    'discardDocPasswordIntents', 'revealDocInShell', 'openExternal']) {
+    precise[name] = unsupported(name)
   }
 
   window.desktop = new Proxy(precise, {
     get(target, prop) {
       if (prop in target) return target[prop]
       if (typeof prop === 'string' && prop.startsWith('on')) return unsubscribe
-      return asyncOk
+      // Unknown capability: typed unsupported, never a fake success.
+      return unsupported(String(prop))
     },
   })
 })()

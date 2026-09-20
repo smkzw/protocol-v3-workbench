@@ -542,7 +542,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       （工作稿保留模板封面与页眉页脚；替换模板正文、去除示例文字的成品级导出在后续阶段）</p>}
     {savedDocument && savedDocument.study_binding_status !== 'current' && <p role="alert">研究信息已变化或暂不可读，这份已保存初稿尚未与当前研究重新核对。</p>}
     {savedDocument && <GenOfficeFrame projectId={projectId} studyDefinitionId={studyDefinitionId}
-      actorId={actorId} savedDocument={savedDocument}/>}
+      actorId={actorId} savedDocument={savedDocument} api={apiRef.current}/>}
     {savedDocument && packet?.saveConflict && <button type="button" disabled={busy}
       onClick={saveCompleteDraft}>将本次初稿另存为新版本（保留历史）</button>}
     {packet?.phase === 'sources' && sourceState?.can_retry && <button type="button" disabled={busy}

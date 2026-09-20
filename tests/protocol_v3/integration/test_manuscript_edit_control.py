@@ -362,7 +362,11 @@ def test_office_snapshot_persists_immutable_copy_bound_to_revision(saved_manuscr
         clock=lambda: datetime.now(_tz.utc), office_store=office_store)
     seed_working_document(service, {})
     current = service.current(PROJECT, SD_ID)
-    docx_bytes = 'PK\x03\x04合成方案内容-fixture-bytes'.encode('utf-8')
+    # F12: the fixture is a real minimal DOCX (zip container with the main
+    # document part); a bare PK-prefixed string is now rejected as invalid —
+    # covered in test_office_working_copy_closure.py.
+    from test_office_working_copy_closure import minimal_docx
+    docx_bytes = minimal_docx()
     intent = {'operation_id': 'operation:office:1', 'actor_id': 'user:example',
         'expected_revision': current['expected_revision'],
         'expected_document_sha256': current['expected_document_sha256'],

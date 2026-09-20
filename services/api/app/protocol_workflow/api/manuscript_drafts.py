@@ -7,6 +7,7 @@ from packages.contracts.workbench_contracts.protocol_v3 import (
 from app.protocol_workflow.application.queries import GetStudyDefinitionQuery
 from app.protocol_workflow.agent3.manuscript_request import prepare_manuscript_request, ManuscriptInputsIncomplete
 from app.protocol_workflow.agent3.source_preparation import SourcePreparationIncomplete
+from app.protocol_workflow.application.manuscript_documents import OfficeWorkingCopyConflictError
 from app.protocol_workflow.graph import GraphRunError
 from .chapter_drafts import ChapterPreparationRequest, ChapterStartRequest
 from .router import _safe_call
@@ -467,6 +468,11 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         expected_revision: int
         expected_document_sha256: Sha256
         content_base64: str = ''
+        # 审计 G1/F04：编辑器打开时所基于的 Office 工作副本版本；条件写基线。
+        base_artifact_revision: int | None = None
+        # 审计 G1/F05：打开时观察到的 StudyDefinition 版本；保存时另记录
+        # 当时观察到的 current，旧稿不被贴上较新研究版本。
+        opened_study_revision_sha256: Sha256 | None = None
 
     @router.post('/office-draft/snapshots', status_code=201)
     def save_office_snapshot(project_id: str, study_definition_id: str,
@@ -478,8 +484,21 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             if current.definition is None:
                 raise HTTPException(404, detail={'message': '没有找到本次研究。'})
             intent = body.model_dump(mode='json')
-            intent['study_revision_sha256'] = current.revision_sha256
-            return documents.office_snapshot(project_id, study_definition_id, intent)
+            # The draft's own research baseline stays what the editor opened
+            # with; the current observation is recorded separately so an old
+            # working copy is never silently re-labelled as S2 (F05).
+            intent['study_revision_sha256'] = (
+                body.opened_study_revision_sha256 or current.revision_sha256)
+            intent['study_revision_sha256_current_observed'] = current.revision_sha256
+            try:
+                return documents.office_snapshot(project_id, study_definition_id, intent)
+            except OfficeWorkingCopyConflictError as exc:
+                raise HTTPException(status_code=409, detail={
+                    'code': 'manuscript_office_base_conflict',
+                    'message': '这份工作副本在您编辑期间已被另一窗口保存了新版本，本次未覆盖；'
+                        '请刷新查看最新版本后再决定如何合并。',
+                    'latest_snapshot': exc.latest_receipt,
+                }) from exc
         return _safe_call(lambda: checked(execute))
 
     @router.post('/office-draft/snapshots/{operation_id}/recover')
@@ -508,7 +527,9 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             raise HTTPException(404, detail={'message': '没有找到该Office工作副本。'})
         return Response(content=artifact.content,
             media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            headers={'X-Content-Sha256': artifact.metadata.content_sha256})
+            headers={'X-Content-Sha256': artifact.metadata.content_sha256,
+                # 编辑器保存时以此为 base_artifact_revision 做条件写（G1/F04）。
+                'X-Artifact-Revision': str(artifact.metadata.revision)})
 
     @router.post('/objects/{block_id}/ai-revisions/prepare', status_code=202)
     def prepare_object_revision(project_id: str, study_definition_id: str, block_id: str,

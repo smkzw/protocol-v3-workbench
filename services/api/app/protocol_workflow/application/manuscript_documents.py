@@ -16,6 +16,18 @@ def manuscript_document_id(project_id, study_id):
     return 'manuscript:' + hashlib.sha256(canonical_json([project_id, study_id]).encode()).hexdigest()
 
 
+class OfficeWorkingCopyConflictError(Exception):
+    """Another Office session advanced the working copy past the client's base.
+
+    Carries the latest snapshot receipt so the caller can surface the real
+    current version instead of a bare 409 (audit G1/F04).
+    """
+
+    def __init__(self, latest_receipt):
+        super().__init__('manuscript_office_base_conflict')
+        self.latest_receipt = latest_receipt
+
+
 class ManuscriptDocumentService:
     def __init__(self, uow_factory, clock, office_store=None):
         self.uow_factory = uow_factory
@@ -457,14 +469,32 @@ class ManuscriptDocumentService:
         return params
 
     def office_snapshot(self, project_id, study_id, intent):
-        """Persist one immutable Office snapshot; idempotent by operation_id."""
+        """Persist one immutable Office snapshot; idempotent by operation_id.
+
+        The current-working-copy invariant (audit G1/F04): the client pins the
+        ``base_artifact_revision`` it opened; when another Office session has
+        advanced the working copy since, the save is refused with the latest
+        receipt instead of silently becoming the new head.  The research
+        baseline the draft was opened against is recorded as-is; the route
+        additionally records what it observed as current at save time, so an
+        old draft is never silently re-labelled with a newer study version.
+        """
         import base64 as _base64
+        import io as _io
+        import zipfile as _zipfile
         existing = self.recover_office_snapshot(project_id, study_id, intent)
         if existing is not None:
             return existing
         if self.office_store is None:
             raise ValueError('manuscript_office_store_missing')
         document_id = manuscript_document_id(project_id, study_id)
+        # Read the current working-copy head outside the write transaction: a
+        # nested connection on the same sqlite file would deadlock the lock.
+        latest = self.latest_office_snapshot(project_id, study_id)
+        base_artifact_revision = intent.get('base_artifact_revision')
+        if latest is not None and base_artifact_revision is not None \
+                and latest.get('artifact_revision') != base_artifact_revision:
+            raise OfficeWorkingCopyConflictError(latest)
         with self.uow_factory() as uow:
             current = uow.semantic_document_repository.get_current(project_id, document_id)
             if current is None:
@@ -476,7 +506,14 @@ class ManuscriptDocumentService:
                 content = _base64.b64decode(intent.get('content_base64') or '', validate=True)
             except Exception as exc:
                 raise ValueError('manuscript_office_content_invalid') from exc
-            if not content.startswith(b'PK'):
+            # A bare "PK" prefix is not a Word document: require a readable
+            # zip container carrying the main document part (F12).
+            try:
+                valid_docx = _zipfile.is_zipfile(_io.BytesIO(content)) and \
+                    'word/document.xml' in _zipfile.ZipFile(_io.BytesIO(content)).namelist()
+            except Exception:
+                valid_docx = False
+            if not valid_docx:
                 raise ValueError('manuscript_office_content_invalid')
             meta = self.office_store.store(
                 f'office-draft:{project_id}:{study_id}', content,
@@ -487,10 +524,13 @@ class ManuscriptDocumentService:
                 'snapshot_id': 'office-snapshot:' + meta.content_sha256,
                 'content_sha256': meta.content_sha256,
                 'artifact_revision': meta.revision,
+                'base_artifact_revision': base_artifact_revision,
                 'size_bytes': meta.size_bytes,
                 'document_revision': current.revision,
                 'document_sha256': document_revision_hash(current),
                 'study_revision_sha256': intent.get('study_revision_sha256'),
+                'study_revision_sha256_current_observed': intent.get(
+                    'study_revision_sha256_current_observed'),
                 'mapping_status': 'pending',
                 'acceptance_scope': 'working_draft_only'}
             params = self._office_event(project_id, study_id, document_id, intent, payload)
@@ -506,8 +546,10 @@ class ManuscriptDocumentService:
         return {'snapshot_id': payload['snapshot_id'],
             'content_sha256': payload['content_sha256'],
             'artifact_revision': payload['artifact_revision'],
+            'base_artifact_revision': payload['base_artifact_revision'],
             'document_revision': payload['document_revision'],
             'study_revision_sha256': payload['study_revision_sha256'],
+            'study_revision_sha256_current_observed': payload['study_revision_sha256_current_observed'],
             'mapping_status': 'pending', 'persisted': True,
             'operation_id': intent['operation_id'], 'replayed': False}
 
