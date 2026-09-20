@@ -136,6 +136,7 @@ def build_zhipu_api_adapter(
     expected_response_model_override: str | None = None,
     artifact_text_resolver: Callable[[str, str], str] | None = None,
     max_input_bytes: int | None = None,
+    max_output_tokens: int | None = None,
 ) -> DirectApiAdapter:
     """Compose a :class:`DirectApiAdapter` over the stdlib Zhipu transport.
 
@@ -271,12 +272,19 @@ def build_zhipu_api_adapter(
     def _completion_body(
         *, effort: str, messages: list[dict[str, str]]
     ) -> dict[str, Any]:
-        return {
+        body: dict[str, Any] = {
             "model": model,
             "messages": messages,
             "reasoning_effort": effort,
             "stream": False,
         }
+        # Deployment-level output budget: without it the gateway/provider
+        # default (e.g. 8192) truncates long structured proposals on
+        # reasoning models (finish_reason='length'), which is a typed
+        # failure. Unset keeps the historical body byte-identical.
+        if max_output_tokens:
+            body["max_tokens"] = max_output_tokens
+        return body
 
     def _compose_messages(payload: dict[str, Any]) -> list[dict[str, str]]:
         """Compose the minimal user message from bounded artifact material."""

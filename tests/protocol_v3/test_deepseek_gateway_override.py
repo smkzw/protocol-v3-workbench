@@ -186,6 +186,7 @@ def _clean_override_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "WORKBENCH_PROTOCOL_V3_AI_KEY",
         "WORKBENCH_PROTOCOL_V3_AI_MODEL",
         "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL",
+        "WORKBENCH_PROTOCOL_V3_AI_MAX_TOKENS",
     ):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("WORKBENCH_PROTOCOL_V3_AI_KEY", FAKE_CREDENTIAL)
@@ -262,3 +263,34 @@ def test_no_overrides_keeps_direct_endpoint_and_strict_identity() -> None:
     assert opener.requests[0]["url"] == DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT
     assert result.receipt is not None
     assert result.receipt.observed_model == DEEPSEEK_DEFAULT_MODEL
+
+
+def test_max_tokens_env_override_reaches_completion_body(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("WORKBENCH_PROTOCOL_V3_AI_MAX_TOKENS", "32000")
+    opener = _FakeOpener([
+        _completion(EXIT_MODEL), _completion(EXIT_MODEL),
+    ])
+    adapter = build_deepseek_api_adapter(
+        expected_response_model_override=EXIT_MODEL,
+        output_sink=_FakeSink(), http_opener=opener,
+    )
+    assert adapter.probe() is True
+    result = HarnessDispatcher().dispatch(request=_request(), adapter=adapter)
+    assert result.success is True, result.error_message
+    completion_body = json.loads(opener.requests[1]["data"].decode("utf-8"))
+    assert completion_body["max_tokens"] == 32000
+
+
+def test_without_max_tokens_env_body_stays_historical() -> None:
+    opener = _FakeOpener([
+        _completion(DEEPSEEK_DEFAULT_MODEL), _completion(DEEPSEEK_DEFAULT_MODEL),
+    ])
+    adapter = build_deepseek_api_adapter(output_sink=_FakeSink(),
+                                         http_opener=opener)
+    assert adapter.probe() is True
+    result = HarnessDispatcher().dispatch(request=_request(), adapter=adapter)
+    assert result.success is True, result.error_message
+    completion_body = json.loads(opener.requests[1]["data"].decode("utf-8"))
+    assert "max_tokens" not in completion_body

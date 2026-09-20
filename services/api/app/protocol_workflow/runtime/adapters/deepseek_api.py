@@ -8,7 +8,10 @@ cms-router/OmniRoute 本机网关（key 轮转池，响应 model 字段会被网
 - ``WORKBENCH_PROTOCOL_V3_AI_MODEL``：请求模型名（如 deepseek-flash）；
 - ``WORKBENCH_PROTOCOL_V3_AI_KEY``：Bearer 凭证（优先于 omp 库解析）；
 - ``WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL``：响应 model 的出口声明
-  （网关池重写 model 字段时用于校验；缺省维持严格相等）。
+  （网关池重写 model 字段时用于校验；缺省维持严格相等）；
+- ``WORKBENCH_PROTOCOL_V3_AI_MAX_TOKENS``：完成请求的 max_tokens 输出
+  预算（推理模型在网关默认输出上限下会被 finish_reason=length 截断；
+  缺省不发该字段）。
 
 未设置任何覆盖变量时，本模块与历史行为完全一致。
 """
@@ -60,6 +63,10 @@ def build_deepseek_api_adapter(
         "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip()
     if expected_model:
         expected_response_model_override = expected_model
+    max_tokens_override = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_MAX_TOKENS", "").strip()
+    if max_tokens_override.isdigit():
+        kwargs["max_output_tokens"] = int(max_tokens_override)
 
     return build_zhipu_api_adapter(
         model=model,
