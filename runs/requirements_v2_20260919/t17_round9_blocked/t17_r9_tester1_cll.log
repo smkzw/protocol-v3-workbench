@@ -1,0 +1,77 @@
+Working...
+# T17 第九轮独立端到端测试报告（测试者1 · CLL II期 / 合成药C2）
+
+- SOURCE_HEAD：`5afa323029b15184d30c3d9ce1ced3036458d4c0`
+- 会话：TaskSpace 170（全新独立会话）；项目：`proj_user_ea0218b04ee1`（MW-II-FBDD8861，主）＋对照 `proj_user_9503a5c5852d`（MW-II-290857AE，无文件）；自建辅助资料 `/tmp/t17_tester1/cll_synopsis.docx`（6段CLL摘要，页面上传，不改仓库代码）
+- 总耗时：约 10:29→11:06 UTC（≈37min，含纯等待约14min）；真实有效点击约21次＋2次被拦截＋4次JS点击（导航被遮挡时用）
+
+## PASSED / FAILED / NOT_RUN（含耗时与点击数，≤20达标）
+
+PASSED
+- 环境基线＋SOURCE_HEAD确认：1min，0点击
+- 首页加载＋预期503保护（`monitoring_principal_unavailable`，点医学写作继续，不记缺陷）：5s，0点击（`/tmp/t17_tester1/01_homepage.png`）
+- 进入医学写作／新建项目对话框（从零开始＋导入方案摘要双入口可见）：~7s，2点击（`02_medical_writing_landing.png`，`03_new_project_dialog.png`）
+- 从零建项成功（主＋对照两个CLL II期项目，项目头显示适应症/草案正确）：~8s/个，~4点击（`12_workspace_created.png`）
+- DOCX上传＋分类保存（`synthetic-reference.docx`→同行评审文献；`cll_synopsis.docx`→本方案文件；勾选/下载原文件/更正类别正常）：~10s，2点击（`15_saved_to_materials.png`，`24_second_source_saved.png`）
+- 来源台账／审批中心只读查看：~6s/个，JS点击（`32_source_ledger_view.png`，`34_approval_center.png`）
+- fail-closed抽查（`manuscript/latest`、`research-information/latest` 均为404＋中文阻断文案；审批中心空态声明不用演示数据填充）：1min，0点击（`35_final_state.png`）
+
+FAILED
+- 入口A"导入方案摘要→导入并提取"：270s＋无进展，15点击内（4点击，270s等待），截图 `06_extraction_progress.png`→`10_extraction_poll270s.png`
+- "准备写作材料"→逐项确认：4次prepare（双资料／单真实资料／对照0文件）全部秒级变 `blocked`，120s＋轮询无推进（累计等待约9min，4点击），截图 `23_blocked_state.png`、`28_intake_blocked_evidence.png`
+
+NOT_RUN（被blocked阻断，无稿可验，非定罪为通过）
+- 逐项确认卡片、生成完整初稿、保存、导出Word、浏览器Office打开编辑保存、文献插入与编号联动、目录跳转与表图目录、研究流程示意图交互验证
+
+## 问题清单
+
+P0-1 intake AI链系统性blocked，阻断写作全链
+- 现象：每次点"准备写作材料"都发 `POST research-intake`（202新run），数秒内变 `{"status":"blocked","validation":null,"can_resume":false}`；页面仅toast"本次整理结果需要核对，资料和记录已保留。"，无原因、无重试、无下一步按钮。对照项目（0文件＋详细CLL brief）同样blocked，证明与内容无关。`ai-runs=[]`，`workbench-inbox`空。
+- run证据：`6fbd9d66`、`1a3a183d`、`7c57cd06`、`d8852b1c`（主＋对照各2个）全blocked；旧run查404（后端重启丢运行态）。
+- 复现：新建CLL II期项目→写作说明填任意CLL设计→点准备写作材料→看toast＋`GET research-intake/{id}`。
+- 截图：`23_blocked_state.png`、`28_intake_blocked_evidence.png`、`25_twosource_poll120s.png`、`27_single_source_poll120s.png`
+
+P0-2 入口A导入链卡死"准备导入／正在准备文档内容"270s＋
+- 现象：建项对话框选"导入方案摘要"，`synthetic-reference.docx` staged正常，点"导入并提取"后进度态 15s／45s／105s／270s 四次轮询零变化，无超时、无错误、无下一步。补充发现：该夹具正文仅一句话"功能测试参考文献，仅用于验证多文件保存。"（699字节，无医学实质），但对照试验证明blocked非内容特异，夹具不背锅。
+- 复现：医学写作→新建项目→导入方案摘要→选夹具→导入并提取→轮询。
+- 截图：`05_file_staged.png`、`06_extraction_progress.png`、`07_extraction_result.png`、`08_extraction_poll60s.png`、`09_extraction_poll150s.png`、`10_extraction_poll270s.png`
+
+P1-1 blocked死胡同：`can_resume=false` 时无任何可操作下一步（无查看原因／重试／返回修改；toast无action）
+- 截图：`23_blocked_state.png`
+
+P1-2 陈旧"继续本次整理"可点但无效（G2项目 `proj_user_a174fa22da65`，run `beb02154` 后端404，前端仍显示可恢复，JS点击后30s零变化零反馈）
+- 截图：`29_g2_project_state.png`
+
+P1-3 v3写作链无文献引用入口（见a表）；P1-4 无目录／表图目录／章节锚点（见b表）；P1-5 无研究流程示意图（见c表）——证据与最小期望见下表，不另附图（页面探针＋bundle grep，无可截图的入口）
+
+P2-1 来源台账口径不一致：同项目写作模块内2份资料正常，来源台账页计数全0并显示"来源台账读取失败：服务器验证身份尚未接入，旧版医学监查读取已阻断。"
+- 截图：`32_source_ledger_view.png`
+
+P2-2 项目下拉展开遮挡顶部模块导航，真实点击被 `<section>` 拦截（来源台账／审批中心各失败2次，改JS点击才进入）
+- 截图：`31_nav_cover.png`
+
+## 重点模块结论表
+
+(a) 文献引用与管理——缺失（v3链不可达；仅旧版页存在）
+- observed：v3写作页全文探针 文献／引用／参考文献全false；`ManuscriptWorkspace.jsx` grep：Literature 0、Citation 0、citation 0、Zotero 0（仅1处小写reference）；`MedicalWritingLiteraturePanel.jsx`（57KB）存在，挂载仅见 `App.jsx` 旧版写作页 rail-tab"文献"，行为＝项目文献库＋"在当前光标处插入引文"（需补全元数据／医学确认才citable，`matched_on` 去重合并）。v3的准备资料→确认→初稿全程无文献入口，故编号自动／删除移动联动／定位回来源均无从验证。
+- 最小期望：v3初稿工作台侧栏加"文献"页（文献库＋光标插入），正文引文顺序编号，删／移段落后编号与文献表自动重排，编号可点回文献条目。
+
+(b) 目录与图表呈现——缺失
+- observed：`MedicalWritingPreviewPanel.jsx`仅版式状态＋页数估算（`page_count_basis`，Word/PDF核验说明），"目录"命中仅封面目录跨页差异文案，无TOC逻辑；`ChapterDraftPreview.jsx`唯一href是表注锚点（`查看注`），无章节锚点；导出仅"导出Word工作稿"＋声明"保留模板封面与页眉页脚；去除示例文字的成品级导出在后续阶段"。无稿可验实际导出。
+- 最小期望：预览＋导出Word含可跳转目录（Heading样式＋页码域）、表目录／图目录（表1／图1顺序编号），三者与正文编号一致。
+
+(c) 研究流程示意图——缺失
+- observed：v3写作页全文探针 流程图／研究流程／示意图全false；预览／章节预览无流程图逻辑；写作说明三步指引只字未提流程图。
+- 最小期望：研究设计章节内嵌流程图（随机→双盲治疗24周→第24周ORR＋随访节点，标注例数120与1:1），与正文融合为"图1"编号＋图题，导出Word可见。
+
+## 反拟合检索表（无初稿输出；检索对象＝全部页面文本＋输入侧）
+
+偏头痛／前列腺／结直肠癌／干眼／银屑病（项目下拉本底CMS-D001除外，非模型输出）／强直／合成药Q／F／Y（下拉本底MW-II-7CBEB92D除外）／X（下拉本底X2除外）／T／M／U／IL-17／ASAS／rPFS／SALT／SNOT-22／UAS7／缓解率20%／35%：全部未在任何输出中出现。输入侧合法含合成药C2／CLL／BTK／ORR／iwCLL／120例（场景要求）。内部标识符（`mwprefillcand_`／`ct_chunk_`／Pydantic文本／类名）页面零直出（仅localStorage键名与API路径含 `research-intake:`，属正常工程实现，不记缺陷）。
+
+KNOWN_LIMITATIONS
+- 未改仓库代码；后端日志不可见，blocked根因（AI网关／队列／校验）用户侧无法确诊，只证明内容无关性（对照0文件同blocked）与运行态丢失（旧run 404）。
+- 导出／Office编辑／文献联动／目录跳转／流程图均因无稿未达；(a)(b)(c)缺失结论来自分支代码grep＋页面探针，非全量审计。
+- localStorage残留多轮旧项目，本报告结论仅基于两个T17新建独立proj id。
+
+EXIT=BLOCKED:准备写作材料系统性blocked（P0-1）＋入口A导入卡死（P0-2），逐项确认之后全链无法推进
+EXIT=0

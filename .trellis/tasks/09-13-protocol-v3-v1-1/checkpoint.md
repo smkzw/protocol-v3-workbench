@@ -1563,3 +1563,14 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **初稿停滞根因与修复（代码提交见下）**：e2e_test.sqlite 事件流显示 tester3 AML 项目仅 start 了 8 个 chapter-draft 流（111 章计划）——resume 循环在**单章模型调用 400 时异常冒泡崩掉整个 resume**（无 per-chapter 隔离），后续 103 章永远没有 start 机会。修复=resume 循环每章 try/except 隔离（一章失败打 stderr 诊断并继续其余章节）。回归 2577 过/2 历史遗留。
 
 **第九轮派发（16:50，真清洁空间）**：矩阵按 owner 更新——tester1=opencode-go/muse-spark-1.3-contributor(max) 慢性淋巴细胞白血病入口A（合成药C2 BTK口服）/ tester2=gemini-3.8-flash(high) 慢性冠脉综合征入口B（合成药X2）/ tester3=cursor-grok-4.6(high) 功能性便秘盲测+OCR（合成药P2）/ tester4=opencode-go/deepseek-v4.1-flash(max) 镰状细胞病自选交叉（合成药G2）。8进程确认存活。probe 项目已从 allowlist 移除。
+
+## 2026-09-20 20:40 第九轮：4/4 BLOCKED——根因=DeepSeek API key 失效（外部依赖，需owner处理）
+
+**取证**：`curl -H "Authorization: Bearer $DEEPSEEK_API_KEY" https://api.deepseek.com/v1/models` → **HTTP 401 "Your api key: ****4e16 is invalid"**。env文件（~/.config/cms-medical-workbench/ai-runtime.env）仅此一把key，无备份凭证；本机8000/11434无本地AI服务。**LOOP被外部依赖阻断，非代码缺陷。**
+- 四测试者表现：tester1(CLL/muse-spark)与tester3(便秘/grok)全部"准备写作材料"秒变blocked（后端AI 401→intake status=blocked）；tester2(CCS/gemini)明确报"后端AI服务DeepSeek鉴权失效(HTTP 401)"；tester4(镰状细胞/deepseek-v4.1) 38B即退。
+- **附带发现（下批消息卫生）**：401时UI仅toast"本次整理结果需要核对，资料和记录已保留。"——无原因、无重试、无下一步（同族：无重试控件/文案不指名）。
+- 报告归档 t17_round9_blocked/。
+
+**恢复条件（需owner）**：①充值/换新DeepSeek key 更新 ai-runtime.env；或②指定其他provider（如owner改默认的alibaba_token_plan/qwen——需同步改产品契约 PROFILE 与 independent_ai profile）。恢复后：重启前后端（同事务）→直接重派第九轮同场景（四测试者未产出任何有效数据，场景无损耗）。
+
+**当前代码状态**：c2ed35c+void=主线程最新（含初稿失败隔离修复），回归2577过，前端95/95+61/61。仓库已推GitHub（5afa323→c2ed35c）。
