@@ -52,15 +52,18 @@ def _chapter_titles(template_dir) -> dict[str, dict]:
 
 
 def _real_values(study_facts: Mapping[str, Any], document: Mapping[str, Any]) -> dict[str, str]:
-    import datetime
-    protocol_id = 'PV3-' + hashlib.sha256(
-        str(document.get('study_definition_id', '')).encode()).hexdigest()[:8].upper()
-    sponsor = '康哲'
-    ic = study_facts.get('research.input_context') or {}
-    if isinstance(ic, dict) and str(ic.get('user_brief', '')).strip():
-        sponsor = sponsor
-    version = str(study_facts.get('framing.version') or '1.0')
-    date = str(datetime.date.today().isoformat())
+    """Document-control values, sourced only from confirmed facts / the saved
+    document (audit G4/F10).  A value the study never confirmed stays as an
+    explicit blank — a company template style does not authorize inventing
+    sponsor names, protocol numbers, or dates at download time."""
+    # 已确认值优先；未确认的文控信息保持空（显式缺口，不冒充已知）。
+    protocol_id = str(study_facts.get('framing.protocol_id') or '').strip()
+    if not protocol_id:
+        protocol_id = ''  # 未确认：不匿名造号
+    sponsor = str(study_facts.get('framing.sponsor') or '').strip()
+    version = str(study_facts.get('framing.version') or '').strip() or '1.0'
+    date = str(study_facts.get('framing.protocol_date')
+               or study_facts.get('document_control.version_date') or '').strip()
     title_fact = study_facts.get('framing.document_title')
     if isinstance(title_fact, dict):
         title_fact = title_fact.get('text') or title_fact.get('title') or '临床研究方案'
@@ -459,7 +462,10 @@ def _add_table(doc, content: str, repeat_header: int = 0) -> None:
                 tr_pr.append(tr_pr.makeelement(qn('w:tblHeader'), {qn('w:val'): 'true'}))
 
 
-_TABLE_REF_RE = re.compile(r'(见表\s*(\d+)\s*[、，；）)]?)')
+# F11: only the citation object (表N) becomes a REF field. The connective
+# 见 and any trailing punctuation stay as plain runs — the export must not
+# silently rewrite prose around the field.
+_TABLE_REF_RE = re.compile(r'见(表\s*(\d+))([、，；）)]?)')
 
 
 def _add_paragraph_with_table_refs(doc, content: str, max_table_no: int) -> int:
@@ -472,8 +478,11 @@ def _add_paragraph_with_table_refs(doc, content: str, max_table_no: int) -> int:
         if n > max_table_no:
             continue
         para.add_run(content[cursor:match.start()])
-        run = para.add_run(f'表{n}')
+        para.add_run('见')
+        run = para.add_run(re.sub(r'\s+', '', match.group(1)))
         _attach_ref_field(run, f'tbl_{n}')
+        if match.group(3):
+            para.add_run(match.group(3))
         refs += 1
         cursor = match.end()
     para.add_run(content[cursor:])

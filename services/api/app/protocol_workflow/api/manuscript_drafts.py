@@ -210,9 +210,17 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         template_dir = default_template_root()
         template_meta = _json.loads((template_dir / 'template.json').read_text(encoding='utf-8'))
         template_path = template_meta['source']['path']
-        out_dir = _Path(_tempfile.gettempdir()) / 'mw_protocol_v3_exports'
+        # F16: the temp artifact is project-scoped and content-addressed, so
+        # two projects sharing a study id/revision can never overwrite each
+        # other's export while it is being downloaded.
+        import hashlib as _hashlib
+        project_scope = _hashlib.sha256(project_id.encode('utf-8')).hexdigest()[:16]
+        artifact_scope = _hashlib.sha256(':'.join([
+            project_id, study_definition_id, str(saved['revision']),
+            saved['document_sha256'] or '']).encode('utf-8')).hexdigest()[:24]
+        out_dir = _Path(_tempfile.gettempdir()) / 'mw_protocol_v3_exports' / project_scope
         out_dir.mkdir(parents=True, exist_ok=True)
-        output_path = out_dir / f'manuscript-{study_definition_id.replace(":", "-")}-rev{saved["revision"]}.docx'
+        output_path = out_dir / f'manuscript-{artifact_scope}.docx'
         current = application_service.get_study_definition(
             GetStudyDefinitionQuery(project_id, study_definition_id))
         result = render_production_docx(template_path, template_dir, saved['document'],
