@@ -1518,3 +1518,15 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **下一批修复清单（会商排序）**：②导入方案摘要慢/假进度/无取消（后端异步化）；④整理失败后下游与已保存初稿不可达；⑤regimen blocked出口；⑥文献引用/OCR/翻译主链可达性（门控改能力判断）；⑦39项键名直出（补标签映射——组件定位待做，会商已给修法）；P2批（章节口径矛盾/目录域/关闭文案/导出按钮形态）。
 
 **新继承坑**：导出heading分支的continue会跳过整块正文（已改为仅跳过heading输出）——改循环内控制流时必须确认跳过范围。
+
+## 2026-09-20 12:35 会商#2/#5/#7/#6修复批次（dd71c70）+ 第七轮派发
+
+**修复批次（回归：2577过/前端95/95+61/61）**：
+- ②导入方案摘要：_deterministic_parse移出响应关键路径——job行先建（phase='parsing'）→POST立即202→detached线程完成parse/persist/AI worker派发；失败标记status='failed'（error_message含堆栈前1800字）；既有cancel路由从第1秒起可用（finish前检查cancelled）。前端零改动兼容（phaseLabel已有parsing映射，POST立即返回后120s客户端超时不再触发）。
+- ⑤regimen blocked：终态升级为带出口的告警（"重新生成给药设计"按钮重派原意图）；自动resume语义不变（单次）。测试断言更新（语义升级）。
+- ⑦39项组织信息：summarizeResidualValue加RESIDUAL_KEY_LABELS中文映射（role/name_note/policy等18键）+未映射键回落"相关内容"——英文键名不再直出。
+- ⑥文献可达性：greenfield会话（无documentSession）恒渲染只含「文献」的右栏（MedicalWritingLiteraturePanel按项目挂载不依赖会话）——文献库从第1秒可达。
+
+**subagent通道**：仍reasoning-level-missing（ZCode运行时配置要求为账号选择思考档位——工具参数无法绕过）。tester4继续zai/glm-5.2兜底；**需owner在ZCode设置选择思考档位后恢复指定矩阵**。
+
+**第七轮派发（12:30，清洁空间三次重置cleared_1223，前后端同事务重启带flag）**：慢性乙型肝炎II期入口A（合成药H，48周）/晚期胃癌II期入口B（合成药G CLDN18.2 ADC，ORR）/特发性肺纤维化II期盲测+OCR（合成药D）/多发性骨髓瘤II期自选交叉（合成药K BCMA ADC）。四模型矩阵同前。EXIT轮询已挂。
