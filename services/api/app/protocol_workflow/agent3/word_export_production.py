@@ -146,11 +146,15 @@ def _bookmark(paragraph, name: str) -> None:
 
 
 _GAP_PATH_RE = re.compile(r'【缺口：\s*[A-Za-z][A-Za-z0-9_.]*\s*：')
+# 会商2补充：gap 块正文中还有「（缺口身份：v2_*）」的节点锚标注，同样
+# 属于内部身份，不进交付稿（语义稿内原样保留供校验）。
+_GAP_IDENTITY_RE = re.compile(r'（缺口身份：\s*[^）]*）')
 
 
 def _redact_gap_paths(content: str) -> str:
-    """缺口标注里的人类可读部分保留，内部 fact_path 不进交付稿（T17 P1-3）。"""
-    return _GAP_PATH_RE.sub('【待补充：', content or '')
+    """缺口标注里的人类可读部分保留，内部 fact_path/节点锚不进交付稿。"""
+    text = _GAP_PATH_RE.sub('【待补充：', content or '')
+    return _GAP_IDENTITY_RE.sub('', text)
 
 
 def render_production_docx(template_path, template_dir, document: Mapping[str, Any],

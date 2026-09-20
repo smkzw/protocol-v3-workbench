@@ -1,0 +1,146 @@
+Working...
+# T17 第六轮会商意见书（会商审阅者）
+
+## 0. 复核方法与证据基础
+
+裁定基准：`HEAD=1939f3dd8afaf37eec85c76e44f074bef1d34b63`（四份报告共同的被测提交；tester1 的 `50e6bdf` 是其父提交，语料门 override 修复已在其内）。
+
+我独立复核（只读，未改任何文件、未起进程）：
+
+1. **四份导出 Word 的 XML 文本实证**（t1 `exported_working_draft.docx`、t2 `iga_protocol_work.docx`、t3 `t17_tester3_export.docx`、t4 `t4e2_draft_v1.docx`）：`缺口身份：` 103–108 处/篇、`v2_*` 107–110、`【缺口` 95–100、`【待判定】` 39、`TOC/PAGEREF=0`、`v2_front_block` 作为独立标题段 1 处（`w:val="3"`）——**t2 的产物同样命中，而 t2 没有提交报告**。
+2. **运行期真值库** `runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/medical_writing_synopsis_import.sqlite3`：导入任务行与分块行。
+3. **源码定位**（前端 `frontend/src/...`、后端 `services/api/app/...`）逐条对齐 tester 声称的行号。
+4. **截图目视复核**（tester3 `27_extract_stuck.png`，视觉模型 + 原图）。
+
+**前置声明（影响本轮结论时效）**：复核过程中（11:53:07–11:56:08）工作树出现**并发未提交修改**：`DesignElementsCards.jsx`、`agent3/chapter_draft.py`、`agent3/word_export_production.py`（后者注释自称 `T17 P1-3`）。这些**不是本次会商所为**（本角色只读），推断为项目方正在并行落修复。下文裁定基于 HEAD；并发修改的覆盖度我在 §2 中单独标注（结论：**覆盖不完整，仍留 P0/P1 尾巴**）。
+
+---
+
+## 1. 交叉印证矩阵
+
+| # | 问题 | tester1 (gemini) | tester2 (grok-4.6) | tester3 (deepseek-v4.1) | tester4 (glm-5.2) | 印证状态 |
+|---|---|---|---|---|---|---|
+| A1 | 设计要素「未决问题」渲染为空 | P1-1 **印证**（并给出行号） | 无报告 | P1-2 **印证**（section 全文 69 字符） | P1-1 **印证**（后端 6 条 unresolved_questions） | **3/4 强印证 + 代码确证** |
+| A2 | 无补答/无重新生成入口 | 未报 | 无报告 | P1-2 **印证**（按钮消失） | P1-1 **印证**（从未被提问） | **2/4 + 代码确证** |
+| A3 | 界面称"全部确认后才可生成初稿"但实际可生成 | 未报 | 无报告 | 未报 | 未报（4 人都在未确认下生成了初稿） | 代码确证（宣传语与闸门不一致） |
+| B | 「导入方案摘要」挂死（PDF+DOCX） | 未测 | 无报告 | **P0（唯一）** | 未测 | **单证 → 服务器真值反证，降级** |
+| C | 导出 Word 泄漏内部标识符 | P1-3 **印证** | 无报告 | P1-3 **印证** | 未报（产物同命中） | **4/4 产物实证** |
+| D | 39 项裸字典键名直出 | P1-2 单证 | 无报告 | 未报 | 未报 | 单证 + 代码确证 |
+| E1 | 含英文文献的整理失败(needs_structure_correction) | 未测 | 无报告 | P1-1 单证（对照实验） | 未测 | 单证，相关性证据 |
+| E2 | 整理失败后下游工作区整体消失、初稿不可达 | 未测 | 无报告 | P1-1 单证 | 未测 | 单证 + 代码确证 |
+| F | regimen「blocked」终态无出口 | 未报 | 无报告 | 未报 | P1-2 单证 | 单证 + 代码确证 |
+| G | 章节成文口径与导航态矛盾（72 vs 3） | 部分（导出含缺口） | 无报告 | P2-1 | P2-1 | **2/4 + 代码确证** |
+| H | 目录/表目录/图目录无 Word 域、无条目 | (b) 项 | 无报告 | P2-2（`目 录` 两次） | (b) 项 | **3/4 + 实测 TOC=0** |
+| I | 文献引用/引文插入在写作主链路不可用 | (a) 项 | 无报告 | (a) 项 + 入口门控代码 | (a) 项 | **3/4 + 代码确证** |
+| J | OCR/翻译无入口 | 未报 | 无报告 | 逐步骤表 + 右栏门控证据 | 未报（未探测） | 单证 + 代码确证 |
+| K | GenOffice 关闭二次确认（无弹窗/已保存仍提示） | P2-2 | 无报告 | 未报 | P2-2 **印证** | 2/4，**属有意设计** |
+| L | 导出入口是行内链接而非按钮 | 未报 | 无报告 | 未报 | P2-3 | 单证 + 代码确证 |
+| M | 刷新后项目选择回默认 | 未报 | 无报告 | 未报 | P2-4 | 单证，未复核 |
+| N | 正文表格编号跳号（缺表3） | P2-1 | 无报告 | 未报 | 未报 | **反证 → 误报** |
+| O | 报告本身缺失 | — | **仅一句 FAILED，无缺陷内容** | — | — | **证据缺口** |
+| P | 503 / 项目下拉含他会话项目 / 来源台账身份未接入 | KNOWN | — | P2-4 | KNOWN | 已知背景，不计缺陷 |
+
+---
+
+## 2. 确认问题清单（根因假设 / 分层 / 级别复核 / 修复方向）
+
+### P0-1 设计要素「未决问题」空白 → 采纳链路死局（A1+A2+A3）
+**根因（前端为主）**：
+- `DesignElementsCards.jsx:199` 已正确取 `const proposal = state?.validation?.proposal`，但 `:208` 读的是 `state?.proposal?.questions`（不存在的层级）→ `join('；')` 得空串，冒号后空白。tester1 定位准确。
+- 结构性问题：`:199-200` 的 `availableCards` 只在 `status==='ready_for_review'` 时渲染卡片，而 `design_elements.py:117-125` 规定**只要任何 questions/unresolved_questions/分节 questions 非空，status 必为 `needs_information`** → 用户既看不到问题，也永远拿不到卡片。
+- `:204` 的「生成设计要素建议」按钮仅在 `!runId` 时渲染 → 无法重跑；界面上不存在补答输入（`MedicalWritingAuthoringJourneySetup` 的说明框只在整理步提供）。
+- 后端合同本身正确（`validation.proposal.questions` / `unresolved_questions` / 各 section `questions` 三组来源），**不应改**。
+**级别复核**：维持最高档（我定 **P0**）。3/4 复现；命中的是流程文档自述的必过步骤；后果链已实证——tester4 的导出稿 `BMD/骨密度` 出现 **0 次**、`synopsis.design/sample_size/investigational_drug` 全为缺口，即"主要终点与样本量从未被采纳"。注意边界：**它不是整条写作链的死局**（四人均生成了初稿），死的是"关键设计采纳"这一段。
+**并发修复覆盖度**：11:53 的 `DesignElementsCards.jsx` 改动合并了 `questions+unresolved_questions` 并按项渲染，方向正确，但 (a) 未聚合分节 questions（模型只往 `endpoint.questions` 写时仍显示 0 项）；(b) 未恢复重新生成/补答入口，而新文案恰恰写着"然后重新生成设计要素建议"——**文案承诺了 UI 不存在的动作**；(c) 卡片仍在 `ready_for_review` 才渲染。
+**最小正确修法**：三组来源合并去重渲染；`needs_information` 时同时给出"补答并重新生成本卡建议"（可写回 `seed_run_id` 对应 brief 或作为 answers 入参）与可点按钮；把 `availableCards` 的闸门从"整体 status"改为"未决项已答的卡片可确认"。
+
+### P0-2 「导入方案摘要」卡死 → **不成立，降级为"慢 + 假进度 + 无取消"**
+**服务器真值（决定性）**：`medical_writing_synopsis_imports` 两行——
+- PDF `en_protocol_trials.pdf`：created `03:12:47Z`(=11:12:47 CST) → updated `03:19:02Z`(=11:19:02)，`status=completed`，`phase=review_ready`，`chunk_index=1/chunk_total=1`，`error_message=''`，用时 **6 分 15 秒**；
+- DOCX `en_protocol_trials.docx`：created `03:25:35Z` → updated `03:35:38Z`，同为 `review_ready`，用时 **10 分 03 秒**；
+- 分块行 `status=done`、`attempt_count=1`、`validation_error` 空；`ai_task_runs.jsonl` 两条 `protocol_synopsis_structuring` 均 `status=completed`（deepseek-v4-flash）。
+**因此"永久挂死/功能性缺陷"不成立**：tester3 的 `28_docx_import.png`（11:35:35）距服务端完成（11:35:38）仅 **3 秒**，其"≥610s 未完成"的观测窗正好压在真实工作结束点上。
+**残留的真实缺陷（我确认为 P1）**：
+1. 单块一次 AI 调用（`MAX_SYNOPSIS_CHUNK_CHARS=30000`，9 页方案只切 1 块）耗时 6–10 分钟，而进度行 `Math.min(current+1,total)/total` 从第一秒就是 **"1 / 1 个内容块"** ——假进度，且无 ETA、无阶段心跳；
+2. **上传阶段无取消**（`intake` 为 null 时取消按钮不渲染），客户端上传超时 `UPLOAD_REQUEST_TIMEOUT_MS=120000`（2 分钟）远小于实测 6–10 分钟 → 用户在超时后看到"请求在 120 秒内未响应"，而后台仍在跑；
+3. tester3 的客户端 DOM 取证（`busy=upload`、`intake=null`、无取消、无错误）与服务端事实**冲突**：按服务器事实判为慢，但该客户端状态漂移应单独立项复现（最可能是自动化标签页被节流/冻结导致渲染帧陈旧，未证实）；其网络取证盯的是 `research-intake`（材料整理）而非导入自身的 `project-intake/synopsis/{intake}/jobs/{key}`，**取证口径错误**，不能作为"未产生轮询"的证据。
+**最小正确修法**：`main.py:7325` 的 `async def` 改为在响应前只写任务行并 `run_in_threadpool`/后台执行 `_deterministic_parse`（其 docstring 本就宣称"AI 不阻塞响应"，代码违反）；上传阶段立即给出可取消按钮与阶段文案；进度区分"排队/抽取中/生成中"并显示 elapsed 与预计时长；客户端超时与后端 SLA 对齐或改为"已受理，后台继续"语义。
+
+### P1-1 导出 Word 泄漏内部标识符（C）
+**根因（后端为主，设计层与产品层错位）**：`agent3/manuscript_document.py:26` 主动拼接 `content = f'{text}（缺口身份：{node_id}）'`（gap-only 章节，本轮 103–108 处/篇）；`chapter_draft.py:25` 的 prompt 要求把 `<fact_path>` 写进正文（→ 22–29 处/篇点号事实键）；导出侧 heading 在 `titles` 缺登记时回落 `node_id`（→ `v2_front_block` 直出为标题）。**缺口本身是设计**（项目自述 "111 章(10 可写 + 101 kept_as_gap)"），但**内部契约 ID 与事实路径不是交付物词汇**。
+**级别复核**：维持 **P1**（4/4 产物必现；交付对象是申办方/伦理的 Word）。tester1（105 次 / 35 次）与 tester3（108 / 31）量级一致，差异来自计数口径。
+**并发修复覆盖度**：`word_export_production.py` 已加 `_redact_gap_paths`（`【缺口：<ascii>：`→`【待补充：`）并抑制无标题节点的 heading；`chapter_draft.py` prompt 改为要求中文描述。但 **`（缺口身份：{node_id}）` 未处理**（`manuscript_document.py:26` 未改，导出正则也不匹配），即最大一条泄漏向量仍在。
+**最小正确修法**：node_id 不进 `content`，改由 `SemanticBlock` 的既有 `semantic_node_id` 字段承载；在导出唯一投影点统一清洗 `（缺口身份：…）` 与旧块的历史文本（存量稿件需重渲染，不可只改生成侧）。
+
+### P1-2 39 项裸键名（D）
+**根因（前端）**：`ManuscriptWorkspace.jsx:26` `Object.entries` 直出 `${key}：${value}`，无标签映射（`arrangement`/`roles`/`name_note`/`reserved_for_signing` 原样显示）。**级别**：维持 P1（医学经理必须逐项确认并写入研究事实）。**最小修法**：复用仓库已有映射范式（`AuthoringCandidatePackagePanel.jsx:245` 的字段标签表），未映射键回落中文兜底而非英文键名。
+
+### P1-3 整理失败即失去整个下游与已保存初稿（E2）
+**根因（前端状态机）**：`ProtocolIntakeWorkspace.jsx:216` 用 `job?.validation?.valid === true &&` 一个闸门包住 `ResearchInformationCard/RegimenDesignWorkspace/DesignElementsCards/ManuscriptWorkspace`；失败后 `saved.runId` 已存在 → `prepare()` 直接复用终态（瞬时返回同一句），`查看历史写作记录` 随 `ManuscriptWorkspace` 卸载而消失。后端"malformed 不自动重试"是既有设计，前端不该因此让**已确认研究事实与已保存初稿不可达**。**级别**：P1。**最小修法**：下游渲染改由"已确认 study_definition/最近一次 valid run 存在"驱动；终态给"保留记录重新整理（新 run）"入口。E1（英文长文献触发结构校验失败）证据只有相关性（tester3 的取消勾选对照实验），缺 `error_message`，降 P2 待复现。
+
+### P1-4 regimen「blocked」无出口（F）
+**根因（前端）**：`RegimenDesignWorkspace.jsx:157` 只输出一句状态文案；`:164` 的问答列表依赖 `proposal`（blocked 时 `validation=null`）；`:138` 的「整理完整给药建议」仅在 `!saved.runId` 渲染 → 点过一次即永久消失。**级别**：P1（与 P0-1 同类：终态无出口）。**最小修法**：blocked/needs_structure_correction 终态提供"保留记录重试/基于当前研究新建建议"（`canStartSuccessor` 分支已存在可复用）；问题来源用 `RegimenProposalCard.jsx:43-47` 的 `openItems()` 聚合逻辑。
+
+### P1-5 文献引用/OCR/翻译在写作主链路不可达（I+J）
+**根因（前端路由/门控）**：文献右栏 `App.jsx:11884-11895` 与整个 `aside.ai-rail` 都挂在 `!greenfieldSetupAvailable`（`App.jsx:8045`）之下，而"从零开始"主流程走的是 protocol-workbench 会话 → `WritingReferencePanel`/`MedicalWritingLiteraturePanel`/`MixedOcrReviewPanel`（含 `OCR识别中`/`Hy-MT2翻译中` 状态串）全部不可达。tester1/tester3/tester4 的 (a) 项结论一致（无插入引文入口、`15 参考文献` 仅占位、TOC/REF 域 0）。**级别**：P1（本轮重点模块之一，产品面缺口而非质量瑕疵）。**最小修法**：把入口门控从"会话类型"改为"证据链能力"判断，或在 protocol-workbench 内显式挂载并声明"本会话不可用"；OCR/翻译需给出明确"未配置"文案而非静默缺席。
+
+### P2 组（确认）
+- **G 章节口径矛盾**：`ManuscriptWorkspace.jsx:499` 报的是 `readiness.chapter_dispositions`（计划口径），`:552/557` 导航按 `chapter.validation.proposal/valid`（结果口径）显示"尚未完成"并禁用 → tester3/tester4 的"声明 vs 实际"实为两个口径混用。修法：标签区分为"成文（含缺口）/待判定/不适用"，gap 章允许只读打开。
+- **H 目录无域 + `目 录` 重复两次**：实测 `TOC/PAGEREF=0`，`目 录` 出现 2 次（前置块清单 + 目录章）。P2。
+- **K GenOffice 关闭确认**：`office/GenOfficeFrame.jsx:78` 注释明示"渲染器 dirty 对宿主不可见 → 固定一次确认"，属**有意 fail-closed**；但已保存后仍称"未保存的修改将丢失"是**文案缺陷**（tester4 用 `10_edit_persisted.png` 自证持久化成功）。降为 P2 文案。
+- **L 导出入口 `ManuscriptWorkspace.jsx:537` 为行内 `<a>`**，非按钮形态 → P2 可发现性。
+- **M 刷新回默认项目**（tester4 单证，未复核）→ P2 观察项。
+
+---
+
+## 3. 误报 / 降级清单
+
+| 原判 | 裁定 | 依据 |
+|---|---|---|
+| tester3 **P0-1 导入永久挂死** | **误报（降 P1）**：任务在服务端 6m15s / 10m03s 内 `review_ready` 完成，分块 `done`、无错误；其 11:35:35 截图距完成仅 3 秒。真实缺陷是慢、假进度 1/1、上传段无取消、客户端超时 120s 与服务端 SLA 错配 | 运行期 DB 两行 + `ai_task_runs.jsonl`；截图 mtime；`MedicalWritingSynopsisProjectIntake.jsx:14-18,298` |
+| tester3 **"导入未产生 job 轮询"**（performance 证据） | **取证口径错误**：监控 `research-intake`（材料整理），导入自身轮询的是 `project-intake/synopsis/{intake}/jobs/{key}` | `MedicalWritingSynopsisProjectIntake.jsx:131` |
+| tester1 **P2-1 表格编号跳号（缺表3）** | **误报**：tester1 自己的导出件实测 `表1 概要 / 表2 概要 / 表3 试验参与者的补偿、赔偿与保险 / 表4 附录 3 中心实验室信息`，编号连续 | 我对 `exported_working_draft.docx` 的段落级统计 |
+| tester1 P2-2 / tester4 P2-2 **GenOffice 二次确认** | **降级为文案 P2**（非数据风险）：`GenOfficeFrame.jsx:78` 注释为有意设计；tester4 的"未保存"解读被自身 `10_edit_persisted.png` 反证 | 代码注释 + 双方证据 |
+| tester4 **P1-3 已确认事实未传导初稿** | **归入 P0-1 的后果链**，不单列：`240 例/12 个月/BMD` 属设计要素卡覆盖字段，卡未采纳 → 事实未入库 → 初稿缺口（`synopsis.*` 全缺）。根因是渲染死局，不是"事实绑定丢失" | `design_elements` 字段域 vs intake 字段域 |
+| tester3/tester4 **项目下拉含他会话项目** | **已知 P2（共享实例设计）**，不计缺陷 | 任务背景 |
+| tester1/tester3/tester4 **503 `monitoring_principal_unavailable`** | **不计缺陷**（宿主认证缝隙预期行为）；tester3 P2-4「来源台账身份未接入」同源，并入此项 | 任务背景 |
+| tester2 **产品判定 FAILED** | **结论无效（证据缺口）**：报告仅一句"已做完"，无缺陷清单、无复现、无证据映射；其产物反可用于 C 项统计 | `t17_r6_tester2_igan2.log` 7 行 |
+
+---
+
+## 4. 修复优先级排序表（用户影响 × 出现频次）
+
+| 序 | 级别 | 问题 | 影响 × 频次 | 最小正确修法方向 |
+|---|---|---|---|---|
+| 1 | **P0** | 设计要素未决问题空白 + 无补答/无重生成 → 关键设计永不采纳 | 致命×3/4 复现，下游稿件缺口（BMD 0 次） | FE 聚合 `questions`+`unresolved_questions`+分节 `questions`；提供补答→重新生成；卡片闸门改为逐项可答。**勿动后端合同** |
+| 2 | **P0** | 导入"卡死"（真值：6–10 分钟慢 + 1/1 假进度 + 上传段无取消 + 客户端 120s 超时错配） | 高×唯一 PDF 入口，单证但代价是整条证据链 | `_deterministic_parse` 移出响应关键路径（线程池/后台），202 后回填分块元数据；上传段加取消与阶段/elapsed；超时与 SLA 对齐 |
+| 3 | **P1** | 导出 Word 残留 `（缺口身份：v2_*）`（并发修复漏项）+ 存量稿件未清洗 | 高×4/4 产物 | node_id 改由 block 元数据承载；导出投影点统一脱敏；已导出/已保存稿件重渲染校验 |
+| 4 | **P1** | 整理失败后下游与已保存初稿不可达 | 高×1/4，但代价是"数据在、用户看不到" | 下游渲染由已确认 study_definition 驱动；终态给"保留记录重新整理" |
+| 5 | **P1** | regimen `blocked` 无出口 | 中高×1/4（同类终态风险面 3 处） | 终态提供重试/新建建议；复用 `openItems()` 聚合问答 |
+| 6 | **P1** | 文献引用/引文/OCR/翻译在写作主链路不可达 | 高×3/4（本轮重点模块） | 门控改按能力判断或在工作台内挂载；不可用时显式声明 |
+| 7 | **P1** | 39 项裸键名直出 | 中×1/4（出现即必现） | 补字段标签映射，未映射回落中文兜底 |
+| 8 | **P2** | 章节成文口径与导航态矛盾 | 中×2/4 | 口径分离 + gap 章只读可开 |
+| 9 | **P2** | 目录/表目录/图目录无域、`目 录` 重复 | 中×3/4 | 预置 Word TOC/PAGEREF 域或明确"待生成"；去重复标题 |
+| 10 | **P2** | 关闭确认文案"未保存"误导 / 导出入口为行内链接 / 刷新回默认项目 | 低-中×1–2/4 | 文案与形态微调；会话选择持久化 |
+
+**红线建议**：第 1、2 项在修复前不应再派"全流程验收"轮次——两者都会把测试注意力吸到错误结论上（本轮 tester3 的 P0 就是例证）。
+
+---
+
+## 5. 举一反三清单
+
+1. **同一字段路径误读模式**：`state?.proposal`（应为 `state?.validation?.proposal`）是一个组件级手误，但同类"卡片组件直接猜后端 envelope"的写法在 regimen/manuscript 组件中普遍存在 → 建议收敛到一个 selector 层（或在渲染前对 envelope 做一次形状断言），并用 `grep 'state\?\.proposal|job\?\.proposal'` 全量清查。
+2. **"终态即出口"UI 契约缺失**：`needs_information` / `blocked` / `needs_structure_correction` 三种终态在 `DesignElementsCards` / `RegimenDesignWorkspace` / `ProtocolIntakeWorkspace` **都只渲染一句话**，都存在"按钮消失、无下一步"的同类隐患 → 应统一为"终态必须给出可点击的下一步（重试/补答/新建/查看原记录）"，并写成前端硬约束。
+3. **内部标识符跨边界泄漏**：任何"把内部块直接投影成交付物"的出口都危险——`（缺口身份：…）`、`fact_path`、`node_id` 作标题、`v2_*`。除 Word 工作稿外，须一并检查 `document-exports` 成品导出、PDF/HTML 导出、GenOffice 快照与前端章节预览是否共用同一渲染器；治理点应放在 **SemanticBlock → 交付物的唯一投影函数**，而不是在每个 renderer 各写一份正则（现有并发修复已出现该苗头）。
+4. **假进度模式**：由服务端给出 `chunk_total=1` 时，"1/1"会在任务刚开始就显示为最后一块 → 所有 N/M 进度都必须区分"排队中/处理中/生成中"并给出 elapsed；同类隐患包括初稿 111 章、资料整理等所有长任务。
+5. **客户端超时 vs 服务端 SLA**：上传 120s、轮询 15s×3 与实测 375–603s 的 AI 调用严重错配；反过来服务端对单块 30k 字符的模型调用没有超时/分块心跳。两处都要对齐，并统一"受理即返回 + 后台继续"的语义。
+6. **`async def` 内执行同步重活**：`main.py:7325` 是 async 却同步跑完整确定性解析（docstring 自称不阻塞），同类隐患存在于其它上传类 async handler（如 `upload_writing_reference_document` 内联 `render_study_schema_png`）→ 统一改 sync def（走线程池）或 `run_in_threadpool`。这与本轮"整站疑似无响应"的观感直接相关（4 会话共享单进程）。
+7. **中文标签映射缺口**：裸键名不限于 39 项 residual；凡 `Object.entries(...)` 直出用户界面的地方都要有标签表与兜底（仓库已有 `AuthoringCandidatePackagePanel` / `formatPathValue` 可作范式）。
+8. **测试派单的取证规范**：本轮出现两类可避免的误判——(a) 监控了近似但不同的端点名；(b) 用"某时刻截图无变化"推断"永久挂死"而不等待到服务端真值（DB/AI run 日志）。后续派单应强制要求：**端点 URL 清单 + 每条结论对应的时间戳序列 + 至少一次服务端侧真值核对**。
+9. **共享实例下的隔离断言**：当前靠人工排除"他会话项目/药物名"污染（t3/t4 的 反拟合表）。建议在导出件上做一次机器校验：正文出现的药物/适应症/期别与本 study 的已确认事实做集合比对，把反拟合从"人工检索"升级为"自动断言"。
+10. **并发修复的验证纪律**：本轮 11:53–11:56 的未提交修复覆盖了 P1-3 的两条向量之一，却漏了 `（缺口身份：…）` 与分节 questions——说明"按报告标题逐条改"会漏掉同类向量。修完后应回到**同一份导出件/同一状态**上重跑红测（导出件零 `v2_*`/零 `缺口身份`/零点号事实键；设计要素 section 在 needs_information 下同时可见问题与可点下一步）。
+
+**给下一轮的验收硬指标（建议）**：① 导出件 `v2_*`=0、`缺口身份`=0、点号事实键=0、`【待判定】` 允许存在但须为中文描述；② design-elements 处于 `needs_information` 时，问题条目数 = 后端 `questions+unresolved_questions+分节 questions` 去重数且可继续推进；③ 导入端点从点击到 202 的耗时上限可量化，且上传段存在取消按钮；④ 整理失败后仍可打开已保存初稿；⑤ 四份 tester 报告必须齐备（本次 4/4 → 3/4 有效）。
+
+CONFERENCE=DONE
+EXIT=0
