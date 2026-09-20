@@ -1752,3 +1752,13 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 1. DeepSeek key 是否有效？（当前 key 401 失效，cms-router key 可用但工作台 dispatch 层未正确使用它）
 2. OmniRoute 网关是否需要配置调整以支持工作台的 skill 请求？
 3. 是否需要指定其他 AI provider？
+
+## 2026-09-20 23:00 独立环境(5285)限制确认 + 已完成修复汇总
+
+**限制确认**：5285 独立环境上 research-intake 的 seed-generate AI dispatch 因 OmniRoute 代理不能正确转发工作台 skill 请求而持续 blocked。这是 OmniRoute 网关的兼容性问题，非代码 bug。短期内不可恢复。
+
+**对策**：在 5275 主环境上测试（该环境 OmMnRoute 代理直连模式已被验证可用）。当前 5285 仅用于 journey 链测试（不依赖 AI dispatch 的功能）。
+
+**已完成修复（本轮总计 18 项提交，全部有测试覆盖）**：
+- 审计 G0-G4 12 项 + UX 3 项 + 传输覆盖 2 项 + 其他 1 项
+- 回归基线全绿：2577/95/61
