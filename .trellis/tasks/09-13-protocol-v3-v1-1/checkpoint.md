@@ -1690,3 +1690,23 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 1. 优先用第六轮已验证的环境（5275）重派测试，确认基础设施无回归
 2. 同时调查 OmniRoute 路由到 deepseek-latest-cloud 与直连 deepseek-v4-flash 的输出质量差异
 3. 继续修复队列（虚假完成口径/义务声明体/导出桥接等）
+
+## 2026-09-20 22:20 【无损暂停】当前诚实状态
+
+### 已验证可工作
+- 场景1 journey链+UI链端到端（第六轮验证，5275环境）
+- 文献引用、目录跳转（第七轮首次PASS）
+- 12项代码修复全部提交（deab516→4d3d3f1→c2ed35c→e47a3f2→f0a9687→185c2e3→4d3d3f1）
+- 回归基线：2577项通过
+
+### 当前阻塞（第九轮）
+5285 独立环境上 seed-generate AI dispatch 返回 `dispatch_exception` → `unknown_outcome`。
+**根因**：不是网络/鉴权/传输层问题（已验证 OmniRoute 通畅），而是 protocol_workflow 的 seed_product.py 路径调用的 `build_deepseek_api_adapter` 与我修改的版本之间存在 **kwargs 透传冲突（endpoint 参数重复传递导致 TypeError）。直接 curl 到 OmniRoute 完全正常。
+
+**修复方向**：在 `deepseek_api.py` 的 `build_deepseek_api_adapter` 中正确处理 kwargs 透传，确保 `endpoint`/`expected_response_model_override` 不通过 **kwargs 重复传递。
+
+### 接手者注意
+- 5285 API 进程目前运行的是 dd71c70 时代的代码（20:57 启动），不含 f0a9687 的传输覆盖修复
+- 需要重启 5285 API 以加载最新代码
+- restart 命令配方见前面 checkpoint 条目（含 WORKBENCH_PROTOCOL_V3_AI_ENDPOINT 等 cms-router 覆盖变量）
+- seed_product.py 的 partial 构造通过 **kwargs 传递 endpoint，与 deepseek_api.py 内部的 env 读取存在参数冲突——需要统一参数来源
