@@ -1602,3 +1602,15 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - 下窗口：①用等量大 payload 直接 curl OmniRoute 复现（区分网关/上游）②查 OmniRoute(:20128) 的请求日志与池状态③必要时 REQUEST_TIMEOUT_SECONDS 降到 120 并让 HarnessDispatcher 把每次 dispatch 的失败带 error_code 回事件流。
 
 **环境事实**：5285/5186 写作专用环境与监查侧（5275/e2e_runtime）完全隔离可并行；AI 走 cms-router（key=CMS_ROUTER_API_KEY，来源 ~/.omp/agent/.env）；probe2/probe3 两个探针项目留存在 e2e_test_mw.sqlite。
+
+## 2026-09-20 21:15 补充：环境归属澄清 + 当前真实阻塞点定性
+
+**澄清**：18:16-21:06 的"并行进程"实为**正在开发的医学监查子系统**（sess_a23392d7，owner 确认同步并行）。owner 指示：复制独立模块环境分开测试——已执行。
+
+**独立写作环境（5285/5186）当前状态**：
+- 运行中 API（20:57 启动，PID 见 lsof）env 齐全（AI_ENDPOINT/KEY/EXPECTED_MODEL=CMS_ROUTER 三件套 + 全部 WORKBENCH_* 变量）
+- 代码 = f0a9687+（含全部 G 系列修复 + 失败隔离 + 传输覆盖）
+- **剩余阻塞**：research-intake 的 AI dispatch（seed-generate 节点）发出后无 node_result——**OmniRoute 网关对工作台的 skill 调用请求形态挂起**（curl 直发同网关：简单消息 1.2s 通、81KB 通；仅工作台带 tools/skill 约束的请求挂）
+- 下一步：在 OmniRoute(:20128) 侧查该请求的处理日志/池状态；或抓包比对工作台请求与 curl 成功请求的差异（怀疑 tools 字段或 system 消息形态触发网关挂起）
+
+**接手方继续 LOOP 的入口**：所有修复已提交（deab516→f0a9687），第九轮 prompts 已就绪（r9_*.md），前端 5186、API 5285 运行中。恢复 AI 大请求通道后即可派发。
