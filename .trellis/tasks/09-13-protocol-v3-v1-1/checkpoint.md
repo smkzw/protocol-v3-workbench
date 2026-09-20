@@ -1762,3 +1762,20 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 **已完成修复（本轮总计 18 项提交，全部有测试覆盖）**：
 - 审计 G0-G4 12 项 + UX 3 项 + 传输覆盖 2 项 + 其他 1 项
 - 回归基线全绿：2577/95/61
+
+## 2026-09-21 02:15 无损暂停——第九轮部分报告已归档，测试继续在 5275 环境上推进
+
+**第九轮状态**：四个测试者日志 mtime 02:02-02:09，仍在运行（部分测试者可能在轮询等待 AI 结果）。log 文件在 /tmp/t17_r9f_tester*.log。
+
+**当前环境状态**：
+- 5285 API + 5186 前端运行中 ✅
+- OmniRoute 网关存活 ✅
+- 独立 DB e2e_test_mw.sqlite 有多个项目（第五至九轮累积）
+- dispatch-locks 25 个文件（历轮累积残留）
+
+**已知深层阻塞**：research-intake 的 seed-generate 节点 AI dispatch 在 5285 环境上始终返回 blocked。这不是代码 bug——是 **OmniRoute 代理(:20128) 对工作台 skill 类型的 chat completion 请求（含 reasoning_effort=high/max、长 system prompt）处理超时或静默丢弃**。简单消息 0.5s 通过，复杂研究整理 prompt 不回。
+
+**下一步建议（按优先级）**：
+1. **切回 5275 直连环境重测试**：OmniRoute 挂起问题不影响 5275 直连模式。在 5275 上用第五/六轮已验证的环境配方重新运行。所有代码修复已在代码库中。
+2. **OmniRoute 网关侧排查**（需 owner）：检查网关是否对 >5KB payload 或含 reasoning_effort 的请求有超时/丢弃策略。
+3. **继续修复队列**（不依赖 AI dispatch 的项）：虚假完成口径 ✅已修、义务声明体提示词优化、Office导出桥接、流程图生成层。
