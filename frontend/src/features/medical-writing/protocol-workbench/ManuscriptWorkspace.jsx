@@ -536,7 +536,13 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
     {packet && !job?.complete_candidate && <p role="status">{packet.phase === 'sources'
       ? (sourceState?.status === 'completed' ? '资料已准备，完整初稿尚未开始。' : sourceState && sourceState.status !== 'running' ? '资料准备已停止，原资料与记录已保留。' : '正在准备本次写作资料。')
       : job?.status === 'blocked' ? '本次写作已停止，已生成章节仍可阅读。' : `正在撰写方案，已有 ${readable.length} 个章节可阅读。`}</p>}
-    {job?.status === 'blocked' && <p>尚未完成：{chapters.filter(chapter => !['not_applicable', 'needs_content_review'].includes(chapter.status)).map(chapter => chapter.title).join('、')}</p>}
+    {job?.status === 'blocked' && <>
+      <p>尚未完成：{chapters.filter(chapter => !['not_applicable', 'needs_content_review'].includes(chapter.status)).map(chapter => chapter.title).join('、')}</p>
+      {/* 第七轮P0：blocked 必须有明确出口——重跑恢复effect（recover→can_resume→
+          幂等start）即触发服务端对未完成章节的续写；失败章已标记可重试 */}
+      <button type="button" className="kz-manuscript-primary" disabled={busy}
+        onClick={() => setRefresh(value => value + 1)}>继续写作（重试未完成的章节）</button>
+    </>}
     {packet && plan?.study_sha256 && plan.study_sha256 !== packet.studySha && <>
       <button type="button"
         disabled={busy || !canGenerate} onClick={() => begin(true)}>按当前研究准备新稿，保留原记录</button>

@@ -89,6 +89,13 @@ class ManuscriptDraftCoordinator:
                 outcome = {'workflow_run_id': child_id, 'status': 'not_started',
                     'validation': None, 'can_resume': True}
             chapters.append({**item, **outcome})
+        # A failed chapter is retryable (resume re-runs it); it must not flip
+        # the whole draft into a non-resumable stop — round-7 P0: one failed
+        # chapter froze 104 remaining chapters with no UI way back.
+        chapters = [
+            ({**item, 'can_resume': True} if item.get('status') == 'failed' else item)
+            for item in chapters
+        ]
         applicable = [item for item in chapters
             if item['status'] not in {'not_applicable', 'kept_as_gap'}]
         complete = bool(applicable) and all(item['status'] == 'needs_content_review'
@@ -120,8 +127,8 @@ class ManuscriptDraftCoordinator:
                 outcome = owner.read(child_id)
             if outcome['can_resume']:
                 outcome = owner.resume(child_id)
-            if outcome['status'] != 'needs_content_review':
-                break
+            # 一章失败（模型调用错误等）不阻塞其余章节：章节相互独立，
+            # 失败章在 read() 里标记可重试，用户可继续触发下一轮 resume。
         return self.read(run_id)
 
 
