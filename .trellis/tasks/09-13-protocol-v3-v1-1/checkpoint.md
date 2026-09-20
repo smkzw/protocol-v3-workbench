@@ -1553,3 +1553,5 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 4. **tester3的P1义务声明体**：已生成6章正文是"义务声明体"（"本药作用机制属于本章的继承性义务…不得照抄"）而非方案正文——章节提示词/材料不足以支撑该章实质写作时模型输出元话语。需评估这些章是否应标待补而非硬写。
 
 **LOOP状态**：第六轮3份+第七轮4份+第八轮3份报告=10份实测证据；P0修了4个（override崩溃/入口A门禁/初稿停滞UI面/虚假完成待修），深层2项（AI生成停滞、导入链）在途。会商机制运转正常（conf2高质量意见书）。
+
+**第八轮补记（14:59）**：tester4（白癜风/ glm-5.2）派发失败——omp 返回 `404 Combo has no executable targets (model_not_found)`，zai/glm-5.2 组合在 omp 侧已失效。下窗口重派该场景时改用可用模型（候选：opencode-go/glm-5.2 或 deepseek-v4-flash；派发前 `omp models` 探测）。至此第八轮 3/4 有效报告，白癜风场景待下窗口补测。tester4 runner进程已随模型失效退出，无残留。
