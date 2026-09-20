@@ -397,18 +397,55 @@ class ManuscriptDocumentService:
     OBJECT_REVISION_SCOPES = ('replace_object', 'patch_object')
 
     def _object_revision_intent(self, project_id, study_id, intent):
+        """Operation identity for one AI object revision (audit G3/F08).
+
+        ``expected_content_sha256`` is deliberately excluded: the client may
+        omit it at prepare time while the async apply fills in the real
+        anchor hash — a mismatch would make the recovery lookup disagree
+        with the original request and invite blind model re-calls.  Anchor
+        staleness is a CAS check at apply time, not part of the identity.
+        """
         return hashlib.sha256(canonical_json([project_id, study_id, 'object-revision',
-            intent['operation_id'], intent['expected_revision'],
-            intent['semantic_block_id'], intent.get('expected_content_sha256'),
+            intent['operation_id'], intent['semantic_block_id'],
             intent.get('scope'), intent.get('instruction')]).encode()).hexdigest()
 
+    def _patch_target(self, intent):
+        """Validate and return the sub-range locator for patch_object (F07)."""
+        target = intent.get('target') or {}
+        if not isinstance(target, dict):
+            raise ValueError('manuscript_object_scope_invalid')
+        kind = target.get('kind')
+        if kind == 'table_cell':
+            row, column = target.get('row'), target.get('column')
+            if not isinstance(row, int) or not isinstance(column, int) \
+                    or isinstance(row, bool) or isinstance(column, bool) \
+                    or row < 0 or column < 0:
+                raise ValueError('manuscript_object_target_invalid')
+            return {'kind': 'table_cell', 'row': row, 'column': column}
+        if kind == 'text_range':
+            start, end = target.get('start'), target.get('end')
+            if not isinstance(start, int) or not isinstance(end, int) \
+                    or isinstance(start, bool) or isinstance(end, bool) \
+                    or start < 0 or end <= start:
+                raise ValueError('manuscript_object_target_invalid')
+            return {'kind': 'text_range', 'start': start, 'end': end}
+        raise ValueError('manuscript_object_target_invalid')
+
     def prepare_object_revision(self, project_id, study_id, intent):
-        """Freeze the anchor and material for one AI object revision."""
+        """Freeze the anchor and material for one AI object revision.
+
+        The frozen (normalized) intent is persisted as a ``prepared`` event so
+        the async apply, a lost receipt, or a worker failure all resolve
+        against one durable operation state instead of 404-then-blind-retry
+        (audit G3/F08)."""
         if intent.get('scope') not in self.OBJECT_REVISION_SCOPES:
             raise ValueError('manuscript_object_scope_invalid')
         if not str(intent.get('instruction') or '').strip():
             raise ValueError('manuscript_object_instruction_missing')
+        if intent.get('scope') == 'patch_object':
+            intent = {**intent, 'target': self._patch_target(intent)}
         document_id = manuscript_document_id(project_id, study_id)
+        intent_sha256 = self._object_revision_intent(project_id, study_id, intent)
         with self.uow_factory() as uow:
             current = uow.semantic_document_repository.get_current(project_id, document_id)
             if current is None:
@@ -422,19 +459,75 @@ class ManuscriptDocumentService:
                 raise ValueError('manuscript_edit_block_unknown')
             if block.block_kind.value not in self.OBJECT_EDITABLE_KINDS:
                 raise ValueError('manuscript_object_kind_unsupported')
+            if intent.get('scope') == 'patch_object' \
+                    and block.block_kind.value == 'paragraph' \
+                    and (intent.get('target') or {}).get('kind') == 'table_cell':
+                raise ValueError('manuscript_object_target_invalid')
+            if intent.get('scope') == 'patch_object' \
+                    and block.block_kind.value == 'table' \
+                    and (intent.get('target') or {}).get('kind') == 'text_range':
+                raise ValueError('manuscript_object_target_invalid')
             content_sha = hashlib.sha256((block.content or '').encode()).hexdigest()
             expected = intent.get('expected_content_sha256')
             if expected and expected != content_sha:
                 raise ValueError('manuscript_object_anchor_changed')
-        return {'schema_version': 'object-revision-request.v1',
-            'scope': intent['scope'],
-            'instruction': intent['instruction'],
-            'semantic_block_id': intent['semantic_block_id'],
-            'block_kind': block.block_kind.value,
-            'current_content': block.content,
-            'current_content_sha256': content_sha,
-            'document_revision': current.revision,
-            'document_sha256': document_revision_hash(current)}
+            frozen = {**intent, 'expected_content_sha256': content_sha}
+            material = {'schema_version': 'object-revision-request.v1',
+                'intent_sha256': intent_sha256,
+                'scope': intent['scope'],
+                'instruction': intent['instruction'],
+                'target': frozen.get('target'),
+                'semantic_block_id': intent['semantic_block_id'],
+                'block_kind': block.block_kind.value,
+                'current_content': block.content,
+                'current_content_sha256': content_sha,
+                'document_revision': current.revision,
+                'document_sha256': document_revision_hash(current)}
+            params = {
+                'domain_event_id': 'manuscript-object-prepared:' + hashlib.sha256(
+                    canonical_json([document_id, intent['operation_id']]).encode()).hexdigest(),
+                'stream_id': document_id,
+                'event_type': 'manuscript_object_revision_prepared.v1',
+                'payload_schema_version': 'mw_protocol_v3_event_v1', 'upcaster_id': 'noop:v1',
+                'actor_type': ActorType.USER, 'actor_id': intent['actor_id'],
+                'action': 'prepare_object_revision',
+                'reason': '冻结一次AI对象修订的完整意图与锚点，供应用/恢复/状态查询共用。',
+                'payload': {'operation_id': intent['operation_id'],
+                    'intent_sha256': intent_sha256, 'intent': frozen,
+                    'status': 'prepared'},
+                'emitted_at': self.clock()}
+            head = uow.event_stream_repository.get_stream_head(project_id, document_id)
+            if head is None:
+                built = self.atomic.builder.build(sequence=1, previous_event_sha256=None, **params)
+            else:
+                built = self.atomic.builder.continue_chain(
+                    head_sha256=head.last_event_sha256,
+                    head_sequence=head.last_sequence, **params)
+            uow.event_stream_repository.append_events(project_id, document_id, [built])
+            uow.commit()
+        return material
+
+    def object_revision_status(self, project_id, study_id, block_id, operation_id):
+        """Operation-level state for one AI revision (audit G3/F08)."""
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            events = uow.event_stream_repository.read_events(project_id, document_id)
+        prepared, revised = None, None
+        for event in events:
+            if event.payload.get('operation_id') != operation_id:
+                continue
+            if event.event_type == 'manuscript_object_revision_prepared.v1':
+                prepared = event.payload
+            elif event.event_type == 'manuscript_object_revised.v1':
+                revised = event.payload
+        if revised is not None:
+            return {'operation_id': operation_id, 'status': 'completed',
+                'document_revision': revised.get('document', {}).get('revision')}
+        if prepared is not None:
+            return {'operation_id': operation_id, 'status': 'running_or_unknown',
+                'next_step': '先用原operation_id调用recover核对结果；未知结果不得重新派发模型。'}
+        return {'operation_id': operation_id, 'status': 'unknown',
+            'next_step': '系统没有该操作的记录，可以重新发起修改。'}
 
     def recover_object_revision(self, project_id, study_id, intent):
         document_id = manuscript_document_id(project_id, study_id)
@@ -483,6 +576,56 @@ class ManuscriptDocumentService:
                 # The user touched this object while the candidate was being
                 # prepared: surface the conflict, never overwrite silently.
                 raise ValueError('manuscript_object_anchor_changed')
+            if intent.get('scope') == 'patch_object':
+                # F07: a patch touches exactly the authorized sub-range. The
+                # candidate replaces only the targeted cell / character range;
+                # everything outside must remain identical afterwards.
+                target = self._patch_target(intent)
+                if target['kind'] == 'table_cell':
+                    import json as _json
+                    try:
+                        parsed = _json.loads(block.content or '{}')
+                    except ValueError as exc:
+                        raise ValueError('manuscript_object_table_content_invalid') from exc
+                    # 块内容与候选契约同形：{"table": {...rows/columns...}}。
+                    table = parsed.get('table') if isinstance(parsed, dict) else parsed
+                    rows = table.get('rows') if isinstance(table, dict) else None
+                    if not isinstance(rows, list) or len(rows) <= target['row']:
+                        raise ValueError('manuscript_object_target_invalid')
+                    row = rows[target['row']]
+                    cells = row.get('cells') if isinstance(row, dict) else None
+                    if not isinstance(cells, list) or len(cells) <= target['column']:
+                        raise ValueError('manuscript_object_target_invalid')
+
+                    def _mask(rows_value):
+                        """Neutralize every cell: whatever survives masking is
+                        'outside the authorized range' and must compare equal
+                        before/after the patch."""
+                        clone = _json.loads(_json.dumps(rows_value))
+                        for row_clone in clone:
+                            for index, cell in enumerate(row_clone.get('cells', [])):
+                                if isinstance(cell, dict):
+                                    cell['text'] = ''
+                                else:
+                                    row_clone['cells'][index] = ''
+                        return _json.dumps(clone, ensure_ascii=False, sort_keys=True)
+
+                    new_rows = _json.loads(_json.dumps(rows))
+                    cell = new_rows[target['row']]['cells'][target['column']]
+                    if isinstance(cell, dict):
+                        cell['text'] = candidate
+                    else:
+                        new_rows[target['row']]['cells'][target['column']] = candidate
+                    if _mask(new_rows) != _mask(rows):
+                        raise ValueError('manuscript_object_candidate_invalid')
+                    candidate = _json.dumps({'table': {**table, 'rows': new_rows}},
+                        ensure_ascii=False, sort_keys=True)
+                else:  # text_range on a paragraph
+                    start, end = target['start'], target['end']
+                    text = block.content or ''
+                    if end > len(text):
+                        raise ValueError('manuscript_object_target_invalid')
+                    candidate = text[:start] + candidate + text[end:]
             if block.block_kind.value == 'table':
                 import json as _json
                 try:

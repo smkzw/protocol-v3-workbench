@@ -454,7 +454,7 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
     class ObjectRevisionRequest(BaseModel):
         model_config = ConfigDict(extra='forbid')
         operation_id: NonEmptyText
-        actor_id: NonEmptyText
+        actor_id: StableId
         expected_revision: int
         expected_document_sha256: Sha256
         semantic_block_id: NonEmptyText
@@ -462,6 +462,9 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         scope: str = 'replace_object'
         instruction: str = ''
         candidate_content: str = ''
+        # F07: patch_object 的授权子范围——表格 {kind:'table_cell',row,column}
+        # 或段落 {kind:'text_range',start,end}；服务端据此约束应用范围。
+        target: dict | None = None
 
     def _object_target(project_id, study_definition_id, block_id, body):
         intent = body.model_dump(mode='json')
@@ -601,6 +604,15 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                 raise HTTPException(404, detail={'message': '没有找到该操作记录，可安全重试或重新发起修改。'})
             return result
         return _safe_call(lambda: checked(execute))
+
+    @router.get('/objects/{block_id}/ai-revisions/{operation_id}/status')
+    def object_revision_status(project_id: str, study_definition_id: str, block_id: str,
+                               operation_id: str):
+        """Operation-level state for one AI revision (audit G3/F08):
+        completed / running_or_unknown / unknown — never a bare 404 that
+        invites a blind model re-call."""
+        return documents.object_revision_status(project_id, study_definition_id,
+            block_id, operation_id)
 
     @router.post('/edits/recover')
     def recover_edits(project_id: str, study_definition_id: str, body: ManuscriptEditRequest):
