@@ -1499,3 +1499,22 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - r6_tester2_igan2：原发性IgA肾病II期（合成药N，36周UACR，背景RAS抑制剂），入口B → cursor-grok-4.6
 - r6_tester3_endo_ocr：子宫内膜异位症II期（合成药Z口服GnRH拮抗剂），盲测+OCR → deepseek-v4.1-flash
 - r6_tester4_osteoporosis：绝经后骨质疏松II期（合成药B硬骨抑素类似物），自选领域框架 → zai/glm-5.2
+
+## 2026-09-20 12:00 第六轮聚合：P0清零、4/4走通端到端、产物QC通过；P1修复两批；会商意见书归档
+
+**第六轮结果（重大里程碑）**：4/4 EXIT（tester1 IgAN入口A EXIT=OK / tester2 mCRPC→改为IgAN入口B走通到Office重开(报告体截断但证据齐全/tmp/t17_tester2/含43_office_reopen.png+两版docx) / tester3 子宫内膜异位盲测+OCR EXIT=OK / tester4 骨质疏松 EXIT=OK）。**上一轮2×P0修复生效：所有测试者全部通过"完成第一步"**。产物QC：docx实稿4份（21.7k/21.6k字等、270+段、6-7表、零占位符；tester2还有编辑前后两版）。
+
+**tester3重点发现（EXIT=OK，独立复现+浏览器证据）**：
+- P0-1（会商降级为P0→慢+假进度）：导入方案摘要永久"正在准备文档内容"（PDF 1.3MB/DOCX 52KB均≥600s无进度无取消；真值=6-10min慢+假进度+客户端120s超时错配）。唯一PDF入口，封死外部证据链。修法（会商）：_deterministic_parse移出响应关键路径+202回填+取消按钮+超时对齐。
+- P1-1：英文文献纳入→整理失败(285s)→旅程钉死第一步（瞬返失败无重试）；取消勾选立即恢复。修法（会商#4）：下游渲染由已确认study_definition驱动。
+- P1-2：设计要素空转（=tester1/4同一根因，已修cb23eaa）。
+
+**tester1/4重点发现（已修cb23eaa+ac035b2）**：设计要素needs_information渲染空白（questions vs unresolved_questions字段错配）→合并渲染+用户下一步指引；导出docx泄漏v2_n_*锚点105次/v2_front_block标题2次/缺口fact_path 35次→导出投影统一脱敏（unregistered node不产heading但正文保留+【缺口：path：】→【待补充：】+（缺口身份：v2_*）剥离——会商2补充发现后者）；测试P2-2"已保存仍弹未保存确认"=有意设计保留。
+
+**tester4独有P1**：regimen-design blocked无UI出口（"本次设计结果需要核对"无操作按钮）→待修（会商#5：终态提供重试+复用openItems聚合问答）。
+
+**会商意见书**（conf2_deepseek-v4.1完成归档；conf1_gemini未完成仅部分）：交叉印证矩阵（A1设计要素3/4强印证、C导出泄漏4/4产物实证、B导入挂死降级、K关闭二次确认属有意设计）+修复优先级10项+红线建议（#1#2修复前不再派全流程验收轮——#1已修）。
+
+**下一批修复清单（会商排序）**：②导入方案摘要慢/假进度/无取消（后端异步化）；④整理失败后下游与已保存初稿不可达；⑤regimen blocked出口；⑥文献引用/OCR/翻译主链可达性（门控改能力判断）；⑦39项键名直出（补标签映射——组件定位待做，会商已给修法）；P2批（章节口径矛盾/目录域/关闭文案/导出按钮形态）。
+
+**新继承坑**：导出heading分支的continue会跳过整块正文（已改为仅跳过heading输出）——改循环内控制流时必须确认跳过范围。
