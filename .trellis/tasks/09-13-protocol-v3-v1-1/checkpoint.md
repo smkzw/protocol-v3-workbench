@@ -1618,3 +1618,11 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 ## 2026-09-20 21:20 独立环境状态：传输覆盖修复后 seed 协调器在独立 DB 上仍未正确触发 AI dispatch
 
 **当前状态**：传输层覆盖（WORKBENCH_PROTOCOL_V3_AI_ENDPOINT/KEY/MODEL/EXPECTED_MODEL）已实现并提交（f0a9687）。direct curl 到 OmniRoute 完全正常。但工作台 5285 的 research-intake 在全新 DB 上 resume 始终返回 blocked——AI dispatch 未实际发起。根因仍在调查：graph runtime 的 reservation 状态与 seed coordinator 交互可能在 clean DB 上存在初始化缺口。下一 Agent 需要继续深入 seed_product + graph_runtime 的 reservation 初始化链。
+
+## 2026-09-20 21:30 状态补记：5285 已用最新代码重启，OmniRoute 通道确认通畅，seed-generate dispatch 需深挖
+
+- 5285 API 已用最新代码（f0a9687+）重启，OmniRoute 网关确认存活（chat 0.7s 返回 200）
+- 当前阻塞：research-intake 的 seed-generate 节点 dispatch 后 AI 调用未返回 node_result，导致 run 停在 blocked
+- 这是 graph runtime 层面的问题（节点 dispatch 后 AI 调用链路挂起），不是配置问题（OmniRoute 已确认存活且 deepseek-flash 可用）
+- 下一步需深入 graph runtime 的 seed-generate 节点执行逻辑，检查是否有隐式的 connection 或 lock 问题
+- 第九轮四个场景（CLL/CCS/功能性便秘/镰状细胞病）的 prompts 已就绪，待阻塞修复后重派
