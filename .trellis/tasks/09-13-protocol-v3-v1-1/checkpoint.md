@@ -1710,3 +1710,25 @@ research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事�
 - 需要重启 5285 API 以加载最新代码
 - restart 命令配方见前面 checkpoint 条目（含 WORKBENCH_PROTOCOL_V3_AI_ENDPOINT 等 cms-router 覆盖变量）
 - seed_product.py 的 partial 构造通过 **kwargs 传递 endpoint，与 deepseek_api.py 内部的 env 读取存在参数冲突——需要统一参数来源
+
+## 2026-09-20 22:20 根本性基础设施阻塞——需 owner 决策
+
+### 已验证的事实
+1. **核心写作产品完全可用**（第六轮验证）：journey链+UI链→AI全稿→保存→导出Word→GenOffice
+2. **12项代码修复全部有效**：Office闭环/核对诚实/surgical/文控/REF/枚举select化/键名映射/导出桥接
+3. **回归基线稳定**：2577过/前端95/95
+
+### 当前阻塞
+**5285 独立环境的 research-intake AI dispatch 持续挂起**——transport 正确发送到 OmniRoute（endpoint=http://localhost:20128/v1/chat/completions），但 OmniRoute 对工作台的大 payload 请求不返回。直接 curl 小请求 0.5 秒通过，大请求（研究整理 prompt，~5KB+system）挂起不回。
+
+这不是代码 bug，而是 **OmniRoute 代理对特定请求形态的兼容性问题**。需要 owner 在 OmniRoute 网关侧排查。
+
+### 当前可行的替代方案
+1. **5275 主环境**（e2e_runtime + e2e_test.sqlite）已被验证可用——第六轮在5275上完成了全链测试。owner可指示在5275上直接跑测试（不建独立环境）。
+2. **提供有效的 DeepSeek key**——protocol_workflow 路径硬编码 api.deepseek.com，需要有效key。
+3. **排查 OmniRoute**：检查 :20128 网关对 POST /v1/chat/completions 且 payload>5KB 的请求的处理。
+
+### 接手者注意
+- 5285 独立环境已运行最新代码（f0a9687+全部修复），前端5186
+- 所有环境变量配方和运维信息见前面 checkpoint 条目
+- 不要在 OmniRoute 挂起问题解决前反复重试——浪费资源
