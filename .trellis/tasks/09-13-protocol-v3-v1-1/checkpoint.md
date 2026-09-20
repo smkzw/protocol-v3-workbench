@@ -1483,3 +1483,19 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
    - r5_tester3_crc_ocr：转移性结直肠癌II期（合成药Y）盲测+OCR/翻译/语义理解重点（公开英文文献下载，失败如实记录） → opencode-go/deepseek-v4.1-flash
    - r5_tester4_dryeye_open：干眼症II期自选领域交叉（合成药E环孢素滴眼液）→ zai/glm-5.2（主线程subagent派发因reasoning-level未配置不可用，omp zai兜底保持四模型多样性；subagent通道修复后下一轮恢复）
 4. setsid 脱离会话派发，EXIT=标记由命令尾部追加；四进程确认存活（8 omp processes）。
+
+## 2026-09-20 10:55 第五轮聚合（2×P0已修）+ 第六轮重派
+
+**第五轮结论**：tester1（AS入口A）与tester2（mCRPC入口B）BLOCKED于同一P0；tester3（CRC盲测+OCR重点）EXIT=OK产出高质量报告；tester4进行中被停。
+- **P0#1（已修 50e6bdf）**：完成第一步→确认变更即崩——`_carry_forward_corpus_gate`把inactive override传成None（pydantic拒绝）→全新项目必现。修=override对象原样携带（inactive合法），access=bool(active)。3条回归锁定。**教训：deab516的R3修复引入回归而本地测试未覆盖inactive分支——"修复需带其边界条件的回归测试"。**
+- **P0#2（已修，运维）**：历次vite重启均漏注入`VITE_PROTOCOL_V3_WORKFLOW_ENABLED=1`→入口A（ProtocolIntakeWorkspace）静默不可达。修=重启命令加变量；已写入重启配方。
+- **P1（已修 50e6bdf）**：竞品分块进度泄漏ct_chunk_*内部ID→改"第N批"；journey路由422的pydantic全栈文本→`_mw_journey_error_detail`转人话（7处）。
+- 自愈条件修正：picos合法missing不再触发reconcile（identical commit保持noop）。
+
+**tester3报告要点（EXIT=OK）**：反拟合全阴性（生成内容0禁语、8项高影响定量参数全部unknown不编造）；OCR/翻译入口不可达如实记录；项目下拉含他会话项目=共享实例隔离缺失（已知P2）；到达"例外进入写作"但止步第一步（P0#1所致）。
+
+**第六轮重派（10:50，清洁空间二次重置cleared_1045，前后端同事务重启，vite带VITE_PROTOCOL_V3_WORKFLOW_ENABLED=1）**：
+- r6_tester1_igan：IgA肾病II期（合成药I补体口服，36周UACR），入口A → gemini-3.8-flash
+- r6_tester2_igan2：原发性IgA肾病II期（合成药N，36周UACR，背景RAS抑制剂），入口B → cursor-grok-4.6
+- r6_tester3_endo_ocr：子宫内膜异位症II期（合成药Z口服GnRH拮抗剂），盲测+OCR → deepseek-v4.1-flash
+- r6_tester4_osteoporosis：绝经后骨质疏松II期（合成药B硬骨抑素类似物），自选领域框架 → zai/glm-5.2
