@@ -1636,3 +1636,20 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 **修复方向**：需要在 graph runtime 的 start_run 后显式调用 advance 或 seed_graph 的初始化方法（当前 start_run 只写入 run_started + checkpoint 但不触发首个节点的 dispatch）。这需要 graph runtime 团队的输入。
 
 **本会话最终成果**：12 项代码修复全部推送，回归 2577 过。详细清单见前面 checkpoint 条目。
+
+## 2026-09-20 22:00 最终无损暂停——诚实状态汇报
+
+### 已完成并验证（推送至GitHub）
+1. 审计G0-G4整改：8项代码修复，全部有测试覆盖（deab516→95ee052）
+2. 场景1 journey链+UI链端到端：建稿→AI全稿→导出33k字→GenOffice渲染验证
+3. 基础设施：独立环境5285/5186，cms-router通道，OmniRoute确认通畅
+4. 消息卫生：枚举select化+键名映射+ct_chunk清理
+
+### 无法在本会话内解决的根本阻塞
+research-intake 的 seed-generate AI dispatch 在全新DB上无法完成。事件流只有3条（started/checkpoint/dispatch），AI调用发出后不写入node_result。这不是传输层问题（curl直连OmniRoute 1.2s通过），而是graph runtime的service函数与reservation系统的交互在fresh DB上有未初始化的依赖。
+
+### 需要owner做的事
+让了解graph runtime内部机制的团队成员检查：为什么fresh DB上seed-generate的service函数执行后不写入graph_node_result事件。可能需要初始化reservation状态或调整graph plan的依赖关系。
+
+### 接手Agent注意
+5285/5186环境运行中（API代码=f0a9687+，前端=vite最新），DeepSeek key已失效需用cms-router通道（已配置）。第九轮r9 prompts已就绪。接手后先解决seed-generate dispatch问题再派测试。
