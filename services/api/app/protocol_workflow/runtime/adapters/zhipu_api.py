@@ -132,6 +132,7 @@ def build_zhipu_api_adapter(
     http_opener: Any | None = None,
     endpoint: str = ZHIPU_CODING_CHAT_COMPLETIONS_ENDPOINT,
     timeout_seconds: int = REQUEST_TIMEOUT_SECONDS,
+    expected_response_model_override: str | None = None,
     artifact_text_resolver: Callable[[str, str], str] | None = None,
     max_input_bytes: int | None = None,
 ) -> DirectApiAdapter:
@@ -216,7 +217,8 @@ def build_zhipu_api_adapter(
         return parsed
 
     def _validated_completion(
-        parsed: dict[str, Any], *, requested_model: str
+        parsed: dict[str, Any], *, requested_model: str,
+        expected_response_model_override: str | None = None,
     ) -> tuple[str, str, str]:
         """Return ``(response_id, observed_model, content)`` after typed checks."""
         response_id = parsed.get("id")
@@ -229,7 +231,15 @@ def build_zhipu_api_adapter(
             raise ZhipuTransportError(
                 f"{provider_label} completion response is missing the model identity"
             )
-        if observed_model != requested_model:
+        # 网关池（OmniRoute 等）可能重写响应 model 字段：部署可用
+        # WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL 显式声明出口身份；未声明
+        # 时维持严格相等（默认直连行为不变）。
+        import os as _os
+        expected_override = _os.environ.get(
+            "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip() or (
+            expected_response_model_override or "")
+        expected = expected_override or requested_model
+        if observed_model != expected:
             raise ZhipuTransportError(
                 f"{provider_label} completion model mismatch: requested "
                 f"{requested_model!r}, observed {observed_model!r}"
@@ -310,7 +320,8 @@ def build_zhipu_api_adapter(
         )
         parsed = _complete(body)
         response_id, observed_model, content = _validated_completion(
-            parsed, requested_model=model
+            parsed, requested_model=model,
+            expected_response_model_override=expected_response_model_override,
         )
         output_sha = hashlib.sha256(content.encode('utf-8')).hexdigest()
         receipt_data = {

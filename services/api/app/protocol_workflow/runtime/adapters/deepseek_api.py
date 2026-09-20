@@ -1,13 +1,19 @@
 """DeepSeek direct-API product transport on the shared chat-completions stack.
 
-The DeepSeek official API is OpenAI-compatible chat completions with Bearer
-auth; the credential is the same stored key omp's opencode-go binding uses
-(``auth_credentials.provider='deepseek'``), resolved read-only and kept in
-memory only.  The product default profile per the 2026-09-13 goal: model
-``deepseek-v4-flash`` (registry ``role_registry.deepseek.json``),
-reasoning effort ``max`` — declared identities only; the observed model must
-match at the transport boundary or the completion fails typed.
+默认行为不变：直连 api.deepseek.com，凭证取自 omp 的 agent 库
+（provider='deepseek'）。T17 第九轮起支持部署级覆盖，把同一适配器指向
+cms-router/OmniRoute 本机网关（key 轮转池，响应 model 字段会被网关重写）：
+
+- ``WORKBENCH_PROTOCOL_V3_AI_ENDPOINT``：完整 chat/completions URL；
+- ``WORKBENCH_PROTOCOL_V3_AI_MODEL``：请求模型名（如 deepseek-flash）；
+- ``WORKBENCH_PROTOCOL_V3_AI_KEY``：Bearer 凭证（优先于 omp 库解析）；
+- ``WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL``：响应 model 的出口声明
+  （网关池重写 model 字段时用于校验；缺省维持严格相等）。
+
+未设置任何覆盖变量时，本模块与历史行为完全一致。
 """
+import os
+
 from app.protocol_workflow.runtime.omp_credentials import resolve_omp_deepseek_key
 from .zhipu_api import build_zhipu_api_adapter
 
@@ -25,7 +31,7 @@ __all__ = [
 def build_deepseek_api_adapter(
     *,
     model: str = DEEPSEEK_DEFAULT_MODEL,
-    credential_resolver=resolve_omp_deepseek_key,
+    credential_resolver=None,
     **kwargs,
 ):
     """Compose the DeepSeek direct-API adapter over the shared transport.
@@ -34,11 +40,21 @@ def build_deepseek_api_adapter(
     injected openers for tests) is inherited unchanged.  The transport error
     strings carry the deepseek label; receipts carry the API-observed identity.
     """
+    endpoint = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_ENDPOINT") or DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT
+    model = os.environ.get("WORKBENCH_PROTOCOL_V3_AI_MODEL") or model
+    key_override = os.environ.get("WORKBENCH_PROTOCOL_V3_AI_KEY", "").strip()
+    expected_model = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip() or None
+    if key_override:
+        credential_resolver = lambda: key_override  # noqa: E731 — 部署级覆盖
+
     return build_zhipu_api_adapter(
         model=model,
         provider_id=DEEPSEEK_PROVIDER_ID,
         provider_label="deepseek",
         credential_resolver=credential_resolver,
-        endpoint=DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT,
+        endpoint=endpoint,
+        expected_response_model_override=expected_model,
         **kwargs,
     )
