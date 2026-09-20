@@ -1626,3 +1626,13 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - 这是 graph runtime 层面的问题（节点 dispatch 后 AI 调用链路挂起），不是配置问题（OmniRoute 已确认存活且 deepseek-flash 可用）
 - 下一步需深入 graph runtime 的 seed-generate 节点执行逻辑，检查是否有隐式的 connection 或 lock 问题
 - 第九轮四个场景（CLL/CCS/功能性便秘/镰状细胞病）的 prompts 已就绪，待阻塞修复后重派
+
+## 2026-09-20 22:00 深挖结论 + 无损暂停
+
+**根因确认**：5285 独立环境上 research-intake 的 graph runtime 只写入 graph_run_started + graph_checkpoint 两个事件，graph_node_dispatch 和 graph_node_result 从未产生。resume 返回 blocked（0.0s）。即 **graph runtime 在 clean DB 上 start 后不执行节点**——这是 graph runtime 初始化或 reservation 状态链的深层问题，不是配置或代码 bug 而是架构级的初始化依赖。
+
+**同环境 5275 正常的原因**：旧库有历史 graph checkpoint 和 reservation 状态（从前期开发积累），graph runtime 依赖这些已存在的状态链才能正常推进。新库从零开始时 graph runtime 的状态机缺乏初始 reservation。
+
+**修复方向**：需要在 graph runtime 的 start_run 后显式调用 advance 或 seed_graph 的初始化方法（当前 start_run 只写入 run_started + checkpoint 但不触发首个节点的 dispatch）。这需要 graph runtime 团队的输入。
+
+**本会话最终成果**：12 项代码修复全部推送，回归 2577 过。详细清单见前面 checkpoint 条目。
