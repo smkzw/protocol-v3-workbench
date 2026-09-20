@@ -1541,3 +1541,15 @@ journey framing/PICOS都已complete (revision 13→15)。structured_design已有
 - (c)研究流程图：语义稿诚实占位（【待判定】），两轮生成未覆盖——流程图生成层待实现。
 
 **第八轮派发（14:15，清洁空间四次重置cleared_1223后的新重置，前后端同事务重启带flag）**：COPD II期入口A（合成药M2 PDE3/4，24周FEV1谷值）/SLE II期入口B（合成药U2 TYK2，52周SRI-4）/AML II期盲测+OCR（合成药V2 FLT3）/白癜风II期自选交叉（合成药R2外用JAK软膏）。四模型矩阵同前，8进程存活。
+
+## 2026-09-20 14:55 【无损暂停】第八轮部分结果（3/4报告）+ 深层问题定性 + 下窗口首任务
+
+**第八轮部分结果（tester1 COPD入口A EXIT=OK；tester2 SLE入口B EXIT=OK但报P0；tester3 AML盲测 EXIT=BLOCKED；tester4白癜风仍在跑——setsid脱离会话会跑完，log落盘/tmp/t17_r8_tester4_myeloma.log，下窗口直接聚合）**。报告归档 t17_round8_partial/。
+
+**深层问题定性（下窗口首批，未根治）**：
+1. **初稿生成停滞复发**（tester3 AML：1→6章停，"继续写作"按钮3次点击每次4分钟无新章；tester2 SLE：8/111后停）。793ad41只修了UI出口与stopped语义，**AI生成层本身停滞**——resume对failed章重试仍失败（400），且无新章派发（循环只遍历已有request）。下窗口深挖：e2e_test.sqlite的chapter-draft事件流失败原因+后端日志400来源+resume为何无新章start。可能需要chapter失败的错误详情透出+AI调用重试策略。
+2. **虚假完成文案**（tester2 P0-1）：8/111完成即显示"全部适用章节初稿已生成"——kept_as_gap排除在applicable外导致complete_candidate=True的口径偷换。修=前端口径分离（已生成X/待补Y/待判定Z/不适用W），complete_candidate的UI文案不得说"全部"。
+3. **导入摘要仍挂**（tester3：扫描PDF 11.7MB/文本PDF/DOCX 全挂死或静默重置）——dd71c70后台化后仍异常：POST立即返回了吗？"静默重置"疑似前端120s超时仍在触发或后台线程_failre。下窗口：查e2e_runtime/medical_writing_synopsis_import.sqlite3的job status（parsing/failed?）+error_message+前端UPLOAD_REQUEST_TIMEOUT_MS对POST的实际约束。
+4. **tester3的P1义务声明体**：已生成6章正文是"义务声明体"（"本药作用机制属于本章的继承性义务…不得照抄"）而非方案正文——章节提示词/材料不足以支撑该章实质写作时模型输出元话语。需评估这些章是否应标待补而非硬写。
+
+**LOOP状态**：第六轮3份+第七轮4份+第八轮3份报告=10份实测证据；P0修了4个（override崩溃/入口A门禁/初稿停滞UI面/虚假完成待修），深层2项（AI生成停滞、导入链）在途。会商机制运转正常（conf2高质量意见书）。
