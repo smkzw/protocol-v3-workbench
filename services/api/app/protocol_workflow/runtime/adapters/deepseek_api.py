@@ -32,6 +32,8 @@ def build_deepseek_api_adapter(
     *,
     model: str = DEEPSEEK_DEFAULT_MODEL,
     credential_resolver=None,
+    endpoint: str = DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT,
+    expected_response_model_override: str | None = None,
     **kwargs,
 ):
     """Compose the DeepSeek direct-API adapter over the shared transport.
@@ -40,14 +42,11 @@ def build_deepseek_api_adapter(
     injected openers for tests) is inherited unchanged.  The transport error
     strings carry the deepseek label; receipts carry the API-observed identity.
     """
-    endpoint = os.environ.get(
-        "WORKBENCH_PROTOCOL_V3_AI_ENDPOINT") or DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT
-    model = os.environ.get("WORKBENCH_PROTOCOL_V3_AI_MODEL") or model
     key_override = os.environ.get("WORKBENCH_PROTOCOL_V3_AI_KEY", "").strip()
-    expected_model = os.environ.get(
-        "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip() or None
     if key_override:
         credential_resolver = lambda: key_override  # noqa: E731 — 部署级覆盖
+    expected_model = os.environ.get(
+        "WORKBENCH_PROTOCOL_V3_AI_EXPECTED_MODEL", "").strip() or None
 
     return build_zhipu_api_adapter(
         model=model,
