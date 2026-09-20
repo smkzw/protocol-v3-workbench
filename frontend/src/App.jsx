@@ -11344,6 +11344,15 @@ function WritingPage({
             </div>
           )}
         </section>
+        {/* T17 第六轮 P1：greenfield 会话（零文档从零设计）没有 documentSession，
+            原条件会把整个右栏——连同文献库——一起隐藏，用户无任何文献入口。
+            文献库按项目挂载、不依赖会话：greenfield 下提供只含「文献」的右栏。 */}
+        {greenfieldSetupAvailable && <aside className="panel ai-rail writing-ai-core" hidden={isStudySchemaSection}>
+          <div className="rail-tabs">
+            <button className="active" type="button" title="项目文献库与正文引文">文献</button>
+          </div>
+          <MedicalWritingLiteraturePanel projectId={projectId} onInsertReference={queueCitationInsertion} />
+        </aside>}
         {!greenfieldSetupAvailable && <aside className="panel ai-rail writing-ai-core" hidden={isStudySchemaSection}>
           <div className="rail-tabs">
             {writingRailTabs.map((tab) => (

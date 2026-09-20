@@ -15,6 +15,19 @@ function readableError(error) {
 
 // One-line readable preview of a residual recommendation value, so the user
 // can see every item's actual content before committing it (R-C05).
+// 组织信息确认列表的字段中文名（T17 第六轮 P1-2：内部键名不直出）。
+// 未映射键回落为"相关内容"，绝不把英文键名暴露给用户。
+const RESIDUAL_KEY_LABELS = {
+  role: '角色', name_note: '姓名说明', note: '说明', policy: '安排',
+  contact: '联系人', channels: '招募渠道', measures: '招募方式',
+  reference: '参照', software: '软件', path: '报告路径',
+  composition: '组成', flow: '信息流向', arrangement: '审阅安排',
+  roles: '职责分工', reserved_for_signing: '签署时填写', summary: '摘要',
+  parameters: '判定参数', logic: '判定规则',
+};
+function residualKeyLabel(key) {
+  return RESIDUAL_KEY_LABELS[key] || '相关内容';
+}
 function summarizeResidualValue(value) {
   if (value === true) return '适用';
   if (value === false) return '不适用';
@@ -23,7 +36,7 @@ function summarizeResidualValue(value) {
   if (value && typeof value === 'object') {
     return Object.entries(value)
       .filter(([, item]) => item !== null && item !== undefined && item !== '')
-      .map(([key, item]) => `${key}：${summarizeResidualValue(item)}`)
+      .map(([key, item]) => `${residualKeyLabel(key)}：${summarizeResidualValue(item)}`)
       .join('；');
   }
   return '（空）';

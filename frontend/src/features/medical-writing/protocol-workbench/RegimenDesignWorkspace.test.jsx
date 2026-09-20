@@ -51,7 +51,10 @@ it("resumes an explicitly queued job but never redispatches an unknown outcome",
   view.unmount();
   api.getRegimenDesign.mockResolvedValue({ workflow_run_id: "design:one", status: "blocked", can_resume: false });
   render(<RegimenDesignWorkspace projectId="one" seedRunId="seed:one" api={api} />);
-  await screen.findByText("本次设计结果需要核对，原资料和记录已保留。");
+  // 会商#5：blocked 终态升级为带出口的告警（文案+重新生成按钮）；
+  // 自动恢复仍然只尝试一次 resume，不静默重复派发。
+  await screen.findByText("本次给药设计未完成（原资料和记录已保留）。常见原因是整理服务暂时不可用或研究信息刚发生变化。");
+  expect(screen.getByRole("button", { name: "重新生成给药设计" })).toBeTruthy();
   expect(api.resumeRegimenDesign).toHaveBeenCalledTimes(1);
   expect(api.startRegimenDesign).not.toHaveBeenCalled();
 });

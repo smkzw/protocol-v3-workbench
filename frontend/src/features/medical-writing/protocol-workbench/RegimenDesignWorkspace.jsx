@@ -153,7 +153,16 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
       if (saved.uncertain) setSaved({ pending: true, intent: saved.intent, previousRunIds: saved.previousRunIds });
       else setRefresh(value => value + 1);
     }}>核对本次设计</button>}
-    {job?.status === "blocked" && <p role="status">本次设计结果需要核对，原资料和记录已保留。</p>}
+    {job?.status === "blocked" && <div role="alert">
+      <p>本次给药设计未完成（原资料和记录已保留）。常见原因是整理服务暂时不可用或研究信息刚发生变化。</p>
+      <button type="button" disabled={busy} onClick={() => {
+        // T17 会商#5：blocked 终态给出明确出口——用原意图重新发起设计。
+        const intent = saved.intent || { seed_run_id: seedRunId, study_definition_id: studyDefinitionId };
+        setSaved({ pending: true, intent, previousRunIds: saved.previousRunIds });
+        setRefresh(value => value + 1);
+      }}>重新生成给药设计</button>
+      {studyDefinitionId && actorId && <span> 或在下方研究信息卡片中核对研究信息后再试。</span>}
+    </div>}
     {job?.status === "needs_structure_correction" && !job.can_resume && <p role="status">设计整理尚未完成，本次记录已保留。</p>}
     {proposal?.regimen && (studyDefinitionId && actorId
       ? <RegimenAdoptionCard projectId={projectId} studyDefinitionId={studyDefinitionId} actorId={actorId}

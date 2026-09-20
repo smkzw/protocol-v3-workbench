@@ -938,7 +938,74 @@ class MedicalWritingSynopsisImportService:
             )
             connection.commit()
 
-        # --- deterministic parse (synchronous, before response) ---
+        # --- deterministic parse OFF the response path (T17 会商#2) ---
+        # A 1.3MB PDF blocked this request for minutes with no progress and
+        # no way to cancel: the job row (and its id) only existed after the
+        # parse finished.  The row is now created first with phase='parsing',
+        # the request returns immediately, and a detached thread finishes
+        # parse → chunk persistence → AI worker spawn.  cancel_job works
+        # from the first second because the job id exists up front.
+        def _finish_import_start():
+            if self._import_cancelled(project_id, idempotency_key):
+                return
+            try:
+                self._finish_import_start_locked(
+                    project_id=project_id,
+                    idempotency_key=idempotency_key,
+                    filename=filename,
+                    media_type=media_type,
+                    suffix=suffix,
+                    payload=payload,
+                    content_sha256=content_sha256,
+                    expected_indication=expected_indication,
+                    actor=actor,
+                    route_snapshot=route_snapshot,
+                    route_identity_hash=route_identity_hash,
+                    job_id=job_id,
+                )
+            except Exception:
+                # The job row stays in phase='parsing'; the status route
+                # reports the failure instead of hanging forever.
+                self._mark_import_failed(project_id, idempotency_key)
+
+        threading.Thread(target=_finish_import_start, daemon=True).start()
+
+        return SynopsisImportJobStartResponse(
+            job_id=job_id,
+            idempotency_key=idempotency_key,
+            status="parsing",
+            phase="parsing",
+            content_sha256=content_sha256,
+            span_count=0,
+            media_type=media_type,
+            warnings=[],
+        )
+
+    def _import_cancelled(self, project_id: str, idempotency_key: str) -> bool:
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT status FROM medical_writing_synopsis_imports "
+                "WHERE project_id = ? AND idempotency_key = ?",
+                (project_id, idempotency_key),
+            ).fetchone()
+        return bool(row and row["status"] == "cancelled")
+
+    def _mark_import_failed(self, project_id: str, idempotency_key: str) -> None:
+        import traceback
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE medical_writing_synopsis_imports SET status = 'failed', "
+                "error_message = ?, updated_at = ? WHERE project_id = ? AND idempotency_key = ?",
+                (traceback.format_exc(limit=3)[:1800], datetime.now(timezone.utc).isoformat(),
+                 project_id, idempotency_key),
+            )
+            connection.commit()
+
+    def _finish_import_start_locked(
+        self, *, project_id, idempotency_key, filename, media_type, suffix,
+        payload, content_sha256, expected_indication, actor,
+        route_snapshot, route_identity_hash, job_id,
+    ):
         parse_result = self._deterministic_parse(
             project_id=project_id,
             filename=filename,
@@ -949,6 +1016,8 @@ class MedicalWritingSynopsisImportService:
             expected_indication=expected_indication,
             actor=actor,
         )
+        if self._import_cancelled(project_id, idempotency_key):
+            return
 
         # Persist chunk rows + update job with real chunk metadata.
         now = datetime.now(timezone.utc)
