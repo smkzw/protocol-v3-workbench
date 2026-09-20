@@ -204,8 +204,22 @@ export function DesignElementsCards({ projectId, seedRunId, studyDefinitionId, a
     {!runId && <button type="button" className="kz-design-primary" disabled={busy || !studyDefinitionId}
       onClick={begin}>生成设计要素建议</button>}
     {runId && state?.status === 'running' && <p role="status">正在整理设计要素建议，已确认内容保留。</p>}
-    {runId && state?.status === 'needs_information' && <p role="alert">设计建议尚有未决问题：
-      {(state?.proposal?.questions || []).join('；')}</p>}
+    {runId && state?.status === 'needs_information' && (() => {
+      // 审计后第6轮 P1：questions 与 unresolved_questions 是两组来源；
+      // 只渲染其一会得到"冒号后空白"。合并去重并给出用户可执行的下一步。
+      const pending = [...new Set([
+        ...(proposal?.questions || []),
+        ...(proposal?.unresolved_questions || []),
+      ])].filter(Boolean);
+      return <div role="alert">
+        <p>设计建议尚有 {pending.length} 项未决内容，需要您补充后才能继续：</p>
+        {pending.length > 0 && <ul>
+          {pending.map((question, index) => <li key={index}>{question}</li>)}
+        </ul>}
+        <p>请在上方「写作说明」或研究信息确认中补充以上内容，然后重新生成设计要素建议；
+          已确认的内容会保留。</p>
+      </div>;
+    })()}
     {runId && state?.status === 'needs_structure_correction' && <p role="alert">
       设计建议的结构尚未核对通过，原建议与记录已保留。</p>}
     {availableCards.map(card => <CardSection key={card} card={card} proposal={proposal}

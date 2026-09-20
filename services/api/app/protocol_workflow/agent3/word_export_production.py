@@ -145,6 +145,14 @@ def _bookmark(paragraph, name: str) -> None:
     paragraph._p.append(end)
 
 
+_GAP_PATH_RE = re.compile(r'【缺口：\s*[A-Za-z][A-Za-z0-9_.]*\s*：')
+
+
+def _redact_gap_paths(content: str) -> str:
+    """缺口标注里的人类可读部分保留，内部 fact_path 不进交付稿（T17 P1-3）。"""
+    return _GAP_PATH_RE.sub('【待补充：', content or '')
+
+
 def render_production_docx(template_path, template_dir, document: Mapping[str, Any],
                            output_path, study_facts: Mapping[str, Any]) -> dict:
     """Zero-placeholder production export on the clean template structure."""
@@ -298,9 +306,14 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
         if node_id != current_node:
             current_node = node_id
             info = titles.get(node_id, {})
-            heading = doc.add_heading(info.get('title', node_id),
-                                      level=STYLE_ID_TO_HEADING.get(info.get('style_id', ''), 2))
-            _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
+            title_text = str(info.get('title') or '').strip()
+            # 内部锚点（v2_n_* / v2_front_block）不是人类标题（T17 P1-3）：
+            # 模板标题表未登记的节点不产出 heading（正文并入前一章），
+            # 但块内容本身照常导出。
+            if title_text:
+                heading = doc.add_heading(title_text,
+                                          level=STYLE_ID_TO_HEADING.get(info.get('style_id', ''), 2))
+                _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
             # R4: no re-projection here.  The synopsis chapter ships the
             # user's current blocks verbatim; re-projecting from facts or
             # writing "不适用" from block shape (B01) are export bugs.
@@ -311,7 +324,7 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
         kind = block.get('block_kind')
         if kind == 'paragraph':
             ref_count += _add_paragraph_with_table_refs(
-                doc, block.get('content') or '', total_tables)
+                doc, _redact_gap_paths(block.get('content') or ''), total_tables)
         elif kind == 'table':
             table_no += 1
             caption = doc.add_paragraph(f'表{table_no} {titles.get(node_id, {}).get("title", "")}')
