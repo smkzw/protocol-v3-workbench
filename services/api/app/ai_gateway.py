@@ -1565,6 +1565,12 @@ def _empty_completion(response_body: str) -> bool:
     """True when an HTTP-200 body carries no completion content (throttle)."""
     try:
         return not _chat_completion_content(response_body).strip()
+    except ValueError as exc:
+        # The content reader raises for a valid completion whose final channel
+        # is empty.  Returning False for that signal disabled the bounded
+        # transport retry this helper exists to trigger.
+        message = str(exc).lower()
+        return "empty" in message or "no content" in message
     except Exception:
         return False
 

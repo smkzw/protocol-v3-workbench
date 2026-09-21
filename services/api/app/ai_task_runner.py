@@ -2198,7 +2198,7 @@ class AiTaskRunner:
                     payload=envelope.payload,
                     thinking=envelope.thinking,
                     reasoning_effort=envelope.reasoning_effort,
-                    max_output_tokens=32_768,
+                    max_output_tokens=65_536,
                 )
             if task_type == AiTaskType.MEDICAL_WRITING_REVISION:
                 project_references = _project_references_from_store(

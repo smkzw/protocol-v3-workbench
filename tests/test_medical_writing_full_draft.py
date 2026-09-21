@@ -534,6 +534,8 @@ class FullDraftServiceTests(unittest.TestCase):
         # A full-document job stays byte-compatible: no scope key, no digest drift.
         full_descriptor = self.full.build_descriptor(project)
         self.assertNotIn("section_ids", full_descriptor)
+        self.assertEqual(4, full_descriptor["chunk_size"])
+        self.assertEqual(65_536, full_descriptor["max_output_tokens"])
         full_job_id, reused = self.full.submit_durable(project, self.store)
         self.assertTrue(reused)
         self.assertEqual(json.loads(self.store.get(project, full_job_id).payload_json)["descriptor"]["digest"], full_descriptor["digest"])

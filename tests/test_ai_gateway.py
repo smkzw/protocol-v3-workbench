@@ -1081,6 +1081,49 @@ class AiGatewayTests(unittest.TestCase):
         self.assertNotIn("response_body", diagnostics)
         self.assertEqual(64, len(diagnostics["response_sha256"]))
 
+    def test_openai_compatible_provider_retries_transient_empty_final_content(self):
+        envelope = AiPromptEnvelope(
+            task_id="task_empty_then_complete",
+            task_type=AiTaskType.COMPETITIVE_INTELLIGENCE,
+            prompt_version="corpus_analysis_v11",
+            system_prompt="Return one JSON object.",
+            payload={"value": "x"},
+        )
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://ai.example.test/v1",
+            api_key="test-key",
+            model_name="deepseek-v4.1-flash",
+            provider_name="opencode-go",
+            expected_response_model="deepseek-v4.1-flash",
+            timeout_seconds=1,
+            max_attempts=2,
+        )
+        empty = _FakeResponse(
+            {
+                "model": "deepseek-v4.1-flash",
+                "choices": [{"finish_reason": "stop", "message": {"content": ""}}],
+            }
+        )
+        complete = _FakeResponse(
+            {
+                "model": "deepseek-v4.1-flash",
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": json.dumps({"status": "ok"})},
+                    }
+                ],
+            }
+        )
+        with patch(
+            "services.api.app.ai_gateway.urllib.request.urlopen",
+            side_effect=[empty, complete],
+        ) as urlopen, patch("services.api.app.ai_gateway.time.sleep"):
+            result = provider.run(envelope)
+
+        self.assertEqual({"status": "ok"}, result)
+        self.assertEqual(2, urlopen.call_count)
+
     def test_openai_compatible_provider_accepts_json_wrapped_by_thinking_text(self):
         spec = AiTaskSpec(
             task_id="task_protocol_rules_wrapped_json",

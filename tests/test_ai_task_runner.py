@@ -1206,7 +1206,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
         self.assertEqual(2, len(provider.envelopes))
         self.assertEqual(
-            [32_768, 32_768],
+            [65_536, 65_536],
             [item.max_output_tokens for item in provider.envelopes],
         )
         self.assertEqual(

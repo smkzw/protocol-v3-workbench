@@ -47,11 +47,15 @@ FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
 FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_4"
 FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v4"
 FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v4"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v4"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v5"
 LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {"protocol_full_draft_artifact_v3"}
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
-FULL_DRAFT_CHUNK_SIZE = 8
+# Four sections keep max-reasoning responses within the provider's bounded
+# final-output budget.  An eight-section v0.4 batch was observed to end before
+# its outer JSON object closed, leaving only a nested evidence object parsable.
+FULL_DRAFT_CHUNK_SIZE = 4
+FULL_DRAFT_MAX_OUTPUT_TOKENS = 65_536
 # design.* paths whose authoritative mapping needs structured (dict) input; a
 # prose decision answer would be silently dropped there, so such decisions
 # fail closed instead of persisting nothing.
@@ -263,6 +267,8 @@ class MedicalWritingFullDraftService:
             "target_sections": targets,
             "prompt_version": FULL_DRAFT_PROMPT_VERSION,
             "minimum_body_chars": FULL_DRAFT_MINIMUM_BODY_CHARS,
+            "chunk_size": FULL_DRAFT_CHUNK_SIZE,
+            "max_output_tokens": FULL_DRAFT_MAX_OUTPUT_TOKENS,
             "ai_policy": policy,
         }
         if scope:
@@ -698,7 +704,11 @@ class MedicalWritingFullDraftService:
             return DurableJobResult(error="独立AI路由身份已变化，请重新生成全文初稿", retryable=False)
 
         target = list(expected.get("target_sections") or [])
-        chunks = [target[index : index + FULL_DRAFT_CHUNK_SIZE] for index in range(0, len(target), FULL_DRAFT_CHUNK_SIZE)]
+        chunk_size = max(1, int(expected.get("chunk_size") or FULL_DRAFT_CHUNK_SIZE))
+        chunks = [
+            target[index : index + chunk_size]
+            for index in range(0, len(target), chunk_size)
+        ]
         final_path = self._artifact_path(job.project_id, job.job_id, "full-draft.json")
         existing_final = self._read_json_file(final_path)
         if (

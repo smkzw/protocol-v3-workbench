@@ -127,3 +127,8 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 执行包`mw_r11_decision_apply_20260922`声明主路由未产生可用可恢复结果，按manifest使用第一fallback `zcode/zcode/GLM-5.3-Flash:max`，session `sess_858de745-44cd-4934-b788-c22cfafd9776`完成；guard audit为ok。owner发现并关闭worker遗漏的`fact_path`合同P0。集中验证后端111 passed；前端正式110+65 passed，最终production build 1971 modules，diff check通过。旧v0.3浏览器只读状态已验证；真实v0.4决定卡尚待产品模型生成。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_DECISION_LOOP_20260922.md`。
 
 下一动作直接使用隔离运行时与产品默认`opencode-go/deepseek-v4.1-flash:max`运行Study A真实v0.4；保持同一durable job长轮询，生成后先做三态/证据/决定绑定/章节完整性检查，再fresh医学会商，未通过不得采纳到Word。不得重跑检索、分诊、下载、OCR或翻译。
+
+## 2026-09-22 Study A v0.4 产品模型结构恢复
+两次身份探针均通过，声明/实际均为`opencode-go/deepseek-v4.1-flash`，role为max；不是鉴权缺失、身份漂移或总配额耗尽。真实job `mwjob_be7f1474e35f71ce2f097902`（8章批次）首答外层JSON未闭合且纠错空响应；`mwjob_3c36cdf12e46da237f93799d`（4章批次）在既定有界尝试后仍以`provider_response_empty`失败。两者均未生成工件、未采纳正文。
+
+根因修复：空`message.content`此前因helper异常分支写反而跳过有界重试，现已纠正；v0.4批大小降至4并纳入descriptor；全文max推理的最终输出预算从32768升至65536并纳入descriptor，模型/provider/强度不变。集中验证112 passed、py_compile/diff check通过。证据：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V04_PROVIDER_RECOVERY_20260922.md`。下一动作重启自有5299、再次身份探针、创建新logical work key并长轮询；不得重试两个旧失败job，不得采纳未经fresh医学会商的工件。
