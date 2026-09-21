@@ -94,7 +94,20 @@ REQUIRED_FINDING_KEYS = {"finding_id", "status", "title", "source_id", "evidence
 REQUIRED_EVIDENCE_SPAN_KEYS = {"span_id", "source_id", "locator", "quote"}
 REQUIRED_UNCERTAINTY_KEYS = {"level", "description"}
 MEDICAL_WRITING_REVISION_REQUIRED_KEYS = {"proposal_text", "diff_patch", "rationale", "evidence_span_ids"}
-PROTOCOL_FULL_DRAFT_REQUIRED_KEYS = {"section_id", "proposal_text", "rationale", "evidence_span_ids"}
+PROTOCOL_FULL_DRAFT_REQUIRED_KEYS = {
+    "section_id",
+    "content_status",
+    "proposal_text",
+    "rationale",
+    "evidence_span_ids",
+    "decision_items",
+    "missing_source_classes",
+}
+PROTOCOL_FULL_DRAFT_CONTENT_STATUSES = {
+    "complete",
+    "decision_required",
+    "source_gap",
+}
 PROTOCOL_FULL_DRAFT_CONTEXT_REQUIRED_KEYS = {
     "draft_version",
     "section_ids",
@@ -533,13 +546,24 @@ class PromptRegistry:
                 "additional_properties": False,
                 "fields": {
                     "section_id": "string; copy one requested section_id exactly",
-                    "proposal_text": "string; substantive Chinese protocol body, not a heading or placeholder",
+                    "content_status": "complete | decision_required | source_gap",
+                    "proposal_text": (
+                        "substantive Chinese protocol body for complete/decision_required; "
+                        "must be empty for source_gap"
+                    ),
                     "rationale": (
                         "string; concise user-facing evidence note: state which confirmed project facts support "
                         "the proposal and what the medical author must verify; do not narrate drafting, prompt, "
                         "corpus, model, candidate, or section-packet mechanics"
                     ),
                     "evidence_span_ids": "array[string]; one or more IDs from evidence_spans",
+                    "decision_items": (
+                        "array; empty unless decision_required. Each item has question, 2-3 options "
+                        "(option_id, label, summary), recommended_option_id, rationale, blocking_section_id"
+                    ),
+                    "missing_source_classes": (
+                        "array[string]; 1-4 concrete source classes for source_gap; empty otherwise"
+                    ),
                 },
                 "note": (
                     "Return exactly one section object for every requested section_id, in the same order. "
@@ -1952,10 +1976,17 @@ def _validate_protocol_full_draft_output(
         errors.extend(f"{prefix} contains unexpected key: {key}" for key in unexpected)
         if not isinstance(section.get("section_id"), str) or not section["section_id"].strip():
             errors.append(f"{prefix}.section_id must be a non-empty string")
+        status = section.get("content_status")
+        if status not in PROTOCOL_FULL_DRAFT_CONTENT_STATUSES:
+            errors.append(f"{prefix}.content_status is invalid")
         proposal = section.get("proposal_text")
-        if not isinstance(proposal, str) or not proposal.strip():
-            errors.append(f"{prefix}.proposal_text must be a non-empty string")
-        elif MARKDOWN_TABLE_SEPARATOR_RE.search(proposal):
+        if not isinstance(proposal, str):
+            errors.append(f"{prefix}.proposal_text must be a string")
+        elif status == "source_gap" and proposal:
+            errors.append(f"{prefix}.proposal_text must be empty for source_gap")
+        elif status != "source_gap" and not proposal.strip():
+            errors.append(f"{prefix}.proposal_text must be non-empty")
+        elif proposal and MARKDOWN_TABLE_SEPARATOR_RE.search(proposal):
             errors.append(f"{prefix}.proposal_text must not contain a Markdown table")
         elif re.fullmatch(
             r"\s*(?:\d+(?:\.\d+)*|附录\s*[A-Z0-9一二三四五六七八九十]+)[、.．：:]?\s*[^。；\n]{1,120}\s*",
@@ -1965,12 +1996,60 @@ def _validate_protocol_full_draft_output(
         if not isinstance(section.get("rationale"), str) or not section["rationale"].strip():
             errors.append(f"{prefix}.rationale must be a non-empty string")
         evidence_ids = section.get("evidence_span_ids")
-        if not _is_string_list(evidence_ids) or len(evidence_ids) != len(set(evidence_ids)):
+        if not isinstance(evidence_ids, list) or any(not isinstance(item, str) or not item for item in evidence_ids) or len(evidence_ids) != len(set(evidence_ids)):
             errors.append(f"{prefix}.evidence_span_ids must be unique non-empty strings")
+        elif status == "source_gap" and evidence_ids:
+            errors.append(f"{prefix}.evidence_span_ids must be empty for source_gap")
+        elif status != "source_gap" and not evidence_ids:
+            errors.append(f"{prefix}.evidence_span_ids must be non-empty")
         else:
             for span_id in evidence_ids:
                 if span_id not in evidence_by_id:
                     errors.append(f"{prefix} references unknown evidence_span_id: {span_id}")
+        decisions = section.get("decision_items")
+        if not isinstance(decisions, list):
+            errors.append(f"{prefix}.decision_items must be a list")
+            decisions = []
+        if status == "decision_required" and not decisions:
+            errors.append(f"{prefix}.decision_items must be non-empty for decision_required")
+        if status != "decision_required" and decisions:
+            errors.append(f"{prefix}.decision_items must be empty unless decision_required")
+        if len(decisions) > 6:
+            errors.append(f"{prefix}.decision_items must contain no more than 6 decisions")
+        for decision_index, decision in enumerate(decisions):
+            decision_prefix = f"{prefix}.decision_items[{decision_index}]"
+            required = {"question", "options", "recommended_option_id", "rationale", "blocking_section_id"}
+            if not isinstance(decision, dict) or set(decision) != required:
+                errors.append(f"{decision_prefix} has an invalid shape")
+                continue
+            for key in ("question", "recommended_option_id", "rationale", "blocking_section_id"):
+                if not isinstance(decision.get(key), str) or not decision[key].strip():
+                    errors.append(f"{decision_prefix}.{key} must be a non-empty string")
+            options = decision.get("options")
+            if not isinstance(options, list) or not 2 <= len(options) <= 3:
+                errors.append(f"{decision_prefix}.options must contain 2-3 choices")
+                continue
+            option_ids = []
+            for option in options:
+                if not isinstance(option, dict) or set(option) != {"option_id", "label", "summary"}:
+                    errors.append(f"{decision_prefix}.options has an invalid choice shape")
+                    continue
+                if any(not isinstance(option.get(key), str) or not option[key].strip() for key in ("option_id", "label", "summary")):
+                    errors.append(f"{decision_prefix}.options must use non-empty strings")
+                option_ids.append(option.get("option_id"))
+            if len(option_ids) != len(set(option_ids)) or decision.get("recommended_option_id") not in option_ids:
+                errors.append(f"{decision_prefix} must identify exactly one listed recommendation")
+            if decision.get("blocking_section_id") != section.get("section_id"):
+                errors.append(f"{decision_prefix}.blocking_section_id must equal section_id")
+        missing_sources = section.get("missing_source_classes")
+        if not isinstance(missing_sources, list) or any(not isinstance(item, str) or not item.strip() for item in missing_sources):
+            errors.append(f"{prefix}.missing_source_classes must be a string list")
+        elif status == "source_gap" and not 1 <= len(missing_sources) <= 4:
+            errors.append(f"{prefix}.missing_source_classes must contain 1-4 source classes")
+        elif len(missing_sources) != len(set(missing_sources)):
+            errors.append(f"{prefix}.missing_source_classes must be unique")
+        elif status != "source_gap" and missing_sources:
+            errors.append(f"{prefix}.missing_source_classes must be empty unless source_gap")
     return errors
 
 

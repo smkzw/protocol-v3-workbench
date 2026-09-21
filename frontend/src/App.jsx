@@ -11439,6 +11439,11 @@ function WritingPage({
                               <Tag tone="success">AI 已完成初稿</Tag>
                               <h2>审阅研究方案全文补写候选</h2>
                               <p>先核对红色关键章节；其余章节已按目录收起，可按需展开。</p>
+                              {(fullDraftArtifact.coverage?.decision_required_count > 0 || fullDraftArtifact.coverage?.source_gap_count > 0) && (
+                                <p className="full-draft-blocker-summary">
+                                  待决定 {fullDraftArtifact.coverage?.decision_required_count || 0} 章 · 缺来源 {fullDraftArtifact.coverage?.source_gap_count || 0} 章。先补齐后，AI只重写受影响章节。
+                                </p>
+                              )}
                             </div>
                             <div className="full-draft-review-progress">
                               <strong>{fullDraftConfirmedSections.length}/{fullDraftArtifact.coverage?.required_review_count || 0}</strong>
@@ -11452,7 +11457,7 @@ function WritingPage({
                             <nav className="full-draft-review-nav" aria-label="全文初稿章节目录">
                               {(fullDraftArtifact.sections || []).map((section) => (
                                 <a
-                                  className={section.review_level === "required" ? "required" : ""}
+                                  className={[section.review_level === "required" ? "required" : "", section.review_level === "blocked" ? "blocked" : ""].filter(Boolean).join(" ")}
                                   href={`#full-draft-${section.section_id}`}
                                   key={section.section_id}
                                 >
@@ -11461,6 +11466,7 @@ function WritingPage({
                                   {section.review_level === "required" && (
                                     <em>{fullDraftConfirmedSections.includes(section.section_id) ? "已确认" : "待确认"}</em>
                                   )}
+                                  {section.review_level === "blocked" && <em>待补齐</em>}
                                 </a>
                               ))}
                             </nav>
@@ -11470,19 +11476,40 @@ function WritingPage({
                                   className={`full-draft-review-item ${section.review_level === "required" ? "review-required" : ""}`}
                                   id={`full-draft-${section.section_id}`}
                                   key={section.section_id}
-                                  open={section.review_level === "required"}
+                                  open={["required", "blocked"].includes(section.review_level)}
                                 >
                                   <summary className="full-draft-review-item-head">
                                     <div>
                                       <strong>{section.section_number ? `${section.section_number} ` : ""}{section.heading || section.section_id}</strong>
                                       {section.review_level === "required" && <Tag tone="danger">监管答辩级确认</Tag>}
+                                      {section.review_level === "blocked" && <Tag tone="danger">暂不可采用</Tag>}
                                     </div>
                                     <span>
                                       项目事实 {section.evidence_summary?.project_fact_spans || 0} · 语料参考 {section.evidence_summary?.corpus_spans || 0}
                                     </span>
                                   </summary>
                                   <div className="full-draft-review-item-body">
-                                    <p>{section.proposal_text}</p>
+                                    {section.proposal_text && <p>{section.proposal_text}</p>}
+                                    {section.content_status === "source_gap" && (
+                                      <div className="full-draft-gap-card">
+                                        <strong>AI 还缺这些资料</strong>
+                                        <ul>{(section.missing_source_classes || []).map((item) => <li key={item}>{item}</li>)}</ul>
+                                      </div>
+                                    )}
+                                    {section.content_status === "decision_required" && (section.decision_items || []).map((item) => (
+                                      <div className="full-draft-decision-card" key={item.question}>
+                                        <strong>{item.question}</strong>
+                                        <ul>
+                                          {(item.options || []).map((option) => (
+                                            <li className={option.option_id === item.recommended_option_id ? "recommended" : ""} key={option.option_id}>
+                                              <b>{option.option_id === item.recommended_option_id ? "推荐 · " : ""}{option.label}</b>
+                                              <span>{option.summary}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                        <p>{item.rationale}</p>
+                                      </div>
+                                    ))}
                                     <div className="full-draft-evidence-note">
                                       <strong>依据与确认点</strong>
                                       <span>{section.rationale}</span>
@@ -11512,6 +11539,11 @@ function WritingPage({
                           </div>
                           <footer className="full-draft-review-workspace-foot">
                             <span>本批补写 {fullDraftArtifact.coverage?.generated_count || 0} 章；当前方案结构共 {documentSession?.sections?.length || "—"} 章。</span>
+                            {fullDraftArtifact.coverage?.adoption_ready === false && (
+                              <button type="button" className="secondary-button" onClick={() => { setFullDraftReviewOpen(false); setStudyDesignOpen(true); }}>
+                                <ListChecks size={14} /> 补充研究设计与资料
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="primary-button"
@@ -11521,6 +11553,7 @@ function WritingPage({
                                 || workingCopyDirty
                                 || editorFrozen
                                 || !workingCopyAuthoritative
+                                || fullDraftArtifact.coverage?.adoption_ready === false
                                 || !(fullDraftArtifact.coverage?.required_review_section_ids || []).every(
                                   (sectionId) => fullDraftConfirmedSections.includes(sectionId),
                                 )

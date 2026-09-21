@@ -120,6 +120,7 @@ class _FakeFullDraftRunner:
             sections.append(
                 {
                     "section_id": section_id,
+                    "content_status": "complete",
                     "proposal_text": (
                         f"本章节围绕{section_id}说明研究对象、研究目的、执行边界和评价要求。"
                         "正文明确研究对象、主要评价路径和实施约束，并采用可直接审阅的连续监管中文。"
@@ -127,6 +128,8 @@ class _FakeFullDraftRunner:
                     ),
                     "rationale": "依据已录入的适应症、分期和目标人群；请核对医学依据完整性。",
                     "evidence_span_ids": [evidence_id],
+                    "decision_items": [],
+                    "missing_source_classes": [],
                 }
             )
         payload = {
@@ -343,6 +346,53 @@ class FullDraftServiceTests(unittest.TestCase):
             )
         self.assertEqual(2, adopted["adopted_count"])
 
+    def test_decision_or_source_gap_blocks_adoption_before_any_write(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job, claim.claim_token, lambda: False, lambda progress: True
+        )
+        self.store.complete(
+            project, job_id, claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        completed = self.store.get(project, job_id)
+        artifact = self.full.read_artifact(project, completed)
+        artifact["sections"][0]["content_status"] = "source_gap"
+        with patch.object(self.full, "read_artifact", return_value=artifact):
+            with self.assertRaisesRegex(RuntimeStoreError, "待决定或来源缺口"):
+                self.full.adopt(project, completed)
+
+    def test_legacy_v3_candidate_remains_readable_but_cannot_be_adopted(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job, claim.claim_token, lambda: False, lambda progress: True
+        )
+        self.store.complete(
+            project, job_id, claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        completed = self.store.get(project, job_id)
+        artifact = self.full.read_artifact(project, completed)
+        artifact["schema_version"] = "protocol_full_draft_artifact_v3"
+        reviewed = self.full._apply_review_policy(artifact)
+        self.assertTrue(reviewed["coverage"]["legacy_read_only"])
+        self.assertFalse(reviewed["coverage"]["adoption_ready"])
+        with patch.object(self.full, "read_artifact", return_value=reviewed):
+            with self.assertRaisesRegex(RuntimeStoreError, "旧版全文初稿候选仅供查阅"):
+                self.full.adopt(project, completed)
+
     def test_review_metadata_marks_high_impact_and_corpus_conduct_sections(self):
         project_source = AiTaskSourceRef(
             source_id="project_fact",
@@ -414,6 +464,57 @@ class FullDraftServiceTests(unittest.TestCase):
 
 
 class FullDraftContractTests(unittest.TestCase):
+    @staticmethod
+    def _output(section):
+        return {
+            "task_id": "run",
+            "task_type": AiTaskType.PROTOCOL_FULL_DRAFT.value,
+            "provider": "buddy",
+            "model": "deepseek-v4-pro",
+            "prompt_version": FULL_DRAFT_PROMPT_VERSION,
+            "input_source_ids": ["source"],
+            "forbidden_source_ids": [],
+            "findings": [],
+            "evidence_spans": [{"span_id": "ev", "source_id": "source", "locator": "loc", "quote": "source"}],
+            "uncertainties": [],
+            "needs_medical_confirmation": True,
+            "schema_version": "ai_task_output_v0_1",
+            "full_draft": {"sections": [section]},
+        }
+
+    def test_gateway_accepts_explicit_source_gap_without_filler(self):
+        output = self._output({
+            "section_id": "sec",
+            "content_status": "source_gap",
+            "proposal_text": "",
+            "rationale": "缺少本品既往临床研究资料。",
+            "evidence_span_ids": [],
+            "decision_items": [],
+            "missing_source_classes": ["研究者手册", "既往临床研究报告"],
+        })
+        self.assertEqual([], validate_ai_output(output))
+
+    def test_gateway_requires_one_recommendation_for_decision_item(self):
+        output = self._output({
+            "section_id": "sec",
+            "content_status": "decision_required",
+            "proposal_text": "本节保留已确认的双盲设计事实，并将具体盲态角色与揭盲程序留给项目决定。" * 3,
+            "rationale": "StudyDefinition尚未明确盲态角色。",
+            "evidence_span_ids": ["ev"],
+            "decision_items": [{
+                "question": "哪些角色应保持盲态？",
+                "options": [
+                    {"option_id": "a", "label": "核心角色", "summary": "受试者和研究者保持盲态。"},
+                    {"option_id": "b", "label": "扩展角色", "summary": "增加监查与分析角色。"},
+                ],
+                "recommended_option_id": "missing",
+                "rationale": "需结合运营可行性确定。",
+                "blocking_section_id": "sec",
+            }],
+            "missing_source_classes": [],
+        })
+        self.assertTrue(any("exactly one listed recommendation" in item for item in validate_ai_output(output)))
+
     def test_gateway_rejects_heading_only_full_draft(self):
         output = {
             "task_id": "run",
@@ -656,9 +757,12 @@ class FullDraftContractTests(unittest.TestCase):
                     "schema_version": "ai_task_output_v0_1",
                     "full_draft": {"sections": [{
                         "section_id": section_id,
+                        "content_status": "complete",
                         "proposal_text": "本章节说明成年哮喘受试者的研究背景、研究目的、执行边界和评价要求。正文明确研究对象、主要评价路径和实施约束，并采用可直接审阅的连续监管中文。关键医学依据通过证据说明单独呈现，正文不混入写作过程或系统操作提示。",
                         "rationale": "使用当前项目唯一允许来源。",
                         "evidence_span_ids": [evidence_id],
+                        "decision_items": [],
+                        "missing_source_classes": [],
                     }]},
                 }
 

@@ -41,10 +41,11 @@ from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateErro
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
-FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_3"
-FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v3"
-FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v3"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v3"
+FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_4"
+FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v4"
+FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v4"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v4"
+LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {"protocol_full_draft_artifact_v3"}
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 FULL_DRAFT_CHUNK_SIZE = 8
@@ -350,6 +351,11 @@ class MedicalWritingFullDraftService:
             "除方案概要、研究设计、目的终点和样本量章节外，不要重复整套样本量、剂量、主要终点、"
             "随机和盲法信息，只写与本章节直接相关的事实。"
             "每章用evidence_span_ids绑定本次evidence_spans中的直接依据，并将needs_medical_confirmation设为true。"
+            "每章还必须返回content_status、decision_items和missing_source_classes。"
+            "事实充分时用complete并返回完整正文；缺少必须由项目决定的规则时用decision_required，"
+            "给出一个推荐项和1至2个备选项，但不得把选项直接写成既定正文；缺少IB、既往研究、"
+            "流行病学、量表授权或其他来源材料时用source_gap，proposal_text留空并准确列出缺少的来源类别，"
+            "禁止用通用段落凑足字数。决定项只用于引导上游研究设计确认，不得自行写回研究事实。"
             "\n语料泛化规则（全部适用）：\n"
             f"{corpus_rules}"
         )
@@ -440,7 +446,26 @@ class MedicalWritingFullDraftService:
     @classmethod
     def _apply_review_policy(cls, artifact: dict[str, Any]) -> dict[str, Any]:
         required_ids: list[str] = []
+        decision_ids: list[str] = []
+        source_gap_ids: list[str] = []
         for section in artifact.get("sections") or []:
+            content_status = _text(section.get("content_status")) or "complete"
+            if content_status == "decision_required":
+                section.update({
+                    "review_level": "blocked",
+                    "review_reasons": ["本节包含尚未确认的科学决定；请先在研究设计中选择推荐项或备选项。"],
+                    "review_advisories": [],
+                })
+                decision_ids.append(_text(section.get("section_id")))
+                continue
+            if content_status == "source_gap":
+                section.update({
+                    "review_level": "blocked",
+                    "review_reasons": ["本节缺少可引用来源；补充所列资料后再生成正文。"],
+                    "review_advisories": [],
+                })
+                source_gap_ids.append(_text(section.get("section_id")))
+                continue
             evidence_summary = section.get("evidence_summary") or {}
             section.update(
                 cls._review_policy(
@@ -454,6 +479,13 @@ class MedicalWritingFullDraftService:
         coverage = artifact.setdefault("coverage", {})
         coverage["required_review_count"] = len(required_ids)
         coverage["required_review_section_ids"] = required_ids
+        coverage["decision_required_count"] = len(decision_ids)
+        coverage["decision_required_section_ids"] = decision_ids
+        coverage["source_gap_count"] = len(source_gap_ids)
+        coverage["source_gap_section_ids"] = source_gap_ids
+        is_legacy = artifact.get("schema_version") in LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS
+        coverage["legacy_read_only"] = is_legacy
+        coverage["adoption_ready"] = not is_legacy and not decision_ids and not source_gap_ids
         artifact["review_policy_version"] = FULL_DRAFT_REVIEW_POLICY_VERSION
         return artifact
 
@@ -773,6 +805,16 @@ class MedicalWritingFullDraftService:
             for item in all_sections
             if item.get("review_level") == "required"
         ]
+        decision_required_ids = [
+            str(item.get("section_id") or "")
+            for item in all_sections
+            if item.get("content_status") == "decision_required"
+        ]
+        source_gap_ids = [
+            str(item.get("section_id") or "")
+            for item in all_sections
+            if item.get("content_status") == "source_gap"
+        ]
         artifact = {
             "schema_version": FULL_DRAFT_ARTIFACT_SCHEMA,
             "job_id": job.job_id,
@@ -788,6 +830,11 @@ class MedicalWritingFullDraftService:
                 "generated_count": len(all_sections),
                 "required_review_count": len(required_review_ids),
                 "required_review_section_ids": required_review_ids,
+                "decision_required_count": len(decision_required_ids),
+                "decision_required_section_ids": decision_required_ids,
+                "source_gap_count": len(source_gap_ids),
+                "source_gap_section_ids": source_gap_ids,
+                "adoption_ready": not decision_required_ids and not source_gap_ids,
                 "section_ids": expected_ids,
             },
             "ai_run_ids": run_ids,
@@ -809,7 +856,12 @@ class MedicalWritingFullDraftService:
                 "coverage": {
                     key: value
                     for key, value in artifact["coverage"].items()
-                    if key not in {"section_ids", "required_review_section_ids"}
+                    if key not in {
+                        "section_ids",
+                        "required_review_section_ids",
+                        "decision_required_section_ids",
+                        "source_gap_section_ids",
+                    }
                 },
             }
         )
@@ -846,7 +898,10 @@ class MedicalWritingFullDraftService:
         if hashlib.sha256(raw).hexdigest() != str(locator.get("artifact_sha256") or ""):
             raise RuntimeStoreError("全文初稿候选完整性校验失败")
         artifact = json.loads(raw.decode("utf-8"))
-        if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
+        if artifact.get("schema_version") not in {
+            FULL_DRAFT_ARTIFACT_SCHEMA,
+            *LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS,
+        }:
             raise RuntimeStoreError("全文初稿候选版本不受支持")
         return self._apply_review_policy(artifact)
 
@@ -859,6 +914,8 @@ class MedicalWritingFullDraftService:
         confirmed_section_ids: Iterable[str] = (),
     ) -> dict[str, Any]:
         artifact = self.read_artifact(project_id, job)
+        if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
+            raise RuntimeStoreError("旧版全文初稿候选仅供查阅；请按当前研究事实重新生成后再采纳")
         service = self._service(project_id)
         repo = service.repo
         document = repo.protocol(project_id)
@@ -872,6 +929,15 @@ class MedicalWritingFullDraftService:
         target_by_id = {str(item.get("section_id")): item for item in artifact.get("target_sections") or []}
         if set(candidates) != set(target_by_id):
             raise RuntimeStoreError("全文初稿候选覆盖与目标章节不一致")
+        unresolved = [
+            section_id
+            for section_id, candidate in candidates.items()
+            if candidate.get("content_status", "complete") != "complete"
+        ]
+        if unresolved:
+            raise RuntimeStoreError(
+                f"仍有 {len(unresolved)} 个章节存在待决定或来源缺口，全文初稿未写入"
+            )
         required_review_ids = {
             section_id
             for section_id, candidate in candidates.items()

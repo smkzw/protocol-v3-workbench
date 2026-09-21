@@ -170,6 +170,17 @@ _FULL_DRAFT_INTERNAL_TOKEN_PATTERNS = (
 _FULL_DRAFT_HEADING_RE = re.compile(
     r"^\s*(?:\d+(?:\.\d+)*|附录\s*[A-Z0-9一二三四五六七八九十]+)[、.．：:]?\s*[^。；\n]{1,120}\s*$"
 )
+_FULL_DRAFT_UNSUPPORTED_RATIONALE_RE = re.compile(
+    r"尚未(?:规定|明确)|未(?:规定|提供|明确)|事实不足|来源不足|需(?:核对|确认|补充)"
+)
+_FULL_DRAFT_HIGH_IMPACT_RULE_RE = re.compile(
+    r"(?:盲态|揭盲|避孕|妊娠|不良事件|严重不良事件|剂量调整|合并用药|洗脱|"
+    r"救援治疗|全分析集|符合方案集|安全性分析集|质量保证|稽查|分层因素|"
+    r"多重性|量表).{0,50}(?:应|必须|需)"
+    r"|(?:应|必须|需).{0,50}(?:盲态|揭盲|避孕|妊娠|不良事件|严重不良事件|"
+    r"剂量调整|合并用药|洗脱|救援治疗|全分析集|符合方案集|安全性分析集|"
+    r"质量保证|稽查|分层因素|多重性|量表)"
+)
 
 _MEDICAL_WRITING_NUMERIC_CITATION_RE = re.compile(
     r"[\[［]\s*\d{1,4}(?:\s*[-‐‑‒–—]\s*\d{1,4})?"
@@ -2817,10 +2828,11 @@ class AiTaskRunner:
                 continue
             prefix = f"full_draft.sections[{index}]"
             section_id = str(section.get("section_id") or "")
+            content_status = str(section.get("content_status") or "")
             if section_id not in expected_ids:
                 errors.append(f"{prefix}.section_id is not in the requested section set")
             proposal = str(section.get("proposal_text") or "").strip()
-            if len(proposal) < minimum:
+            if content_status != "source_gap" and len(proposal) < minimum:
                 errors.append(
                     f"{prefix}.proposal_text is not substantive: {len(proposal)} < {minimum} characters"
                 )
@@ -2861,10 +2873,26 @@ class AiTaskRunner:
             ):
                 errors.append(f"{prefix}.proposal_text contains a Markdown table")
             candidate_evidence = section.get("evidence_span_ids")
-            if not isinstance(candidate_evidence, list) or not candidate_evidence:
+            if content_status == "source_gap" and candidate_evidence:
+                errors.append(f"{prefix}.evidence_span_ids must be empty for source_gap")
+            elif content_status != "source_gap" and (
+                not isinstance(candidate_evidence, list) or not candidate_evidence
+            ):
                 errors.append(f"{prefix}.evidence_span_ids must be non-empty")
-            elif any(span_id not in evidence_ids for span_id in candidate_evidence):
+            elif isinstance(candidate_evidence, list) and any(
+                span_id not in evidence_ids for span_id in candidate_evidence
+            ):
                 errors.append(f"{prefix}.evidence_span_ids references an unknown evidence span")
+            rationale = str(section.get("rationale") or "")
+            if (
+                content_status == "complete"
+                and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(rationale)
+                and _FULL_DRAFT_HIGH_IMPACT_RULE_RE.search(proposal)
+            ):
+                errors.append(
+                    f"{prefix} writes an unsupported high-impact rule as complete; "
+                    "return decision_required with choices instead"
+                )
             if proposal and source_text and proposal == source_text.strip():
                 errors.append(f"{prefix}.proposal_text must be section-specific, not the entire source packet")
         if output.get("needs_medical_confirmation") is not True:

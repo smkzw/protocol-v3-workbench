@@ -82,7 +82,7 @@ SERVER_PROMPT_VERSIONS[AiTaskType.REGULATORY_TRANSLATION_ZH] = (
     "regulatory_translation_zh_v0_5"
 )
 SERVER_PROMPT_VERSIONS[AiTaskType.PROTOCOL_FULL_DRAFT] = (
-    "protocol_full_draft_v0_3"
+    "protocol_full_draft_v0_4"
 )
 
 GLOBAL_FORBIDDEN_SOURCE_IDS = {

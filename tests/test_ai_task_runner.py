@@ -179,9 +179,12 @@ class RepairingFullDraftProvider:
                 "sections": [
                     {
                         "section_id": section_id,
+                        "content_status": "complete",
                         "proposal_text": proposal,
                         "rationale": "依据当前项目已确认研究事实形成章节候选。",
                         "evidence_span_ids": ["full_draft_ev_1"],
+                        "decision_items": [],
+                        "missing_source_classes": [],
                     }
                     for section_id in section_ids
                 ]
@@ -1177,7 +1180,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_3",
+            prompt_version="protocol_full_draft_v0_4",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={
@@ -1231,7 +1234,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_3",
+            prompt_version="protocol_full_draft_v0_4",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={

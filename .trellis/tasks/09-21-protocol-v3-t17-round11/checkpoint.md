@@ -115,3 +115,8 @@ ego(lite) TaskSpace 12 使用 Study A 的 SQLite online-backup 副本验收。�
 独立会商`01a0c4df-0312-7def-ad4c-5dbe282319c9`给出REVISE。数值忠实度良好，但4.4盲法角色/揭盲职责、14.1避孕要求存在无事实支撑的规则，背景/管理章节仍有通用填充，18张章级确认也不符合决定级AI lead。会商对“缺14章”的推断经主线程读取105章真实document session后缩窄：十个正文标题已有实质种子，1.1为结构内容；1.2研究示意图、1.3研究流程表和13参考文献仍是真实缺口。v0.3未采纳。
 
 集中验证：后端受影响160通过；前端正式110 Vitest+65 Node通过；生产build 1971 modules通过；diff check通过。阶段记录见`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V03_20260922.md`。下一动作直接进入v0.4：输出显式决定项（推荐+备选）、把来源缺口与正文完成分开、拒绝无来源的项目实施规则，并把章级重复确认压缩为决定级队列；只重跑受影响生成块，不重复上游资料处理。
+
+## 2026-09-22 Study A 全文补写 v0.4 合同
+v0.4 合同已实现并完成集中验证：每章显式区分 complete、decision_required、source_gap；决定项包含推荐与备选，缺来源不再用通用正文填充；任一待决定/缺来源在任何章节写入前阻止整批采纳。已知含无依据规则的v0.3原始工件保持不可变和可读，但升为只读，不允许再采纳。宽屏审阅区显示决定卡和缺资料列表，当前仍通过既有研究设计流程补答。
+
+执行节点`mw_r11_full_draft_v04_contract_20260922`实际使用deepseek-v4.1-flash:max、无fallback，但受原生plan mode限制未编辑；Codex直接集成并记录其越界只读检查。最终定向105 passed；同批更广受影响集163 passed、前端110+65 passed、build 1971 modules、diff check通过。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V04_CONTRACT_20260922.md`。下一动作是闭合“推荐预选→用户一次确认→StudyDefinition→仅重生成受影响章节”的一键链路，再运行真实v0.4并做fresh医学会商；不重复检索、分诊、下载、OCR或翻译。
