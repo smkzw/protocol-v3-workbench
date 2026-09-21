@@ -370,7 +370,14 @@ class VerifiedTriageProvider:
         # check below accepts either the request name or the calibrated
         # response name; anything else stays rejected.
         response_model = getattr(self._inner, "response_model", "") or ""
-        _acceptable = {self.model_name, getattr(self._inner, "expected_response_model", "") or ""}
+        _acceptable = {
+            identity
+            for identity in (
+                self.model_name,
+                getattr(self._inner, "expected_response_model", "") or "",
+            )
+            if identity
+        }
         if response_model not in _acceptable:
             raise CompetitorTriageError(
                 f"provider response_model must be exactly '{self.model_name}', "
@@ -5805,9 +5812,42 @@ class CompetitorTriageService:
         ):
             # Discovery is projected; try corpus projection if PICOS is complete
             if journey.picos_complete:
-                confirmation = self._project_corpus(
-                    project_id, run, confirmation, journey
-                )
+                try:
+                    stale_reason = self._stale_reason(project_id, run)
+                    if stale_reason:
+                        raise CompetitorTriageStaleError(stale_reason)
+                    if (
+                        journey.search_plan is not None
+                        and not journey.search_plan.latest_snapshot_id
+                        and journey.discovery_basket_projection.snapshot_id
+                        == run.snapshot_id
+                    ):
+                        snapshot = self.repository.search_snapshot(
+                            project_id, run.snapshot_id
+                        )
+                        journey = self.journey_service.restore_confirmed_search_snapshot_binding(
+                            project_id,
+                            snapshot,
+                            confirmation_id=confirmation.confirmation_id,
+                            confirmation_hash=confirmation.confirmation_hash,
+                            run_id=run.run_id,
+                            expected_revision=journey.revision,
+                            actor=request.actor,
+                            idempotency_key=(
+                                f"{request.idempotency_key}:restore-search-binding"
+                            ),
+                        )
+                    confirmation = self._project_corpus(
+                        project_id, run, confirmation, journey
+                    )
+                except Exception as exc:
+                    confirmation = confirmation.model_copy(
+                        update={
+                            "projection_status": "deferred_until_picos",
+                            "projection_error": f"{type(exc).__name__}: {exc}",
+                        }
+                    )
+                    self.repository.store_triage_confirmation(confirmation)
             else:
                 # PICOS still not complete — nothing to do
                 confirmation = confirmation.model_copy(

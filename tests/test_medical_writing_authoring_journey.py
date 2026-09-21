@@ -2153,6 +2153,69 @@ class MedicalWritingAuthoringJourneyServiceTests(unittest.TestCase):
         persisted = MedicalWritingAuthoringJourneyService(self.service.db_path).get(project_id)
         self.assertEqual(attached.search_plan.model_dump(), persisted.search_plan.model_dump())
 
+    def test_framing_triage_change_preserves_matching_registry_snapshot(self):
+        project_id = "proj_synthetic_ra_preserve_registry_snapshot"
+        created = self.service.create(
+            project_id,
+            MedicalWritingAuthoringJourneyCreateRequest(
+                framing=_complete_framing(),
+                actor="medical_manager_test",
+                idempotency_key="create-ra-preserve-registry-snapshot",
+            ),
+        )
+        attached = self.service.attach_search_snapshot(
+            project_id,
+            _search_snapshot(project_id),
+            MedicalWritingCompetitorSearchExecuteRequest(
+                search_plan_id=created.search_plan.plan_id,
+                actor="medical_manager_test",
+                idempotency_key="attach-ra-preserve-registry-snapshot",
+            ),
+        )
+        changed_profile = attached.framing.product_profile.model_copy(
+            update={"administration_routes": ["口服"]},
+            deep=True,
+        )
+        changed_framing = attached.framing.model_copy(
+            update={"product_profile": changed_profile},
+            deep=True,
+        )
+        preview = self.service.impact_preview(
+            project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=attached.revision,
+                stage="framing",
+                framing=changed_framing,
+            ),
+        )
+        committed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=attached.revision,
+                stage="framing",
+                framing=changed_framing,
+                impact_preview_id=preview.preview_id,
+                actor="medical_manager_test",
+                idempotency_key="commit-ra-preserve-registry-snapshot",
+            ),
+        )
+
+        self.assertNotEqual(attached.search_plan.plan_id, committed.search_plan.plan_id)
+        self.assertEqual(
+            attached.search_plan.registry_filter,
+            committed.search_plan.registry_filter,
+        )
+        self.assertEqual(
+            attached.search_plan.latest_snapshot_id,
+            committed.search_plan.latest_snapshot_id,
+        )
+        self.assertEqual(attached.search_plan.returned_count, committed.search_plan.returned_count)
+        self.assertEqual("triage_pending", committed.search_plan.status)
+        self.assertIn(
+            "口服",
+            [item.value for item in committed.search_plan.triage_criteria],
+        )
+
     def test_upstream_change_requires_matching_impact_preview_and_invalidates_downstream(self):
         project_id = "proj_synthetic_ra_change"
         framed = self.service.create(
@@ -2171,6 +2234,15 @@ class MedicalWritingAuthoringJourneyServiceTests(unittest.TestCase):
                 picos=_complete_picos(),
                 actor="medical_manager_test",
                 idempotency_key="commit-ra-change-picos",
+            ),
+        )
+        designed = self.service.attach_search_snapshot(
+            project_id,
+            _search_snapshot(project_id),
+            MedicalWritingCompetitorSearchExecuteRequest(
+                search_plan_id=designed.search_plan.plan_id,
+                actor="medical_manager_test",
+                idempotency_key="attach-ra-change-snapshot",
             ),
         )
         changed_framing = _complete_framing(
@@ -2218,6 +2290,9 @@ class MedicalWritingAuthoringJourneyServiceTests(unittest.TestCase):
         self.assertFalse(changed.picos_complete)
         self.assertIn("corpus_coverage", changed.invalidated_dependents)
         self.assertFalse(changed.corpus_gate.access_permitted)
+        self.assertEqual("", changed.search_plan.latest_snapshot_id)
+        self.assertEqual("planned", changed.search_plan.status)
+        self.assertEqual("", changed.discovery_basket_projection.confirmation_id)
 
 
 class MedicalWritingAuthoringJourneyApiTests(unittest.TestCase):

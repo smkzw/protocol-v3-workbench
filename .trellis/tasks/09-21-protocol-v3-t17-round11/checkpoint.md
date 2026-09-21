@@ -1,5 +1,7 @@
 # 当前锚点（2026-09-21）
 状态：in_progress，用户授权持续实施，未阶段暂停。原生Goal旧paused状态未篡改，新prompt见plans/mw_protocol_v3_goal_prompt_20260921.txt。
+本轮采用 direct 后接 independent conference：Study A 的检索快照续接、人工确认投影与当前 SQLite 状态紧密耦合，由 owner 做一个最小完整修复；冻结修复和实证后，再由 fresh reviewer 独立检查是否错误复用了已失效语料。构建期间按完整批次集中测试，不逐处测试。
+2026-09-21 纠错结果：首次 revision20→22 投影在会商中被证明医学事实已变更，owner 已从在线备份将 journey/writing-reference 两库完整恢复到 revision20；逻辑级逐表哈希与备份完全一致。源码现保留同一 registry snapshot，但 triage criteria 变化会清空 active discovery/corpus projection 并要求新的人审；stale run 不得历史恢复，恢复异常会持久化。集中回归 469 passed。会商同session `sess_6dbc92ce-b722-45a0-ae67-dd518c02cfe2` corrective PASS。下一批实现“现有篮+当前标准”的显式人工复核与受控重绑，不调用模型、不重检索/下载/OCR/翻译；完成前 Study A 正确停在 corpus admission 前。
 详细证据与进度：runs/requirements_v2_20260919/t17_round11/TAKEOVER_REVIEW.md。
 执行+会商：恢复执行、fresh恢复审阅与续审、编辑链三次复核均已terminal；最后Word会商session52763已完成，不再poll。当前没有冻结源码范围。
 当前：修正真实Word模板页眉/占位替换保真；定向测试session4765待收取。原生Word已打开own synthetic copy，目录运行时更新但文件未持久化更新，勿冒称Word格式全部通过。

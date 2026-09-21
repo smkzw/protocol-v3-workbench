@@ -2603,6 +2603,175 @@ class TestProjectionRetry(TriageTestBase):
             run.status,
         )
 
+    def test_retry_repairs_historical_lost_snapshot_binding_without_second_triage(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]}
+            }
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-create-lost-binding",
+            ),
+            provider,
+        )
+
+        original_finalize = self.journey_service.finalize_corpus_triage
+        self.journey_service.finalize_corpus_triage = (  # type: ignore
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                RuntimeError("simulate pre-existing lost binding window")
+            )
+        )
+        confirmation = self.service.confirm_basket(
+            self.project_id,
+            response.run.run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=["NCT00000001"],
+                excluded_nct_ids=[],
+                final_classifications={
+                    "NCT00000001": "direct_competitor"
+                },
+                actor="test",
+                reason="preserve the confirmed basket",
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-confirm-lost-binding",
+            ),
+        )
+        self.journey_service.finalize_corpus_triage = original_finalize  # type: ignore
+        self.assertEqual("deferred_until_picos", confirmation.projection_status)
+
+        projected = self.journey_service.get(self.project_id)
+        broken_plan = projected.search_plan.model_copy(
+            update={
+                "status": "planned",
+                "latest_snapshot_id": "",
+                "returned_count": 0,
+                "public_document_count": 0,
+                "searched_at": None,
+            },
+            deep=True,
+        )
+        broken = projected.model_copy(
+            update={"search_plan": broken_plan},
+            deep=True,
+        )
+        with self.journey_service._connect() as connection:
+            connection.execute(
+                "UPDATE medical_writing_authoring_journeys SET payload_json = ? WHERE project_id = ?",
+                (broken.model_dump_json(), self.project_id),
+            )
+            connection.commit()
+
+        recovered = self.service.retry_projection(
+            self.project_id,
+            confirmation.confirmation_id,
+            CompetitorTriageProjectionRetryRequest(
+                actor="test",
+                idempotency_key="ct-test-retry-lost-binding",
+            ),
+        )
+        self.assertEqual("corpus_projected", recovered.projection_status)
+        restored = self.journey_service.get(self.project_id)
+        self.assertEqual(snapshot.snapshot_id, restored.search_plan.latest_snapshot_id)
+        self.assertEqual("triaged", restored.search_plan.status)
+        self.assertEqual(snapshot.snapshot_id, restored.corpus_triage.snapshot_id)
+        self.assertEqual("finalized", restored.corpus_triage.status)
+
+    def test_retry_does_not_restore_confirmation_after_material_facts_change(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]}
+            }
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-create-stale-confirmation",
+            ),
+            provider,
+        )
+        original_finalize = self.journey_service.finalize_corpus_triage
+        self.journey_service.finalize_corpus_triage = (  # type: ignore
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                RuntimeError("defer corpus projection")
+            )
+        )
+        confirmation = self.service.confirm_basket(
+            self.project_id,
+            response.run.run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=["NCT00000001"],
+                excluded_nct_ids=[],
+                final_classifications={"NCT00000001": "direct_competitor"},
+                actor="test",
+                reason="original confirmation",
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-confirm-stale-confirmation",
+            ),
+        )
+        self.journey_service.finalize_corpus_triage = original_finalize  # type: ignore
+        projected = self.journey_service.get(self.project_id)
+        changed_profile = projected.framing.product_profile.model_copy(
+            update={"administration_routes": ["口服"]},
+            deep=True,
+        )
+        changed_framing = projected.framing.model_copy(
+            update={"product_profile": changed_profile},
+            deep=True,
+        )
+        preview = self.journey_service.impact_preview(
+            self.project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=projected.revision,
+                stage="framing",
+                framing=changed_framing,
+            ),
+        )
+        changed = self.journey_service.commit_stage(
+            self.project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=projected.revision,
+                stage="framing",
+                framing=changed_framing,
+                impact_preview_id=preview.preview_id,
+                actor="test",
+                idempotency_key="ct-test-change-after-confirmation",
+            ),
+        )
+        self.assertEqual(snapshot.snapshot_id, changed.search_plan.latest_snapshot_id)
+        self.assertEqual("triage_pending", changed.search_plan.status)
+        self.assertEqual("", changed.discovery_basket_projection.confirmation_id)
+
+        retried = self.service.retry_projection(
+            self.project_id,
+            confirmation.confirmation_id,
+            CompetitorTriageProjectionRetryRequest(
+                actor="test",
+                idempotency_key="ct-test-retry-stale-confirmation",
+            ),
+        )
+        self.assertEqual("deferred_until_picos", retried.projection_status)
+        self.assertIn("material facts have changed", retried.projection_error)
+        persisted = self.repo.triage_confirmation(
+            self.project_id, confirmation.confirmation_id
+        )
+        self.assertEqual(retried.projection_error, persisted.projection_error)
+        final = self.journey_service.get(self.project_id)
+        self.assertEqual("pending", final.corpus_triage.status)
+
 
 class TestExactModelIdentity(TriageTestBase):
     def test_provider_response_model_is_recorded(self):

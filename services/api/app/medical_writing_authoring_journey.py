@@ -1476,6 +1476,29 @@ class MedicalWritingAuthoringJourneyService:
                 assert request.framing is not None
                 framing_complete = not request.framing.missing_required_fields()
                 search_ready = request.framing.creation_minimum_complete()
+                next_search_plan = (
+                    self._rebuild_search_plan(
+                        project_id,
+                        request.framing,
+                        revision,
+                        now,
+                        previous=current.search_plan,
+                        discovery_projection=current.discovery_basket_projection,
+                        corpus_triage=current.corpus_triage,
+                    )
+                    if search_ready
+                    else None
+                )
+                search_contract_changed = bool(
+                    current.search_plan is not None
+                    and (
+                        next_search_plan is None
+                        or current.search_plan.registry_filter
+                        != next_search_plan.registry_filter
+                        or current.search_plan.triage_criteria
+                        != next_search_plan.triage_criteria
+                    )
+                )
                 updates: dict[str, Any] = {
                     "revision": revision,
                     "framing": request.framing,
@@ -1483,15 +1506,25 @@ class MedicalWritingAuthoringJourneyService:
                     "framing_complete": framing_complete,
                     "status": "stage1_complete" if framing_complete else "stage1_in_progress",
                     "current_stage": "picos" if framing_complete else "framing",
-                    "search_plan": (
-                        self._search_plan(project_id, request.framing, revision, now)
-                        if search_ready
-                        else None
-                    ),
+                    "search_plan": next_search_plan,
                     "invalidated_dependents": invalidated,
                     "updated_at": now,
                     "updated_by": request.actor,
                 }
+                if search_contract_changed:
+                    # The immutable registry result can remain reusable when
+                    # its filter is unchanged, but the active retain/exclude
+                    # decision was made against an older medical triage
+                    # contract. Keep its repository history and require a new
+                    # explicit confirmation before corpus admission.
+                    updates.update(
+                        {
+                            "discovery_basket_projection": DiscoveryBasketProjection(),
+                            "corpus_triage": MedicalWritingCorpusTriage(),
+                            "corpus_gate": self._carry_forward_corpus_gate(current),
+                            "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
+                        }
+                    )
                 updates["study_definition"] = _build_study_definition(
                     project_id=project_id,
                     revision=(current.study_definition.revision + 1 if current.study_definition else 1),
@@ -3151,6 +3184,154 @@ class MedicalWritingAuthoringJourneyService:
             connection.commit()
         return updated
 
+    def restore_confirmed_search_snapshot_binding(
+        self,
+        project_id: str,
+        snapshot: WritingReferenceSearchSnapshot,
+        *,
+        confirmation_id: str,
+        confirmation_hash: str,
+        run_id: str,
+        expected_revision: int,
+        actor: str,
+        idempotency_key: str,
+    ) -> MedicalWritingAuthoringJourney:
+        """Repair a historical lost binding without repeating external work.
+
+        This recovery is intentionally narrow.  It only accepts the immutable
+        snapshot already named by the journey's confirmed discovery projection,
+        and only when its registry request still equals the current search plan.
+        It never searches, triages, downloads, translates, or changes the user's
+        retained basket.
+        """
+        request_material = {
+            "snapshot_id": snapshot.snapshot_id,
+            "confirmation_id": confirmation_id,
+            "confirmation_hash": confirmation_hash,
+            "run_id": run_id,
+            "expected_revision": expected_revision,
+        }
+        request_sha256 = _payload_sha256(request_material)
+        replay = self._replay_from_store(project_id, idempotency_key, request_sha256)
+        if replay is not None:
+            return replay
+
+        state = self.get(project_id)
+        if state.revision != expected_revision:
+            raise MedicalWritingAuthoringJourneyConflictError(
+                f"stale authoring journey revision: expected {expected_revision}, current {state.revision}"
+            )
+        if snapshot.project_id != project_id or state.search_plan is None:
+            raise ValueError("confirmed search snapshot cannot be restored for this journey")
+        if state.search_plan.latest_snapshot_id:
+            if state.search_plan.latest_snapshot_id == snapshot.snapshot_id:
+                return state
+            raise MedicalWritingAuthoringJourneyConflictError(
+                "the journey is already bound to a different immutable snapshot"
+            )
+        projection = state.discovery_basket_projection
+        if (
+            projection.snapshot_id != snapshot.snapshot_id
+            or projection.confirmation_id != confirmation_id
+            or projection.confirmation_hash != confirmation_hash
+            or projection.run_id != run_id
+        ):
+            raise ValueError(
+                "only the snapshot referenced by the confirmed discovery basket can be restored"
+            )
+        expected_search = self.build_competitor_search_request(
+            project_id,
+            MedicalWritingCompetitorSearchExecuteRequest(
+                search_plan_id=state.search_plan.plan_id,
+                actor=actor,
+                idempotency_key=f"{idempotency_key}:validate",
+            ),
+        ).search
+        if snapshot.request != expected_search:
+            raise ValueError(
+                "the confirmed snapshot registry request no longer matches the current search plan"
+            )
+        if snapshot.returned_count != len(snapshot.candidates):
+            raise ValueError("writing reference snapshot candidate count is inconsistent")
+        public_document_count = sum(
+            sum(
+                1
+                for document in candidate.public_documents
+                if document.document_type.lower() in {"protocol", "protocol_sap"}
+            )
+            for candidate in snapshot.candidates
+        )
+
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            replay = self._idempotent_replay(
+                connection, project_id, idempotency_key, request_sha256
+            )
+            if replay is not None:
+                connection.commit()
+                return replay
+            current = _load_authoring_journey_payload(
+                self._current_row(connection, project_id)["payload_json"]
+            )
+            if current.revision != expected_revision:
+                connection.rollback()
+                raise MedicalWritingAuthoringJourneyConflictError(
+                    f"stale authoring journey revision: expected {expected_revision}, current {current.revision}"
+                )
+            if current.search_plan is None or current.search_plan.latest_snapshot_id:
+                connection.rollback()
+                raise MedicalWritingAuthoringJourneyConflictError(
+                    "search plan changed while restoring the confirmed snapshot"
+                )
+            current_projection = current.discovery_basket_projection
+            if (
+                current_projection.snapshot_id != snapshot.snapshot_id
+                or current_projection.confirmation_id != confirmation_id
+                or current_projection.confirmation_hash != confirmation_hash
+                or current_projection.run_id != run_id
+            ):
+                connection.rollback()
+                raise ValueError("confirmed discovery basket changed during snapshot recovery")
+            now = datetime.now(timezone.utc)
+            restored_plan = current.search_plan.model_copy(
+                update={
+                    "status": "triaged",
+                    "latest_snapshot_id": snapshot.snapshot_id,
+                    "returned_count": snapshot.returned_count,
+                    "public_document_count": public_document_count,
+                    "searched_at": snapshot.created_at,
+                },
+                deep=True,
+            )
+            updated = current.model_copy(
+                update={
+                    "revision": current.revision + 1,
+                    "search_plan": restored_plan,
+                    "updated_at": now,
+                    "updated_by": actor,
+                },
+                deep=True,
+            )
+            self._persist_update(
+                connection,
+                updated,
+                expected_revision=current.revision,
+                event_type="authoring_journey_confirmed_snapshot_binding_restored",
+                actor=actor,
+                idempotency_key=idempotency_key,
+                request_sha256=request_sha256,
+                detail={
+                    "snapshot_id": snapshot.snapshot_id,
+                    "confirmation_id": confirmation_id,
+                    "run_id": run_id,
+                    "returned_count": snapshot.returned_count,
+                    "public_document_count": public_document_count,
+                    "external_work_repeated": False,
+                },
+            )
+            connection.commit()
+        return updated
+
     def require_writing_access(self, project_id: str) -> None:
         if not self.has_project(project_id):
             return
@@ -4213,16 +4394,18 @@ class MedicalWritingAuthoringJourneyService:
             else:
                 state_updates["picos"] = new_picos
             updated = current.model_copy(update=state_updates, deep=True)
-            # F4: When adopting framing.clinicaltrials_condition_term (or any
-            # other search-contract input), rebuild the versioned search plan
-            # atomically so the next competitor search uses the new condition
-            # term.  This replaces the old plan_id/revision rather than leaving
-            # the stale Chinese-condition plan active.  If the current search
-            # plan has a bound snapshot, clearing latest_snapshot_id forces
-            # re-search before the next snapshot can be attached.
+            # F4: Rebuild the versioned search plan atomically. A changed
+            # registry filter clears the old binding and requires a new search;
+            # triage-only changes preserve the immutable registry snapshot.
             if "competitor_search_plan" in impacted and updated.search_plan is not None:
-                rebuilt_plan = self._search_plan(
-                    project_id, new_framing, updated.revision, now
+                rebuilt_plan = self._rebuild_search_plan(
+                    project_id,
+                    new_framing,
+                    updated.revision,
+                    now,
+                    previous=updated.search_plan,
+                    discovery_projection=updated.discovery_basket_projection,
+                    corpus_triage=updated.corpus_triage,
                 )
                 # Fail closed: if the rebuilt plan would be identical to the
                 # old one (e.g. condition_term did not actually change the
@@ -4712,8 +4895,14 @@ class MedicalWritingAuthoringJourneyService:
                 and "competitor_search_plan" in plan.impacted
                 and updated.search_plan is not None
             ):
-                rebuilt_plan = self._search_plan(
-                    project_id, new_framing, updated.revision, now
+                rebuilt_plan = self._rebuild_search_plan(
+                    project_id,
+                    new_framing,
+                    updated.revision,
+                    now,
+                    previous=updated.search_plan,
+                    discovery_projection=updated.discovery_basket_projection,
+                    corpus_triage=updated.corpus_triage,
                 )
                 if rebuilt_plan.plan_id != updated.search_plan.plan_id:
                     updated = updated.model_copy(
@@ -4889,6 +5078,60 @@ class MedicalWritingAuthoringJourneyService:
             triage_criteria=triage_criteria,
             source_study_definition_revision=revision,
             generated_at=now,
+        )
+
+    def _rebuild_search_plan(
+        self,
+        project_id: str,
+        framing: Any,
+        revision: int,
+        now: datetime,
+        *,
+        previous: MedicalWritingCompetitorSearchPlan | None,
+        discovery_projection: DiscoveryBasketProjection,
+        corpus_triage: MedicalWritingCorpusTriage,
+    ) -> MedicalWritingCompetitorSearchPlan:
+        """Rebuild current triage criteria without discarding the registry result.
+
+        A route, mechanism, objective, or design edit can change medical triage
+        criteria while leaving the ClinicalTrials.gov registry request exactly
+        unchanged.  The immutable registry snapshot remains valid in that case;
+        losing its identity made a later, already-confirmed basket impossible to
+        project.  A material registry-filter change still returns a clean plan
+        and therefore requires a new search.
+        """
+        rebuilt = self._search_plan(project_id, framing, revision, now)
+        if (
+            previous is None
+            or previous.registry_filter != rebuilt.registry_filter
+            or not previous.latest_snapshot_id
+        ):
+            return rebuilt
+
+        snapshot_id = previous.latest_snapshot_id
+        triage_criteria_unchanged = previous.triage_criteria == rebuilt.triage_criteria
+        has_confirmed_projection = triage_criteria_unchanged and ((
+            discovery_projection.snapshot_id == snapshot_id
+            and bool(discovery_projection.confirmation_id)
+        ) or (
+            corpus_triage.status == "finalized"
+            and corpus_triage.snapshot_id == snapshot_id
+        ))
+        if has_confirmed_projection:
+            status = "triaged"
+        elif previous.returned_count == 0:
+            status = "no_results"
+        else:
+            status = "triage_pending"
+        return rebuilt.model_copy(
+            update={
+                "status": status,
+                "latest_snapshot_id": snapshot_id,
+                "returned_count": previous.returned_count,
+                "public_document_count": previous.public_document_count,
+                "searched_at": previous.searched_at,
+            },
+            deep=True,
         )
 
     def _initialize(self) -> None:
