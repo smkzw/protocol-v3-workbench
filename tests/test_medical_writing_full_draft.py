@@ -368,6 +368,248 @@ class FullDraftServiceTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeStoreError, "待决定或来源缺口"):
                 self.full.adopt(project, completed)
 
+    def _completed_artifact(self):
+        """Complete one full-draft job and return its projected artifact."""
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job, claim.claim_token, lambda: False, lambda progress: True
+        )
+        self.store.complete(
+            project, job_id, claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        return self.store.get(project, job_id), self.full.read_artifact(
+            project, self.store.get(project, job_id)
+        )
+
+    def test_decision_identity_is_projected_from_the_artifact(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job, claim.claim_token, lambda: False, lambda progress: True
+        )
+        self.store.complete(
+            project, job_id, claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        completed = self.store.get(project, job_id)
+        artifact = self.full.read_artifact(project, completed)
+        artifact["sections"][0]["content_status"] = "decision_required"
+        artifact["sections"][0]["decision_items"] = [
+            {
+                "question": "是否设置独立数据监查委员会？",
+                "options": [
+                    {"option_id": "a", "label": "设置", "summary": "设立独立数据监查委员会。"},
+                    {"option_id": "b", "label": "不设置", "summary": "暂不设立独立数据监查委员会。"},
+                ],
+                "recommended_option_id": "a",
+                "rationale": "样本量与安全性要求需要独立监查。",
+                "blocking_section_id": "sec_1",
+            }
+        ]
+        projected = self.full._with_decision_identity(artifact)
+        first = projected["sections"][0]["decision_items"][0]["decision_id"]
+        self.assertTrue(first.startswith("fdd_"))
+        # The identity is stable across re-projection and independent of list order.
+        self.assertEqual(first, self.full._with_decision_identity(artifact)["sections"][0]["decision_items"][0]["decision_id"])
+        self.assertEqual(
+            first,
+            self.full.decision_item_id("sec_1", "是否设置独立数据监查委员会？"),
+        )
+
+    def test_decision_without_supported_study_definition_path_fails_closed(self):
+        project = self.repo.project_id
+        completed, artifact = self._completed_artifact()
+        artifact["sections"][0]["content_status"] = "decision_required"
+        artifact["sections"][0]["decision_items"] = [
+            {
+                "question": "是否设置独立数据监查委员会？",
+                "options": [
+                    {"option_id": "a", "label": "设置", "summary": "设立独立数据监查委员会。"},
+                    {"option_id": "b", "label": "不设置", "summary": "暂不设立独立数据监查委员会。"},
+                ],
+                "recommended_option_id": "a",
+                "rationale": "样本量与安全性要求需要独立监查。",
+                "blocking_section_id": "sec_1",
+            }
+        ]
+        decision_id = self.full.decision_item_id("sec_1", "是否设置独立数据监查委员会？")
+        writes = []
+
+        def writer(*args, **kwargs):
+            writes.append(kwargs)
+            raise AssertionError("writer must not run for an unbound decision")
+
+        with patch.object(self.full, "read_artifact", return_value=artifact):
+            with self.assertRaisesRegex(RuntimeStoreError, "未绑定研究设计字段路径"):
+                self.full.resolve_decision(
+                    project,
+                    self.store,
+                    completed,
+                    decisions=[{"decision_id": decision_id, "option_id": "a"}],
+                    idempotency_key="k1",
+                    study_definition_writer=writer,
+                )
+        self.assertEqual([], writes)
+
+    def test_one_confirmation_persists_choice_and_resubmits_only_affected_sections(self):
+        project = self.repo.project_id
+        completed, artifact = self._completed_artifact()
+        artifact["sections"][0]["content_status"] = "decision_required"
+        artifact["sections"][0]["decision_items"] = [
+            {
+                "question": "避孕要求是否按本项目方案规定？",
+                "options": [
+                    {"option_id": "a", "label": "按方案规定", "summary": "按本项目方案规定执行避孕与妊娠报告。"},
+                    {"option_id": "b", "label": "参照通用做法", "summary": "参照通用实践执行避孕要求。"},
+                ],
+                "recommended_option_id": "a",
+                "rationale": "该规则必须由本项目决定。",
+                "blocking_section_id": "sec_1",
+                "fact_path": "picos.assessment_timing_restrictions",
+            }
+        ]
+        decision_id = self.full.decision_item_id("sec_1", "避孕要求是否按本项目方案规定？")
+        writes = []
+
+        def writer(project_id, *, field_path, value, actor, idempotency_key):
+            writes.append(
+                {
+                    "project_id": project_id,
+                    "field_path": field_path,
+                    "value": value,
+                    "actor": actor,
+                    "idempotency_key": idempotency_key,
+                }
+            )
+            return SimpleNamespace(
+                revision=9,
+                study_definition=SimpleNamespace(revision=4),
+            )
+
+        with patch.object(self.full, "read_artifact", return_value=artifact):
+            result = self.full.resolve_decision(
+                project,
+                self.store,
+                completed,
+                decisions=[
+                    {"decision_id": decision_id, "option_id": "b"},
+                ],
+                idempotency_key="k1",
+                study_definition_writer=writer,
+            )
+
+        self.assertEqual(1, len(writes))
+        self.assertEqual("picos.assessment_timing_restrictions", writes[0]["field_path"])
+        # The medical manager's selected alternative, not the recommendation, is
+        # written once, shaped for the declared string-list field type.
+        self.assertEqual(["参照通用实践执行避孕要求。"], writes[0]["value"])
+        self.assertIn("k1", writes[0]["idempotency_key"])
+        self.assertEqual(["sec_1"], result["affected_section_ids"])
+        self.assertEqual(completed.job_id, result["superseded_job_id"])
+        self.assertEqual(4, result["study_definition_confirmations"][0]["study_definition_revision"])
+
+        replacement_id = result["regeneration"]["job_id"]
+        self.assertNotEqual(completed.job_id, replacement_id)
+        replacement = json.loads(self.store.get(project, replacement_id).payload_json)
+        self.assertEqual(
+            ["sec_1"],
+            replacement["descriptor"]["section_ids"],
+        )
+        self.assertEqual(
+            ["sec_1"],
+            [item["section_id"] for item in replacement["descriptor"]["target_sections"]],
+        )
+        # A full-document job stays byte-compatible: no scope key, no digest drift.
+        full_descriptor = self.full.build_descriptor(project)
+        self.assertNotIn("section_ids", full_descriptor)
+        full_job_id, reused = self.full.submit_durable(project, self.store)
+        self.assertTrue(reused)
+        self.assertEqual(json.loads(self.store.get(project, full_job_id).payload_json)["descriptor"]["digest"], full_descriptor["digest"])
+
+    def test_decision_fact_value_matches_declared_field_type(self):
+        # String-list authoritative fields take the prose answer as a
+        # single-item list; scalar fields take it as-is.
+        self.assertEqual(
+            ["按本项目方案规定执行避孕与妊娠报告。"],
+            self.full._decision_fact_value(
+                "picos.assessment_timing_restrictions", "按本项目方案规定执行避孕与妊娠报告。"
+            ),
+        )
+        self.assertEqual(
+            ["设立独立数据监查委员会"],
+            self.full._decision_fact_value(
+                "framing.intrinsic_objectives", "设立独立数据监查委员会"
+            ),
+        )
+        self.assertEqual(
+            ["静脉滴注"],
+            self.full._decision_fact_value(
+                "framing.product_profile.administration_routes", "静脉滴注"
+            ),
+        )
+        self.assertEqual("双盲", self.full._decision_fact_value("design.blinding", "双盲"))
+        self.assertEqual("既往复发/难治", self.full._decision_fact_value("picos.population_summary", "既往复发/难治"))
+
+    def test_decision_targeting_structured_design_path_fails_closed(self):
+        project = self.repo.project_id
+        completed, artifact = self._completed_artifact()
+        artifact["sections"][0]["content_status"] = "decision_required"
+        artifact["sections"][0]["decision_items"] = [
+            {
+                "question": "是否设置独立数据监查委员会？",
+                "options": [
+                    {"option_id": "a", "label": "设置", "summary": "设立独立数据监查委员会。"},
+                    {"option_id": "b", "label": "不设置", "summary": "暂不设立独立数据监查委员会。"},
+                ],
+                "recommended_option_id": "a",
+                "rationale": "样本量与安全性要求需要独立监查。",
+                "blocking_section_id": "sec_1",
+                "fact_path": "design.src_dmc",
+            }
+        ]
+        decision_id = self.full.decision_item_id("sec_1", "是否设置独立数据监查委员会？")
+        writes = []
+
+        def writer(*args, **kwargs):
+            writes.append(kwargs)
+            raise AssertionError("a structured design path must not take prose input")
+
+        with patch.object(self.full, "read_artifact", return_value=artifact):
+            with self.assertRaisesRegex(RuntimeStoreError, "结构化设计取值"):
+                self.full.resolve_decision(
+                    project,
+                    self.store,
+                    completed,
+                    decisions=[{"decision_id": decision_id, "option_id": "a"}],
+                    idempotency_key="k1",
+                    study_definition_writer=writer,
+                )
+        self.assertEqual([], writes)
+
+    def test_scoped_regeneration_requires_a_blank_affected_section(self):
+        project = self.repo.project_id
+        # A revision history makes the working copy authoritative for targets.
+        self.repo.working["sec_1"].revision = 1
+        self.repo.working["sec_1"].content_blocks[1]["text"] = (
+            "本章节已经写入了完整的研究背景说明，包含研究依据、人群特征、既往治疗暴露、"
+            "监管语境要求、目标适应症的流行病学特征以及现有治疗手段的局限，"
+            "长度足以通过空白章节判定，因此不应再作为全文初稿的重新生成目标。"
+        )
+        with self.assertRaisesRegex(RuntimeStoreError, "指定章节没有可重新生成的空白正文"):
+            self.full.build_descriptor(project, section_ids=["sec_1"])
+
     def test_legacy_v3_candidate_remains_readable_but_cannot_be_adopted(self):
         project = self.repo.project_id
         job_id, _ = self.full.submit_durable(project, self.store)
@@ -510,6 +752,7 @@ class FullDraftContractTests(unittest.TestCase):
                 "recommended_option_id": "missing",
                 "rationale": "需结合运营可行性确定。",
                 "blocking_section_id": "sec",
+                "fact_path": "design.blinding",
             }],
             "missing_source_classes": [],
         })
@@ -563,7 +806,11 @@ class FullDraftContractTests(unittest.TestCase):
             None,
             output,
             [source],
-            {"section_ids": ["sec_process"], "minimum_body_chars": 80},
+            {
+                "section_ids": ["sec_process"],
+                "minimum_body_chars": 80,
+                "decision_fact_paths": ["design.blinding"],
+            },
         )
         self.assertTrue(any("drafting-process language" in error for error in errors))
 
@@ -640,6 +887,7 @@ class FullDraftContractTests(unittest.TestCase):
                         "marker_open": "SECTION_ID=",
                         "marker_close": "\n",
                         "minimum_body_chars": 80,
+                        "decision_fact_paths": ["design.blinding"],
                     },
                 ),
             )
@@ -720,6 +968,7 @@ class FullDraftContractTests(unittest.TestCase):
                         "marker_open": "SECTION_ID=",
                         "marker_close": "\n",
                         "minimum_body_chars": 80,
+                        "decision_fact_paths": ["design.blinding"],
                     },
                 ),
             )
@@ -801,6 +1050,7 @@ class FullDraftContractTests(unittest.TestCase):
                         "marker_open": "SECTION_ID=",
                         "marker_close": "\n",
                         "minimum_body_chars": 80,
+                        "decision_fact_paths": ["design.blinding"],
                     },
                 ),
             )

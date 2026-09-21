@@ -6303,6 +6303,52 @@ button:disabled {
   color: #174c3c;
 }
 
+.full-draft-decision-choices {
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.full-draft-decision-choices legend {
+  padding: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.full-draft-decision-choices label {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 2px 8px;
+  align-items: start;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.full-draft-decision-choices label input {
+  margin: 3px 0 0;
+}
+
+.full-draft-decision-choices label span {
+  grid-column: 2;
+  color: var(--text-secondary);
+}
+
+.full-draft-decision-choices label.recommended b {
+  color: #174c3c;
+}
+
+.full-draft-decision-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.full-draft-decision-confirm span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
 .full-draft-decision-card p {
   margin: 8px 0 0;
   color: var(--text-secondary);

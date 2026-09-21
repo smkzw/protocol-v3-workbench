@@ -14,7 +14,7 @@ import os
 import re
 import uuid
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, get_args, get_origin
 
 from packages.contracts.workbench_contracts import (
     AiTaskRequest,
@@ -22,6 +22,8 @@ from packages.contracts.workbench_contracts import (
     AiTaskSourceRef,
     DurableJobCreateRequest,
     DurableJobProgressPayload,
+    MedicalWritingPicosDefinition,
+    MedicalWritingStudyFraming,
     MedicalWritingWorkingCopySaveRequest,
 )
 
@@ -38,6 +40,7 @@ from .medical_writing_content_quality import (
 )
 from .medical_writing_corpus_policy import CORPUS_GENERALIZATION_PROMPT_RULES
 from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateError
+from .medical_writing_authoring_prefill import SUPPORTED_ADOPT_PATHS
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
@@ -49,6 +52,15 @@ LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {"protocol_full_draft_artifact_v3"}
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 FULL_DRAFT_CHUNK_SIZE = 8
+# design.* paths whose authoritative mapping needs structured (dict) input; a
+# prose decision answer would be silently dropped there, so such decisions
+# fail closed instead of persisting nothing.
+_DECISION_STRUCTURED_DESIGN_PATHS = frozenset(
+    {"design.src_dmc", "design.phase1_parts", "design.arms_or_cohorts"}
+)
+FULL_DRAFT_DECISION_FACT_PATHS = tuple(
+    sorted(SUPPORTED_ADOPT_PATHS - _DECISION_STRUCTURED_DESIGN_PATHS)
+)
 
 _PLACEHOLDER_RE = re.compile(
     r"(?:^|[\s，。；：])(?:待补充|待确认|待定|TBD|TODO|不适用|无适用内容|由方案规定|见方案规定)(?:$|[\s，。；：])",
@@ -173,10 +185,22 @@ class MedicalWritingFullDraftService:
             return int(current.revision), [dict(block) for block in current.content_blocks]
         return 0, [dict(block) for block in section.content_blocks]
 
-    def _target_sections(self, service: Any, project_id: str, document: Any) -> list[dict[str, Any]]:
+    def _target_sections(
+        self,
+        service: Any,
+        project_id: str,
+        document: Any,
+        *,
+        section_ids: Iterable[str] | None = None,
+    ) -> list[dict[str, Any]]:
         repo = service.repo
+        scope = {
+            _text(item) for item in (section_ids or ()) if _text(item)
+        } or None
         targets: list[dict[str, Any]] = []
         for section in document.sections:
+            if scope is not None and str(section.section_id) not in scope:
+                continue
             if (
                 section.applicability_status == "not_applicable"
                 or section.applicability_render_action == "omit"
@@ -205,13 +229,28 @@ class MedicalWritingFullDraftService:
             )
         return targets
 
-    def build_descriptor(self, project_id: str) -> dict[str, Any]:
+    def build_descriptor(
+        self,
+        project_id: str,
+        *,
+        section_ids: Iterable[str] | None = None,
+    ) -> dict[str, Any]:
         service = self._service(project_id)
         repo = service.repo
         document = repo.protocol(project_id)
-        targets = self._target_sections(service, project_id, document)
+        scope = sorted({_text(item) for item in (section_ids or ()) if _text(item)})
+        targets = self._target_sections(
+            service,
+            project_id,
+            document,
+            section_ids=scope,
+        )
         if not targets:
-            raise RuntimeStoreError("当前文档没有可生成的空白正文章节；请先检查适用性或已有正文")
+            raise RuntimeStoreError(
+                "指定章节没有可重新生成的空白正文；请检查章节是否已有实质正文"
+                if scope
+                else "当前文档没有可生成的空白正文章节；请先检查适用性或已有正文"
+            )
         policy = dict(service._policy_identity())
         policy["prompt_version"] = FULL_DRAFT_PROMPT_VERSION
         descriptor = {
@@ -226,6 +265,12 @@ class MedicalWritingFullDraftService:
             "minimum_body_chars": FULL_DRAFT_MINIMUM_BODY_CHARS,
             "ai_policy": policy,
         }
+        if scope:
+            # Only a scoped descriptor carries the key, so every pre-existing
+            # full-document descriptor keeps its original digest and job
+            # identity.  The scope is part of the digest, so a scoped
+            # regeneration can never reuse the full-document job.
+            descriptor["section_ids"] = scope
         descriptor["digest"] = _digest(descriptor)
         return descriptor
 
@@ -235,8 +280,9 @@ class MedicalWritingFullDraftService:
         durable_store: DurableJobStore,
         *,
         actor: str = "medical_manager",
+        section_ids: Iterable[str] | None = None,
     ) -> tuple[str, bool]:
-        descriptor = self.build_descriptor(project_id)
+        descriptor = self.build_descriptor(project_id, section_ids=section_ids)
         business_key = f"v1:{descriptor['digest']}"
         payload = {
             "descriptor": descriptor,
@@ -327,6 +373,7 @@ class MedicalWritingFullDraftService:
         corpus_rules = "\n".join(
             f"- {rule}" for rule in CORPUS_GENERALIZATION_PROMPT_RULES
         )
+        decision_paths = "、".join(FULL_DRAFT_DECISION_FACT_PATHS)
         return (
             "你是中文临床研究方案撰写专家。请生成一个可直接进入研究方案全文的章节正文候选，"
             "而不是标题清单或提纲。只依据允许来源和当前项目已确认研究事实；公司/共享语料只用于"
@@ -355,7 +402,9 @@ class MedicalWritingFullDraftService:
             "事实充分时用complete并返回完整正文；缺少必须由项目决定的规则时用decision_required，"
             "给出一个推荐项和1至2个备选项，但不得把选项直接写成既定正文；缺少IB、既往研究、"
             "流行病学、量表授权或其他来源材料时用source_gap，proposal_text留空并准确列出缺少的来源类别，"
-            "禁止用通用段落凑足字数。决定项只用于引导上游研究设计确认，不得自行写回研究事实。"
+            "禁止用通用段落凑足字数。每个决定项的fact_path只能从以下字段中按语义选择并原样复制："
+            f"{decision_paths}。不得自造字段路径。决定项只用于引导上游研究设计确认，"
+            "模型本身不得写回研究事实。"
             "\n语料泛化规则（全部适用）：\n"
             f"{corpus_rules}"
         )
@@ -597,6 +646,7 @@ class MedicalWritingFullDraftService:
             "marker_open": "SECTION_ID=",
             "marker_close": "\n",
             "minimum_body_chars": descriptor["minimum_body_chars"],
+            "decision_fact_paths": list(FULL_DRAFT_DECISION_FACT_PATHS),
         }
         run = service.ai_task_runner.submit_internal(
             project_id,
@@ -634,7 +684,10 @@ class MedicalWritingFullDraftService:
         expected = payload.get("descriptor") or {}
         service = self._service(job.project_id)
         try:
-            current = self.build_descriptor(job.project_id)
+            current = self.build_descriptor(
+                job.project_id,
+                section_ids=expected.get("section_ids"),
+            )
         except Exception as exc:
             return DurableJobResult(error=f"全文初稿上下文不可用：{exc}", retryable=False)
         if current.get("digest") != expected.get("digest"):
@@ -882,6 +935,34 @@ class MedicalWritingFullDraftService:
             ),
         )
 
+    @staticmethod
+    def decision_item_id(section_id: str, question: Any) -> str:
+        """Deterministic identity of one full-draft decision item.
+
+        The identity is derived from the artifact itself so a decision can be
+        resolved and replayed without introducing a second decision store.
+        """
+        return "fdd_" + _digest(
+            {"section_id": _text(section_id), "question": _text(question)}
+        )[:24]
+
+    @classmethod
+    def decision_index(cls, artifact: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+        index: dict[str, dict[str, Any]] = {}
+        for section in artifact.get("sections") or []:
+            if not isinstance(section, Mapping):
+                continue
+            section_id = _text(section.get("section_id"))
+            for item in section.get("decision_items") or []:
+                if not isinstance(item, Mapping):
+                    continue
+                index[cls.decision_item_id(section_id, item.get("question"))] = {
+                    "section_id": section_id,
+                    "content_status": _text(section.get("content_status")),
+                    "item": dict(item),
+                }
+        return index
+
     def read_artifact(self, project_id: str, job: Any) -> dict[str, Any]:
         if job.project_id != project_id or job.job_type != FULL_DRAFT_JOB_TYPE:
             raise RuntimeStoreError("全文初稿任务不属于当前项目")
@@ -903,7 +984,30 @@ class MedicalWritingFullDraftService:
             *LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS,
         }:
             raise RuntimeStoreError("全文初稿候选版本不受支持")
-        return self._apply_review_policy(artifact)
+        return self._with_decision_identity(self._apply_review_policy(artifact))
+
+    @classmethod
+    def _with_decision_identity(cls, artifact: dict[str, Any]) -> dict[str, Any]:
+        """Project the stable decision identity into a read-time copy.
+
+        The persisted artifact stays byte-identical; clients address a decision
+        by the identity derived from the artifact itself instead of inventing
+        their own index into a list that may be reordered.
+        """
+        for section in artifact.get("sections") or []:
+            if not isinstance(section, dict):
+                continue
+            section_id = _text(section.get("section_id"))
+            items = section.get("decision_items")
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if isinstance(item, dict):
+                    item.setdefault(
+                        "decision_id",
+                        cls.decision_item_id(section_id, item.get("question")),
+                    )
+        return artifact
 
     def adopt(
         self,
@@ -1006,6 +1110,211 @@ class MedicalWritingFullDraftService:
             "adopted_count": len(adopted),
             "replayed_count": len(replayed),
             "coverage": artifact.get("coverage") or {},
+        }
+
+    @staticmethod
+    def _decision_fact_value(fact_path: str, value: str) -> Any:
+        """Shape one confirmed prose answer for its authoritative field.
+
+        A decision card's answer is a single confirmed statement.  Scalar
+        fields take it as-is; fields the StudyDefinition models declare as
+        string lists receive a single-item list, the shape the existing
+        adoption validation accepts for that declared field type.
+        """
+        root, _, rest = fact_path.partition(".")
+        model = {
+            "framing": MedicalWritingStudyFraming,
+            "picos": MedicalWritingPicosDefinition,
+        }.get(root)
+        if model is None:
+            return value
+        cursor = model
+        parts = [part for part in rest.split(".") if part]
+        for index, part in enumerate(parts):
+            field = cursor.model_fields.get(part)
+            if field is None:
+                return value
+            annotation = field.annotation
+            if index == len(parts) - 1:
+                if get_origin(annotation) is list and get_args(annotation) == (str,):
+                    return [value]
+                return value
+            if not hasattr(annotation, "model_fields"):
+                return value
+            cursor = annotation
+        return value
+
+    def resolve_decision(
+        self,
+        project_id: str,
+        durable_store: DurableJobStore,
+        job: Any,
+        *,
+        decisions: Iterable[Mapping[str, Any]],
+        idempotency_key: str,
+        actor: str = "medical_manager",
+        study_definition_writer: Optional[Callable[..., Any]] = None,
+    ) -> dict[str, Any]:
+        """Resolve full-draft decision cards in one explicit confirmation.
+
+        The answer is written by the existing authoritative StudyDefinition
+        confirmation channel handed in as ``study_definition_writer``; this
+        service never invents a fact path and never keeps a decision store of
+        its own.  A decision item that does not carry an already supported
+        authoritative fact path fails closed.
+
+        Resolution order matters and is preserved:
+
+        1. validate every decision against the current immutable artifact;
+        2. persist the confirmed answers through the existing channel (CAS plus
+           audit live inside that channel);
+        3. the persisted StudyDefinition revision invalidates this artifact
+           under the existing ``adopt`` binding check — the artifact is never
+           rewritten;
+        4. submit a new full-draft job scoped to the affected sections only.
+        """
+        artifact = self.read_artifact(project_id, job)
+        if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
+            raise RuntimeStoreError(
+                "旧版全文初稿候选仅供查阅；请按当前研究事实重新生成后再确认决定"
+            )
+        service = self._service(project_id)
+        repo = service.repo
+        document = repo.protocol(project_id)
+        if str(document.document_id) != str(artifact.get("document_id")) or str(
+            document.version
+        ) != str(artifact.get("document_version")):
+            raise StaleRuntimeStateError("全文初稿所属文档已变化，决定未写入")
+        if self._binding(repo, project_id, document) != artifact.get("study_definition"):
+            # The existing binding check already superseded this artifact.
+            raise StaleRuntimeStateError("研究设计绑定已变化，本次决定未写入")
+        key = _text(idempotency_key)
+        if not key:
+            raise ValueError("全文初稿决定确认需要 idempotency_key")
+        index = self.decision_index(artifact)
+        writer = study_definition_writer
+        if writer is None or not callable(writer):
+            raise RuntimeStoreError(
+                "全文初稿决定尚未绑定研究设计确认通道，未写入任何研究事实"
+            )
+        submitted = list(decisions)
+        if len(submitted) != 1:
+            raise ValueError("每次只能确认一个全文初稿决定")
+        resolved: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for raw in submitted:
+            if not isinstance(raw, Mapping):
+                raise ValueError("全文初稿决定必须是对象")
+            decision_id = _text(raw.get("decision_id"))
+            option_id = _text(raw.get("option_id"))
+            if not decision_id or not option_id:
+                raise ValueError("全文初稿决定需要 decision_id 与 option_id")
+            if decision_id in seen:
+                raise ValueError(f"全文初稿决定重复提交：{decision_id}")
+            seen.add(decision_id)
+            entry = index.get(decision_id)
+            if entry is None:
+                raise RuntimeStoreError(f"全文初稿候选不存在该决定项：{decision_id}")
+            if entry["content_status"] != "decision_required":
+                raise RuntimeStoreError(
+                    f"该章节当前不是待决定状态，不能按决定项确认：{entry['section_id']}"
+                )
+            item = entry["item"]
+            option = next(
+                (
+                    candidate
+                    for candidate in item.get("options") or []
+                    if _text(candidate.get("option_id")) == option_id
+                ),
+                None,
+            )
+            if option is None:
+                raise RuntimeStoreError(
+                    f"全文初稿决定项没有该选项：{decision_id}/{option_id}"
+                )
+            fact_path = _text(item.get("fact_path"))
+            if not fact_path:
+                raise RuntimeStoreError(
+                    "决定项未绑定研究设计字段路径，无法写入权威研究设计；"
+                    "请先在既有研究设计流程中确认该决定"
+                )
+            if fact_path not in SUPPORTED_ADOPT_PATHS:
+                raise RuntimeStoreError(
+                    f"决定项目标不是既有研究设计字段：{fact_path}"
+                )
+            if fact_path in _DECISION_STRUCTURED_DESIGN_PATHS:
+                raise RuntimeStoreError(
+                    f"决定项目标路径需要结构化设计取值，决定卡无法安全写入：{fact_path}；"
+                    "请在研究设计中直接确认该决定"
+                )
+            prose = _text(option.get("summary")) or _text(option.get("label"))
+            resolved.append(
+                {
+                    "decision_id": decision_id,
+                    "section_id": entry["section_id"],
+                    "question": _text(item.get("question")),
+                    "option_id": option_id,
+                    "recommended_option_id": _text(item.get("recommended_option_id")),
+                    "fact_path": fact_path,
+                    "value": self._decision_fact_value(fact_path, prose),
+                }
+            )
+        if not resolved:
+            raise ValueError("全文初稿决定确认为空")
+
+        confirmations: list[dict[str, Any]] = []
+        for entry in resolved:
+            value = entry["value"]
+            if not value:
+                raise RuntimeStoreError(
+                    f"决定项选项缺少可写入的实质内容：{entry['decision_id']}"
+                )
+            outcome = writer(
+                project_id,
+                field_path=entry["fact_path"],
+                value=value,
+                actor=actor,
+                idempotency_key=f"full-draft-decision:{job.job_id}:{entry['decision_id']}:{key}",
+            )
+            confirmations.append(
+                {
+                    "decision_id": entry["decision_id"],
+                    "section_id": entry["section_id"],
+                    "fact_path": entry["fact_path"],
+                    "option_id": entry["option_id"],
+                    "study_definition_revision": getattr(
+                        getattr(outcome, "study_definition", None), "revision", None
+                    ),
+                    "journey_revision": getattr(outcome, "revision", None),
+                }
+            )
+
+        affected_section_ids = sorted(
+            {entry["section_id"] for entry in resolved}
+        )
+        regenerated_job_id, reused = self.submit_durable(
+            project_id,
+            durable_store,
+            actor=actor,
+            section_ids=affected_section_ids,
+        )
+        return {
+            "job_id": job.job_id,
+            "project_id": project_id,
+            "artifact_schema": FULL_DRAFT_ARTIFACT_SCHEMA,
+            # The written StudyDefinition revision makes this artifact stale for
+            # every existing consumer: ``adopt`` already refuses it through the
+            # unchanged binding check, and the scoped descriptor guarantees a
+            # different durable job.  No artifact byte is rewritten.
+            "superseded_job_id": job.job_id,
+            "resolved_decisions": resolved,
+            "study_definition_confirmations": confirmations,
+            "affected_section_ids": affected_section_ids,
+            "regeneration": {
+                "job_id": regenerated_job_id,
+                "reused": bool(reused),
+                "section_ids": affected_section_ids,
+            },
         }
 
 

@@ -1189,6 +1189,7 @@ class AiTaskRunnerTests(unittest.TestCase):
                 "marker_open": "SECTION_ID=",
                 "marker_close": "\n",
                 "minimum_body_chars": 80,
+                "decision_fact_paths": ["design.blinding"],
             },
         )
         provider = RepairingFullDraftProvider()
@@ -1243,6 +1244,7 @@ class AiTaskRunnerTests(unittest.TestCase):
                 "marker_open": "SECTION_ID=",
                 "marker_close": "\n",
                 "minimum_body_chars": 80,
+                "decision_fact_paths": ["design.blinding"],
             },
         )
         provider = TwiceRepairingFullDraftProvider()

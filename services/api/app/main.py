@@ -7851,6 +7851,90 @@ def get_medical_writing_full_draft_result(project_id: str, job_id: str):
         raise HTTPException(status_code=409, detail=str(exc))
 
 
+def _confirm_full_draft_decision_in_study_definition(
+    project_id: str,
+    *,
+    field_path: str,
+    value,
+    actor: str,
+    idempotency_key: str,
+):
+    """Persist one confirmed full-draft decision through the existing
+    authoring-journey StudyDefinition confirmation path.
+
+    No second decision store is introduced: the medical manager's single
+    explicit confirmation reuses the same CAS, idempotency and audit semantics
+    as every other study-design adoption.
+    """
+    journey = medical_writing_authoring_journey_service.get(project_id)
+    package = getattr(journey, "prefill_package", None)
+    if package is None:
+        raise RuntimeStoreError(
+            "当前项目还没有已生成的研究设计确认包，决定未写入"
+        )
+    verifier = _build_authoring_prefill_evidence_verifier(project_id)
+    return medical_writing_authoring_journey_service.adopt_prefill_candidate(
+        project_id,
+        AuthoringPrefillAdoptRequest(
+            expected_revision=journey.revision,
+            expected_package_revision=package.package_revision,
+            field_path=field_path,
+            candidate_id="",
+            edited_value=value,
+            actor=actor,
+            idempotency_key=idempotency_key,
+        ),
+        evidence_verifier=verifier,
+    )
+
+
+@app.post("/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/decisions")
+def resolve_medical_writing_full_draft_decision(
+    project_id: str,
+    job_id: str,
+    request: dict,
+):
+    """Resolve full-draft decision cards in one explicit confirmation.
+
+    The confirmed answer is written through the existing authoritative
+    StudyDefinition confirmation path, this artifact becomes stale under the
+    unchanged binding check, and a new full-draft job is submitted for the
+    affected sections only.  An unbound decision fails closed.
+    """
+    try:
+        canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        record = mw_durable_store.get(canonical_id, job_id)
+        if record.job_type != FULL_DRAFT_JOB_TYPE:
+            raise HTTPException(status_code=404, detail=f"full-draft job not found: {job_id}")
+        result = medical_writing_full_draft_service.resolve_decision(
+            canonical_id,
+            mw_durable_store,
+            record,
+            decisions=request.get("decisions") or [],
+            idempotency_key=str(request.get("idempotency_key") or ""),
+            actor=str(request.get("actor") or "medical_manager"),
+            study_definition_writer=_confirm_full_draft_decision_in_study_definition,
+        )
+        regenerated = result.get("regeneration") or {}
+        regenerated_id = str(regenerated.get("job_id") or "")
+        if regenerated_id and not regenerated.get("reused"):
+            try:
+                mw_durable_worker.wake(canonical_id, regenerated_id)
+            except Exception:
+                pass
+        return result
+    except HTTPException:
+        raise
+    except DurableJobNotFound:
+        raise HTTPException(status_code=404, detail=f"durable job not found: {job_id}")
+    except MedicalWritingAuthoringJourneyConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (RuntimeStoreError, StaleRuntimeStateError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
 @app.post("/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/adopt")
 def adopt_medical_writing_full_draft(project_id: str, job_id: str, request: dict):
     try:

@@ -114,6 +114,7 @@ PROTOCOL_FULL_DRAFT_CONTEXT_REQUIRED_KEYS = {
     "marker_open",
     "marker_close",
     "minimum_body_chars",
+    "decision_fact_paths",
 }
 MARKDOWN_TABLE_SEPARATOR_RE = re.compile(
     r"^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$"
@@ -559,7 +560,9 @@ class PromptRegistry:
                     "evidence_span_ids": "array[string]; one or more IDs from evidence_spans",
                     "decision_items": (
                         "array; empty unless decision_required. Each item has question, 2-3 options "
-                        "(option_id, label, summary), recommended_option_id, rationale, blocking_section_id"
+                        "(option_id, label, summary), recommended_option_id, rationale, "
+                        "blocking_section_id, and one fact_path copied exactly from "
+                        "task_context.decision_fact_paths"
                     ),
                     "missing_source_classes": (
                         "array[string]; 1-4 concrete source classes for source_gap; empty otherwise"
@@ -799,6 +802,15 @@ class PromptRegistry:
         if isinstance(minimum, bool) or not isinstance(minimum, int) or not 20 <= minimum <= 2_000:
             raise AiGatewayConfigurationError(
                 "protocol full-draft minimum_body_chars must be an integer between 20 and 2000"
+            )
+        decision_fact_paths = context.get("decision_fact_paths")
+        if (
+            not _is_string_list(decision_fact_paths)
+            or not decision_fact_paths
+            or len(decision_fact_paths) != len(set(decision_fact_paths))
+        ):
+            raise AiGatewayConfigurationError(
+                "protocol full-draft decision_fact_paths must contain unique non-empty strings"
             )
         if len(json.dumps(context, ensure_ascii=False).encode("utf-8")) > 32_768:
             raise AiGatewayConfigurationError(
@@ -2018,11 +2030,24 @@ def _validate_protocol_full_draft_output(
             errors.append(f"{prefix}.decision_items must contain no more than 6 decisions")
         for decision_index, decision in enumerate(decisions):
             decision_prefix = f"{prefix}.decision_items[{decision_index}]"
-            required = {"question", "options", "recommended_option_id", "rationale", "blocking_section_id"}
+            required = {
+                "question",
+                "options",
+                "recommended_option_id",
+                "rationale",
+                "blocking_section_id",
+                "fact_path",
+            }
             if not isinstance(decision, dict) or set(decision) != required:
                 errors.append(f"{decision_prefix} has an invalid shape")
                 continue
-            for key in ("question", "recommended_option_id", "rationale", "blocking_section_id"):
+            for key in (
+                "question",
+                "recommended_option_id",
+                "rationale",
+                "blocking_section_id",
+                "fact_path",
+            ):
                 if not isinstance(decision.get(key), str) or not decision[key].strip():
                     errors.append(f"{decision_prefix}.{key} must be a non-empty string")
             options = decision.get("options")

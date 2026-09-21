@@ -2823,6 +2823,7 @@ class AiTaskRunner:
         source_text = "\n".join(
             str(getattr(source, "text_preview", "") or "") for source in allowed_sources
         )
+        decision_fact_paths = set(context.get("decision_fact_paths") or [])
         for index, section in enumerate(sections):
             if not isinstance(section, dict):
                 continue
@@ -2884,6 +2885,14 @@ class AiTaskRunner:
             ):
                 errors.append(f"{prefix}.evidence_span_ids references an unknown evidence span")
             rationale = str(section.get("rationale") or "")
+            for decision_index, decision in enumerate(section.get("decision_items") or []):
+                if not isinstance(decision, dict):
+                    continue
+                fact_path = str(decision.get("fact_path") or "")
+                if fact_path not in decision_fact_paths:
+                    errors.append(
+                        f"{prefix}.decision_items[{decision_index}].fact_path is not an allowed study-definition path"
+                    )
             if (
                 content_status == "complete"
                 and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(rationale)

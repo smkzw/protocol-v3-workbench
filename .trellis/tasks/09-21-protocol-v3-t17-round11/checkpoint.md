@@ -120,3 +120,10 @@ ego(lite) TaskSpace 12 使用 Study A 的 SQLite online-backup 副本验收。�
 v0.4 合同已实现并完成集中验证：每章显式区分 complete、decision_required、source_gap；决定项包含推荐与备选，缺来源不再用通用正文填充；任一待决定/缺来源在任何章节写入前阻止整批采纳。已知含无依据规则的v0.3原始工件保持不可变和可读，但升为只读，不允许再采纳。宽屏审阅区显示决定卡和缺资料列表，当前仍通过既有研究设计流程补答。
 
 执行节点`mw_r11_full_draft_v04_contract_20260922`实际使用deepseek-v4.1-flash:max、无fallback，但受原生plan mode限制未编辑；Codex直接集成并记录其越界只读检查。最终定向105 passed；同批更广受影响集163 passed、前端110+65 passed、build 1971 modules、diff check通过。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V04_CONTRACT_20260922.md`。下一动作是闭合“推荐预选→用户一次确认→StudyDefinition→仅重生成受影响章节”的一键链路，再运行真实v0.4并做fresh医学会商；不重复检索、分诊、下载、OCR或翻译。
+
+## 2026-09-22 Study A 全文决定卡与局部重写闭环
+决定卡闭环已实现并经owner修订接受：模型必须从既有StudyDefinition可确认字段白名单提供`fact_path`；用户每次只确认一张卡；结果复用原CAS/幂等/审计通道，旧全文候选因研究revision变化失效，只为受影响章节创建新durable job。列表字段按合同塑形，结构化设计字段拒绝用散文静默写入。浏览器幂等键固定为job/decision/option，未知网络结果可安全重试。
+
+执行包`mw_r11_decision_apply_20260922`声明主路由未产生可用可恢复结果，按manifest使用第一fallback `zcode/zcode/GLM-5.3-Flash:max`，session `sess_858de745-44cd-4934-b788-c22cfafd9776`完成；guard audit为ok。owner发现并关闭worker遗漏的`fact_path`合同P0。集中验证后端111 passed；前端正式110+65 passed，最终production build 1971 modules，diff check通过。旧v0.3浏览器只读状态已验证；真实v0.4决定卡尚待产品模型生成。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_DECISION_LOOP_20260922.md`。
+
+下一动作直接使用隔离运行时与产品默认`opencode-go/deepseek-v4.1-flash:max`运行Study A真实v0.4；保持同一durable job长轮询，生成后先做三态/证据/决定绑定/章节完整性检查，再fresh医学会商，未通过不得采纳到Word。不得重跑检索、分诊、下载、OCR或翻译。
