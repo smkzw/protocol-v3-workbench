@@ -89,13 +89,8 @@ class ManuscriptDraftCoordinator:
                 outcome = {'workflow_run_id': child_id, 'status': 'not_started',
                     'validation': None, 'can_resume': True}
             chapters.append({**item, **outcome})
-        # A failed chapter is retryable (resume re-runs it); it must not flip
-        # the whole draft into a non-resumable stop — round-7 P0: one failed
-        # chapter froze 104 remaining chapters with no UI way back.
-        chapters = [
-            ({**item, 'can_resume': True} if item.get('status') == 'failed' else item)
-            for item in chapters
-        ]
+        # A child controls its own resume permission. A non-retryable child
+        # keeps the draft incomplete, but cannot freeze untouched siblings.
         applicable = [item for item in chapters
             if item['status'] not in {'not_applicable', 'kept_as_gap'}]
         complete = bool(applicable) and all(item['status'] == 'needs_content_review'
@@ -104,7 +99,7 @@ class ManuscriptDraftCoordinator:
             and not item.get('can_resume') for item in applicable)
         return {'workflow_run_id': run_id, 'plan': payload['plan'], 'chapters': chapters,
             'status': 'needs_content_review' if complete else 'blocked' if stopped else 'running',
-            'can_resume': not complete and not stopped and any(item.get('can_resume') for item in applicable),
+            'can_resume': not complete and any(item.get('can_resume') for item in applicable),
             'complete_candidate': complete, 'adopted': False}
 
     def resume(self, run_id):
@@ -114,10 +109,10 @@ class ManuscriptDraftCoordinator:
             return state
         self.runtime.run_to_completion(run_id)
         owner = self._owner(prepared)
-        # Sequential within a single pinned request: healthy active or unknown
-        # children keep their identity and are not re-dispatched by another owner.
-        # 一章的模型调用异常（如上游400）只标记该章失败并继续其余章节——
-        # 异常冒泡会让整个resume崩溃，剩余章节永远没有派发机会（round-7 P0）。
+        # Sequential within a single pinned request: completed children keep
+        # their identity and are never dispatched again.  A child with an
+        # unknown outcome can proceed only through its coordinator's explicit
+        # retry gate; a live lease remains blocked and is isolated here.
         import sys as _sys
         for request in prepared.chapter_requests():
             child_id = owner.run_id(request)

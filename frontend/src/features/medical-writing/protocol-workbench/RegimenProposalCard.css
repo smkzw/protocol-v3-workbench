@@ -19,12 +19,12 @@
   --kz-shadow-2: 0 2px 4px rgba(15, 17, 21, 0.08), 0 14px 30px rgba(15, 17, 21, 0.12);
   --kz-radius: 8px;
   --kz-font: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px;
+  max-width: none;
+  margin: 0;
+  padding: 16px;
   color: var(--kz-text);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.45;
   font-family: var(--kz-font);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
@@ -43,7 +43,7 @@
 }
 
 .rpc-heading {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .rpc-title-row {
@@ -85,12 +85,12 @@
 .rpc-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 10px;
 }
 
 .rpc-unit {
   min-width: 0;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid var(--kz-border);
   border-top: 4px solid var(--kz-yellow);
   border-radius: var(--kz-radius);
@@ -133,8 +133,8 @@
 }
 
 .rpc-step + .rpc-step {
-  margin-top: 14px;
-  padding-top: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--kz-border);
 }
 
@@ -242,7 +242,47 @@
 }
 
 .rpc-actions {
-  margin-top: 20px;
+  margin-top: 12px;
+}
+
+.rpc-clarifications {
+  margin-top: 10px;
+}
+
+.rpc-question {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(320px, 1.2fr);
+  gap: 8px 16px;
+  margin: 0;
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--kz-border);
+}
+
+.rpc-question legend {
+  grid-column: 1 / -1;
+  padding: 0;
+  color: var(--kz-heading);
+  font-weight: 700;
+}
+
+.rpc-question p,
+.rpc-question label {
+  margin: 0;
+}
+
+.rpc-question select,
+.rpc-question textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.rpc-question textarea {
+  min-height: 76px;
+  resize: vertical;
 }
 
 .rpc-confirm {
@@ -277,6 +317,10 @@
   .rpc-grid {
     grid-template-columns: 1fr;
   }
+
+  .rpc-question {
+    grid-template-columns: 1fr;
+  }
 }
 
 .rpc-source-links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; font-size: 14px; }
@@ -287,15 +331,15 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 14px 16px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
   border: 1px solid var(--kz-border);
   border-radius: var(--kz-radius);
   background: var(--kz-warm);
   color: var(--kz-text);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.45;
 }
 .rpc-validity p { margin: 0; flex: 1 1 260px; }
 .rpc-validity button {

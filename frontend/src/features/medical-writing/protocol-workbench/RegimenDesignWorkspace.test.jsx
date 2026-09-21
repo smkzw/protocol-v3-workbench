@@ -51,10 +51,10 @@ it("resumes an explicitly queued job but never redispatches an unknown outcome",
   view.unmount();
   api.getRegimenDesign.mockResolvedValue({ workflow_run_id: "design:one", status: "blocked", can_resume: false });
   render(<RegimenDesignWorkspace projectId="one" seedRunId="seed:one" api={api} />);
-  // 会商#5：blocked 终态升级为带出口的告警（文案+重新生成按钮）；
-  // 自动恢复仍然只尝试一次 resume，不静默重复派发。
+  // blocked 终态提供只读核对出口；重新生成必须先形成新的明确请求，
+  // 不能把查看失败结果伪装成一次新生成。
   await screen.findByText("本次给药设计未完成（原资料和记录已保留）。常见原因是整理服务暂时不可用或研究信息刚发生变化。");
-  expect(screen.getByRole("button", { name: "重新生成给药设计" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "查看当前进度" })).toBeTruthy();
   expect(api.resumeRegimenDesign).toHaveBeenCalledTimes(1);
   expect(api.startRegimenDesign).not.toHaveBeenCalled();
 });
@@ -72,7 +72,7 @@ it("pins the server study request before dispatch and recovers that exact reques
   expect(api.startRegimenDesign.mock.calls[0][1]).toEqual(intent);
   view.unmount();
   render(<RegimenDesignWorkspace projectId="one" seedRunId="seed:one" studyDefinitionId="study:a" actorId="user:a" api={api}/>);
-  await screen.findByText('请补充研究给药途径。');
+  await screen.findByRole('group', {name:/请补充研究给药途径/});
   expect(api.recoverRegimenDesign.mock.calls[0][1]).toEqual(intent);
   expect(api.prepareRegimenDesign).toHaveBeenCalledTimes(1);
   expect(api.startRegimenDesign).toHaveBeenCalledTimes(1);
@@ -83,7 +83,7 @@ it('does not carry a saved study-bound run into another study with the same seed
     startRegimenDesign:vi.fn(async()=>done),getRegimenDesign:vi.fn(async()=>done)};
   const view=render(<RegimenDesignWorkspace projectId="one" seedRunId="seed:one" studyDefinitionId="study:a" actorId="user:a" api={api}/>);
   fireEvent.click(screen.getByRole('button',{name:'整理完整给药建议'}));
-  await screen.findByText('请补充研究给药途径。');
+  await screen.findByRole('group', {name:/请补充研究给药途径/});
   view.rerender(<RegimenDesignWorkspace projectId="one" seedRunId="seed:one" studyDefinitionId="study:b" actorId="user:a" api={api}/>);
   expect(screen.queryByText('请补充研究给药途径。')).toBeNull();
   expect(screen.getByRole('button',{name:'整理完整给药建议'})).toBeTruthy();

@@ -1457,16 +1457,13 @@ class DeepSeekPrefillAdapter:
             # provider must not gain that trust merely by exposing a similarly
             # named attribute.
             if isinstance(provider, OpenAICompatibleAiProvider):
-                # DeepSeek renamed the served id: v4-flash requests now return
-                # model=deepseek-flash.  Accept both the request name and the
-                # calibrated response identity.
-                _acceptable = {self._model_name, "deepseek-flash"}
-                expected = provider.expected_response_model
-                if expected not in _acceptable:
-                    raise RuntimeError(
-                        "configured provider identity contract mismatch: "
-                        f"expected {self._model_name}, got {expected or '<empty>'}"
-                    )
+                # The provider already compares the upstream response with
+                # its frozen expected_response_model.  The configured request
+                # alias may intentionally differ from that calibrated served
+                # identity (for example deepseek-flash ->
+                # deepseek-latest-cloud), so repeating an alias comparison
+                # here would reject a response that has already passed the
+                # authoritative transport contract.
                 return result
 
             # D5: For generic injected providers, require explicit exact

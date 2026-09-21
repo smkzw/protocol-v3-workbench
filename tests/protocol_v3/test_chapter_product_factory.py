@@ -102,3 +102,61 @@ def test_product_chapter_factory_calls_only_on_execution_and_reopens(tmp_path,co
             assert 'evidence:invented' in error['detail'] and 'evidence:invented' in message
         else:
             assert 'broken chapter JSON' in message
+
+
+def test_correction_unknown_outcome_gets_one_explicit_retry(tmp_path):
+    """A lost correction dispatch stays auditable, then owner retry advances it."""
+    from app.protocol_workflow.agent3.product import create_product_chapter_factory
+    from app.protocol_workflow.agent3.chapter_draft import prepare_chapter_draft
+    from app.protocol_workflow.registries.fact_bindings import bind_chapter_input
+    from app.protocol_workflow.canonical.study_definition import study_revision_hash
+    from app.protocol_workflow.runtime.adapters.zhipu_api import ZhipuTransportError
+
+    contract, _, evidence = inputs()
+    study = confirmed_study({'study.objective': '合成研究目的'})
+    prepared = prepare_chapter_draft(
+        contract,
+        bind_chapter_input(study, contract, bindings_for_objective()),
+        (evidence,),
+    )
+    valid = json.dumps({
+        'chapter_contract_id': contract.chapter_contract_id,
+        'node_id': contract.semantic_node_id,
+        'blocks': [{
+            'kind': 'paragraph',
+            'block_id': 'block:one',
+            'text': '纠正后的合成章节正文。',
+            'evidence_refs': [evidence.evidence_unit_id],
+        }],
+    })
+    opener = _FakeOpener([
+        _FakeResponse(_completion_body(content='原始损坏JSON')),
+        ZhipuTransportError('synthetic correction transport failure'),
+        _FakeResponse(_completion_body(content=valid, response_id='retry-response')),
+    ])
+    kwargs = dict(
+        storage_config={'backend': 'sqlite', 'path': str(tmp_path / 'chapter.db')},
+        prior_probe_receipt=ROOT.parents[2] / 'runs/mw_protocol_v3_1r6_glm_transport_20260905/product_probe_attempt.json',
+        max_input_bytes=2_000_000,
+        credential_resolver=lambda: 'synthetic-only',
+        http_opener=opener,
+    )
+    owner = create_product_chapter_factory(**kwargs)(
+        study.project_id, study.study_definition_id, study_revision_hash(study)
+    )
+    run_id = owner.start(prepared)
+
+    first = owner.resume(run_id)
+    assert first['status'] == 'blocked'
+    assert first['can_resume'] is True
+    assert opener.calls == 2
+    assert first['correction_run_id'] == run_id + ':correction:1'
+
+    second = owner.resume(run_id)
+    assert second['status'] == 'needs_content_review'
+    assert second['can_resume'] is False
+    assert second['validation']['valid'] is True
+    assert opener.calls == 3
+    assert [item.attempt for item in owner.runtime.reservation_attempts(
+        run_id + ':correction:1', 'chapter-generate'
+    )] == [1, 2]

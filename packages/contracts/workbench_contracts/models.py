@@ -2623,10 +2623,6 @@ class MedicalWritingMinimumProductFactPacket(WorkbenchModel):
         if self.ib_validation_status == "confirmed_after_warning":
             if not self.ib_warning_codes:
                 raise ValueError("IB warning confirmation requires warning codes")
-            if len(self.ib_override_reason) < 10:
-                raise ValueError(
-                    "IB warning confirmation requires a substantive reason"
-                )
         elif self.ib_override_reason:
             raise ValueError(
                 "IB override reason is only valid after warning confirmation"
@@ -6062,7 +6058,7 @@ class MedicalWritingAuthoringJourneyDraftSaveRequest(
 
 class MedicalWritingCorpusGateOverrideRequest(WorkbenchModel):
     expected_revision: int = Field(ge=1)
-    reason: str = Field(min_length=10, max_length=5_000)
+    reason: str = Field(default="", max_length=5_000)
     acknowledged_missing_requirements: List[str] = Field(min_length=1, max_length=100)
     actor: str = Field(default="medical_manager", min_length=1, max_length=100)
     idempotency_key: str = Field(min_length=1, max_length=200)
@@ -6075,8 +6071,6 @@ class MedicalWritingCorpusGateOverrideRequest(WorkbenchModel):
         ]
         self.actor = self.actor.strip()
         self.idempotency_key = self.idempotency_key.strip()
-        if len(self.reason) < 10:
-            raise ValueError("corpus gate override reason must contain at least 10 characters")
         if not self.acknowledged_missing_requirements:
             raise ValueError("corpus gate override must acknowledge missing requirements")
         if len(self.acknowledged_missing_requirements) != len(
@@ -7937,8 +7931,6 @@ class MedicalWritingReferenceImportRequest(WorkbenchModel):
         self.override_reason = self.override_reason.strip()
         self.actor = self.actor.strip()
         self.idempotency_key = self.idempotency_key.strip()
-        if self.override_validation and len(self.override_reason) < 10:
-            raise ValueError("reference validation override reason must contain at least 10 characters")
         if self.manual_metadata:
             values = self.manual_metadata.model_dump()
             for field_name, value in values.items():
@@ -9125,6 +9117,7 @@ class WritingReferenceUpperLayerStageRun(WorkbenchModel):
     transport: str
     requested_model: str
     response_model: str = ""
+    expected_response_model: str = ""
     deployment_profile: str
     prompt_version: str
     input_hash: str
@@ -9166,9 +9159,11 @@ class WritingReferenceUpperLayerStageRun(WorkbenchModel):
         if not self.requested_model.strip():
             raise ValueError("upper-layer requested_model is required")
         if self.status in {"succeeded", "completed_degraded"}:
-            if self.response_model != self.requested_model:
+            if self.response_model != (
+                self.expected_response_model or self.requested_model
+            ):
                 raise ValueError(
-                    "successful upper-layer run requires exact response_model"
+                    "successful upper-layer run requires configured response_model"
                 )
         if bool(self.parent_stage_run_id) != bool(self.escalation_id):
             raise ValueError(

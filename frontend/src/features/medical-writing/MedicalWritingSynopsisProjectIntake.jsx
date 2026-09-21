@@ -204,10 +204,13 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
   const [acknowledged, setAcknowledged] = useState([]);
   const [overrideReason, setOverrideReason] = useState("");
 
-  useEffect(() => () => {
-    mountedRef.current = false;
-    pollControllerRef.current?.abort();
-    commandControllerRef.current?.abort();
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      pollControllerRef.current?.abort();
+      commandControllerRef.current?.abort();
+    };
   }, []);
 
   const warnings = imported?.source?.validation_warnings || [];
@@ -218,7 +221,6 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
       && framing?.study_phase?.trim()
       && synopsisText.trim()
       && acknowledged.length === warnings.length
-      && (!warnings.length || overrideReason.trim().length >= 10)
   ), [acknowledged.length, framing, imported, overrideReason, synopsisText, warnings.length]);
 
   const reset = () => {
@@ -585,7 +587,7 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
               <span>{warning}</span>
             </label>
           ))}
-          <textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="确认该文件可用于当前项目的理由（不少于10个字符）" />
+          <textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：补充说明该文件为何适用于当前项目" />
         </div>
       )}
 

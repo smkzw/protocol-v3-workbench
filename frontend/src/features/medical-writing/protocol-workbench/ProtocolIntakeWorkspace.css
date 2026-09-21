@@ -19,12 +19,14 @@
   --kz-shadow-2: 0 2px 4px rgba(15, 17, 21, 0.08), 0 14px 30px rgba(15, 17, 21, 0.12);
   --kz-radius: 8px;
   --kz-font: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
-  max-width: 1100px;
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 32px;
+  padding: 16px 20px;
   color: var(--kz-text);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.45;
   font-family: var(--kz-font);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
@@ -37,7 +39,7 @@
   outline-offset: 2px;
 }
 
-.pvi-heading { margin-bottom: 24px; }
+.pvi-heading { margin-bottom: 12px; }
 .pvi-heading h2 {
   font-size: 28px;
   line-height: 1.3;
@@ -195,3 +197,30 @@
     scroll-behavior: auto;
   }
 }
+
+/* Desktop writing: confirmed design beside the actual document, not above it. */
+.pvi-writing-desk { display:grid; grid-template-columns:clamp(340px, 24vw, 460px) minmax(720px, 1fr); gap:12px; align-items:start; margin-top:12px; }
+.pvi-writing-desk > * { min-width:0; }
+.pvi-design-pane { position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; border:1px solid var(--kz-border); border-top:3px solid var(--kz-orange); border-radius:8px; background:white; padding:10px; box-shadow:var(--kz-shadow); }
+.pvi-design-pane > h2 { font-size:18px; margin:0 0 8px; }
+.pvi-design-pane > details { border-top:1px solid var(--kz-border); padding:6px 0; }
+.pvi-design-pane > details > summary { cursor:pointer; font-size:14px; font-weight:700; padding:2px 0; }
+.pvi-design-pane .pvi-proposal, .pvi-design-pane .rpc-card { margin:6px 0; padding:10px; max-width:none; box-shadow:none; }
+.pvi-design-pane p, .pvi-design-pane li { font-size:14px; line-height:1.4; }
+.pvi-design-pane .pvi-research-information dl { grid-template-columns:1fr; gap:8px; }
+.pvi-document-pane { min-width:0; }
+.pvi-document-pane .kz-manuscript { margin:0; padding:10px; min-height:calc(100vh - 150px); }
+@media(max-width:1180px) { .pvi-writing-desk { grid-template-columns:1fr; } .pvi-design-pane { position:static; max-height:none; } }
+
+.pvi-intake-summary { margin:4px 0; font-size:14px; }
+.pvi-heading > p { margin:4px 0; font-size:14px; }
+.pvi-heading h2 { font-size:24px; margin:4px 0; }
+
+.pvi-workspace--writing > .pvi-heading { display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:16px; row-gap:2px; margin-bottom:8px; }
+.pvi-workspace--writing > .pvi-heading > p { grid-column:1 / -1; }
+.pvi-workspace--writing > details:not([open]) { display:inline-block; vertical-align:top; margin:0 20px 0 0; }
+.pvi-workspace--writing > details > summary { padding:6px 0; font-size:14px; cursor:pointer; }
+.pvi-workspace--writing > details[open] { margin:8px 0; }
+.pvi-design-pane .pvi-research-information { border:0; padding:4px 0; margin:0; }
+.pvi-design-pane .pvi-research-information [role=status] { font-size:12px; margin:4px 0; color:var(--kz-muted); }
+.pvi-design-pane .pvi-research-information dl { margin:8px 0; }

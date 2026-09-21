@@ -28,6 +28,10 @@ shim = '<script src="./bridge-shim.js"></script>'
 if shim not in html:
     html = re.sub(r'(<script type="module"[^>]*>)', shim + r'\1', html, count=1)
     path.write_text(html, encoding='utf-8')
-print('shim injected')
+style = '<link rel="stylesheet" href="./embedded.css">'
+if style not in html:
+    html = html.replace('</head>', style + '</head>')
+path.write_text(html, encoding='utf-8')
+print('shim and embedded styles injected')
 PY
 print "GenOffice renderer installed at $DEST"

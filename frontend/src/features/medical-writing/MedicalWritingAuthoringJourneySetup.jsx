@@ -525,7 +525,7 @@ function isConditionalPicosFieldComplete(picos, fieldName) {
   const decision = picos?.field_applicability?.[fieldName];
   const designAllowsNotApplicable = ["randomized_exploratory", "single_arm_early_phase", "open_label_extension", "other"].includes(picos?.design_archetype)
     && !(picos?.design_archetype === "randomized_exploratory" && fieldName === "comparator_summary");
-  return Boolean(designAllowsNotApplicable && decision?.status === "not_applicable" && decision?.confirmed_by_medical_manager && decision?.reason?.trim().length >= 10);
+  return Boolean(designAllowsNotApplicable && decision?.status === "not_applicable" && decision?.confirmed_by_medical_manager);
 }
 
 async function readJson(response) {
@@ -2108,7 +2108,27 @@ export function MedicalWritingAuthoringJourneySetup({
       } catch (error) {
         if (!shouldReconcileWrite(error)) throw error;
         response = await reconcileJourneyWrite(requestProjectId, (current) => current.revision > sourceRevision && writePayloadMatches(current?.[`${targetStage}_draft`]?.[targetStage], payload));
-        if (!response) throw error;
+        if (!response) {
+          const isStaleRevision = error?.status === 409
+            && String(error?.message || "").includes("stale authoring journey revision");
+          if (!isStaleRevision) throw error;
+
+          // A background projection may advance the journey while the user is
+          // editing. Refresh the revision and retry this explicit draft save
+          // once; transport failures and unknown outcomes are never replayed.
+          const latest = await fetch(`/api/projects/${requestProjectId}/medical-writing/authoring-journey`).then(readJson);
+          if (activeProjectRef.current !== requestProjectId || latest.revision <= sourceRevision) throw error;
+          const retryKey = await stableAuthoringWriteKey(
+            requestProjectId,
+            `draft-${targetStage}`,
+            latest.revision,
+            payload,
+          );
+          response = await fetch(`/api/projects/${requestProjectId}/medical-writing/authoring-journey/stages/${targetStage}/draft`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ expected_revision: latest.revision, stage: targetStage, [targetStage]: payload, actor: "medical_manager", idempotency_key: retryKey }),
+          }).then(readJson);
+        }
       }
       if (activeProjectRef.current !== requestProjectId) return;
       applyJourneyResponse(response);
@@ -2278,8 +2298,8 @@ export function MedicalWritingAuthoringJourneySetup({
       : [];
     const ack = [...new Set(acknowledged || [])].sort();
     const reasonText = (overrideReason || "").trim();
-    if (!missingLabels.every((label) => ack.includes(label)) || reasonText.length < 10) {
-      setMessage("例外放行前须逐项确认全部未满足条件，并填写不少于10个字符的项目特异理由。");
+    if (!missingLabels.every((label) => ack.includes(label))) {
+      setMessage("例外放行前请逐项确认全部未满足条件。");
       return;
     }
     const overridePayload = { reason: reasonText, acknowledged_missing_requirements: ack };
@@ -2338,9 +2358,8 @@ export function MedicalWritingAuthoringJourneySetup({
   if (synopsisReviewPending(journey)) {
     const validationWarnings = journey.synopsis_import?.source?.validation_warnings || [];
     const allWarningsAcknowledged = validationWarnings.every((item) => synopsisAcknowledged.includes(item));
-    const requiresOverrideReason = validationWarnings.length > 0;
     const sourceMatchesSelection = Boolean(journey.synopsis_import?.source && (!synopsisFileIdentity || journey.synopsis_import.source.content_sha256 === synopsisFileIdentity.contentSha256));
-    const canConfirm = Boolean(sourceMatchesSelection && !synopsisReplacementPending && synopsisText.trim() && allWarningsAcknowledged && (!requiresOverrideReason || synopsisOverrideReason.trim().length >= 10));
+    const canConfirm = Boolean(sourceMatchesSelection && !synopsisReplacementPending && synopsisText.trim() && allWarningsAcknowledged);
     const synopsisInteractionLocked = ["synopsis-upload", "synopsis-confirm"].includes(busy);
     return <div className="authoring-journey-shell">{header}<main className="authoring-journey-body"><SynopsisImportPanel journey={journey} file={synopsisFile} uploadKey={synopsisUploadKey} replacementPending={synopsisReplacementPending} framing={framing} picos={picos} synopsisText={synopsisText} acknowledged={synopsisAcknowledged} overrideReason={synopsisOverrideReason} busy={busy} interactionLocked={synopsisInteractionLocked} onFile={selectSynopsisFile} onUpload={uploadSynopsis} onFraming={updateFraming} onPicos={updatePicos} onSynopsisText={setSynopsisText} onAcknowledged={setSynopsisAcknowledged} onOverrideReason={setSynopsisOverrideReason} /></main>{message && <p className={`authoring-journey-message ${message.includes("失败") ? "danger" : ""}`}>{message}</p>}{journey.synopsis_import?.source && <footer className="authoring-journey-footer synopsis-import-footer"><span>{synopsisReplacementPending ? "已选择替换文件；重新解析完成前，当前候选不可确认。" : "导入候选不会直接成为正式研究事实；确认后仍需完成研究框架和PICOS两阶段医学审核。"}</span><button className="primary-button" type="button" onClick={confirmSynopsisImport} disabled={Boolean(busy) || !canConfirm}><CheckCircle2 size={15} /> {busy === "synopsis-confirm" ? "确认中" : "确认并进入两阶段补全"}</button></footer>}</div>;
   }
@@ -2518,7 +2537,7 @@ export function MedicalWritingAuthoringJourneySetup({
                   <strong>{compactResearchLabel}</strong>
                   <small>
                     {compactResearchChildTotal > 0
-                      ? `${compactResearchChildCompleted}/${compactResearchChildTotal} · ${compactResearchChildPercent}%`
+                      ? `已完成 ${compactResearchChildCompleted}/${compactResearchChildTotal} · ${compactResearchChildPercent}%`
                       : `${compactResearchPercent}%`}
                   </small>
                   <span
@@ -2715,6 +2734,10 @@ function ResearchPipelineBanner({
     );
   const downstreamRetryable = isFailed && Boolean(status?.pipeline_retryable);
   const failedTaskMessage = String(pipeline.error_summary || "").includes(
+    "HTTP 401",
+  )
+    ? "产品模型连接未通过鉴权；公开检索结果已保留。请修复模型连接后仅重试分诊，不会重复检索。"
+    : String(pipeline.error_summary || "").includes(
     "CorpusAnalysisAiError",
   )
     ? "独立AI返回的语料分析结构未符合系统合同；已完成的原文、OCR和翻译仍保留，可直接重试后续语料分析。"
@@ -3246,7 +3269,7 @@ function InvestigatorBrochureIntake({
   const allAcknowledged = warnings.length > 0
     && warnings.every((item) => acknowledged.includes(item.code));
   const confirm = async () => {
-    if (!allAcknowledged || overrideReason.trim().length < 10) return;
+    if (!allAcknowledged) return;
     await onAttach(registration, overrideReason);
     setLocalMessage("已按医学经理确认沿用该研究者手册；原提示仍保留在来源记录中。");
   };
@@ -3273,8 +3296,8 @@ function InvestigatorBrochureIntake({
         <input type="checkbox" checked={acknowledged.includes(warning.code)} onChange={() => setAcknowledged((current) => current.includes(warning.code) ? current.filter((item) => item !== warning.code) : [...current, warning.code])} />
         <span><strong>{warning.label}</strong><small>{warning.message}</small></span>
       </label>)}
-      <textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="说明确认该文件可用于当前项目的理由，不少于10个字符" />
-      <button type="button" className="primary-button" onClick={confirm} disabled={!allAcknowledged || overrideReason.trim().length < 10 || interactionLocked}><CheckCircle2 size={14} /> 确认沿用</button>
+      <textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：补充说明为何该文件可用于当前项目" />
+      <button type="button" className="primary-button" onClick={confirm} disabled={!allAcknowledged || interactionLocked}><CheckCircle2 size={14} /> 确认沿用</button>
     </div>}
     {currentSourceId && <div className="authoring-ib-current"><CheckCircle2 size={14} /><span><strong>已接入项目事实来源</strong><small title={currentSourceId}>{currentSourceId}</small></span></div>}
     {localMessage && <p>{localMessage}</p>}
@@ -3992,7 +4015,7 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
       </div>
       {searchPlan?.latest_snapshot_id && <WritingReferencePanel projectId={projectId} variant="authoring" snapshotId={searchPlan.latest_snapshot_id} lockedIndication={searchPlan.registry_filter?.condition_term || journey.framing?.clinicaltrials_condition_term || journey.framing?.indication || ""} lockedPhase={journey.framing?.study_phase || ""} journey={journey} onJourneyChange={setJourney} selectedBriefIds={selectedBriefIds} onSelectedBriefIdsChange={setSelectedBriefIds} />}
       <div className="authoring-gate-checklist"><strong>{missing.length ? "尚未满足的准入条件" : "准入条件已满足"}</strong>{(gate?.requirements?.length ? gate.requirements : missing.map((label) => ({ label, satisfied: false, detail: "" }))).map((item) => <label key={item.label} className={item.satisfied ? "satisfied" : ""}><input type="checkbox" checked={item.satisfied || acknowledged.includes(item.label)} onChange={() => { if (item.satisfied) return; setAcknowledged((current) => current.includes(item.label) ? current.filter((value) => value !== item.label) : [...current, item.label]); }} disabled={readOnly || allowed || item.satisfied} /><span><b>{item.label}</b>{item.detail && <small>{item.detail}</small>}</span></label>)}</div>
-      {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口，并填写项目特异的例外理由；系统不会自动代替您确认。</p><label className="synopsis-override-reason"><span>例外理由</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="说明当前为何需要例外进入写作，以及后续如何补齐语料；不少于10个字符。" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged || overrideReason.trim().length < 10} title={!allAcknowledged ? "请先逐项确认全部缺口" : overrideReason.trim().length < 10 ? "请填写不少于10个字符的项目特异理由" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? "可以建立版本化方案工作稿。" : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanReady && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
+      {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口；补充说明为可选项。</p><label className="synopsis-override-reason"><span>例外说明（可选）</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：说明当前为何先进入写作及后续资料计划" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged} title={!allAcknowledged ? "请先逐项确认全部缺口" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? "可以建立版本化方案工作稿。" : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanReady && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
     </section>
   );
 }

@@ -284,6 +284,8 @@ class VerifiedTriageProvider:
                 ALIBABA_TOKEN_PLAN_BASE_URL,
                 ALIBABA_TOKEN_PLAN_MODEL,
                 ALIBABA_TOKEN_PLAN_PROVIDER,
+                DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS,
+                DEEPSEEK_COMPATIBLE_GATEWAY_MODELS,
                 DIRECT_DEEPSEEK_BASE_URL,
                 DIRECT_DEEPSEEK_MODELS,
             )
@@ -298,11 +300,20 @@ class VerifiedTriageProvider:
                 raise CompetitorTriageError(
                     "production triage provider base_url is required"
                 )
+            if self.provider_name == "deepseek":
+                direct_route = (
+                    base_url == DIRECT_DEEPSEEK_BASE_URL
+                    and configured_model in DIRECT_DEEPSEEK_MODELS
+                )
+                gateway_route = (
+                    base_url in DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS
+                    and configured_model in DEEPSEEK_COMPATIBLE_GATEWAY_MODELS
+                )
+                if not direct_route and not gateway_route:
+                    raise CompetitorTriageError(
+                        "provider base_url/model does not match the configured DeepSeek product route"
+                    )
             pinned_routes = {
-                "deepseek": (
-                    DIRECT_DEEPSEEK_BASE_URL,
-                    DIRECT_DEEPSEEK_MODELS,
-                ),
                 ALIBABA_TOKEN_PLAN_PROVIDER: (
                     ALIBABA_TOKEN_PLAN_BASE_URL,
                     frozenset({ALIBABA_TOKEN_PLAN_MODEL}),
@@ -319,7 +330,11 @@ class VerifiedTriageProvider:
             # 'deepseek-flash' for v4-flash requests): accept the calibrated
             # expectation as long as both ids belong to the pinned route's
             # model family (requirements-v2 T17 round-1 finding).
-            _deepseek_family = {"deepseek-v4-flash", "deepseek-flash"}
+            _deepseek_family = {
+                "deepseek-v4-flash",
+                "deepseek-flash",
+                "deepseek-latest-cloud",
+            }
             if (
                 self.expected_response_model != configured_model
                 and not (

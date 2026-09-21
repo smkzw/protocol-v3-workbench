@@ -1,0 +1,70 @@
+{
+  "profile": "deepseek",
+  "route": {
+    "declared_model": "deepseek-flash",
+    "expected_observed_model": "deepseek-latest-cloud",
+    "endpoint_kind": "local_omniroute_chat_completions"
+  },
+  "probe_verified": true,
+  "cases": [
+    {
+      "case": "superiority-no-interim",
+      "status": "completed",
+      "candidate": {
+        "replacement_content": "本研究采用随机、双盲、安慰剂对照的Ⅱ期优效性设计，主要终点为第24周症状评分较基线的变化；本研究不开展期中分析。"
+      }
+    },
+    {
+      "case": "noninferiority-interim",
+      "status": "completed",
+      "candidate": {
+        "replacement_content": "本研究为阳性对照非劣效性Ⅲ期研究，主要终点为第52周事件发生率。非劣效性评价采用风险差（risk difference）尺度，非劣效界值设定为8%。计划在主要终点累计事件数达到总计划主要终点事件数的50%时进行一次期中分析，该期中分析为无效性期中分析。"
+      }
+    },
+    {
+      "case": "blind-mdd",
+      "status": "completed",
+      "candidate": {
+        "replacement_content": "研究概述：拟开展难治性重度抑郁症Ⅱ期研究，试验药物为口服辅助治疗，治疗8周。对照、主要终点、剂量和样本量尚未确认，列为待确认事项。"
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "08d524cdceb8b363ea2bdfaa0a1c0f790ae9566ba84fd50db2d119503436179d",
+      "provider_session_id": "a4f5467d-cd8d-4f55-b884-5c9245b89c74"
+    },
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "95f8de6a0a219aff2555c4f3f62cd31a410caee8010e33c104dcefe52a7ee5ea",
+      "provider_session_id": "859fe260-0f83-4b03-8d13-09ba81652c98"
+    },
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "cee4c8fc05c8b4b89efa07d66d0a6ebe4b68fef55a4a97aecf525b925cf8e7b9",
+      "provider_session_id": "57cfb4c0-fef0-4a15-aa70-86e7088c3181"
+    },
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "be3503989c34a81acd5b36f235c006ec07b8a16b5cedc5be8db08ac810a5121d",
+      "provider_session_id": "9eeed769-f5a5-4488-876a-6fe9e729145f"
+    },
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "c10875dc307d6a0116430b67332765f808cd146eb6d60e5765f434b29f519849",
+      "provider_session_id": "40fba2e2-1a68-463b-937b-a08152324f90"
+    },
+    {
+      "observed_provider": "deepseek",
+      "observed_model": "deepseek-latest-cloud",
+      "output_sha256": "fa2474e680d3a2469deab47a16ddcf6902665c6c3d96d3533a09a881e49a13e5",
+      "provider_session_id": "452b04ef-8207-4d4c-ae20-1b443b3f786e"
+    }
+  ]
+}

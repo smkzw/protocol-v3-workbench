@@ -79,7 +79,7 @@ def test_export_preserves_user_content_without_reprojection_or_rewriting(tmp_pat
     assert '用户手改过的概要段落' in text
     assert '用户改过的访视安排' in text
     # No silent term replacement at export (R4/A13).
-    assert '受试者' in text and '受试者' not in text.replace('受试者', '')
+    assert text.count('受试者') == 3
     # No export-time synopsis projection: the projected abbreviation line
     # would differ from the user's own wording.
     assert '缩略语：AE = 不良事件' not in text
@@ -117,3 +117,108 @@ def test_template_orphan_media_never_ships(tmp_path):
                 if name.startswith('word/header') or name.startswith('word/footer')
                 or name == 'word/styles.xml']
     assert kept, 'headers, footers and styles must survive pruning'
+
+
+def test_template_instruction_page_does_not_leave_a_blank_page_before_cover(tmp_path):
+    from docx import Document
+    from docx.oxml.ns import qn
+    template_path, template_dir = _template_paths()
+    out = tmp_path / 'cover.docx'
+    render_production_docx(template_path, template_dir,
+        _document([_para('v2_n_11_1_1', '保留的研究正文。')]), out,
+        {'framing.document_title': '用于核对封面的合成研究方案'})
+    doc = Document(out)
+    title_index = next(i for i, p in enumerate(doc.paragraphs)
+        if p.text == '用于核对封面的合成研究方案')
+    prefix = doc.paragraphs[:title_index]
+    assert not any(b.get(qn('w:type')) == 'page'
+        for p in prefix for b in p._p.findall('.//' + qn('w:br')))
+    assert title_index <= 3, 'only the cover spacing may precede the title'
+    assert '保留的研究正文。' in _all_text(doc)
+
+
+def test_generated_table_of_contents_has_balanced_fields_and_no_template_page_cache(tmp_path):
+    from docx import Document
+    from docx.oxml.ns import qn
+    template_path, template_dir = _template_paths()
+    out = tmp_path / 'toc.docx'
+    render_production_docx(template_path, template_dir,
+        _document([_para('v2_n_11_1_1','独立研究正文。')]),out,{})
+    doc=Document(out)
+    depth=0
+    for field in doc.element.body.iter(qn('w:fldChar')):
+        kind=field.get(qn('w:fldCharType'))
+        if kind=='begin': depth+=1
+        elif kind=='end': depth-=1
+        assert depth>=0
+    assert depth==0, 'template TOC must not be cut midway through an open field'
+    assert '方案修订历史记录\t5' not in _all_text(doc)
+    toc = next(p for p in doc.paragraphs if p._p.findall('.//' + qn('w:instrText')))
+    assert '方案修订历史记录' in toc.text
+    assert '主要研究者签字页' in toc.text
+    assert '独立研究正文。' in _all_text(doc)
+    assert len(doc.settings.element.findall(qn('w:updateFields'))) == 1
+    assert doc.settings.element.find(qn('w:trackRevisions')) is None
+
+
+def test_template_textbox_alternate_branches_are_not_concatenated(tmp_path):
+    from docx import Document
+    from docx.oxml.ns import qn
+    template_path, template_dir = _template_paths()
+    out = tmp_path / 'textbox.docx'
+    render_production_docx(template_path,template_dir,
+        _document([_para('v2_n_11_1_1','用户正文仍包含所有版本都应当具有版本号和日期。')]),out,
+        {'framing.sponsor':'合成申办者'})
+    doc=Document(out)
+    branches = list(doc.element.body.iter(qn('w:txbxContent')))
+    template_branches = [branch for branch in Document(template_path).element.body.iter(qn('w:txbxContent'))
+        if '本文件包含重要的保密性商业信息' in ''.join(n.text or '' for n in branch.iter(qn('w:t')))]
+    assert len(branches) == len(template_branches) == 2
+    texts = [''.join(n.text or '' for n in branch.iter(qn('w:t'))) for branch in branches]
+    assert texts[0] == texts[1]
+    assert all(text.count('本文件包含重要的保密性商业信息') == 1 for text in texts)
+    assert all('合成申办者' in text for text in texts)
+    assert '用户正文仍包含所有版本都应当具有版本号和日期。' in _all_text(doc)
+
+
+def test_placeholder_replacement_preserves_runs_breaks_and_tabs():
+    from docx import Document
+    from app.protocol_workflow.agent3.word_export_production import _replace_in_paragraph
+    doc = Document()
+    p = doc.add_paragraph()
+    p.add_run('前文<申办')
+    p.add_run('者名称>').bold = True
+    tail = p.add_run()
+    tail.add_break()
+    tail.add_text('后文')
+    tail.add_tab()
+    tail.add_text('尾部')
+    _replace_in_paragraph(p, {'<申办者名称>': '合成单位'})
+    assert p.text == '前文合成单位\n后文\t尾部'
+    assert p.runs[1].bold is True
+    assert p.runs[2].text == '\n后文\t尾部'
+
+
+def test_template_header_uses_width_aware_tabs_and_retains_cover_section(tmp_path):
+    from docx import Document
+    from docx.oxml.ns import qn
+    template_path, template_dir = _template_paths()
+    out = tmp_path / 'header.docx'
+    render_production_docx(template_path, template_dir,
+        _document([_para('v2_n_1_1', '合成正文。')]), out,
+        {'framing.protocol_date': '2026-09-21', 'framing.protocol_id': 'TEST-20260921'})
+    doc = Document(out)
+    header = next(p for p in doc.sections[0].header.paragraphs if '版本日期：' in p.text)
+    assert '\t' in header.text
+    assert header.text.count('\t') == 2
+    version = next(p for p in doc.sections[0].header.paragraphs if '版本号：' in p.text)
+    assert version.text.count('\t') == 1
+    assert '2026-09-21' in header.text
+    from docx.enum.text import WD_TAB_ALIGNMENT
+    active_tabs = [t for t in header.paragraph_format.tab_stops if t.alignment != WD_TAB_ALIGNMENT.CLEAR]
+    assert [t.alignment for t in active_tabs] == [WD_TAB_ALIGNMENT.CENTER, WD_TAB_ALIGNMENT.RIGHT]
+    cleared = {t.position for t in header.paragraph_format.tab_stops if t.alignment == WD_TAB_ALIGNMENT.CLEAR}
+    assert {t.position for t in header.style.paragraph_format.tab_stops}.issubset(cleared)
+    source = Document(template_path)
+    assert doc.sections[0]._sectPr.xml == source.sections[0]._sectPr.xml
+    assert len(list(doc.element.body.iter(qn('w:sectPr')))) >= 2

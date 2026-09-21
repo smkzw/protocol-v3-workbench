@@ -59,6 +59,7 @@ def _sample_size_writer(p):
         'statistics.sample_size.alpha': s['alpha'],
         'statistics.sample_size.power': s['power'],
         'statistics.sample_size.method': s['model'],
+        'statistics.sample_size.planned_n': s['planned_n'],
         'statistics.sample_size.attrition': s['attrition'],
         'statistics.sample_size.assumption_evidence': {
             'justification': deepcopy(s['justification']),
@@ -151,27 +152,41 @@ DESIGN_CARDS = {
 CONDITIONAL_CARDS = ('non-inferiority-margin', 'interim')
 
 
+def _confirmed_fact(facts, path):
+    if path in facts:
+        return facts[path]
+    value = facts
+    for part in path.split('.'):
+        if not isinstance(value, dict) or part not in value:
+            return None
+        value = value[part]
+    return value
+
+
 def available_design_cards(confirmed_facts, proposal):
     """Which cards the confirmed design facts make adoptable right now.
 
-    A conditional card is available only when the proposal proposes it AND the
-    confirmed facts do not contradict it. Unknown design facts leave the card
-    unavailable-but-visible as a question instead of silently dropping it.
+    A conditional card is available only when the proposal proposes it AND an
+    explicit confirmed fact makes it applicable. Unknown design facts leave
+    the card unavailable-but-visible instead of silently treating it as true.
     """
     if proposal.get('status') != 'ready_for_review':
         return []
-    design = confirmed_facts.get('framing.structured_design')
-    design = design if isinstance(design, dict) else {}
-    ni_fact = design.get('noninferiority_margin_decision')
-    interim_fact = design.get('interim_analysis')
+    ni_applicable = _confirmed_fact(confirmed_facts, 'design.noninferiority_applicable')
+    interim_applicable = _confirmed_fact(confirmed_facts, 'statistics.sample_size.interim_applicable')
+    # A previously confirmed card also proves applicability when reopening an
+    # older study whose explicit applicability flag predates this workflow.
+    ni_decision = _confirmed_fact(
+        confirmed_facts, 'framing.structured_design.noninferiority_margin_decision')
+    interim_decision = _confirmed_fact(
+        confirmed_facts, 'framing.structured_design.interim_analysis')
     cards = ['objectives-endpoint', 'estimand', 'sample-size']
-    if proposal.get('non_inferiority_margin'):
-        ni_denied = isinstance(ni_fact, str) and ni_fact.strip().lower() in ('false', '不适用', '无')
-        if not ni_denied:
-            cards.append('non-inferiority-margin')
-    if proposal.get('interim_planning'):
-        if interim_fact is not False:
-            cards.append('interim')
+    if proposal.get('non_inferiority_margin') and (
+            ni_applicable is True or isinstance(ni_decision, dict)):
+        cards.append('non-inferiority-margin')
+    if proposal.get('interim_planning') and (
+            interim_applicable is True or interim_decision is True):
+        cards.append('interim')
     return cards
 
 
@@ -194,7 +209,14 @@ def prepare_design_card_adoption(coordinator, run_id, card, *, confirmed_facts, 
     if state.get('status') != 'ready_for_review' or not validation or validation.get('valid') is not True:
         raise ValueError('design_elements_unresolved')
     proposal = validation['proposal']
-    if card not in available_design_cards(confirmed_facts, proposal):
+    applicability_confirmed = (
+        card == 'non-inferiority-margin'
+        and selections.get('noninferiority_applicable_confirmed') is True
+    ) or (
+        card == 'interim'
+        and selections.get('interim_applicable_confirmed') is True
+    )
+    if card not in available_design_cards(confirmed_facts, proposal) and not applicability_confirmed:
         raise ValueError('design_card_not_applicable')
     if not isinstance(selections, dict) or not selections:
         raise ValueError('design_card_selection_invalid')
@@ -202,8 +224,17 @@ def prepare_design_card_adoption(coordinator, run_id, card, *, confirmed_facts, 
     updates = {}
     for writer in spec['writers']:
         updates.update(writer(proposal))
+    if card == 'objectives-endpoint':
+        updates['picos.primary_objectives'] = [deepcopy(
+            proposal['objectives']['primary'][selections['primary_objective']]
+        )]
+    elif card == 'non-inferiority-margin':
+        updates['design.noninferiority_applicable'] = True
+    elif card == 'interim':
+        updates['statistics.sample_size.interim_applicable'] = True
     output_sha = validation['raw_response']['output_sha256']
-    record = _design_card_record(coordinator, run_id, card, output_sha=output_sha,
+    record = design_card_record(coordinator.project_id, run_id, card,
+        selections=selections, output_sha=output_sha,
         study_definition_id=study_definition_id, operation_id=operation_id,
         expected_revision=expected_revision, snapshot_sha256=snapshot_sha256,
         actor_id=actor_id, decided_at=decided_at, reason=reason)
@@ -222,11 +253,10 @@ def _check_selections(card, proposal, selections):
     """Selections must address every option-bearing field the card writes."""
     if card == 'objectives-endpoint':
         primary = proposal['objectives']['primary']
-        ep = proposal['endpoint']['primary_endpoint']
         idx = selections.get('primary_objective')
         if isinstance(idx, bool) or not isinstance(idx, int) or not 0 <= idx < len(primary):
             raise ValueError('design_card_selection_invalid')
-        if selections.get('primary_endpoint_confirmed') is not True and not ep.get('text'):
+        if selections.get('primary_endpoint_confirmed') is not True:
             raise ValueError('design_card_selection_invalid')
         return
     if card == 'estimand':
@@ -246,25 +276,32 @@ def _check_selections(card, proposal, selections):
             raise ValueError('design_card_selection_invalid')
         return
     if card == 'non-inferiority-margin':
-        if selections.get('ni_margin_confirmed') is not True:
+        if selections.get('ni_margin_confirmed') is not True \
+                or selections.get('noninferiority_applicable_confirmed') is not True:
             raise ValueError('design_card_selection_invalid')
         return
     if card == 'interim':
-        if selections.get('interim_confirmed') is not True:
+        if selections.get('interim_confirmed') is not True \
+                or selections.get('interim_applicable_confirmed') is not True:
             raise ValueError('design_card_selection_invalid')
         return
     raise ValueError('design_card_unknown')
 
 
-def _design_card_record(coordinator, run_id, card, *, output_sha,
+def design_card_record(project_id, run_id, card, *, selections, output_sha,
         study_definition_id, operation_id, expected_revision, snapshot_sha256,
-        actor_id, decided_at, reason):
+        actor_id, decided_at, reason, legacy=False):
     from app.protocol_workflow.canonical.hashing import canonical_json
-    spec = DESIGN_CARDS[card]
+    spec = DESIGN_CARDS.get(card)
+    if spec is None:
+        raise ValueError('design_card_unknown')
+    option_material = [run_id, output_sha, card]
+    if not legacy:
+        option_material.append(dict(selections))
     option = 'design-element-option:' + hashlib.sha256(canonical_json(
-        [run_id, output_sha, card]).encode()).hexdigest()
+        option_material).encode()).hexdigest()
     identity = spec['decision_key'] + '-record:' + hashlib.sha256(canonical_json(
-        [coordinator.project_id, study_definition_id, operation_id]).encode()).hexdigest()
+        [project_id, study_definition_id, operation_id]).encode()).hexdigest()
     return DecisionRecord(decision_record_id=identity,
         decision_key=spec['decision_key'], snapshot_sha256=snapshot_sha256,
         expected_state_revision=expected_revision,

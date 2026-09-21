@@ -71,6 +71,13 @@ DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL = "deepseek-v4-flash"
 DIRECT_DEEPSEEK_MODELS = frozenset(
     {DIRECT_DEEPSEEK_MODEL, DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL}
 )
+# Personal-workbench deployment used by the product model.  It keeps the
+# declared provider family while the local gateway owns credential rotation
+# and reports its calibrated exit identity in the response model field.
+DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS = frozenset(
+    {"http://127.0.0.1:20128/v1"}
+)
+DEEPSEEK_COMPATIBLE_GATEWAY_MODELS = frozenset({"deepseek-flash"})
 ALIBABA_TOKEN_PLAN_PROVIDER = "alibaba_token_plan"
 ALIBABA_TOKEN_PLAN_BASE_URL = (
     "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
@@ -1578,8 +1585,20 @@ def _product_route_errors(
     if transport != "openai_compatible":
         errors.append("transport must be openai_compatible")
     if provider == "deepseek":
-        expected_base_url = DIRECT_DEEPSEEK_BASE_URL
-        allowed_models = DIRECT_DEEPSEEK_MODELS
+        normalized_base_url = base_url.rstrip("/")
+        direct_route = (
+            normalized_base_url == DIRECT_DEEPSEEK_BASE_URL
+            and model in DIRECT_DEEPSEEK_MODELS
+        )
+        compatible_gateway_route = (
+            normalized_base_url in DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS
+            and model in DEEPSEEK_COMPATIBLE_GATEWAY_MODELS
+        )
+        if not direct_route and not compatible_gateway_route:
+            errors.append(
+                "DeepSeek route must be the approved direct route or configured local gateway"
+            )
+        return errors
     else:
         expected_base_url = ALIBABA_TOKEN_PLAN_BASE_URL
         allowed_models = frozenset({ALIBABA_TOKEN_PLAN_MODEL})

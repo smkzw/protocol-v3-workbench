@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "policy": "beijing-daily-peak-off-peak-v3",
+  "timezone": "Asia/Shanghai",
+  "peak_start": "11:00",
+  "peak_end": "19:00",
+  "days": "all",
+  "period_labels": {
+    "peak": "高峰",
+    "off_peak": "非高峰"
+  },
+  "packet_period": "off_peak",
+  "packet_evaluated_at": "2026-09-21T09:24:19.716737+08:00",
+  "variants": {
+    "peak": {
+      "agent": "grok",
+      "provider": "grok-build",
+      "model": "grok-4.6",
+      "effort": "high",
+      "default_provider": "grok-build",
+      "default_model": "grok-4.6",
+      "default_effort": "high",
+      "escalate_provider": "grok-build",
+      "escalate_model": "grok-4.6",
+      "escalate_effort": "high",
+      "primary": {
+        "agent": "grok",
+        "provider": "grok-build",
+        "model": "grok-4.6",
+        "effort": "high"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "grok/grok-build/grok-4.6:high -> pi/cursor/cursor-grok-4.6:high -> pi/openai-codex/gpt-5.6-sol:medium"
+    },
+    "off_peak": {
+      "agent": "codebuddy",
+      "provider": "codebuddy-cli",
+      "model": "deepseek-v4.1-flash",
+      "effort": "max",
+      "default_provider": "codebuddy-cli",
+      "default_model": "deepseek-v4.1-flash",
+      "default_effort": "max",
+      "escalate_provider": "codebuddy-cli",
+      "escalate_model": "deepseek-v4.1-flash",
+      "escalate_effort": "max",
+      "primary": {
+        "agent": "codebuddy",
+        "provider": "codebuddy-cli",
+        "model": "deepseek-v4.1-flash",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "zcode",
+          "provider": "zcode",
+          "model": "GLM-5.3-Flash",
+          "effort": "max"
+        },
+        {
+          "agent": "grok",
+          "provider": "grok-build",
+          "model": "grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "cursor-grok-4.6",
+          "effort": "high"
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "codebuddy/codebuddy-cli/deepseek-v4.1-flash:max -> zcode/zcode/GLM-5.3-Flash:max -> grok/grok-build/grok-4.6:high -> pi/cursor/cursor-grok-4.6:high -> pi/openai-codex/gpt-5.6-sol:medium"
+    }
+  }
+}

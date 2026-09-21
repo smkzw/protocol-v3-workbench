@@ -1,5 +1,6 @@
 """Design jobs derive from the stored source interpretation and pinned materials."""
 import hashlib
+from typing import Literal
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel, ConfigDict, AwareDatetime, StrictInt, Field
 from packages.contracts.workbench_contracts.protocol_v3 import NonEmptyText, StableId, Sha256, PositiveRevision
@@ -10,6 +11,7 @@ from app.protocol_workflow.api.router import _safe_call, _mutation_response
 from app.protocol_workflow.api.schemas import StudyDefinitionMutationResponse
 from app.protocol_workflow.application.research_context import prepare_research_context_creation, prepare_research_context_update
 from app.protocol_workflow.application.queries import ListStudyDefinitionsQuery, RecoverStudyDecisionQuery, GetStudyDefinitionQuery
+from app.protocol_workflow.errors import ProtocolWorkflowError
 
 
 class RegimenStartRequest(BaseModel):
@@ -34,6 +36,10 @@ class ResearchInformationRequest(RegimenAdoptionRequest):
     seed_run_id: NonEmptyText
     selections: dict[str, StrictInt]
     user_edits: dict[str, NonEmptyText | list[NonEmptyText]] = Field(default_factory=dict)
+
+
+class RegimenAnswersRequest(RegimenAdoptionRequest):
+    answers: dict[str, NonEmptyText]
 
 
 class ResearchContextRequest(BaseModel):
@@ -292,6 +298,54 @@ def create_design_router(seeds, designs, *, application_service, route_class):
         state = current(coordinator,workflow_run_id)
         schedule(coordinator,state,background_tasks)
         return state
+
+    def answers_query(project_id, workflow_run_id, body):
+        from app.protocol_workflow.agent2.study_input import prepare_regimen_answers_recovery
+        return prepare_regimen_answers_recovery(designs(project_id), workflow_run_id,
+            **body.model_dump())
+
+    @router.post("/{workflow_run_id}/answers", response_model=StudyDefinitionMutationResponse)
+    def adopt_answers(project_id: str, workflow_run_id: str, body: RegimenAnswersRequest):
+        coordinator = designs(project_id)
+        current(coordinator, workflow_run_id)
+        def execute():
+            receipt = application_service.lookup_decision(
+                answers_query(project_id, workflow_run_id, body))
+            if receipt is not None:
+                return receipt
+            study = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, body.study_definition_id))
+            if study.definition is None:
+                raise HTTPException(404, detail={"message": "没有找到本次研究，原补答已保留。"})
+            from app.protocol_workflow.agent2.study_input import (
+                prepare_regimen_answers, validate_regimen_study_input,
+            )
+            try:
+                validate_regimen_study_input(coordinator.prepared_request(workflow_run_id),
+                    study_definition_id=body.study_definition_id,
+                    facts=study.definition.facts)
+                command = prepare_regimen_answers(coordinator, workflow_run_id,
+                    current_facts=study.definition.facts, **body.model_dump())
+            except ValueError as exc:
+                raise HTTPException(409, detail={
+                    "message": "本次研究内容或待答问题已经变化，原补答未保存。",
+                    "next_step": "请读取当前研究后核对这组问题。",
+                }) from exc
+            return application_service.apply_decision(command)
+        return _mutation_response(_safe_call(execute))
+
+    @router.post("/{workflow_run_id}/answers/recover", response_model=StudyDefinitionMutationResponse)
+    def recover_answers(project_id: str, workflow_run_id: str, body: RegimenAnswersRequest):
+        current(designs(project_id), workflow_run_id)
+        result = _safe_call(lambda: application_service.lookup_decision(
+            answers_query(project_id, workflow_run_id, body)))
+        if result is None:
+            raise HTTPException(404, detail={
+                "message": "尚未查到本次补答的保存回执，原答案已保留。",
+                "next_step": "请继续使用原操作核对，不要重复创建答案。",
+            })
+        return _mutation_response(result)
+
     @router.post("/{workflow_run_id}/adopt",response_model=StudyDefinitionMutationResponse)
     def adopt(project_id:str,workflow_run_id:str,body:RegimenAdoptionRequest):
         coordinator = designs(project_id)
@@ -360,6 +414,11 @@ class DesignCardAdoptionRequest(RegimenAdoptionRequest):
     seed_run_id: NonEmptyText
     card: NonEmptyText
     selections: dict[str, NonEmptyText | StrictInt | bool]
+
+
+class DesignCardMutationResponse(StudyDefinitionMutationResponse):
+    selection_status: Literal['verified', 'legacy_unknown']
+    selections: dict[str, NonEmptyText | StrictInt | bool] | None = None
 
 
 def create_design_elements_router(seeds, element_designs, *, application_service, route_class):
@@ -446,8 +505,16 @@ def create_design_elements_router(seeds, element_designs, *, application_service
             study = _safe_call(lambda: application_service.get_study_definition(
                 GetStudyDefinitionQuery(project_id, study_definition_id)))
             if study.definition is not None:
+                from app.protocol_workflow.agent2.design_adoption import available_design_cards
+                state = dict(state)
                 state["expected_revision"] = study.revision
                 state["snapshot_sha256"] = study.revision_sha256
+                proposal = state['validation']['proposal']
+                state['adoptable_cards'] = available_design_cards(study.definition.facts, proposal)
+                state['conditional_cards_pending'] = [card for card, section in (
+                    ('non-inferiority-margin', proposal.get('non_inferiority_margin')),
+                    ('interim', proposal.get('interim_planning')),
+                ) if section and card not in state['adoptable_cards']]
         return state
 
     @router.post("/{workflow_run_id}/resume", status_code=202)
@@ -492,28 +559,36 @@ def create_design_elements_router(seeds, element_designs, *, application_service
         state = current(coordinator, workflow_run_id)
         output_sha = ((state.get("validation") or {}).get("raw_response") or {}).get("output_sha256")
         if not output_sha:
-            return None
-        from app.protocol_workflow.agent2.design_adoption import DESIGN_CARDS
-        spec = DESIGN_CARDS.get(body.card)
-        if spec is None:
-            raise HTTPException(422, detail={"message": "没有找到该设计要素卡片。"})
-        from app.protocol_workflow.canonical.hashing import canonical_json
-        from app.protocol_workflow.application.queries import RecoverStudyDecisionQuery
-        option = 'design-element-option:' + hashlib.sha256(canonical_json(
-            [workflow_run_id, output_sha, body.card]).encode()).hexdigest()
-        identity = spec['decision_key'] + '-record:' + hashlib.sha256(canonical_json(
-            [project_id, body.study_definition_id, body.operation_id]).encode()).hexdigest()
-        from packages.contracts.workbench_contracts.protocol_v3 import ActorType, DecisionRecord
-        record = DecisionRecord(decision_record_id=identity, decision_key=spec['decision_key'],
-            snapshot_sha256=body.snapshot_sha256, expected_state_revision=body.expected_revision,
-            state_revision=body.expected_revision + 1, option_ids=(option,),
-            selected_option_id=option, actor_type=ActorType.USER, actor_id=body.actor_id,
-            reason=body.reason, decided_at=body.decided_at)
-        return application_service.lookup_decision(RecoverStudyDecisionQuery(
-            project_id=project_id, study_definition_id=body.study_definition_id,
-            idempotency_key=body.operation_id, decision_record=record))
+            return None, None
+        from app.protocol_workflow.agent2.design_adoption import design_card_record
+        def lookup(legacy):
+            record = design_card_record(project_id, workflow_run_id, body.card,
+                selections=dict(body.selections), output_sha=output_sha,
+                study_definition_id=body.study_definition_id, operation_id=body.operation_id,
+                expected_revision=body.expected_revision, snapshot_sha256=body.snapshot_sha256,
+                actor_id=body.actor_id, decided_at=body.decided_at, reason=body.reason,
+                legacy=legacy)
+            return application_service.lookup_decision(RecoverStudyDecisionQuery(
+                project_id=project_id, study_definition_id=body.study_definition_id,
+                idempotency_key=body.operation_id, decision_record=record))
+        try:
+            receipt = lookup(False)
+        except ProtocolWorkflowError as selected_error:
+            try:
+                legacy_receipt = lookup(True)
+            except ProtocolWorkflowError:
+                raise selected_error
+            if legacy_receipt is not None:
+                return legacy_receipt, 'legacy_unknown'
+            raise selected_error
+        return (receipt, 'verified') if receipt is not None else (None, None)
 
-    @router.post("/{workflow_run_id}/adopt/{card}", response_model=StudyDefinitionMutationResponse)
+    def card_response(result, body, selection_status):
+        base = _mutation_response(result).model_dump()
+        return DesignCardMutationResponse(**base, selection_status=selection_status,
+            selections=dict(body.selections) if selection_status == 'verified' else None)
+
+    @router.post("/{workflow_run_id}/adopt/{card}", response_model=DesignCardMutationResponse)
     def adopt_card(project_id: str, workflow_run_id: str, card: str,
                    body: DesignCardAdoptionRequest):
         if body.card != card:
@@ -521,34 +596,24 @@ def create_design_elements_router(seeds, element_designs, *, application_service
         current(element_designs(project_id), workflow_run_id)
 
         def execute():
-            try:
-                receipt = _safe_call(lambda: element_receipt(project_id, workflow_run_id, body))
-            except Exception as exc:  # noqa: BLE001 — receipt probe is advisory
-                import sys as _s
-                print('ELEMENTS RECEIPT PROBE FAIL:', type(exc).__name__, str(exc)[:300],
-                      file=_s.stderr)
-                receipt = None  # fall through to a fresh apply
+            receipt, selection_status = element_receipt(project_id, workflow_run_id, body)
             if receipt is not None:
-                return receipt
+                return receipt, selection_status
             command = adoption_command(project_id, workflow_run_id, body)
-            try:
-                return application_service.apply_decision(command)
-            except Exception as exc:
-                import sys as _s
-                print('ELEMENTS APPLY FAIL:', type(exc).__name__, str(exc)[:400], file=_s.stderr)
-                raise
-        return _mutation_response(_safe_call(execute))
+            return application_service.apply_decision(command), 'verified'
+        result, selection_status = _safe_call(execute)
+        return card_response(result, body, selection_status)
 
-    @router.post("/{workflow_run_id}/adopt/{card}/recover", response_model=StudyDefinitionMutationResponse)
+    @router.post("/{workflow_run_id}/adopt/{card}/recover", response_model=DesignCardMutationResponse)
     def recover_card(project_id: str, workflow_run_id: str, card: str,
                      body: DesignCardAdoptionRequest):
         if body.card != card:
             raise HTTPException(422, detail={"message": "请求路径与内容中的卡片不一致。"})
         current(element_designs(project_id), workflow_run_id)
-        receipt = _safe_call(lambda: element_receipt(project_id, workflow_run_id, body))
+        receipt, selection_status = _safe_call(lambda: element_receipt(project_id, workflow_run_id, body))
         if receipt is None:
             raise HTTPException(404, detail={"message": "尚未查到本次确认的保存回执，原建议与操作记录已保留。",
                 "next_step": "请稍后核对本次确认，不要重新生成建议。"})
-        return _mutation_response(receipt)
+        return card_response(receipt, body, selection_status)
 
     return router

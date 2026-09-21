@@ -1,0 +1,4 @@
+/* Browser adapter has no Genspark execution service. Keep those upstream
+   controls out of the embedded workspace; medical recommendations live in
+   the host study pane. Do not alter document/paper/paragraph styles. */
+.ai-dock, .ribbon-group:has(.ai-entry) { display:none !important; }

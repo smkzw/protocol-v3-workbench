@@ -1,14 +1,11 @@
+import { ProtocolWritingDesk } from './ProtocolWritingDesk';
 import { useEffect, useRef, useState } from 'react';
-import { RegimenDesignWorkspace } from './RegimenDesignWorkspace';
-import { DesignElementsCards } from './DesignElementsCards';
-import { ResearchInformationCard } from './ResearchInformationCard';
-import { ManuscriptWorkspace } from './ManuscriptWorkspace';
 function restored(key) {try{return JSON.parse(localStorage.getItem(key)||'null');}catch{return null;}}
 function message(error) {
   const text=error?.detail?.message||error?.message;
   return typeof text==='string' && /[\u3400-\u9fff]/u.test(text)?text:'本次保存结果尚未核实，资料和原操作已保留。';
 }
-function ContextSession({projectId,seedRunId,actorId,api,proposal}) {
+function ContextSession({projectId,seedRunId,actorId,api,proposal,onNavigationGuardChange}) {
   const key='protocol-v3:study-context:'+JSON.stringify([projectId,seedRunId]);
   const selectionKey='protocol-v3:current-study:'+projectId;
   const [pending,setPending]=useState(()=>restored(key));
@@ -84,13 +81,8 @@ function ContextSession({projectId,seedRunId,actorId,api,proposal}) {
         decided_at:new Date().toISOString(),...(selected?{expected_revision:selected.revision,snapshot_sha256:selected.revision_sha256}:{})}};
     const controller=new AbortController();request.current=controller;execute(packet,false,controller);
   }
-  if(!pending&&!loading&&!error&&selected?.matches_selected_inputs===true)return <><ResearchInformationCard projectId={projectId} seedRunId={seedRunId}
-    studyDefinitionId={selected.study_definition_id} actorId={actorId} api={api} proposal={proposal}/>
-    <RegimenDesignWorkspace projectId={projectId}
-    seedRunId={seedRunId} studyDefinitionId={selected.study_definition_id} actorId={actorId} api={api}/>
-    <DesignElementsCards projectId={projectId} seedRunId={seedRunId}
-      studyDefinitionId={selected.study_definition_id} actorId={actorId} api={api}/>
-    <ManuscriptWorkspace projectId={projectId} seedRunId={seedRunId} studyDefinitionId={selected.study_definition_id} actorId={actorId} api={api}/></>;
+  if(!pending&&!loading&&!error&&selected?.matches_selected_inputs===true)return <ProtocolWritingDesk projectId={projectId} seedRunId={seedRunId}
+    studyDefinitionId={selected.study_definition_id} actorId={actorId} api={api} proposal={proposal} onNavigationGuardChange={onNavigationGuardChange}/>;
   return <section className="pvi-proposal" aria-label="本次方案写作">
     <h2>继续方案设计</h2>
     {notice&&<p role="status">{notice}</p>}{error&&<p role="alert">{error}</p>}

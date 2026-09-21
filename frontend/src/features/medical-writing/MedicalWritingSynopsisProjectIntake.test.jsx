@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { StrictMode } from "react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { webcrypto } from "node:crypto";
 
 import {
+  MedicalWritingSynopsisProjectIntake,
   SynopsisRequestTimeoutError,
   cancelSynopsisJob,
   pollSynopsisJob,
@@ -17,6 +21,8 @@ const startedJob = {
 };
 
 afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
@@ -91,4 +97,21 @@ describe("synopsis intake recovery", () => {
     expect(synopsisJobState(terminal)).toBe("failed");
     expect(synopsisJobMessage(terminal)).toContain("继续处理");
   });
+});
+
+it("settles a failed import after StrictMode replays the mount effect", async () => {
+  vi.stubGlobal("crypto", webcrypto);
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ ...startedJob, status: "failed", phase: "failed",
+      error_message: "资料提取失败，原文件已保留" }),
+  }));
+  const { container } = render(<StrictMode><MedicalWritingSynopsisProjectIntake /></StrictMode>);
+  const file = new File(["source"], "synopsis.docx");
+  file.arrayBuffer = async () => new Uint8Array([1, 2, 3]).buffer;
+  fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [file] } });
+  fireEvent.click(screen.getByRole("button", { name: "导入并提取" }));
+  expect((await screen.findByRole("alert")).textContent).toContain("资料提取失败");
+  expect(screen.getByRole("button", { name: "继续处理" }).disabled).toBe(false);
+  expect(container.querySelector(".file-first-progress")).toBeNull();
 });

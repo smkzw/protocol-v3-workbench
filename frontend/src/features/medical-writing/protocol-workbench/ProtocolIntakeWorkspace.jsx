@@ -1,3 +1,4 @@
+import { ProtocolWritingDesk } from './ProtocolWritingDesk';
 import protocolLogo from './assets/logo_bot.svg';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ProtocolSourceIntake } from "./ProtocolSourceIntake";
@@ -5,7 +6,6 @@ import { StudyContextWorkspace } from "./StudyContextWorkspace";
 import { ResearchInformationCard } from "./ResearchInformationCard";
 import { RegimenDesignWorkspace } from "./RegimenDesignWorkspace";
 import { DesignElementsCards } from "./DesignElementsCards";
-import { ManuscriptWorkspace } from './ManuscriptWorkspace';
 import { createProtocolWorkspaceApi } from "./protocolWorkspaceApi.mjs";
 import "./ProtocolIntakeWorkspace.css";
 import { sourceRoleDisplayText } from "./sourceRoleLabels.mjs";
@@ -24,7 +24,7 @@ function publicError(error) {
   return typeof text === "string" && /[\u3400-\u9fff]/u.test(text) ? text : "暂时无法读取整理结果，请稍后查看进度。";
 }
 
-function IntakeProject({ projectId, api, studyDefinitionId, actorId }) {
+function IntakeProject({ projectId, api, studyDefinitionId, actorId, onNavigationGuardChange }) {
   const key = "protocol-v3:intake:" + projectId;
   const saved = useMemo(() => restored(key), [key]);
   const restoredRequest = saved.pendingRequest && typeof saved.pendingRequest.userBrief === "string"
@@ -170,21 +170,21 @@ function IntakeProject({ projectId, api, studyDefinitionId, actorId }) {
   const proposal = job?.validation?.proposal;
   const confirming = Boolean(actorId && job?.validation?.valid === true);
   const missing = Array.isArray(proposal?.missing_fields) ? proposal.missing_fields.map(field => LABELS[field]).filter(Boolean) : [];
-  return <main className="pvi-workspace">
+  return <main className={`pvi-workspace${confirming ? ' pvi-workspace--writing' : ''}`}>
     <header className="pvi-heading">
       <img src={protocolLogo} width="121" height="25" alt="康哲药业"/>
-      <p className="pvi-eyebrow">研究方案 · {confirming ? '确认建议' : '准备资料'}</p>
-      <h2>{confirming ? '确认研究信息' : '准备研究资料'}</h2>
-      <p>{confirming ? '资料已整理。核对本次研究的建议，必要时直接修改。' : '添加已有方案、研究者手册或参考资料，整理研究信息和需要补充的内容。'}</p>
+      {!confirming && <p className="pvi-eyebrow">研究方案 · 准备资料</p>}
+      <h2>{confirming ? '研究方案工作台' : '准备研究资料'}</h2>
+      <p>{confirming ? '左侧确认研究设计，右侧编辑、保存和下载方案。' : '添加已有方案、研究者手册或参考资料，整理研究信息和需要补充的内容。'}</p>
     </header>
     <details className="pvi-howto">
       <summary>整套流程怎么做？（三步）</summary>
       <ol>
         <li><b>整理资料</b>：把研究简述写/粘贴在说明框里，点"准备写作材料"。没有正式文件也能开始。</li>
         <li><b>逐项确认</b>：系统逐项给建议（含推荐理由），您逐张卡片点"确认"；红色标识的内容重点核对。</li>
-        <li><b>生成初稿并导出</b>：全部确认后点"生成完整初稿"，阅读修改后"保存"，最后"导出Word"。</li>
+        <li><b>生成初稿并导出</b>：关键设计确认后点"生成完整初稿"，阅读修改后"保存"，最后"导出Word"。</li>
       </ol>
-      <p>任何一步出问题，已保存的内容都不会丢失；按页面提示继续即可。</p>
+      <p>以编辑器的保存回执为准；保存失败时先下载本地备份。</p>
     </details>
     {storageError && <p role="alert">{storageError}</p>}
     <details className="pvi-source-disclosure" open={!confirming}>
@@ -207,8 +207,8 @@ function IntakeProject({ projectId, api, studyDefinitionId, actorId }) {
     </div>}
     {job?.status === "blocked" && <p className="pvi-message" role="status">本次整理结果需要核对，资料和记录已保留。</p>}
     {job?.status === "needs_structure_correction" && !pending(job) && <p className="pvi-message" role="status">整理尚未完成，资料和本次记录已保留。</p>}
-    {proposal && <section className="pvi-proposal" aria-label="整理建议">
-      <h3>资料整理建议</h3><details className="pvi-seed-details" open={!actorId}><summary>查看全部建议与原文依据</summary>
+    {proposal && <details className="pvi-seed-details pvi-intake-summary" aria-label="整理建议" open={!actorId}>
+      <summary>资料整理建议与原文依据</summary>
       <p>以下保留资料整理时的候选信息；本研究选择以确认记录为准。</p>
       <dl>{Object.entries(LABELS).flatMap(([field, label]) => {
         const values = proposal.fields?.[field];
@@ -229,25 +229,21 @@ function IntakeProject({ projectId, api, studyDefinitionId, actorId }) {
             </details>}
           </div>)}
         </dd></div>;
-      })}</dl></details>
+      })}</dl>
       {missing.length > 0 && <p className="pvi-missing">还需要补充：{missing.join("、")}。可添加资料或在写作说明中补充。</p>}
-    </section>}
+    </details>}
     {job?.validation?.valid === true && (studyDefinitionId || !actorId
-      ? <>{studyDefinitionId && actorId && <ResearchInformationCard projectId={projectId}
-          seedRunId={job.workflow_run_id} studyDefinitionId={studyDefinitionId} actorId={actorId} api={api} proposal={proposal}/>}
-        <RegimenDesignWorkspace projectId={projectId} seedRunId={job.workflow_run_id}
-          api={api} studyDefinitionId={studyDefinitionId} actorId={actorId} />
-        {studyDefinitionId && actorId && <DesignElementsCards projectId={projectId}
-          seedRunId={job.workflow_run_id} studyDefinitionId={studyDefinitionId}
-          actorId={actorId} api={api}/>}
-        {studyDefinitionId && actorId && <ManuscriptWorkspace projectId={projectId} seedRunId={job.workflow_run_id}
-          studyDefinitionId={studyDefinitionId} actorId={actorId} api={api}/>}</>
-      : <StudyContextWorkspace projectId={projectId} seedRunId={job.workflow_run_id} api={api} actorId={actorId} proposal={proposal} />)}
+      ? (studyDefinitionId && actorId
+        ? <ProtocolWritingDesk projectId={projectId} seedRunId={job.workflow_run_id}
+          studyDefinitionId={studyDefinitionId} actorId={actorId} api={api} proposal={proposal} onNavigationGuardChange={onNavigationGuardChange}/>
+        : <RegimenDesignWorkspace projectId={projectId} seedRunId={job.workflow_run_id}
+          api={api} studyDefinitionId={studyDefinitionId} actorId={actorId}/>)
+      : <StudyContextWorkspace projectId={projectId} seedRunId={job.workflow_run_id} api={api} actorId={actorId} proposal={proposal} onNavigationGuardChange={onNavigationGuardChange} />)}
   </main>;
 }
 
-export function ProtocolIntakeWorkspace({ projectId, api, studyDefinitionId, actorId }) {
+export function ProtocolIntakeWorkspace({ projectId, api, studyDefinitionId, actorId, onNavigationGuardChange }) {
   const defaultApi = useMemo(() => createProtocolWorkspaceApi(), []);
   return <IntakeProject key={projectId} projectId={projectId} api={api || defaultApi}
-    studyDefinitionId={studyDefinitionId} actorId={actorId} />;
+    studyDefinitionId={studyDefinitionId} actorId={actorId} onNavigationGuardChange={onNavigationGuardChange} />;
 }

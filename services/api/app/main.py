@@ -3913,16 +3913,10 @@ def create_project(request: UserProjectCreateRequest):
         # 404s and the prepare button stays permanently disabled.
         try:
             from .protocol_workflow.api.composition import (
-                protocol_workflow_config_from_env,
+                admit_protocol_workflow_project,
             )
-            from .protocol_workflow.storage.sqlite import admit_project
 
-            _p3_config = protocol_workflow_config_from_env()
-            if _p3_config.enabled and _p3_config.db_path is not None:
-                admit_project(
-                    {"backend": "sqlite", "path": str(_p3_config.db_path)},
-                    record.project_id,
-                )
+            admit_protocol_workflow_project(record.project_id)
         except Exception:
             pass  # best-effort; the workflow surface reports its own state
         authoring_entry_mode = (

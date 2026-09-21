@@ -86,10 +86,16 @@ class RegimenProposal(_ProposalShape):
         return self
 
 
+class RegimenQuestion(_ProposalShape):
+    question: NonEmptyText
+    recommended_answer: NonEmptyText
+    options: list[NonEmptyText] = Field(default_factory=list)
+
+
 class RegimenDesignResponse(_ProposalShape):
     coverage: list[CandidateAssignment]
     regimen: RegimenProposal | None
-    questions: list[NonEmptyText]
+    questions: list[NonEmptyText | RegimenQuestion]
 
 
 REGIMEN_INSTRUCTION = """根据完整原资料与研究种子，整理一个有来源的完整给药候选，不批准研究事实。
@@ -101,6 +107,8 @@ periods、arms和schedules保留完整给药关系。steps按给药顺序列出�
 references只能引用source_intake.sources中真实的来源id、locator和逐字quote。理由和概述不是逐字引文，目的推断须明确，不补写未支持的盲态或设计属性。
 历史和竞品资料仅作参考，不能覆盖研究者手册、项目权威或本研究已确认事实。记录不一致和未决问题，不能自选一边消除冲突。
 input_sha256使用seed_proposal.input_sha256。资料不足以形成方案时regimen为null，questions集中给最少的实际缺口，不用占位符填满；不要求用户填每个结构字段。
+questions优先输出对象：question写用户需要决定的单一问题，recommended_answer给出基于现有资料的推荐完整答案，options给出2到3个可直接点选的完整答案且包含推荐答案。只有无法给出负责任推荐时才可输出纯文本问题。
+confirmed_study.facts中的research.regimen_clarifications是用户此前已确认的补答；必须作为本研究事实使用，不得再次询问语义相同的问题。若它与新资料真正冲突，提出包含冲突两端的新问题。
 仅输出符合output_schema的JSON。此步不形成DecisionRecord，不改变StudyDefinition。"""
 
 
@@ -155,8 +163,26 @@ def read_regimen_response(prepared: PreparedRegimenRequest, output: dict) -> dic
                 step["source_support"] = ("ai_recommendation" if not support else
                                           "project_material" if all(support) else "reference_only")
                 step["requires_confirmation"] = True
-    missing = (regimen is None or response.questions or
+    confirmed = (payload.get("confirmed_study") or {}).get("facts", {})
+    prior_answers = confirmed.get("research.regimen_clarifications", {})
+    if not isinstance(prior_answers, dict):
+        prior_answers = {}
+    questions = []
+    for raw in response.questions:
+        item = raw if isinstance(raw, RegimenQuestion) else None
+        text = item.question if item else str(raw)
+        question_id = "regimen-question:" + hashlib.sha256(text.strip().encode("utf-8")).hexdigest()[:24]
+        if question_id in prior_answers:
+            continue
+        recommendation = item.recommended_answer if item else ""
+        options = list(dict.fromkeys(item.options if item else []))
+        if recommendation and recommendation not in options:
+            options.insert(0, recommendation)
+        questions.append({"question_id": question_id, "question": text,
+                          "recommended_answer": recommendation, "options": options,
+                          "fact_path": "research.regimen_clarifications"})
+    missing = (regimen is None or questions or
                regimen["unresolved_questions"] or
                any(item["relation"] == "unresolved" for item in coverage))
     return {"status": "needs_information" if missing else "ready_for_review",
-            "coverage": coverage, "regimen": regimen, "questions": response.questions}
+            "coverage": coverage, "regimen": regimen, "questions": questions}

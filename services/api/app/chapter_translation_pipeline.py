@@ -458,6 +458,7 @@ class UpperLayerStageExecutionResult:
     prompt_version: str
     input_hash: str
     output_hash: str
+    expected_response_model: str = ""
     status: str = "succeeded"
     stage_run_id: str = ""
     latest_stage_run_id: str = ""
@@ -615,6 +616,9 @@ class PersistedUpperLayerStageExecutorAdapter:
             "escalation_model": str(
                 getattr(self.service, "escalation_model", "") or ""
             ),
+            "expected_response_model": str(
+                getattr(self.service, "expected_response_model", "") or ""
+            ),
             "retry_generation": owner.retry_generation,
             "retry_parent_stage_run_id": owner.retry_parent_stage_run_id,
             "contract_supersession_generation": (
@@ -707,6 +711,10 @@ class PersistedUpperLayerStageExecutorAdapter:
             stage=stage,
             requested_model=selected_run.requested_model,
             response_model=selected_run.response_model,
+            expected_response_model=str(
+                getattr(self.service, "expected_response_model", "")
+                or selected_run.requested_model
+            ),
             prompt_version=selected_run.prompt_version,
             input_hash=selected_run.input_hash,
             output_hash=selected_run.output_hash,
@@ -987,9 +995,11 @@ class ChapterTranslationPipeline:
                 "upper-layer stage returned an empty model identity"
             )
         if execution.status in {"succeeded", "completed_degraded"}:
-            if execution.response_model != execution.requested_model:
+            if execution.response_model != (
+                execution.expected_response_model or execution.requested_model
+            ):
                 raise ChapterTranslationPipelineError(
-                    "upper-layer response model does not match requested model"
+                    "upper-layer response model does not match configured expectation"
                 )
         if bool(execution.parent_stage_run_id) != bool(execution.escalation_id):
             raise ChapterTranslationPipelineError(

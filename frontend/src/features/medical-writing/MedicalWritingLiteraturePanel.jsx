@@ -132,8 +132,7 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
   };
 
   const canOverride = sourceInput.trim()
-    && manualMetadata.title.trim()
-    && overrideReason.trim().length >= 10;
+    && manualMetadata.title.trim();
 
   return (
     <section className="medical-literature-panel" aria-label="项目文献库">
@@ -171,7 +170,7 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
             <label>期刊<input value={manualMetadata.journal} onChange={(event) => setManualMetadata((current) => ({ ...current, journal: event.target.value }))} /></label>
             <label>年份<input value={manualMetadata.year} onChange={(event) => setManualMetadata((current) => ({ ...current, year: event.target.value }))} /></label>
             <label className="span-2">文献官网链接<input value={manualMetadata.url} onChange={(event) => setManualMetadata((current) => ({ ...current, url: event.target.value }))} /></label>
-            <label className="span-2">医学确认理由<textarea value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="说明已核对的原始页面及确认依据，至少10个字" /></label>
+            <label className="span-2">补充说明（可选）<textarea value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可说明已核对的原始页面或确认依据" /></label>
           </div>
           <button onClick={() => importReference({ override: true })} disabled={Boolean(busy) || !canOverride}>确认信息并导入</button>
         </details>

@@ -1,10 +1,12 @@
 .gz-office-entry,
 .gz-office-frame {
-  margin: 16px 0;
-  padding: 12px;
-  border: 1px solid #d9d9e3;
-  border-radius: 10px;
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid var(--kz-border, #D6D2CD);
+  border-top: 3px solid var(--kz-orange, #FF9900);
+  border-radius: 8px;
   background: #fff;
+  box-shadow: var(--kz-shadow, 0 6px 18px rgba(15,17,21,.08));
 }
 
 .gz-office-frame header {
@@ -29,8 +31,67 @@
 
 .gz-office-frame iframe {
   width: 100%;
-  height: 78vh;
-  border: 1px solid #cfcfd8;
-  border-radius: 8px;
+  height: calc(100vh - 160px);
+  min-height: 560px;
+  border: 1px solid var(--kz-border, #D6D2CD);
+  border-radius: 6px;
   background: #fff;
+}
+
+.gz-office-entry header { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.gz-office-entry header div { display:flex; align-items:center; gap:12px; }
+.gz-office-frame iframe { display:block; box-sizing:border-box; }
+
+.gz-office-frame--focus { position:fixed; inset:12px; z-index:1000; margin:0; display:flex; flex-direction:column; box-shadow:0 8px 32px #0003; }
+.gz-office-frame--focus iframe { flex:1; min-height:0; height:auto; }
+.gz-office-frame--focus header { flex-shrink:0; }
+
+.gz-office-frame header div, .gz-office-entry header div { flex-wrap:wrap; align-items:center; }
+.gz-office-frame header button, .gz-office-entry header button,
+.gz-office-frame header a, .gz-office-entry header a {
+  font-family:inherit; font-size:14px; line-height:1.4; padding:7px 12px;
+  border:1px solid var(--kz-border, #D6D2CD); border-radius:6px;
+  background:#fff; color:var(--kz-text, #404040); text-decoration:none;
+}
+.gz-office-frame header a, .gz-office-entry header a { color:var(--kz-link, #9A5B00); font-weight:600; }
+.gz-office-frame header a:hover, .gz-office-entry header a:hover { background:var(--kz-soft, #FFF7ED); border-color:var(--kz-orange, #FF9900); }
+.gz-office-frame > [role=status] { margin:4px 0 8px; font-size:14px; line-height:1.45; }
+.gz-office-history { max-height:200px; overflow:auto; border-top:1px solid var(--kz-border, #D6D2CD); font-size:14px; }
+.gz-office-history ul { list-style:none; margin:0; padding:0; }
+.gz-office-history li { display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; padding:6px 0; }
+.gz-office-history time { color:var(--kz-muted, #595959); font-size:12px; }
+.gz-office-history a { margin-left:auto; color:var(--kz-link, #9A5B00); }
+.gz-office-history p { margin:8px 0; }
+.gz-office-reconciliation {
+  margin: 6px 0 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--kz-border, #D6D2CD);
+  border-radius: 6px;
+  background: var(--kz-soft, #FFF9F2);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.gz-office-reconciliation ul { margin: 4px 0; padding-left: 20px; }
+.gz-office-reconciliation li, .gz-office-reconciliation p { margin: 2px 0; }
+.gz-office-ai-edit {
+  display:grid; gap:8px; margin:6px 0 8px; padding:8px 10px;
+  border:1px solid var(--kz-border, #D6D2CD); border-radius:6px; background:#FFFDF9;
+  font-size:14px;
+}
+.gz-office-ai-edit__bar, .gz-office-ai-edit__actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.gz-office-ai-edit__bar strong { margin-right:auto; }
+.gz-office-ai-edit__body { display:grid; grid-template-columns:minmax(220px, .7fr) minmax(320px, 1.3fr) auto; gap:8px; align-items:end; }
+.gz-office-ai-edit blockquote { margin:0; padding:6px 8px; border-left:3px solid #FF9900; background:#fff; line-height:1.45; }
+.gz-office-ai-edit label { display:grid; gap:4px; }
+.gz-office-ai-edit input { min-width:0; padding:7px 9px; border:1px solid var(--kz-border, #D6D2CD); border-radius:5px; font:inherit; }
+.gz-office-ai-edit__candidate { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:start; }
+.gz-office-ai-edit__candidate > div:not(.gz-office-ai-edit__actions) { padding:6px 8px; border:1px solid #E5E1DC; border-radius:5px; background:#fff; }
+.gz-office-ai-edit__candidate span { font-size:12px; color:#595959; }
+.gz-office-ai-edit__candidate p { margin:3px 0 0; line-height:1.45; white-space:pre-wrap; }
+.gz-office-ai-edit__actions { align-self:center; }
+.gz-office-literature { margin:6px 0 8px; border:1px solid var(--kz-border, #D6D2CD); border-radius:6px; background:#fff; }
+.gz-office-literature > summary { cursor:pointer; padding:8px 10px; font-size:14px; font-weight:700; }
+.gz-office-literature .medical-literature-panel { border:0; box-shadow:none; }
+@media (max-width: 1180px) {
+  .gz-office-ai-edit__body, .gz-office-ai-edit__candidate { grid-template-columns:1fr; }
 }

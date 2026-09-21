@@ -7,7 +7,7 @@ function restored(key){try{return JSON.parse(localStorage.getItem(key)||'null');
 function basicValue(value){return typeof value==='string'?Boolean(value.trim()):Array.isArray(value)&&value.length>0&&value.every(item=>typeof item==='string'&&item.trim());}
 function displayValue(value){return Array.isArray(value)?value.join('、'):value;}
 function message(error){const text=error?.detail?.message||error?.message;return typeof text==='string'&&/[\u3400-\u9fff]/u.test(text)?text:'本次保存结果尚未确认，原选择已保留。';}
-function Session({projectId,studyDefinitionId,seedRunId,actorId,proposal,api}){
+function Session({projectId,studyDefinitionId,seedRunId,actorId,proposal,api,compact=false}){
   const key='protocol-v3:research-information:'+JSON.stringify([projectId,studyDefinitionId,seedRunId]);
   const entries=Object.entries(LABELS).filter(([field])=>proposal?.fields?.[field]?.length);
   const [intent,setIntent]=useState(()=>restored(key));
@@ -93,10 +93,10 @@ function Session({projectId,studyDefinitionId,seedRunId,actorId,proposal,api}){
   const receiptHasCurrent=Boolean(receipt?.definition?.facts);
   const changedSinceChoice=receiptHasCurrent&&entries.some(([field])=>JSON.stringify(currentValues[field])!==JSON.stringify(chosenValue(field)));
   return <section className='pvi-proposal pvi-research-information' aria-label='确认本次研究信息'>
-    <h3>确认本次研究信息</h3>
-    <p>{receipt||hasCurrent?'以下为已保存的研究信息；需要更改时可调整。':'已预选资料整理出的建议，请核对它们是否适用于本次研究。'}</p>
+    {!compact && <h3>确认本次研究信息</h3>}
+    {!(compact && (receipt||hasCurrent)) && <p>{receipt||hasCurrent?'以下为已保存的研究信息；需要更改时可调整。':'已预选资料整理出的建议，请核对它们是否适用于本次研究。'}</p>}
     {error&&<p role='alert'>{error}</p>}
-    {receipt||hasCurrent?<><p role='status'>{receipt?'本次研究信息选择已保存':'当前研究已保存这些信息'}</p>
+    {receipt||hasCurrent?<><p role='status'>{compact?'已确认':receipt?'本次研究信息选择已保存':'当前研究已保存这些信息'}</p>
       {changedSinceChoice&&<p>研究信息后来有更新。下方显示当前内容，原确认记录已保留。</p>}
       <dl>{entries.map(([field,label])=><div key={field}><dt>{label}</dt><dd>{displayValue(receipt&&!receiptHasCurrent?chosenValue(field):currentValues[field])??'当前未记录'}</dd></div>)}</dl>
       {changedSinceChoice&&<details><summary>查看这次确认时的选择</summary><dl>{entries.map(([field,label])=><div key={field}><dt>{label}</dt><dd>{displayValue(chosenValue(field))}</dd></div>)}</dl></details>}

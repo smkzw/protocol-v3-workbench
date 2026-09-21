@@ -222,6 +222,18 @@ class FrozenCorpusAnalysisAiRoute:
             raise CorpusAnalysisAiError(
                 "frozen independent-AI route is incomplete or malformed"
             ) from exc
+        deepseek_family = {
+            "deepseek-v4-flash",
+            "deepseek-flash",
+            "deepseek-latest-cloud",
+        }
+        calibrated_response_identity = (
+            route.expected_response_model == route.model
+            or (
+                route.model in deepseek_family
+                and route.expected_response_model in deepseek_family
+            )
+        )
         if (
             route.schema_version != CORPUS_ANALYSIS_ROUTE_SCHEMA_VERSION
             or not route.profile_id
@@ -230,7 +242,7 @@ class FrozenCorpusAnalysisAiRoute:
             or not route.model
             or not route.base_url
             or route.transport != "openai_compatible"
-            or route.expected_response_model != route.model
+            or not calibrated_response_identity
         ):
             raise CorpusAnalysisAiError(
                 "frozen independent-AI route has unsupported identity fields"
@@ -902,7 +914,7 @@ class MedicalWritingCorpusAnalysisAiService:
                 "independent AI returned a non-object corpus analysis"
             )
         response_model = str(getattr(provider, "response_model", "") or "")
-        if response_model != route.model:
+        if response_model != route.expected_response_model:
             raise CorpusAnalysisAiError(
                 "independent AI response model does not match the frozen route"
             )

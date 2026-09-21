@@ -3491,7 +3491,7 @@ def map_design_adoption_to_study_updates(
             detail_bits.append(stratification)
         if factors:
             detail_bits.append("分层因素：" + "、".join(factors))
-        if mode == "随机":
+        if mode in {"随机", "随机分配", "随机化"}:
             structured_design["randomization_mode"] = "randomized"
             ensure_piece("随机")
             if stratification:
@@ -3501,7 +3501,7 @@ def map_design_adoption_to_study_updates(
             if picos_payload.get("design_archetype") in {"", "single_arm_early_phase"}:
                 picos_updates["design_archetype"] = "randomized_exploratory"
                 changed.append("picos.design_archetype")
-        elif mode == "非随机":
+        elif mode in {"非随机", "非随机分配"}:
             structured_design["randomization_mode"] = "non_randomized"
             pieces = [p for p in pieces if p != "随机"]
             ensure_piece("非随机" if "非随机" not in pieces else "")

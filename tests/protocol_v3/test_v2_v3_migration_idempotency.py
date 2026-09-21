@@ -2158,10 +2158,12 @@ class TestContractBinding:
         assert not any(name == "sqlite3" or name.startswith("sqlite3.") for name in newly_loaded)
         # pydantic checks run against the pure contracts package only
         assert "packages.contracts.workbench_contracts.models" in sys.modules
+        # Purity is an import-delta property. The complete suite legitimately
+        # loads unrelated app modules before this test; they cannot be treated
+        # as imports performed by this verifier.
         assert not any(
-            name.startswith("app.")
-            for name in sys.modules
-            if name != "app" and "protocol_workflow" not in name
+            name.startswith("app.") and "protocol_workflow" not in name
+            for name in newly_loaded
         )
 
 

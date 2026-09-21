@@ -77,3 +77,28 @@ def test_metadata_can_be_corrected_without_reupload_and_stale_edit_is_explained(
         conflict = c.patch(f'{BASE}/{sid}/metadata', json={**metadata, 'source_version': '1.4'})
         assert conflict.status_code == 409
         assert '新版本' in conflict.json()['detail']['message']
+
+
+def test_docx_without_text_is_not_misreported_as_corrupt(tmp_path):
+    db = tmp_path / 'product.db'
+    shared.admit(db, PROJECT)
+    # A readable OOXML body with only a visual object has no text to extract.
+    source = build_docx('<w:p><w:r><w:drawing/></w:r></w:p>')
+    with client(db) as c:
+        response = upload(c, source)
+        assert response.status_code == 400
+        detail = response.json()['detail']
+        assert detail['code'] == 'source_docx_no_extractable_text'
+        assert '可提取的文字' in detail['message']
+        assert '另存' not in detail['next_step']
+        assert '文字识别' in detail['next_step']
+        assert c.get(BASE).json()['sources'] == []
+
+
+def test_invalid_docx_has_a_distinct_parse_error_code(tmp_path):
+    db = tmp_path / 'product.db'
+    shared.admit(db, PROJECT)
+    with client(db) as c:
+        response = upload(c, b'not a ZIP document')
+        assert response.status_code == 400
+        assert response.json()['detail']['code'] == 'source_docx_parse_failed'

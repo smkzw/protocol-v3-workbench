@@ -10,7 +10,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict
 
 from packages.contracts.workbench_contracts.protocol_v3 import NonEmptyText, SourceRole
-from app.protocol_workflow.agent1.docx_parse import parse_docx
+from app.protocol_workflow.agent1.docx_parse import DocxNoExtractableText, parse_docx
 from app.protocol_workflow.agent1.source_identity import SourceIdentityService
 
 DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
@@ -34,8 +34,15 @@ def create_source_router(service_factory: Callable[[], SourceIdentityService], *
         content = file.file.read()
         try:
             parsed = parse_docx(content)
+        except DocxNoExtractableText as exc:
+            raise HTTPException(400, detail={
+                'code': 'source_docx_no_extractable_text',
+                'message': '这份 Word 文件没有可提取的文字，尚未加入资料。',
+                'next_step': '请上传能选中文字的版本；若是扫描件，请先完成文字识别后再上传。',
+            }) from exc
         except (BadZipFile, ParseError, KeyError, ValueError) as exc:
             raise HTTPException(400, detail={
+                'code': 'source_docx_parse_failed',
                 'message': '这份文件暂时无法按 Word 方案读取，尚未加入资料。',
                 'next_step': '请在 Word 中确认文件可以打开，并另存为 DOCX 后重选。',
             }) from exc

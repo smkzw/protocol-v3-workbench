@@ -899,6 +899,60 @@ class TestReservationDiscipline:
                 reason="duplicate",
             )
 
+    def test_retry_accepts_monotonic_budget_expansion_for_persisted_run(
+        self, tmp_path
+    ) -> None:
+        """A persisted one-attempt run can use the new retry budget."""
+
+        executions: dict[str, int] = {}
+
+        def _flaky(request):
+            node_id = request.node.node_id
+            executions[node_id] = executions.get(node_id, 0) + 1
+            if node_id == "draft_node" and executions[node_id] == 1:
+                raise TimeoutError("synthetic timeout on first attempt")
+            return {"node": node_id, "label": "labeled-synthetic"}
+
+        base_plan = _probe_plan()
+        old_plan = base_plan.model_copy(
+            update={
+                "nodes": tuple(
+                    node.model_copy(update={"allowed_attempts": 1})
+                    if node.node_id == "draft_node"
+                    else node
+                    for node in base_plan.nodes
+                )
+            }
+        )
+        new_plan = old_plan.model_copy(
+            update={
+                "nodes": tuple(
+                    node.model_copy(update={"allowed_attempts": 2})
+                    if node.node_id == "draft_node"
+                    else node
+                    for node in old_plan.nodes
+                )
+            }
+        )
+        services = {node.node_id: _flaky for node in base_plan.nodes}
+        runtime = _runtime(tmp_path, services)
+        run_id = "run-probe-0013-budget-expansion"
+        runtime.start_run(old_plan, workflow_run_id=run_id, root_inputs=_root_inputs())
+        blocked = runtime.run_to_completion(run_id, plan=old_plan)
+        assert blocked.nodes[0].status.value == "blocked_unknown"
+
+        retried = runtime.retry_node(
+            run_id,
+            node_id="draft_node",
+            retry_decision_id="retry-budget-expansion-1",
+            reason="owner-approved retry after plan budget expansion",
+            plan=new_plan,
+        )
+        assert retried.nodes[0].status.value == "completed"
+        assert executions["draft_node"] == 2
+        assert [a.attempt for a in runtime.reservation_attempts(run_id, "draft_node")] == [1, 2]
+        assert runtime.load_run(new_plan, run_id).nodes[0].status.value == "completed"
+
     def test_blocked_running_row_from_crash_requires_explicit_resolution(
         self, tmp_path
     ) -> None:

@@ -1,0 +1,132 @@
+{
+  "captured_at": "2026-09-21T14:50:00+08:00",
+  "project_id": "proj_user_8a5a00cb014a",
+  "revision": 20,
+  "current_stage": "corpus",
+  "framing_complete": true,
+  "picos_complete": true,
+  "framing": {
+    "protocol_id": "MW-III-AEA61047-DRAFT",
+    "study_phase": "III期",
+    "intrinsic_objectives": [
+      "确证性研究"
+    ],
+    "investigational_product": "合成试验药A",
+    "indication": "成人中重度斑块状银屑病",
+    "administration_routes": [
+      "口服"
+    ],
+    "dosage_forms": [
+      "口服固体制剂"
+    ],
+    "technology_type": "small_molecule",
+    "design_pattern": "平行组（parallel assignment）、双盲、安慰剂对照、随机",
+    "structured_design": {
+      "schema_version": "medical_writing_structured_study_design_v2",
+      "randomization_mode": "randomized",
+      "randomization_details": "随机分配",
+      "blinding_mode": "double_blind",
+      "blinded_roles": [],
+      "blinding_details": "",
+      "comparator_type": "placebo",
+      "comparator_intervention": "匹配安慰剂",
+      "assignment_model": "平行组（parallel assignment）",
+      "center_model": "多中心",
+      "treatment_switch": {
+        "planned": null,
+        "trigger_or_timing": "",
+        "eligible_population": "",
+        "destination_treatment": "",
+        "blinding_strategy": "",
+        "analysis_handling": "",
+        "notes": ""
+      },
+      "crossover": {
+        "planned": null,
+        "sequences": [],
+        "periods": [],
+        "washout_strategy": "",
+        "carryover_assessment": "",
+        "period_sequence_analysis": "",
+        "notes": ""
+      },
+      "open_label_extension": {
+        "planned": null,
+        "entry_source": "",
+        "entry_eligibility": "",
+        "treatment_regimen": "",
+        "duration": "",
+        "blind_break_and_transition": "",
+        "long_term_objectives": [],
+        "notes": ""
+      },
+      "sample_size_reestimation": {
+        "planned": false,
+        "reestimation_mode": "undecided",
+        "timing_or_information": "",
+        "reestimated_parameter": "",
+        "decision_rule": "",
+        "alpha_protection": "",
+        "operational_protection": "",
+        "notes": ""
+      },
+      "adaptive_design": {
+        "planned": null,
+        "adaptive_type": "undecided",
+        "adaptation_timing": "",
+        "decision_criteria": "",
+        "adaptable_elements": [],
+        "simulation_operating_characteristics": "",
+        "type_i_error_control": "",
+        "operational_control": "",
+        "notes": ""
+      },
+      "src_planned": null,
+      "dmc_planned": null,
+      "interim_analysis": {
+        "planned": false,
+        "purpose": "",
+        "timing": "",
+        "information_fraction": "",
+        "statistical_boundary": "",
+        "alpha_control": "",
+        "independent_committee": "",
+        "operational_firewall": "",
+        "notes": ""
+      },
+      "phase1_parts": [],
+      "phase1_sequence": "",
+      "arm_or_cohort_kind": "parallel_arms",
+      "arm_or_cohort_labels": [
+        "试验药组",
+        "对照组"
+      ],
+      "other_design_notes": ""
+    }
+  },
+  "picos": {
+    "design_archetype": "randomized_confirmatory",
+    "population_summary": "确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者。",
+    "intervention_summary": "试验组接受合成试验药A 100 mg口服，每日一次，连续16周；对照组接受匹配安慰剂。",
+    "comparator_summary": "匹配安慰剂对照；试验组与安慰剂组按1:1随机分配，双盲治疗16周。",
+    "primary_endpoint": "第16周达到PASI 75应答（较基线PASI评分改善≥75%）的受试者比例。",
+    "key_secondary_endpoints": [
+      "第16周sPGA达到0或1且较基线改善≥2级的受试者比例。",
+      "第16周达到PASI 90应答的受试者比例。"
+    ],
+    "safety_endpoints": [
+      "治疗期间出现的不良事件（TEAE）、严重不良事件及导致停药的不良事件发生率。",
+      "实验室检查、生命体征及12导联心电图具有临床意义的变化。"
+    ],
+    "study_epochs": [
+      "筛选期：最长4周。",
+      "双盲治疗期：16周。",
+      "安全性随访期：4周。"
+    ],
+    "visit_strategy": "筛选后于基线/第1天随机；第2、4、8、12、16周进行治疗期访视，第20周进行安全性随访。PASI和sPGA于基线及第4、8、12、16周评价。",
+    "estimand_strategy": "治疗策略人群为所有随机受试者；比较第16周PASI 75应答。停药或使用救援治疗按复合策略判定为无应答，其他缺失数据采用无应答填补；报告组间率差及95%置信区间。",
+    "sample_size_strategy": "假设第16周PASI 75应答率试验组为60%、安慰剂组为30%，双侧α=0.05、把握度90%、1:1随机，并考虑15%脱落，共计划入组132例（每组66例）。",
+    "statistical_strategy": "全分析集按随机分组采用CMH方法比较主要终点，报告应答率差、95%置信区间和P值，以优效性为目标。主要缺失处理采用无应答填补，并以多重插补和观察病例分析进行敏感性分析；安全性集按实际治疗分析。不开展期中分析。"
+  },
+  "picos_draft": null
+}

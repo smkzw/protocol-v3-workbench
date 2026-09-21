@@ -1,19 +1,20 @@
 /* Design-elements cards: kangzhe light skin, body >= 16px / support >= 14px. */
-.kz-design-elements { display: grid; gap: 16px; }
+.kz-design-elements { display: grid; gap: 12px; }
 .kz-design-elements header h3 { font-size: 22px; margin: 4px 0; }
 .kz-design-eyebrow { font-size: 14px; color: #6b6b6b; margin: 0; }
 .kz-design-primary, .kz-design-confirm {
-  font-size: 16px; padding: 10px 18px; border-radius: 10px;
-  background: #e8722a; color: #fff; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 700; padding: 8px 12px; border-radius: 8px;
+  background: #FF9900; color: #0F1115; border: 1px solid #FF9900; cursor: pointer;
 }
+.kz-design-primary:hover:not(:disabled), .kz-design-confirm:hover:not(:disabled) { background: #F5A000; }
 .kz-design-primary:disabled, .kz-design-confirm:disabled { background: #d9d9d9; color: #777; }
-.kz-design-card { background: #fff; border: 1px solid #e3e3e3; border-radius: 14px; padding: 18px; }
-.kz-design-card.kz-design-critical { border-color: #d64541; border-width: 2px; }
+.kz-design-card { background: #fff; border: 1px solid #e3e3e3; border-radius: 10px; padding: 12px; }
+.kz-design-card.kz-design-critical { border-color: #C00000; border-width: 2px; }
 .kz-design-card header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .kz-design-card h4 { font-size: 18px; margin: 0 0 8px; }
 .kz-design-card h5 { font-size: 16px; margin: 12px 0 4px; }
 .kz-design-risk-tag {
-  font-size: 14px; color: #fff; background: #d64541; border-radius: 6px; padding: 2px 10px;
+  font-size: 12px; color: #fff; background: #C00000; border-radius: 4px; padding: 2px 8px;
 }
 .kz-design-options, .kz-design-assumptions { margin: 6px 0; padding-left: 20px; }
 .kz-design-options li { margin-bottom: 8px; }
@@ -22,9 +23,23 @@
   font-size: 14px; color: #8a5a2b; background: #fdf1e5; border-radius: 6px;
   padding: 1px 8px; margin-left: 8px;
 }
-.kz-design-estimand { display: grid; grid-template-columns: 140px 1fr; gap: 4px 12px; }
+.kz-design-estimand { display: grid; grid-template-columns: minmax(64px, .3fr) minmax(0, 1fr); gap: 4px 8px; }
+.kz-design-estimand dd { margin: 0; overflow-wrap: anywhere; }
+.kz-design-facts { display:grid; grid-template-columns:minmax(88px,.34fr) minmax(0,1fr); gap:4px 8px; margin:6px 0; }
+.kz-design-facts dt { color:#595959; font-size:14px; font-weight:600; }
+.kz-design-facts dd { margin:0; overflow-wrap:anywhere; font-size:16px; }
+.kz-design-guide { margin:4px 0 8px; padding-left:20px; font-size:14px; line-height:1.4; }
+.kz-design-guide li { margin:2px 0; }
+.kz-design-card p { margin: 4px 0 8px; line-height: 1.45; }
+.pvi-design-pane .kz-design-card h4 { font-size: 16px; }
+.pvi-design-pane .kz-design-card p,
+.pvi-design-pane .kz-design-card li,
+.pvi-design-pane .kz-design-options strong,
+.pvi-design-pane .kz-design-estimand dd { font-size: 14px; }
+.pvi-design-pane .kz-design-facts dd { font-size:14px; }
+.pvi-design-pane .kz-design-guide { font-size:13px; }
 .kz-design-estimand dt { font-size: 14px; color: #6b6b6b; }
 @media (max-width: 700px) {
-  .kz-design-estimand { grid-template-columns: 1fr; }
+  .kz-design-estimand, .kz-design-facts { grid-template-columns: 1fr; }
   .kz-design-primary, .kz-design-confirm { width: 100%; }
 }

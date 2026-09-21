@@ -23,6 +23,10 @@ class ChapterFactsResidualConfirmRequest(BaseModel):
     accepted_fact_paths: list[NonEmptyText] = Field(min_length=1)
 
 
+class ChapterFactsDerivedConfirmRequest(ChapterFactsResidualConfirmRequest):
+    candidate_id: StableId
+
+
 class ManuscriptSaveRequest(ChapterStartRequest):
     operation_id: StableId
     actor_id: StableId
@@ -152,7 +156,7 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
 
     @router.post('/chapter-facts/derive', status_code=202)
     def derive_chapter_facts(project_id: str, study_definition_id: str, tasks: BackgroundTasks):
-        """Derive missing chapter facts from the confirmed design (AI actor)."""
+        """Prepare chapter-fact recommendations without changing study facts."""
         deriver = deriver_for(project_id, study_definition_id)
         if deriver is None:
             raise HTTPException(501, detail={'message': '本部署未启用章节事实派生。'})
@@ -174,16 +178,9 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         study = current.definition
         operation_id = 'chapter-facts:' + snapshot
         def run():
-            outcome = deriver.run(template, study,
+            deriver.run(template, study,
                 operation_id=operation_id, expected_revision=revision,
                 snapshot_sha256=snapshot)
-            command = outcome.get('command')
-            if command is not None:
-                try:
-                    application_service.apply_decision(command)
-                except Exception as exc:  # noqa: BLE001 — surfaced via progress poll
-                    deriver.progress['errors'].append(
-                        f'apply_failed:{type(exc).__name__}:{str(exc)[:180]}')
         tasks.add_task(run)
         return {'status': 'started', 'gaps': len(gaps),
                 'batches_total': deriver.progress['batches_total']}
@@ -197,7 +194,27 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
 
     @router.get('/export/docx')
     def export_docx(project_id: str, study_definition_id: str):
-        """Render the saved working draft as an ordered DOCX on the clean template."""
+        """Return the current Word bytes; initialize from semantics only once."""
+        from fastapi.responses import Response
+        latest = documents.latest_office_snapshot(project_id, study_definition_id)
+        if latest is not None:
+            artifact = documents.office_snapshot_content(
+                project_id, study_definition_id, latest['operation_id'])
+            if artifact is None:
+                raise HTTPException(500, detail={'message': '当前 Word 版本记录存在，但文件暂不可读取。'})
+            return Response(content=artifact.content,
+                media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                headers={'Content-Disposition': 'attachment; filename="protocol-working-copy.docx"',
+                    'X-Content-Sha256': latest['content_sha256'],
+                    'X-Export-Scope': 'current_office_snapshot'})
+        return _render_semantic_candidate(project_id, study_definition_id)
+
+    @router.get('/candidate/docx')
+    def candidate_docx(project_id: str, study_definition_id: str):
+        """Render the current semantic candidate without replacing saved Word bytes."""
+        return _render_semantic_candidate(project_id, study_definition_id)
+
+    def _render_semantic_candidate(project_id: str, study_definition_id: str):
         from fastapi.responses import FileResponse
         from app.protocol_workflow.agent3.word_export_production import render_production_docx
         from app.protocol_workflow.registries.template_runtime import default_template_root
@@ -227,12 +244,74 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             output_path, current.definition.facts if current.definition else {})
         return FileResponse(output_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             filename=output_path.name, headers={'X-Document-Sha256': result['document_sha256'],
-                'X-Output-Sha256': result['output_sha256'], 'X-Export-Scope': result['export_scope']})
+                'X-Output-Sha256': result['output_sha256'],
+                'X-Export-Scope': 'semantic_candidate_docx'})
 
     @router.get('/chapter-facts/derive')
     def chapter_facts_status(project_id: str, study_definition_id: str):
         deriver = deriver_for(project_id, study_definition_id)
         return {'progress': dict(deriver.progress) if deriver else None}
+
+    @router.post('/chapter-facts/derive/confirm')
+    def confirm_derived_chapter_facts(project_id: str, study_definition_id: str,
+                                      body: ChapterFactsDerivedConfirmRequest):
+        """Write only the current candidate paths explicitly confirmed by the user."""
+        import hashlib as _hashlib
+        from app.protocol_workflow.application.commands import ApplyStudyDecisionCommand
+        from app.protocol_workflow.canonical.decision_inputs import ConfirmationDependency
+        from app.protocol_workflow.canonical.hashing import canonical_json
+        from packages.contracts.workbench_contracts.protocol_v3 import ActorType, DecisionRecord
+        deriver = deriver_for(project_id, study_definition_id)
+        candidate = (deriver.progress.get('candidate') if deriver else None)
+        if not candidate or candidate.get('candidate_id') != body.candidate_id:
+            raise HTTPException(409, detail={'message': '这组章节建议已失效或尚未生成。',
+                'next_step': '请重新生成建议并核对后确认。'})
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        if (candidate.get('study_definition_id') != study_definition_id
+                or candidate.get('expected_revision') != body.expected_revision
+                or candidate.get('snapshot_sha256') != body.snapshot_sha256
+                or current.revision != body.expected_revision
+                or current.revision_sha256 != body.snapshot_sha256):
+            raise HTTPException(409, detail={'message': '研究内容刚有更新，本次建议未采用。',
+                'next_step': '请按最新研究内容重新生成章节建议。'})
+        available = candidate.get('updates') or {}
+        accepted = set(body.accepted_fact_paths)
+        updates = {path: value for path, value in available.items() if path in accepted}
+        if not updates:
+            raise HTTPException(422, detail={'message': '没有选中可确认的章节建议。'})
+        selected = body.candidate_id
+        record = DecisionRecord(
+            decision_record_id='chapter.facts.derivation-record:' + _hashlib.sha256(
+                canonical_json([study_definition_id, body.operation_id]).encode()).hexdigest(),
+            decision_key='chapter.facts.derivation',
+            snapshot_sha256=body.snapshot_sha256,
+            expected_state_revision=body.expected_revision,
+            state_revision=body.expected_revision + 1,
+            option_ids=(selected,), selected_option_id=selected,
+            actor_type=ActorType.USER, actor_id=body.actor_id,
+            reason='确认按当前研究设计生成的章节事实建议',
+            decided_at=body.decided_at)
+        dependencies = tuple(ConfirmationDependency(
+            fact_path=path,
+            rationale='章节事实由该已确认设计事实派生；设计变化后需重新核对') for path in (
+            'research.input_context', 'picos.population_summary',
+            'picos.primary_endpoint', 'estimand.primary.variable',
+            'estimand.primary.ice_strategy',
+            'framing.structured_design.comparator_type',
+            'framing.structured_design.allocation_ratio') if path in current.definition.facts)
+        receipt = application_service.apply_decision(ApplyStudyDecisionCommand(
+            project_id=project_id, study_definition_id=study_definition_id,
+            idempotency_key=body.operation_id, expected_revision=body.expected_revision,
+            actor_type=ActorType.USER, actor_id=body.actor_id,
+            reason=record.reason, decision_record=record,
+            fact_updates=updates, revise_confirmed_facts=False,
+            confirmation_dependencies=dependencies))
+        deriver.progress['candidate'] = None
+        return {'revision': receipt.revision, 'applied_paths': len(updates),
+                'study_sha256': receipt.revision_sha256}
 
     @router.get('/chapter-facts/residual')
     def chapter_facts_residual(project_id: str, study_definition_id: str):
@@ -328,6 +407,27 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                         if exc.code != 'graph_reservation_contended_retryable':
                             raise
                 tasks.add_task(resume)
+            return state
+        return _safe_call(lambda: checked(execute))
+
+    @router.post('/resume', status_code=202)
+    def resume(project_id: str, study_definition_id: str,
+               body: ChapterStartRequest, tasks: BackgroundTasks):
+        """Explicitly retry recoverable chapters without replaying the draft."""
+        def execute():
+            owner = manuscripts(project_id)
+            state = original(owner, study_definition_id, body)
+            if state is None:
+                raise HTTPException(404, detail={
+                    'message': '原整稿任务尚未登记，请保留本次操作记录。'})
+            if state['can_resume']:
+                def resume_task():
+                    try:
+                        owner.resume(state['workflow_run_id'])
+                    except GraphRunError as exc:
+                        if exc.code != 'graph_reservation_contended_retryable':
+                            raise
+                tasks.add_task(resume_task)
             return state
         return _safe_call(lambda: checked(execute))
 
@@ -474,6 +574,22 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         # 或段落 {kind:'text_range',start,end}；服务端据此约束应用范围。
         target: dict | None = None
 
+    class OfficeSelectionRevisionRequest(BaseModel):
+        """One AI candidate for a live GenOffice text selection.
+
+        The server produces text only. The browser editor owns the live anchor,
+        baseline comparison, apply and undo so an old semantic document can
+        never overwrite the current Office working copy.
+        """
+        model_config = ConfigDict(extra='forbid')
+        operation_id: StableId
+        actor_id: StableId
+        anchor_id: NonEmptyText
+        target_kind: str = Field(pattern='^(paragraph|table_cell)$')
+        selected_text: str = Field(min_length=1, max_length=20000)
+        instruction: str = Field(min_length=1, max_length=4000)
+        office_artifact_revision: int = Field(ge=0, strict=True)
+
     def _object_target(project_id, study_definition_id, block_id, body):
         intent = body.model_dump(mode='json')
         intent['semantic_block_id'] = block_id
@@ -530,6 +646,10 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
             return receipt
         return _safe_call(lambda: checked(execute))
 
+    @router.get('/office-draft/snapshots')
+    def office_snapshot_history(project_id: str, study_definition_id: str):
+        return {'snapshots': documents.office_snapshot_history(project_id, study_definition_id)}
+
     @router.get('/office-draft/snapshots/latest')
     def latest_office_snapshot(project_id: str, study_definition_id: str):
         latest = documents.latest_office_snapshot(project_id, study_definition_id)
@@ -549,6 +669,86 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
                 # 编辑器保存时以此为 base_artifact_revision 做条件写（G1/F04）。
                 'X-Artifact-Revision': str(artifact.metadata.revision)})
 
+    @router.get('/office-draft/reconciliation')
+    def office_snapshot_reconciliation(project_id: str, study_definition_id: str):
+        """Read-only checks over the latest saved Word bytes; never blocks saving."""
+        current = application_service.get_study_definition(
+            GetStudyDefinitionQuery(project_id, study_definition_id))
+        if current.definition is None:
+            raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+        try:
+            result = documents.office_snapshot_reconciliation(
+                project_id, study_definition_id, current.definition.facts,
+                current.revision_sha256)
+        except Exception as exc:
+            raise HTTPException(422, detail={
+                'message': '当前 Word 已保存，但自动核对未完成。您仍可继续编辑和下载。',
+                'next_step': '可稍后重新核对，或直接人工检查当前 Word。'}) from exc
+        if result is None:
+            raise HTTPException(404, detail={'message': '尚无可核对的已保存 Word 工作稿。'})
+        return result
+
+    @router.post('/office-draft/ai-revisions', status_code=202)
+    def prepare_office_selection_revision(project_id: str, study_definition_id: str,
+                                          body: OfficeSelectionRevisionRequest,
+                                          tasks: BackgroundTasks):
+        """Generate a candidate for the exact live Word selection; never apply it."""
+        def execute():
+            current = application_service.get_study_definition(
+                GetStudyDefinitionQuery(project_id, study_definition_id))
+            if current.definition is None:
+                raise HTTPException(404, detail={'message': '没有找到本次研究。'})
+            worker = (object_revision_worker_factory(project_id, study_definition_id)
+                      if object_revision_worker_factory else None)
+            material = {
+                'schema_version': 'office-selection-revision-input.v1',
+                'project_id': project_id,
+                'study_definition_id': study_definition_id,
+                'study_revision_sha256': current.revision_sha256,
+                **body.model_dump(mode='json'),
+            }
+
+            def run():
+                try:
+                    worker.run(material, operation_id=body.operation_id)
+                except Exception as exc:  # noqa: BLE001 — returned by status
+                    worker.progress['errors'].append(str(exc)[:200])
+                    worker.progress.setdefault('errors_by_operation', {})[
+                        body.operation_id] = str(exc)[:200]
+
+            if worker is not None:
+                tasks.add_task(run)
+            return {
+                'schema_version': 'office-selection-revision-request.v1',
+                'operation_id': body.operation_id,
+                'status': 'dispatched' if worker is not None else 'prepared_no_worker',
+                'anchor': {
+                    'anchor_id': body.anchor_id,
+                    'target_kind': body.target_kind,
+                    'office_artifact_revision': body.office_artifact_revision,
+                },
+            }
+        return _safe_call(lambda: checked(execute))
+
+    @router.get('/office-draft/ai-revisions/{operation_id}')
+    def office_selection_revision_status(project_id: str, study_definition_id: str,
+                                         operation_id: str):
+        worker = (object_revision_worker_factory(project_id, study_definition_id)
+                  if object_revision_worker_factory else None)
+        if worker is None:
+            return {'operation_id': operation_id, 'status': 'unavailable'}
+        candidate = worker.progress.get('candidates', {}).get(operation_id)
+        if candidate is not None:
+            return {'operation_id': operation_id, 'status': 'candidate_ready',
+                'candidate': candidate}
+        if worker.progress.get('running'):
+            return {'operation_id': operation_id, 'status': 'running'}
+        operation_error = worker.progress.get('errors_by_operation', {}).get(operation_id)
+        if operation_error:
+            return {'operation_id': operation_id, 'status': 'failed',
+                'message': '本次局部修改建议未生成，原文和选区未改变。'}
+        return {'operation_id': operation_id, 'status': 'unknown'}
+
     @router.post('/objects/{block_id}/ai-revisions/prepare', status_code=202)
     def prepare_object_revision(project_id: str, study_definition_id: str, block_id: str,
                                 body: ObjectRevisionRequest, tasks: BackgroundTasks):
@@ -565,15 +765,7 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
 
             def run():
                 try:
-                    candidate = worker.run(material, operation_id=intent['operation_id'])
-                    study = application_service.get_study_definition(
-                        GetStudyDefinitionQuery(project_id, study_definition_id))
-                    documents.apply_object_revision(project_id, study_definition_id,
-                        study.definition.facts, {**intent,
-                        'expected_revision': material['document_revision'],
-                        'expected_document_sha256': material['document_sha256'],
-                        'expected_content_sha256': material['current_content_sha256'],
-                        'candidate_content': candidate['replacement_content']})
+                    worker.run(material, operation_id=intent['operation_id'])
                 except Exception as exc:  # noqa: BLE001 — surfaced via recover/poll
                     worker.progress['errors'].append(str(exc)[:200])
 
@@ -619,8 +811,16 @@ def create_manuscript_draft_router(manuscripts, preparations, *, application_ser
         """Operation-level state for one AI revision (audit G3/F08):
         completed / running_or_unknown / unknown — never a bare 404 that
         invites a blind model re-call."""
-        return documents.object_revision_status(project_id, study_definition_id,
+        status = documents.object_revision_status(project_id, study_definition_id,
             block_id, operation_id)
+        worker = (object_revision_worker_factory(project_id, study_definition_id)
+                  if object_revision_worker_factory else None)
+        candidate = (worker.progress.get('candidates', {}).get(operation_id)
+                     if worker else None)
+        if candidate is not None and status.get('status') != 'completed':
+            return {**status, 'status': 'candidate_ready', 'candidate': candidate,
+                'next_step': '请先查看候选差异，明确采用后才会修改对象。'}
+        return status
 
     @router.post('/edits/recover')
     def recover_edits(project_id: str, study_definition_id: str, body: ManuscriptEditRequest):

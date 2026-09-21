@@ -133,3 +133,48 @@ def test_opened_study_baseline_is_not_relabelled_with_current(office_service):
     latest = office_service.latest_office_snapshot(PROJECT, SD_ID)
     assert latest['study_revision_sha256'] == 'sha:study:S1'
     assert latest['study_revision_sha256_current_observed'] == 'sha:study:S2'
+
+
+def test_two_first_editors_do_not_replace_each_others_work(office_service):
+    """Both tabs opened before any snapshot; only one can create that head."""
+    from concurrent.futures import ThreadPoolExecutor
+    current = office_service.current(PROJECT, SD_ID)
+    def save(index):
+        try:
+            return office_service.office_snapshot(PROJECT, SD_ID,
+                _intent(f'operation:first:{index}', current, minimal_docx(f'窗口{index}'),
+                        base_artifact_revision=0, study_revision_sha256='a' * 64))
+        except OfficeWorkingCopyConflictError:
+            return 'conflict'
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(save, [1, 2]))
+    assert results.count('conflict') == 1
+    saved = next(result for result in results if isinstance(result, dict))
+    assert office_service.latest_office_snapshot(PROJECT, SD_ID)['operation_id'] == saved['operation_id']
+
+
+def test_history_lists_and_downloads_both_word_versions_without_changing_head(office_service):
+    from fastapi import FastAPI
+    from fastapi.routing import APIRoute
+    from fastapi.testclient import TestClient
+    from app.protocol_workflow.api.manuscript_drafts import create_manuscript_draft_router
+    current=office_service.current(PROJECT,SD_ID)
+    original_bytes=minimal_docx('原来的人工修改')
+    first=office_service.office_snapshot(PROJECT,SD_ID,
+        _intent('history:first',current,original_bytes,base_artifact_revision=0))
+    second=office_service.office_snapshot(PROJECT,SD_ID,
+        _intent('history:second',current,minimal_docx('后来的修改'),base_artifact_revision=first['artifact_revision']))
+    app=FastAPI()
+    app.include_router(create_manuscript_draft_router(None,None,application_service=None,
+        template_loader=None,documents=office_service,route_class=APIRoute))
+    base=f'/api/projects/{PROJECT}/protocol-workflow/study-definitions/{SD_ID}/manuscript-draft/office-draft/snapshots'
+    with TestClient(app) as client:
+        response=client.get(base)
+        assert response.status_code==200
+        versions=response.json()['snapshots']
+        assert [item['operation_id'] for item in versions]==['history:second','history:first']
+        assert all(item['saved_at'] for item in versions)
+        original=client.get(base+'/history:first/content')
+        assert original.status_code==200
+        assert original.content==original_bytes
+        assert client.get(base+'/latest').json()['operation_id']==second['operation_id']

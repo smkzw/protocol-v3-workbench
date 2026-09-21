@@ -15,15 +15,16 @@ from app.protocol_workflow.canonical.document import document_revision_hash
 from .chapter_draft import read_chapter_draft
 
 
-_GAP_INSTRUCTION = ('【缺口】本章以下事实尚未确认，成文时以显式缺口标注：{paths}。'
-                    '确认后由系统补充或用户直接撰写，不编造、不写成不适用。')
-_PENDING_INSTRUCTION = '【待判定】本章适用性存在未决条件：{reason}。确认相关设计后生成本章内容。'
+_GAP_INSTRUCTION = ('【待补充】本章所需的研究信息尚未全部确认。确认后可由系统补写，'
+                    '也可直接在文档中完善；当前工作稿不会据此编造结论。')
+_PENDING_INSTRUCTION = ('【待判定】本章是否适用仍需结合已确认的研究设计判断。'
+                        '完成相关选择后，系统将生成对应内容。')
 
 
 def _gap_block(node_id, contract_id, content_id, fact_paths, text, now):
     block_id = 'manuscript-block:' + hashlib.sha256(
         canonical_json([node_id, 'gap', sorted(fact_paths)]).encode()).hexdigest()
-    content = f'{text}（缺口身份：{node_id}）'
+    content = text
     return SemanticBlock(semantic_block_id=block_id, semantic_node_id=node_id,
         chapter_contract_id=contract_id,
         substantive_content_contract_id=content_id,
@@ -91,9 +92,9 @@ def assemble_working_manuscript(prepared, state, study, *, document_id, now, cur
         if not fact_paths:
             fact_paths = ('research.input_context',)
         if item['disposition'] == 'pending_decision':
-            text = _PENDING_INSTRUCTION.format(reason=item.get('reason', '适用性未决'))
+            text = _PENDING_INSTRUCTION
         else:
-            text = _GAP_INSTRUCTION.format(paths='、'.join(fact_paths))
+            text = _GAP_INSTRUCTION
         blocks.append(_gap_block(node, plan_chapter['chapter_contract_id'],
             item['substantive_content_contract_id'], fact_paths, text, now))
     snapshot = ApplicabilitySnapshot.model_validate(plan['applicability_snapshot'])

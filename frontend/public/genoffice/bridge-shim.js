@@ -16,7 +16,7 @@
  *   rev        expected semantic document revision for saves
  *   sha        expected document sha256 for saves
  *   actor      actor id
- *   studySha   study-definition baseline sha the document was opened against
+ *   openedStudySha study-definition baseline sha the document was opened against
  *
  * Save flow (audit F04): the open receipt carries the Office artifact
  * revision (X-Artifact-Revision); each save pins it as base_artifact_revision
@@ -30,14 +30,22 @@
   const docName = query.get('docName') || '研究方案工作稿.docx'
   const saveUrl = query.get('saveUrl')
   const actor = query.get('actor') || 'medical_manager'
-  const studySha = query.get('sha') || ''
+  const documentSha = query.get('sha') || ''
+  const openedStudySha = query.get('openedStudySha') || ''
 
+  let closeCheck = null
+  function requestDirtyState() {
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => closeCheck?.())
+  }
+  if (typeof document !== 'undefined') {
+    for (const type of ['input', 'click', 'keyup']) document.addEventListener(type, requestDirtyState, true)
+  }
   const noop = () => {}
   const unsubscribe = () => () => {}
 
   // The Office working-copy revision this editor session opened against; the
   // save receipt refreshes it so consecutive saves chain correctly.
-  let baseArtifactRevision = null
+  let baseArtifactRevision = Number(query.get('baseArtifactRevision') || 0)
 
   function bytesToBase64(bytes) {
     let binary = ''
@@ -83,10 +91,10 @@
         operation_id: operationId,
         actor_id: actor,
         expected_revision: Number(query.get('rev') || 0),
-        expected_document_sha256: studySha,
+        expected_document_sha256: documentSha,
         content_base64: bytesToBase64(data),
         base_artifact_revision: baseArtifactRevision,
-        opened_study_revision_sha256: studySha || null,
+        opened_study_revision_sha256: openedStudySha || null,
       }),
     })
   }
@@ -95,22 +103,39 @@
     if (!saveUrl) return { ok: false, error: 'no-save-url' }
     // One save = one operation identity. A lost receipt is recovered with the
     // same id instead of re-posting a new snapshot (audit F04).
-    if (!saveDocx.operationId) saveDocx.operationId = 'office-save:' + crypto.randomUUID()
+    const requestedData = data
+    if (!saveDocx.operationId) {
+      saveDocx.operationId = 'office-save:' + crypto.randomUUID()
+      saveDocx.pendingData = new Uint8Array(data).slice().buffer
+    }
+    data = saveDocx.pendingData
+    const hasNewChanges = await sha256Hex(data) !== await sha256Hex(requestedData)
     const operationId = saveDocx.operationId
-    const response = await postSnapshot(operationId, data)
+    let response
+    try { response = await postSnapshot(operationId, data) }
+    catch (error) {
+      window.parent.postMessage({ type: 'protocol-office:save-failed', error: '保存结果暂未核实，请保留页面并下载本地备份。', data: requestedData }, window.location.origin)
+      return { ok: false, retryable: true, error: '保存结果暂未核实，请保留页面并重试。' }
+    }
     if (response.ok) {
       const receipt = await response.json().catch(() => ({}))
       if (receipt.artifact_revision) baseArtifactRevision = receipt.artifact_revision
       saveDocx.operationId = null
+      window.parent.postMessage({ type: 'protocol-office:saved', receipt }, window.location.origin)
+      requestDirtyState()
+      if (hasNewChanges) return saveDocx(path, requestedData)
       return { ok: true, snapshot: receipt }
     }
     let detail = {}
     try { detail = await response.json() } catch { /* opaque error body */ }
+    window.parent.postMessage({ type: 'protocol-office:save-failed',
+      error: detail?.detail?.message || '本次修改尚未保存。请下载本地备份后重试。', data: requestedData,
+      conflict: response.status === 409, latest_snapshot: detail?.detail?.latest_snapshot }, window.location.origin)
     if (response.status === 409 && detail?.detail?.code === 'manuscript_office_base_conflict') {
       // Keep the editor dirty; the user decides how to merge with the
       // version that arrived while they were editing.
       const latest = detail.detail.latest_snapshot || {}
-      if (latest.artifact_revision) baseArtifactRevision = latest.artifact_revision
+      // Do not advance the base without reopening/merging the other version.
       return { ok: false, conflict: true,
         error: detail.detail.message || '另一窗口已保存新版本',
         latest_snapshot: latest }
@@ -131,6 +156,8 @@
   // "已新建空白文档" regardless of the requested working copy.
   const pendingOpen = docUrl ? openDocx() : null
   const precise = {
+    onCloseCheck: (handler) => { closeCheck = handler; requestDirtyState(); return () => { if (closeCheck === handler) closeCheck = null } },
+    reportCloseCheck: (state) => window.parent.postMessage({ type: 'protocol-office:dirty', dirty: Boolean(state.dirty) }, window.location.origin),
     getLanguage: async () => 'zh',
     getTheme: async () => 'system',
     getAutoSaveDefault: async () => ({ on: false, updatedAt: 0 }),

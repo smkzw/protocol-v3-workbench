@@ -23,7 +23,8 @@ def chapter_draft_plan(project_id, branch_id, *, correction=False):
         nodes=(
             GraphNodePlan(node_id="chapter-generate", kind=GraphNodeKind.WORK, owner=GraphNodeOwner.FULL_DRAFT,
                 depends_on=(), input_schemas=roots, output_schema="raw_response",
-                logical_key="chapter-draft.correct.v1" if correction else "chapter-draft.generate.v1", allowed_attempts=1),
+                logical_key="chapter-draft.correct.v1" if correction else "chapter-draft.generate.v1",
+                allowed_attempts=2),
             GraphNodePlan(node_id="chapter-validate", kind=GraphNodeKind.CHECK, owner=GraphNodeOwner.SYSTEM,
                 depends_on=("chapter-generate",), input_schemas=("chapter_intake", "raw_response"),
                 output_schema="chapter_validation", logical_key="chapter-draft.validate.v1", allowed_attempts=1),

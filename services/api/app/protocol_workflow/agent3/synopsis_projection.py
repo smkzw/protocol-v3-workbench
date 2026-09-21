@@ -73,9 +73,9 @@ def build_key_points(facts: Mapping[str, Any]) -> list[str]:
 
 def build_overview_paragraph(facts: Mapping[str, Any]) -> str:
     """一段式设计概览：只陈述已确认事实，缺失属性不出现。"""
-    drug = _fact_text(facts, 'framing.investigational_product') or '研究药物'
-    indication = _fact_text(facts, 'framing.indication') or '相应适应症'
-    population = _fact_text(facts, 'picos.population_summary') or f'{indication}患者'
+    drug = _fact_text(facts, 'framing.investigational_product')
+    indication = _fact_text(facts, 'framing.indication')
+    population = _fact_text(facts, 'picos.population_summary')
     planned = _fact_text(facts, 'statistics.sample_size.planned_n')
     sample = f'计划入组约{planned}。' if planned else ''
     primary = _fact_text(facts, 'picos.primary_endpoint')
@@ -92,8 +92,19 @@ def build_overview_paragraph(facts: Mapping[str, Any]) -> str:
     head = '、'.join(attributes)
     prefix = f'本研究为一项{head}的临床研究' if attributes else '本研究为一项临床研究'
     primary_part = f'主要终点为{primary_clean}。' if primary_clean else ''
-    return (f'{prefix}，评价{drug}在{population}中的有效性、安全性与耐受性。'
-            f'{primary_part}{sample}研究流程见表1（见1.3节）。')
+    scope = ''
+    if drug and population:
+        scope = f'，评价{drug}在{population}中的有效性、安全性与耐受性'
+    elif drug:
+        scope = f'，评价{drug}的有效性、安全性与耐受性'
+    elif population:
+        scope = f'，评价研究干预在{population}中的有效性、安全性与耐受性'
+    confirmed = f'{prefix}{scope}。{primary_part}{sample}研究流程见表1（见1.3节）。'
+    missing = [label for value, label in ((drug, '研究药物'), (indication, '适应症'),
+                                           (population, '目标人群')) if not value]
+    if missing:
+        confirmed += f'【待补充】{"、".join(missing)}尚未确认。'
+    return confirmed
 
 
 def build_synopsis_blocks(facts: Mapping[str, Any]) -> list[dict]:

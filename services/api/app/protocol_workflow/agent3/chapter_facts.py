@@ -3,12 +3,11 @@
 The user's confirmed research design (intake context, PICOS, regimen, design
 elements) is the only medical authority here.  Chapter-level facts (AE
 handling, statistical methods, visit schedules, ...) are drafted by the model
-from that authority so the complete draft can compile; every derived value is
-applied as one AI-actor decision with provenance and stays editable through
-the normal controlled-editing flow.  The model never invents values the
-confirmed design cannot support: a fact it leaves out simply keeps its chapter
-unresolved, and the derivation is content-idempotent (only missing paths are
-derived again).
+from that authority so the complete draft can compile.  Derived values remain
+recommendations until the user confirms them; a model run never writes study
+facts by itself.  The model never invents values the confirmed design cannot
+support: a fact it leaves out simply keeps its chapter unresolved, and the
+derivation is content-idempotent (only missing paths are derived again).
 """
 import hashlib
 import json
@@ -100,20 +99,23 @@ def build_batch_material(instruction, study_facts, gaps, index, batch):
             'confirmed_facts': study_facts, 'chapters': chapters}
 
 
-def parse_batch_output(content, gaps, index, batch):
-    """Return {canonical_path: value} for well-formed derived values only."""
+def parse_batch_output(content, gaps, index, batch, *, include_review=False):
+    """Return typed updates plus chapter-grouped values for user review."""
     try:
         payload = json.loads(content)
     except (ValueError, TypeError):
-        return {}, ('invalid_json',)
+        result = ({}, ('invalid_json',), ())
+        return result if include_review else result[:2]
     if not isinstance(payload, dict) or not isinstance(payload.get('chapters'), dict):
-        return {}, ('invalid_shape',)
-    updates, problems = {}, []
+        result = ({}, ('invalid_shape',), ())
+        return result if include_review else result[:2]
+    updates, problems, review_items = {}, [], []
     for node_id in batch:
         produced = payload['chapters'].get(node_id)
         if not isinstance(produced, dict):
             problems.append(f'{node_id}:missing')
             continue
+        chapter_values = []
         for path in gaps[node_id]['paths']:
             if path not in produced:
                 problems.append(f'{path}:omitted')
@@ -126,7 +128,11 @@ def parse_batch_output(content, gaps, index, batch):
                 problems.append(f'{path}:invalid_type')
                 continue
             updates[binding.canonical_path] = value
-    return updates, tuple(problems)
+            chapter_values.append(value)
+        if chapter_values:
+            review_items.append({'title': gaps[node_id]['title'], 'values': chapter_values})
+    result = (updates, tuple(problems), tuple(review_items))
+    return result if include_review else result[:2]
 
 
 DETERMINISTIC_FACT_INSTRUCTION = '系统按已确认研究信息确定性生成（非模型内容）'
@@ -139,33 +145,28 @@ def deterministic_document_facts(study, template):
     deterministically from confirmed study facts and the template identity —
     the same values a medical writer would type into a document-control page.
     """
-    import hashlib as _hashlib
     facts = study.facts
-    drug = str(facts.get('framing.investigational_product', '研究药物')).strip()
-    indication = str(facts.get('framing.indication', '相应适应症')).strip()
+    drug = str(facts.get('framing.investigational_product', '')).strip()
+    indication = str(facts.get('framing.indication', '')).strip()
     phase = str(facts.get('framing.study_phase', '')).strip()
     date = str(getattr(study, 'updated_at', '') or '1970-01-01')[:10]
-    protocol_id = 'PV3-' + _hashlib.sha256(
-        study.study_definition_id.encode()).hexdigest()[:8].upper()
-    title = f"{drug}在{indication}受试者中的{phase}研究方案".replace('中的中', '中的')
+    title_parts = [part for part in (drug, indication, phase) if part]
     identity = {
-        'framing.document_title': title,
-        'framing.protocol_id': protocol_id,
-        'framing.version': '1.0',
+        'framing.version': '0.1（工作稿）',
         'document_control.version_date': date,
         'document_control.version_history': [
-            {'version': '1.0', 'date': date, 'note': '初始版本'}],
+            {'version': '0.1', 'date': date, 'note': '系统生成工作稿'}],
         'document_control.confidentiality_statement':
-            '本文件含保密信息，仅供公司内部授权人员在本项目范围内使用，未经许可不得对外提供。',
-        'document_control.applicable_parties':
-            ['医学撰写', '生物统计', '临床运营', '药物警戒', '注册事务'],
+            '工作稿，仅供项目核对；未经确认不得作为正式申报版本。',
         'document_control.header_footer_metadata': {
-            'header': f'{protocol_id} | 版本 1.0', 'footer': '保密'},
+            'header': '研究方案工作稿 | 版本 0.1', 'footer': '工作稿'},
         'document_control.amendment_exists': False,
         'document_control.initial_version_treatment': '初始完整版本',
         'document_control.change_rationale': '初始版本，无修订说明',
         'provenance.template.version': 'v2.0',
     }
+    if len(title_parts) == 3:
+        identity['framing.document_title'] = f'{drug}在{indication}试验参与者中的{phase}研究方案'
     missing = set()
     for entry in template.registry.chapters:
         for item in entry.contract.substantive_content.fact_requirements:
@@ -186,7 +187,8 @@ class ChapterFactsDeriver:
         self._clock = clock or (lambda: datetime.now(timezone.utc))
         self._batch_size = batch_size
         self.progress = {'running': False, 'batches_done': 0, 'batches_total': 0,
-                         'derived_paths': 0, 'problems': [], 'errors': []}
+                         'derived_paths': 0, 'problems': [], 'errors': [],
+                         'candidate': None}
 
     def _build_adapter(self, key):
         from app.protocol_workflow.runtime.adapters.direct_api import DirectApiAdapter  # noqa: F401
@@ -251,21 +253,20 @@ class ChapterFactsDeriver:
         return adapter._dispatch_fn(payload)
 
     def run(self, template, study, *, operation_id, expected_revision, snapshot_sha256):
-        """Derive and apply missing chapter facts; return the outcome summary."""
-        from app.protocol_workflow.application.commands import ApplyStudyDecisionCommand
-        from packages.contracts.workbench_contracts.protocol_v3 import ActorType, DecisionRecord
-        from app.protocol_workflow.canonical.decision_inputs import ConfirmationDependency
+        """Derive missing chapter facts and retain a user-confirmable candidate."""
 
         gaps = collect_chapter_gaps(template, study)
         index = _binding_index(template.fact_catalog.bindings)
         self.progress = {'running': True, 'batches_done': 0,
                          'batches_total': (len(gaps) + self._batch_size - 1) // self._batch_size,
-                         'derived_paths': 0, 'problems': [], 'errors': []}
+                         'derived_paths': 0, 'problems': [], 'errors': [],
+                         'candidate': None}
         if not gaps:
             self.progress['running'] = False
             return {'derived_paths': 0, 'gaps': 0}
         node_ids = sorted(gaps)
         updates: dict = {}
+        review_items: list = []
         problems: list = []
         try:
             for start in range(0, len(node_ids), self._batch_size):
@@ -290,10 +291,11 @@ class ChapterFactsDeriver:
                     if record['receipt'].get('output_sha256') != receipt['output_sha256']:
                         self.progress['errors'].append('chapter_facts_response_material_mismatch')
                         continue
-                batch_updates, batch_problems = parse_batch_output(
-                    record['content'], gaps, index, batch)
+                batch_updates, batch_problems, batch_review_items = parse_batch_output(
+                    record['content'], gaps, index, batch, include_review=True)
                 updates.update(batch_updates)
                 problems.extend(batch_problems)
+                review_items.extend(batch_review_items)
                 self.progress['batches_done'] += 1
                 self.progress['derived_paths'] += len(batch_updates)
         finally:
@@ -301,44 +303,26 @@ class ChapterFactsDeriver:
         deterministic = deterministic_document_facts(study, template)
         for path, value in deterministic.items():
             updates.setdefault(path, value)
+        if deterministic:
+            review_items.append({'title': '文档基本信息',
+                                 'values': list(deterministic.values())})
         self.progress['problems'] = problems[:200]
         if not updates:
             return {'derived_paths': 0, 'gaps': len(gaps),
                     'problems': problems[:50], 'errors': self.progress['errors']}
-        selected = 'chapter-facts-derived:' + hashlib.sha256(canonical_json(
-            sorted(updates)).encode()).hexdigest()[:40]
-        record = DecisionRecord(
-            decision_record_id='chapter.facts.derivation-record:' + hashlib.sha256(
-                canonical_json([study.study_definition_id, operation_id]).encode()
-            ).hexdigest(),
-            decision_key='chapter.facts.derivation',
-            snapshot_sha256=snapshot_sha256,
-            expected_state_revision=expected_revision,
-            state_revision=expected_revision + 1,
-            option_ids=(selected,), selected_option_id=selected,
-            actor_type=ActorType.AI, actor_id='chapter-facts-derivation',
-            reason='按已确认研究设计派生缺失章节事实（AI建议；初稿与受控编辑中可核对修改）',
-            decided_at=self._clock().isoformat().replace('+00:00', 'Z'))
-        dependencies = tuple(ConfirmationDependency(
-            fact_path=path,
-            rationale='章节事实由该已确认设计事实派生；设计变化后需重新核对') for path in (
-            'research.input_context', 'picos.population_summary',
-            'picos.primary_endpoint', 'estimand.primary.variable',
-            'estimand.primary.ice_strategy',
-            'framing.structured_design.comparator_type',
-            'framing.structured_design.allocation_ratio') if path in study.facts)
-        command = ApplyStudyDecisionCommand(
-            project_id=study.project_id, study_definition_id=study.study_definition_id,
-            idempotency_key=operation_id, expected_revision=expected_revision,
-            actor_type=ActorType.AI, actor_id='chapter-facts-derivation',
-            reason=record.reason, decision_record=record,
-            # AI-actor derivation only ADDS new fact paths (never overwrites
-            # confirmed authority), so no revision intent is claimed here.
-            fact_updates=updates, revise_confirmed_facts=False,
-            confirmation_dependencies=dependencies)
+        candidate = {
+            'candidate_id': 'chapter-facts-derived:' + hashlib.sha256(
+                canonical_json(updates).encode()).hexdigest()[:40],
+            'study_definition_id': study.study_definition_id,
+            'snapshot_sha256': snapshot_sha256,
+            'expected_revision': expected_revision,
+            'updates': updates,
+            'items': review_items,
+        }
+        self.progress['candidate'] = candidate
         return {'derived_paths': len(updates), 'gaps': len(gaps),
-                'applied_revision': expected_revision + 1, 'command': command,
-                'problems': problems[:50], 'errors': self.progress['errors']}
+                'candidate': candidate, 'problems': problems[:50],
+                'errors': self.progress['errors']}
 
 
 # ---------------------------------------------------------------------------

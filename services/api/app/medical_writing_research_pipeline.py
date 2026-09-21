@@ -593,6 +593,17 @@ class MedicalWritingResearchPipelineService:
         # Always assign so promoting out of a failed/soft-terminal stage
         # can clear a stale error_summary (e.g. corpus_not_ready:…).
         state.error_summary = error
+        if error:
+            # A waiting/failed projection must not keep presenting the last
+            # child checkpoint as if work were still running. Durable jobs and
+            # audit rows retain the history; the user-facing banner shows the
+            # actionable terminal/waiting message.
+            state.child_phase = ""
+            state.child_completed = 0
+            state.child_total = 0
+            state.child_percent = 0
+            state.child_label = ""
+            state.child_context = {}
         return state
 
     def start(
@@ -1657,6 +1668,18 @@ class MedicalWritingResearchPipelineService:
             getattr(getattr(run, "status", ""), "value", None)
             or getattr(run, "status", "")
         )
+        if run_status == "partial_failed":
+            messages = [
+                str(getattr(chunk, "error_message", "") or "").strip()
+                for chunk in (getattr(run, "chunks", None) or [])
+                if str(getattr(chunk, "error_message", "") or "").strip()
+            ]
+            if any("HTTP 401" in message for message in messages):
+                raise ResearchPipelineError(
+                    "竞品分诊模型鉴权失败（HTTP 401）；公开检索结果已保留，请检查产品模型连接后重试分诊"
+                )
+            detail = next(iter(dict.fromkeys(messages)), "部分分诊批次失败")
+            raise ResearchPipelineError(f"竞品分诊仅部分完成：{detail}")
         return run_status in {"review_ready", "confirmed"}
 
     def _await_triage_child(
@@ -2576,11 +2599,12 @@ class MedicalWritingResearchPipelineService:
                 progress_callback=report_preparation_progress,
             )
             self._wait_preparation(project_id, state, pulse)
-            staged = self._pause_for_deferred_preparation_stage(
-                project_id, state, prep_batch.batch_id
+            prep_batch = self._drain_deferred_preparation_stages(
+                project_id,
+                prep_batch.batch_id,
+                actor=actor,
+                progress_callback=report_preparation_progress,
             )
-            if staged is not None:
-                return staged
 
         # Document-content validation is a user-authority boundary.
         admission = self._admit_prepared_public_documents(
@@ -2938,11 +2962,12 @@ class MedicalWritingResearchPipelineService:
                 progress_callback=report_preparation_progress,
             )
             self._wait_preparation(project_id, state, pulse)
-            staged = self._pause_for_deferred_preparation_stage(
-                project_id, state, prep_batch.batch_id
+            prep_batch = self._drain_deferred_preparation_stages(
+                project_id,
+                prep_batch.batch_id,
+                actor=actor,
+                progress_callback=report_preparation_progress,
             )
-            if staged is not None:
-                return staged
 
         # Document-content validation is a user-authority boundary. The
         # pipeline may batch-approve clean structure extraction, but it must
@@ -3021,42 +3046,16 @@ class MedicalWritingResearchPipelineService:
         if not snapshot_id:
             raise ResearchPipelineError("缺少检索快照，无法恢复翻译范围检查")
 
-        # Verifies the persisted batch still exists.  When a bounded stage is
-        # waiting, admit exactly one next stage and run only its pending items;
-        # never recreate the batch or replay completed extraction.
+        # Verifies the persisted batch still exists.  Internal resource stages
+        # are implementation batches, not user decisions: drain every pending
+        # stage in the same immutable batch without replaying completed work.
         batch = self.preparation_batch_service.get(project_id, prep_batch_id)
-        deferred_count = int(getattr(batch, "deferred_item_count", 0) or 0)
-        if deferred_count > 0:
-            stage_advancer = getattr(
-                self.preparation_batch_service, "admit_next_stage", None
-            )
-            if not callable(stage_advancer):
-                raise ResearchPipelineError(
-                    "既有原文准备批次仍有延后项，但当前服务不支持阶段准入"
-                )
-            from packages.contracts.workbench_contracts.models import (
-                WritingReferencePreparationBatchStageAdvanceRequest,
-            )
-
-            stage_request = WritingReferencePreparationBatchStageAdvanceRequest(
-                actor=actor,
-                idempotency_key=(
-                    f"pipeline-preparation-stage:{prep_batch_id}:"
-                    f"{getattr(batch, 'admission_stage_index', 1)}:{resume_idempotency_key}"
-                ),
-            )
-            batch = stage_advancer(project_id, prep_batch_id, stage_request)
-            self.preparation_batch_service.run_pending(
+        if int(getattr(batch, "deferred_item_count", 0) or 0) > 0:
+            batch = self._drain_deferred_preparation_stages(
                 project_id,
                 prep_batch_id,
-                actor,
+                actor=actor,
             )
-            batch = self.preparation_batch_service.get(project_id, prep_batch_id)
-            deferred_count = int(getattr(batch, "deferred_item_count", 0) or 0)
-            if deferred_count > 0:
-                return self._pause_for_deferred_preparation_stage(
-                    project_id, state, prep_batch_id
-                ) or state
         admission = self._admit_prepared_public_documents(
             project_id,
             actor=actor,
@@ -3116,7 +3115,68 @@ class MedicalWritingResearchPipelineService:
             # it may create a new immutable translation batch lineage.  The
             # durable parent retry path does not come through this method.
             allow_new_translation_batch=bool(resume_idempotency_key),
+            translation_retry_key=resume_idempotency_key,
         )
+
+    def _drain_deferred_preparation_stages(
+        self,
+        project_id: str,
+        prep_batch_id: str,
+        *,
+        actor: str,
+        progress_callback: Callable[[Any], None] | None = None,
+    ) -> Any:
+        """Run bounded preparation stages continuously after basket approval.
+
+        Stage size remains the worker's resource-control mechanism.  It no
+        longer creates a repeated user gate because no scientific choice is
+        made between stages.  The stable stage idempotency key and the existing
+        batch preserve completed download/OCR work across retries and restarts.
+        """
+
+        stage_advancer = getattr(
+            self.preparation_batch_service, "admit_next_stage", None
+        )
+        if not callable(stage_advancer):
+            raise ResearchPipelineError(
+                "既有原文准备批次仍有延后项，但当前服务不支持阶段准入"
+            )
+        from packages.contracts.workbench_contracts.models import (
+            WritingReferencePreparationBatchStageAdvanceRequest,
+        )
+
+        batch = self.preparation_batch_service.get(project_id, prep_batch_id)
+        while int(getattr(batch, "deferred_item_count", 0) or 0) > 0:
+            previous_deferred = int(
+                getattr(batch, "deferred_item_count", 0) or 0
+            )
+            stage_index = int(
+                getattr(batch, "admission_stage_index", 1) or 1
+            )
+            batch = stage_advancer(
+                project_id,
+                prep_batch_id,
+                WritingReferencePreparationBatchStageAdvanceRequest(
+                    actor=actor,
+                    idempotency_key=(
+                        f"pipeline-preparation-stage:{prep_batch_id}:"
+                        f"{stage_index}:automatic"
+                    ),
+                ),
+            )
+            self.preparation_batch_service.run_pending(
+                project_id,
+                prep_batch_id,
+                actor,
+                progress_callback=progress_callback,
+            )
+            batch = self.preparation_batch_service.get(project_id, prep_batch_id)
+            remaining = int(getattr(batch, "deferred_item_count", 0) or 0)
+            if remaining >= previous_deferred:
+                raise ResearchPipelineError(
+                    "原文准备下一批未产生进展；已保留完成项，请从当前批次恢复"
+                )
+        return batch
 
     def _pause_for_deferred_preparation_stage(
         self,
@@ -3155,6 +3215,7 @@ class MedicalWritingResearchPipelineService:
         snapshot_id: str,
         heartbeat: Callable[[DurableJobProgressPayload], bool] | None = None,
         allow_new_translation_batch: bool = False,
+        translation_retry_key: str = "",
     ) -> ResearchPipelineState:
         """Continue from admitted source documents through round-1 analysis."""
 
@@ -3182,10 +3243,14 @@ class MedicalWritingResearchPipelineService:
                 state.translation_batch_id,
             )
             if "allow_new_batch" in inspect.signature(start_translation).parameters:
-                translation = start_translation(
-                    *start_args,
-                    allow_new_batch=allow_new_translation_batch,
-                )
+                start_kwargs = {
+                    "allow_new_batch": allow_new_translation_batch,
+                }
+                if "retry_idempotency_key" in inspect.signature(
+                    start_translation
+                ).parameters:
+                    start_kwargs["retry_idempotency_key"] = translation_retry_key
+                translation = start_translation(*start_args, **start_kwargs)
             else:
                 # Keep narrow test doubles and older adapters source-compatible
                 # while the production method gains automatic-retry lineage
@@ -3256,11 +3321,18 @@ class MedicalWritingResearchPipelineService:
             f"{missing}。请完成医学准入与PICOS对齐后重算。"
         )
         if material_ready:
-            detail += (
-                "已满足第一轮研究材料最低条件（分诊固化+至少一份Protocol结构化+"
-                "关键锚点翻译通过），已临时开放证据化设计推荐；完整医学准入与"
-                "PICOS对齐仍需补齐后才会达到完全语料就绪。"
-            )
+            if material_detail == "material_ready_source_only":
+                detail += (
+                    "已满足第一轮研究材料最低条件（分诊固化+至少一份Protocol结构化+"
+                    "关键锚点英文原文可追溯），已开放证据化设计推荐；专用翻译服务"
+                    "恢复后可补充受控中文译文，完整医学准入与PICOS对齐仍需补齐。"
+                )
+            else:
+                detail += (
+                    "已满足第一轮研究材料最低条件（分诊固化+至少一份Protocol结构化+"
+                    "关键锚点翻译通过），已开放证据化设计推荐；完整医学准入与"
+                    "PICOS对齐仍需补齐。"
+                )
         else:
             detail += f"第一轮研究材料尚未齐备（{material_detail}），设计推荐仍锁定。"
         state = self._set_stage(
@@ -3440,11 +3512,11 @@ class MedicalWritingResearchPipelineService:
           - at least one protocol has been extracted/validated — read from
             the corpus gate's own ``protocol_structure`` requirement status
             when available (identical semantics to the corpus gate itself);
-          - at least one critical-anchor (objectives_endpoints / eligibility
-            / schedule / safety) translation item has passed fidelity —
-            checked directly against the translation batch, independent of
-            medical-review admission (which the full corpus gate still
-            requires and this conservative path does not substitute for).
+          - critical-anchor evidence is available from a fidelity-passed
+            translation, or from at least two validated original-language
+            anchors when the dedicated body translator is unavailable. The
+            corpus analysis always quotes the original source text; translation
+            remains an aid rather than a prerequisite for scientific review.
           - the frozen product independent-AI route produced an immutable,
             evidence-bound round-1 analysis artifact with at least one
             validated evidence summary. A marker, skeleton, override, or
@@ -3494,6 +3566,7 @@ class MedicalWritingResearchPipelineService:
         protocol_ready = bool(protocol_requirement and protocol_requirement.satisfied)
         batch_items: list[Any] = []
         translation_ready = False
+        source_only_anchors: set[str] = set()
         if state.translation_batch_id:
             try:
                 batch = self.translation_batch_service.get(
@@ -3513,6 +3586,7 @@ class MedicalWritingResearchPipelineService:
                     )
                     for item in batch_items
                 )
+                source_only_anchors = self._source_only_critical_anchors(batch)
             elif persisted_ready and "translation_batch_unavailable" not in unavailable_reasons:
                 unavailable_reasons.append("translation_batch_missing")
         elif persisted_ready:
@@ -3533,8 +3607,9 @@ class MedicalWritingResearchPipelineService:
             )
         if not protocol_ready:
             reasons.append("protocol_structure_not_satisfied")
-        if not translation_ready:
-            reasons.append("critical_anchor_translation_fidelity_not_passed")
+        source_only_ready = len(source_only_anchors) >= 2
+        if not translation_ready and not source_only_ready:
+            reasons.append("critical_anchor_evidence_not_ready")
 
         analysis_ready = bool(
             state.round1_analysis_id
@@ -3550,11 +3625,16 @@ class MedicalWritingResearchPipelineService:
         ready = (
             triage_authority_ready
             and protocol_ready
-            and translation_ready
+            and (translation_ready or source_only_ready)
             and analysis_ready
         )
         if ready:
-            return True, "material_ready"
+            return (
+                True,
+                "material_ready"
+                if translation_ready
+                else "material_ready_source_only",
+            )
         detail = ",".join(reasons) if reasons else "material_not_ready"
         if unavailable_reasons:
             return (
@@ -4288,6 +4368,7 @@ class MedicalWritingResearchPipelineService:
         snapshot_id: str,
         prior_batch_id: str = "",
         allow_new_batch: bool = False,
+        retry_idempotency_key: str = "",
     ) -> dict[str, Any]:
         """Create a translation batch scoped to the critical ICH M11 anchors.
 
@@ -4308,6 +4389,24 @@ class MedicalWritingResearchPipelineService:
         # A deliberate user ``resume_waiting`` action passes
         # ``allow_new_batch=True`` and is the only path allowed to create a
         # new immutable retry lineage.
+        if allow_new_batch:
+            latest = getattr(self.translation_batch_service, "latest", None)
+            try:
+                previous = latest(project_id, snapshot_id) if callable(latest) else None
+            except Exception:
+                previous = None
+            if previous is not None and len(
+                self._source_only_critical_anchors(previous)
+            ) >= 2:
+                result = (
+                    previous.model_dump(mode="json")
+                    if hasattr(previous, "model_dump")
+                    else dict(previous)
+                )
+                result["batch_id"] = str(result.get("batch_id") or "")
+                result["durable_job_id"] = ""
+                result["reused_source_only_batch"] = True
+                return result
         if prior_batch_id and not allow_new_batch:
             getter = getattr(self.translation_batch_service, "get", None)
             if callable(getter):
@@ -4358,8 +4457,14 @@ class MedicalWritingResearchPipelineService:
                 max_spans_per_anchor=5,
             ),
         )
-        retry_parent = str(prior_batch_id or "initial")
-        retry_parent_hash = hashlib.sha256(retry_parent.encode("utf-8")).hexdigest()[:10]
+        retry_identity = str(
+            retry_idempotency_key
+            if allow_new_batch and retry_idempotency_key
+            else prior_batch_id or "initial"
+        )
+        retry_identity_hash = hashlib.sha256(
+            retry_identity.encode("utf-8")
+        ).hexdigest()[:10]
         request = WritingReferenceTranslationBatchCreateRequest(
             snapshot_id=snapshot_id,
             glossary_version="cms_regulatory_zh_v1",
@@ -4373,7 +4478,7 @@ class MedicalWritingResearchPipelineService:
             # still replays the same idempotent result.
             idempotency_key=(
                 f"pipe-tr-v23-{pipeline_id}-"
-                f"{scope_preview.scope_sha256[:16]}-{retry_parent_hash}"
+                f"{scope_preview.scope_sha256[:16]}-{retry_identity_hash}"
             ),
         )
         batch = self.translation_batch_service.create(project_id, request)
@@ -4426,7 +4531,9 @@ class MedicalWritingResearchPipelineService:
                 # candidate_ready critical anchors must NOT unlock the
                 # downstream round-1 path — that previously left design
                 # locked forever after a fidelity wipeout.
-                if not critical_ready:
+                if not critical_ready and len(
+                    self._source_only_critical_anchors(batch)
+                ) < 2:
                     raise ResearchPipelineError(
                         f"翻译未形成可用关键锚点译文（status={status}，"
                         f"critical_ready=0/{len(CRITICAL_ANCHORS)}）"
@@ -4440,9 +4547,31 @@ class MedicalWritingResearchPipelineService:
         # Soft timeout: proceed if at least one critical anchor exists.
         batch = getter(project_id, state.translation_batch_id)
         projection = self._translation_progress_projection(batch)
-        if int(projection["context"]["critical_anchors_ready"]):
+        if int(projection["context"]["critical_anchors_ready"]) or len(
+            self._source_only_critical_anchors(batch)
+        ) >= 2:
             return
         raise ResearchPipelineError("翻译超时")
+
+    @staticmethod
+    def _source_only_critical_anchors(batch: Any) -> set[str]:
+        """Return validated source anchors usable when body translation is down."""
+        payload = _payload_dict(batch)
+        items = [_payload_dict(item) for item in list(payload.get("items") or [])]
+        return {
+            str(item.get("ich_m11_anchor") or "")
+            for item in items
+            if str(item.get("ich_m11_anchor") or "") in CRITICAL_ANCHORS
+            and str(item.get("document_type") or "").casefold() == "protocol"
+            and str(item.get("validation_status") or "")
+            in {"confirmed", "user_overridden"}
+            and str(item.get("structure_review_id") or "")
+            and int(item.get("structure_review_revision") or 0) >= 1
+            and str(item.get("source_text_sha256") or "")
+            and str(item.get("generation_status") or "") == "failed_retryable"
+            and str(item.get("error_code") or "")
+            == "translation_generation_failed"
+        }
 
     @staticmethod
     def _translation_progress_projection(batch: Any) -> dict[str, Any]:

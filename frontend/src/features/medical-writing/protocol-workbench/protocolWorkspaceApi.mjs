@@ -133,6 +133,9 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     recoverManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/recover`, intent, signal);
     },
+    resumeManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/resume`, intent, signal);
+    },
     prepareManuscriptSave(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/save/prepare`, intent, signal);
     },
@@ -142,7 +145,7 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     recoverManuscriptSave(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/save/recover`, intent, signal);
     },
-    async saveOfficeSnapshot(projectId, studyId, { operationId, actorId, expectedRevision, expectedDocumentSha256, file }, { signal } = {}) {
+    async saveOfficeSnapshot(projectId, studyId, { operationId, actorId, expectedRevision, expectedDocumentSha256, baseArtifactRevision = null, openedStudyRevisionSha256 = null, file }, { signal } = {}) {
       // Binary read branch (P3): a DOCX File/ArrayBuffer is base64-framed
       // into the same JSON error contract every other endpoint uses.
       const buffer = file instanceof ArrayBuffer ? file : await file.arrayBuffer();
@@ -156,6 +159,8 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
         operation_id: operationId, actor_id: actorId,
         expected_revision: expectedRevision,
         expected_document_sha256: expectedDocumentSha256,
+        base_artifact_revision: baseArtifactRevision,
+        opened_study_revision_sha256: openedStudyRevisionSha256,
         content_base64: btoa(binary),
       }, signal);
     },
@@ -165,8 +170,20 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     latestOfficeSnapshot(projectId, studyId, { signal } = {}) {
       return get(`${manuscriptPath(projectId, studyId)}/office-draft/snapshots/latest`, signal);
     },
+    officeSnapshotHistory(projectId, studyId, { signal } = {}) {
+      return get(`${manuscriptPath(projectId, studyId)}/office-draft/snapshots`, signal);
+    },
     officeSnapshotContentUrl(projectId, studyId, operationId) {
       return `${manuscriptPath(projectId, studyId)}/office-draft/snapshots/${encodeURIComponent(String(operationId))}/content`;
+    },
+    getOfficeSnapshotReconciliation(projectId, studyId, { signal } = {}) {
+      return get(`${manuscriptPath(projectId, studyId)}/office-draft/reconciliation`, signal);
+    },
+    prepareOfficeSelectionRevision(projectId, studyId, intent, { signal } = {}) {
+      return post(`${manuscriptPath(projectId, studyId)}/office-draft/ai-revisions`, intent, signal);
+    },
+    getOfficeSelectionRevision(projectId, studyId, operationId, { signal } = {}) {
+      return get(`${manuscriptPath(projectId, studyId)}/office-draft/ai-revisions/${encodeURIComponent(String(operationId))}`, signal);
     },
     editManuscriptDraft(projectId, studyId, intent, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/edits`, intent, signal);
@@ -237,6 +254,12 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     },
     resumeRegimenDesign(projectId, workflowRunId, { signal } = {}) {
       return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/resume`, {}, signal);
+    },
+    adoptRegimenAnswers(projectId, workflowRunId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/answers`, intent, signal);
+    },
+    recoverRegimenAnswers(projectId, workflowRunId, intent, { signal } = {}) {
+      return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/answers/recover`, intent, signal);
     },
     adoptRegimenDesign(projectId, workflowRunId, intent, { signal } = {}) {
       return post(`${regimenPath(projectId)}/${encodeURIComponent(String(workflowRunId))}/adopt`, intent, signal);
@@ -376,6 +399,12 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
       return get(
         `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/derive`,
         signal,
+      );
+    },
+    confirmDerivedChapterFacts(projectId, studyDefinitionId, intent, { signal } = {}) {
+      return post(
+        `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyDefinitionId))}/manuscript-draft/chapter-facts/derive/confirm`,
+        intent, signal,
       );
     },
     getChapterFactsResidual(projectId, studyDefinitionId, { signal } = {}) {

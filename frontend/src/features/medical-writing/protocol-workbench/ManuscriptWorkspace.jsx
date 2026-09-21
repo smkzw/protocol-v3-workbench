@@ -103,28 +103,18 @@ function HistoryVersions({ storageKey, onRestore, busy }) {
   </div>;
 }
 
-function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, api }) {
+function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, api, onNavigationGuardChange }) {
   const key = 'protocol-v3:manuscript:' + JSON.stringify([projectId, studyDefinitionId, seedRunId]);
   const [packet, setPacket] = useState(() => savedValue(key));
   const [plan, setPlan] = useState(null), [job, setJob] = useState(null);
   const [selected, setSelected] = useState(null), [error, setError] = useState('');
   const [savedDocument, setSavedDocument] = useState(null);
-  // A saved working draft survives reloads: restore it once the packet is
-  // back so the read/edit preview (and export link) reappear without a save.
-  useEffect(() => {
-    if (!packet || savedDocument || !apiRef.current?.getSavedManuscriptDocument) return;
-    const controller = new AbortController();
-    Promise.resolve().then(() => apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId, { signal: controller.signal }))
-      .then(value => { if (!controller.signal.aborted && value?.document) {
-        setSavedDocument(normalizeSavedDocument(value));
-      } })
-      .catch(() => {});
-    return () => controller.abort();
-  }, [packet, projectId, studyDefinitionId, savedDocument]);
+  const [officeOpen, setOfficeOpen] = useState(false);
   const [sourceState, setSourceState] = useState(null);
   const [planRefresh, setPlanRefresh] = useState(0);
   const [busy, setBusy] = useState(false), [refresh, setRefresh] = useState(0);
   const [factsBusy, setFactsBusy] = useState(false);
+  const [derivedCandidate, setDerivedCandidate] = useState(null);
   const [residual, setResidual] = useState(null);
   const [readiness, setReadiness] = useState(null);
   const [showAllResidual, setShowAllResidual] = useState(false);
@@ -159,6 +149,18 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       .catch(() => {});
     return () => controller.abort();
   }, [projectId, studyDefinitionId, readiness, factsBusy, refresh]);
+
+  useEffect(() => {
+    if (!apiRef.current?.getChapterFactsStatus || factsBusy) return undefined;
+    const controller = new AbortController();
+    Promise.resolve().then(() => apiRef.current.getChapterFactsStatus(projectId, studyDefinitionId, { signal: controller.signal }))
+      .then(value => {
+        if (!controller.signal.aborted && !value?.progress?.running) {
+          setDerivedCandidate(value?.progress?.candidate || null);
+        }
+      }).catch(() => {});
+    return () => controller.abort();
+  }, [projectId, studyDefinitionId, factsBusy, refresh]);
 
   async function confirmResidual() {
     if (factsBusy || !residual || !actorId) return;
@@ -197,8 +199,34 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
         if ((next?.plan || next)?.all_applicable_inputs_ready) break;
         const status = await client.getChapterFactsStatus(projectId, studyDefinitionId)
           .catch(() => null);
-        if (status?.progress && !status.progress.running) break;
+        if (status?.progress && !status.progress.running) {
+          setDerivedCandidate(status.progress.candidate || null);
+          break;
+        }
       }
+    } catch (reason) { setError(readableError(reason)); }
+    finally { setFactsBusy(false); }
+  }
+
+  async function confirmDerivedFacts() {
+    const candidate = derivedCandidate;
+    const paths = Object.keys(candidate?.updates || {});
+    if (factsBusy || !candidate || !paths.length || !actorId) return;
+    setFactsBusy(true); setError('');
+    try {
+      await apiRef.current.confirmDerivedChapterFacts(projectId, studyDefinitionId, {
+        operation_id: 'chapter-facts-derived-confirm:' + crypto.randomUUID(),
+        candidate_id: candidate.candidate_id,
+        actor_id: actorId,
+        expected_revision: candidate.expected_revision,
+        snapshot_sha256: candidate.snapshot_sha256,
+        decided_at: new Date().toISOString(),
+        accepted_fact_paths: paths,
+      });
+      const next = await apiRef.current.getManuscriptPlan(projectId, studyDefinitionId);
+      if (next?.plan || next?.chapters) setPlan(next?.plan || next);
+      setDerivedCandidate(null);
+      setRefresh(v => v + 1);
     } catch (reason) { setError(readableError(reason)); }
     finally { setFactsBusy(false); }
   }
@@ -281,7 +309,9 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
           if (controller.signal.aborted) return;
           if (state.workflow_run_id !== packet.intent.expected_workflow_run_id) throw new Error('本次写作记录尚未核对完整。');
           setJob(state); setError('');
-          if (state.status !== 'running') return;
+          // Partial blockage can coexist with siblings that are progressing.
+          // Keep observing the original run; reads never dispatch a retry.
+          if (state.status !== 'running' && !state.can_resume) return;
         }
         timer = setTimeout(read, delay); delay = Math.min(delay * 2, 30000);
       } catch (reason) { if (!controller.signal.aborted) setError(readableError(reason)); }
@@ -356,7 +386,7 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   }
 
   async function begin(newVersion = false) {
-    if (flight.current || (packet && newVersion !== true)) return;
+    if (flight.current || officeOpen || (packet && newVersion !== true)) return;
     flight.current = true; setBusy(true); setError('');
     const controller = new AbortController(); request.current = controller;
     try {
@@ -387,7 +417,8 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
         let state;
         try { state = await apiRef.current.recoverManuscriptDraft(projectId, studyDefinitionId, packet.intent, { signal: controller.signal }); }
         catch (reason) { if (reason?.status !== 404) throw reason; }
-        if (!state || state.can_resume) await apiRef.current.startManuscriptDraft(projectId, studyDefinitionId, packet.intent, { signal: controller.signal });
+        if (!state) await apiRef.current.startManuscriptDraft(projectId, studyDefinitionId, packet.intent, { signal: controller.signal });
+        else if (state.can_resume) await apiRef.current.resumeManuscriptDraft(projectId, studyDefinitionId, packet.intent, { signal: controller.signal });
       } else {
         let state;
         try { state = await apiRef.current.getManuscriptSources(projectId, packet.sourceRunId, { signal: controller.signal }); }
@@ -427,77 +458,8 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   const current = readable.find(chapter => chapter.node_id === selected) || readable[0];
   const persistedChapter = current && savedChapter(savedDocument?.document, current.node_id);
 
-  // --- Controlled editing: local drafts keyed by the exact document version,
-  // IME-safe submit, server-side EditClass reclassification (the client's
-  // wording claim is advisory only). Fact-class edits surface proposals.
-  const composingRef = useRef(false);
-  const [editingBlockId, setEditingBlockId] = useState(null);
-  const [editBusy, setEditBusy] = useState(false);
-  const [editNotice, setEditNotice] = useState('');
-  const draftsKey = savedDocument
-    ? `${key}:drafts:${savedDocument.document.revision}:${savedDocument.document_sha256}`
-    : null;
-  const [localDrafts, setLocalDrafts] = useState(() => draftsKey ? savedValue(draftsKey) || {} : {});
-  useEffect(() => { setLocalDrafts(draftsKey ? savedValue(draftsKey) || {} : {}); setEditingBlockId(null); },
-    [draftsKey]);
-  function stashDraft(blockId, text) {
-    setLocalDrafts(previous => {
-      const next = { ...previous, [blockId]: text };
-      try { if (draftsKey) localStorage.setItem(draftsKey, JSON.stringify(next)); } catch { /* keep in memory */ }
-      return next;
-    });
-  }
-  async function saveBlockEdit(blockId, newText) {
-    if (editBusy || !savedDocument) return;
-    setEditBusy(true); setError('');
-    const controller = new AbortController(); request.current = controller;
-    try {
-      // The schema forbids extra fields (study id lives in the URL) and
-      // requires the run's source pins alongside the document CAS pair.
-      const intent = {
-        source_run_id: packet.sourceRunId,
-        study_revision_sha256: packet.studySha,
-        expected_workflow_run_id: packet.intent?.expected_workflow_run_id,
-        operation_id: 'manuscript-edit:' + crypto.randomUUID(),
-        actor_id: actorId,
-        expected_revision: savedDocument.document.revision,
-        expected_document_sha256: savedDocument.document_sha256,
-        edits: [{ semantic_block_id: blockId, block: { content: newText }, claimed_class: 'wording_only' }] };
-      localStorage.setItem(key + ':edit:' + intent.operation_id, JSON.stringify(intent));
-      let receipt;
-      try { receipt = await apiRef.current.recoverEdit?.(projectId, studyDefinitionId, intent, { signal: controller.signal }); }
-      catch (reason) { if (reason?.status !== 404) throw reason; }
-      if (!controller.signal.aborted && !receipt) {
-        receipt = await apiRef.current.editManuscriptDraft(projectId, studyDefinitionId, intent, { signal: controller.signal });
-      }
-      if (!controller.signal.aborted && receipt) {
-        // R3: every edit saves.  Fact-touching edits persist too; the receipt
-        // only carries reconciliation clues for the explicit check stage.
-        setSavedDocument(normalizeSavedDocument(receipt));
-        setEditNotice('');
-        stashDraft(blockId, newText);
-        if ((receipt.fact_clue_count || 0) > 0) {
-          const paths = [...new Set((receipt.edit_clues || [])
-            .filter(clue => clue.edit_class === 'fact_or_uncertain')
-            .flatMap(clue => clue.affected_fact_paths))];
-          setEditNotice(`本段修改已保存为新版本。它涉及研究事实（${[...new Set(paths)].join('、') || '研究信息'}），显式核对时会列出与已确认设计的差异；研究事实本身保持不变。`);
-        }
-      }
-    } catch (reason) {
-      if (!controller.signal.aborted) {
-        // A failed save must never lose the user's typing: keep the editor
-        // open with the draft, and say what happened and what to do next.
-        stashDraft(blockId, newText);
-        setEditingBlockId(blockId);
-        if (reason?.status === 409) { setEditNotice('文档已有更新版本，本次修改没有覆盖它。您输入的内容仍在本页编辑框中，请刷新后基于最新版本重试。'); setRefresh(v => v + 1); }
-        else setError(readableError(reason) + ' 您输入的内容仍保留在本页编辑框中，可直接再次保存。');
-      }
-    }
-    finally { flight.current = false; setEditBusy(false); }
-  }
   return <section className="kz-protocol kz-manuscript" aria-label="完整方案初稿">
-    <header><p className="kz-manuscript-eyebrow">阅读与修改</p><h2>把研究建议写成完整方案</h2>
-      <p>保留已确认的研究选择，按模板撰写全部适用章节。</p></header>
+    <header><h2>研究方案</h2></header>
     {!packet && <>
       <button className="kz-manuscript-primary" type="button" onClick={() => begin()}
         disabled={busy || !canGenerate}>生成完整初稿</button>
@@ -509,13 +471,31 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       {readiness?.can_generate_working_draft && (() => {
         const counts = { write: 0, write_with_gaps: 0, pending_decision: 0, not_applicable: 0 };
         for (const item of readiness.chapter_dispositions || []) counts[item.disposition] = (counts[item.disposition] || 0) + 1;
-        return <p>关键设计已确认：{counts.write} 章直接撰写，{counts.write_with_gaps} 章带显式缺口成文（缺口在正文中有标注，可随时补），{counts.pending_decision} 章待判定，{counts.not_applicable} 章不适用。</p>;
+        return <ul className="kz-manuscript-summary">
+          <li><strong>可起草：</strong>{counts.write} 章资料齐备，{counts.write_with_gaps} 章带缺口起草。</li>
+          <li><strong>章节范围：</strong>{counts.pending_decision} 章待判定，{counts.not_applicable} 章不适用。</li>
+        </ul>;
       })()}
-      {!canGenerate && apiRef.current?.deriveChapterFacts && readiness?.critical_design_confirmed && <>
+      {apiRef.current?.deriveChapterFacts && readiness?.critical_design_confirmed
+        && !derivedCandidate && (readiness.chapter_dispositions || []).some(item => item.disposition === 'write_with_gaps') && <>
         <button type="button" disabled={factsBusy} onClick={deriveFacts}>
           {factsBusy ? '正在按已确认设计补齐章节事实…' : '先按已确认设计补齐章节事实，减少缺口（可选）'}</button>
-        <p>缺失的章节级事实由模型按已确认研究设计起草并标为AI建议；也可以直接生成初稿，缺口会在正文显式标注。设计变化后需重新补齐。</p>
+        <ul><li>补充内容作为建议，确认后采用。</li><li>也可先起草，再补正文标出的缺口。</li></ul>
       </>}
+      {derivedCandidate && Object.keys(derivedCandidate.updates || {}).length > 0 && <div
+        className="kz-manuscript-residual" role="group" aria-label="章节事实建议确认">
+        <p>系统根据已确认的研究设计整理了 {Object.keys(derivedCandidate.updates).length} 项章节建议：</p>
+        <ul>
+          {(derivedCandidate.items || []).slice(0, 8).map((item, index) => (
+            <li key={`${item.title}-${index}`}><strong>{item.title}：</strong>
+              {(item.values || []).map(summarizeResidualValue).join('；')}</li>
+          ))}
+          {(derivedCandidate.items || []).length > 8 && <li>其余 {(derivedCandidate.items || []).length - 8} 个章节的建议将在确认后用于相应正文，仍可继续修改。</li>}
+        </ul>
+        <button type="button" disabled={factsBusy || !actorId} onClick={confirmDerivedFacts}>
+          确认并采用以上章节建议</button>
+        <button type="button" disabled={factsBusy} onClick={() => setDerivedCandidate(null)}>暂不采用</button>
+      </div>}
       {readiness?.critical_design_confirmed && residual && Object.keys(residual).length > 0 && <>
         <div className="kz-manuscript-residual" role="group" aria-label="可选的研究组织信息确认">
           <p>还有 {Object.keys(residual).length} 项组织与执行信息可确认（可选：现在一键采纳常规建议，或生成初稿后直接在正文修改）：</p>
@@ -537,55 +517,58 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
       ? (sourceState?.status === 'completed' ? '资料已准备，完整初稿尚未开始。' : sourceState && sourceState.status !== 'running' ? '资料准备已停止，原资料与记录已保留。' : '正在准备本次写作资料。')
       : job?.status === 'blocked' ? '本次写作已停止，已生成章节仍可阅读。' : `正在撰写方案，已有 ${readable.length} 个章节可阅读。`}</p>}
     {job?.status === 'blocked' && <>
-      <p>尚未完成：{chapters.filter(chapter => !['not_applicable', 'needs_content_review'].includes(chapter.status)).map(chapter => chapter.title).join('、')}</p>
-      {/* 第七轮P0：blocked 必须有明确出口——重跑恢复effect（recover→can_resume→
-          幂等start）即触发服务端对未完成章节的续写；失败章已标记可重试 */}
+      <ul className="kz-manuscript-summary">
+        <li><strong>需要处理：</strong>{chapters.filter(chapter => !['not_applicable', 'kept_as_gap', 'needs_content_review'].includes(chapter.status)).map(chapter => chapter.title).join('、') || '正在核对未完成章节。'}</li>
+        <li><strong>下一步：</strong>{job.can_resume ? '继续可起草的章节，已完成内容会保留。' : '先核对本次任务结果；暂不能重试的章节会保留当前记录。'}</li>
+      </ul>
       <button type="button" className="kz-manuscript-primary" disabled={busy}
-        onClick={() => setRefresh(value => value + 1)}>继续写作（重试未完成的章节）</button>
+        onClick={resume}>{job.can_resume ? '继续写作（重试未完成的章节）' : '核对未完成章节的状态'}</button>
     </>}
     {packet && plan?.study_sha256 && plan.study_sha256 !== packet.studySha && <>
       <button type="button"
-        disabled={busy || !canGenerate} onClick={() => begin(true)}>按当前研究准备新稿，保留原记录</button>
+        disabled={busy || officeOpen || !canGenerate} onClick={() => begin(true)}>按当前研究准备新稿，保留原记录</button>
       {!canGenerate && <p role="status">研究信息更新后，本次初稿尚未与当前研究核对（
         {(readiness?.blocking_design_conflicts || []).map(item => item.title).join('、')
           || (plan.chapters || []).filter(chapter => chapter.status === 'needs_information')
             .map(chapter => chapter.title).join('、') || '见研究建议页提示'}）。
         处理完成后即可准备新稿；原稿与已保存版本不受影响。</p>}
     </>}
-    {packet && <HistoryVersions storageKey={key} onRestore={entry => { remember(entry); setJob(null); setSavedDocument(null); setSourceState(null); setRefresh(v => v + 1); }} busy={busy}/>}
+    {officeOpen && <p className="kz-manuscript-session-hint">切换历史或准备新稿前，请先保存并关闭编辑器。</p>}
+    {packet && <HistoryVersions storageKey={key} onRestore={entry => { remember(entry); setJob(null); setSavedDocument(null); setSourceState(null); setRefresh(v => v + 1); }} busy={busy || officeOpen}/>}
     {job?.complete_candidate && (() => {
       const chapters = job?.chapters || [];
       const written = chapters.filter(c => c.status === 'needs_content_review' && (c.validation || {}).valid).length;
       const gaps = chapters.filter(c => c.status === 'kept_as_gap').length;
-      return <p role="status">初稿已生成：{written} 个章节已完成撰写{gaps > 0 ? `，另有 ${gaps} 个章节因研究信息尚未确认而保留为显式缺口（确认相关设计后可补充撰写）` : ''}。可开始逐章阅读核对。</p>;
+      return <ul className="kz-manuscript-summary" aria-label="初稿进度">
+        <li><strong>已起草：</strong>{written} 个章节，需医学核对。</li>
+        {gaps > 0 && <li><strong>待补充：</strong>{gaps} 个章节保留缺口；在左侧确认相关设计后补写。</li>}
+        <li><strong>下一步：</strong>打开文档编辑、保存，再下载当前工作稿。</li>
+      </ul>;
     })()}
     {job?.complete_candidate && !savedDocument && <button type="button" className="kz-manuscript-primary"
       disabled={busy || !actorId} onClick={saveCompleteDraft}>{packet?.saveIntent ? '核对并完成原稿保存' : '保存完整初稿'}</button>}
-    {savedDocument && <p role="status">完整工作初稿已保存，第 {savedDocument.document.revision} 版。
-      <a className="kz-manuscript-export" href={`/api/projects/${encodeURIComponent(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(studyDefinitionId)}/manuscript-draft/export/docx`}>导出Word工作稿</a>
-      （工作稿保留模板封面与页眉页脚；替换模板正文、去除示例文字的成品级导出在后续阶段）</p>}
-    {savedDocument && savedDocument.study_binding_status !== 'current' && <p role="alert">研究信息已变化或暂不可读，这份已保存初稿尚未与当前研究重新核对。</p>}
+    {savedDocument?.study_binding_status && savedDocument.study_binding_status !== 'current' && <p role="alert">研究信息已变化或暂不可读，这份已保存初稿尚未与当前研究重新核对。</p>}
     {savedDocument && <GenOfficeFrame projectId={projectId} studyDefinitionId={studyDefinitionId}
-      actorId={actorId} savedDocument={savedDocument} api={apiRef.current}/>}
-    {savedDocument && packet?.saveConflict && <button type="button" disabled={busy}
+      actorId={actorId} savedDocument={savedDocument} api={apiRef.current} onSessionChange={setOfficeOpen} onNavigationGuardChange={onNavigationGuardChange} onClose={() => setRefresh(value => value + 1)}/>}
+    {savedDocument && packet?.saveConflict && <button type="button" disabled={busy || officeOpen}
       onClick={saveCompleteDraft}>将本次初稿另存为新版本（保留历史）</button>}
     {packet?.phase === 'sources' && sourceState?.can_retry && <button type="button" disabled={busy}
       onClick={retrySources}>使用原资料重试本次准备</button>}
     {error && <p role="alert">{error}</p>}
-    {packet && (error || job?.can_resume) && <button type="button" disabled={busy} onClick={resume}>核对并继续本次写作</button>}
+    {packet && job?.status !== 'blocked' && (error || job?.can_resume) && <button type="button" disabled={busy} onClick={resume}>核对并继续本次写作</button>}
     <button type="button" disabled={busy} onClick={() => setRefresh(value => value + 1)}>更新研究与文档状态</button>
-    {chapters.length > 0 && <div className="kz-manuscript-layout">
+    {chapters.length > 0 && <details className="kz-manuscript-reference" open={savedDocument ? undefined : true}>
+      <summary>{savedDocument ? '查看 AI 起草依据（只读，不代表当前 Word 内容）' : '查看已生成章节'}</summary>
+      <div className="kz-manuscript-layout">
       <nav aria-label="方案章节"><ol>{chapters.map(chapter => <li key={chapter.node_id}>
         <button type="button" aria-current={current?.node_id === chapter.node_id ? 'true' : undefined}
           disabled={!chapter.validation?.proposal} onClick={() => setSelected(chapter.node_id)}>{chapter.title}</button>
         <small>{chapter.status === 'not_applicable' ? '本研究不适用' : chapter.validation?.valid ? '初稿已生成' : '尚未完成'}</small>
       </li>)}</ol></nav>
       <div>{current && <ChapterDraftPreview title={current.title} candidate={persistedChapter || current.validation.proposal} saved={Boolean(persistedChapter)}
-        edit={savedDocument ? { busy: editBusy, composingRef, localDrafts,
-          editingBlockId, onStartEdit: setEditingBlockId, onCancelEdit: () => setEditingBlockId(null),
-          onSave: saveBlockEdit, onDraft: stashDraft } : undefined}/>}</div>
-    </div>}
-    {editNotice && <p role="status">{editNotice}</p>}
+        edit={undefined}/>}</div>
+    </div></details>}
+
   </section>;
 }
 

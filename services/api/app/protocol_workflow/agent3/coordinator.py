@@ -65,41 +65,136 @@ class ChapterDraftCoordinator:
             raise ValueError('chapter_run_identity_mismatch')
         return prepared
 
+    def _retryable_node(self, run_id, plan, node_id):
+        """Return whether an owner retry can safely create the next attempt."""
+        snapshot = self.runtime.load_run(plan, run_id)
+        node = snapshot.node(node_id)
+        if node.status.value not in {'failed', 'blocked_unknown'}:
+            return False
+        # A live lease is still owned by another dispatcher.  Explicit retry
+        # must reconcile that owner first; it is never permission to
+        # redispatch a still-live call.
+        if (node.status.value == 'blocked_unknown'
+                and self.runtime.node_has_live_dispatch(run_id, node_id)):
+            return False
+        return len(self.runtime.reservation_attempts(run_id, node_id)) < (
+            plan.node(node_id).allowed_attempts)
+
+    def _retry_node(self, run_id, plan, node_id):
+        if not self._retryable_node(run_id, plan, node_id):
+            return False
+        attempts = self.runtime.reservation_attempts(run_id, node_id)
+        latest = attempts[-1] if attempts else None
+        if latest is not None and latest.status.value in {'reserved', 'running'}:
+            # A dead pre-dispatch or in-flight shell must be explicitly
+            # reconciled before a new attempt. UNKNOWN_OUTCOME remains
+            # distinguishable and is never rewritten.
+            self.runtime.resolve_blocked_with_failure(
+                run_id,
+                node_id=node_id,
+                resolution_id=run_id + ':resolve:1',
+                reason='owner reconciled the dead dispatch lease before retry',
+            )
+        self.runtime.retry_node(
+            run_id,
+            node_id=node_id,
+            retry_decision_id=run_id + ':retry:1',
+            reason='owner-approved explicit retry after reconciling the prior attempt',
+            plan=plan,
+        )
+        # A successful retry leaves downstream validation pending.  Advance
+        # the same pinned graph so the caller observes the complete outcome.
+        self.runtime.run_to_completion(run_id)
+        return True
+
+    def _annotate_retry(self, outcome, run_id, plan, node_id):
+        if outcome.get('status') == 'blocked':
+            outcome = dict(outcome)
+            outcome['can_resume'] = self._retryable_node(run_id, plan, node_id)
+        return outcome
+
+    def _correction_id(self, run_id):
+        return run_id + ':correction:1'
+
+    def _correction_plan(self):
+        return chapter_draft_plan(self.project_id, self.branch_id, correction=True)
+
+    def _original_plan(self):
+        return chapter_draft_plan(self.project_id, self.branch_id)
+
+    def _ensure_correction(self, run_id, prepared, validation):
+        """Start or explicitly retry the one correction graph."""
+        correction_id = self._correction_id(run_id)
+        correction_plan = self._correction_plan()
+        try:
+            correction_snapshot = self.runtime.load_run(correction_plan, correction_id)
+        except GraphRunError as exc:
+            if exc.code != 'graph_run_unknown':
+                raise
+            from app.protocol_workflow.runtime.model_response import read_model_response
+            from app.protocol_workflow.runtime.proposal_correction import structure_correction_inputs
+            record = read_model_response(self.artifacts, validation['raw_response']['artifact_ref'])
+            inputs = structure_correction_inputs(
+                prepared, record, validation,
+                input_name='chapter_intake', error_prefix='chapter')
+            self.runtime.start_run(
+                correction_plan,
+                workflow_run_id=correction_id,
+                root_inputs=inputs,
+            )
+            self.runtime.run_to_completion(correction_id)
+            return correction_id
+
+        if correction_snapshot.status.value == 'blocked':
+            self._retry_node(correction_id, correction_plan, 'chapter-generate')
+        else:
+            self.runtime.run_to_completion(correction_id)
+        return correction_id
+
+
     def read(self, run_id):
         self.prepared_request(run_id)
-        correction_id = run_id + ':correction:1'
-        correction_plan = chapter_draft_plan(self.project_id, self.branch_id, correction=True)
+        correction_id = self._correction_id(run_id)
+        correction_plan = self._correction_plan()
         try:
             snapshot = self.runtime.load_run(correction_plan, correction_id)
         except GraphRunError as exc:
             if exc.code != 'graph_run_unknown':
                 raise
             correction_id = None
-            outcome = proposal_outcome(self.runtime,
-                chapter_draft_plan(self.project_id, self.branch_id), run_id, 'chapter-validate')
+            original_plan = self._original_plan()
+            outcome = proposal_outcome(
+                self.runtime, original_plan, run_id, 'chapter-validate')
             if outcome['status'] == 'needs_structure_correction':
                 outcome['can_resume'] = True
+            elif outcome['status'] == 'blocked':
+                outcome = self._annotate_retry(
+                    outcome, run_id, original_plan, 'chapter-generate')
         else:
-            outcome = proposal_outcome(self.runtime, correction_plan, correction_id,
-                                       'chapter-validate', snapshot=snapshot)
+            outcome = proposal_outcome(
+                self.runtime, correction_plan, correction_id,
+                'chapter-validate', snapshot=snapshot)
+            if outcome['status'] == 'blocked':
+                outcome = self._annotate_retry(
+                    outcome, correction_id, correction_plan, 'chapter-generate')
         return {'workflow_run_id': run_id, 'correction_run_id': correction_id,
                 'study_definition_id': self.study_definition_id,
                 'study_revision_sha256': self.study_revision_sha256, **outcome}
 
     def resume(self, run_id):
-        from app.protocol_workflow.runtime.model_response import read_model_response
-        from app.protocol_workflow.runtime.proposal_correction import structure_correction_inputs
         prepared = self.prepared_request(run_id)
+        original_plan = self._original_plan()
         self.runtime.run_to_completion(run_id)
-        original = proposal_outcome(self.runtime,
-            chapter_draft_plan(self.project_id, self.branch_id), run_id, 'chapter-validate')
+        original = proposal_outcome(
+            self.runtime, original_plan, run_id, 'chapter-validate')
         validation = original['validation']
-        if validation is not None and validation['status'] == 'needs_structure_correction':
-            record = read_model_response(self.artifacts, validation['raw_response']['artifact_ref'])
-            inputs = structure_correction_inputs(prepared, record, validation,
-                input_name='chapter_intake', error_prefix='chapter')
-            correction_id = run_id + ':correction:1'
-            self.runtime.start_run(chapter_draft_plan(self.project_id, self.branch_id, correction=True),
-                workflow_run_id=correction_id, root_inputs=inputs)
-            self.runtime.run_to_completion(correction_id)
+        if validation is None and original['status'] == 'blocked':
+            self._retry_node(run_id, original_plan, 'chapter-generate')
+            original = proposal_outcome(
+                self.runtime, original_plan, run_id, 'chapter-validate')
+            validation = original['validation']
+        if validation is None:
+            return self.read(run_id)
+        if validation['status'] == 'needs_structure_correction':
+            self._ensure_correction(run_id, prepared, validation)
         return self.read(run_id)

@@ -620,8 +620,12 @@ class GraphRuntime:
         resolution_id: str,
         reason: str,
     ) -> GraphRunSnapshot:
-        """Explicitly close a dead-process crash window (RUNNING shell) as
-        failed.  The node stays failed until an explicit retry."""
+        """Explicitly close a dead-process crash window as failed.
+
+        Both a RESERVED shell (dispatch never crossed) and a RUNNING shell
+        (dispatch began but the owner died) require this explicit resolution
+        before a new attempt.  A live lease is never closed by this method.
+        """
 
         view = self._load(workflow_run_id, caller_plan=None)
         view.plan.node(node_id)
@@ -641,7 +645,14 @@ class GraphRuntime:
                 "resolution_id and reason must be non-empty",
             )
         latest = self._latest_reservation(view, node_id)
-        if latest is not None and latest.status is ReservationStatus.RUNNING:
+        if latest is not None and latest.status in (
+                ReservationStatus.RESERVED, ReservationStatus.RUNNING):
+            if self.node_has_live_dispatch(workflow_run_id, node_id):
+                raise GraphRunError(
+                    "graph_reservation_contended_retryable",
+                    f"node {node_id!r} still has a live dispatch lease; "
+                    "reconcile it after the owner resolves",
+                )
             with self._reservation_repository_factory() as repo:
                 repo.transition(
                     self._project_id,
@@ -650,6 +661,7 @@ class GraphRuntime:
                     terminal_state=ExecutionTerminalState.FAILED,
                     output_sha256=None,
                     error_code="crash_resolved_failed",
+                    transport_attempts=latest.transport_attempts,
                     updated_at=self._clock(),
                 )
         view = self._load(workflow_run_id, caller_plan=None)
@@ -791,6 +803,7 @@ class GraphRuntime:
         node_id: str,
         retry_decision_id: str,
         reason: str,
+        plan: Optional[GraphPlan] = None,
     ) -> GraphRunSnapshot:
         """Append one explicit, auditable retry attempt for a node.
 
@@ -799,10 +812,15 @@ class GraphRuntime:
         node's ``allowed_attempts``).
         """
 
-        view = self._load(workflow_run_id, caller_plan=None)
+        view = self._load(workflow_run_id, caller_plan=plan)
         self._resolve_divergence(workflow_run_id, view)
         self._apply_reservation_repairs(view)
         node = view.plan.node(node_id)
+        retry_limit = (
+            plan.node(node_id).allowed_attempts
+            if plan is not None
+            else node.allowed_attempts
+        )
         if not retry_decision_id.strip() or not reason.strip():
             raise GraphRunError(
                 "graph_retry_identity_invalid",
@@ -822,6 +840,13 @@ class GraphRuntime:
         status = self._node_status(view, node_id)
         if existing_decision is not None:
             return self._snapshot(view, executed=set())
+        if (status is GraphNodeStatus.BLOCKED_UNKNOWN
+                and self.node_has_live_dispatch(workflow_run_id, node_id)):
+            raise GraphRunError(
+                "graph_reservation_contended_retryable",
+                f"node {node_id!r} still has a live dispatch lease; "
+                "reconcile it before retrying",
+            )
         if status is GraphNodeStatus.COMPLETED:
             raise GraphRunError(
                 "graph_node_completed",
@@ -834,11 +859,11 @@ class GraphRuntime:
                 "nodes accept explicit retries",
             )
         attempts = self.reservation_attempts(workflow_run_id, node_id)
-        if len(attempts) >= node.allowed_attempts:
+        if len(attempts) >= retry_limit:
             raise GraphRunError(
                 "graph_retry_exhausted",
                 f"node {node_id!r} already used {len(attempts)} of "
-                f"{node.allowed_attempts} allowed attempts",
+                f"{retry_limit} allowed attempts",
             )
         inputs, input_hashes = self._gather_inputs(view, node)
         contract = self._build_contract(workflow_run_id, view.plan, node, input_hashes)
@@ -925,25 +950,56 @@ class GraphRuntime:
         self._load_reservation_states(view)
         return view
 
+    @staticmethod
+    def _retry_budget_compatible(stored: GraphPlan, caller: GraphPlan) -> bool:
+        """Allow only a monotonic retry-budget expansion on an old run."""
+        stored_payload = stored.material_payload()
+        caller_payload = caller.material_payload()
+        stored_limits = {
+            item["node_id"]: item["allowed_attempts"]
+            for item in stored_payload["nodes"]
+        }
+        caller_limits = {
+            item["node_id"]: item["allowed_attempts"]
+            for item in caller_payload["nodes"]
+        }
+        stored_nodes = {
+            item["node_id"]: item for item in stored_payload["nodes"]
+        }
+        caller_nodes = {
+            item["node_id"]: item for item in caller_payload["nodes"]
+        }
+        for payload in (stored_payload, caller_payload):
+            for item in payload["nodes"]:
+                item.pop("allowed_attempts", None)
+        if stored_payload != caller_payload or stored_nodes.keys() != caller_nodes.keys():
+            return False
+        return all(
+            caller_limits[node_id] >= stored_limits[node_id]
+            for node_id in stored_limits
+        )
+
     def _assert_binding(
         self, stored: GraphPlan, caller: GraphPlan, workflow_run_id: str
     ) -> None:
-        if (
-            stored.project_id != caller.project_id
-            or stored.branch_id != caller.branch_id
-            or stored.graph_id != caller.graph_id
-            or stored.graph_version != caller.graph_version
-            or stored.material_sha256() != caller.material_sha256()
-        ):
-            raise GraphPlanBindingError(
-                "graph_plan_binding_mismatch",
-                f"run {workflow_run_id!r} is bound to graph "
-                f"{stored.graph_id!r} version {stored.graph_version!r} "
-                f"(material {stored.material_sha256()[:12]}…), not "
-                f"{caller.graph_id!r} version {caller.graph_version!r} "
-                f"(material {caller.material_sha256()[:12]}…); old graphs are "
-                "rejected",
-            )
+        exact = (
+            stored.project_id == caller.project_id
+            and stored.branch_id == caller.branch_id
+            and stored.graph_id == caller.graph_id
+            and stored.graph_version == caller.graph_version
+            and stored.material_sha256() == caller.material_sha256()
+        )
+        if exact or self._retry_budget_compatible(stored, caller):
+            return
+        raise GraphPlanBindingError(
+            "graph_plan_binding_mismatch",
+            f"run {workflow_run_id!r} is bound to graph "
+            f"{stored.graph_id!r} version {stored.graph_version!r} "
+            f"(material {stored.material_sha256()[:12]}…), not "
+            f"{caller.graph_id!r} version {caller.graph_version!r} "
+            f"(material {caller.material_sha256()[:12]}…); old graphs are "
+            "rejected",
+        )
 
     def _verify_contract_digests(self, view: _RunView) -> None:
         """Re-verify every persisted v1_1 contract digest on reconstruction."""
@@ -1704,7 +1760,10 @@ class GraphRuntime:
                         and stored.branch_id == plan.branch_id
                         and stored.graph_id == plan.graph_id
                         and stored.graph_version == plan.graph_version
-                        and stored.material_sha256() == plan.material_sha256()
+                        and (
+                            stored.material_sha256() == plan.material_sha256()
+                            or GraphRuntime._retry_budget_compatible(stored, plan)
+                        )
                         and stored_roots == dict(root_hashes)
                     ):
                         return False

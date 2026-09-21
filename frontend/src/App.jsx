@@ -10817,6 +10817,17 @@ function WritingPage({
     setRevisionInstruction(nextIntent.defaultInstruction);
   };
   const queueCitationInsertion = (reference) => {
+    if (greenfieldSetupAvailable) {
+      const event = new CustomEvent('protocol-office:insert-reference', {
+        detail: { projectId, reference }, cancelable: true,
+      });
+      window.dispatchEvent(event);
+      const message = event.defaultPrevented
+        ? '正在插入当前 Word 光标；编号和参考文献表会自动更新。'
+        : '请先在左侧打开文档编辑器，再插入引文。';
+      setCitationInsertionMessage(message);
+      return message;
+    }
     if (!realWorkingCopyEditable || editorFrozen) {
       const message = workingCopyAuthoritative
         ? "请先创建可编辑工作副本，并确保当前作者版本未冻结。"
@@ -15906,7 +15917,7 @@ export function App() {
     if (activePage === "writing") {
       if (["1", "true"].includes(import.meta.env.VITE_PROTOCOL_V3_WORKFLOW_ENABLED)
           && activeProjectId && activeManifest?.route_bindings?.medical_writing) {
-        return <ProtocolIntakeWorkspace key={activeProjectId} projectId={activeProjectId} actorId="medical_manager" />;
+        return <ProtocolIntakeWorkspace key={activeProjectId} projectId={activeProjectId} actorId="medical_manager" onNavigationGuardChange={setWritingNavigationGuard} />;
       }
       if (runtimeReadiness.status !== "ready") {
         return (

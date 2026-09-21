@@ -137,14 +137,20 @@ def check_applicable_design(confirmed_facts, proposal: dict) -> None:
     interim = proposal.get('interim_planning')
     design = confirmed_facts.get('framing.structured_design')
     design = design if isinstance(design, dict) else {}
-    ni_fact = design.get('noninferiority_margin_decision')
-    interim_fact = design.get('interim_analysis')
+    ni_fact = confirmed_facts.get('design.noninferiority_applicable')
+    if ni_fact is None:
+        ni_fact = design.get('noninferiority_margin_decision')
+    interim_fact = confirmed_facts.get('statistics.sample_size.interim_applicable')
+    if interim_fact is None:
+        interim_fact = design.get('interim_analysis')
     if status == 'ready_for_review':
-        if isinstance(ni_fact, str) and ni_fact.strip().lower() in ('false', '不适用', '无') and ni is not None:
+        ni_denied = ni_fact is False or (
+            isinstance(ni_fact, str) and ni_fact.strip().lower() in ('false', '不适用', '无'))
+        if ni_denied and ni is not None:
             raise ValueError('design_elements_ni_conflicts_confirmed_design')
         if interim_fact is False and interim is not None:
             raise ValueError('design_elements_interim_conflicts_confirmed_design')
-        if ni is None and isinstance(ni_fact, str) and ni_fact.strip().lower() not in ('false', '不适用', '无', '') and design:
+        if ni is None and (ni_fact is True or isinstance(ni_fact, dict)):
             raise ValueError('design_elements_ni_missing_for_confirmed_ni_design')
         if interim is None and interim_fact is True:
             raise ValueError('design_elements_interim_missing_for_confirmed_interim_design')

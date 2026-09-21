@@ -245,6 +245,7 @@ class WritingReferenceUpperLayerExecutionService:
         transport: str = UPPER_LAYER_TRANSPORT,
         default_model: str = DEFAULT_UPPER_LAYER_MODEL,
         escalation_model: str = ESCALATED_UPPER_LAYER_MODEL,
+        expected_response_model: str = "",
         clock: Callable[[], datetime] = _utc_now,
         flash_max_attempts: int = 3,
         escalation_lease_seconds: int = 300,
@@ -259,6 +260,9 @@ class WritingReferenceUpperLayerExecutionService:
         self.transport = transport.strip()
         self.default_model = default_model.strip()
         self.escalation_model = escalation_model.strip()
+        self.expected_response_model = (
+            expected_response_model.strip() or self.default_model
+        )
         if not all(
             (
                 self.provider,
@@ -324,6 +328,7 @@ class WritingReferenceUpperLayerExecutionService:
             "transport": self.transport,
             "default_model": self.default_model,
             "escalation_model": self.escalation_model,
+            "expected_response_model": self.expected_response_model,
             "invocation_contract_version": UPPER_LAYER_INVOCATION_CONTRACT_VERSION,
         }
         request_hash = _sha256_json(semantic)
@@ -814,6 +819,11 @@ class WritingReferenceUpperLayerExecutionService:
             transport=self.transport,
             requested_model=requested_model,
             response_model=response_model,
+            expected_response_model=(
+                self.expected_response_model
+                if requested_model == self.default_model
+                else requested_model
+            ),
             deployment_profile=request.deployment_profile,
             prompt_version=request.prompt_version,
             input_hash=input_hash,
@@ -956,7 +966,12 @@ class WritingReferenceUpperLayerExecutionService:
         if status not in _ADAPTER_RESULT_STATUSES:
             return "failed_terminal", "invalid_upper_layer_result_status", None
         if status in {"succeeded", "completed_degraded"}:
-            if result.response_model != requested_model:
+            expected_response_model = (
+                self.expected_response_model
+                if requested_model == self.default_model
+                else requested_model
+            )
+            if result.response_model != expected_response_model:
                 return "failed_terminal", "response_model_mismatch", None
             if result.output_payload is None:
                 return "failed_terminal", "upper_layer_output_missing", None
@@ -1280,6 +1295,11 @@ class WritingReferenceUpperLayerExecutionService:
                 "provider": self.provider,
                 "transport": self.transport,
                 "requested_model": model,
+                "expected_response_model": (
+                    self.expected_response_model
+                    if model == self.default_model
+                    else model
+                ),
                 "invocation_contract_version": UPPER_LAYER_INVOCATION_CONTRACT_VERSION,
                 "parent_stage_run_id": parent_stage_run_id,
                 "escalation_id": escalation_id,
@@ -1297,6 +1317,7 @@ class WritingReferenceUpperLayerExecutionService:
                 "transport": self.transport,
                 "default_model": self.default_model,
                 "escalation_model": self.escalation_model,
+                "expected_response_model": self.expected_response_model,
                 "invocation_contract_version": UPPER_LAYER_INVOCATION_CONTRACT_VERSION,
             }
         )[:16]

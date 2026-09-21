@@ -47,6 +47,22 @@ const ROLE_LABELS = {
 // 自由输入，保证非常规表述不被界面挡死。
 const PACKAGE_ENUM_FREE_CHOICE = "__free_text__";
 const PACKAGE_ENUM_OPTIONS = {
+  "design.arms_or_cohorts": [
+    ["parallel_two_1_1", "两组平行，1:1随机（试验药组 vs 对照组）"],
+  ],
+  "design.comparator_type": [
+    ["placebo", "安慰剂对照"],
+    ["active", "阳性药/活性对照"],
+    ["none_or_dose_escalation", "无对照/剂量递增"],
+  ],
+  "design.interim_analysis": [
+    ["not_planned", "不设期中分析"],
+    ["planned", "设置期中分析（细节后续补充）"],
+  ],
+  "design.sample_size_reestimation": [
+    ["not_planned", "不进行样本量再估计"],
+    ["planned", "计划样本量再估计（细节后续补充）"],
+  ],
   "framing.product_profile.technology_type": [
     ["small_molecule", "小分子化学药物"],
     ["monoclonal_antibody", "单克隆抗体"],
@@ -157,11 +173,47 @@ const UNSUPPORTED_SUBSTANTIVE_GAP_PREFIX = "声称内容未在引用原文中出
 
 const COMPOSITE_BLOCK_REASON_LABELS = {
   unavailable: "候选不可用。",
-  pending_decision: "该候选含待确认项；请对每个字段填写确认值或勾选跳过。",
-  manual_only: "该候选标注为需逐项确认（manual_only）；请对每个字段填写确认值或勾选跳过。",
-  insufficient: "该候选证据不足（insufficient）；请对每个字段填写确认值或勾选跳过。",
-  unsupported_gap: "该候选存在未被来源原文支持的实质声明；请对每个字段填写确认值或勾选跳过。",
+  pending_decision: "系统已预选有依据的值并跳过空白的普通可选项；请只确认下方高影响决策。",
+  manual_only: "系统已预选有依据的值并跳过空白的普通可选项；请只确认下方高影响决策。",
+  insufficient: "当前证据不足以自动决定全部设计；系统已保留可用建议，请只补充下方高影响决策。",
+  unsupported_gap: "当前建议存在证据缺口；系统已保留可用建议，请只补充下方高影响决策。",
 };
+
+const HIGH_IMPACT_COMPOSITE_PATHS = new Set([
+  "design.arms_or_cohorts",
+  "design.comparator_type",
+  "design.interim_analysis",
+  "design.sample_size_reestimation",
+]);
+
+function hasCompositeCandidateValue(value) {
+  if (value == null) return false;
+  if (typeof value === "string") return Boolean(value.trim());
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.keys(value).length > 0;
+  return true;
+}
+
+function defaultCompositeDecisionDraft(candidate) {
+  const overrides = {};
+  const skips = {};
+  for (const path of compositeDecisionPaths(candidate)) {
+    const value = candidate?.structured_value?.[path];
+    if (hasCompositeCandidateValue(value)) {
+      overrides[path] = value;
+    } else if (!HIGH_IMPACT_COMPOSITE_PATHS.has(path)) {
+      skips[path] = true;
+    }
+  }
+  return { overrides, skips };
+}
+
+function unresolvedCompositeDecisionPaths(candidate, pathOverrides = {}, pathSkips = {}) {
+  return compositeDecisionPaths(candidate).filter((path) => {
+    if (pathSkips[path]) return false;
+    return !hasCompositeCandidateValue(pathOverrides[path]);
+  });
+}
 
 /**
  * Stable machine code for why a candidate cannot be adopted without per-path
@@ -427,6 +479,20 @@ export function serializeCompositePathOverride(candidate, path, value) {
   if (typeof value !== "string") return value;
   const trimmed = value.trim();
   if (!trimmed) return "";
+  if (path === "design.arms_or_cohorts" && trimmed === "parallel_two_1_1") {
+    return { kind: "parallel_arms", labels: ["试验药组", "对照组"] };
+  }
+  if (path === "design.comparator_type") {
+    if (trimmed === "placebo") return { type: "安慰剂", intervention: "匹配安慰剂" };
+    if (trimmed === "active") return { type: "活性对照", intervention: "" };
+    if (trimmed === "none_or_dose_escalation") return { type: "无对照/剂量递增", intervention: "" };
+  }
+  if (path === "design.interim_analysis" && ["not_planned", "planned"].includes(trimmed)) {
+    return { planned: trimmed === "planned", purpose: "" };
+  }
+  if (path === "design.sample_size_reestimation" && ["not_planned", "planned"].includes(trimmed)) {
+    return { planned: trimmed === "planned" };
+  }
   const candidateValue = candidate?.structured_value?.[path];
   if (!Array.isArray(candidateValue)) return trimmed;
 
@@ -690,7 +756,7 @@ function CandidateCard({
   const pending = isPendingCompositeCandidate(candidate);
   const sourceOk = hasUsableSourceText(candidate.evidence_refs);
   const targets = candidate.target_paths || [];
-  const pendingPaths = compositeDecisionPaths(candidate);
+  const pendingPaths = unresolvedCompositeDecisionPaths(candidate, pathOverrides, pathSkips);
   const labeledTargets = targets.map((path) => ({
     path,
     label: resolvePathLabel(path, pathLabels),
@@ -905,7 +971,7 @@ export function AuthoringCandidatePackagePanel({
   const fieldOverrides = overridesByField[activeGroup.field_path] || {};
   const fieldSkips = skipsByField[activeGroup.field_path] || {};
   const pending = isPendingCompositeCandidate(selectedCandidate);
-  const pendingPaths = compositeDecisionPaths(selectedCandidate);
+  const pendingPaths = unresolvedCompositeDecisionPaths(selectedCandidate, fieldOverrides, fieldSkips);
   const ready = compositeAdoptionReady(selectedCandidate, fieldOverrides, fieldSkips);
   const confirmed = selectedCandidate?.state === "user_confirmed";
   const adoptBusy = busy === "prefill-composite-adopt" || busy === `prefill-composite-adopt-${activeGroup.field_path}`;
@@ -914,6 +980,22 @@ export function AuthoringCandidatePackagePanel({
 
   const setSelected = (candidateId) => {
     setSelectedByField((current) => ({ ...current, [activeGroup.field_path]: candidateId }));
+    const candidate = displayCandidates.find((item) => item.candidate_id === candidateId);
+    const defaults = defaultCompositeDecisionDraft(candidate);
+    setOverridesByField((current) => ({
+      ...current,
+      [activeGroup.field_path]: {
+        ...defaults.overrides,
+        ...(current[activeGroup.field_path] || {}),
+      },
+    }));
+    setSkipsByField((current) => ({
+      ...current,
+      [activeGroup.field_path]: {
+        ...defaults.skips,
+        ...(current[activeGroup.field_path] || {}),
+      },
+    }));
   };
   const setOverride = (path, value) => {
     setOverridesByField((current) => ({
@@ -1054,8 +1136,8 @@ export function AuthoringCandidatePackagePanel({
                 ? "该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。"
                 : pending
                   ? pendingPaths.length
-                    ? `该方案需逐项确认：请对 ${pendingPaths.length} 个字段填写确认值或勾选跳过。`
-                    : "该方案需逐项确认后采用。"
+                    ? `已预填建议并跳过普通空白项；请再确认 ${pendingPaths.length} 个高影响决策。`
+                    : "关键决策已确认，可一次采用整套方案。"
                   : "可直接采用；仅在确有项目差异时再展开修改。"}
             </p>
             {pending && !ready && selectedCandidate && (
@@ -1088,7 +1170,7 @@ export function AuthoringCandidatePackagePanel({
           )}
           {pending && pendingPaths.length > 0 && (
             <p className="authoring-package-pending-badge" data-recommendation-role="pending_decision">
-              <ChevronDown size={13} /> {pendingPaths.length}项待决定
+              <ChevronDown size={13} /> {pendingPaths.length}项关键决策待确认
             </p>
           )}
         </aside>

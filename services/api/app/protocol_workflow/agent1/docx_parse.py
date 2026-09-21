@@ -19,6 +19,11 @@ W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 PARSER_VERSION = 'protocol-docx-xml.v2'
 
 
+class DocxNoExtractableText(ValueError):
+    """Readable DOCX package with no extractable source text."""
+
+
+
 @dataclass(frozen=True)
 class DocxCell:
     locator: str
@@ -215,5 +220,5 @@ def parse_docx(payload: bytes, *, parser_version: str = PARSER_VERSION) -> DocxP
             diagnostics.append(ParseDiagnostic('field_structure_pending', part,
                                                '来源中存在未闭合的域，需核对该部分的目录或引用范围。'))
     if not any(b.text.strip() for b in blocks):
-        raise ValueError('DOCX contains no extractable source text')
+        raise DocxNoExtractableText('DOCX contains no extractable source text')
     return DocxParseResult(source_hash, tuple(blocks), tuple(diagnostics), tuple(p[0] for p in story_roots), parser_version=parser_version)

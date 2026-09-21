@@ -168,6 +168,7 @@ class UpperLayerRuntimeRoute:
     provider: str
     transport: str
     model: str
+    expected_response_model: str
     deployment_profile: str
 
 
@@ -181,6 +182,11 @@ def upper_layer_runtime_route_from_env(
             values.get("WORKBENCH_AI_TRANSPORT") or "openai_compatible"
         ).strip(),
         model=str(values.get("WORKBENCH_AI_MODEL") or "").strip(),
+        expected_response_model=str(
+            values.get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL")
+            or values.get("WORKBENCH_AI_MODEL")
+            or ""
+        ).strip(),
         deployment_profile=upper_layer_deployment_profile_from_env(values),
     )
     if not route.provider or not route.transport or not route.model:
@@ -244,6 +250,7 @@ class RuntimeRoutedWritingReferenceUpperLayerExecutionService:
             ),
             provider=route.provider,
             transport=route.transport,
+            expected_response_model=route.expected_response_model,
             default_model=route.model,
             escalation_model=self._escalation_model(route),
         )
@@ -273,6 +280,10 @@ class RuntimeRoutedWritingReferenceUpperLayerExecutionService:
     @property
     def default_model(self) -> str:
         return self._snapshot()[1].model
+
+    @property
+    def expected_response_model(self) -> str:
+        return self._snapshot()[1].expected_response_model
 
     @property
     def escalation_model(self) -> str:
@@ -434,6 +445,7 @@ class DeepSeekUpperLayerAdapter:
         *,
         expected_provider: str = "deepseek",
         expected_transport: str = "openai_compatible",
+        expected_response_model: str = "",
     ) -> None:
         if not requested_model.strip():
             raise ValueError("upper-layer requested model is required")
@@ -441,6 +453,9 @@ class DeepSeekUpperLayerAdapter:
         self.provider_factory = provider_factory
         self.expected_provider = expected_provider
         self.expected_transport = expected_transport
+        self.expected_response_model = (
+            expected_response_model.strip() or requested_model.strip()
+        )
 
     def _thinking_mode(self) -> str:
         return (
@@ -524,6 +539,14 @@ class DeepSeekUpperLayerAdapter:
             return "provider_identity_mismatch"
         if model_name != self.requested_model:
             return "requested_model_identity_mismatch"
+        if (
+            str(
+                getattr(provider, "expected_response_model", "")
+                or model_name
+            ).strip()
+            != self.expected_response_model
+        ):
+            return "expected_response_model_identity_mismatch"
         if transport != self.expected_transport:
             return "transport_identity_mismatch"
         return ""
@@ -608,7 +631,9 @@ class DeepSeekUpperLayerAdapter:
             ),
         )
         return UpperLayerAdapterResult(
-            response_model=request.requested_model,
+            response_model=str(
+                getattr(provider, "response_model", "") or request.requested_model
+            ),
             status="succeeded",
             output_payload=_upper_layer_hash_payload(plan),
         )
@@ -723,7 +748,9 @@ class DeepSeekUpperLayerAdapter:
         serialized_outcome = _upper_layer_hash_payload(outcome)
         if outcome.passed and not outcome.fallback_used:
             return UpperLayerAdapterResult(
-                response_model=request.requested_model,
+                response_model=str(
+                    getattr(provider, "response_model", "") or request.requested_model
+                ),
                 status="succeeded",
                 output_payload=serialized_outcome,
                 preserved_hy_mt2_target_map_sha256=actual_target_hash,
@@ -732,14 +759,18 @@ class DeepSeekUpperLayerAdapter:
             return self._terminal("pro_upper_layer_qc_not_accepted")
         if outcome.passed:
             return UpperLayerAdapterResult(
-                response_model=request.requested_model,
+                response_model=str(
+                    getattr(provider, "response_model", "") or request.requested_model
+                ),
                 status="completed_degraded",
                 output_payload=serialized_outcome,
                 failure_code="flash_qc_degraded_hy_mt2_preserved",
                 preserved_hy_mt2_target_map_sha256=actual_target_hash,
             )
         return UpperLayerAdapterResult(
-            response_model=request.requested_model,
+            response_model=str(
+                getattr(provider, "response_model", "") or request.requested_model
+            ),
             status="failed_escalatable",
             failure_code="flash_qc_deterministic_failure",
         )
@@ -771,10 +802,15 @@ class DeepSeekUpperLayerAdapter:
                 "http 404",
             )
         ):
+            diagnostics = dict(getattr(exc, "diagnostics", {}) or {})
+            status = int(diagnostics.get("http_status") or 0)
             return self._terminal(
-                "deepseek_request_rejected"
-                if self.expected_provider == "deepseek"
-                else "product_ai_request_rejected"
+                {
+                    400: "product_ai_http_400_invalid_request",
+                    401: "product_ai_http_401_authentication_failed",
+                    403: "product_ai_http_403_forbidden",
+                    404: "product_ai_http_404_route_or_model_not_found",
+                }.get(status, "product_ai_request_rejected")
             )
         if any(
             marker in message
@@ -792,7 +828,10 @@ class DeepSeekUpperLayerAdapter:
 
     def _run_provider(self, provider: Any, envelope: AiPromptEnvelope) -> Any:
         output = provider.run(envelope)
-        if str(getattr(provider, "response_model", "") or "") != self.requested_model:
+        if (
+            str(getattr(provider, "response_model", "") or "")
+            != self.expected_response_model
+        ):
             raise _ResponseModelIdentityError
         return output
 
@@ -894,9 +933,14 @@ def build_production_upper_layer_adapter_factory(
 ) -> Callable[[str], DeepSeekUpperLayerAdapter]:
     effective_provider_factory = provider_factory or (
         build_production_product_ai_provider_factory(env=env)
-        if env is None or provider != "deepseek"
-        else build_production_deepseek_provider_factory(env=env)
+        if env is not None or provider != "deepseek"
+        else build_production_deepseek_provider_factory()
     )
+    expected_response_model = str(
+        (env or {}).get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL")
+        or (env or {}).get("WORKBENCH_AI_MODEL")
+        or ""
+    ).strip()
 
     def _factory(model: str) -> DeepSeekUpperLayerAdapter:
         return DeepSeekUpperLayerAdapter(
@@ -904,6 +948,7 @@ def build_production_upper_layer_adapter_factory(
             effective_provider_factory,
             expected_provider=provider,
             expected_transport=transport,
+            expected_response_model=expected_response_model,
         )
 
     return _factory

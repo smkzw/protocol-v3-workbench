@@ -30,8 +30,10 @@ class ObjectRevisionWorker:
         self._product_profile = product_profile
         self._adapter_factory = adapter_factory
         self._clock = clock or (lambda: datetime.now(timezone.utc))
-        self.progress = {'running': False, 'applied': 0, 'errors': []}
+        self.progress = {'running': False, 'applied': 0, 'errors': [],
+                         'errors_by_operation': {}, 'candidates': {}}
         self._materials = {}
+        self._probe_verified = False
 
     def _build_adapter(self, key):
         from app.protocol_workflow.runtime.adapters.direct_api import DirectApiAdapter  # noqa: F401
@@ -40,7 +42,10 @@ class ObjectRevisionWorker:
         if self._product_profile == 'deepseek':
             from app.protocol_workflow.runtime.adapters.deepseek_api import (
                 build_deepseek_api_adapter)
+            from app.protocol_workflow.runtime.omp_credentials import (
+                resolve_omp_deepseek_key)
             return build_deepseek_api_adapter(
+                credential_resolver=resolve_omp_deepseek_key,
                 artifact_text_resolver=self._resolver, max_input_bytes=2_000_000,
                 receipt_sink=self._receipt_sink(key))
         from app.protocol_workflow.runtime.adapters.zhipu_api import (
@@ -102,12 +107,51 @@ class ObjectRevisionWorker:
             record = self._stored_response(key)
             if record is None:
                 adapter = self._build_adapter(key)
+                if not self._probe_verified:
+                    if not adapter.probe():
+                        raise ValueError('object_revision_product_probe_failed')
+                    self._probe_verified = True
                 receipt = self._dispatch_batch(adapter, material_text, material_sha)
                 record = read_model_response(self._store, receipt['output_artifact_ref'])
                 if record['receipt'].get('output_sha256') != receipt['output_sha256']:
                     raise ValueError('object_revision_response_material_mismatch')
-            self.progress['applied'] += 1
-            return _parse_candidate(record['content'])
+            try:
+                candidate = _parse_candidate(record['content'])
+            except ValueError as exc:
+                if str(exc) != 'object_revision_candidate_unparsable':
+                    raise
+                # One same-model structural correction only. The original
+                # response remains immutable; the correction may wrap it in
+                # the required JSON object but must not revise its wording.
+                correction_material = {
+                    'schema_version': 'object-revision-structure-correction.v1',
+                    'instruction': (
+                        '仅把original_response原样放入replacement_content字符串，'
+                        '输出单个JSON对象，不得增删或改写任何医学内容。'),
+                    'original_response': record['content'],
+                }
+                correction_text = _canonical_json(correction_material)
+                correction_sha = hashlib.sha256(
+                    correction_text.encode('utf-8')).hexdigest()
+                correction_key = 'object-revision-correction:' + correction_sha[16:]
+                corrected = self._stored_response(correction_key)
+                if corrected is None:
+                    correction_adapter = self._build_adapter(correction_key)
+                    if not self._probe_verified:
+                        if not correction_adapter.probe():
+                            raise ValueError('object_revision_product_probe_failed')
+                        self._probe_verified = True
+                    correction_receipt = self._dispatch_batch(
+                        correction_adapter, correction_text, correction_sha)
+                    corrected = read_model_response(
+                        self._store, correction_receipt['output_artifact_ref'])
+                    if corrected['receipt'].get('output_sha256') \
+                            != correction_receipt['output_sha256']:
+                        raise ValueError(
+                            'object_revision_response_material_mismatch')
+                candidate = _parse_candidate(corrected['content'])
+            self.progress['candidates'][operation_id] = candidate
+            return candidate
         finally:
             self.progress['running'] = False
 

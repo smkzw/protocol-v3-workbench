@@ -1847,3 +1847,13 @@ npm exec vite -- --port 5186 --strictPort --host 127.0.0.1
 **下一步恢复动作（按序）**：①读会商日志（若PID 95065已退且日志含完整审阅意见书）→②按意见书修复：优先P0-A初稿生成停滞（三测试者复现，r8遗留；继续写作点击后前端0网络请求，查manuscript chapter-draft派发/durable executor/前端状态机三处）、P0-B确认门禁不收敛（三测试者同族：每轮生成新未决项并要求确认上一轮自身补答，查needs_information判定与确认事实回写链）、P0-C跨项目串染（TED方案正文出现IgAN适应症"已确认"表述，查导出章节装配来源）→③P1：v2_n_*缺口锚点泄漏进导出正文（ac035b2剥离未覆盖缺口成文路径）、导入方案摘要挂死13min、chapter-sources:hash按钮文本直出、"继承性义务"病句、OCR图片型DOCX不可用→④回归（PYTHONPATH=services/api:packages:. venv runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python -m pytest tests/protocol_v3/ -q）→⑤提交GitHub→⑥备份两库后删全部旧项目（保留出厂demo）→⑦严格按锁定编队重派第十一轮：omp -p --no-session --model <provider/model> --thinking <level>，配t17_prompts/r11_tester{1..4}_*.md（COPD/MS/MDD/膝OA+易用性专题），muse-spark(max)/gemini-3.8-flash(high)（gemini配额至2026-09-23T03:23Z不可用，需替代如muse-spark或deepseek-v4.1并记录偏差）/cursor-grok-4.6(high)/deepseek-v4.1-flash(max)，python subprocess.Popen(start_new_session=True) setsid派发，日志/tmp/t17_r11_testerN_*.log。
 **第十轮报告要点**：tester2 TED入口B全程走通（导出Word成功+GenOffice编辑保存往返OK）但产品FAILED（7/111章、104缺口、文献/目录/流程图缺失）；tester1入口A初稿停滞6/111；tester3 IPF门禁4轮不收敛止步0/111+OCR图片型不可用；tester4痛风停滞10/103+正文出现"v2_n_16_x1"内部锚点与"继承性义务"病句。反拟合四测试者全过。AI通道修复实战验证：四测试者全部穿越seed-generate与设计AI节点，第九轮401/504/blocked全灭。
 **环境注意**：本轮5285重启漏设WORKBENCH_RUNTIME_DIR用了共享runtime（项目库=工作台/runtime/user_projects.sqlite3），下一轮重启必须补上并把项目库路径同步到清理SQL；tester1原gemini进程429配额墙至09-23。
+
+## 2026-09-21 Codex 接手第十轮后续修复
+- 当前源码 24c1ed1；6de4afb为实现基线，后继提交归档第十轮。已有runtime脏文件保留。用户已明确恢复持续推进。native Goal工具仍报告paused，仅记录差异，不改内部数据库。
+- 权威修订以 requirements-v2 R1–R5 为准：完整结构工作稿可保留显式非关键缺口，自由编辑与设计确认/核对分离，导出不得静默改正文。旧Goal与旧检查点冲突处不继续执行。
+- 模式：execution-plus-conference。后端恢复链派发独立有界执行，Codex负责当前证据、前端与相邻链路整合，冻结修改后独立会商复核；选择依据是恢复合同跨层且此前多轮修复未闭环。
+- 第十轮跨项目串染已被会商撤销，不据旧checkpoint误判改数据。保留全部现场数据库，不执行交接建议的共享项目删除；新验收在隔离运行目录完成。
+- 当前顺序：恢复/失败隔离 → 确认补答闭环 → 导入/正文/导出同源问题 → 定向与完整真实验收。不是重新开始旧阶段。执行包 mw_r11_recovery_20260921。
+- 用户追加宽屏密度、AI文案分点、编辑器格式退步审阅：纳入本次核心范围。ego TaskSpace=199/p1，后续复用；编辑链会商 mw_r11_editor_review_20260921（只读）。摘要StrictMode行为反例已复现，修复后5/5定向通过；首轮命令工作目录错误未写测试，未将旧4通过冒充新验证。
+
+2026-09-21 09:24：宽屏/编辑链源码会商返回，修复与限制持续记录于 runs/requirements_v2_20260919/t17_round11/TAKEOVER_REVIEW.md。真实Office作为默认主画布，侧边研究设计；当前下载追随Office保存；暂未最终验收。ego199/p1继续复用；后端execution会话41554仍在跑，禁止重复派发。

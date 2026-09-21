@@ -24,7 +24,7 @@ from typing import Any, Mapping
 
 from docx import Document as open_docx
 from docx.enum.section import WD_ORIENT, WD_SECTION
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_TAB_ALIGNMENT
 from docx.oxml.ns import qn
 
 from app.protocol_workflow.canonical.document import document_revision_hash
@@ -88,26 +88,40 @@ def _replace_text_in_part(part, replacements: dict[str, str]) -> int:
     for table in part.tables:
         for row in table.rows:
             for cell in row.cells:
-                hits += _replace_in_headers_footers(cell, replacements)
+                hits += _replace_text_in_part(cell, replacements)
     return hits
 
 
 def _replace_in_paragraph(para, replacements: dict[str, str]) -> int:
-    joined = ''.join(run.text for run in para.runs)
-    if not joined:
-        return 0
-    new = joined
+    return _replace_paragraph_xml(para._p, replacements)
+
+
+def _replace_paragraph_xml(wp, replacements: dict[str, str]) -> int:
+    """Replace text spans without flattening runs, tabs, breaks or textboxes."""
+    nodes = [n for n in wp.iter(qn('w:t'))
+             if next(n.iterancestors(qn('w:p')), None) is wp]
+    changed = False
     for old in sorted(replacements, key=len, reverse=True):
-        real = replacements[old]
-        if old and old in new:
-            new = new.replace(old, real)
-    if new == joined:
-        return 0
-    if para.runs:
-        para.runs[0].text = new
-        for run in para.runs[1:]:
-            run.text = ''
-    return 1
+        if not old:
+            continue
+        text = ''.join(n.text or '' for n in nodes)
+        offsets = []
+        pos = 0
+        for node in nodes:
+            end = pos + len(node.text or '')
+            offsets.append((node, pos, end))
+            pos = end
+        for match in reversed(list(re.finditer(re.escape(old), text))):
+            spans = [(n, a, b) for n, a, b in offsets
+                     if a < match.end() and b > match.start()]
+            for i, (node, start, end) in enumerate(spans):
+                value = node.text or ''
+                left = max(0, match.start() - start)
+                right = min(end - start, match.end() - start)
+                node.text = value[:left] + (replacements[old] if i == 0 else '') + value[right:]
+                node.set(qn('xml:space'), 'preserve')
+            changed = changed or bool(spans)
+    return int(changed)
 
 
 def _replace_in_headers_footers(doc, replacements: dict[str, str]) -> int:
@@ -116,6 +130,8 @@ def _replace_in_headers_footers(doc, replacements: dict[str, str]) -> int:
         for part in (section.header, section.footer,
                      section.first_page_header, section.first_page_footer,
                      section.even_page_header, section.even_page_footer):
+            if part.is_linked_to_previous:
+                continue
             try:
                 hits += _replace_text_in_part(part, replacements)
             except Exception:  # noqa: BLE001 — a linked/absent part is skipped
@@ -123,19 +139,65 @@ def _replace_in_headers_footers(doc, replacements: dict[str, str]) -> int:
     return hits
 
 
+def _layout_template_headers(doc) -> None:
+    """Use the printable width instead of template space padding."""
+    seen = set()
+    for section in doc.sections:
+        width = section.page_width - section.left_margin - section.right_margin
+        for part in (section.header, section.first_page_header, section.even_page_header):
+            if part.is_linked_to_previous:
+                continue
+            if part.part.partname in seen:
+                continue
+            seen.add(part.part.partname)
+            for para in part.paragraphs:
+                if not ('版本号：' in para.text or '版本日期：' in para.text):
+                    continue
+                padding = re.findall(r' {10,}', para.text)
+                if not padding:
+                    continue
+                # Retain existing run styles; replace only space padding with
+                # native Word tabs, which track the section's usable width.
+                _replace_in_paragraph(para, {spaces: '\t' for spaces in padding})
+                for node in list(para._p.iter(qn('w:t'))):
+                    if '\t' not in (node.text or ''):
+                        continue
+                    chunks = node.text.split('\t')
+                    node.text = chunks[0]
+                    previous = node
+                    for chunk in chunks[1:]:
+                        tab = node.makeelement(qn('w:tab'))
+                        previous.addnext(tab)
+                        text = node.makeelement(qn('w:t'), {qn('xml:space'): 'preserve'})
+                        text.text = chunk
+                        tab.addnext(text)
+                        previous = text
+                tabs = para.paragraph_format.tab_stops
+                tabs.clear_all()
+                style = para.style
+                cleared = set()
+                while style is not None:
+                    for inherited in style.paragraph_format.tab_stops:
+                        if inherited.position not in cleared:
+                            tabs.add_tab_stop(inherited.position, WD_TAB_ALIGNMENT.CLEAR)
+                            cleared.add(inherited.position)
+                    style = style.base_style
+                if len(padding) > 1:
+                    tabs.add_tab_stop(int(width / 2), WD_TAB_ALIGNMENT.CENTER)
+                tabs.add_tab_stop(width, WD_TAB_ALIGNMENT.RIGHT)
+
+
 def _find_toc_end(doc) -> int | None:
-    """Index of the last paragraph of the front matter (after the TOC)."""
-    last_toc = None
+    """Keep front matter through its TOC heading, never its template cache.
+
+    A cached TOC entry such as ``1. 方案摘要`` is not a body boundary. Cutting
+    there leaves the outer TOC field open and retains someone else's pages.
+    The current manuscript receives a fresh, balanced field below.
+    """
     for i, para in enumerate(doc.paragraphs):
-        text = para.text.strip()
-        if text.startswith('目') and '录' in text:
-            last_toc = i
-        field = para._p.findall('.//' + qn('w:fldChar'))
-        if field:
-            last_toc = i
-        if text.startswith('1.') or text.startswith('1、'):
+        if re.sub(r'\s+', '', para.text) == '目录':
             return i
-    return last_toc
+    return None
 
 
 def _bookmark(paragraph, name: str) -> None:
@@ -166,6 +228,7 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     # 1) real header/footer + cover values before body surgery
     replacements = _real_values(study_facts, document)
     _replace_in_headers_footers(doc, replacements)
+    _layout_template_headers(doc)
     front_limit = _find_toc_end(doc)
     if front_limit is None:
         raise ValueError('production_export_front_matter_unresolved')
@@ -182,16 +245,21 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
                       if '临床研究' in para.text and ('XXXXXX' in para.text or '安全性的' in para.text)), None)
     if title_idx is not None:
         title_para = paras[title_idx]
-        for para in paras[:title_idx]:
-            if para.text.strip():
-                para._p.getparent().remove(para._p)
+        # Remove the instruction page as a whole, including its page break.
+        # Preserve the cover's spacing after that break. Removing only text
+        # left an empty first page and miscounted the front-matter boundary.
+        instruction_end = max((i + 1 for i, para in enumerate(paras[:title_idx])
+            if any(br.get(qn('w:type')) == 'page'
+                   for br in para._p.findall('.//' + qn('w:br')))), default=title_idx)
+        for para in paras[:instruction_end]:
+            para._p.getparent().remove(para._p)
         for run in title_para.runs[1:]:
             run.text = ''
         if title_para.runs:
             title_para.runs[0].text = real_title
         else:
             title_para.add_run(real_title)
-        front_limit -= title_idx
+        front_limit -= instruction_end
     for para in doc.paragraphs[:front_limit + 1]:
         _replace_in_paragraph(para, replacements)
     for table in doc.tables:
@@ -203,24 +271,25 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     # 1a) deep sweep per paragraph (covers text boxes the docx API misses and
     # placeholders split across runs): join all w:t of a w:p, then rewrite.
     for wp in doc.element.body.iter(qn('w:p')):
-        nodes = list(wp.iter(qn('w:t')))
-        if not nodes:
-            continue
-        joined = ''.join(n.text or '' for n in nodes)
-        new_text = joined
-        for old_t in sorted(replacements, key=len, reverse=True):
-            if old_t and old_t in new_text:
-                new_text = new_text.replace(old_t, replacements[old_t])
-        if new_text != joined:
-            nodes[0].text = new_text
-            for n in nodes[1:]:
-                n.text = ''
+        # Text boxes contain their own paragraphs, often in both DrawingML
+        # Choice and VML Fallback branches. Process each paragraph separately;
+        # joining descendants of the outer anchor duplicates the alternatives.
+        _replace_paragraph_xml(wp, replacements)
 
     # 1b) template instruction paragraphs (blue notes) never reach the export
     instruction_markers = ('示例文本', '定稿前请更新', '蓝色说明',
                            '紧急危害例外仅适用于', '不得将其写成通用豁免')
+    template_instruction_texts = {
+        '所有版本都应当具有版本号和日期。',
+        '保密声明。示例如下：',
+        '以下表格旨在体现历次EC/IRB批准的方案版本变更情况，包括修订内容描述及依据。当前修订案的变更汇总表应位于方案标题页。 如不需要，可删除本页',
+        '[以下签字页如有需要可进行添加，以下签字页为示例]',
+        '如适用，示例#1',
+        '下表包含了本模板中出现的缩略语，该列表应根据实际方案制定（如从本表中删除未涉及的缩略语，增添新缩略语）。',
+    }
     for para in list(doc.paragraphs[:front_limit + 1]):
-        if any(marker in para.text for marker in instruction_markers):
+        if (para.text.strip() in template_instruction_texts
+                or any(marker in para.text for marker in instruction_markers)):
             para._p.getparent().remove(para._p)
             front_limit -= 1
 
@@ -290,7 +359,25 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             made += 1
         return made
 
-    _expand_signature_pages()
+    added_signature_pages = _expand_signature_pages()
+
+    # Cache only current heading text; pagination is deliberately left to the
+    # renderer/Word field update, never copied from the source template.
+    toc_titles = [p.text for p in doc.paragraphs if p.text.strip()
+        and p.style.name.startswith('Heading')
+        and re.sub(r'\s+', '', p.text) != '目录']
+    toc = doc.add_paragraph()
+    for kind in ('begin', 'instruction', 'separate'):
+        run = toc.add_run()
+        if kind == 'instruction':
+            field = run._r.makeelement(qn('w:instrText'))
+            field.set(qn('xml:space'), 'preserve')
+            field.text = ' TOC \\o "1-3" \\h \\z \\u '
+        else:
+            field = run._r.makeelement(qn('w:fldChar'), {qn('w:fldCharType'): kind})
+            if kind == 'begin':
+                field.set(qn('w:dirty'), 'true')
+        run._r.append(field)
 
     # 3) our chapters with bookmarks + numbered table captions + REF
     # cross-references, serialized exactly as saved (R4/A13/A14).
@@ -315,6 +402,7 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             # 模板标题表未登记的节点不产出 heading（正文并入前一章），
             # 但块内容本身照常导出。
             if title_text:
+                toc_titles.append(title_text)
                 heading = doc.add_heading(title_text,
                                           level=STYLE_ID_TO_HEADING.get(info.get('style_id', ''), 2))
                 _bookmark(heading, 'chap_' + re.sub(r'[^A-Za-z0-9]', '_', node_id))
@@ -340,6 +428,14 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
                 _tune_wide_table(doc.tables[-1])
     if in_landscape:
         _switch_orientation(doc, False)
+
+    for i, title_text in enumerate(toc_titles):
+        if i:
+            toc.add_run().add_break()
+        toc.add_run(title_text)
+    end_run = toc.add_run()
+    end_run._r.append(end_run._r.makeelement(qn('w:fldChar'),
+        {qn('w:fldCharType'): 'end'}))
 
     # 3b) engineering/process language is REPORTED, never deleted here
     # (R-C04): cleaning is a visible candidate applied to a document version,
@@ -380,12 +476,23 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
     # has a strict child sequence — updateFields belongs before w:compat;
     # appending at the end makes Word reject the whole file.
     settings = doc.settings.element
-    update = settings.makeelement(qn('w:updateFields'), {qn('w:val'): 'true'})
-    compat = settings.find(qn('w:compat'))
-    if compat is not None:
-        compat.addprevious(update)
+    # A fresh generated draft must not inherit the template author's review
+    # mode. This does not touch any already-saved Office snapshot or revisions.
+    tracking = settings.find(qn('w:trackRevisions'))
+    if tracking is not None:
+        settings.remove(tracking)
+    updates = settings.findall(qn('w:updateFields'))
+    if updates:
+        updates[0].set(qn('w:val'), 'true')
+        for duplicate in updates[1:]:
+            settings.remove(duplicate)
     else:
-        settings.append(update)
+        update = settings.makeelement(qn('w:updateFields'), {qn('w:val'): 'true'})
+        compat = settings.find(qn('w:compat'))
+        if compat is not None:
+            compat.addprevious(update)
+        else:
+            settings.append(update)
 
     pruned_media = _prune_orphaned_media(doc)
     doc.save(str(output_path))
@@ -395,9 +502,16 @@ def render_production_docx(template_path, template_dir, document: Mapping[str, A
             'export_scope': 'production_docx', 'tables': table_no,
             'cross_references': ref_count,
             'engineering_marker_hits': marker_hits,
+            'template_diagnostics': {
+                'cover_anchor_found': title_idx is not None,
+                'added_signature_pages': added_signature_pages,
+                'retained_instruction_candidates': [p.text for p in doc.paragraphs[:front_limit + 1]
+                    if any(marker in p.text for marker in ('示例', '如有需要', '本模板', '请更新'))],
+            },
             'orphaned_media_pruned': pruned_media,
             'field_diagnostics': {'cross_reference_fields': ref_count,
                 'update_fields_on_open': True,
+                'toc_cache': 'current_headings_without_unverified_page_numbers',
                 'third_party_citation_interop': 'not_claimed'}}
 
 

@@ -1,0 +1,8 @@
+接手医学写作 Protocol v3 连续构建。你是唯一主执行与最终整合者，用户指定本fork模型gpt-5.6-sol、medium（不要自行切换，也不要据此改变产品模型/工程路由）。
+唯一实施区：/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313
+完整交接入口：/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/plans/protocol_v3_fork_execution_20260921/00_START_HERE.md
+先读最新全局AGENTS.md和适用项目指令，再完整读入口要求的移交状态、权威、PRD、架构、Plan、执行规范、BUILD_DISCIPLINE、验收总包与GOAL_PROMPT，运行资料包完整性校验。核对当前HEAD+dirty与SOURCE_STATE；不能仅从GitHub/旧Goal续作。原生Goal未被本资料包自动修改，请把GOAL_PROMPT作为本次用户任务目标执行；如工具无法更新原生Goal，诚实记录，不改内部数据库。
+从F00接管开始，先确认上一执行者/worker已停止写入，接收F01已产生结果，不重复派发。Trellis唯一动态状态。按F00–F11依赖连续实现，构建期间不逐处测试/逐任务回归，不加无当前需求的抽象/框架/管理层；每个任务的测试命令是F12集中验收目录。只有真实阻塞且源码检查不足、或完整功能批次必须编译才能继续集成时做有明确问题的最小诊断。
+完成实现后统一执行F12完整产品验收，F13交付。普通进度使用commentary；不因一个任务/会商/测试完成就结束回合等用户“继续”。遵守最新执行会商机制，同一长任务使用原handle持续等待，不因几分钟无输出重派。只有真实科学取舍、Ⅰ期模板、生产激活/真实cutover等必要用户决定才提问，独立工作继续。用户明确暂停时无损记录。
+特别落实宽屏双栏/高密度清晰bullet提示/真正Word编辑和保真导出；推荐预选不等于关键科学决定已确认。保留R1–R5草稿与当前Word所有权，不恢复零缺口才准起草或简化编辑器主库。
+不修改live8910/医学监查/共享runtime/外部SOP/只读plan-upgrade，不清理历史，不抄含key交接命令。完成是用户可用且证据充分的产品，不是测试数字或资料包完成。

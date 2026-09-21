@@ -40,7 +40,9 @@ function resolveDownloadUrl(sourceDownloadUrl, sourceArtifactId) {
 }
 
 function openItems(proposal) {
-  const questions = Array.isArray(proposal?.questions) ? proposal.questions.filter(Boolean) : [];
+  const questions = Array.isArray(proposal?.questions) ? proposal.questions.filter(Boolean).map(
+    item => typeof item === "string" ? item : item.question,
+  ).filter(Boolean) : [];
   const unresolved = Array.isArray(proposal?.regimen?.unresolved_questions)
     ? proposal.regimen.unresolved_questions.filter(Boolean)
     : [];

@@ -1,0 +1,346 @@
+{
+  "schema_version": "protocol-v3-fork-task-definitions.v1",
+  "definition_only": true,
+  "live_status_authority": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/.trellis/tasks/09-21-protocol-v3-t17-round11",
+  "tasks": [
+    {
+      "id": "F00",
+      "title": "接管源码、权威、运行与Trellis",
+      "depends_on": [],
+      "requirements": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A01"
+      ],
+      "execution": "tasks/F00_EXECUTION.md",
+      "verification": "tasks/F00_ACCEPTANCE.md"
+    },
+    {
+      "id": "F01",
+      "title": "设计卡真实选项与原确认意图恢复",
+      "depends_on": [
+        "F00"
+      ],
+      "requirements": [
+        "R2",
+        "R3",
+        "R5"
+      ],
+      "acceptance": [
+        "A05",
+        "A11",
+        "A12",
+        "V06"
+      ],
+      "execution": "tasks/F01_EXECUTION.md",
+      "verification": "tasks/F01_ACCEPTANCE.md"
+    },
+    {
+      "id": "F02",
+      "title": "给药推荐就地补答与确认事实收敛",
+      "depends_on": [
+        "F01"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R5"
+      ],
+      "acceptance": [
+        "A02",
+        "A04",
+        "A05",
+        "A08",
+        "V04"
+      ],
+      "execution": "tasks/F02_EXECUTION.md",
+      "verification": "tasks/F02_ACCEPTANCE.md"
+    },
+    {
+      "id": "F03",
+      "title": "整稿与设计图的真实可恢复运行",
+      "depends_on": [
+        "F00"
+      ],
+      "requirements": [
+        "R2",
+        "R3"
+      ],
+      "acceptance": [
+        "A11",
+        "A12",
+        "A25",
+        "V04"
+      ],
+      "execution": "tasks/F03_EXECUTION.md",
+      "verification": "tasks/F03_ACCEPTANCE.md"
+    },
+    {
+      "id": "F04",
+      "title": "双入口、来源身份、模型路径与反拟合",
+      "depends_on": [
+        "F00"
+      ],
+      "requirements": [
+        "R1",
+        "R5"
+      ],
+      "acceptance": [
+        "A01",
+        "A02",
+        "A03",
+        "A07",
+        "A08",
+        "A26"
+      ],
+      "execution": "tasks/F04_EXECUTION.md",
+      "verification": "tasks/F04_ACCEPTANCE.md"
+    },
+    {
+      "id": "F05",
+      "title": "完整结构且有实质正文的工作初稿",
+      "depends_on": [
+        "F02",
+        "F03",
+        "F04"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A13",
+        "A14",
+        "A23"
+      ],
+      "execution": "tasks/F05_EXECUTION.md",
+      "verification": "tasks/F05_ACCEPTANCE.md"
+    },
+    {
+      "id": "F06",
+      "title": "当前Office稿、候选、未保存输入与历史",
+      "depends_on": [
+        "F00"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A20",
+        "A21",
+        "A24",
+        "V05",
+        "V08"
+      ],
+      "execution": "tasks/F06_EXECUTION.md",
+      "verification": "tasks/F06_ACCEPTANCE.md"
+    },
+    {
+      "id": "F07",
+      "title": "实际Word快照的科学核对与显式同步",
+      "depends_on": [
+        "F06"
+      ],
+      "requirements": [
+        "R3"
+      ],
+      "acceptance": [
+        "A09",
+        "A10",
+        "A11",
+        "A17",
+        "A18",
+        "A25"
+      ],
+      "execution": "tasks/F07_EXECUTION.md",
+      "verification": "tasks/F07_ACCEPTANCE.md"
+    },
+    {
+      "id": "F08",
+      "title": "真实Word对象的局部AI修订与目标重生成",
+      "depends_on": [
+        "F05",
+        "F07"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A13",
+        "A14",
+        "A15",
+        "A16",
+        "A17"
+      ],
+      "execution": "tasks/F08_EXECUTION.md",
+      "verification": "tasks/F08_ACCEPTANCE.md"
+    },
+    {
+      "id": "F09",
+      "title": "真实文献插入、引用编号与文献表",
+      "depends_on": [
+        "F04",
+        "F06"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A22"
+      ],
+      "execution": "tasks/F09_EXECUTION.md",
+      "verification": "tasks/F09_ACCEPTANCE.md"
+    },
+    {
+      "id": "F10",
+      "title": "模板、文控、Word排版与当前版本导出",
+      "depends_on": [
+        "F05",
+        "F06"
+      ],
+      "requirements": [
+        "R3",
+        "R4"
+      ],
+      "acceptance": [
+        "A13",
+        "A14",
+        "A19",
+        "A21",
+        "A23"
+      ],
+      "execution": "tasks/F10_EXECUTION.md",
+      "verification": "tasks/F10_ACCEPTANCE.md"
+    },
+    {
+      "id": "F11",
+      "title": "桌面宽屏、信息密度与全状态交互收口",
+      "depends_on": [
+        "F01",
+        "F02",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09"
+      ],
+      "requirements": [
+        "R2",
+        "R3",
+        "R5"
+      ],
+      "acceptance": [
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "A21",
+        "A24"
+      ],
+      "execution": "tasks/F11_EXECUTION.md",
+      "verification": "tasks/F11_ACCEPTANCE.md"
+    },
+    {
+      "id": "F12",
+      "title": "独立跨研究端到端、医学与Word验收",
+      "depends_on": [
+        "F03",
+        "F04",
+        "F05",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A15",
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A21",
+        "A22",
+        "A23",
+        "A24",
+        "A25",
+        "A26",
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08"
+      ],
+      "execution": "tasks/F12_EXECUTION.md",
+      "verification": "tasks/F12_ACCEPTANCE.md"
+    },
+    {
+      "id": "F13",
+      "title": "可重现交付、经验复盘与激活决策",
+      "depends_on": [
+        "F12"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "acceptance": [
+        "A23"
+      ],
+      "execution": "tasks/F13_EXECUTION.md",
+      "verification": "tasks/F13_ACCEPTANCE.md"
+    }
+  ]
+}

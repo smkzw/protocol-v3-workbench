@@ -736,19 +736,37 @@ class ManuscriptDocumentService:
         if self.office_store is None:
             raise ValueError('manuscript_office_store_missing')
         document_id = manuscript_document_id(project_id, study_id)
-        # Read the current working-copy head outside the write transaction: a
-        # nested connection on the same sqlite file would deadlock the lock.
-        latest = self.latest_office_snapshot(project_id, study_id)
         base_artifact_revision = intent.get('base_artifact_revision')
-        if latest is not None and base_artifact_revision is not None \
-                and latest.get('artifact_revision') != base_artifact_revision:
-            raise OfficeWorkingCopyConflictError(latest)
         with self.uow_factory() as uow:
+            # Resolve the head under the same write transaction as the save.
+            # 0 means the editor opened before any Office snapshot existed.
+            latest = None
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_office_snapshot.v1':
+                    continue
+                verify_event_integrity(event)
+                latest = event.payload
+                if latest.get('operation_id') == intent['operation_id']:
+                    if latest['intent_sha256'] != self._office_snapshot_intent(project_id, study_id, intent):
+                        raise ValueError('manuscript_office_snapshot_intent_changed')
+                    return {**latest, 'persisted': True, 'replayed': True}
+            if latest is not None and base_artifact_revision is not None \
+                    and latest.get('artifact_revision') != base_artifact_revision:
+                raise OfficeWorkingCopyConflictError(latest)
             current = uow.semantic_document_repository.get_current(project_id, document_id)
             if current is None:
                 raise ValueError('manuscript_document_missing')
-            if current.revision != intent['expected_revision'] or \
-                    document_revision_hash(current) != intent['expected_document_sha256']:
+            current_hash = document_revision_hash(current)
+            expected_matches_current = (current.revision == intent['expected_revision']
+                and current_hash == intent['expected_document_sha256'])
+            expected_matches_open_word = (latest is not None
+                and latest.get('artifact_revision') == base_artifact_revision
+                and latest.get('document_revision') == intent['expected_revision']
+                and latest.get('document_sha256') == intent['expected_document_sha256'])
+            # A newer semantic candidate may coexist with the current Word.
+            # Saving that already-open Word keeps its own semantic provenance;
+            # choosing the candidate uses the current semantic provenance.
+            if not expected_matches_current and not expected_matches_open_word:
                 raise ValueError('manuscript_document_revision_changed')
             try:
                 content = _base64.b64decode(intent.get('content_base64') or '', validate=True)
@@ -774,8 +792,8 @@ class ManuscriptDocumentService:
                 'artifact_revision': meta.revision,
                 'base_artifact_revision': base_artifact_revision,
                 'size_bytes': meta.size_bytes,
-                'document_revision': current.revision,
-                'document_sha256': document_revision_hash(current),
+                'document_revision': intent['expected_revision'],
+                'document_sha256': intent['expected_document_sha256'],
                 'study_revision_sha256': intent.get('study_revision_sha256'),
                 'study_revision_sha256_current_observed': intent.get(
                     'study_revision_sha256_current_observed'),
@@ -827,6 +845,22 @@ class ManuscriptDocumentService:
                 latest = event.payload
         return latest
 
+    def office_snapshot_history(self, project_id, study_id):
+        """Read saved Word versions without adopting or rebuilding any bytes."""
+        document_id = manuscript_document_id(project_id, study_id)
+        versions = []
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_office_snapshot.v1':
+                    continue
+                verify_event_integrity(event)
+                payload = event.payload
+                versions.append({key: payload.get(key) for key in (
+                    'operation_id', 'artifact_revision', 'document_revision',
+                    'content_sha256', 'size_bytes')})
+                versions[-1]['saved_at'] = event.emitted_at.isoformat()
+        return list(reversed(versions))
+
     def office_snapshot_content(self, project_id, study_id, operation_id):
         """Read-only byte lookup by operation_id; no intent recomputation."""
         document_id = manuscript_document_id(project_id, study_id)
@@ -840,6 +874,28 @@ class ManuscriptDocumentService:
                     return None
                 return self.office_store.read_by_sha256(event.payload['content_sha256'])
         return None
+
+    def office_snapshot_reconciliation(self, project_id, study_id, confirmed_facts,
+                                       study_revision_sha256):
+        """Inspect the actual latest Word bytes; saving never depends on this."""
+        latest = self.latest_office_snapshot(project_id, study_id)
+        if latest is None:
+            return None
+        artifact = self.office_snapshot_content(
+            project_id, study_id, latest['operation_id'])
+        if artifact is None:
+            return None
+        from .office_projection import project_office_snapshot
+        result = project_office_snapshot(
+            artifact.content, confirmed_facts,
+            snapshot_sha256=latest['content_sha256'],
+            study_revision_sha256=study_revision_sha256)
+        result['operation_id'] = latest['operation_id']
+        result['artifact_revision'] = latest['artifact_revision']
+        result['opened_study_revision_sha256'] = latest.get('study_revision_sha256')
+        result['study_matches_opened_baseline'] = (
+            latest.get('study_revision_sha256') == study_revision_sha256)
+        return result
 
 
     def edit(self, project_id, study_id, confirmed_facts, intent):

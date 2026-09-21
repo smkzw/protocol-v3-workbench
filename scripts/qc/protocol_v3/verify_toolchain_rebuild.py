@@ -88,8 +88,8 @@ FRONTEND_PACKAGE_MANAGER_FIELD = "npm@10.9.8"
 FRONTEND_LOCKFILE_VERSION = 3
 FRONTEND_PACKAGE_COUNT = 255
 FRONTEND_INVENTORY_SCHEMA = "protocol-v3-test-inventory.v1"
-FRONTEND_INVENTORY_COUNTS = {"total": 59, "vitest": 12, "node": 47}
-FRONTEND_TEST_PATHS_SHA256 = "3aaf5a2c307e30ed8c64612a6ef7ea2b072d873d324e19c6432c6831207b5326"
+FRONTEND_INVENTORY_COUNTS = {"total": 63, "vitest": 15, "node": 48}
+FRONTEND_TEST_PATHS_SHA256 = "bbc6a3920a4cfe572a998fe41f9c377564c3d10392e4c5cfc3d671d20d71bf88"
 FRONTEND_IGNORED_DIRECTORIES = [
     ".cache",
     ".git",
@@ -119,6 +119,8 @@ FRONTEND_VITEST_PATHS = [
     "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
     "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
     "src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx",
+    "src/features/medical-writing/protocol-workbench/DesignElementsCards.test.jsx",
+    "src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.test.jsx",
     "src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx",
     "src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx",
     "src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx",
@@ -126,6 +128,7 @@ FRONTEND_VITEST_PATHS = [
     "src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx",
     "src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx",
     "src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx",
+    "src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.test.jsx",
     "tests/ProtocolSourceSelectionRecovery.test.jsx"
 ]
 FRONTEND_EXPLICIT_NODE_QC_PATHS = [

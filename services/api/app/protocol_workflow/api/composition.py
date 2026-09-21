@@ -19,10 +19,10 @@ explicit default-off switch and a durable per-project allowlist:
   stable Chinese not-found envelope — never a new error shape.
 * Structural validation inside the new chain stays inside the same Chinese
   envelope at route scope (custom route class); legacy handlers are unchanged.
-* Admission itself is out-of-band (see ``storage.sqlite.admit_project``):
-  there is no HTTP activation endpoint and no automatic enrollment in this
-  phase, and the in-memory cutover-transition record is never consulted
-  (it does not survive restarts and is not an admission authority).
+* Admission has no public HTTP activation endpoint. Product project creation
+  calls the composition-owned :func:`admit_protocol_workflow_project`, keeping
+  shared ``main.py`` outside storage internals while using the same durable
+  allowlist as route admission.
 
     WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED=1|true|yes|on  (default: off)
     WORKBENCH_PROTOCOL_V3_WORKFLOW_DB=<product sqlite path>  (required iff on)
@@ -80,13 +80,19 @@ from app.protocol_workflow.storage.selected import (
     UnitOfWorkFactory,
     create_product_unit_of_work_factory,
 )
-from app.protocol_workflow.storage.sqlite import SqliteStorageError, is_project_admitted, build_committed_reservation_repository_factory
+from app.protocol_workflow.storage.sqlite import (
+    SqliteStorageError,
+    admit_project,
+    build_committed_reservation_repository_factory,
+    is_project_admitted,
+)
 
 __all__ = [
     "ENV_BUSY_TIMEOUT_MS",
     "ENV_DB_PATH",
     "ENV_ENABLED",
     "ProtocolWorkflowMountConfig",
+    "admit_protocol_workflow_project",
     "mount_protocol_workflow_router",
     "protocol_workflow_config_from_env",
 ]
@@ -163,6 +169,19 @@ def protocol_workflow_config_from_env(
         db_path=db_path,
         busy_timeout_ms=busy_timeout_ms,
     )
+
+
+def admit_protocol_workflow_project(project_id: str) -> bool:
+    """Durably admit a newly created product project when v3 is enabled.
+
+    This composition boundary is the only Protocol v3 symbol the shared main
+    needs. A disabled surface performs no I/O and returns ``False``.
+    """
+    config = protocol_workflow_config_from_env()
+    if not config.enabled or config.db_path is None:
+        return False
+    admit_project(config.adapter_config(), project_id)
+    return True
 
 
 def _default_registry_path() -> Path:

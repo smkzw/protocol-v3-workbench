@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { RegimenProposalCard } from "./RegimenProposalCard";
 import { RegimenAdoptionCard } from "./RegimenAdoptionCard";
+import { RegimenClarificationCard } from "./RegimenClarificationCard";
 
 function readSaved(key) {
   try { return JSON.parse(localStorage.getItem(key) || "{}") || {}; } catch { return {}; }
@@ -36,6 +37,7 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [storageError, setStorageError] = useState("");
+  const [answersConfirmed, setAnswersConfirmed] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const flight = useRef(false);
   const alive = useRef(true);
@@ -97,7 +99,7 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
   }, [projectId, seedRunId, saved.runId, saved.pending, refresh]);
 
   const canStartSuccessor = Boolean(studyDefinitionId && job && saved.runId
-    && job.study_definition_id !== studyDefinitionId && !job.can_resume
+    && (job.study_definition_id !== studyDefinitionId || answersConfirmed) && !job.can_resume
     && job.status !== "running" && !saved.pending && !saved.uncertain);
   async function start(replaceReference = false) {
     if (flight.current || (saved.runId && !(replaceReference && canStartSuccessor)) || saved.pending) return;
@@ -121,7 +123,7 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
       dispatched = true;
       const next = checked(await apiRef.current.startRegimenDesign(projectId, intent, { signal: controller.signal }), intent?.expected_workflow_run_id);
       if (!alive.current || controller.signal.aborted) return;
-      remember({ runId: next.workflow_run_id, previousRunIds }); setJob(next);
+      remember({ runId: next.workflow_run_id, previousRunIds }); setJob(next); setAnswersConfirmed(false);
     } catch (reason) {
       if (!alive.current || controller.signal.aborted) return;
       // Do not start automatic lookup while the original request is still in flight.
@@ -145,7 +147,7 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
   }
   return <section className="pvi-proposal" aria-label="完整给药建议">
     {!saved.runId && !saved.pending && !saved.uncertain && <button type="button" disabled={busy} onClick={() => start()}>整理完整给药建议</button>}
-    {canStartSuccessor && <button type="button" disabled={busy} onClick={() => start(true)}>基于本研究整理新建议</button>}
+    {canStartSuccessor && <button type="button" disabled={busy} onClick={() => start(true)}>{answersConfirmed?'使用已确认补答继续完善建议':'基于本研究整理新建议'}</button>}
     {(busy || job?.status === "running") && <p role="status">正在整理各治疗期和组别的给药关系，记录已保存。</p>}
     {storageError && <p role="alert">{storageError}</p>}
     {error && <p role="alert">{error}</p>}
@@ -155,12 +157,7 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
     }}>核对本次设计</button>}
     {job?.status === "blocked" && <div role="alert">
       <p>本次给药设计未完成（原资料和记录已保留）。常见原因是整理服务暂时不可用或研究信息刚发生变化。</p>
-      <button type="button" disabled={busy} onClick={() => {
-        // T17 会商#5：blocked 终态给出明确出口——用原意图重新发起设计。
-        const intent = saved.intent || { seed_run_id: seedRunId, study_definition_id: studyDefinitionId };
-        setSaved({ pending: true, intent, previousRunIds: saved.previousRunIds });
-        setRefresh(value => value + 1);
-      }}>重新生成给药设计</button>
+      <button type="button" disabled={busy} onClick={() => setRefresh(value => value + 1)}>查看当前进度</button>
       {studyDefinitionId && actorId && <span> 或在下方研究信息卡片中核对研究信息后再试。</span>}
     </div>}
     {job?.status === "needs_structure_correction" && !job.can_resume && <p role="status">设计整理尚未完成，本次记录已保留。</p>}
@@ -170,7 +167,11 @@ function DesignSession({ projectId, seedRunId, api, onConfirm, studyDefinitionId
           runId={job.workflow_run_id} proposal={proposal} api={api} />
       : <RegimenProposalCard proposal={proposal} onConfirm={onConfirm}
           sourceDownloadUrl={id => api.sourceDownloadUrl(projectId, id)} />)}
-    {!proposal?.regimen && proposal?.questions?.length > 0 && <ul>{proposal.questions.map((question, index) => <li key={index}>{question}</li>)}</ul>}
+    {proposal?.questions?.length > 0 && (studyDefinitionId && actorId
+      ? <RegimenClarificationCard projectId={projectId} studyDefinitionId={studyDefinitionId}
+          actorId={actorId} runId={job.workflow_run_id} proposal={proposal} api={api}
+          onConfirmed={() => setAnswersConfirmed(true)}/>
+      : <ul>{proposal.questions.map((question,index)=><li key={question?.question_id||index}>{typeof question==='string'?question:question.question}</li>)}</ul>)}
     {saved.previousRunIds?.map((runId, index) => <button key={runId} type="button" onClick={() => readHistory(runId)}>查看之前的给药建议（{index + 1}）</button>)}
     {historicalJob && <section aria-label="之前的给药建议">
       <h3>之前的给药建议</h3>
