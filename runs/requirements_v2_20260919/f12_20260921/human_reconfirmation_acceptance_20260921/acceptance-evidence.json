@@ -1,0 +1,62 @@
+{
+  "schema_version": "mw_human_reconfirmation_acceptance_v1",
+  "source_commit": "c89efde9dec67b559a5813ed684a446a09d49e3a",
+  "project_id": "proj_user_8a5a00cb014a",
+  "scope": "isolated SQLite online-backup copy",
+  "before": {
+    "journey_revision": 20,
+    "run_id": "ct_run_64da04e8e33f89dc728f",
+    "snapshot_id": "wref_search_95d54c91e3c4fb21b234",
+    "source_confirmation_id": "ct_conf_64147b6c4d57d64cb9b9",
+    "retained_count": 59,
+    "excluded_count": 256,
+    "candidate_count": 315,
+    "reconfirmation_required": true
+  },
+  "browser": {
+    "tool": "ego-browser ego-lite",
+    "task_space_id": 12,
+    "viewport_checked": "1920x1080 and 1440x900",
+    "horizontal_overflow": false,
+    "review_card_top_before_layout_fix_px": 1578,
+    "review_card_top_after_layout_fix_px": 800,
+    "candidate_list_top_after_layout_fix_px": 1215,
+    "visible_primary_action": "确认当前315项分类",
+    "external_ai_or_registry_resources": [],
+    "screenshot_status": "UNVERIFIED",
+    "screenshot_limitation": "ego-lite Page.captureScreenshot timed out in three attempts; semantic snapshots and DOM geometry were retained instead"
+  },
+  "after": {
+    "journey_revision": 23,
+    "run_status": "confirmed",
+    "snapshot_id": "wref_search_95d54c91e3c4fb21b234",
+    "confirmation_id": "ct_reconf_81450fa2caf9cf004f20",
+    "confirmation_kind": "human_reconfirmation",
+    "source_confirmation_id": "ct_conf_64147b6c4d57d64cb9b9",
+    "projection_status": "corpus_projected",
+    "retained_count": 59,
+    "excluded_count": 256,
+    "reconfirmation_required": false
+  },
+  "network_observation": {
+    "confirmation_request": "POST competitor-triage/ct_run_64da04e8e33f89dc728f/reconfirm -> 200",
+    "new_competitor_search": false,
+    "new_ai_triage": false,
+    "new_download": false,
+    "new_ocr": false,
+    "new_translation": false
+  },
+  "source_runtime": {
+    "sqlite_file_count": 18,
+    "hash_manifest_sha256": "d00dde8ccf7efe59ac1c29c416a2dc0732cdb567a5a0e7addbc4c355b57e6740",
+    "hashes_unchanged_after_acceptance": true
+  },
+  "verification": {
+    "frontend_build_modules": 1971,
+    "vitest_files_passed": 15,
+    "vitest_tests_passed": 110,
+    "node_test_files_passed": 48,
+    "node_tests_passed": 65,
+    "git_diff_check": "passed"
+  }
+}

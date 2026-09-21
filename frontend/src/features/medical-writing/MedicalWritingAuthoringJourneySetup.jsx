@@ -2256,6 +2256,7 @@ export function MedicalWritingAuthoringJourneySetup({
       || automaticMinimumSearchLockRef.current
       || !framingSearchReady
       || journey.search_plan?.latest_snapshot_id
+      || journey.discovery_basket_projection?.snapshot_id
     ) return;
     const minimumFactKey = [
       projectId,
@@ -2276,6 +2277,7 @@ export function MedicalWritingAuthoringJourneySetup({
     journey?.project_id,
     journey?.status,
     journey?.search_plan?.latest_snapshot_id,
+    journey?.discovery_basket_projection?.snapshot_id,
     loadError,
     loading,
     projectId,
@@ -2407,7 +2409,9 @@ export function MedicalWritingAuthoringJourneySetup({
     setPrefillSection(destination.stage === "picos" ? (destination.group === "applicability" ? "design" : "picos") : destination.group === "design" ? "design" : "identity");
     setAdvancedRefinementOpen(true);
   };
-  const competitorSnapshotId = journey?.search_plan?.latest_snapshot_id || "";
+  const competitorSnapshotId = journey?.search_plan?.latest_snapshot_id
+    || journey?.discovery_basket_projection?.snapshot_id
+    || "";
   const competitorSearchCount = journey?.search_plan?.returned_count || 0;
   const compactResearchPipeline = pipelineStatus?.pipeline || {};
   const compactResearchPercent = Math.max(
@@ -3963,6 +3967,16 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
         ? `还需确认：${assemblyPlanBlockers.slice(0, 3).map((item) => item.label).join("、")}${assemblyPlanBlockers.length > 3 ? `等${assemblyPlanBlockers.length}项` : ""}。`
         : assemblyPlanState.error || "方案结构尚未完成核对，暂不能建立工作稿。";
   const persistedSearchMessage = searchPlan?.latest_snapshot_id ? `最近一次公开检索已记录：${searchPlan.returned_count}项公开研究，${searchPlan.public_document_count}份公开Protocol；结果编号 ${searchPlan.latest_snapshot_id}。` : "";
+  const reusableSnapshotId = searchPlan?.latest_snapshot_id
+    || journey?.discovery_basket_projection?.snapshot_id
+    || "";
+  const reusingPriorSnapshot = Boolean(
+    reusableSnapshotId && !searchPlan?.latest_snapshot_id,
+  );
+  const visibleSearchMessage = searchMessage
+    || (reusingPriorSnapshot
+      ? "既有公开检索结果已保留；请按当前研究信息复核预选分类，无需重复检索。"
+      : persistedSearchMessage);
   const searchContractIncomplete = Boolean(searchPlan && !searchPlan.registry_filter);
   const registryFilter = searchPlan?.registry_filter || {};
   const triageCriteria = searchPlan?.triage_criteria || [];
@@ -3985,7 +3999,9 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
           title={
             searchContractIncomplete
               ? "检索条件不完整，请刷新页面后重试"
-              : searchPlan?.latest_snapshot_id && (searchPlan?.returned_count || 0) > 0
+              : reusingPriorSnapshot
+                ? "既有结果可直接复核；仅在需要更新公开信息时重新检索"
+                : searchPlan?.latest_snapshot_id && (searchPlan?.returned_count || 0) > 0
                 ? "已有检索结果；再次点击将按当前条件重新检索并覆盖上一批结果"
                 : searchPlan?.latest_snapshot_id && (searchPlan?.returned_count || 0) === 0
                   ? "上次检索未找到公开研究；可修正适应症英文检索词后重新检索"
@@ -3996,7 +4012,9 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
           {" "}
           {busy === "search"
             ? "检索中…"
-            : searchPlan?.latest_snapshot_id
+            : reusingPriorSnapshot
+              ? "按需重新检索"
+              : searchPlan?.latest_snapshot_id
               ? ((searchPlan?.returned_count || 0) > 0 ? "重新检索竞品" : "未找到结果，重新检索")
               : "执行公开竞品检索"}
         </button>
@@ -4011,9 +4029,9 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
           </section>
         </div>
         {searchContractIncomplete && <p className="authoring-search-contract-error" role="alert">检索合同版本过旧，请刷新页面后重试；系统不会按前端推测条件发起注册库检索。</p>}
-        {(searchMessage || persistedSearchMessage) && <p>{searchMessage || persistedSearchMessage}</p>}
+        {visibleSearchMessage && <p>{visibleSearchMessage}</p>}
       </div>
-      {searchPlan?.latest_snapshot_id && <WritingReferencePanel projectId={projectId} variant="authoring" snapshotId={searchPlan.latest_snapshot_id} lockedIndication={searchPlan.registry_filter?.condition_term || journey.framing?.clinicaltrials_condition_term || journey.framing?.indication || ""} lockedPhase={journey.framing?.study_phase || ""} journey={journey} onJourneyChange={setJourney} selectedBriefIds={selectedBriefIds} onSelectedBriefIdsChange={setSelectedBriefIds} />}
+      {reusableSnapshotId && <WritingReferencePanel projectId={projectId} variant="authoring" snapshotId={reusableSnapshotId} lockedIndication={searchPlan.registry_filter?.condition_term || journey.framing?.clinicaltrials_condition_term || journey.framing?.indication || ""} lockedPhase={journey.framing?.study_phase || ""} journey={journey} onJourneyChange={setJourney} selectedBriefIds={selectedBriefIds} onSelectedBriefIdsChange={setSelectedBriefIds} />}
       <div className="authoring-gate-checklist"><strong>{missing.length ? "尚未满足的准入条件" : "准入条件已满足"}</strong>{(gate?.requirements?.length ? gate.requirements : missing.map((label) => ({ label, satisfied: false, detail: "" }))).map((item) => <label key={item.label} className={item.satisfied ? "satisfied" : ""}><input type="checkbox" checked={item.satisfied || acknowledged.includes(item.label)} onChange={() => { if (item.satisfied) return; setAcknowledged((current) => current.includes(item.label) ? current.filter((value) => value !== item.label) : [...current, item.label]); }} disabled={readOnly || allowed || item.satisfied} /><span><b>{item.label}</b>{item.detail && <small>{item.detail}</small>}</span></label>)}</div>
       {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口；补充说明为可选项。</p><label className="synopsis-override-reason"><span>例外说明（可选）</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：说明当前为何先进入写作及后续资料计划" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged} title={!allAcknowledged ? "请先逐项确认全部缺口" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? "可以建立版本化方案工作稿。" : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanReady && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
     </section>

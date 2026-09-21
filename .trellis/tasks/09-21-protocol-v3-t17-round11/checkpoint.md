@@ -93,3 +93,11 @@ Word原生验收制品：`runs/requirements_v2_20260919/f12_20260921/office_brid
 集中验证：相关后端450通过；Protocol v3全套2601通过、1 warning；前端正式110 Vitest+65 Node通过；production build 1971 modules通过；py_compile/diff check通过。mutation inventory增加1条route、2条journey mutator并按用户已授权的阶段断言升版为236/134/197，没有新增门控。
 
 阶段记录：`runs/requirements_v2_20260919/t17_round11/HUMAN_RECONFIRMATION_BATCH_20260921.md`；会商审阅与metrics见对应reviews/metrics文件。Study A真实库仍保持revision20暂停态，未写入。下一动作先在隔离运行时只读验证reconfirmation状态和59/256预选，再用ego(lite)做真实宽屏交互验收，确认无误后才执行Study A人工复核；持续推进，不阶段暂停。
+
+## 2026-09-21 既有篮子浏览器验收与自动重检索修复
+
+ego(lite) TaskSpace 12 使用 Study A 的 SQLite online-backup 副本验收。首次发现两项同源前端缺口：`search_plan.latest_snapshot_id` 为空时没有回退到既有 `discovery_basket_projection.snapshot_id`，导致复核面板不可达；挂载时自动研究 effect 还会误发新检索。污染仅限第一份验收副本，服务立即停止，副本从未变化的原库重建。修订后旧快照直接显示，自动检索被抑制，提示改为“无需重复检索/按需重新检索”，复核卡前置于候选列表。
+
+干净副本实际一次确认成功：revision 20→23，snapshot仍为`wref_search_95d54c91e3c4fb21b234`，confirmation `ct_reconf_81450fa2caf9cf004f20`，kind `human_reconfirmation`，projection `corpus_projected`，59/256不变。日志无新检索、AI分诊、下载、OCR或翻译；原18个SQLite哈希清单不变。1920无横向溢出，复核卡由页面1578px前置到800px。ego截图接口三次内部超时，截图状态保持UNVERIFIED，未以其他浏览器替代。
+
+集中验证：frontend build 1971 modules；15/110 Vitest与48/65 Node全通过；diff check通过。记录见`runs/requirements_v2_20260919/t17_round11/HUMAN_RECONFIRMATION_BROWSER_ACCEPTANCE_20260921.md`与同名acceptance目录JSON。下一动作先提交推送本批，再对原Study A隔离运行库执行同一确定性复核，继续F12完整三研究旅程。

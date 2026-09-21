@@ -19584,6 +19584,11 @@ textarea {
   font-size: 12px;
 }
 
+.writing-reference-validation[data-section="ai-triage-review"] {
+  order: -1;
+  border-left: 3px solid var(--orange);
+}
+
 .writing-reference-validation.requires-review {
   border-color: #f0c989;
   background: #fffbf3;

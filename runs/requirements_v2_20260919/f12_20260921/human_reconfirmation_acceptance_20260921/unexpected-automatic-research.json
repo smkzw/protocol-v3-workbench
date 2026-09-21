@@ -1,0 +1,22 @@
+{
+  "schema_version": "mw_human_reconfirmation_acceptance_incident_v1",
+  "scope": "isolated_acceptance_copy_only",
+  "before": {
+    "journey_revision": 20,
+    "snapshot_id": "wref_search_95d54c91e3c4fb21b234",
+    "retained": 59,
+    "excluded": 256
+  },
+  "observed": {
+    "journey_revision": 22,
+    "new_snapshot_id": "wref_search_573174292747ae8bb960",
+    "http_calls": [
+      "POST authoring-journey/prefill-package/generate",
+      "POST authoring-journey/competitor-search",
+      "POST research-pipeline/start"
+    ],
+    "trigger": "mounting corpus-stage UI when search_plan.latest_snapshot_id was empty despite an existing discovery_basket_projection snapshot"
+  },
+  "containment": "stopped isolated API and Vite; discarded and rebuilt only the acceptance runtime from the unchanged source runtime",
+  "source_runtime_modified": false
+}
