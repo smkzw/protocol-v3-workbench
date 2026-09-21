@@ -541,12 +541,15 @@ class MedicalWritingFullDraftService:
     @staticmethod
     def _section_evidence_is_resolvable(
         section: Mapping[str, Any],
-        source_ids: set[str],
+        source_locators: Mapping[str, str],
     ) -> bool:
         expected = [_text(item) for item in section.get("evidence_span_ids") or []]
         bindings = section.get("evidence_bindings")
         if not isinstance(bindings, list):
             return False
+        section_source_ids = {
+            _text(item) for item in section.get("source_ids") or [] if _text(item)
+        }
         actual: list[str] = []
         for item in bindings:
             if not isinstance(item, Mapping):
@@ -557,7 +560,8 @@ class MedicalWritingFullDraftService:
             quote = _text(item.get("quote"))
             if (
                 not span_id
-                or source_id not in source_ids
+                or source_id not in section_source_ids
+                or source_locators.get(source_id) != locator
                 or not locator
                 or not quote
                 or _text(item.get("quote_sha256"))
@@ -566,6 +570,26 @@ class MedicalWritingFullDraftService:
                 return False
             actual.append(span_id)
         return actual == expected
+
+    @classmethod
+    def _artifact_evidence_is_resolvable(cls, artifact: Mapping[str, Any]) -> bool:
+        source_locators: dict[str, str] = {}
+        for item in artifact.get("source_bindings") or []:
+            if not isinstance(item, Mapping):
+                return False
+            source_id = _text(item.get("source_id"))
+            locator = _text(item.get("locator"))
+            if not source_id or not locator:
+                return False
+            if source_id in source_locators and source_locators[source_id] != locator:
+                return False
+            source_locators[source_id] = locator
+        sections = artifact.get("sections")
+        return isinstance(sections, list) and bool(sections) and all(
+            isinstance(section, Mapping)
+            and cls._section_evidence_is_resolvable(section, source_locators)
+            for section in sections
+        )
 
     @classmethod
     def _apply_review_policy(cls, artifact: dict[str, Any]) -> dict[str, Any]:
@@ -608,8 +632,14 @@ class MedicalWritingFullDraftService:
         coverage["source_gap_count"] = len(source_gap_ids)
         coverage["source_gap_section_ids"] = source_gap_ids
         is_legacy = artifact.get("schema_version") in LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS
+        evidence_chain_resolvable = (
+            not is_legacy and cls._artifact_evidence_is_resolvable(artifact)
+        )
         coverage["legacy_read_only"] = is_legacy
-        coverage["adoption_ready"] = not is_legacy and not decision_ids and not source_gap_ids
+        coverage["evidence_chain_resolvable"] = evidence_chain_resolvable
+        coverage["adoption_ready"] = (
+            evidence_chain_resolvable and not decision_ids and not source_gap_ids
+        )
         artifact["review_policy_version"] = FULL_DRAFT_REVIEW_POLICY_VERSION
         return artifact
 
@@ -705,13 +735,15 @@ class MedicalWritingFullDraftService:
         ]
         if actual_ids != expected_ids:
             return None
-        source_ids = {
-            _text(item.get("source_id"))
+        source_locators = {
+            _text(item.get("source_id")): _text(item.get("locator"))
             for item in payload.get("source_bindings") or []
-            if isinstance(item, Mapping) and _text(item.get("source_id"))
+            if isinstance(item, Mapping)
+            and _text(item.get("source_id"))
+            and _text(item.get("locator"))
         }
         if not all(
-            self._section_evidence_is_resolvable(item, source_ids)
+            self._section_evidence_is_resolvable(item, source_locators)
             for item in sections
             if isinstance(item, Mapping)
         ):
@@ -799,6 +831,7 @@ class MedicalWritingFullDraftService:
             and existing_final.get("precondition_digest") == expected.get("digest")
             and (existing_final.get("coverage") or {}).get("section_ids")
             == [item["section_id"] for item in target]
+            and self._artifact_evidence_is_resolvable(existing_final)
         ):
             encoded = _canonical(existing_final).encode("utf-8")
             artifact_sha = hashlib.sha256(encoded).hexdigest()
@@ -892,10 +925,13 @@ class MedicalWritingFullDraftService:
                     section["section_number"] = descriptor_section.get("section_number", "")
                     section["ai_run_id"] = str(run.run_id)
                     section["source_ids"] = [source.source_id for source in sources]
-                    section["evidence_bindings"] = self._evidence_bindings_for_section(
-                        section,
-                        output,
-                    )
+                    try:
+                        section["evidence_bindings"] = self._evidence_bindings_for_section(
+                            section,
+                            output,
+                        )
+                    except RuntimeStoreError as exc:
+                        return DurableJobResult(error=str(exc), retryable=False)
                     section.update(
                         self._review_metadata(
                             section,
@@ -947,14 +983,8 @@ class MedicalWritingFullDraftService:
         actual_ids = [str(item.get("section_id") or "") for item in all_sections]
         if actual_ids != expected_ids:
             return DurableJobResult(error="全文初稿合并后章节覆盖不完整，未写入任何正文", retryable=False)
-        persisted_source_ids = {
-            _text(item.get("source_id"))
-            for item in source_bindings
-            if isinstance(item, Mapping) and _text(item.get("source_id"))
-        }
-        if not all(
-            self._section_evidence_is_resolvable(section, persisted_source_ids)
-            for section in all_sections
+        if not self._artifact_evidence_is_resolvable(
+            {"sections": all_sections, "source_bindings": source_bindings}
         ):
             return DurableJobResult(error="全文初稿章节证据链不完整，未写入候选", retryable=False)
         required_review_ids = [
@@ -1124,16 +1154,7 @@ class MedicalWritingFullDraftService:
         artifact = self.read_artifact(project_id, job)
         if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
             raise RuntimeStoreError("旧版全文初稿候选仅供查阅；请按当前研究事实重新生成后再采纳")
-        source_ids = {
-            _text(item.get("source_id"))
-            for item in artifact.get("source_bindings") or []
-            if isinstance(item, Mapping) and _text(item.get("source_id"))
-        }
-        if not all(
-            self._section_evidence_is_resolvable(section, source_ids)
-            for section in artifact.get("sections") or []
-            if isinstance(section, Mapping)
-        ):
+        if not self._artifact_evidence_is_resolvable(artifact):
             raise RuntimeStoreError("全文初稿章节证据链不完整，未采纳")
         service = self._service(project_id)
         repo = service.repo

@@ -137,3 +137,5 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 
 ## 2026-09-22 v0.5 证据链持久化
 采用 execution-plus-conference：owner 直接修复与当前全文初稿持久化紧耦合的确定性缺陷，冻结提交后做独立工程审阅；真实 v0.5 工件形成后另启 fresh 医学会商。v0.4 已证明生成时校验有效，但最终工件未保存 evidence span 到来源/定位/摘录的映射，不能作为可采纳候选。现将证据绑定按章节持久化，避免跨批次短 ID 冲突；chunk 恢复、最终合并和采纳均重新验证引用、来源与摘录哈希。schema 已升为 artifact v5/chunk v5/descriptor v6；v3/v4 保留只读。集中回归 115 passed，py_compile 通过。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V05_EVIDENCE_PROVENANCE_20260922.md`。下一动作：冻结提交与独立审阅，然后在隔离 5299 生成 Study A v0.5，逐章核对证据链并进行 fresh 医学会商；此前不得采纳。
+
+独立工程会商已完成：`zcode/zcode/GLM-5.3-Flash:max` 同一session两轮，无fallback。首轮复现“损坏最终件仍被复用”的审阅死循环并指出确定性错误误重试；owner合并修复后，续审验证最终件会从有效chunk重建且不重复模型调用，read-time adoption_ready与证据链一致。续审低风险空sections边界也已关闭。最终同一集中集117 passed，py_compile/diff check通过，会商工程范围PASS。下一动作直接提交本批并运行隔离Study A v0.5；逐章证据链与fresh医学会商通过前不得采纳。

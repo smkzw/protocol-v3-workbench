@@ -108,13 +108,14 @@ class _FakeRepo:
 
 
 class _FakeFullDraftRunner:
-    def __init__(self):
+    def __init__(self, *, repeated_evidence_id: bool = False):
         self.calls = 0
+        self.repeated_evidence_id = repeated_evidence_id
 
     def submit_internal(self, project_id, request):
         self.calls += 1
         packet = request.allowed_sources[0]
-        evidence_id = f"ev_{self.calls}"
+        evidence_id = "ev_repeated" if self.repeated_evidence_id else f"ev_{self.calls}"
         sections = []
         for section_id in request.task_context["section_ids"]:
             sections.append(
@@ -696,6 +697,66 @@ class FullDraftServiceTests(unittest.TestCase):
         self.assertIsNone(
             self.full._read_reusable_chunk(project, job_id, descriptor, 1, chunk)
         )
+
+    def test_damaged_final_is_rebuilt_from_valid_chunks_instead_of_reused(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        job = self.store.get(project, job_id)
+        first = ProtocolFullDraftExecutor(self.full).execute(
+            job, "claim", lambda: False, lambda progress: True
+        )
+        locator = json.loads(first.artifact_locator)
+        path = self.full.artifact_root / locator["artifact_relpath"]
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["sections"][0]["evidence_bindings"] = []
+        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+        second = ProtocolFullDraftExecutor(self.full).execute(
+            job, "claim", lambda: False, lambda progress: True
+        )
+
+        self.assertEqual("", second.error)
+        self.assertEqual(1, self.runner.calls)
+        repaired = json.loads(path.read_text(encoding="utf-8"))
+        self.assertTrue(self.full._artifact_evidence_is_resolvable(repaired))
+
+        repaired["sections"] = []
+        path.write_text(json.dumps(repaired, ensure_ascii=False), encoding="utf-8")
+        third = ProtocolFullDraftExecutor(self.full).execute(
+            job, "claim", lambda: False, lambda progress: True
+        )
+        self.assertEqual("", third.error)
+        self.assertEqual(1, self.runner.calls)
+        rebuilt = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(2, len(rebuilt["sections"]))
+        self.assertTrue(self.full._artifact_evidence_is_resolvable(rebuilt))
+
+    def test_duplicate_span_ids_in_different_chunks_keep_section_scoped_bindings(self):
+        project = self.repo.project_id
+        self.runner = _FakeFullDraftRunner(repeated_evidence_id=True)
+        self.service.ai_task_runner = self.runner
+        with patch(
+            "services.api.app.medical_writing_full_draft.FULL_DRAFT_CHUNK_SIZE",
+            1,
+        ):
+            job_id, _ = self.full.submit_durable(project, self.store)
+            job = self.store.get(project, job_id)
+            result = ProtocolFullDraftExecutor(self.full).execute(
+                job, "claim", lambda: False, lambda progress: True
+            )
+
+        self.assertEqual("", result.error)
+        self.assertEqual(2, self.runner.calls)
+        locator = json.loads(result.artifact_locator)
+        artifact = json.loads(
+            (self.full.artifact_root / locator["artifact_relpath"]).read_text(encoding="utf-8")
+        )
+        self.assertTrue(self.full._artifact_evidence_is_resolvable(artifact))
+        self.assertEqual(
+            ["ev_repeated", "ev_repeated"],
+            [section["evidence_bindings"][0]["span_id"] for section in artifact["sections"]],
+        )
+        self.assertEqual(2, len({section["ai_run_id"] for section in artifact["sections"]}))
 
     def test_review_metadata_marks_high_impact_and_corpus_conduct_sections(self):
         project_source = AiTaskSourceRef(
