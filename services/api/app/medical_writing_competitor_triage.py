@@ -38,6 +38,7 @@ from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple
 
 from packages.contracts.workbench_contracts import (
     CompetitorTriageBasketConfirmationRequest,
+    CompetitorTriageBasketReconfirmationRequest,
     CompetitorTriageCandidateResult,
     CompetitorTriageChunkRecord,
     CompetitorTriageChunkStatus,
@@ -46,6 +47,7 @@ from packages.contracts.workbench_contracts import (
     CompetitorTriageCreateRequest,
     CompetitorTriageMatchingDimension,
     CompetitorTriageProjectionRetryRequest,
+    CompetitorTriageReconfirmationStatus,
     CompetitorTriageProvenance,
     CompetitorTriageRetryRequest,
     CompetitorTriageRun,
@@ -56,6 +58,7 @@ from packages.contracts.workbench_contracts import (
     DurableJobProgressPayload,
     DurableJobRecord,
     MedicalWritingAuthoringJourney,
+    MedicalWritingCompetitorSearchExecuteRequest,
     MedicalWritingCorpusTriageFinalizeRequest,
     WritingReferenceSearchSnapshot,
     WritingReferenceTrialCandidate,
@@ -4995,7 +4998,11 @@ class CompetitorTriageService:
             raise KeyError(run_id)
         # Re-check stale on read
         run = self._check_and_mark_stale(project_id, run)
-        return CompetitorTriageRunResponse(run=run, summary=self._summarize(run))
+        return CompetitorTriageRunResponse(
+            run=run,
+            summary=self._summarize(run),
+            reconfirmation=self._reconfirmation_status(project_id, run),
+        )
 
     # ------------------------------------------------------------------
     # Stale detection
@@ -5079,6 +5086,83 @@ class CompetitorTriageService:
             )
             self.repository.store_triage_run(run)
         return run
+
+    def _reconfirmation_status(
+        self, project_id: str, run: CompetitorTriageRun
+    ) -> CompetitorTriageReconfirmationStatus:
+        confirmation = self.repository.triage_confirmation_for_run(
+            project_id, run.run_id
+        )
+        if confirmation is None:
+            return CompetitorTriageReconfirmationStatus()
+        try:
+            journey = self.journey_service.get(project_id)
+        except KeyError:
+            return CompetitorTriageReconfirmationStatus()
+        comparison_revision = (
+            confirmation.journey_revision
+            if confirmation.confirmation_kind == "human_reconfirmation"
+            else run.journey_revision
+        )
+        comparable_journey = journey.model_copy(
+            update={"revision": comparison_revision}
+        )
+        current_facts_hash = _material_facts_hash(comparable_journey)
+        confirmed_facts_hash = (
+            confirmation.confirmed_material_facts_hash
+            or run.material_facts_hash
+        )
+        required = (
+            journey.search_plan is None
+            or current_facts_hash != confirmed_facts_hash
+        )
+        return CompetitorTriageReconfirmationStatus(
+            required=required,
+            reason=(
+                "当前研究信息已更新，请核对既有分类后确认；系统不会重复调用AI分诊。"
+                if required
+                else ""
+            ),
+            source_confirmation_id=confirmation.confirmation_id,
+            snapshot_id=confirmation.snapshot_id,
+            current_journey_revision=journey.revision,
+            retained_nct_ids=confirmation.retained_nct_ids,
+            excluded_nct_ids=confirmation.excluded_nct_ids,
+            final_classifications=confirmation.final_classifications,
+            current_triage_criteria=(
+                journey.search_plan.triage_criteria
+                if journey.search_plan is not None
+                else []
+            ),
+        )
+
+    def _confirmation_stale_reason(
+        self,
+        project_id: str,
+        run: CompetitorTriageRun,
+        confirmation: CompetitorTriageConfirmationRecord,
+    ) -> str:
+        if confirmation.confirmation_kind != "human_reconfirmation":
+            return self._stale_reason(project_id, run)
+        try:
+            snapshot = self.repository.search_snapshot(project_id, run.snapshot_id)
+        except KeyError:
+            return f"snapshot {run.snapshot_id} no longer exists"
+        if _snapshot_hash(snapshot) != run.snapshot_hash:
+            return "snapshot content has changed since the run was created"
+        try:
+            journey = self.journey_service.get(project_id)
+        except KeyError:
+            return "authoring journey no longer exists"
+        comparable_journey = journey.model_copy(
+            update={"revision": confirmation.journey_revision}
+        )
+        if (
+            _material_facts_hash(comparable_journey)
+            != confirmation.confirmed_material_facts_hash
+        ):
+            return "project material facts changed after the human re-review"
+        return ""
 
     # ------------------------------------------------------------------
     # Basket confirm
@@ -5319,18 +5403,6 @@ class CompetitorTriageService:
                 + ", ".join(unclassified_candidates)
             )
 
-        if not retained_set:
-            substantive = "".join(
-                character
-                for character in request.no_suitable_competitor_reason
-                if character.isalnum()
-            )
-            if len(substantive) < 10:
-                raise CompetitorTriageError(
-                    "all-excluded competitor triage requires a substantive "
-                    "no_suitable_competitor_reason of at least 10 characters"
-                )
-
         # Check stale — stale runs cannot be confirmed (only replayed)
         stale_reason = self._stale_reason(project_id, run)
         if stale_reason:
@@ -5341,7 +5413,9 @@ class CompetitorTriageService:
             request.reason.strip()
             if retained_set
             else request.no_suitable_competitor_reason.strip()
+            or "医学经理确认本次候选均不适合作为竞品或间接参照。"
         )
+        confirmation_journey = self.journey_service.get(project_id)
         confirmation = CompetitorTriageConfirmationRecord(
             confirmation_id=confirmation_id,
             run_id=run.run_id,
@@ -5362,6 +5436,13 @@ class CompetitorTriageService:
             reason=effective_reason,
             confirmation_hash=confirmation_hash,
             journey_revision=request.expected_journey_revision,
+            confirmation_kind="initial_ai_assisted",
+            confirmed_material_facts_hash=run.material_facts_hash,
+            confirmed_search_plan_id=(
+                confirmation_journey.search_plan.plan_id
+                if confirmation_journey.search_plan is not None
+                else ""
+            ),
             projection_status="pending",
             created_at=now,
         )
@@ -5401,6 +5482,325 @@ class CompetitorTriageService:
         )
 
         return confirmation
+
+    def reconfirm_basket(
+        self,
+        project_id: str,
+        run_id: str,
+        request: CompetitorTriageBasketReconfirmationRequest,
+    ) -> CompetitorTriageConfirmationRecord:
+        """Create a new human confirmation against current medical facts.
+
+        The immutable registry snapshot and old AI evidence are reused for
+        review only. No provider, search, download, OCR, or translation call is
+        made. The complete current user partition becomes a new confirmation
+        identity with explicit lineage to the superseded confirmation.
+        """
+        run = self.repository.triage_run(project_id, run_id)
+        if run is None:
+            raise KeyError(run_id)
+        source = self.repository.triage_confirmation(
+            project_id, request.source_confirmation_id
+        )
+        if (
+            source is None
+            or source.run_id != run_id
+            or source.snapshot_id != run.snapshot_id
+        ):
+            raise CompetitorTriageConflictError(
+                "source confirmation does not belong to this triage run and snapshot"
+            )
+        current = self.journey_service.get(project_id)
+        if current.search_plan is None:
+            raise CompetitorTriageConflictError(
+                "current competitor search plan is missing"
+            )
+        snapshot = self.repository.search_snapshot(project_id, run.snapshot_id)
+        expected_search = self.journey_service.build_competitor_search_request(
+            project_id,
+            MedicalWritingCompetitorSearchExecuteRequest(
+                search_plan_id=current.search_plan.plan_id,
+                actor=request.actor,
+                idempotency_key=f"{request.idempotency_key}:validate",
+            ),
+        ).search
+        if snapshot.request != expected_search:
+            raise CompetitorTriageConflictError(
+                "the immutable snapshot no longer matches the current registry search contract"
+            )
+        candidate_ids = {candidate.nct_id for candidate in snapshot.candidates}
+        retained = set(request.retained_nct_ids)
+        excluded = set(request.excluded_nct_ids)
+        classifications = {
+            nct_id: (
+                value.value
+                if isinstance(value, CompetitorTriageClassification)
+                else str(value)
+            )
+            for nct_id, value in request.final_classifications.items()
+        }
+        if (
+            len(retained) != len(request.retained_nct_ids)
+            or len(excluded) != len(request.excluded_nct_ids)
+        ):
+            raise CompetitorTriageError("reconfirmation contains duplicate candidate ids")
+        if retained & excluded or retained | excluded != candidate_ids:
+            raise CompetitorTriageError(
+                "reconfirmation must classify every snapshot candidate exactly once"
+            )
+        if set(classifications) != candidate_ids:
+            raise CompetitorTriageError(
+                "final classifications must cover every snapshot candidate"
+            )
+        if any(
+            value not in _ALLOWED_CLASSIFICATIONS
+            for value in classifications.values()
+        ):
+            raise CompetitorTriageError("reconfirmation contains an invalid classification")
+        classified_retained = {
+            nct_id
+            for nct_id, value in classifications.items()
+            if value in {
+                CompetitorTriageClassification.DIRECT_COMPETITOR.value,
+                CompetitorTriageClassification.INDIRECT_REFERENCE.value,
+            }
+        }
+        classified_excluded = {
+            nct_id
+            for nct_id, value in classifications.items()
+            if value == CompetitorTriageClassification.EXCLUDED.value
+        }
+        if classified_retained != retained or classified_excluded != excluded:
+            raise CompetitorTriageError(
+                "final classifications conflict with the retained/excluded basket"
+            )
+
+        comparable_current = current.model_copy(
+            update={"revision": request.expected_journey_revision}
+        )
+        current_facts_hash = _material_facts_hash(comparable_current)
+        reason = request.reason.strip() or (
+            "医学经理已按当前研究信息重新核对既有竞品篮子。"
+        )
+        material = {
+            "run_id": run_id,
+            "project_id": project_id,
+            "snapshot_id": run.snapshot_id,
+            "source_confirmation_id": source.confirmation_id,
+            "current_material_facts_hash": current_facts_hash,
+            "current_search_plan_id": current.search_plan.plan_id,
+            "retained_nct_ids": sorted(retained),
+            "excluded_nct_ids": sorted(excluded),
+            "final_classifications": {
+                nct_id: classifications[nct_id]
+                for nct_id in sorted(classifications)
+            },
+            "reason": reason,
+        }
+        confirmation_hash = _hash_value(material)
+        confirmation_id = f"ct_reconf_{confirmation_hash[:20]}"
+        confirmation = CompetitorTriageConfirmationRecord(
+            confirmation_id=confirmation_id,
+            run_id=run_id,
+            project_id=project_id,
+            snapshot_id=run.snapshot_id,
+            retained_nct_ids=sorted(retained),
+            excluded_nct_ids=sorted(excluded),
+            final_classifications={
+                nct_id: CompetitorTriageClassification(classifications[nct_id])
+                for nct_id in sorted(classifications)
+            },
+            no_suitable_competitor_reason=(
+                request.no_suitable_competitor_reason.strip()
+            ),
+            actor=request.actor,
+            reason=reason,
+            confirmation_hash=confirmation_hash,
+            journey_revision=request.expected_journey_revision,
+            confirmation_kind="human_reconfirmation",
+            source_confirmation_id=source.confirmation_id,
+            confirmed_material_facts_hash=current_facts_hash,
+            confirmed_search_plan_id=current.search_plan.plan_id,
+            projection_status="pending",
+            created_at=_utc_now(),
+        )
+        if current.revision != request.expected_journey_revision:
+            with self.repository._connect() as connection:
+                replay_id = self.repository.triage_idempotent_replay(
+                    connection,
+                    project_id,
+                    "reconfirm_competitor_triage_basket",
+                    request.idempotency_key,
+                    confirmation.confirmation_hash,
+                )
+            if replay_id is not None:
+                replay = self.repository.triage_confirmation(
+                    project_id, replay_id
+                )
+                if replay is None:
+                    raise CompetitorTriageConflictError(
+                        "reconfirmed basket replay is missing"
+                    )
+                return replay
+            raise CompetitorTriageConflictError(
+                "stale authoring journey revision: "
+                f"expected {request.expected_journey_revision}, "
+                f"current {current.revision}"
+            )
+        replay = self._atomic_human_reconfirmation(
+            project_id=project_id,
+            run=run,
+            confirmation=confirmation,
+            request=request,
+        )
+        if replay is not None:
+            return replay
+        try:
+            journey = self.journey_service.project_human_reconfirmed_basket(
+                project_id,
+                snapshot,
+                confirmation_id=confirmation.confirmation_id,
+                confirmation_hash=confirmation.confirmation_hash,
+                source_confirmation_id=source.confirmation_id,
+                run_id=run.run_id,
+                retained_nct_ids=confirmation.retained_nct_ids,
+                excluded_nct_ids=confirmation.excluded_nct_ids,
+                expected_revision=current.revision,
+                actor=request.actor,
+                reason=confirmation.reason,
+                idempotency_key=f"triage_reconfirm_project_{confirmation.confirmation_id}",
+            )
+            confirmation = confirmation.model_copy(
+                update={"projection_status": "discovery_projected"}
+            )
+            if journey.picos_complete:
+                confirmation = self._project_corpus(
+                    project_id, run, confirmation, journey
+                )
+            self.repository.store_triage_run(
+                run.model_copy(
+                    update={
+                        "status": (
+                            CompetitorTriageRunStatus.CONFIRMED
+                            if confirmation.projection_status
+                            in {"discovery_projected", "corpus_projected"}
+                            else CompetitorTriageRunStatus.PROJECTION_PENDING
+                        ),
+                        "updated_at": _utc_now(),
+                    }
+                )
+            )
+        except Exception as exc:
+            confirmation = confirmation.model_copy(
+                update={
+                    "projection_status": "failed",
+                    "projection_error": f"{type(exc).__name__}: {exc}",
+                    "projection_attempts": confirmation.projection_attempts + 1,
+                }
+            )
+            self.repository.store_triage_run(
+                run.model_copy(
+                    update={
+                        "status": CompetitorTriageRunStatus.PROJECTION_PENDING,
+                        "updated_at": _utc_now(),
+                    }
+                )
+            )
+        self.repository.store_triage_confirmation(confirmation)
+        return confirmation
+
+    def _atomic_human_reconfirmation(
+        self,
+        *,
+        project_id: str,
+        run: CompetitorTriageRun,
+        confirmation: CompetitorTriageConfirmationRecord,
+        request: CompetitorTriageBasketReconfirmationRequest,
+    ) -> Optional[CompetitorTriageConfirmationRecord]:
+        operation = "reconfirm_competitor_triage_basket"
+        existing = self.repository.triage_confirmation(
+            project_id, confirmation.confirmation_id
+        )
+        with self.repository._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            replay_id = self.repository.triage_idempotent_replay(
+                connection,
+                project_id,
+                operation,
+                request.idempotency_key,
+                confirmation.confirmation_hash,
+            )
+            if replay_id is not None:
+                connection.commit()
+                replay = self.repository.triage_confirmation(project_id, replay_id)
+                if replay is None:
+                    raise CompetitorTriageConflictError(
+                        "reconfirmed basket replay is missing"
+                    )
+                return replay
+            if existing is not None:
+                self.repository.triage_record_idempotency(
+                    connection,
+                    project_id,
+                    operation,
+                    request.idempotency_key,
+                    confirmation.confirmation_hash,
+                    confirmation.confirmation_id,
+                )
+                connection.commit()
+                return existing
+            connection.execute(
+                """
+                INSERT INTO competitor_triage_confirmations(
+                    tenant_id, project_id, confirmation_id, run_id, snapshot_id,
+                    confirmation_hash, projection_status, payload_json, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    TENANT_ID,
+                    project_id,
+                    confirmation.confirmation_id,
+                    run.run_id,
+                    run.snapshot_id,
+                    confirmation.confirmation_hash,
+                    confirmation.projection_status,
+                    _canonical_json(confirmation.model_dump(mode="json")),
+                    confirmation.created_at.isoformat(),
+                ),
+            )
+            classification_map = {
+                result.nct_id: result.classification.value
+                for chunk in run.chunks
+                for result in chunk.results
+            }
+            for nct_id in sorted(confirmation.final_classifications):
+                final_status = confirmation.final_classifications[nct_id].value
+                ai_status = classification_map.get(nct_id, "unknown")
+                decision_reason = (
+                    f"医学经理按当前研究事实复核既有分诊；来源确认 {confirmation.source_confirmation_id}。"
+                    f"原AI分类 {ai_status}，本次确认 {final_status}。"
+                )
+                if confirmation.reason:
+                    decision_reason += f"复核说明：{confirmation.reason}"
+                self._write_relevance_decision_in_tx(
+                    connection,
+                    project_id=project_id,
+                    snapshot_id=run.snapshot_id,
+                    nct_id=nct_id,
+                    relevance_status=final_status,
+                    reason=decision_reason,
+                    actor=request.actor,
+                )
+            self.repository.triage_record_idempotency(
+                connection,
+                project_id,
+                operation,
+                request.idempotency_key,
+                confirmation.confirmation_hash,
+                confirmation.confirmation_id,
+            )
+            connection.commit()
+        return None
 
     def _atomic_confirm_and_decisions(
         self,
@@ -5703,15 +6103,25 @@ class CompetitorTriageService:
         idempotency key so repeated calls are safe.
         """
         try:
+            if not confirmation.retained_nct_ids:
+                corpus_reason = (
+                    confirmation.no_suitable_competitor_reason
+                    or confirmation.reason
+                    or "医学经理确认本次候选均不适合作为竞品或间接参照。"
+                )
+            elif confirmation.confirmation_kind == "human_reconfirmation":
+                corpus_reason = (
+                    f"Human basket reconfirmation {confirmation.confirmation_id}"
+                )
+            else:
+                corpus_reason = (
+                    f"AI triage confirmation {confirmation.confirmation_id}"
+                )
             finalize_request = MedicalWritingCorpusTriageFinalizeRequest(
                 expected_revision=journey.revision,
                 snapshot_id=run.snapshot_id,
                 retained_candidate_ids=sorted(confirmation.retained_nct_ids),
-                reason=(
-                    confirmation.no_suitable_competitor_reason
-                    if not confirmation.retained_nct_ids
-                    else f"AI triage confirmation {confirmation.confirmation_id}"
-                ),
+                reason=corpus_reason,
                 actor=confirmation.actor,
                 idempotency_key=f"triage_corpus_{confirmation.confirmation_id}",
             )
@@ -5773,22 +6183,13 @@ class CompetitorTriageService:
         # If discovery projection hasn't succeeded yet, retry that first
         if confirmation.projection_status in ("pending", "failed"):
             try:
-                self.journey_service.project_discovery_basket(
-                    project_id,
-                    confirmation_id=confirmation.confirmation_id,
-                    confirmation_hash=confirmation.confirmation_hash,
-                    snapshot_id=run.snapshot_id,
-                    retained_nct_ids=sorted(confirmation.retained_nct_ids),
-                    excluded_nct_ids=sorted(confirmation.excluded_nct_ids),
-                    run_id=run.run_id,
-                    actor=request.actor,
-                    reason=confirmation.reason,
-                    expected_journey_revision=journey.revision,
-                    idempotency_key=f"triage_disc_{confirmation.confirmation_id}",
+                journey = self._retry_discovery_projection(
+                    project_id=project_id,
+                    run=run,
+                    confirmation=confirmation,
+                    journey=journey,
+                    request=request,
                 )
-                # Discovery projection bumped the journey revision.
-                # Re-read the journey before any corpus attempt.
-                journey = self.journey_service.get(project_id)
                 if journey.picos_complete:
                     confirmation = self._project_corpus(
                         project_id, run, confirmation, journey
@@ -5813,7 +6214,9 @@ class CompetitorTriageService:
             # Discovery is projected; try corpus projection if PICOS is complete
             if journey.picos_complete:
                 try:
-                    stale_reason = self._stale_reason(project_id, run)
+                    stale_reason = self._confirmation_stale_reason(
+                        project_id, run, confirmation
+                    )
                     if stale_reason:
                         raise CompetitorTriageStaleError(stale_reason)
                     if (
@@ -5869,6 +6272,53 @@ class CompetitorTriageService:
 
         self.repository.store_triage_confirmation(confirmation)
         return confirmation
+
+    def _retry_discovery_projection(
+        self,
+        *,
+        project_id: str,
+        run: CompetitorTriageRun,
+        confirmation: CompetitorTriageConfirmationRecord,
+        journey: MedicalWritingAuthoringJourney,
+        request: CompetitorTriageProjectionRetryRequest,
+    ) -> MedicalWritingAuthoringJourney:
+        stale_reason = self._confirmation_stale_reason(
+            project_id, run, confirmation
+        )
+        if stale_reason:
+            raise CompetitorTriageStaleError(stale_reason)
+        if confirmation.confirmation_kind == "human_reconfirmation":
+            snapshot = self.repository.search_snapshot(project_id, run.snapshot_id)
+            return self.journey_service.project_human_reconfirmed_basket(
+                project_id,
+                snapshot,
+                confirmation_id=confirmation.confirmation_id,
+                confirmation_hash=confirmation.confirmation_hash,
+                source_confirmation_id=confirmation.source_confirmation_id,
+                run_id=run.run_id,
+                retained_nct_ids=confirmation.retained_nct_ids,
+                excluded_nct_ids=confirmation.excluded_nct_ids,
+                expected_revision=journey.revision,
+                actor=request.actor,
+                reason=confirmation.reason,
+                idempotency_key=(
+                    f"triage_reconfirm_project_{confirmation.confirmation_id}"
+                ),
+            )
+        self.journey_service.project_discovery_basket(
+            project_id,
+            confirmation_id=confirmation.confirmation_id,
+            confirmation_hash=confirmation.confirmation_hash,
+            snapshot_id=run.snapshot_id,
+            retained_nct_ids=sorted(confirmation.retained_nct_ids),
+            excluded_nct_ids=sorted(confirmation.excluded_nct_ids),
+            run_id=run.run_id,
+            actor=request.actor,
+            reason=confirmation.reason,
+            expected_journey_revision=journey.revision,
+            idempotency_key=f"triage_disc_{confirmation.confirmation_id}",
+        )
+        return self.journey_service.get(project_id)
 
     # ------------------------------------------------------------------
     # Summary

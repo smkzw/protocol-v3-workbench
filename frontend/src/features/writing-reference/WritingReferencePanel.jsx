@@ -294,10 +294,13 @@ export function WritingReferencePanel({
     setAiTriageError("");
     const isNewRun = aiTriageSelectionRunRef.current !== run.run_id;
     const latestResults = triageCandidateResults(payload);
-    setAiTriageSelections((current) => mergeTriageSelections(
-      current,
-      latestResults,
-      { reset: isNewRun },
+    const reconfirmationSelections = payload?.reconfirmation?.required
+      ? payload.reconfirmation.final_classifications || {}
+      : null;
+    setAiTriageSelections((current) => (
+      reconfirmationSelections
+        ? { ...reconfirmationSelections }
+        : mergeTriageSelections(current, latestResults, { reset: isNewRun })
     ));
     if (isNewRun) {
       setAiTriageDetailsOpen(false);
@@ -467,14 +470,18 @@ export function WritingReferencePanel({
     () => triageCandidateResults(aiTriageRun),
     [aiTriageRun],
   );
+  const triageReconfirmationRequired = Boolean(
+    aiTriageRun?.reconfirmation?.required,
+  );
   const aiTriagePresentation = useMemo(() => deriveTriagePresentation({
     run: aiTriageRun?.run,
+    reconfirmationRequired: triageReconfirmationRequired,
     jobStatus: aiTriageStatus,
     hasActiveJob: Boolean(aiTriageJobId) && ["starting", "queued", "running", "resuming"].includes(aiTriageStatus),
     pipeline: aiTriagePipeline,
     snapshotId,
     candidateCount: candidates.length,
-  }), [aiTriageJobId, aiTriagePipeline, aiTriageRun, aiTriageStatus, candidates.length, snapshotId]);
+  }), [aiTriageJobId, aiTriagePipeline, aiTriageRun, aiTriageStatus, candidates.length, snapshotId, triageReconfirmationRequired]);
   const aiTriageCoverageComplete = Boolean(candidates.length)
     && aiTriageResults.length === candidates.length
     && candidates.every((candidate) => aiTriageSelections[candidate.nct_id]);
@@ -484,13 +491,11 @@ export function WritingReferencePanel({
     )
   )).length;
   const aiTriageAllExcluded = aiTriageCoverageComplete && aiTriageRetainedCount === 0;
-  const noSuitableCompetitorReasonValid = !aiTriageAllExcluded
-    || noSuitableCompetitorReason.trim().length >= 10;
   const candidateDisplayStatus = useCallback((candidate) => (
-    aiTriageRun?.run?.status === "review_ready"
+    aiTriageRun?.run?.status === "review_ready" || triageReconfirmationRequired
       ? aiTriageSelections[candidate.nct_id] || candidate.relevance_status
       : currentDecision(workspace, candidate.nct_id)?.relevance_status || candidate.relevance_status
-  ), [aiTriageRun?.run?.status, aiTriageSelections, workspace]);
+  ), [aiTriageRun?.run?.status, aiTriageSelections, triageReconfirmationRequired, workspace]);
   const candidatePageSize = 50;
   const filteredCandidates = useMemo(() => {
     const query = candidateQuery.trim().toLowerCase();
@@ -526,7 +531,9 @@ export function WritingReferencePanel({
     && journey?.corpus_triage?.status === "finalized"
     && journey?.corpus_triage?.snapshot_id === snapshotId;
   const triageReviewLocked = triageFinalized || (
-    authoringMode && aiTriageRun?.run?.status === "confirmed"
+    authoringMode
+      && aiTriageRun?.run?.status === "confirmed"
+      && !triageReconfirmationRequired
   );
   const retainedCandidateIds = journey?.corpus_triage?.retained_candidate_ids || [];
   const retainedCandidateIdSet = useMemo(
@@ -913,7 +920,11 @@ export function WritingReferencePanel({
 
   const confirmAiTriageRun = async () => {
     const run = aiTriageRun?.run;
-    if (!run || run.status !== "review_ready" || !aiTriageCoverageComplete) return;
+    if (
+      !run
+      || (!triageReconfirmationRequired && run.status !== "review_ready")
+      || !aiTriageCoverageComplete
+    ) return;
     const allCandidateIds = candidates.map((candidate) => candidate.nct_id);
     const retainedNctIds = allCandidateIds.filter((nctId) => (
       ["direct_competitor", "indirect_reference"].includes(aiTriageSelections[nctId])
@@ -923,33 +934,43 @@ export function WritingReferencePanel({
       setAiTriageError("仍有候选研究未完成分类，无法确认。");
       return;
     }
-    if (!retainedNctIds.length && noSuitableCompetitorReason.trim().length < 10) {
-      setAiTriageError("全部候选均排除时，请填写至少10个字的无合适竞品理由。");
-      return;
-    }
     const finalClassifications = Object.fromEntries(
       allCandidateIds.map((nctId) => [nctId, aiTriageSelections[nctId]]),
     );
     setBusyAction("confirm-ai-triage");
     setAiTriageError("");
     try {
+      const endpoint = triageReconfirmationRequired ? "reconfirm" : "confirm";
+      const basePayload = {
+        retained_nct_ids: retainedNctIds,
+        excluded_nct_ids: excludedNctIds,
+        final_classifications: finalClassifications,
+        no_suitable_competitor_reason: retainedNctIds.length
+          ? ""
+          : noSuitableCompetitorReason.trim(),
+        actor: "medical_manager",
+        reason: triageReason.trim() || (
+          triageReconfirmationRequired
+            ? "医学经理已按当前研究信息重新核对既有竞品篮子。"
+            : "医学经理已整体核对AI分诊结果并确认锁定当前竞品篮子。"
+        ),
+        idempotency_key: requestKey(
+          triageReconfirmationRequired
+            ? "competitor-triage-reconfirm"
+            : "competitor-triage-confirm",
+        ),
+        expected_journey_revision: journey?.revision || 0,
+      };
       const confirmation = await fetch(
-        `/api/projects/${projectId}/medical-writing/authoring-journey/competitor-triage/${run.run_id}/confirm`,
+        `/api/projects/${projectId}/medical-writing/authoring-journey/competitor-triage/${run.run_id}/${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            expected_run_revision: run.canonical_input_hash,
-            retained_nct_ids: retainedNctIds,
-            excluded_nct_ids: excludedNctIds,
-            final_classifications: finalClassifications,
-            no_suitable_competitor_reason: retainedNctIds.length
-              ? ""
-              : noSuitableCompetitorReason.trim(),
-            actor: "medical_manager",
-            reason: triageReason.trim() || "医学经理已整体核对AI分诊结果并确认锁定当前竞品篮子。",
-            idempotency_key: requestKey("competitor-triage-confirm"),
-            expected_journey_revision: journey?.revision || 0,
+            ...basePayload,
+            ...(triageReconfirmationRequired
+              ? { source_confirmation_id: aiTriageRun.reconfirmation.source_confirmation_id }
+              : { expected_run_revision: run.canonical_input_hash }),
           }),
         },
       ).then(readJson);
@@ -962,7 +983,16 @@ export function WritingReferencePanel({
       const pipeline = confirmation?.pipeline || null;
       const pipelineStage = String(pipeline?.stage || "").trim();
       const pipelineAdvanced = confirmation?.pipeline_advanced === true;
-      if (!retainedNctIds.length) {
+      if (
+        triageReconfirmationRequired
+        && ["failed", "deferred_until_picos"].includes(
+          confirmation?.projection_status,
+        )
+      ) {
+        setMessage("分类复核记录已保存，但尚未同步到写作旅程；请点击“重试同步”，无需再次审核。");
+      } else if (triageReconfirmationRequired) {
+        setMessage(`已按当前研究信息确认${allCandidateIds.length}项分类，并沿用原检索快照；未重复运行AI或原文处理。`);
+      } else if (!retainedNctIds.length) {
         setMessage("已确认本次公开检索结果中无合适竞品；可继续手工上传方案或使用通用语料库。");
       } else if (pipelineAdvanced) {
         setMessage(`已按本次审核结果确认并锁定全部${allCandidateIds.length}项候选研究。研究流水线已开始继续处理原文。`);
@@ -1455,16 +1485,25 @@ export function WritingReferencePanel({
             </p>}
             {aiTriageError && aiTriagePresentation.kind === "idle" && <p className="writing-reference-message danger" role="alert">{aiTriageError}</p>}
           </div>}
-          {authoringMode && aiTriageRun?.run?.status === "review_ready" && (
+          {authoringMode && (aiTriageRun?.run?.status === "review_ready" || triageReconfirmationRequired) && (
             <section className="writing-reference-validation" data-section="ai-triage-review">
               <div>
                 <div>
-                  <strong>批量确认AI分诊建议</strong>
+                  <strong>{triageReconfirmationRequired ? "按当前研究信息重新核对" : "批量确认AI分诊建议"}</strong>
                   <p>
-                    AI已预设 {aiTriageResults.length}/{candidates.length} 项分类：
-                    建议保留 {aiTriageRetainedCount} 项，排除 {Math.max(0, candidates.length - aiTriageRetainedCount)} 项。
-                    无需逐项操作；仅在需要调整时展开明细。
+                    {triageReconfirmationRequired ? "既有人工确认结果已全部预选" : `AI已预设 ${aiTriageResults.length}/${candidates.length} 项分类`}：
+                    保留 {aiTriageRetainedCount} 项，排除 {Math.max(0, candidates.length - aiTriageRetainedCount)} 项。
+                    只需核对变化影响；需要调整时再展开明细。
                   </p>
+                  {triageReconfirmationRequired && (
+                    <ul className="writing-reference-criteria-list">
+                      {(aiTriageRun?.reconfirmation?.current_triage_criteria || []).map((criterion) => (
+                        <li key={criterion.criterion_id}>
+                          <b>{criterion.label}</b>：{criterion.value}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -1518,21 +1557,21 @@ export function WritingReferencePanel({
                 })}
               </div>}
               {!aiTriageCoverageComplete && <p className="writing-reference-message danger">AI结果未完整覆盖当前公开检索结果全部候选，不能确认；请重试或刷新结果。</p>}
-              {aiTriageAllExcluded && <p className="writing-reference-message">当前选择将排除全部候选。确认后仍可继续手工上传方案或使用通用语料库，但必须记录无合适竞品的实质理由。</p>}
+              {aiTriageAllExcluded && <p className="writing-reference-message">当前选择将排除全部候选。确认后仍可继续手工上传方案或使用通用语料库；说明可按需补充。</p>}
               <label className="writing-reference-select">
                 本次审核说明（可选）
                 <textarea value={triageReason} onChange={(event) => setTriageReason(event.target.value)} placeholder="可记录调整分类或锁定篮子的总体考虑；不填写时系统记录标准确认说明。" />
               </label>
               {aiTriageAllExcluded && <label className="writing-reference-select">
-                无合适竞品理由（必填）
-                <textarea value={noSuitableCompetitorReason} onChange={(event) => setNoSuitableCompetitorReason(event.target.value)} placeholder="说明为何本次公开检索结果中的候选均不适合作为直接竞品或间接参照，至少10个字。" />
+                无合适竞品理由（可选）
+                <textarea value={noSuitableCompetitorReason} onChange={(event) => setNoSuitableCompetitorReason(event.target.value)} placeholder="如需留痕，可简要说明候选与当前适应症、分期、人群或设计不匹配之处。" />
               </label>}
-              <button className="primary-button" data-action="confirm-ai-triage" onClick={confirmAiTriageRun} disabled={!aiTriageCoverageComplete || !noSuitableCompetitorReasonValid || Boolean(busyAction)}>
-                {busyAction === "confirm-ai-triage" ? "确认中…" : aiTriageAllExcluded ? "确认全部排除并继续" : `确认并锁定全部${candidates.length}项`}
+              <button className="primary-button" data-action="confirm-ai-triage" onClick={confirmAiTriageRun} disabled={!aiTriageCoverageComplete || Boolean(busyAction)}>
+                {busyAction === "confirm-ai-triage" ? "确认中…" : triageReconfirmationRequired ? `确认当前${candidates.length}项分类` : aiTriageAllExcluded ? "确认全部排除并继续" : `确认并锁定全部${candidates.length}项`}
               </button>
             </section>
           )}
-          {authoringMode && !triageFinalized && aiTriageRun?.run?.status !== "review_ready" && aiTriageRun?.run?.status !== "confirmed" && <div className="writing-reference-triage-finalize">
+          {authoringMode && !triageFinalized && aiTriageRun?.run?.status !== "review_ready" && aiTriageRun?.run?.status !== "confirmed" && !triageReconfirmationRequired && <div className="writing-reference-triage-finalize">
             <div><strong>锁定深度处理篮子</strong><span>当前已有 {relatedDecisionIds.length} 项直接竞品/间接参照；锁定后仍保留所有候选和分诊审计。</span></div>
             <label>分诊定稿理由<textarea value={triageReason} onChange={(event) => setTriageReason(event.target.value)} placeholder="说明为何当前篮子足以进入Protocol深度处理。" /></label>
             <button className="primary-button" onClick={finalizeTriage} disabled={!relatedDecisionIds.length || triageReason.trim().length < 10 || Boolean(busyAction)}>{busyAction === "finalize-triage" ? "锁定中" : "锁定竞品篮子"}</button>

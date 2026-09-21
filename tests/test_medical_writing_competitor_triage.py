@@ -25,6 +25,7 @@ from unittest.mock import patch
 
 from packages.contracts.workbench_contracts import (
     CompetitorTriageBasketConfirmationRequest,
+    CompetitorTriageBasketReconfirmationRequest,
     CompetitorTriageChunkStatus,
     CompetitorTriageClassification,
     CompetitorTriageCreateRequest,
@@ -2137,6 +2138,29 @@ class TestStaleDetection(TriageTestBase):
         self.assertNotEqual(CompetitorTriageRunStatus.STALE, refreshed.run.status)
         self.assertEqual(response.run.material_facts_hash, refreshed.run.material_facts_hash)
 
+        confirmation = self.service.confirm_basket(
+            self.project_id,
+            response.run.run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=["NCT00000001"],
+                excluded_nct_ids=[],
+                final_classifications={"NCT00000001": "direct_competitor"},
+                actor="test",
+                reason="confirm after revision-only title adoption",
+                idempotency_key="ct-test-confirm-title-only-adopt",
+                expected_journey_revision=self.journey_service.get(
+                    self.project_id
+                ).revision,
+            ),
+        )
+        self.assertIn(
+            confirmation.projection_status,
+            {"discovery_projected", "corpus_projected"},
+        )
+        settled = self.service.get_run(self.project_id, response.run.run_id)
+        self.assertFalse(settled.reconfirmation.required)
+
     def test_stale_run_cannot_be_confirmed(self):
         candidates = [_make_candidate("NCT00000001")]
         snapshot = self._bind_snapshot(candidates)
@@ -2483,21 +2507,18 @@ class TestBasketConfirmAndIdempotency(TriageTestBase):
         self.assertEqual([], journey.corpus_triage.retained_candidate_ids)
         self.assertEqual("corpus", journey.current_stage)
 
-    def test_all_excluded_without_substantive_reason_is_rejected(self):
-        with self.assertRaisesRegex(
-            ValueError, "no_suitable_competitor_reason"
-        ):
-            CompetitorTriageBasketConfirmationRequest(
-                expected_run_revision="run-revision",
-                retained_nct_ids=[],
-                excluded_nct_ids=["NCT00000001"],
-                final_classifications={"NCT00000001": "excluded"},
-                no_suitable_competitor_reason="不合适",
-                actor="test",
-                reason="",
-                idempotency_key="ct-test-all-excluded-invalid",
-                expected_journey_revision=1,
-            )
+    def test_all_excluded_reason_is_optional(self):
+        request = CompetitorTriageBasketConfirmationRequest(
+            expected_run_revision="run-revision",
+            retained_nct_ids=[],
+            excluded_nct_ids=["NCT00000001"],
+            final_classifications={"NCT00000001": "excluded"},
+            actor="test",
+            reason="",
+            idempotency_key="ct-test-all-excluded-optional",
+            expected_journey_revision=1,
+        )
+        self.assertEqual("", request.no_suitable_competitor_reason)
 
     def test_confirm_unknown_nct_rejected(self):
         candidates = [_make_candidate("NCT00000001")]
@@ -2771,6 +2792,152 @@ class TestProjectionRetry(TriageTestBase):
         self.assertEqual(retried.projection_error, persisted.projection_error)
         final = self.journey_service.get(self.project_id)
         self.assertEqual("pending", final.corpus_triage.status)
+
+    def test_human_reconfirmation_reuses_snapshot_without_ai_and_rebinds(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]}
+            }
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-create-human-reconfirm",
+            ),
+            provider,
+        )
+        original = self.service.confirm_basket(
+            self.project_id,
+            response.run.run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=["NCT00000001"],
+                excluded_nct_ids=[],
+                final_classifications={"NCT00000001": "direct_competitor"},
+                actor="test",
+                reason="original confirmation",
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-confirm-human-reconfirm",
+            ),
+        )
+        projected = self.journey_service.get(self.project_id)
+        changed_profile = projected.framing.product_profile.model_copy(
+            update={"administration_routes": ["口服"]},
+            deep=True,
+        )
+        changed_framing = projected.framing.model_copy(
+            update={"product_profile": changed_profile},
+            deep=True,
+        )
+        preview = self.journey_service.impact_preview(
+            self.project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=projected.revision,
+                stage="framing",
+                framing=changed_framing,
+            ),
+        )
+        changed = self.journey_service.commit_stage(
+            self.project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=projected.revision,
+                stage="framing",
+                framing=changed_framing,
+                impact_preview_id=preview.preview_id,
+                actor="test",
+                idempotency_key="ct-test-change-before-human-reconfirm",
+            ),
+        )
+
+        pending = self.service.get_run(self.project_id, response.run.run_id)
+        self.assertTrue(pending.reconfirmation.required)
+        self.assertEqual(
+            original.confirmation_id,
+            pending.reconfirmation.source_confirmation_id,
+        )
+        self.assertEqual(
+            {"NCT00000001": CompetitorTriageClassification.DIRECT_COMPETITOR},
+            pending.reconfirmation.final_classifications,
+        )
+
+        request = CompetitorTriageBasketReconfirmationRequest(
+            source_confirmation_id=original.confirmation_id,
+            expected_journey_revision=changed.revision,
+            retained_nct_ids=["NCT00000001"],
+            excluded_nct_ids=[],
+            final_classifications={"NCT00000001": "direct_competitor"},
+            actor="test",
+            idempotency_key="ct-test-human-reconfirm",
+        )
+        original_projection = (
+            self.journey_service.project_human_reconfirmed_basket
+        )
+        self.journey_service.project_human_reconfirmed_basket = (  # type: ignore
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                RuntimeError("transient human rebind failure")
+            )
+        )
+        failed = self.service.reconfirm_basket(
+            self.project_id,
+            response.run.run_id,
+            request,
+        )
+        self.journey_service.project_human_reconfirmed_basket = original_projection  # type: ignore
+        self.assertEqual("failed", failed.projection_status)
+        pending_run = self.repo.triage_run(self.project_id, response.run.run_id)
+        self.assertEqual(
+            CompetitorTriageRunStatus.PROJECTION_PENDING,
+            pending_run.status,
+        )
+
+        reconfirmed = self.service.retry_projection(
+            self.project_id,
+            failed.confirmation_id,
+            CompetitorTriageProjectionRetryRequest(
+                actor="test",
+                idempotency_key="ct-test-human-reconfirm-retry",
+            ),
+        )
+
+        self.assertEqual("human_reconfirmation", reconfirmed.confirmation_kind)
+        self.assertEqual(original.confirmation_id, reconfirmed.source_confirmation_id)
+        self.assertNotEqual(original.confirmation_id, reconfirmed.confirmation_id)
+        rebound = self.journey_service.get(self.project_id)
+        self.assertEqual(snapshot.snapshot_id, rebound.search_plan.latest_snapshot_id)
+        self.assertEqual(
+            reconfirmed.confirmation_id,
+            rebound.discovery_basket_projection.confirmation_id,
+        )
+        self.assertEqual("finalized", rebound.corpus_triage.status)
+        run_after = self.repo.triage_run(self.project_id, response.run.run_id)
+        self.assertEqual(CompetitorTriageRunStatus.CONFIRMED, run_after.status)
+        settled = self.service.get_run(self.project_id, response.run.run_id)
+        self.assertFalse(settled.reconfirmation.required)
+
+        decisions_before = {
+            item.nct_id: item.revision
+            for item in self.repo.relevance_decisions_for_snapshot(
+                self.project_id, snapshot.snapshot_id
+            )
+        }
+        replay = self.service.reconfirm_basket(
+            self.project_id, response.run.run_id, request
+        )
+        self.assertEqual(reconfirmed.confirmation_id, replay.confirmation_id)
+        self.assertEqual(
+            decisions_before,
+            {
+                item.nct_id: item.revision
+                for item in self.repo.relevance_decisions_for_snapshot(
+                    self.project_id, snapshot.snapshot_id
+                )
+            },
+        )
 
 
 class TestExactModelIdentity(TriageTestBase):

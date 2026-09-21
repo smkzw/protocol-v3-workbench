@@ -121,4 +121,19 @@ const confirmedWithOldAwaitingPipeline = deriveTriagePresentation({
 });
 check(confirmedWithOldAwaitingPipeline.kind === "confirmed", "confirmed run stays confirmed even when parent pipeline still shows awaiting_triage_confirm (stale)");
 
+const reconfirmationRequired = deriveTriagePresentation({
+  run: { ...queuedRun, status: "confirmed" },
+  reconfirmationRequired: true,
+  jobStatus: "completed",
+  snapshotId: "snapshot-1",
+});
+check(
+  reconfirmationRequired.kind === "reconfirmation_required",
+  "shows a human re-review instead of a new AI run when medical facts changed",
+);
+check(
+  reconfirmationRequired.message.includes("不会重复调用AI"),
+  "explains that the immutable result is reused",
+);
+
 console.log(`triagePresentationState: ${passed} passed`);

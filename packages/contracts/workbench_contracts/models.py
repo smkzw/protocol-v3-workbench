@@ -8217,26 +8217,39 @@ class CompetitorTriageBasketConfirmationRequest(WorkbenchModel):
     idempotency_key: str = Field(min_length=8, max_length=160)
     expected_journey_revision: int = Field(ge=1)
 
-    @model_validator(mode="after")
-    def validate_all_excluded_reason(self):
-        self.no_suitable_competitor_reason = (
-            self.no_suitable_competitor_reason.strip()
-        )
-        if not self.retained_nct_ids:
-            substantive = re.sub(
-                r"[\W_]+", "", self.no_suitable_competitor_reason, flags=re.UNICODE
-            )
-            if len(substantive) < 10:
-                raise ValueError(
-                    "all-excluded competitor triage requires a substantive "
-                    "no_suitable_competitor_reason of at least 10 characters"
-                )
-        return self
-
-
 class CompetitorTriageProjectionRetryRequest(WorkbenchModel):
     actor: str = Field(default="medical_manager", min_length=2, max_length=80)
     idempotency_key: str = Field(min_length=8, max_length=160)
+
+
+class CompetitorTriageBasketReconfirmationRequest(WorkbenchModel):
+    source_confirmation_id: str = Field(min_length=1, max_length=160)
+    expected_journey_revision: int = Field(ge=1)
+    retained_nct_ids: List[str] = Field(default_factory=list)
+    excluded_nct_ids: List[str] = Field(default_factory=list)
+    final_classifications: Dict[str, CompetitorTriageClassification] = Field(
+        min_length=1
+    )
+    no_suitable_competitor_reason: str = Field(default="", max_length=2000)
+    actor: str = Field(default="medical_manager", min_length=2, max_length=80)
+    reason: str = Field(default="", max_length=500)
+    idempotency_key: str = Field(min_length=8, max_length=160)
+
+
+class CompetitorTriageReconfirmationStatus(WorkbenchModel):
+    required: bool = False
+    reason: str = ""
+    source_confirmation_id: str = ""
+    snapshot_id: str = ""
+    current_journey_revision: int = Field(default=0, ge=0)
+    retained_nct_ids: List[str] = Field(default_factory=list)
+    excluded_nct_ids: List[str] = Field(default_factory=list)
+    final_classifications: Dict[str, CompetitorTriageClassification] = Field(
+        default_factory=dict
+    )
+    current_triage_criteria: List[MedicalWritingCompetitorTriageCriterion] = Field(
+        default_factory=list
+    )
 
 
 class CompetitorTriageConfirmationRecord(WorkbenchModel):
@@ -8254,6 +8267,12 @@ class CompetitorTriageConfirmationRecord(WorkbenchModel):
     reason: str = ""
     confirmation_hash: str
     journey_revision: int
+    confirmation_kind: Literal[
+        "initial_ai_assisted", "human_reconfirmation"
+    ] = "initial_ai_assisted"
+    source_confirmation_id: str = ""
+    confirmed_material_facts_hash: str = ""
+    confirmed_search_plan_id: str = ""
     projection_status: Literal[
         "pending",
         "discovery_projected",
@@ -8291,6 +8310,9 @@ class CompetitorTriageRunSummary(WorkbenchModel):
 class CompetitorTriageRunResponse(WorkbenchModel):
     run: CompetitorTriageRun
     summary: CompetitorTriageRunSummary
+    reconfirmation: CompetitorTriageReconfirmationStatus = Field(
+        default_factory=CompetitorTriageReconfirmationStatus
+    )
 
 
 class WritingReferenceDocumentIngestRequest(WorkbenchModel):

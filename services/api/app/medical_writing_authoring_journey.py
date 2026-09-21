@@ -3332,6 +3332,175 @@ class MedicalWritingAuthoringJourneyService:
             connection.commit()
         return updated
 
+    def project_human_reconfirmed_basket(
+        self,
+        project_id: str,
+        snapshot: WritingReferenceSearchSnapshot,
+        *,
+        confirmation_id: str,
+        confirmation_hash: str,
+        source_confirmation_id: str,
+        run_id: str,
+        retained_nct_ids: list[str],
+        excluded_nct_ids: list[str],
+        expected_revision: int,
+        actor: str,
+        reason: str,
+        idempotency_key: str,
+    ) -> MedicalWritingAuthoringJourney:
+        """Bind an unchanged registry snapshot to a new explicit human review.
+
+        This path is for a prior AI-assisted basket whose medical triage facts
+        changed after confirmation. It does not reuse that confirmation as
+        current and does not call search or AI. The user-provided complete
+        partition becomes a new confirmation before this method is called.
+        """
+        retained = sorted(set(retained_nct_ids))
+        excluded = sorted(set(excluded_nct_ids))
+        request_material = {
+            "snapshot_id": snapshot.snapshot_id,
+            "confirmation_id": confirmation_id,
+            "confirmation_hash": confirmation_hash,
+            "source_confirmation_id": source_confirmation_id,
+            "run_id": run_id,
+            "retained_nct_ids": retained,
+            "excluded_nct_ids": excluded,
+            "expected_revision": expected_revision,
+        }
+        request_sha256 = _payload_sha256(request_material)
+        replay = self._replay_from_store(project_id, idempotency_key, request_sha256)
+        if replay is not None:
+            return replay
+        state = self.get(project_id)
+        if state.revision != expected_revision:
+            raise MedicalWritingAuthoringJourneyConflictError(
+                f"stale authoring journey revision: expected {expected_revision}, current {state.revision}"
+            )
+        if snapshot.project_id != project_id or state.search_plan is None:
+            raise ValueError("the reviewed snapshot does not belong to this journey")
+        if state.search_plan.latest_snapshot_id not in ("", snapshot.snapshot_id):
+            raise MedicalWritingAuthoringJourneyConflictError(
+                "the journey is already bound to a different immutable snapshot"
+            )
+        existing_projection = state.discovery_basket_projection
+        if (
+            existing_projection.confirmation_id
+            and existing_projection.confirmation_id
+            not in {source_confirmation_id, confirmation_id}
+        ):
+            raise MedicalWritingAuthoringJourneyConflictError(
+                "a different confirmed basket is already active"
+            )
+        expected_search = self.build_competitor_search_request(
+            project_id,
+            MedicalWritingCompetitorSearchExecuteRequest(
+                search_plan_id=state.search_plan.plan_id,
+                actor=actor,
+                idempotency_key=f"{idempotency_key}:validate",
+            ),
+        ).search
+        if snapshot.request != expected_search:
+            raise ValueError(
+                "the reviewed snapshot registry request no longer matches the current search plan"
+            )
+        candidate_ids = {candidate.nct_id for candidate in snapshot.candidates}
+        if set(retained) & set(excluded) or set(retained) | set(excluded) != candidate_ids:
+            raise ValueError("the human-reviewed basket must classify every snapshot candidate exactly once")
+
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            replay = self._idempotent_replay(
+                connection, project_id, idempotency_key, request_sha256
+            )
+            if replay is not None:
+                connection.commit()
+                return replay
+            current = _load_authoring_journey_payload(
+                self._current_row(connection, project_id)["payload_json"]
+            )
+            if current.revision != expected_revision:
+                connection.rollback()
+                raise MedicalWritingAuthoringJourneyConflictError(
+                    f"stale authoring journey revision: expected {expected_revision}, current {current.revision}"
+                )
+            if current.search_plan is None or current.search_plan.plan_id != state.search_plan.plan_id:
+                connection.rollback()
+                raise MedicalWritingAuthoringJourneyConflictError(
+                    "search plan changed during basket re-review"
+                )
+            current_projection = current.discovery_basket_projection
+            if (
+                current_projection.confirmation_id
+                and current_projection.confirmation_id
+                not in {source_confirmation_id, confirmation_id}
+            ):
+                connection.rollback()
+                raise MedicalWritingAuthoringJourneyConflictError(
+                    "a different confirmed basket became active during re-review"
+                )
+            now = datetime.now(timezone.utc)
+            public_document_count = sum(
+                sum(
+                    1
+                    for document in candidate.public_documents
+                    if document.document_type.lower() in {"protocol", "protocol_sap"}
+                )
+                for candidate in snapshot.candidates
+            )
+            search_plan = current.search_plan.model_copy(
+                update={
+                    "status": "triaged",
+                    "latest_snapshot_id": snapshot.snapshot_id,
+                    "returned_count": snapshot.returned_count,
+                    "public_document_count": public_document_count,
+                    "searched_at": snapshot.created_at,
+                },
+                deep=True,
+            )
+            projection = DiscoveryBasketProjection(
+                confirmation_id=confirmation_id,
+                confirmation_hash=confirmation_hash,
+                snapshot_id=snapshot.snapshot_id,
+                retained_nct_ids=retained,
+                excluded_nct_ids=excluded,
+                run_id=run_id,
+                actor=actor,
+                reason=reason,
+                projected_at=now,
+            )
+            updated = current.model_copy(
+                update={
+                    "revision": current.revision + 1,
+                    "search_plan": search_plan,
+                    "discovery_basket_projection": projection,
+                    "corpus_triage": MedicalWritingCorpusTriage(),
+                    "corpus_gate": self._carry_forward_corpus_gate(current),
+                    "picos_corpus_alignment": MedicalWritingPicosCorpusAlignment(),
+                    "updated_at": now,
+                    "updated_by": actor,
+                },
+                deep=True,
+            )
+            self._persist_update(
+                connection,
+                updated,
+                expected_revision=current.revision,
+                event_type="authoring_journey_human_reconfirmed_basket_projected",
+                actor=actor,
+                idempotency_key=idempotency_key,
+                request_sha256=request_sha256,
+                detail={
+                    "confirmation_id": confirmation_id,
+                    "source_confirmation_id": source_confirmation_id,
+                    "snapshot_id": snapshot.snapshot_id,
+                    "retained_count": len(retained),
+                    "excluded_count": len(excluded),
+                    "external_work_repeated": False,
+                },
+            )
+            connection.commit()
+        return updated
+
     def require_writing_access(self, project_id: str) -> None:
         if not self.has_project(project_id):
             return

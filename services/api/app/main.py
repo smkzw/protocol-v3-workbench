@@ -73,6 +73,7 @@ from packages.contracts.workbench_contracts import (
     CompetitorTriageCreateRequest,
     CompetitorTriageRetryRequest,
     CompetitorTriageBasketConfirmationRequest,
+    CompetitorTriageBasketReconfirmationRequest,
     CompetitorTriageProjectionRetryRequest,
     MedicalWritingSynopsisImportConfirmRequest,
     MedicalWritingLegacyAuthoringBootstrapPrepareRequest,
@@ -8042,6 +8043,8 @@ def retry_medical_writing_research_pipeline_triage(
         raise HTTPException(status_code=422, detail=str(exc))
     except CompetitorTriageConflictError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
+    except MedicalWritingAuthoringJourneyConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except CompetitorTriageStaleError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
     except CompetitorTriageError as exc:
@@ -8704,6 +8707,8 @@ def retry_competitor_triage_run(
         raise HTTPException(status_code=409, detail=str(exc))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except CompetitorTriageStaleError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except CompetitorTriageError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
@@ -8759,6 +8764,39 @@ def confirm_competitor_triage_basket(
         raise HTTPException(status_code=409, detail=str(exc))
     except CompetitorTriageConflictError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
+    except MedicalWritingAuthoringJourneyConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (WritingReferenceConflictError, WritingReferenceStaleStateError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except CompetitorTriageError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.post(
+    "/api/projects/{project_id}/medical-writing/authoring-journey/competitor-triage/{run_id}/reconfirm"
+)
+def reconfirm_competitor_triage_basket(
+    project_id: str,
+    run_id: str,
+    request: CompetitorTriageBasketReconfirmationRequest,
+):
+    try:
+        canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        confirmation = competitor_triage_service.reconfirm_basket(
+            canonical_id, run_id, request
+        )
+        result = confirmation.model_dump(mode="json")
+        result["pipeline_advanced"] = False
+        result["external_work_repeated"] = False
+        return result
+    except CompetitorTriageStaleError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except CompetitorTriageConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except MedicalWritingAuthoringJourneyConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except (WritingReferenceConflictError, WritingReferenceStaleStateError) as exc:
         raise HTTPException(status_code=409, detail=str(exc))
     except KeyError as exc:
@@ -8789,6 +8827,10 @@ def retry_competitor_triage_projection(
         return competitor_triage_service.retry_projection(
             canonical_id, confirmation.confirmation_id, request
         ).model_dump(mode="json")
+    except CompetitorTriageStaleError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except MedicalWritingAuthoringJourneyConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except CompetitorTriageError as exc:

@@ -62,7 +62,7 @@ function conciseFailureDetail({ run, jobStatus, pipeline, pipelineRelevant, prog
  * small operator-facing state. No timeout is inferred locally: a terminal
  * failure is only surfaced when one of the APIs reports it.
  */
-export function deriveTriagePresentation({ run, jobStatus = "", hasActiveJob = false, pipeline = null, snapshotId = "", candidateCount = 0 } = {}) {
+export function deriveTriagePresentation({ run, reconfirmationRequired = false, jobStatus = "", hasActiveJob = false, pipeline = null, snapshotId = "", candidateCount = 0 } = {}) {
   const progress = triageProgress(run, candidateCount);
   const runStatus = String(run?.status || "");
   const pipelineRelevant = pipelineMatchesRun(pipeline, run, snapshotId);
@@ -74,6 +74,14 @@ export function deriveTriagePresentation({ run, jobStatus = "", hasActiveJob = f
   const hasTerminalPipelineFailure = PIPELINE_FAILURE_STAGES.has(pipelineStage) && !hasActiveJob;
   const hasTerminalJobFailure = jobStatus === "failed" || jobStatus === "cancelled";
 
+  if (reconfirmationRequired) {
+    return {
+      kind: "reconfirmation_required",
+      progress,
+      retryable: false,
+      message: "研究信息已更新。既有分类已预选，请按当前条件核对后确认；不会重复调用AI。",
+    };
+  }
   if (runStatus === "confirmed") {
     return { kind: "confirmed", progress, retryable: false, message: "分诊结果已确认并锁定。" };
   }

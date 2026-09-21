@@ -84,3 +84,12 @@ Word原生验收制品：`runs/requirements_v2_20260919/f12_20260921/office_brid
 本批次一次性集中验证：GenOffice build 483 modules通过；工作台build 1971 modules通过；前端正式inventory为15个Vitest文件/110项和48个Node文件/65项，全部通过；GenOffice docx-engine 1398通过、1跳过；后端锁定venv与完整项目PYTHONPATH全量2601通过、1项Python 3.14 tar未来行为warning；两库`git diff --check`均通过。此前两次后端命令分别因使用系统Python缺`app`、不完整PYTHONPATH缺`packages`在collection退出，未执行测试、未改源码/expected/gate；最终有效命令使用项目锁定venv。测试按完整构建批次集中执行，没有恢复“改一处测一次”。
 
 独立审阅的P0非法XML已关闭，原生Word保存重开已关闭；其P1多作者与核心期刊元数据已最小关闭。仍未关闭且不得冒称完成：两个差异研究加一个独立MDD盲测的完整产品旅程、111章节适用性与跨章医学一致性、A01–A26其余场景、V02–V08、完整GB/T 7714资源类型/人工抽样、复杂富文本/整格/脚注对象级AI修改。下一动作继续F12，优先建立三个独立project/study/run/document/SHA身份并运行完整“资料→推荐→确认→初稿→当前Word→下载”旅程，再按一次集中矩阵修复真实失败；不阶段暂停。
+
+## 2026-09-21 既有竞品篮子按当前条件人工复核
+实施并独立会商完成：研究事实变化但 registry 检索合同未变时，系统沿用不可变快照和既有人工篮子，显示当前医学分诊条件与完整预选结果；用户一次确认即可建立带来源谱系的新人工确认并受控重绑。该路径不调用AI、检索、下载、OCR、翻译，也不推进父研究流水线。全排除理由按用户已授权决定取消任意最少字数，留空时系统写确定性审计说明。
+
+会商 `sess_a19b465f-8d17-4bcb-bf41-c7f9af5fa580` 实证发现投影失败后界面无重试入口及revision-only假复核；均已修复。重绑失败现在保存确认并把run置为projection_pending，成功重试回confirmed；初次确认按run revision比较事实，人工复核按自身revision比较。冲突/过期统一409，审计文字区分AI初次确认与人工复核。同键重放不重复写决策。
+
+集中验证：相关后端450通过；Protocol v3全套2601通过、1 warning；前端正式110 Vitest+65 Node通过；production build 1971 modules通过；py_compile/diff check通过。mutation inventory增加1条route、2条journey mutator并按用户已授权的阶段断言升版为236/134/197，没有新增门控。
+
+阶段记录：`runs/requirements_v2_20260919/t17_round11/HUMAN_RECONFIRMATION_BATCH_20260921.md`；会商审阅与metrics见对应reviews/metrics文件。Study A真实库仍保持revision20暂停态，未写入。下一动作先在隔离运行时只读验证reconfirmation状态和59/256预选，再用ego(lite)做真实宽屏交互验收，确认无误后才执行Study A人工复核；持续推进，不阶段暂停。

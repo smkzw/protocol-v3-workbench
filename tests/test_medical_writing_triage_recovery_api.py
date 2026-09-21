@@ -246,6 +246,62 @@ class CompetitorTriageRecoveryApiTests(unittest.TestCase):
         self.assertEqual(422, raised.exception.status_code)
         confirm_mock.assert_not_called()
 
+    def test_reconfirm_reuses_existing_work_without_advancing_pipeline(self):
+        confirmation = _Dumpable(
+            {
+                "confirmation_id": "ct_reconf_001",
+                "run_id": "ct_run_001",
+                "snapshot_id": "snapshot-current",
+                "projection_status": "corpus_projected",
+                "confirmation_kind": "human_reconfirmation",
+                "source_confirmation_id": "ct_conf_001",
+                "retained_nct_ids": ["NCT00000001"],
+                "excluded_nct_ids": ["NCT00000002"],
+                "final_classifications": {
+                    "NCT00000001": "direct_competitor",
+                    "NCT00000002": "excluded",
+                },
+            }
+        )
+        request = contract_models.CompetitorTriageBasketReconfirmationRequest(
+            source_confirmation_id="ct_conf_001",
+            expected_journey_revision=9,
+            retained_nct_ids=["NCT00000001"],
+            excluded_nct_ids=["NCT00000002"],
+            final_classifications={
+                "NCT00000001": "direct_competitor",
+                "NCT00000002": "excluded",
+            },
+            actor="medical_manager",
+            idempotency_key="reconfirm-triage-001",
+        )
+        with (
+            patch.object(
+                main,
+                "_canonical_module_project_id",
+                return_value="proj-canonical",
+            ),
+            patch.object(
+                main.competitor_triage_service,
+                "reconfirm_basket",
+                return_value=confirmation,
+            ) as reconfirm_mock,
+            patch.object(
+                main.medical_writing_research_pipeline_service,
+                "advance_after_basket_confirm",
+            ) as advance_mock,
+        ):
+            result = main.reconfirm_competitor_triage_basket(
+                "proj-alias", "ct_run_001", request
+            )
+
+        reconfirm_mock.assert_called_once_with(
+            "proj-canonical", "ct_run_001", request
+        )
+        advance_mock.assert_not_called()
+        self.assertFalse(result["pipeline_advanced"])
+        self.assertFalse(result["external_work_repeated"])
+
 
     def test_confirm_advances_parent_pipeline_after_basket_confirmation(self):
         """MW-A1-002: one-click basket confirm must also advance the parent
