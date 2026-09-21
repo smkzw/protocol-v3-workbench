@@ -247,6 +247,15 @@ class FullDraftServiceTests(unittest.TestCase):
             final_progress=result.progress,
         )
         completed = self.store.get(project, first)
+        artifact = self.full.read_artifact(project, completed)
+        self.assertEqual("protocol_full_draft_artifact_v5", artifact["schema_version"])
+        for section in artifact["sections"]:
+            self.assertEqual(
+                section["evidence_span_ids"],
+                [item["span_id"] for item in section["evidence_bindings"]],
+            )
+            self.assertTrue(all(item["locator"] for item in section["evidence_bindings"]))
+            self.assertTrue(all(item["quote"] for item in section["evidence_bindings"]))
         adopted = self.full.adopt(project, completed)
         replay = self.full.adopt(project, completed)
         self.assertEqual(2, adopted["adopted_count"])
@@ -636,6 +645,57 @@ class FullDraftServiceTests(unittest.TestCase):
         with patch.object(self.full, "read_artifact", return_value=reviewed):
             with self.assertRaisesRegex(RuntimeStoreError, "旧版全文初稿候选仅供查阅"):
                 self.full.adopt(project, completed)
+
+    def test_legacy_v4_candidate_without_persisted_evidence_is_read_only(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job, claim.claim_token, lambda: False, lambda progress: True
+        )
+        self.store.complete(
+            project, job_id, claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        completed = self.store.get(project, job_id)
+        artifact = self.full.read_artifact(project, completed)
+        artifact["schema_version"] = "protocol_full_draft_artifact_v4"
+        for section in artifact["sections"]:
+            section.pop("evidence_bindings", None)
+        reviewed = self.full._apply_review_policy(artifact)
+        self.assertTrue(reviewed["coverage"]["legacy_read_only"])
+        self.assertFalse(reviewed["coverage"]["adoption_ready"])
+        with patch.object(self.full, "read_artifact", return_value=reviewed):
+            with self.assertRaisesRegex(RuntimeStoreError, "旧版全文初稿候选仅供查阅"):
+                self.full.adopt(project, completed)
+
+    def test_chunk_without_resolvable_evidence_is_not_reused(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        job = self.store.get(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            job, "claim", lambda: False, lambda progress: True
+        )
+        self.assertEqual("", result.error)
+        descriptor = json.loads(job.payload_json)["descriptor"]
+        chunk = descriptor["target_sections"]
+        path = self.full._artifact_path(
+            project,
+            job_id,
+            "chunk-0001",
+            chunk=chunk,
+            descriptor_digest=descriptor["digest"],
+        )
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["sections"][0]["evidence_bindings"] = []
+        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        self.assertIsNone(
+            self.full._read_reusable_chunk(project, job_id, descriptor, 1, chunk)
+        )
 
     def test_review_metadata_marks_high_impact_and_corpus_conduct_sections(self):
         project_source = AiTaskSourceRef(

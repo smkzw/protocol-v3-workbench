@@ -134,3 +134,6 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 根因修复：空`message.content`此前因helper异常分支写反而跳过有界重试，现已纠正；v0.4批大小降至4并纳入descriptor；全文max推理的最终输出预算从32768升至65536并纳入descriptor，模型/provider/强度不变。集中验证112 passed、py_compile/diff check通过。证据：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V04_PROVIDER_RECOVERY_20260922.md`。下一动作重启自有5299、再次身份探针、创建新logical work key并长轮询；不得重试两个旧失败job，不得采纳未经fresh医学会商的工件。
 
 第三个job `mwjob_96ee70138c21a86568eb3f3d`使用4章/65536后成功持久化17批68章，第18批因两章引用未返回的`span_project_center`且同模型纠错未删除而失败。新增科学保守归一化：保留有效span并删除悬空span；章节若因此无有效证据，清空正文/决定并降为明确`source_gap`，绝不补造证据。集中验证113 passed。下一动作重启5299后重试同一job，复用前17个chunk从第18批继续；不得新建第四个logical job。
+
+## 2026-09-22 v0.5 证据链持久化
+采用 execution-plus-conference：owner 直接修复与当前全文初稿持久化紧耦合的确定性缺陷，冻结提交后做独立工程审阅；真实 v0.5 工件形成后另启 fresh 医学会商。v0.4 已证明生成时校验有效，但最终工件未保存 evidence span 到来源/定位/摘录的映射，不能作为可采纳候选。现将证据绑定按章节持久化，避免跨批次短 ID 冲突；chunk 恢复、最终合并和采纳均重新验证引用、来源与摘录哈希。schema 已升为 artifact v5/chunk v5/descriptor v6；v3/v4 保留只读。集中回归 115 passed，py_compile 通过。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V05_EVIDENCE_PROVENANCE_20260922.md`。下一动作：冻结提交与独立审阅，然后在隔离 5299 生成 Study A v0.5，逐章核对证据链并进行 fresh 医学会商；此前不得采纳。

@@ -45,10 +45,13 @@ from .medical_writing_authoring_prefill import SUPPORTED_ADOPT_PATHS
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
 FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_4"
-FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v4"
-FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v4"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v5"
-LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {"protocol_full_draft_artifact_v3"}
+FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v5"
+FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v5"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v6"
+LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {
+    "protocol_full_draft_artifact_v3",
+    "protocol_full_draft_artifact_v4",
+}
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 # Four sections keep max-reasoning responses within the provider's bounded
@@ -498,6 +501,72 @@ class MedicalWritingFullDraftService:
         )
         return metadata
 
+    @staticmethod
+    def _evidence_bindings_for_section(
+        section: Mapping[str, Any],
+        output: Mapping[str, Any],
+    ) -> list[dict[str, str]]:
+        """Persist the exact evidence behind one section without cross-run ID collisions.
+
+        ``span_id`` values are scoped to one provider response and may repeat in
+        another chunk.  Keeping each binding beside its section makes the
+        persisted candidate independently auditable while preserving the
+        provider's original evidence IDs for display and diagnostics.
+        """
+        evidence_by_id = {
+            _text(item.get("span_id")): item
+            for item in output.get("evidence_spans") or []
+            if isinstance(item, Mapping) and _text(item.get("span_id"))
+        }
+        bindings: list[dict[str, str]] = []
+        for raw_span_id in section.get("evidence_span_ids") or []:
+            span_id = _text(raw_span_id)
+            evidence = evidence_by_id.get(span_id)
+            if evidence is None:
+                raise RuntimeStoreError(f"章节证据引用无法解析：{span_id or 'empty'}")
+            binding = {
+                "span_id": span_id,
+                "source_id": _text(evidence.get("source_id")),
+                "locator": _text(evidence.get("locator")),
+                "quote": _text(evidence.get("quote")),
+            }
+            if not all(binding.values()):
+                raise RuntimeStoreError(f"章节证据绑定不完整：{span_id}")
+            binding["quote_sha256"] = hashlib.sha256(
+                binding["quote"].encode("utf-8")
+            ).hexdigest()
+            bindings.append(binding)
+        return bindings
+
+    @staticmethod
+    def _section_evidence_is_resolvable(
+        section: Mapping[str, Any],
+        source_ids: set[str],
+    ) -> bool:
+        expected = [_text(item) for item in section.get("evidence_span_ids") or []]
+        bindings = section.get("evidence_bindings")
+        if not isinstance(bindings, list):
+            return False
+        actual: list[str] = []
+        for item in bindings:
+            if not isinstance(item, Mapping):
+                return False
+            span_id = _text(item.get("span_id"))
+            source_id = _text(item.get("source_id"))
+            locator = _text(item.get("locator"))
+            quote = _text(item.get("quote"))
+            if (
+                not span_id
+                or source_id not in source_ids
+                or not locator
+                or not quote
+                or _text(item.get("quote_sha256"))
+                != hashlib.sha256(quote.encode("utf-8")).hexdigest()
+            ):
+                return False
+            actual.append(span_id)
+        return actual == expected
+
     @classmethod
     def _apply_review_policy(cls, artifact: dict[str, Any]) -> dict[str, Any]:
         required_ids: list[str] = []
@@ -635,6 +704,17 @@ class MedicalWritingFullDraftService:
             if isinstance(item, dict)
         ]
         if actual_ids != expected_ids:
+            return None
+        source_ids = {
+            _text(item.get("source_id"))
+            for item in payload.get("source_bindings") or []
+            if isinstance(item, Mapping) and _text(item.get("source_id"))
+        }
+        if not all(
+            self._section_evidence_is_resolvable(item, source_ids)
+            for item in sections
+            if isinstance(item, Mapping)
+        ):
             return None
         return payload
 
@@ -812,6 +892,10 @@ class MedicalWritingFullDraftService:
                     section["section_number"] = descriptor_section.get("section_number", "")
                     section["ai_run_id"] = str(run.run_id)
                     section["source_ids"] = [source.source_id for source in sources]
+                    section["evidence_bindings"] = self._evidence_bindings_for_section(
+                        section,
+                        output,
+                    )
                     section.update(
                         self._review_metadata(
                             section,
@@ -863,6 +947,16 @@ class MedicalWritingFullDraftService:
         actual_ids = [str(item.get("section_id") or "") for item in all_sections]
         if actual_ids != expected_ids:
             return DurableJobResult(error="全文初稿合并后章节覆盖不完整，未写入任何正文", retryable=False)
+        persisted_source_ids = {
+            _text(item.get("source_id"))
+            for item in source_bindings
+            if isinstance(item, Mapping) and _text(item.get("source_id"))
+        }
+        if not all(
+            self._section_evidence_is_resolvable(section, persisted_source_ids)
+            for section in all_sections
+        ):
+            return DurableJobResult(error="全文初稿章节证据链不完整，未写入候选", retryable=False)
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections
@@ -1030,6 +1124,17 @@ class MedicalWritingFullDraftService:
         artifact = self.read_artifact(project_id, job)
         if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
             raise RuntimeStoreError("旧版全文初稿候选仅供查阅；请按当前研究事实重新生成后再采纳")
+        source_ids = {
+            _text(item.get("source_id"))
+            for item in artifact.get("source_bindings") or []
+            if isinstance(item, Mapping) and _text(item.get("source_id"))
+        }
+        if not all(
+            self._section_evidence_is_resolvable(section, source_ids)
+            for section in artifact.get("sections") or []
+            if isinstance(section, Mapping)
+        ):
+            raise RuntimeStoreError("全文初稿章节证据链不完整，未采纳")
         service = self._service(project_id)
         repo = service.repo
         document = repo.protocol(project_id)
