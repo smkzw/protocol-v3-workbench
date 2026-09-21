@@ -32,6 +32,7 @@ OCR_PADDLE_PROFILE_ID = "ocr_paddle_official"
 TRANSLATION_BODY_OMLX_PROFILE_ID = "translation_body_local_omlx"
 TRANSLATION_SUPPORT_PROFILE_ID = "deepseek_translation_support"
 INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID = "independent_ai__deepseek_v4_flash"
+INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID = "independent_ai__opencode_go_deepseek_v41_flash"
 DEFAULT_OCR_MODEL = "GLM-OCR-bf16"
 PADDLE_OCR_MODEL = "PaddleOCR-VL-1.6"
 GATE_TRANSLATION_BODY_MODEL = "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
@@ -124,8 +125,8 @@ ROLE_DEFINITIONS: tuple[AiRoleDefinition, ...] = (
         role_id=INDEPENDENT_AI_ROLE,
         label="综合AI",
         description="竞品分析、方案设计、候选生成、修订与一致性核查。",
-        recommendation="默认使用 DeepSeek V4 Flash（最大推理）；可在获准的私有化模型之间切换。",
-        default_model="qwen3.8-max-preview",
+        recommendation="默认通过 OpenCode Go 使用 DeepSeek V4.1 Flash（最大推理）；可在已配置模型之间切换。",
+        default_model="deepseek-v4.1-flash",
     ),
     AiRoleDefinition(
         role_id=OCR_ROLE,
@@ -241,6 +242,18 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
             enabled=True,
         ),
         AiProviderProfile(
+            profile_id=INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+            provider="opencode-go",
+            label="OpenCode Go · DeepSeek V4.1 Flash 综合AI",
+            base_url="https://opencode.ai/zen/go/v1",
+            model="deepseek-v4.1-flash",
+            expected_response_model="deepseek-v4.1-flash",
+            api_key_env="OPENCODE_API_KEY",
+            deployment_scope="cloud",
+            discovery_mode="manual_plus_probe",
+            enabled=True,
+        ),
+        AiProviderProfile(
             profile_id=INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID,
             provider="deepseek",
             label="DeepSeek V4 Flash 综合AI",
@@ -256,7 +269,10 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
 
 
 _BUILTIN_ROLE_PROFILE_IDS = {
-    INDEPENDENT_AI_ROLE: {INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID},
+    INDEPENDENT_AI_ROLE: {
+        INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+        INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID,
+    },
     OCR_ROLE: {OCR_OMLX_PROFILE_ID, OCR_PADDLE_PROFILE_ID},
     TRANSLATION_BODY_ROLE: {TRANSLATION_BODY_OMLX_PROFILE_ID},
     TRANSLATION_SUPPORT_ROLE: {TRANSLATION_SUPPORT_PROFILE_ID},
@@ -366,8 +382,8 @@ class AiRoleRuntimeSettingsStore:
         return {
             INDEPENDENT_AI_ROLE: AiRoleBinding(
                 role_id=INDEPENDENT_AI_ROLE,
-                profile_id=INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID,
-                model=DEFAULT_TRANSLATION_SUPPORT_MODEL,
+                profile_id=INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+                model="deepseek-v4.1-flash",
                 enabled=True,
                 thinking=THINKING_ENABLED,
                 reasoning_effort="max",

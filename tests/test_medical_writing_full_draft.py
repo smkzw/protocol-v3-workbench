@@ -25,6 +25,7 @@ from services.api.app.demo_repository import DemoRepository
 from services.api.app.medical_writing_durable_jobs import DurableJobStore
 from services.api.app.medical_writing_full_draft import (
     FULL_DRAFT_ARTIFACT_SCHEMA,
+    FULL_DRAFT_PROMPT_VERSION,
     MedicalWritingFullDraftService,
     ProtocolFullDraftExecutor,
 )
@@ -121,10 +122,10 @@ class _FakeFullDraftRunner:
                     "section_id": section_id,
                     "proposal_text": (
                         f"本章节围绕{section_id}说明研究对象、研究目的、执行边界和评价要求。"
-                        "正文依据当前项目已确认研究事实组织，明确需要医学作者在整体审核时核对的关键要点，"
-                        "不引入未被来源支持的剂量、样本量、终点或时间点。"
+                        "正文明确研究对象、主要评价路径和实施约束，并采用可直接审阅的连续监管中文。"
+                        "关键医学依据通过证据说明单独呈现，正文不混入写作过程或系统操作提示。"
                     ),
-                    "rationale": "基于当前项目绑定事实和章节语义生成监管中文正文。",
+                    "rationale": "依据已录入的适应症、分期和目标人群；请核对医学依据完整性。",
                     "evidence_span_ids": [evidence_id],
                 }
             )
@@ -133,7 +134,7 @@ class _FakeFullDraftRunner:
             "task_type": AiTaskType.PROTOCOL_FULL_DRAFT.value,
             "provider": "buddy",
             "model": "deepseek-v4-pro",
-            "prompt_version": "protocol_full_draft_v0_1",
+            "prompt_version": FULL_DRAFT_PROMPT_VERSION,
             "input_source_ids": [source.source_id for source in request.allowed_sources],
             "forbidden_source_ids": [],
             "findings": [],
@@ -159,7 +160,7 @@ class _FakeFullDraftRunner:
             request_origin="trusted_server_source",
             data_classification="confidential_clinical_document",
             deployment_profile="approved_private_documents",
-            prompt_version="protocol_full_draft_v0_1",
+            prompt_version=FULL_DRAFT_PROMPT_VERSION,
             artifacts=[AiTaskArtifact(artifact_id=f"artifact_{self.calls}", artifact_type="provider_output", payload=payload)],
             created_at=now,
             updated_at=now,
@@ -175,7 +176,7 @@ class FullDraftServiceTests(unittest.TestCase):
             "provider_name": "buddy",
             "model_name": "deepseek-v4-pro",
             "route_identity_hash": "b" * 64,
-            "prompt_version": "protocol_full_draft_v0_1",
+            "prompt_version": FULL_DRAFT_PROMPT_VERSION,
         }
         source = AiTaskSourceRef(
             source_id="study_definition_fake",
@@ -259,6 +260,12 @@ class FullDraftServiceTests(unittest.TestCase):
             lambda: False,
             lambda progress: True,
         )
+        locator = json.loads(result.artifact_locator)
+        self.assertNotIn(
+            "required_review_section_ids",
+            locator["coverage"],
+        )
+        self.assertLessEqual(len(result.artifact_locator), 2_000)
         self.store.complete(
             project,
             job_id,
@@ -303,6 +310,108 @@ class FullDraftServiceTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeStoreError, "候选不具备实质内容"):
                 self.full.adopt(project, self.store.get(project, job_id))
 
+    def test_required_review_sections_must_be_confirmed_before_adoption(self):
+        project = self.repo.project_id
+        job_id, _ = self.full.submit_durable(project, self.store)
+        claim = self.store.claim(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            claim.job,
+            claim.claim_token,
+            lambda: False,
+            lambda progress: True,
+        )
+        self.store.complete(
+            project,
+            job_id,
+            claim.claim_token,
+            output_hash=result.output_hash,
+            artifact_locator=result.artifact_locator,
+            provider=result.provider,
+            model=result.model,
+            final_progress=result.progress,
+        )
+        completed = self.store.get(project, job_id)
+        artifact = self.full.read_artifact(project, completed)
+        artifact["sections"][0]["review_level"] = "required"
+        with patch.object(self.full, "read_artifact", return_value=artifact):
+            with self.assertRaisesRegex(RuntimeStoreError, "高影响章节未逐卡确认"):
+                self.full.adopt(project, completed)
+            adopted = self.full.adopt(
+                project,
+                completed,
+                confirmed_section_ids=[artifact["sections"][0]["section_id"]],
+            )
+        self.assertEqual(2, adopted["adopted_count"])
+
+    def test_review_metadata_marks_high_impact_and_corpus_conduct_sections(self):
+        project_source = AiTaskSourceRef(
+            source_id="project_fact",
+            source_type="current_project_study_definition",
+            title="项目事实",
+            locator="study-definition:1",
+            text_preview="主要终点为第16周PASI75。",
+            project_id=self.repo.project_id,
+            module="medical_writing",
+        )
+        corpus_source = AiTaskSourceRef(
+            source_id="company_corpus",
+            source_type="company_protocol_reference_corpus",
+            title="公司方案语料",
+            locator="corpus:1",
+            text_preview="避孕方法和严重不良事件报告规则示例。",
+            project_id=self.repo.project_id,
+            module="medical_writing",
+        )
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": "主要终点为第16周PASI75，并规定严重不良事件报告要求。",
+                "evidence_span_ids": ["ev_project", "ev_corpus"],
+            },
+            {
+                "evidence_spans": [
+                    {"span_id": "ev_project", "source_id": "project_fact"},
+                    {"span_id": "ev_corpus", "source_id": "company_corpus"},
+                ]
+            },
+            [project_source, corpus_source],
+            {"heading": "主要终点与安全性报告"},
+        )
+        self.assertEqual("required", metadata["review_level"])
+        self.assertEqual(1, metadata["evidence_summary"]["project_fact_spans"])
+        self.assertEqual(1, metadata["evidence_summary"]["corpus_spans"])
+        self.assertEqual(2, len(metadata["review_reasons"]))
+
+    def test_review_metadata_marks_operational_safety_and_embedded_design_decisions(self):
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": (
+                    "本节说明妊娠事件的随访范围，并包含计划入组132例和主要终点的设计决定。"
+                ),
+                "evidence_span_ids": [],
+            },
+            {"evidence_spans": []},
+            [],
+            {"heading": "妊娠事件"},
+        )
+        self.assertEqual("required", metadata["review_level"])
+        self.assertIn("妊娠事件", metadata["review_reasons"][0])
+        self.assertTrue(any("计划入组" in item for item in metadata["review_advisories"]))
+
+    def test_review_metadata_does_not_require_confirmation_for_incidental_design_mentions(self):
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": (
+                    "疾病背景部分说明主要终点采用第16周PASI75，并概述计划入组132例的研究背景。"
+                ),
+                "evidence_span_ids": [],
+            },
+            {"evidence_spans": []},
+            [],
+            {"heading": "疾病背景及治疗现状"},
+        )
+        self.assertEqual("standard", metadata["review_level"])
+        self.assertTrue(any("重复提及" in item for item in metadata["review_advisories"]))
+
 
 class FullDraftContractTests(unittest.TestCase):
     def test_gateway_rejects_heading_only_full_draft(self):
@@ -311,7 +420,7 @@ class FullDraftContractTests(unittest.TestCase):
             "task_type": AiTaskType.PROTOCOL_FULL_DRAFT.value,
             "provider": "buddy",
             "model": "deepseek-v4-pro",
-            "prompt_version": "protocol_full_draft_v0_1",
+            "prompt_version": FULL_DRAFT_PROMPT_VERSION,
             "input_source_ids": ["source"],
             "forbidden_source_ids": [],
             "findings": [],
@@ -323,6 +432,39 @@ class FullDraftContractTests(unittest.TestCase):
         }
         errors = validate_ai_output(output)
         self.assertTrue(any("proposal_text" in error for error in errors))
+
+    def test_ai_task_runner_rejects_drafting_process_language_in_prose(self):
+        source = AiTaskSourceRef(
+            source_id="source",
+            source_type="current_project_study_definition",
+            title="研究事实",
+            locator="study-definition:1",
+            text_preview="成年斑块状银屑病受试者，主要终点为第16周PASI75。",
+            project_id="project",
+            module="medical_writing",
+        )
+        output = {
+            "evidence_spans": [{"span_id": "ev", "source_id": "source"}],
+            "full_draft": {
+                "sections": [{
+                    "section_id": "sec_process",
+                    "proposal_text": (
+                        "当前项目已确认成年斑块状银屑病受试者作为研究对象，主要终点为第16周PASI75。"
+                        "本节继续说明研究目的、疗效评价路径、受试者保护要求和研究实施边界，"
+                        "并形成可供医学作者审阅的连续规范正文。"
+                    ),
+                    "rationale": "依据项目研究事实。",
+                    "evidence_span_ids": ["ev"],
+                }]
+            },
+        }
+        errors = AiTaskRunner._validate_protocol_full_draft_output(
+            None,
+            output,
+            [source],
+            {"section_ids": ["sec_process"], "minimum_body_chars": 80},
+        )
+        self.assertTrue(any("drafting-process language" in error for error in errors))
 
     def test_ai_task_runner_rejects_internal_transport_tokens_in_prose(self):
         class Provider:
@@ -389,7 +531,7 @@ class FullDraftContractTests(unittest.TestCase):
                 AiTaskRequest(
                     module="medical_writing",
                     task_type=AiTaskType.PROTOCOL_FULL_DRAFT,
-                    prompt_version="protocol_full_draft_v0_1",
+                    prompt_version=FULL_DRAFT_PROMPT_VERSION,
                     allowed_sources=[source],
                     task_context={
                         "draft_version": "c" * 64,
@@ -469,7 +611,7 @@ class FullDraftContractTests(unittest.TestCase):
                 AiTaskRequest(
                     module="medical_writing",
                     task_type=AiTaskType.PROTOCOL_FULL_DRAFT,
-                    prompt_version="protocol_full_draft_v0_1",
+                    prompt_version=FULL_DRAFT_PROMPT_VERSION,
                     allowed_sources=[source],
                     task_context={
                         "draft_version": "d" * 64,
@@ -514,7 +656,7 @@ class FullDraftContractTests(unittest.TestCase):
                     "schema_version": "ai_task_output_v0_1",
                     "full_draft": {"sections": [{
                         "section_id": section_id,
-                        "proposal_text": "本章节基于当前项目已确认研究事实，说明研究背景、目标人群、研究目的和实施边界，并为医学作者提供可直接审核的连续规范正文。正文同时明确研究对象、主要评价路径和实施约束，避免以标题或占位符代替可审阅内容。",
+                        "proposal_text": "本章节说明成年哮喘受试者的研究背景、研究目的、执行边界和评价要求。正文明确研究对象、主要评价路径和实施约束，并采用可直接审阅的连续监管中文。关键医学依据通过证据说明单独呈现，正文不混入写作过程或系统操作提示。",
                         "rationale": "使用当前项目唯一允许来源。",
                         "evidence_span_ids": [evidence_id],
                     }]},
@@ -547,7 +689,7 @@ class FullDraftContractTests(unittest.TestCase):
                 AiTaskRequest(
                     module="medical_writing",
                     task_type=AiTaskType.PROTOCOL_FULL_DRAFT,
-                    prompt_version="protocol_full_draft_v0_1",
+                    prompt_version=FULL_DRAFT_PROMPT_VERSION,
                     allowed_sources=[source],
                     task_context={
                         "draft_version": "a" * 64,

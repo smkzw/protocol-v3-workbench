@@ -19,6 +19,11 @@ from .ai_gateway import (
     DIRECT_DEEPSEEK_BASE_URL,
     DIRECT_DEEPSEEK_MODEL,
     DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL,
+    DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS,
+    DEEPSEEK_COMPATIBLE_GATEWAY_MODELS,
+    OPENCODE_GO_BASE_URL,
+    OPENCODE_GO_MODEL,
+    OPENCODE_GO_PROVIDER,
     AiTaskType,
     PROTOCOL_FULL_DRAFT_CONTEXT_REQUIRED_KEYS,
 )
@@ -76,6 +81,9 @@ SERVER_PROMPT_VERSIONS[AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING] = (
 SERVER_PROMPT_VERSIONS[AiTaskType.REGULATORY_TRANSLATION_ZH] = (
     "regulatory_translation_zh_v0_5"
 )
+SERVER_PROMPT_VERSIONS[AiTaskType.PROTOCOL_FULL_DRAFT] = (
+    "protocol_full_draft_v0_3"
+)
 
 GLOBAL_FORBIDDEN_SOURCE_IDS = {
     "generated_html_reference",
@@ -120,34 +128,54 @@ _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY = TaskAiRoutePolicy(
         {DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL, DIRECT_DEEPSEEK_MODEL}
     ),
 )
+_LOCAL_DEEPSEEK_COMPATIBLE_POLICY = TaskAiRoutePolicy(
+    provider_name="deepseek",
+    transport_name="openai_compatible",
+    base_url=next(iter(DEEPSEEK_COMPATIBLE_GATEWAY_BASE_URLS)),
+    allowed_models=DEEPSEEK_COMPATIBLE_GATEWAY_MODELS,
+)
 _ALIBABA_QWEN38_POLICY = TaskAiRoutePolicy(
     provider_name=ALIBABA_TOKEN_PLAN_PROVIDER,
     transport_name="openai_compatible",
     base_url=ALIBABA_TOKEN_PLAN_BASE_URL,
     allowed_models=frozenset({ALIBABA_TOKEN_PLAN_MODEL}),
 )
+_OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY = TaskAiRoutePolicy(
+    provider_name=OPENCODE_GO_PROVIDER,
+    transport_name="openai_compatible",
+    base_url=OPENCODE_GO_BASE_URL,
+    allowed_models=frozenset({OPENCODE_GO_MODEL}),
+)
 
 # Medical-writing semantic tasks accept only explicit product-owned routes.
-# Qwen 3.8 is the local default; the exact direct DeepSeek routes remain
-# available for retained task-specific services and controlled rollback.
+# OpenCode Go / DeepSeek V4.1 Flash is the default; the Alibaba and direct or
+# loopback DeepSeek routes remain available for explicit rollback choices.
 TASK_AI_ROUTE_POLICIES = {
     AiTaskType.MEDICAL_WRITING_REVISION: (
+        _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
+        _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.PROTOCOL_FULL_DRAFT: (
+        _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
+        _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING: (
+        _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
     ),
     AiTaskType.DOCUMENT_SECTION_EXTRACTION: (
+        _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
+        _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.REGULATORY_TRANSLATION_ZH: (
+        _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
     ),

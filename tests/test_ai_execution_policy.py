@@ -17,8 +17,9 @@ from packages.contracts.workbench_contracts import (
 from services.api.app.ai_execution_policy import (
     AiExecutionPolicyDenied,
     AiExecutionPolicyResolver,
+    TASK_AI_ROUTE_POLICIES,
 )
-from services.api.app.ai_gateway import AiPromptEnvelope
+from services.api.app.ai_gateway import AiPromptEnvelope, AiTaskType
 from services.api.app.ai_task_runner import AiTaskRunner, AiTaskStore, public_ai_run
 from services.api.app.demo_repository import DemoRepository
 from services.api.app.main import app
@@ -186,6 +187,18 @@ class AiExecutionPolicyTests(unittest.TestCase):
                 model_name=provider.model_name,
             ),
         )
+
+    def test_medical_writing_defaults_allow_opencode_go_deepseek_flash(self):
+        for task_type in (
+            AiTaskType.MEDICAL_WRITING_REVISION,
+            AiTaskType.PROTOCOL_FULL_DRAFT,
+            AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING,
+            AiTaskType.DOCUMENT_SECTION_EXTRACTION,
+            AiTaskType.REGULATORY_TRANSLATION_ZH,
+        ):
+            policy = TASK_AI_ROUTE_POLICIES[task_type][0]
+            self.assertEqual("opencode-go", policy.provider_name)
+            self.assertEqual("deepseek-v4.1-flash", next(iter(policy.allowed_models)))
 
     def test_medical_writing_revision_policy_accepts_plan_pin_only_as_known_optional_key(self):
         resolver = AiExecutionPolicyResolver(

@@ -32,17 +32,20 @@ from .medical_writing_durable_jobs import (
     DurableJobStore,
 )
 from .medical_writing_content_quality import (
+    DRAFTING_PROCESS_VOCABULARY_RE,
     INTERNAL_TRANSPORT_VOCABULARY_RE,
     iter_unresolved_draft_markers,
 )
+from .medical_writing_corpus_policy import CORPUS_GENERALIZATION_PROMPT_RULES
 from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateError
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
-FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_1"
-FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v1"
-FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v1"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v1"
+FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_3"
+FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v3"
+FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v3"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v3"
+FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 FULL_DRAFT_CHUNK_SIZE = 8
 
@@ -50,6 +53,42 @@ _PLACEHOLDER_RE = re.compile(
     r"(?:^|[\s，。；：])(?:待补充|待确认|待定|TBD|TODO|不适用|无适用内容|由方案规定|见方案规定)(?:$|[\s，。；：])",
     re.IGNORECASE,
 )
+_REQUIRED_REVIEW_HEADING_RE = re.compile(
+    r"^(?:方案概要|研究目的和终点|主要目的和主要终点|主要终点.*|研究设计|总体设计|"
+    r"确证性设计与假设依据|随机化|盲法与揭盲|研究人群|研究人群选择及依据|"
+    r"入选标准|排除标准|统计分析|(?:主要)?估计目标.*|样本量.*|非劣效.*|"
+    r"期中分析.*|多重性.*|剂量选择.*|对照选择.*|研究药物相关风险|"
+    r"妊娠事件(?:的报告与随访)?|避孕的规定与方法|安全信息报告途径)$",
+    re.IGNORECASE,
+)
+_REQUIRED_REVIEW_CONTENT_RE = re.compile(
+    r"主要终点|估计目标|伴发事件|样本量|计划入组|非劣效界值|期中分析|alpha|α|"
+    r"剂量选择|对照选择|核心人群",
+    re.IGNORECASE,
+)
+_CORPUS_CONDUCT_RE = re.compile(
+    r"避孕|妊娠.{0,24}(?:报告|随访|结局)|不良事件.{0,20}(?:是指|定义|记录|报告)|"
+    r"严重不良事件.{0,30}(?:记录|报告)|剂量(?:调整|暂停|减量)|给药中断|永久停药|"
+    r"合并用药|禁用药|限制用药|洗脱|救援治疗|IWRS|交互式网络应答|"
+    r"侵入性操作|全分析集|符合方案集|安全性分析集",
+    re.IGNORECASE,
+)
+_DESIGN_RESTATEMENT_SIGNALS = (
+    re.compile(r"计划入组\s*\d+\s*例"),
+    re.compile(r"\d+(?:\.\d+)?\s*mg", re.IGNORECASE),
+    re.compile(r"主要终点"),
+    re.compile(r"随机"),
+    re.compile(r"双盲"),
+)
+_DESIGN_RESTATEMENT_ALLOWED_HEADING_RE = re.compile(
+    r"方案概要|研究设计|研究目的和终点|主要目的和主要终点|样本量",
+    re.IGNORECASE,
+)
+_CORPUS_SOURCE_TYPES = {
+    "company_protocol_reference_corpus",
+    "shared_protocol_reference_corpus",
+    "shared_phase1_protocol_reference_corpus",
+}
 
 
 def _canonical(value: Any) -> str:
@@ -284,6 +323,9 @@ class MedicalWritingFullDraftService:
     @staticmethod
     def _instruction(chunk: list[dict[str, Any]], descriptor: dict[str, Any]) -> str:
         ids = ", ".join(item["section_id"] for item in chunk)
+        corpus_rules = "\n".join(
+            f"- {rule}" for rule in CORPUS_GENERALIZATION_PROMPT_RULES
+        )
         return (
             "你是中文临床研究方案撰写专家。请生成一个可直接进入研究方案全文的章节正文候选，"
             "而不是标题清单或提纲。只依据允许来源和当前项目已确认研究事实；公司/共享语料只用于"
@@ -296,8 +338,124 @@ class MedicalWritingFullDraftService:
             "样本量、终点、量表和访视时间点，必须在对应章节直接写入原值；不得改写成‘将在正式文本中明确’、"
             "‘未提供具体数值’、‘尚无直接证据来源支持’、‘由医学经理/医学负责人确认’或‘确认后再写入’。"
             "当前输出就是供医学经理审核的完整候选，不得承诺后续补写；"
+            "正文不得出现‘当前项目已确认’、‘本方案不引用竞品’、‘公司语料’、‘章节包’、"
+            "‘候选正文’等写作过程说明；这些内容只可转化为rationale中的简洁证据说明。"
+            "公司或共享语料不得直接决定本项目的避孕方法、妊娠报告、AE/SAE定义与时限、"
+            "剂量调整、合并/禁限用药、洗脱、救援治疗、随机揭盲、分析集或其他研究实施规则。"
+            "缺少项目事实时，只能给出不含命名系统、固定方法清单、固定时限、角色分工或停止后果的"
+            "保守通用表述，并在rationale中明确列出医学作者需核对的决策。"
+            "若允许的当前项目来源没有明确写出某项研究实施规则，不得把该规则写成方案既定要求；"
+            "妊娠处理、AE分类、报告对象与时限、随访终点、数据职责、签署要求和CRF记录方式等"
+            "只能说明本章节应覆盖的目的与范围，并把可选建议写入rationale，不能在正文中虚构为已决定事项。"
+            "除方案概要、研究设计、目的终点和样本量章节外，不要重复整套样本量、剂量、主要终点、"
+            "随机和盲法信息，只写与本章节直接相关的事实。"
             "每章用evidence_span_ids绑定本次evidence_spans中的直接依据，并将needs_medical_confirmation设为true。"
+            "\n语料泛化规则（全部适用）：\n"
+            f"{corpus_rules}"
         )
+
+    @staticmethod
+    def _review_policy(heading: str, proposal: str, corpus_count: int) -> dict[str, Any]:
+        required_reasons: list[str] = []
+        advisory_reasons: list[str] = []
+        heading_signals = sorted(
+            {
+                match.group(0)
+                for match in _REQUIRED_REVIEW_HEADING_RE.finditer(heading)
+            }
+        )
+        embedded_signals = sorted(
+            {match.group(0) for match in _REQUIRED_REVIEW_CONTENT_RE.finditer(proposal)}
+        )
+        if heading_signals:
+            required_reasons.append(
+                f"本节直接设定高影响设计或研究实施决定（{'、'.join(heading_signals[:6])}），请逐卡确认。"
+            )
+        if embedded_signals:
+            advisory_reasons.append(
+                f"本节提及高影响设计信息（{'、'.join(embedded_signals[:6])}）；系统未把重复提及升级为强制确认。"
+            )
+        if corpus_count and _CORPUS_CONDUCT_RE.search(proposal):
+            required_reasons.append(
+                "正文使用跨项目语料支持研究实施规则；请确认该规则适用于本项目，或改为本项目权威内容。"
+            )
+        restatement_count = sum(
+            bool(pattern.search(proposal)) for pattern in _DESIGN_RESTATEMENT_SIGNALS
+        )
+        if (
+            restatement_count >= 3
+            and not _DESIGN_RESTATEMENT_ALLOWED_HEADING_RE.search(heading)
+        ):
+            advisory_reasons.append(
+                "本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。"
+            )
+        return {
+            "review_level": "required" if required_reasons else "standard",
+            "review_reasons": required_reasons,
+            "review_advisories": advisory_reasons,
+        }
+
+    @classmethod
+    def _review_metadata(
+        cls,
+        section: Mapping[str, Any],
+        output: Mapping[str, Any],
+        sources: list[AiTaskSourceRef],
+        descriptor_section: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        evidence_by_id = {
+            str(item.get("span_id") or ""): item
+            for item in output.get("evidence_spans") or []
+            if isinstance(item, dict) and str(item.get("span_id") or "").strip()
+        }
+        source_by_id = {source.source_id: source for source in sources}
+        referenced_sources = []
+        for span_id in section.get("evidence_span_ids") or []:
+            evidence = evidence_by_id.get(str(span_id))
+            source = source_by_id.get(str((evidence or {}).get("source_id") or ""))
+            if source is not None:
+                referenced_sources.append(source)
+        project_count = sum(
+            source.source_type == "current_project_study_definition"
+            for source in referenced_sources
+        )
+        corpus_count = sum(
+            source.source_type in _CORPUS_SOURCE_TYPES for source in referenced_sources
+        )
+        metadata = cls._review_policy(
+            _text(descriptor_section.get("heading")),
+            _text(section.get("proposal_text")),
+            corpus_count,
+        )
+        metadata.update(
+            {
+            "evidence_summary": {
+                "project_fact_spans": project_count,
+                "corpus_spans": corpus_count,
+            },
+            }
+        )
+        return metadata
+
+    @classmethod
+    def _apply_review_policy(cls, artifact: dict[str, Any]) -> dict[str, Any]:
+        required_ids: list[str] = []
+        for section in artifact.get("sections") or []:
+            evidence_summary = section.get("evidence_summary") or {}
+            section.update(
+                cls._review_policy(
+                    _text(section.get("heading")),
+                    _text(section.get("proposal_text")),
+                    int(evidence_summary.get("corpus_spans") or 0),
+                )
+            )
+            if section.get("review_level") == "required":
+                required_ids.append(_text(section.get("section_id")))
+        coverage = artifact.setdefault("coverage", {})
+        coverage["required_review_count"] = len(required_ids)
+        coverage["required_review_section_ids"] = required_ids
+        artifact["review_policy_version"] = FULL_DRAFT_REVIEW_POLICY_VERSION
+        return artifact
 
     @staticmethod
     def _run_output(run: Any) -> dict[str, Any]:
@@ -559,6 +717,14 @@ class MedicalWritingFullDraftService:
                     section["section_number"] = descriptor_section.get("section_number", "")
                     section["ai_run_id"] = str(run.run_id)
                     section["source_ids"] = [source.source_id for source in sources]
+                    section.update(
+                        self._review_metadata(
+                            section,
+                            output,
+                            sources,
+                            descriptor_section,
+                        )
+                    )
                     chunk_sections.append(section)
                 chunk_record = {
                     "schema_version": FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA,
@@ -602,6 +768,11 @@ class MedicalWritingFullDraftService:
         actual_ids = [str(item.get("section_id") or "") for item in all_sections]
         if actual_ids != expected_ids:
             return DurableJobResult(error="全文初稿合并后章节覆盖不完整，未写入任何正文", retryable=False)
+        required_review_ids = [
+            str(item.get("section_id") or "")
+            for item in all_sections
+            if item.get("review_level") == "required"
+        ]
         artifact = {
             "schema_version": FULL_DRAFT_ARTIFACT_SCHEMA,
             "job_id": job.job_id,
@@ -615,6 +786,8 @@ class MedicalWritingFullDraftService:
             "coverage": {
                 "target_count": len(expected_ids),
                 "generated_count": len(all_sections),
+                "required_review_count": len(required_review_ids),
+                "required_review_section_ids": required_review_ids,
                 "section_ids": expected_ids,
             },
             "ai_run_ids": run_ids,
@@ -636,7 +809,7 @@ class MedicalWritingFullDraftService:
                 "coverage": {
                     key: value
                     for key, value in artifact["coverage"].items()
-                    if key != "section_ids"
+                    if key not in {"section_ids", "required_review_section_ids"}
                 },
             }
         )
@@ -650,7 +823,10 @@ class MedicalWritingFullDraftService:
                 percent=1.0,
                 step=total,
                 step_total=total,
-                message=f"全文初稿已生成 {len(all_sections)}/{len(expected_ids)} 个章节候选，待整体审核",
+                message=(
+                    f"全文初稿已生成 {len(all_sections)}/{len(expected_ids)} 个章节候选，"
+                    f"其中 {len(required_review_ids)} 个高影响章节需逐卡确认"
+                ),
             ),
         )
 
@@ -672,7 +848,7 @@ class MedicalWritingFullDraftService:
         artifact = json.loads(raw.decode("utf-8"))
         if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
             raise RuntimeStoreError("全文初稿候选版本不受支持")
-        return artifact
+        return self._apply_review_policy(artifact)
 
     def adopt(
         self,
@@ -680,6 +856,7 @@ class MedicalWritingFullDraftService:
         job: Any,
         *,
         actor: str = "medical_manager",
+        confirmed_section_ids: Iterable[str] = (),
     ) -> dict[str, Any]:
         artifact = self.read_artifact(project_id, job)
         service = self._service(project_id)
@@ -695,6 +872,20 @@ class MedicalWritingFullDraftService:
         target_by_id = {str(item.get("section_id")): item for item in artifact.get("target_sections") or []}
         if set(candidates) != set(target_by_id):
             raise RuntimeStoreError("全文初稿候选覆盖与目标章节不一致")
+        required_review_ids = {
+            section_id
+            for section_id, candidate in candidates.items()
+            if candidate.get("review_level") == "required"
+        }
+        missing_confirmations = sorted(
+            required_review_ids.difference(
+                str(item) for item in confirmed_section_ids if str(item).strip()
+            )
+        )
+        if missing_confirmations:
+            raise RuntimeStoreError(
+                f"仍有 {len(missing_confirmations)} 个高影响章节未逐卡确认，全文初稿未写入"
+            )
         adopted: list[str] = []
         replayed: list[str] = []
         for section_id, target in target_by_id.items():
@@ -704,6 +895,7 @@ class MedicalWritingFullDraftService:
                 len(proposal) < FULL_DRAFT_MINIMUM_BODY_CHARS
                 or _PLACEHOLDER_RE.search(proposal)
                 or INTERNAL_TRANSPORT_VOCABULARY_RE.search(proposal)
+                or DRAFTING_PROCESS_VOCABULARY_RE.search(proposal)
                 or next(iter_unresolved_draft_markers(proposal), None)
             ):
                 raise RuntimeStoreError(f"全文初稿章节候选不具备实质内容：{section_id}")

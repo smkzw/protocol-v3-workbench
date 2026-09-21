@@ -52,7 +52,10 @@ from .ai_runtime_settings import runtime_ai_settings_store
 from .ai_role_runtime_settings import INDEPENDENT_AI_ROLE, runtime_ai_role_settings_store
 from .demo_repository import DemoRepository
 from .medical_writing_legacy_reference_index import parse_legacy_reference_marker
-from .medical_writing_content_quality import iter_unresolved_draft_markers
+from .medical_writing_content_quality import (
+    DRAFTING_PROCESS_VOCABULARY_RE,
+    iter_unresolved_draft_markers,
+)
 
 LOCAL_PATH_RE = re.compile(r"/Users/[^\s\"'，,；;）)\]}]+")
 SAFE_ARTIFACT_KEYS = {
@@ -2169,6 +2172,23 @@ class AiTaskRunner:
                 task_context=dict(resolution.task_context),
             )
             envelope = self.prompt_registry.build(spec)
+            if task_type == AiTaskType.PROTOCOL_FULL_DRAFT:
+                # Full-draft batches ask a reasoning model for several
+                # substantive sections plus evidence bindings in one JSON
+                # object.  Provider defaults can spend the entire completion
+                # budget on reasoning and return no final content, so this
+                # task declares the same large bounded budget used by the
+                # corpus-analysis workflow.
+                envelope = AiPromptEnvelope(
+                    task_id=envelope.task_id,
+                    task_type=envelope.task_type,
+                    prompt_version=envelope.prompt_version,
+                    system_prompt=envelope.system_prompt,
+                    payload=envelope.payload,
+                    thinking=envelope.thinking,
+                    reasoning_effort=envelope.reasoning_effort,
+                    max_output_tokens=32_768,
+                )
             if task_type == AiTaskType.MEDICAL_WRITING_REVISION:
                 project_references = _project_references_from_store(
                     self.store, project_id
@@ -2218,6 +2238,16 @@ class AiTaskRunner:
             self.store.append(run)
             return run
         except AiProviderRuntimeError as exc:
+            failure_artifacts = []
+            if exc.diagnostics:
+                failure_artifacts.append(
+                    AiTaskArtifact(
+                        artifact_id=f"artifact_{run_id}_provider_failure_diagnostics",
+                        artifact_type="provider_failure_diagnostics",
+                        payload={"diagnostics": dict(exc.diagnostics)},
+                        validation_errors=[str(exc)],
+                    )
+                )
             run = AiTaskRun(
                 **base,
                 status=AiTaskRunStatus.FAILED,
@@ -2225,6 +2255,7 @@ class AiTaskRunner:
                 error_message=str(exc),
                 validation_errors=[str(exc)],
                 actual_response_model=_provider_response_model(provider),
+                artifacts=failure_artifacts,
             )
             self.store.append(run)
             return run
@@ -2255,6 +2286,16 @@ class AiTaskRunner:
                     validation_errors=validation_errors,
                 )
             )
+            required_top_level_identity = {
+                "task_id": run_id,
+                "task_type": task_type.value,
+                "provider": resolution.provider_name,
+                "model": resolution.model_name,
+                "prompt_version": resolution.prompt_version,
+                "schema_version": "ai_task_output_v0_1",
+                "input_source_ids": [source.source_id for source in input_sources],
+                "forbidden_source_ids": list(resolution.forbidden_source_ids),
+            }
             repair_context: Dict[str, Any] = {
                 "instruction": (
                     "The previous provider output failed server validation. "
@@ -2263,10 +2304,12 @@ class AiTaskRunner:
                 ),
                 "validation_errors": validation_errors,
                 "previous_invalid_output": output,
+                "required_top_level_identity": required_top_level_identity,
             }
             repair_system_prompt = (
                 "\n上一次输出未通过服务器校验。请逐条修正payload.repair_context.validation_errors，"
-                "重新返回完整JSON对象；不得省略任何原任务字段，不得新增证据或改变原任务事实。"
+                "重新返回完整JSON对象；必须逐字复制payload.repair_context.required_top_level_identity"
+                "中的全部顶层身份字段，不得省略任何原任务字段，不得新增证据或改变原任务事实。"
             )
             if task_type == AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING:
                 nested_contract_errors = [
@@ -2373,10 +2416,33 @@ class AiTaskRunner:
                         "服务端不会静默删除或改写非法绑定；本次修复后仍非法将继续失败关闭。"
                     )
             if task_type == AiTaskType.PROTOCOL_FULL_DRAFT:
+                failed_source_ids = {
+                    match.group(1).rstrip(";,")
+                    for error in validation_errors
+                    if (
+                        match := re.search(
+                            r"allowed source ([^\s;]+)",
+                            error,
+                        )
+                    )
+                }
+                if failed_source_ids:
+                    repair_context["exact_source_quote_options"] = [
+                        {
+                            "source_id": source.source_id,
+                            "locator": source.locator,
+                            "text_preview": source.text_preview,
+                        }
+                        for source in input_sources
+                        if source.source_id in failed_source_ids
+                    ]
                 repair_context["instruction"] = (
                     "The previous full-draft output failed strict section identity or substantive-content validation. "
                     "Return the complete original JSON object, preserving every requested section_id exactly once "
-                    "and replacing every invalid or placeholder proposal_text with substantive Chinese protocol prose."
+                    "and replacing every invalid or placeholder proposal_text with substantive Chinese protocol prose. "
+                    "When exact_source_quote_options is present, every evidence quote must be copied character-for-character "
+                    "as one unchanged continuous substring of the matching text_preview; remove the span and all references "
+                    "to it instead of paraphrasing or inventing a quote."
                 )
                 repair_system_prompt += (
                     "全文初稿修复必须逐项覆盖payload.task_context.section_ids，保持原顺序和唯一身份；"
@@ -2386,6 +2452,8 @@ class AiTaskRunner:
                     "‘尚待确认’、‘尚无直接证据支持’等未完成草稿指令；evidence_span_ids必须来自本次evidence_spans。"
                     "允许来源已经给出的年龄、剂量、频率、治疗周期、样本量、终点、量表和访视时间点必须直接写入正文；"
                     "不得使用‘将在正式文本中明确’、‘未提供具体数值’、‘由医学经理确认’或‘确认后再写入’等未来补写表达。"
+                    "若repair_context提供exact_source_quote_options，证据quote必须从对应text_preview逐字复制连续原文；"
+                    "不得改写、概括或拼接，无法逐字引用时应删除该证据及所有对它的引用。"
                 )
             repair_payload = {
                 **envelope.payload,
@@ -2397,11 +2465,24 @@ class AiTaskRunner:
                 prompt_version=envelope.prompt_version,
                 system_prompt=envelope.system_prompt + repair_system_prompt,
                 payload=repair_payload,
+                thinking=envelope.thinking,
+                reasoning_effort=envelope.reasoning_effort,
+                max_output_tokens=envelope.max_output_tokens,
             )
             try:
                 repaired_provider_output = provider.run(repair_envelope)
                 _enforce_actual_response_model(provider, resolution)
                 repaired_output = normalize_provider_output(repaired_provider_output)
+                if task_type == AiTaskType.PROTOCOL_FULL_DRAFT:
+                    # These fields are transport identity owned by the server,
+                    # not generated medical content.  Some compatible JSON
+                    # providers still omit one field during a corrective turn.
+                    # Restore only missing values from the trusted request;
+                    # an explicit mismatched value remains visible and fails
+                    # the normal identity validation below.
+                    for key, value in required_top_level_identity.items():
+                        if key not in repaired_output:
+                            repaired_output[key] = deepcopy(value)
                 repaired_errors = self._validate_run_output(
                     run_id,
                     task_type,
@@ -2413,6 +2494,58 @@ class AiTaskRunner:
                     expected_prompt_version=resolution.prompt_version,
                     expected_task_context=resolution.task_context,
                 )
+                if repaired_errors and task_type == AiTaskType.PROTOCOL_FULL_DRAFT:
+                    final_repair_context = {
+                        **repair_context,
+                        "instruction": (
+                            "The first corrective response was still structurally invalid. This is the final bounded "
+                            "same-model correction. Return exactly one complete top-level JSON object with findings, "
+                            "evidence_spans, uncertainties, needs_medical_confirmation=true, and full_draft.sections. "
+                            "full_draft.sections must contain every task_context.section_id exactly once and in order. "
+                            "Do not return a bare section, finding, array, explanation, or Markdown. Preserve substantive "
+                            "medical prose from the prior response only when it remains source-bound. Every evidence quote "
+                            "must be an unchanged continuous substring of its matching allowed source."
+                        ),
+                        "validation_errors": repaired_errors,
+                        "previous_invalid_output": repaired_output,
+                        "repair_attempt": 2,
+                    }
+                    final_repair_envelope = AiPromptEnvelope(
+                        task_id=envelope.task_id,
+                        task_type=envelope.task_type,
+                        prompt_version=envelope.prompt_version,
+                        system_prompt=(
+                            envelope.system_prompt
+                            + repair_system_prompt
+                            + "\n第一次纠错输出仍未通过结构校验。本次是最终一次同模型结构纠错；"
+                            "必须返回唯一、完整的顶层JSON对象，不能返回裸章节、裸finding、数组、解释或Markdown。"
+                        ),
+                        payload={
+                            **envelope.payload,
+                            "repair_context": final_repair_context,
+                        },
+                        thinking=envelope.thinking,
+                        reasoning_effort=envelope.reasoning_effort,
+                        max_output_tokens=envelope.max_output_tokens,
+                    )
+                    final_provider_output = provider.run(final_repair_envelope)
+                    _enforce_actual_response_model(provider, resolution)
+                    final_output = normalize_provider_output(final_provider_output)
+                    for key, value in required_top_level_identity.items():
+                        if key not in final_output:
+                            final_output[key] = deepcopy(value)
+                    repaired_output = final_output
+                    repaired_errors = self._validate_run_output(
+                        run_id,
+                        task_type,
+                        repaired_output,
+                        allowed_sources=input_sources,
+                        forbidden_source_ids=resolution.forbidden_source_ids,
+                        expected_provider=resolution.provider_name,
+                        expected_model=resolution.model_name,
+                        expected_prompt_version=resolution.prompt_version,
+                        expected_task_context=resolution.task_context,
+                    )
                 output = repaired_output
                 validation_errors = repaired_errors
             except (AiGatewayConfigurationError, AiProviderRuntimeError) as exc:
@@ -2712,6 +2845,14 @@ class AiTaskRunner:
                 errors.append(
                     f"{prefix}.proposal_text contains unresolved drafting markers: "
                     + ", ".join(unresolved_markers)
+                )
+            drafting_process_markers = sorted(
+                {match.group() for match in DRAFTING_PROCESS_VOCABULARY_RE.finditer(proposal)}
+            )
+            if drafting_process_markers:
+                errors.append(
+                    f"{prefix}.proposal_text contains drafting-process language: "
+                    + ", ".join(drafting_process_markers)
                 )
             if _FULL_DRAFT_HEADING_RE.fullmatch(proposal):
                 errors.append(f"{prefix}.proposal_text contains only a heading")

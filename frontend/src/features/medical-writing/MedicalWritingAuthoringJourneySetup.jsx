@@ -3875,21 +3875,24 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
   const gateStatusClass = ready ? "allowed" : allowed ? "exception" : "blocked";
   const assemblyPayload = assemblyPlanState.payload || {};
   const assemblyPlan = assemblyPayload.plan || null;
+  const assemblyPlanQuestions = (assemblyPlan?.modules || []).flatMap((module) => (module.unresolved_questions || []).map((question) => ({
+    code: question.code || module.module_id,
+    label: ASSEMBLY_PLAN_BLOCKER_LABELS[module.module_id] || ASSEMBLY_PLAN_BLOCKER_LABELS[question.code] || question.prompt || module.module_id,
+    severity: question.severity || "blocker",
+  })));
+  const assemblyPlanBlockers = assemblyPlanQuestions.filter((item) => item.severity === "blocker");
+  const assemblyPlanAdvisories = assemblyPlanQuestions.filter((item) => item.severity !== "blocker");
   const assemblyPlanReady = Boolean(
     assemblyPayload.available
       && assemblyPayload.source_current
       && assemblyPayload.confirmation_current
-      && assemblyPayload.deterministic_projection_allowed,
+      && assemblyPlanBlockers.length === 0,
   );
   const studyDefinitionBound = Boolean(
     journey?.study_definition?.definition_id
       && journey?.study_definition?.revision
       && journey?.study_definition?.state_sha256,
   );
-  const assemblyPlanBlockers = (assemblyPlan?.modules || []).flatMap((module) => (module.unresolved_questions || []).map((question) => ({
-    code: question.code || module.module_id,
-    label: ASSEMBLY_PLAN_BLOCKER_LABELS[module.module_id] || ASSEMBLY_PLAN_BLOCKER_LABELS[question.code] || question.prompt || module.module_id,
-  })));
   const gateStatusText = ready && assemblyPlanReady
     ? "语料与方案结构均已核对"
     : ready
@@ -3962,7 +3965,9 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
   const assemblyPlanMessage = assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"
     ? "系统正在自动核对方案结构完整性，您无需填写技术表单。"
     : assemblyPlanReady
-      ? "方案结构已完成版本绑定，可建立版本化方案工作稿。"
+      ? assemblyPlanAdvisories.length
+        ? `方案结构已完成版本绑定，可先建立工作稿；${assemblyPlanAdvisories.length}项可选设计会保留为后续确认项。`
+        : "方案结构已完成版本绑定，可建立版本化方案工作稿。"
       : assemblyPlanBlockers.length
         ? `还需确认：${assemblyPlanBlockers.slice(0, 3).map((item) => item.label).join("、")}${assemblyPlanBlockers.length > 3 ? `等${assemblyPlanBlockers.length}项` : ""}。`
         : assemblyPlanState.error || "方案结构尚未完成核对，暂不能建立工作稿。";

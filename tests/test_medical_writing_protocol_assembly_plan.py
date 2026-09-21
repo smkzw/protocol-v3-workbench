@@ -284,7 +284,7 @@ def test_only_selected_unresolved_phase1_part_blocks_its_own_module():
     assert mad.unresolved_questions == []
 
 
-def test_interim_false_true_and_unknown_have_fail_closed_cross_projection_semantics(
+def test_interim_false_true_and_unknown_preserve_projection_without_blocking_draft(
     tmp_path: Path,
 ):
     false_plan = _build(_definition(interim_planned=False))
@@ -319,7 +319,7 @@ def test_interim_false_true_and_unknown_have_fail_closed_cross_projection_semant
     unknown_resolution = _module(unknown_plan, "design.interim_analysis")
     assert unknown_resolution.applicability == "conditional_applicable"
     assert unknown_resolution.deterministic_projection_allowed is False
-    assert unknown_resolution.blocking_severity == "blocker"
+    assert unknown_resolution.blocking_severity == "warning"
     assert (
         "design.interim_analysis"
         in _manifest(unknown_plan, "synopsis").unresolved_module_ids
@@ -339,19 +339,16 @@ def test_interim_false_true_and_unknown_have_fail_closed_cross_projection_semant
             unknown_definition, expected_plan_revision=0, key="refresh-unknown"
         ),
     )
-    with pytest.raises(
-        MedicalWritingProtocolAssemblyPlanBlockedError,
-        match="design.interim_analysis",
-    ):
-        service.confirm(
-            unknown_definition.project_id,
-            MedicalWritingProtocolAssemblyPlanConfirmRequest(
-                expected_plan_revision=refreshed.plan.revision,
-                expected_plan_sha256=refreshed.plan.state_sha256,
-                actor="medical_author",
-                idempotency_key="confirm-unknown",
-            ),
-        )
+    confirmed = service.confirm(
+        unknown_definition.project_id,
+        MedicalWritingProtocolAssemblyPlanConfirmRequest(
+            expected_plan_revision=refreshed.plan.revision,
+            expected_plan_sha256=refreshed.plan.state_sha256,
+            actor="medical_author",
+            idempotency_key="confirm-unknown",
+        ),
+    )
+    assert confirmed.plan.confirmation_status == "author_confirmed"
 
 
 def test_active_comparator_without_one_authoritative_regimen_blocks_confirmation(

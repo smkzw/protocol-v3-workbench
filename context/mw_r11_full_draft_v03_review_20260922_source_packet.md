@@ -1,0 +1,1633 @@
+# Study A full-draft v0.3 frozen review packet
+
+This is a read-only extraction prepared for independent review. It is evidence, not authority. The raw candidate remains immutable.
+
+## Identities
+
+- Candidate: `runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/full-draft.json`
+- Candidate SHA-256: `c2e98124598aa71a2e36eedb173cd24163d8a8504f41d9996a963cf241192da9`
+- Candidate schema/job: `protocol_full_draft_artifact_v3` / `mwjob_ccfa294601420a96bd660cf9`
+- StudyDefinition: `mwdefinition_1ded2281210281a3b8a0` revision `8`, state SHA-256 `3989470f61c21914c0df6910a0a80af4593ce2b08bbd31281cf44e0b069f272e`
+- Raw coverage: `85/85`; raw required cards `67`
+- Current read-time review projection: `protocol_full_draft_review_v0_2`; required cards `18`
+- Product model observed and durable job recorded: `opencode-go` / `deepseek-v4.1-flash`; thinking strength is configured `max`.
+
+## Authoritative StudyDefinition revision 8 extract
+
+```json
+{
+  "field_states_missing_or_deferred": {
+    "framing.clinicaltrials_condition_term": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "framing.competitor_target_scope": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "framing.key_uncertainties": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "framing.manual_source_ids": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "framing.product_profile.device_dependency": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "deferred",
+      "value_origin": "manual_entry"
+    },
+    "framing.product_profile.immunogenicity_relevance": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "deferred",
+      "value_origin": "manual_entry"
+    },
+    "framing.structured_design.adaptive_design.adaptive_type": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "deferred",
+      "value_origin": "manual_entry"
+    },
+    "framing.structured_design.sample_size_reestimation.reestimation_mode": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "deferred",
+      "value_origin": "manual_entry"
+    },
+    "framing.target_mechanism": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.aesi_definitions": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.allowed_concomitant_rules": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.assessment_timing_restrictions": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.exploratory_endpoints": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.exploratory_objectives": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.prohibited_concomitant_rules": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.required_background_rules": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    },
+    "picos.washout_rules": {
+      "confirmed_at": null,
+      "confirmed_by": "",
+      "evidence": [],
+      "reviewed_at": null,
+      "reviewed_by": "",
+      "status": "missing",
+      "value_origin": "manual_entry"
+    }
+  },
+  "framing": {
+    "design_pattern": "平行组（parallel assignment）、双盲、安慰剂对照、随机",
+    "development_regions": [
+      "中国"
+    ],
+    "document_title": "合成试验药A用于治疗成人中重度斑块状银屑病的III期临床研究",
+    "indication": "成人中重度斑块状银屑病",
+    "intrinsic_objectives": [
+      "确证性研究"
+    ],
+    "investigational_product": "合成试验药A",
+    "population_intent": "成人中重度斑块状银屑病患者",
+    "protocol_id": "MW-III-AEA61047-DRAFT",
+    "study_phase": "III期",
+    "version": "草案"
+  },
+  "identity": {
+    "definition_id": "mwdefinition_1ded2281210281a3b8a0",
+    "revision": 8,
+    "schema_version": "medical_writing_study_definition_v2",
+    "state_sha256": "3989470f61c21914c0df6910a0a80af4593ce2b08bbd31281cf44e0b069f272e"
+  },
+  "picos": {
+    "aesi_definitions": [],
+    "allowed_concomitant_rules": [],
+    "assessment_instruments": [
+      {
+        "acronym": "PASI",
+        "administration_mode": "研究者评定",
+        "appendix_locator": "",
+        "canonical_name_en": "Psoriasis Area and Severity Index",
+        "canonical_name_zh": "银屑病面积和严重程度指数",
+        "confirmation_status": "confirmed",
+        "confirmed_at": "2026-09-21T00:00:00Z",
+        "confirmed_by": "medical_manager",
+        "endpoint_paths": [
+          "picos.primary_endpoint",
+          "picos.key_secondary_endpoints"
+        ],
+        "evidence_span_ids": [],
+        "instrument_id": "pasi",
+        "instrument_kind": "clinician_reported",
+        "notes": "评分规则由医学经理确认；中文版本与使用许可状态后续按项目资料核对。",
+        "protocol_modified": false,
+        "recall_period": "",
+        "respondent": "研究者",
+        "rights": {
+          "checked_at": null,
+          "confirmed_at": null,
+          "confirmed_by": "",
+          "evidence_url": "",
+          "full_text_policy": "metadata_only",
+          "license_reference": "",
+          "owner": "",
+          "status": "unknown"
+        },
+        "scoring_direction": "分数越高表示疾病越严重",
+        "scoring_range": "0–72分",
+        "scoring_summary": "按头部、上肢、躯干和下肢的皮损面积及红斑、浸润和鳞屑严重程度计算；PASI 75/90分别表示较基线改善至少75%/90%。",
+        "soa_activity_ids": [],
+        "source_bindings": [],
+        "source_synopsis_only": false,
+        "study_purpose": "用于主要终点和关键次要终点评价。",
+        "translation": {
+          "artifact_id": "",
+          "reviewed_at": null,
+          "reviewed_by": "",
+          "source_language": "英语",
+          "source_url": "",
+          "status": "unknown",
+          "target_language": "简体中文",
+          "version_label": ""
+        },
+        "version_label": "",
+        "visit_labels": [
+          "基线",
+          "第4周",
+          "第8周",
+          "第12周",
+          "第16周"
+        ]
+      }
+    ],
+    "assessment_timing_restrictions": [],
+    "comparator_summary": "匹配安慰剂对照；试验组与安慰剂组按1:1随机分配，双盲治疗16周。",
+    "estimand_strategy": "治疗策略人群为所有随机受试者；比较第16周PASI 75应答。停药或使用救援治疗按复合策略判定为无应答，其他缺失数据采用无应答填补；报告组间率差及95%置信区间。",
+    "exclusion_modules": [
+      "非斑块型银屑病为主要表现，或存在可能干扰疗效/安全性评价的其他活动性皮肤病；活动性严重感染；妊娠或哺乳期；研究者判断不适合参加。"
+    ],
+    "exploratory_endpoints": [],
+    "exploratory_objectives": [],
+    "inclusion_modules": [
+      "年龄≥18岁；确诊斑块状银屑病≥6个月；筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3；适合接受系统治疗或光疗。"
+    ],
+    "intervention_dose_regimen": "合成试验药A：100 mg，每日一次（QD）（口服）；第1天至第16周。依从：通过药品计数及受试者日记评价依从性\n匹配安慰剂：每日一次（QD）（口服）；第1天至第16周双盲治疗期。依从：通过药品计数及受试者日记评价依从性",
+    "intervention_summary": "试验组接受合成试验药A 100 mg口服，每日一次，连续16周；对照组接受匹配安慰剂。",
+    "key_secondary_endpoints": [
+      "第16周sPGA达到0或1且较基线改善≥2级的受试者比例。",
+      "第16周达到PASI 90应答的受试者比例。"
+    ],
+    "other_secondary_endpoints": [
+      "第16周PASI评分较基线的变化。",
+      "第16周DLQI评分较基线的变化。"
+    ],
+    "population_summary": "确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者。",
+    "primary_endpoint": "第16周达到PASI 75应答（较基线PASI评分改善≥75%）的受试者比例。",
+    "primary_objectives": [
+      "评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效。"
+    ],
+    "prohibited_concomitant_rules": [],
+    "required_background_rules": [],
+    "safety_endpoints": [
+      "治疗期间出现的不良事件（TEAE）、严重不良事件及导致停药的不良事件发生率。",
+      "实验室检查、生命体征及12导联心电图具有临床意义的变化。"
+    ],
+    "sample_size_strategy": "假设第16周PASI 75应答率试验组为60%、安慰剂组为30%，双侧α=0.05、把握度90%、1:1随机，并考虑15%脱落，共计划入组132例（每组66例）。",
+    "secondary_objectives": [
+      "评价合成试验药A对皮损清除程度及皮肤病相关生活质量的影响。"
+    ],
+    "statistical_strategy": "全分析集按随机分组采用CMH方法比较主要终点，报告应答率差、95%置信区间和P值，以优效性为目标。主要缺失处理采用无应答填补，并以多重插补和观察病例分析进行敏感性分析；安全性集按实际治疗分析。不开展期中分析。",
+    "study_epochs": [
+      "筛选期：最长4周。",
+      "双盲治疗期：16周。",
+      "安全性随访期：4周。"
+    ],
+    "visit_strategy": "筛选后于基线/第1天随机；第2、4、8、12、16周进行治疗期访视，第20周进行安全性随访。PASI和sPGA于基线及第4、8、12、16周评价。",
+    "washout_rules": []
+  },
+  "structured_design": {
+    "adaptive_design": {
+      "adaptable_elements": [],
+      "adaptation_timing": "",
+      "adaptive_type": "undecided",
+      "decision_criteria": "",
+      "notes": "",
+      "operational_control": "",
+      "planned": null,
+      "simulation_operating_characteristics": "",
+      "type_i_error_control": ""
+    },
+    "arm_or_cohort_kind": "parallel_arms",
+    "arm_or_cohort_labels": [
+      "试验药组",
+      "对照组"
+    ],
+    "assignment_model": "平行组（parallel assignment）",
+    "blinded_roles": [],
+    "blinding_details": "",
+    "blinding_mode": "double_blind",
+    "center_model": "多中心",
+    "comparator_intervention": "匹配安慰剂",
+    "comparator_type": "placebo",
+    "crossover": {
+      "carryover_assessment": "",
+      "notes": "",
+      "period_sequence_analysis": "",
+      "periods": [],
+      "planned": null,
+      "sequences": [],
+      "washout_strategy": ""
+    },
+    "dmc_planned": null,
+    "interim_analysis": {
+      "alpha_control": "",
+      "independent_committee": "",
+      "information_fraction": "",
+      "notes": "",
+      "operational_firewall": "",
+      "planned": false,
+      "purpose": "",
+      "statistical_boundary": "",
+      "timing": ""
+    },
+    "open_label_extension": {
+      "blind_break_and_transition": "",
+      "duration": "",
+      "entry_eligibility": "",
+      "entry_source": "",
+      "long_term_objectives": [],
+      "notes": "",
+      "planned": null,
+      "treatment_regimen": ""
+    },
+    "other_design_notes": "",
+    "phase1_parts": [],
+    "phase1_sequence": "",
+    "randomization_details": "随机分配",
+    "randomization_mode": "randomized",
+    "sample_size_reestimation": {
+      "alpha_protection": "",
+      "decision_rule": "",
+      "notes": "",
+      "operational_protection": "",
+      "planned": false,
+      "reestimated_parameter": "",
+      "reestimation_mode": "undecided",
+      "timing_or_information": ""
+    },
+    "schema_version": "medical_writing_structured_study_design_v2",
+    "src_planned": null,
+    "treatment_switch": {
+      "analysis_handling": "",
+      "blinding_strategy": "",
+      "destination_treatment": "",
+      "eligible_population": "",
+      "notes": "",
+      "planned": null,
+      "trigger_or_timing": ""
+    }
+  },
+  "unresolved_paths": [
+    "framing.clinicaltrials_condition_term",
+    "framing.competitor_target_scope",
+    "framing.key_uncertainties",
+    "framing.manual_source_ids",
+    "framing.product_profile.device_dependency",
+    "framing.product_profile.immunogenicity_relevance",
+    "framing.structured_design.adaptive_design.adaptive_type",
+    "framing.structured_design.sample_size_reestimation.reestimation_mode",
+    "framing.target_mechanism",
+    "picos.aesi_definitions",
+    "picos.allowed_concomitant_rules",
+    "picos.assessment_timing_restrictions",
+    "picos.exploratory_endpoints",
+    "picos.exploratory_objectives",
+    "picos.prohibited_concomitant_rules",
+    "picos.required_background_rules",
+    "picos.washout_rules"
+  ]
+}
+```
+
+## Candidate sections
+
+### 1 方案概要
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_db84fad0e1f348fc`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（方案概要），请逐卡确认。
+- evidence count: project `20`, corpus `0`
+
+**Candidate text**
+
+本研究为一项在中国开展的多中心、随机、双盲、安慰剂对照、平行组III期临床研究，研究题目为合成试验药A用于治疗成人中重度斑块状银屑病的III期临床研究。目标研究人群为确诊为斑块状银屑病且疾病严重程度为中重度的成人受试者，入选标准包括年龄≥18岁、确诊斑块状银屑病≥6个月、筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，且适合接受系统治疗或光疗。计划入组132例受试者，按1:1随机分配至试验药组或对照组，双盲治疗16周；试验组接受合成试验药A 100 mg口服、每日一次，对照组接受匹配安慰剂。主要研究目的为评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效，次要目的为评价其对皮损清除程度及皮肤病相关生活质量的影响。主要终点为第16周达到PASI 75应答（较基线PASI评分改善≥75%）的受试者比例；关键次要终点包括第16周sPGA达到0或1且较基线改善≥2级的受试者比例，以及第16周达到PASI 90应答的受试者比例；其他次要终点包括第16周PASI评分较基线的变化和第16周DLQI评分较基线的变化。安全性终点包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征及12导联心电图具有临床意义的变化。研究时期包括筛选期最长4周、双盲治疗期16周和安全性随访期4周；筛选后于基线/第1天随机，第2、4、8、12、16周进行治疗期访视，第20周进行安全性随访，PASI和sPGA于基线及第4、8、12、16周评价。统计分析采用全分析集，按随机分组以CMH方法比较主要终点，报告应答率差、95%置信区间和P值，以优效性为目标；主要缺失处理采用无应答填补，并以多重插补和观察病例分析进行敏感性分析，安全性集按实际治疗分析，不开展期中分析。
+
+**User-facing evidence note**
+
+依据当前项目已确认的研究题目、分期、开发区域、总体设计、目标人群、入选标准、干预与给药方案、研究目的与终点、研究时期与访视策略、样本量策略和统计分析策略撰写。医学作者需核对最终方案编号、版本以及统计分析方法表述与锁定的统计分析计划是否一致。
+
+### 2 研究背景和立项依据
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_0687d5113cc82a0a`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+本研究聚焦成人中重度斑块状银屑病。目标研究人群为确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者；入选标准要求年龄≥18岁、确诊斑块状银屑病≥6个月、筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，并且适合接受系统治疗或光疗。上述疾病严重程度和系统治疗或光疗需求构成本项目立项的临床人群基础。合成试验药A为小分子口服药物，拟在中国开展确证性III期临床研究，采用随机、双盲、安慰剂对照、平行组、多中心设计，以评价其相较安慰剂治疗成人中重度斑块状银屑病的疗效，同时评价其对皮损清除程度及皮肤病相关生活质量的影响。主要终点为第16周达到PASI 75应答的受试者比例，双盲治疗期为16周。
+
+**User-facing evidence note**
+
+依据当前项目已确认的适应症、目标人群、入选标准、药物技术类型、给药途径、开发区域、研究分期、研究目的、终点和总体设计撰写。医学作者需核对疾病背景和立项依据中引用的流行病学、疾病负担或未满足临床需求表述，并以可引用的已批准资料为准。
+
+### 2.1 疾病背景及治疗现状
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_5f2555c78168de91`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+本研究的目标人群为成人中重度斑块状银屑病患者。入选标准明确要求年龄≥18岁、确诊斑块状银屑病≥6个月、筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，并且适合接受系统治疗或光疗，说明目标人群具有中重度疾病活动度并需要系统治疗或光疗。排除标准排除以非斑块型银屑病为主要表现、存在可能干扰疗效或安全性评价的其他活动性皮肤病、活动性严重感染、妊娠或哺乳期以及研究者判断不适合参加的受试者。研究采用第16周PASI 75应答为主要终点，并以sPGA、PASI 90、PASI评分变化和DLQI评分变化评价皮损清除程度及皮肤病相关生活质量，体现对中重度斑块状银屑病疾病活动度和患者报告结局的综合关注。
+
+**User-facing evidence note**
+
+依据当前项目已确认的目标人群、入选标准、排除标准、主要终点、关键次要终点和其他次要终点撰写。疾病流行病学、疾病负担和当前治疗现状的具体数据需医学作者依据可引用的已批准资料核对。
+
+### 2.2 作用机制及同类药物研究进展
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_ec775a481341d056`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点、剂量选择）；系统未把重复提及升级为强制确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `8`, corpus `0`
+
+**Candidate text**
+
+合成试验药A为小分子药物，采用口服给药途径，剂型为口服固体制剂，属于系统性暴露。已确认的给药方案为100 mg、每日一次，连续16周；对照组接受匹配安慰剂，双盲治疗期为16周。研究采用随机、双盲、安慰剂对照、平行组、多中心设计，在成人中重度斑块状银屑病患者中评价合成试验药A相较安慰剂的疗效。小分子口服药物经系统暴露发挥作用，其作用机制内容以药物靶点、药效学特征以及系统暴露与临床剂量选择的关系为核心；同类药物研究进展围绕小分子口服药物在斑块状银屑病治疗领域的开发情况展开，并与本项目第16周PASI 75主要终点、sPGA和PASI 90关键次要终点以及DLQI评分变化相衔接。
+
+**User-facing evidence note**
+
+依据当前项目已确认的药物技术类型、给药途径、剂型、暴露范围、给药方案、对照措施、总体设计、研究目的和终点撰写。作用机制的具体靶点和信号通路、同类药物研究数据需医学作者依据可引用的药理学和同类药物研究资料核对。
+
+### 2.3 研究药物简介
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_2b3b651762037aa3`
+- projected review: `standard`
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+合成试验药A为本研究的试验药物，药物技术类型为小分子，给药途径为口服，剂型为口服固体制剂，属于系统性暴露。试验组给药方案为合成试验药A 100 mg、每日一次口服，第1天至第16周；对照组接受匹配安慰剂，每日一次口服，第1天至第16周双盲治疗期。试验组与安慰剂组按1:1随机分配，双盲治疗16周，采用匹配安慰剂对照。依从性通过药品计数及受试者日记评价。研究药物简介围绕上述试验药物和匹配安慰剂的名称、技术类型、剂型、给药途径、给药方案、治疗周期及依从性评价方式展开，为后续研究药物管理、给药和安全性评价提供基础信息。
+
+**User-facing evidence note**
+
+依据当前项目已确认的试验药物、药物技术类型、给药途径、剂型、暴露范围、试验组和对照组给药方案、随机分配比例及依从性评价方式撰写。医学作者需核对研究药物名称、规格、批号信息、储存条件和药物管理流程与最终药学研究资料是否一致。
+
+### 2.3.1 非临床研究结果
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_0d1c72ba25343e73`
+- projected review: `standard`
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+非临床研究为合成试验药A的临床开发提供药理学与毒理学支持。基于已确认的开发信息，合成试验药A为小分子药物，口服给药，剂型为口服固体制剂，属于系统性暴露，拟定给药方案为100 mg每日一次、连续16周。非临床评价与临床给药途径、剂量水平和治疗周期相衔接，为在成人中重度斑块状银屑病受试者中开展随机、双盲、安慰剂对照、平行组、多中心确证性III期研究提供支持。非临床研究结果围绕与系统性暴露相关的药效学、药代动力学和毒理学发现展开，并说明其对确证性III期研究立项的支持依据。
+
+**User-facing evidence note**
+
+依据当前项目已确认的药物技术类型、给药途径、剂型、暴露范围、给药方案和研究分期撰写。具体非临床研究结果需医学作者依据非临床研究报告核对，包括药效学、药代动力学、毒理学及安全药理学内容，并确认其支持100 mg每日一次、连续16周给药的依据。
+
+### 2.3.2 既往临床研究结果
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_cf9127212cfac33d`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `9`, corpus `0`
+
+**Candidate text**
+
+既往临床研究结果为本次确证性III期研究提供依据。本项目已确认在成人中重度斑块状银屑病受试者中采用合成试验药A 100 mg口服、每日一次、连续16周，并设置匹配安慰剂对照；研究采用随机、双盲、平行组、多中心设计，主要终点为第16周PASI 75应答率，关键次要终点包括第16周sPGA达到0或1且较基线改善≥2级和第16周PASI 90应答率。既往临床研究结果与上述人群、剂量、终点和治疗周期设定相衔接，用于支持本项目的获益风险评价和研究设计合理性。
+
+**User-facing evidence note**
+
+依据当前项目已确认的研究题目、分期、适应症、干预与给药方案、对照措施、总体设计、主要终点和关键次要终点撰写。既往临床研究的疗效信号、安全性特征和暴露-效应关系需医学作者依据临床研究报告核对。
+
+### 2.4 本研究的理论基础
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_650a3ed48fbc8ff8`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `7`, corpus `0`
+
+**Candidate text**
+
+本研究的理论基础在于以成人中重度斑块状银屑病为目标人群，采用合成试验药A 100 mg口服、每日一次、连续16周，对照措施为匹配安慰剂，通过随机、双盲、安慰剂对照、平行组、多中心设计开展确证性III期评价。主要研究目的为评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效，次要目的为评价其对皮损清除程度及皮肤病相关生活质量的影响。主要终点第16周PASI 75应答率直接反映皮损改善程度；关键次要终点第16周sPGA达到0或1且较基线改善≥2级以及第16周PASI 90应答率，进一步支持皮损清除的临床获益评价；其他次要终点第16周PASI评分较基线的变化和第16周DLQI评分较基线的变化，分别补充皮损严重程度和皮肤病相关生活质量的评价维度。安全性终点覆盖治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征及12导联心电图具有临床意义的变化，为获益风险评价提供依据。
+
+**User-facing evidence note**
+
+依据当前项目已确认的研究目的、主要终点、关键次要终点、其他次要终点、安全性终点、总体设计、干预和给药方案撰写。医学作者需核对样本量假设、估计目标、缺失数据处理和敏感性分析方法与锁定的统计分析计划是否一致。
+
+### 3 研究目的和终点
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_cc81ab6b8717128e`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（研究目的和终点），请逐卡确认。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+本研究的主要目的为评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效；次要目的为评价合成试验药A对皮损清除程度及皮肤病相关生活质量的影响。主要终点为第16周达到PASI 75应答（较基线PASI评分改善≥75%）的受试者比例。关键次要终点包括第16周sPGA达到0或1且较基线改善≥2级的受试者比例，以及第16周达到PASI 90应答的受试者比例。其他次要终点包括第16周PASI评分较基线的变化和第16周DLQI评分较基线的变化。安全性终点包括治疗期间出现的不良事件（TEAE）、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征及12导联心电图具有临床意义的变化。
+
+**User-facing evidence note**
+
+支持要点：已确认研究事实明确列出主要研究目的、次要研究目的、主要终点、关键次要终点、其他次要终点和安全性终点。医学作者需核对：各终点层级、评价时点和统计方法在全文中的一致性。
+
+### 3.1 主要目的和主要终点
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_db5f25e7dd5b8877`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（主要目的和主要终点），请逐卡确认。
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究的主要研究目的为评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效。主要终点为第16周达到PASI 75应答（较基线PASI评分改善≥75%）的受试者比例。该终点采用受试者比例这一二分类指标，直接反映试验药物在目标人群中的皮损改善获益。主要目的与主要终点的对应关系应作为确证性结论的核心依据，并在统计分析计划中保持定义一致。主要终点的评价时点为第16周，PASI评估在基线及第4、8、12、16周进行。
+
+**User-facing evidence note**
+
+支持要点：主要研究目的为评价合成试验药A相较安慰剂治疗成人中重度斑块状银屑病的疗效；主要终点为第16周达到PASI 75应答的受试者比例；PASI评价时点为基线及第4、8、12、16周。医学作者需核对：主要终点定义、评价时点和分析人群是否在统计分析计划中保持一致。
+
+### 3.3 探索性目的和探索性终点
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_9e670d193fbbb761`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+探索性目的与探索性终点用于在主要和次要评价之外生成新的研究假设，其结论不具有确证性，不用于支持注册结论。探索性分析的范围、指标定义、分析人群、缺失数据处理和结果报告边界均应与确证性分析分开设定。本方案不将未经确认的指标列为探索性终点。探索性结果在解释时需避免因多重比较或事后选择而影响主要终点结论，并应与主要和次要分析分开呈现。
+
+**User-facing evidence note**
+
+支持要点：已确认研究事实仅列出主要终点、关键次要终点、其他次要终点和安全性终点，未单独列出探索性目的或探索性终点；所引证据显示该章节当前尚无实质正文。医学作者需核对：是否设置探索性目的和探索性终点，如设置则需补充具体指标、分析人群和多重性控制策略。
+
+### 4 研究设计
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_1741b1557c67abd7`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（研究设计），请逐卡确认。
+- evidence count: project `7`, corpus `0`
+
+**Candidate text**
+
+本研究为在中国开展的III期确证性临床研究，采用随机、双盲、安慰剂对照、平行组（parallel assignment）和多中心设计。目标研究人群为成人中重度斑块状银屑病患者。试验组接受合成试验药A 100 mg口服，每日一次，连续16周；对照组接受匹配安慰剂。试验组与安慰剂组按1:1随机分配，双盲治疗16周。研究设置筛选期、双盲治疗期和安全性随访期：筛选期最长4周，双盲治疗期16周，安全性随访期4周。筛选后于基线/第1天随机；第2、4、8、12、16周进行治疗期访视，第20周进行安全性随访。PASI和sPGA于基线及第4、8、12、16周评价。整体设计旨在控制偏倚，为试验药相较安慰剂的疗效和安全性评价提供依据。
+
+**User-facing evidence note**
+
+支持要点：已确认研究事实明确研究分期为III期、开发区域为中国、内在目的为确证性研究，总体设计为平行组、双盲、安慰剂对照、随机、多中心；试验干预、研究时期和访视策略均已明确。医学作者需核对：筛选期、治疗期和随访期的时间安排与访视流程是否一致。
+
+### 4.1 总体设计
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b7de17e9668663cc`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（总体设计），请逐卡确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+本研究采用随机化（随机分配）、双盲、安慰剂对照（匹配安慰剂）、平行组（parallel assignment）及多中心设计。试验组与安慰剂组按1:1随机分配，双盲治疗16周，对照措施为匹配安慰剂，以降低实施偏倚和测量偏倚对疗效评价的影响。研究在多个中心开展，以提高样本代表性和结果的稳健性。总体设计围绕确证性研究目的构建，主要比较第16周PASI 75应答率。试验组接受合成试验药A 100 mg口服，每日一次；对照组接受匹配安慰剂。研究时期包括最长4周的筛选期、16周的双盲治疗期和4周的安全性随访期。
+
+**User-facing evidence note**
+
+支持要点：总体设计为随机、双盲、安慰剂对照、平行组和多中心；试验组与安慰剂组按1:1随机分配，双盲治疗16周。医学作者需核对：匹配安慰剂的描述与药房和盲法管理要求是否一致。
+
+### 4.2.1 确证性设计与假设依据
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_57a2ea891245f09c`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（确证性设计与假设依据），请逐卡确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+本研究为确证性研究，主要假设为合成试验药A在第16周PASI 75应答率方面优于安慰剂。样本量计算假设第16周PASI 75应答率试验组为60%、安慰剂组为30%，采用双侧α=0.05、把握度90%、1:1随机，并考虑15%脱落，共计划入组132例（每组66例）。主要分析采用全分析集，按随机分组以CMH方法比较主要终点，报告应答率差、95%置信区间和P值，以优效性为目标。主要缺失处理采用无应答填补，并以多重插补和观察病例分析进行敏感性分析；安全性集按实际治疗分析。本研究不开展期中分析，也不进行样本量再估计。
+
+**User-facing evidence note**
+
+支持要点：样本量假设为第16周PASI 75应答率试验组60%、安慰剂组30%，双侧α=0.05、把握度90%、1:1随机、15%脱落，共132例；主要分析采用全分析集、CMH方法，以优效性为目标，并采用无应答填补及敏感性分析；不开展期中分析，也不进行样本量再估计。医学作者需核对：假设参数、缺失数据处理和敏感性分析是否与统计分析计划一致。
+
+### 4.3 随机化
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_a72266096758d298`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（随机化），请逐卡确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+本研究采用随机化分配。试验组与安慰剂组按1:1随机分配，随机化在筛选合格后、基线/第1天给药前进行。随机分配旨在使已知和未知的预后因素在组间尽可能均衡，降低选择偏倚，并为意向性治疗分析提供基础。随机化方式为随机分配；研究不开展期中分析，也不计划样本量再估计。受试者随机后进入双盲治疗期，接受试验药或匹配安慰剂，双盲治疗期为16周。随机分配和双盲治疗期的安排与主要终点第16周PASI 75应答的评价时点一致。
+
+**User-facing evidence note**
+
+支持要点：随机化方式为随机分配；试验组与安慰剂组按1:1随机分配；筛选后于基线/第1天随机；双盲治疗期为16周；不开展期中分析，也不进行样本量再估计。医学作者需核对：随机化实施时点、分层因素和随机化系统描述是否需要在方案中补充。
+
+### 4.4 盲法与揭盲
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_818d6b6aa87464a2`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（盲法与揭盲），请逐卡确认。
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本研究采用双盲设计。双盲治疗期内，受试者、研究者、监查员及数据分析人员等对治疗分配保持盲态，匹配安慰剂用于维持盲态，以降低实施偏倚和测量偏倚。揭盲应仅限于预先规定的情形；任何个体揭盲均需记录触发原因、时间、处理措施和结果，并评估对受试者继续治疗及统计分析的影响。研究治疗结束后的揭盲应按预先规定的程序实施，确保主要终点评价的完整性。在双盲治疗期内，除预先规定的揭盲情形外，不应向受试者和研究相关人员披露治疗分配信息。
+
+**User-facing evidence note**
+
+支持要点：总体设计为双盲、安慰剂对照，对照措施为匹配安慰剂，双盲治疗期为16周。医学作者需核对：揭盲触发条件、操作流程、记录要求以及揭盲后受试者处理规则是否已在方案其他部分明确；所引证据未规定具体揭盲流程，不应将未确认流程写为既定要求。
+
+### 4.5 研究结束与研究持续时间
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_6c6f891b8aa2debd`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究的研究持续时间由筛选期、双盲治疗期和安全性随访期组成。筛选期最长4周；双盲治疗期为16周；安全性随访期为4周，受试者在第20周进行安全性随访。PASI和sPGA于基线及第4、8、12、16周评价。研究结束的管理应与上述阶段划分和访视计划保持一致，并覆盖受试者完成双盲治疗期及安全性随访期的相关安排。
+
+**User-facing evidence note**
+
+依据已确认研究时期（筛选期最长4周、双盲治疗期16周、安全性随访期4周）及访视策略（第20周安全性随访，PASI和sPGA于基线及第4、8、12、16周评价）撰写。医学作者需核对研究结束的判定标准、末例末次访视定义及是否需补充数据库锁定相关表述。
+
+### 4.6 研究暂停和终止标准
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b036374cce02a515`
+- projected review: `standard`
+- evidence count: project `0`, corpus `0`
+
+**Candidate text**
+
+研究暂停或终止可发生于受试者层面、研究中心层面或整体研究层面；当出现可能影响受试者安全、研究数据可靠性或伦理合规性的情形时，应对是否暂停或终止相关研究活动进行评估。评估应依据适用法律法规、伦理委员会意见以及研究过程中获得的安全性信息，并保持与研究方案其他部分一致。具体触发情形、评估流程、恢复条件及终止后的受试者处理，需结合事件性质和研究实际作出判断，不宜以固定清单或时限替代个案评估。
+
+**User-facing evidence note**
+
+允许来源未给出研究暂停和终止的具体项目标准，正文仅界定管理范围并避免预设情形、时限或角色分工。医学作者需确认触发情形、评估流程、报告对象与时限、恢复条件及终止后受试者处理。
+
+### 5 研究人群
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_11aad340a18d8fc7`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（研究人群），请逐卡确认。
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+本研究的目标人群为成人中重度斑块状银屑病患者，具体为确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者。受试者须年龄≥18岁、确诊斑块状银屑病≥6个月，且筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，并适合接受系统治疗或光疗。排除标准包括非斑块型银屑病为主要表现或存在可能干扰疗效/安全性评价的其他活动性皮肤病、活动性严重感染、妊娠或哺乳期，以及研究者判断不适合参加。上述人群界定用于确保纳入具有中重度疾病活动度且适合系统治疗或光疗的成人患者。
+
+**User-facing evidence note**
+
+依据目标研究人群、研究人群概述、入选标准模块和排除标准模块撰写。医学作者需核对年龄、病程、PASI、受累体表面积和sPGA阈值是否需与方案其他章节完全一致，并确认是否存在未列出的排除情形。
+
+### 5.2 研究人群选择及依据
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_d4c842e938b24ef4`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（研究人群选择及依据），请逐卡确认。
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+研究人群选择为成人中重度斑块状银屑病患者，即确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者。该人群需年龄≥18岁、确诊斑块状银屑病≥6个月，且筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，并适合接受系统治疗或光疗。选择上述人群的依据在于，本研究目标人群明确为成人中重度斑块状银屑病患者，入选标准通过病程和疾病严重程度阈值界定具有系统治疗或光疗需求的成人患者，从而使研究结论能够适用于该目标人群。
+
+**User-facing evidence note**
+
+依据目标研究人群、研究人群概述及入选标准模块撰写，说明选择成人中重度斑块状银屑病患者的依据。医学作者需核对人群选择依据是否需补充流行病学或治疗现状证据，并确认与入选标准的一致性。
+
+### 5.3 入选标准
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_786ed871c599f48b`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（入选标准），请逐卡确认。
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+受试者须同时满足以下入选标准：年龄≥18岁；确诊斑块状银屑病≥6个月；筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3；适合接受系统治疗或光疗。上述标准用于确认受试者为成人中重度斑块状银屑病患者，并具有足够的疾病严重程度和系统治疗或光疗需求。
+
+**User-facing evidence note**
+
+依据入选标准模块撰写，逐项保留年龄≥18岁、确诊斑块状银屑病≥6个月、PASI≥12、受累体表面积≥10%、sPGA≥3及适合系统治疗或光疗。医学作者需确认各项评估时点、检测方法和是否需补充避孕相关要求。
+
+### 5.4 排除标准
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b7e45f89bd422b0c`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（排除标准），请逐卡确认。
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+受试者存在下列任一情况者不纳入本研究：非斑块型银屑病为主要表现，或存在可能干扰疗效/安全性评价的其他活动性皮肤病；活动性严重感染；妊娠或哺乳期；研究者判断不适合参加。上述排除标准用于识别可能影响疗效或安全性评价的临床情形，并保障受试者安全。排除标准的评估需结合筛选期和基线时的临床信息进行。
+
+**User-facing evidence note**
+
+依据排除标准模块撰写，保留非斑块型银屑病主要表现、其他活动性皮肤病、活动性严重感染、妊娠或哺乳期及研究者判断不适合参加。医学作者需确认是否需补充结核、感染筛查、实验室阈值或合并用药相关排除条件。
+
+### 5.5 筛选失败与重新筛选
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_4c48871b5365c1fd`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+筛选失败与重新筛选的管理范围包括：受试者在筛选期未满足入选标准、满足排除标准，或未能完成筛选期所需评估，因而未进入随机分配。对于筛选失败后是否允许重新筛选、重新筛选需重复的评估内容以及重新筛选的时间安排，应结合筛选期最长4周的限制、受试者安全和研究数据完整性进行评估。重新筛选后的入组判断应与入选标准、排除标准保持一致。
+
+**User-facing evidence note**
+
+允许来源未给出筛选失败与重新筛选的项目规则，正文仅说明管理范围，并仅引用筛选期最长4周的已确认事实。医学作者需确认筛选失败定义、是否允许重新筛选、允许次数与间隔、重复评估项目及数据记录要求。
+
+### 6 研究治疗/干预
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_7a3cc05f07007ef0`
+- projected review: `standard`
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+试验组受试者接受合成试验药A 100 mg口服，每日一次，连续16周；对照组受试者接受匹配安慰剂，每日一次口服，双盲治疗期同样为16周。合成试验药A为小分子药物，剂型为口服固体制剂，给药途径为口服，暴露范围为全身性。试验组与安慰剂组按1:1随机分配。治疗依从性通过药品计数及受试者日记评价。研究治疗自第1天开始，至第16周结束。
+
+**User-facing evidence note**
+
+依据试验干预、剂量与给药方案、对照及药物技术类型、给药途径、剂型撰写，保留100 mg每日一次口服、连续16周、匹配安慰剂、1:1随机分配和依从性评价方式。医学作者需确认给药时点、漏服处理、剂量调整、合并用药及救援治疗规则。
+
+### 6.1 试验用药品
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_fc00c21a15e837a8`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+本研究涉及的研究治疗包括试验药与对照药两类：试验组接受合成试验药A，剂型为口服固体制剂，经口服途径给药；对照组接受匹配安慰剂。试验组给药方案为合成试验药A 100 mg口服、每日一次，自第1天持续至第16周；对照组为匹配安慰剂口服、每日一次，在双盲治疗期第1天至第16周给药。试验用药品的供应、保存与使用应保证受试者在整个双盲治疗期内获得连续、足量的研究治疗，并保证药品处置全过程可追溯。研究药物信息、药品管理及发放回收与清点等要求分别在本章其余各条中说明。
+
+**User-facing evidence note**
+
+依据已确认事实：试验药物为合成试验药A，对照为匹配安慰剂，剂型为口服固体制剂，试验组给药为100 mg每日一次口服、第1天至第16周。医学作者需核对：本章与各条之间的事实引用关系，以及对照药品的给药期间是否需要单独成条说明。
+
+### 6.1.1 研究药物信息
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_469d7df8436fa4a2`
+- projected review: `standard`
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+合成试验药A为小分子药物，剂型为口服固体制剂，经口服途径给药，属系统暴露。试验组给药方案为100 mg每日一次，自第1天至第16周；对照组给予匹配安慰剂，每日一次口服，给药期间与双盲治疗期一致，即第1天至第16周。研究药物信息应包括试验药与安慰剂的名称、剂型、给药途径、给药剂量与频次、给药期间，以及在研究中心内的接收与查验要求，以保证所用药品与受试者所分配的治疗相一致。关于药物过量、给药错误及依从性评价的内容在其他相关章节中分别说明。
+
+**User-facing evidence note**
+
+依据已确认事实：合成试验药A为小分子药物，口服固体制剂，经口服给药并属系统暴露；试验组给药为100 mg每日一次、第1天至第16周，对照为匹配安慰剂每日一次口服。医学作者需核对：药品规格与剂型的具体表述、安慰剂的描述方式，以及是否需要在本条补充批号与有效期的记录口径。
+
+### 6.1.2 制备、包装、标签、储存与管理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_503d4369748f76ae`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节所覆盖的范围包括合成试验药A及其匹配安慰剂在研究中心内的相关准备、包装、标签、储存与管理。试验用药品的包装与标签应满足双盲实施的需要，标签信息应清晰、准确、完整，能够支持在研究中心内正确识别与追溯。药品应存放于符合其保存要求的专用区域，避免光照、潮湿、高温或其他可能影响药品质量的条件，并保留储存过程记录。出现包装破损、标签信息不清、储存条件偏离或其他可能影响药品质量的情形时，应对相关药品予以隔离并评估其是否可继续使用，同时保留评估与处理记录。
+
+**User-facing evidence note**
+
+本章可依据的已确认事实为试验药物为口服固体制剂且对照为匹配安慰剂；包装、标签与储存条件等具体参数未在已确认事实中给出，正文按管理范围与通用原则表述。医学作者需核对：储存条件与温控要求、标签内容与盲态保持的具体规定、包装破损与储存条件偏离的处理流程。
+
+### 6.1.3 发放、回收与清点
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_5cffa5a750f97bfc`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+试验用药品的发放对象应为已进入双盲治疗期的受试者，发放数量应与访视安排相匹配，以保证第1天至第16周治疗期内药品供应连续。每次发放与回收均应在药品管理记录中体现，回收时应核对未使用药品、已使用包装及剩余数量，并与发放数量进行平衡核对，出现数量不符时应查明原因并记录。回收与清点结果应与依从性评价相衔接，为药品计数及受试者日记的依从性评价提供依据。清点结束后，剩余药品应按适用管理流程处置并保留处置记录。
+
+**User-facing evidence note**
+
+本章依据的已确认事实为双盲治疗期第1天至第16周以及依从性通过药品计数及受试者日记评价；发放、回收与清点的具体流程与记录表单未在已确认事实中给出。医学作者需核对：发放与回收的记录方式、清点差异的处理要求、剩余药品处置流程，以及与依从性评价的数据衔接。
+
+### 6.3 剂量调整、暂停、恢复与永久停药
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_f9aff27f50671f3a`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节覆盖研究治疗在双盲治疗期内发生剂量调整、暂停给药、恢复给药及永久停药时的判定与处理范围。研究治疗为固定给药方案，合成试验药A 100 mg口服每日一次、自第1天至第16周，对照为匹配安慰剂每日一次口服，任何偏离既定给药方案的处理均应基于对受试者安全与获益的个体化医学评估。暂停给药、恢复给药或永久停药的决定应记录其临床理由、发生时间及处理经过，并说明后续随访与安全性观察的安排。治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率属于本研究的评价内容，相关停药情况应在安全性评估中予以关注和汇总。
+
+**User-facing evidence note**
+
+本章依据的已确认事实为固定给药方案（100 mg每日一次、第1天至第16周；对照为匹配安慰剂）以及安全性终点包含导致停药的不良事件发生率；具体剂量调整、暂停与停药标准未在已确认事实中给出。医学作者需核对：暂停与恢复给药的具体判定标准、永久停药后的随访安排，以及是否需与安全性随访期衔接。
+
+### 6.4 药物过量与给药错误管理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_bd1ccf6487d38384`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+本章节覆盖药物过量与给药错误两类事件在识别、医学评估、处理与记录方面的范围。药物过量指实际用药量超过既定给药剂量；给药错误指实际给药与本研究既定给药方案不一致的情形。研究治疗为每日一次口服给药，发生此类事件后应首先评估受试者当前的安全状况，判断是否需要额外的医学处理与观察，并记录事件发生经过、涉及药品及用量、已采取的措施和转归。此类事件应按适用的安全性信息管理要求完成记录与处理，并与研究治疗的后续实施安排相衔接。
+
+**User-facing evidence note**
+
+已确认事实包含研究治疗为口服每日一次给药以及安全性终点的设置；药物过量与给药错误的处理与报告流程未在已确认事实中给出，正文按事件识别、医学评估、记录与处理的范围表述。医学作者需核对：过量的医学处理与观察要求、给药错误的处理路径，以及是否需与安全性报告流程保持统一。
+
+### 6.5 研究治疗依从性
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_3edc6ed0268a0557`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究的依从性评价通过药品计数及受试者日记实施，两种方法共同用于评价双盲治疗期第1天至第16周内受试者实际接受研究治疗的情况。药品计数应基于发放、使用与回收数量的核对结果；受试者日记应反映受试者按每日一次口服给药要求用药的实际执行情况。评价过程中应核对药品计数结果与受试者日记记录的一致性，对两者不一致或存在漏记、缺项的情形应查明原因并记录，以支持对依从性的准确判断。依从性评价结果应与药品发放、回收与清点记录一并审阅，反映研究治疗实施的真实情况。
+
+**User-facing evidence note**
+
+本章直接依据已确认事实中依从性通过药品计数及受试者日记评价的表述，以及双盲治疗期第1天至第16周的给药期间；依从性的汇总与判定口径未在已确认事实中给出。医学作者需核对：药品计数与日记不一致时的处理、依从性数据的汇总方式，以及是否需要设定评价阈值。
+
+### 6.6 合并用药/治疗
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_f2862d79759a5299`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节规定研究期间合并用药与合并治疗的记录、评估与管理范围。受试者在筛选期及双盲治疗期内使用的合并用药或治疗应完整记录，以便在安全性评价与疗效评价中判断其与症状、不良事件及研究治疗之间的关系。本研究的疗效评估对停药或使用救援治疗采用复合策略判定为无应答，因此对可能影响疗效评价的合并治疗需要予以识别和记录。合并用药与合并治疗的使用应基于受试者的临床需要，并评估其是否可能干扰研究治疗的给药、疗效判断或安全性评价；研究期间出现的合并用药与合并治疗情况应在安全性评价中予以汇总和说明。
+
+**User-facing evidence note**
+
+本章依据的已确认事实为疗效评估对停药或使用救援治疗采用复合策略判定为无应答；合并用药与合并治疗的允许范围、禁限用药清单与洗脱期要求未在已确认事实中给出。医学作者需核对：救援治疗的定义与使用条件、需要限制的合并治疗类别，以及合并用药记录与疗效判定的一致性。
+
+### 6.6.1 允许的合并用药/治疗
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_27e7b9590fd8c895`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本部分规定研究期间合并用药和治疗的使用与管理原则。受试者在筛选期、双盲治疗期及安全性随访期内可能因合并疾病或原有疾病接受其他药物治疗，研究期间应持续收集并记录其使用的合并用药和治疗信息。对于银屑病相关的治疗，其使用需与双盲治疗期的疗效和安全性评价相协调，避免使用可能干扰研究评价的药物。鉴于本研究设有16周双盲治疗期和4周安全性随访期，合并用药的评估应结合受试者的临床需要以及药物之间可能存在的相互影响进行。研究期间可继续使用的药物、新增用药的评估方式以及需要特别关注的药物类别，应与本研究的适应症人群和总体设计特点相适应。
+
+**User-facing evidence note**
+
+本节依据已确认的双盲治疗期16周、安全性随访期4周以及口服给药设计，对合并用药的管理原则作概括性规定。医学作者需核对允许使用的具体药物类别、银屑病相关治疗的限定条件、记录字段以及是否允许继续使用某些背景治疗；当前项目来源未给出合并用药清单，故正文未列具体药物。
+
+### 6.6.2 禁止的合并用药/治疗
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_2ac8e3c15d7050ab`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本部分针对研究期间不得使用的药物和治疗，规定其管理原则与记录要求。凡可能干扰研究药物疗效评价、增加受试者安全性风险或与研究药物存在有临床意义相互作用的药物和治疗，均应纳入研究期间的用药管理。受试者在双盲治疗期和安全性随访期内使用此类药物或治疗时，应记录其名称、使用原因、使用时间和剂量等信息，并评估其对疗效和安全性评价的影响。对于确因临床需要而使用的情况，应根据受试者的临床状况和研究的评价要求进行处理，并确保受试者安全。禁止使用的具体药物类别、例外情形、评估方式及处理流程，应与本研究的适应症人群、口服给药途径和双盲设计特点相适应。
+
+**User-facing evidence note**
+
+本节依据已确认的双盲治疗期、安全性随访期及口服给药途径，规定禁止用药的管理原则。医学作者需核对禁止使用的具体药物类别、例外情形以及使用后的评估与处理流程；当前项目来源未提供禁止用药清单，正文未列具体药名，也未设定固定的洗脱或停药规则。
+
+### 7 研究程序和评估
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_d413096e15cdc754`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本章节描述本研究的整体程序与评估安排。研究分为筛选期、双盲治疗期和安全性随访期，其中筛选期最长4周，双盲治疗期为16周，安全性随访期为4周。受试者在筛选合格后于基线/第1天完成随机，进入双盲治疗期，并在第2、4、8、12、16周进行访视；第20周进行安全性随访。PASI和sPGA在基线及第4、8、12、16周进行评价，用于支持疗效终点分析。安全性评估包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征和12导联心电图具有临床意义的变化。研究期间应按照访视安排完成各项评估，研究程序的执行应以保证受试者安全和数据完整性为原则。
+
+**User-facing evidence note**
+
+本节依据已确认的研究时期（筛选期最长4周、双盲治疗期16周、安全性随访期4周）和访视策略（第2、4、8、12、16周治疗期访视，第20周安全性随访；PASI和sPGA于基线及第4、8、12、16周评价）撰写。医学作者需核对访视时间窗、评估项目清单及安全性评估的具体安排。
+
+### 7.1 研究程序
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b3cae21f267891a1`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本部分描述研究从筛选到安全性随访结束的总体程序。受试者进入筛选期后完成入选和排除标准相关的评估；筛选合格者在基线/第1天完成随机，进入双盲治疗期。双盲治疗期内，受试者接受每日一次口服给药，持续16周，并在第2、4、8、12、16周进行访视。治疗期访视包括疗效评估、安全性评估、依从性评价以及合并用药信息的收集，其中依从性通过药品计数及受试者日记进行评价。第16周完成双盲治疗期结束时的评估后，受试者进入安全性随访期，并在第20周完成安全性随访。PASI和sPGA在基线及第4、8、12、16周进行评价。研究程序的实施应保证各访视评估的完整性、数据的可溯源性和受试者安全。
+
+**User-facing evidence note**
+
+本节依据已确认的每日一次口服给药、16周双盲治疗期、依从性通过药品计数及受试者日记评价以及访视策略撰写。医学作者需核对各访视的具体操作顺序、样本采集与评估流程等未在当前项目来源中明确的实施细节。
+
+### 7.1.1 筛选期与基线
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_95ab531d6c19c056`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+筛选期最长4周，用于确认受试者是否符合本研究的入选和排除标准。目标研究人群为确诊为斑块状银屑病、疾病严重程度为中重度的成人受试者。入选标准包括年龄≥18岁、确诊斑块状银屑病≥6个月、筛选及基线时PASI≥12、受累体表面积≥10%、sPGA≥3，且适合接受系统治疗或光疗。排除标准包括以非斑块型银屑病为主要表现，或存在可能干扰疗效/安全性评价的其他活动性皮肤病；活动性严重感染；妊娠或哺乳期；以及研究者判断不适合参加研究的情形。筛选期应完成确认入选资格和建立基线状态所需的评估。筛选合格者于基线/第1天完成随机，进入双盲治疗期。PASI和sPGA在基线进行评价，并作为后续疗效评价的基线参照。
+
+**User-facing evidence note**
+
+本节依据已确认的入选标准（年龄≥18岁、确诊斑块状银屑病≥6个月、PASI≥12、BSA≥10%、sPGA≥3、适合系统治疗或光疗）、排除标准以及筛选期最长4周、基线/第1天随机的安排撰写。医学作者需核对筛选期具体检查项目、基线评估清单及随机前的资格确认流程。
+
+### 7.1.2 治疗期及随访
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_35edfc4291166f83`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+双盲治疗期为16周，受试者自第1天开始接受每日一次口服给药，试验组接受合成试验药A 100 mg，对照组接受匹配安慰剂。治疗期访视安排在第2、4、8、12、16周，第16周为双盲治疗期结束访视。PASI和sPGA在基线及第4、8、12、16周进行评价。治疗期间应持续进行安全性评估，包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件，以及实验室检查、生命体征和12导联心电图具有临床意义的变化。依从性通过药品计数及受试者日记进行评价。第16周完成双盲治疗期评估后，受试者进入安全性随访期，并于第20周完成安全性随访。研究期间应收集合并用药信息，并评估其与研究治疗的关系。
+
+**User-facing evidence note**
+
+本节依据已确认的16周双盲治疗期、每日一次口服给药、第2、4、8、12、16周治疗期访视、第20周安全性随访、PASI和sPGA评价时间点以及安全性终点撰写。医学作者需核对治疗期各访视的安全性与疗效评估项目、依从性评价的具体方法及停药后的随访安排。
+
+### 7.1.3 计划外访视
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_fa330c66e63604ee`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+计划外访视是指在计划访视之外，根据受试者的临床状况或研究评估需要而增加的访视。研究期间如受试者出现需要医学关注的不良事件、合并用药调整或其他临床状况变化，可通过计划外访视进行进一步评估。计划外访视的评估内容应根据临床需要确定，并完整记录访视原因、评估结果和处理措施。计划外访视所获得的安全性信息应纳入研究的安全性评价，相关数据应在后续计划访视中继续跟踪。计划外访视不替代本研究的计划访视，其时间安排和评估项目应结合受试者的具体情况以及研究评价的需要确定。
+
+**User-facing evidence note**
+
+本节依据已确认的研究时期和访视安排，对计划外访视的管理原则作一般性表述。当前项目来源未明确计划外访视的触发条件、评估内容、记录要求及后续跟踪方式，医学作者需补充相关决策。
+
+### 7.1.4 研究治疗终止、退出研究及失访处理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_37da318610b32464`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+研究治疗终止是指受试者不再接受研究药物，退出研究是指受试者终止参与本研究的全部研究活动。受试者在研究期间可随时决定退出研究，其决定不应影响其继续接受适当的医疗照护。研究治疗终止或退出研究时，应完成适宜的安全性评估，并根据受试者的情况安排后续安全性观察；本研究的双盲治疗期为16周，安全性随访期为4周，可用于观察停止研究治疗后的安全性情况。失访是指受试者在研究期间无法联系或无法完成计划访视的情形，对于失访受试者，应通过可获得的方式尝试恢复联系，并记录联系经过及末次可获得的评估信息。上述处理应遵循受试者权益保护和临床研究数据完整性的要求。
+
+**User-facing evidence note**
+
+本节依据已确认的双盲治疗期16周、安全性随访期4周以及受试者权益保护的一般要求撰写。当前项目来源未明确研究治疗终止标准、退出研究标准、失访判定与联系流程，医学作者需核对并补充上述实施规则。
+
+### 7.3 安全性评估
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_bd9d9224d94e0ac8`
+- projected review: `standard`
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+安全性评估贯穿合成试验药A治疗成人中重度斑块状银屑病的确证性III期研究的筛选期、16周双盲治疗期及4周安全性随访期，覆盖治疗期访视和安全性随访访视。安全性终点包括治疗期间出现的不良事件（TEAE）、严重不良事件及导致停药的不良事件发生率，并评价实验室检查、生命体征及12导联心电图具有临床意义的变化。安全性评估结果将用于支持对试验药物安全特征的总体判断。
+
+**User-facing evidence note**
+
+依据当前项目已确认的研究分期、内在研究目的、目标人群、研究时期、访视策略及安全性终点撰写。医学作者需核对安全性评估的总体安排是否与完整方案中安全性数据的采集和审核流程一致。
+
+### 7.3.1 生命体征和体格检查
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_90b6de05a57a5bcc`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+生命体征和体格检查用于安全性评估。研究将在筛选期、双盲治疗期及安全性随访期内开展相关评估，评价并记录具有临床意义的异常变化，评估结果纳入安全性评价的总体分析。访视安排包括基线/第1天以及第2、4、8、12、16周治疗期访视和第20周安全性随访；生命体征和体格检查的评估时点应与上述访视安排相衔接。
+
+**User-facing evidence note**
+
+依据安全性终点中生命体征具有临床意义的变化及访视策略撰写。当前项目事实未明确生命体征的测量参数和每个访视点的具体评估安排，医学作者需核对并补充必要的实施细节。
+
+### 7.3.2 心电图检查
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_bbc8a74bb7965cf9`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究设置12导联心电图检查，用于评价安全性终点中具有临床意义的变化。检查覆盖筛选期、双盲治疗期和安全性随访期，并与本研究的访视安排衔接：筛选后于基线/第1天随机，第2、4、8、12、16周进行治疗期访视，第20周进行安全性随访。心电图检查结果将纳入安全性评价的总体分析。
+
+**User-facing evidence note**
+
+依据安全性终点中12导联心电图具有临床意义的变化及访视策略撰写。当前项目事实未明确心电图检查的具体时点、判读方式和异常判定标准，医学作者需在定稿前核定。
+
+### 7.3.3 实验室检查
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_26f3d31f974592dd`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+实验室检查用于评价合成试验药A的安全性特征。研究将在筛选期、双盲治疗期及安全性随访期内采集实验室检查数据，并对具有临床意义的异常变化进行评价，该结果纳入安全性终点所涵盖的实验室检查、生命体征及12导联心电图具有临床意义变化的分析范围。访视安排包括基线/第1天以及第2、4、8、12、16周治疗期访视和第20周安全性随访；实验室检查时点应与上述访视安排相衔接。
+
+**User-facing evidence note**
+
+依据安全性终点中实验室检查具有临床意义的变化及访视策略撰写。当前项目事实未明确实验室检查项目、采样时点、空腹要求和异常判定流程，医学作者需核对。
+
+### 7.3.4 妊娠检查和避孕问询
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_02ec258233d8e7ca`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+妊娠状态评估与避孕问询用于支持入组判断和安全性评价。本研究排除妊娠或哺乳期受试者，因此在筛选期需确认受试者不存在妊娠或哺乳状态，并围绕入组合格性判断记录相关信息。对受试者开展的避孕相关问询应作为安全性评价信息进行管理，并与研究访视安排相衔接。妊娠检查和避孕问询信息应保持记录的一致性和可追溯性。
+
+**User-facing evidence note**
+
+依据排除标准中妊娠或哺乳期及研究访视安排撰写。当前项目事实未提供妊娠检查方法、需要评估的受试者范围、避孕要求、妊娠报告与随访流程；这些实施规则需医学作者确认，本候选正文未将其写为既定要求。
+
+### 8 安全性评价
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_7693d868c98988a2`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+安全性评价汇总合成试验药A在成人中重度斑块状银屑病受试者中的安全性评估框架。安全性评价覆盖16周双盲治疗期和4周安全性随访期，以治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征和12导联心电图具有临床意义的变化作为安全性终点。安全性数据按访视计划采集，并用于描述试验药物在目标人群中的安全性特征。
+
+**User-facing evidence note**
+
+依据研究时期、安全性终点和安全性分析安排撰写。医学作者需核对第8章与第8.1、8.2节的衔接，并确认是否需要补充安全性数据审核和报告流程。
+
+### 8.1 总则
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_384005122a9ff626`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（期中分析）；系统未把重复提及升级为强制确认。
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+安全性评价旨在系统描述合成试验药A在成人中重度斑块状银屑病受试者中的安全性特征。安全性数据来源于双盲治疗期和安全性随访期内收集的不良事件、实验室检查、生命体征及12导联心电图等信息。安全性分析按实际治疗分组进行，以反映受试者实际接受的治疗情况；本研究不开展期中分析。安全性评价应对治疗期间出现的不良事件、严重不良事件、导致停药的不良事件以及具有临床意义的检查异常进行汇总和评价。
+
+**User-facing evidence note**
+
+依据安全性分析策略中安全性集按实际治疗分析、不开展期中分析及安全性终点撰写。医学作者需确认安全性分析集的完整定义和安全性汇总方法是否需要在正文中进一步细化。
+
+### 8.2 定义
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_893db0e17b2da155`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+安全性评价中使用的核心术语需统一界定，以支持安全性数据的规范采集、记录和评价。纳入界定的术语包括治疗期间出现的不良事件（TEAE）、严重不良事件、导致停药的不良事件，以及实验室检查、生命体征和12导联心电图具有临床意义的变化。上述术语在安全性评价过程中应保持判定标准一致，并与本研究的安全性评价框架衔接，确保不同受试者之间的安全性信息具有可比性。
+
+**User-facing evidence note**
+
+依据当前项目已列出的安全性终点术语撰写，未虚构不良事件、严重不良事件的定义和报告时限。医学作者需确认本定义章节应纳入的术语范围及正式定义来源。
+
+### 8.2.1 不良事件
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_42f4fa79abc0cfdc`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本章节明确不良事件在本研究安全性评价中的定位，并说明其采集与判定所应覆盖的范围。本研究的安全性终点包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，同时关注实验室检查、生命体征及12导联心电图中有临床意义的变化；因此，不良事件的识别与记录是安全性评价的基础环节。研究人群为成人中重度斑块状银屑病患者，研究期间出现的医学事件应在统一的安全性评估框架下进行判断。本节为严重不良事件、可疑且非预期严重不良反应等后续章节提供概念与范围基础，并说明不良事件与治疗相关性判断、严重程度评价之间的逻辑关系。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的安全性终点和安全性观察安排撰写，用于界定不良事件章节的目的与范围。医学作者需核对并补充项目特定的不良事件定义、严重程度分级标准、相关性判断方法及采集记录要求；公司语料中的示例不可直接作为本项目规则。
+
+### 8.2.2 严重不良事件
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b2568b149c433676`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节说明严重不良事件在安全性评价中的识别、评估与记录范围。严重不良事件是本方案安全性终点的重要组成部分，与治疗期间出现的不良事件及导致停药的不良事件共同构成安全性分析的核心内容。研究期间，凡在医学上符合严重性判定标准的事件，均应在统一的安全性流程中进行识别、评估和记录，并与一般不良事件相区分。本节应覆盖严重性判定的考虑因素、严重性与严重程度之间的区别，以及严重不良事件与可疑且非预期严重不良反应、不良事件报告章节之间的衔接关系。严重不良事件的发生情况将纳入治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率分析。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的安全性终点中严重不良事件相关要求撰写。医学作者需核对并补充严重性判定标准、严重性与严重程度区分原则、严重不良事件的记录与报告衔接要求；现有允许来源未提供本项目严重性的定义细节。
+
+### 8.2.3 可疑且非预期严重不良反应
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b1a29c067cba5951`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节说明可疑且非预期严重不良反应在安全性报告体系中的概念定位与识别范围。可疑且非预期严重不良反应的判断涉及对严重性、非预期性以及与试验药物相关性三个维度的综合评估，是严重不良事件报告链条中的关键环节。本节应覆盖可疑且非预期严重不良反应的定义框架、识别路径和报告衔接要求，并说明其与严重不良事件、一般不良事件在评估和记录层面的区别。研究药物为合成试验药A，其安全性信息应在研究期间持续收集，以便对可疑且非预期严重不良反应进行及时识别和评估。本节与不良事件的报告章节保持衔接，确保严重性、非预期性和相关性评估结果能够进入相应的报告流程。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的试验药物信息及安全性终点框架撰写，用于界定可疑且非预期严重不良反应章节的范围。医学作者需核对并补充严重性、非预期性和相关性三维判断标准，以及报告时限与报告路径；现有允许来源未提供本项目具体规则。
+
+### 8.3 研究药物相关风险
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_060d398405a8454b`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（研究药物相关风险），请逐卡确认。
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+本章节说明与合成试验药A相关风险的评价范围与监测框架。合成试验药A为小分子口服固体制剂，经口服途径给药并在全身暴露；本研究采用100 mg每日一次、连续16周的口服给药方案，该给药方案是研究药物相关风险评价的背景。研究期间的安全性监测涵盖治疗期间出现的不良事件、严重不良事件、导致停药的不良事件，以及实验室检查、生命体征和12导联心电图中有临床意义的变化。上述安全性终点构成研究药物相关风险识别与评价的主要信息来源。本节应覆盖对已知和潜在风险进行监测、识别与处理的原则，并说明其与不良事件采集、评估、报告及随访章节之间的衔接关系。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的试验药物特征、给药方案及安全性终点撰写。医学作者需核对并补充已知和潜在风险清单、风险监测与处理措施，以及剂量调整或停药标准；现有允许来源未提供具体风险谱。
+
+### 8.4 不良事件的采集与记录
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_39e4b116abc0cd5e`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本章节说明不良事件采集与记录的目的、时间范围和一般原则。本研究治疗期为16周，随后设4周安全性随访期，并于第20周进行安全性随访；不良事件的采集与记录应覆盖上述安全性观察期内发生的相关事件，以确保安全性终点能够被完整评价。本节应覆盖不良事件记录的内容要求、记录过程中严重程度与严重性信息的区分，以及采集信息与评估、报告和随访环节的衔接关系。采集与记录应保证所获得的信息足以支持治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率分析，并满足监管报告对信息完整性和可溯源性的基本要求。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的研究时期和安全性终点撰写，用于界定不良事件采集与记录章节的目的和范围。医学作者需核对并补充采集起止时间、记录字段、CRF设计、记录职责和签署要求；公司语料中的字段清单和eCRF表述来自其他项目，不能直接迁移。
+
+### 8.5 不良事件的评估
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_25e1c06d0b06aa86`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+本章节说明不良事件评估的目的、范围与基本框架。不良事件评估涵盖严重程度分级、严重性判定、与研究药物的相关性评价以及预期性判断等方面，评估结果直接关系到后续记录、报告和随访安排。本研究安全性终点包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，并关注实验室检查、生命体征和12导联心电图中有临床意义的变化；因此，评估应保证各项安全性事件能够被一致地归类和汇总。本节应覆盖严重程度与严重性的区别、相关性判断的一般原则，以及评估结果在安全性分析中的使用方式，并与采集、报告和随访章节保持衔接。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的安全性终点撰写，用于界定不良事件评估章节的框架。医学作者需核对并补充严重程度分级量表、严重性判定标准、相关性判断方法及预期性判断规则；现有允许来源未提供本项目评估标准。
+
+### 8.6 不良事件的报告
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_88e2c46a69d01a79`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节说明不良事件报告的目的、范围和衔接要求。报告范围应涵盖研究期间出现的严重不良事件和可疑且非预期严重不良反应，并说明其与一般不良事件报告之间的关系。本研究安全性终点包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，相关报告信息应能够支持安全性分析和监管沟通。本节应覆盖报告范围的界定、报告活动的组织原则以及与采集、评估和随访环节的衔接关系。报告活动应遵循适用法规和伦理要求，并保证所提交信息与研究记录之间具有可追溯性。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的安全性终点和安全性观察期撰写，用于界定不良事件报告章节的范围和衔接要求。医学作者需核对并补充报告对象、报告时限、报告路径、报告表格及职责分工；现有允许来源未提供本项目报告规则。
+
+### 8.7 不良事件的随访
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_3a0ca66f9b437b15`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+本章节说明不良事件随访的目的、范围和结束条件的一般原则。本研究在16周治疗期结束后设4周安全性随访期，治疗期间计划于第2、4、8、12、16周进行访视，并于第20周进行安全性随访。不良事件随访应与上述安全性观察安排相衔接，确保对需要继续观察的事件进行跟踪。本节应说明随访的触发条件、随访内容与随访终止的判断原则，并确保随访信息能够补充和完善安全性评价。随访活动应与采集、评估和报告章节保持衔接，保证不良事件信息的连续性和可追溯性。
+
+**User-facing evidence note**
+
+本段依据当前项目已确认的研究时期和访视安排撰写，用于界定不良事件随访章节的目的与范围。医学作者需核对并补充随访触发条件、随访内容、随访终点和结束随访的判断标准；现有允许来源未提供本项目随访规则。
+
+### 8.8 妊娠事件的报告与随访
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_592627c65fa92131`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（妊娠事件的报告与随访），请逐卡确认。
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+妊娠事件属于研究期间需关注的安全性信息。研究排除妊娠或哺乳期受试者，因此妊娠事件章节的目的在于界定妊娠事件的识别、记录、报告和随访范围，保证研究期间发生的妊娠及相关不良事件得到统一收集和可追溯管理。该章节应覆盖妊娠发生时间、末次给药时间、妊娠过程、妊娠结局及新生儿情况等信息，并关注妊娠期间母体或胎儿出现的不良事件。妊娠事件的报告对象、报告时限、随访频率和终止随访条件属于研究实施规则，应依据研究方案、伦理要求和适用法规确定。上述内容用于支持对试验药安全性信息的完整评价，并为获益-风险评价提供依据。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，妊娠或哺乳期受试者被排除，研究时期包括筛选期最长4周、双盲治疗期16周和安全性随访期4周。正文仅界定妊娠事件报告与随访的目的和范围。医学作者需核对报告对象、报告时限、随访频率及终止随访条件等实施规则。
+
+### 9 统计分析
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b3a882d12f1c39d5`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（统计分析），请逐卡确认。
+- advisory: 本节重复了多项总体设计事实；建议压缩为与本节直接相关的信息。
+- evidence count: project `6`, corpus `0`
+
+**Candidate text**
+
+统计分析围绕第16周PASI 75应答这一主要终点展开。全分析集包括所有随机受试者，按随机分组进行主要终点比较，采用CMH方法检验试验药组与安慰剂组第16周PASI 75应答率的差异，报告应答率差、95%置信区间和P值，以优效性为目标。第16周sPGA达到0或1且较基线改善≥2级的受试者比例，以及第16周PASI 90应答率作为关键次要终点；第16周PASI评分较基线的变化和第16周DLQI评分较基线的变化作为其他次要终点。估计目标采用治疗策略，停药或使用救援治疗按复合策略判定为无应答，其他缺失数据采用无应答填补。主要分析采用无应答填补，并以多重插补和观察病例分析进行敏感性分析。安全性集按实际治疗分析。样本量假设第16周PASI 75应答率试验组为60%、安慰剂组为30%，双侧α=0.05、把握度90%、1:1随机，并考虑15%脱落，共计划入组132例（每组66例）。本研究不开展期中分析，也不进行样本量再估计。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，主要终点、关键和其他次要终点、估计目标、样本量假设和统计分析策略均有明确数值。医学作者需核对次要终点多重性控制、亚组分析、敏感性分析细节和安全性分析方法的补充描述。
+
+### 9.5 安全性数据分析
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_1bab119d767e0f49`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+安全性数据分析基于安全性集，按受试者实际接受的治疗进行分组，覆盖双盲治疗期及安全性随访期收集的安全性信息。主要安全性终点包括治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率，以及实验室检查、生命体征及12导联心电图具有临床意义的变化。分析时应按系统器官分类和首选术语对不良事件进行汇总，描述发生例数、发生率、严重程度、与试验药物的关系、转归及对研究治疗的影响；对实验室检查、生命体征和12导联心电图，应描述基线值、治疗后变化及异常且有临床意义的结果。对严重不良事件、导致停药的不良事件和需要特别关注的安全性事件，应单独汇总。安全性数据以描述性统计为主，不进行正式的优效性检验，结果用于支持对试验药获益-风险的评价。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，安全性终点涵盖治疗期间出现的不良事件、严重不良事件、导致停药的不良事件发生率，以及实验室检查、生命体征和12导联心电图具有临床意义的变化；安全性集按实际治疗分析。正文以描述性统计和安全信号汇总为主。医学作者需核对特殊关注不良事件、缺失安全性数据处理和亚组分析等细化要求。
+
+### 10 数据采集与管理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_e093ad5004cde0c6`
+- projected review: `standard`
+- evidence count: project `3`, corpus `0`
+
+**Candidate text**
+
+研究数据采集与管理覆盖筛选期、基线/第1天、双盲治疗期第2、4、8、12、16周访视及第20周安全性随访。数据管理应保证研究数据真实、准确、完整、可溯源，并与研究方案、统计分析计划和质量管理要求保持一致。采集内容应包括受试者人口学信息、入选和排除标准核对、疾病严重程度评价、给药与依从性信息、疗效终点、安全性信息以及合并用药等。PASI和sPGA于基线及第4、8、12、16周评价，依从性通过药品计数及受试者日记评价。数据采集工具、数据录入和核查流程、数据疑问处理、数据锁定以及不同数据源的整合方式，应在数据管理相关文件中明确，并保证各环节记录可追溯。本章节界定数据采集与管理的范围、职责边界和质量要求，为统计分析提供合格数据集。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，访视包括基线/第1天、第2、4、8、12、16周和第20周安全性随访，PASI和sPGA于基线及第4、8、12、16周评价，依从性通过药品计数及受试者日记评价。正文界定数据采集与管理范围。医学作者需核对数据管理工具、数据流、数据锁定和职责分工等实施细节。
+
+### 10.1 病例报告表
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_ae1d1fb8450d1498`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+病例报告表用于按照研究方案要求采集和记录每例受试者的研究数据，覆盖筛选期、基线/第1天、双盲治疗期第2、4、8、12、16周访视及第20周安全性随访。病例报告表应围绕入选和排除标准、人口学信息、疾病严重程度评价、给药与依从性、疗效终点、安全性信息和合并用药等内容设置字段，并与PASI、sPGA和DLQI等评价时点保持一致。所有记录应与源文件保持一致，数据修改应保留修改痕迹、修改理由和修改时间，保证数据可溯源、可核查。病例报告表的填写责任、数据录入方式、数据疑问处理流程、数据锁定条件及签署要求，应依据研究方案和数据管理要求确定。本章节界定病例报告表的目的、覆盖范围和记录原则，保证各访视数据及时、完整地进入分析数据集。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，病例报告表需覆盖筛选期、基线/第1天、双盲治疗期各访视及第20周安全性随访，并对应PASI、sPGA和DLQI评价时点。正文界定病例报告表的目的、范围和记录原则；医学作者需核对填写责任、数据录入、疑问处理和签署要求。
+
+### 10.2 数据源的定义
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_853d5ef9216b528b`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+数据源的定义用于明确研究数据的原始来源、采集载体和可溯源性要求。源数据包括受试者在研究中心产生的临床诊疗记录、检查结果、药品发放与回收记录、受试者日记以及方案要求的其他原始记录；病例报告表中的数据应与源数据一致，并能通过源文件核查其准确性和完整性。对于PASI、sPGA、DLQI等量表评价，应明确评价者、评价时间和评价依据；对于给药与依从性，应明确药品计数和受试者日记的记录方式。直接进入病例报告表的数据、经转换进入分析数据集的数据以及外部来源数据，均应明确其源数据定义和核查路径。不同数据源出现不一致时，应按照数据管理要求进行核实和解决，并保留处理记录。本章节界定源数据的范围、数据流和核查原则，为数据质量保证和统计分析提供基础。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，PASI和sPGA于基线及第4、8、12、16周评价，依从性通过药品计数及受试者日记评价。正文据此界定源数据范围。医学作者需核对具体源文件清单、数据流和外部数据源。
+
+### 10.3 数据质量保证
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_92c510d2c44bc5b4`
+- projected review: `standard`
+- evidence count: project `0`, corpus `1`
+
+**Candidate text**
+
+数据质量保证覆盖数据采集、录入、核查、转移和统计分析准备全过程，目的是保证研究数据真实、准确、完整、一致和可溯源。质量保证活动应与研究方案、数据管理要求和质量管理体系相衔接，针对关键数据和关键流程设定核查重点。数据质量保证可包括由研究中心质量保证人员对数据转移文件、统计报告数据进行抽查，以及由申办者根据研究进展和质量控制人员/监查员的核查结果，对临床研究过程产生的数据进行不同范畴的稽查。数据质量问题的识别、记录、跟踪和关闭应保留完整记录。本章节界定数据质量保证的目的、范围和原则，具体核查职责、稽查计划和数据质量指标应依据质量管理文件确定。
+
+**User-facing evidence note**
+
+数据质量保证与稽查措辞属于监管语境下的通用表述，不应外推为当前III期项目的既定职责分工或稽查计划。医学作者需核对研究中心、申办者、质量控制人员和监查员的具体职责及数据质量指标。
+
+### 10.4 资料保存与数据保护
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_54b16d7c77a11828`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+资料保存与数据保护旨在确保研究相关记录在保存期限内可追溯、可核查，并保护受试者个人信息和隐私。需要保存的资料包括源文件、病例报告表、药品发放与回收记录、受试者日记、伦理审查文件、安全性信息记录及其他与研究实施相关的文件。资料保存期限、保存地点、保存形式和销毁条件应符合适用法律法规、伦理要求和研究机构管理规定。数据保护应覆盖数据采集、传输、存储、使用和共享环节，采取适当措施防止受试者个人信息泄露、丢失或未经授权访问。研究相关数据的访问、修改和传输应保留记录，统计分析使用去标识化或编码数据。受试者身份识别信息与临床数据应分开管理，并在研究报告中按适用要求保护受试者隐私。本章节界定资料保存与数据保护的范围和原则，具体保存期限、访问权限和销毁流程应依据适用法规和机构要求确定。
+
+**User-facing evidence note**
+
+依据已明确的研究事实，研究为多中心实施，依从性通过药品计数及受试者日记评价，因此正文将上述记录纳入资料保存范围。当前项目来源未规定具体保存期限、存储方式、访问权限和销毁流程；医学作者需按适用法规和机构要求核对并补充。
+
+### 10.5 数据发布和研究发表策略
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_50a93abf10a49f33`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究为合成试验药A治疗成人中重度斑块状银屑病的III期临床研究。研究结果的发布与发表应遵循科学诚信和公开透明的原则，确保阳性、阴性及无结论结果均得到适当披露，避免选择性报告。研究数据的所有权、发表权、作者资格、稿件撰写、内部审阅和结果披露方式，应依据适用法律法规、伦理审查要求及研究相关协议确定。研究结果的披露途径包括向受试者、研究者、监管机构及公众进行适当说明，并应保护受试者个人信息的去标识化。多中心研究中，各中心研究者发表单中心数据的时间与条件应事先约定，以保障总体研究的完整性和研究实施的一致性。研究发表物中不得披露可识别受试者身份的信息。发表策略还应与研究注册信息、伦理审查意见及适用期刊的发表要求保持一致，具体发表形式、作者名单、审阅周期及数据共享范围应按照研究相关协议执行。
+
+**User-facing evidence note**
+
+该章节对应10.5数据发布和研究发表策略。当前项目来源确认研究为合成试验药A治疗成人中重度斑块状银屑病的III期临床研究，但未提供发表权归属、作者资格、审阅周期、结果披露范围及多中心发表约定等具体规则。正文据此采用通用发表与披露原则表述。医学作者需核对并补充项目特定的发表策略、数据共享范围及作者资格标准。
+
+### 11 伦理考虑
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_e43418eaf858e5ee`
+- projected review: `standard`
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+本研究为合成试验药A治疗成人中重度斑块状银屑病的III期临床研究，研究实施应将受试者的权益、安全和健康置于首位，其重要性高于科学和社会利益。研究的伦理考虑应涵盖伦理审查与批准、知情同意的获取、受试者隐私与个人信息保护、研究相关损害的保险与赔偿以及研究文件的管理与监查。研究开始前，研究方案、知情同意文件及其他提供给受试者的材料应提交相应的伦理审查机构审查并获得批准；研究过程中对方案的任何重要修改，应按照适用法规和伦理审查要求重新提交审查。研究实施相关人员应具备相应资质并接受培训，以保证研究符合伦理原则和法律法规。受试者参加研究应出于自愿，并有权随时退出而不影响其应获得的医疗待遇。本章节所述伦理要求应与适用法规、伦理审查意见及研究相关协议保持一致，并接受相应监督和检查。
+
+**User-facing evidence note**
+
+该章节对应11伦理考虑。当前项目来源确认研究题目、III期分期、适应症和目标人群，但未提供伦理审查、知情同意、隐私保护及损害赔偿的具体实施规则。正文以受试者权益优先和伦理审查原则为基础，结合项目研究身份进行通用表述。医学作者需核对伦理审查流程、知情同意安排、隐私保护措施及损害赔偿机制的具体要求。
+
+### 11.1 遵守法律法规
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_ad110bfbe989aa5a`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究为在中国开展的III期药物临床试验，应遵守中国适用的法律法规、药品监督管理部门的相关规定以及伦理审查要求，覆盖临床试验管理、个人信息保护、生物样本管理及研究记录保存等方面。研究实施各方应按照适用法规履行相应职责，确保研究数据的真实性、完整性和可追溯性。涉及需要事先批准、备案或报告的研究活动，应依法取得相应许可后方可实施。研究方案、知情同意文件及其他研究相关材料应符合法律法规和伦理审查要求，并在法规或监管要求发生变化时进行必要调整。研究实施过程中应关注法律法规的动态更新，确保研究全过程符合适用监管要求。
+
+**User-facing evidence note**
+
+该章节对应11.1遵守法律法规。当前项目来源确认开发区域为中国，研究分期为III期。正文围绕中国适用法规、监管要求及合规义务展开，未写入未确认的具体许可、备案或报告时限。医学作者需核对适用法规清单、审批备案事项及合规责任分工。
+
+### 11.2 知情同意
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_e0758ac163445055`
+- projected review: `standard`
+- evidence count: project `0`, corpus `0`
+
+**Candidate text**
+
+本研究应在受试者参加任何研究相关程序之前，取得其自愿签署的知情同意。知情同意过程应使用受试者能够理解的语言，充分说明研究目的、研究程序、试验药物、预期获益与潜在风险、替代治疗选择、数据与生物样本的使用安排、隐私保护措施以及受试者的权利与义务。受试者应有充分机会提问并获得解答，在理解相关信息后自主决定是否参加研究。受试者有权随时退出研究，且不因退出而受到歧视或影响其应获得的医疗待遇。对于无阅读能力或存在其他特殊情况的受试者，应采取符合适用法规和伦理审查要求的知情同意方式。知情同意文件的版本、签署要求及保存方式应接受伦理审查和监查，并确保与适用法规和伦理审查意见保持一致。
+
+**User-facing evidence note**
+
+该章节对应11.2知情同意。当前项目来源未提供知情同意的具体签署要求、见证安排和文件版本管理规则。正文仅描述知情同意的目的、要素和受试者权利，采用通用伦理表述。医学作者需核对知情同意文件模板、签署与保存要求及特殊人群的知情同意安排。
+
+### 11.3 伦理委员会
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_0a9e98cb500d9ec5`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本研究为多中心III期临床研究，在启动前应将研究方案、知情同意文件及其他提供给受试者的材料提交伦理委员会审查，并在获得伦理委员会批准后实施。伦理委员会的组成和审查程序应符合适用法规和伦理审查要求，其审查应关注受试者的权益、安全和健康，以及研究的科学性和伦理合理性。研究过程中，对研究方案、知情同意文件或研究实施的重要修改，应按照适用法规和伦理审查要求提交伦理委员会审查；研究过程中出现可能影响受试者安全或研究实施的重要信息，应及时向伦理委员会报告。研究实施人员应按照伦理委员会的意见开展研究，并接受其监督和检查。伦理审查的提交、批准、跟踪审查及沟通要求应符合适用法规和伦理委员会的要求。
+
+**User-facing evidence note**
+
+该章节对应11.3伦理委员会。当前项目来源确认研究为多中心III期临床研究，但未提供伦理委员会名称、审批时限和跟踪审查要求。正文采用通用伦理审查与报告原则。医学作者需核对伦理委员会审查流程、跟踪审查频率及重要信息报告要求。
+
+### 11.4 保密与隐私
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_69c81a8357089814`
+- projected review: `standard`
+- evidence count: project `0`, corpus `0`
+
+**Candidate text**
+
+本研究应保护受试者的个人隐私和个人信息，研究过程中收集的受试者信息应采取适当的去标识化措施，避免直接暴露可识别个人身份的信息。研究数据的采集、存储、使用、传输和共享应符合适用法律法规和伦理审查要求，并采取适当的技术和管理措施防止信息泄露、丢失或未经授权的访问。涉及受试者身份的信息和研究数据应受到严格保护，仅授权人员方可接触相关记录。研究结果发表或公开时，不得披露可识别受试者身份的信息。涉及数据跨境传输或二次使用的研究活动，应按照适用法规获得相应批准或授权。隐私保护、数据保密及信息安全的责任与措施应与适用法规和研究相关协议保持一致。
+
+**User-facing evidence note**
+
+该章节对应11.4保密与隐私。当前项目来源未提供数据存储、传输、共享及跨境传输的具体规则。正文采用通用隐私保护与信息安全原则。医学作者需核对个人信息保护措施、数据访问权限及跨境传输合规要求。
+
+### 11.5 保险与赔偿
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_cb95bcbc11a174bb`
+- projected review: `standard`
+- evidence count: project `0`, corpus `0`
+
+**Candidate text**
+
+本研究应依据适用法律法规和伦理审查要求，为受试者因参加研究而发生的与研究相关的损害提供适当的保险与赔偿安排。研究相关损害的保险范围、赔偿条件、申请与处理途径以及相关联系信息，应在知情同意文件中向受试者说明。受试者不因参加研究而放弃其依法享有的权利，也不因签署知情同意文件而免除研究相关方依法应承担的责任。当发生与研究相关的损害时，应及时为受试者提供适当的医疗处理，并按照适用法规和保险文件规定的程序处理赔偿事宜。保险与赔偿的具体范围、责任划分和处理流程应与保险文件、伦理审查意见及研究相关协议保持一致。
+
+**User-facing evidence note**
+
+该章节对应11.5保险与赔偿。当前项目来源未提供保险范围、赔偿条件、责任划分和申请流程的具体规则。正文采用通用保险与赔偿原则，并明确受试者权利不因参加研究而减损。医学作者需核对保险文件、赔偿流程及与研究相关损害处理机制的衔接。
+
+### 12 研究文件、监查和管理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_df24f522766abc57`
+- projected review: `standard`
+- evidence count: project `1`, corpus `0`
+
+**Candidate text**
+
+本研究为多中心临床研究，研究文件、监查和管理应覆盖各研究中心，确保研究按照方案、适用法规及质量管理要求实施。研究文件管理应覆盖研究全过程形成的方案、审查、同意、药品、数据与监查等相关记录，确保其真实、完整、可追溯，并按照适用法规和机构要求保存。监查活动应评估研究实施、数据记录和受试者保护情况，及时发现并处理方案偏离、数据问题和潜在风险。研究管理应覆盖研究实施所需的质量控制、数据与安全性信息管理等关键环节，并支持多中心研究的一致性。研究文件的归档、保存和销毁应符合适用法规、伦理审查要求及研究相关协议。研究实施各方应配合监查、稽查和监管检查，确保研究全过程符合方案和适用要求。
+
+**User-facing evidence note**
+
+该章节对应12研究文件、监查和管理。当前项目来源确认研究为多中心III期临床研究，但未提供文件保存期限、监查方式、数据管理职责和CRF记录方式的具体规则。正文采用通用研究文件与监查管理原则。医学作者需核对文件归档要求、监查计划、质量控制安排及数据管理职责。
+
+### 12.1 研究方案的依从
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_41067e2a2f9fda04`
+- projected review: `standard`
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+研究方案的依从是保障受试者安全和研究数据可靠性的基础。本研究为多中心、随机、双盲、安慰剂对照的III期临床研究，研究者和研究中心应严格按照经批准的方案及适用的药物临床试验质量管理规范实施研究。在16周双盲治疗期内，受试者按方案接受每日一次口服给药；试验组与对照组的依从性均通过药品计数及受试者日记进行评价。研究中心应确保筛选、随机、治疗期访视和安全性随访等环节按照方案规定的流程执行。对于发现的方案依从性问题，应如实记录，评估其对受试者安全和研究数据完整性的影响，并采取适当的纠正和预防措施。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本试验为多中心、随机、双盲、安慰剂对照III期研究，双盲治疗期16周，受试者每日一次口服给药，依从性通过药品计数及受试者日记评价。建议医学作者核对依从性评价的具体记录方式、时间点和异常判定标准是否与数据管理安排一致。
+
+### 12.2 监查
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_5bce5a5d2a9cd80f`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+监查的目的是确认研究按照经批准的方案、药物临床试验质量管理规范及适用法规实施，保障受试者权益、安全和研究数据的准确性、完整性与可溯源性。本研究为多中心临床研究，监查范围应覆盖各研究中心的研究启动、受试者筛选与随机、16周双盲治疗期访视、安全性随访以及研究数据的记录与报告。监查活动应关注知情同意过程、试验用药品的管理与计数、受试者日记的填写、方案规定的疗效和安全性评估的实施情况，以及不良事件和严重不良事件的记录与报告。监查过程中发现的问题应及时与研究相关人员沟通，并跟踪至妥善解决；监查记录应能够反映监查活动的范围、发现的问题及处理结果。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究为多中心临床研究，研究时期包括最长4周筛选期、16周双盲治疗期和4周安全性随访期，访视安排明确。建议医学作者核对监查活动的具体频率、方式和源数据核查范围，并确认监查记录要求。
+
+### 12.3 稽查和核查
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_6dac26944474f952`
+- projected review: `standard`
+- evidence count: project `1`, corpus `2`
+
+**Candidate text**
+
+稽查是由独立于研究实施团队的人员对研究相关活动、数据和文件进行的系统性检查，以评估研究是否按照经批准的方案、药物临床试验质量管理规范及适用法规执行。核查是由监管机构对研究实施、记录和报告开展的检查。本研究为多中心临床研究，稽查和核查的范围可涵盖研究中心、申办者相关职能部门以及参与研究实施的其他单位。研究相关方应确保稽查和核查人员能够查阅研究文件、源数据和相关记录，并配合完成必要的访谈和现场检查。对于稽查和核查中发现的问题，应按照质量管理要求进行记录、评估和整改，以持续改进研究质量。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究为多中心临床研究，涉及多个研究中心和参与研究实施的相关方。本章按监管共性定义撰写稽查和核查的目的与配合要求；建议医学作者核对本项目稽查与核查的具体程序、通知方式、范围界定和记录保存要求。
+
+### 12.4 方案偏离
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_8d715f9a6698dbcc`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+方案偏离是指研究实施过程中出现的任何偏离经批准方案要求的行为或事件。方案偏离可涉及受试者不符合入选或排除标准、未按方案规定的时间点完成访视、未按方案要求实施给药或评估、试验用药品管理异常以及研究数据记录不完整或不准确等情形。本研究为多中心、随机、双盲、安慰剂对照的III期临床研究，各研究中心应采取措施尽量减少方案偏离的发生。发现方案偏离后，应及时记录偏离的具体内容、发生时间和原因，评估其对受试者安全和研究数据可靠性的影响；对于可能影响受试者权益或主要研究数据完整性的偏离，应给予特别关注，并按照质量管理要求进行处理和报告。方案偏离的记录和评估应能够支持研究数据的合理解释。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究为多中心、随机、双盲、安慰剂对照III期研究，已明确入选和排除标准、访视安排及给药要求。建议医学作者核对方案偏离的定义细则、分级标准、记录模板、报告路径和时限。
+
+### 12.5 关键角色和研究管理
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_804f56b825b06d7c`
+- projected review: `standard`
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+关键角色和研究管理的目标是明确研究组织架构、职责分工、沟通路径和决策机制，确保研究在多个研究中心之间协调一致地实施。本研究为多中心、随机、双盲、安慰剂对照的III期临床研究，涉及申办者、研究者和研究中心等多方参与。研究管理应覆盖研究启动、受试者筛选与随机、16周双盲治疗期、安全性随访、数据管理与统计分析以及研究结束等阶段。各相关方应按照适用的药物临床试验质量管理规范和方案要求履行相应职责，确保研究进度、数据质量和受试者安全得到有效管理。研究过程中形成的授权、沟通和决策记录应予保存，以便追溯和审核。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究为多中心、随机、双盲、安慰剂对照III期研究，研究时期包括16周双盲治疗期和4周安全性随访期。建议医学作者核对本项目关键角色的具体组成、职责分工、授权方式和沟通决策机制。
+
+### 12.6 研究和研究中心的关闭
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_071dc7d1c41ba2f5`
+- projected review: `standard`
+- evidence count: project `4`, corpus `0`
+
+**Candidate text**
+
+研究和研究中心关闭的目的是确保所有研究相关活动在结束后得到妥善处理，受试者权益和安全性得到持续保障，研究数据和文件完整归档。研究中心关闭前，应确认受试者已完成方案规定的治疗期访视和安全性随访，或已根据研究要求获得适当的后续安排；应确认试验用药品已按要求完成清点、回收或销毁；应确认研究相关文件、源数据和记录已按照适用法规和机构要求完成整理与归档。研究关闭还应包括对未解决的安全性问题、数据疑问和方案偏离事项的清理。关闭完成后，应形成相应的关闭记录，以支持研究整体的结束和后续监管核查。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究设16周双盲治疗期和4周安全性随访期，并明确了治疗期访视及第20周安全性随访安排。建议医学作者核对研究和研究中心关闭的具体标准、关闭前检查事项、文件归档和试验用药品回收要求。
+
+### 12.7 质量控制与保证
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_b9e92c2f0bf08455`
+- projected review: `required`
+- required reason: 正文使用跨项目语料支持研究实施规则；请确认该规则适用于本项目，或改为本项目权威内容。
+- evidence count: project `4`, corpus `2`
+
+**Candidate text**
+
+质量控制与保证的目的是确保研究数据的产生、记录、处理和报告符合经批准的方案、药物临床试验质量管理规范及适用法规要求，保障数据的准确性、完整性和可溯源性。质量控制活动应覆盖研究实施的关键环节，包括受试者筛选与随机、双盲治疗期访视、疗效和安全性评估、试验用药品管理、不良事件记录以及数据管理过程。质量保证应支持对研究过程和研究数据进行独立评估，以识别系统性问题和改进机会。本研究为多中心临床研究，质量控制与保证措施应在各研究中心保持一致，相关活动应有记录，以便研究相关方和监管机构查阅。发现质量问题时，应及时评估其影响并采取纠正和预防措施。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究为多中心临床研究，已明确受试者筛选、随机、双盲治疗期访视、疗效和安全性评估及试验用药品管理要求。建议医学作者核对质量控制与保证的具体活动类型、频次、责任主体和记录方式，并确认其与数据管理安排一致。
+
+### 14 附录
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_02f0fcfe33d65d34`
+- projected review: `standard`
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+本附录用于汇集与本研究实施相关的补充性材料、标准参考信息和记录工具，支持研究中心和研究相关方准确执行方案要求。附录内容应与正文相关章节保持一致，涉及的访视安排、PASI和sPGA评估、DLQI评估、药品计数及受试者日记等，应与正文中的定义、时间点和操作要求相同。附录可收录研究流程与访视安排、评估量表及使用说明、实验室检查相关参考信息、试验用药品管理记录和受试者记录工具等补充材料。附录中的内容不改变正文已经明确的研究设计、终点和安全性要求；如附录内容与正文出现不一致，应进行核对并统一。
+
+**User-facing evidence note**
+
+依据已确认研究定义，本研究明确PASI和sPGA于基线及第4、8、12、16周评价，DLQI作为其他次要终点评价，依从性通过药品计数及受试者日记评价。建议医学作者核对附录的具体构成清单、模板和版本控制要求。
+
+### 14.1 避孕的规定与方法
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_821ddd4ec4423824`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（避孕的规定与方法），请逐卡确认。
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节说明本研究对有生育能力受试者避孕管理的目的、范围与执行要求。根据本研究入选与排除标准，妊娠或哺乳期女性不得入组，受试者在筛选及基线评价时应确认未处于妊娠或哺乳状态。研究期间，具备生育能力的受试者应维持持续、正确的避孕措施，以降低非计划妊娠风险，并在双盲治疗期及安全性随访期内保持执行。本章节同时覆盖妊娠事件发生后的识别、报告与随访要求，以及避孕相关受试者教育内容，确保避孕与妊娠管理在本研究各中心得到统一执行。
+
+**User-facing evidence note**
+
+已确认事实支持的内容为：妊娠或哺乳期女性被排除入组，研究时期为筛选期最长4周、双盲治疗期16周、安全性随访期4周，因此正文将该章节限定在避孕与妊娠管理的目的、范围及覆盖期内。本项目尚未规定可接受与不可接受的避孕方法、避孕持续时间及妊娠检测时点，正文未写入具体清单或时限。医学作者需结合本品口服系统暴露特征和监管要求核定上述决策；另一项目的Ⅰ期方案文本中的避孕方法清单不可直接沿用。
+
+### 14.2 研究量表和评价工具
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_47144bb8ad86d32f`
+- projected review: `standard`
+- advisory: 本节提及高影响设计信息（主要终点）；系统未把重复提及升级为强制确认。
+- evidence count: project `5`, corpus `0`
+
+**Candidate text**
+
+本研究采用PASI、sPGA和DLQI作为疗效与生活质量评价工具。PASI用于评价银屑病皮损的面积与严重程度，主要终点为第16周达到PASI 75应答的受试者比例，关键次要终点包括第16周达到PASI 90应答的受试者比例，其他次要终点包括第16周PASI评分较基线的变化；PASI于基线及第4、8、12、16周进行评价。sPGA用于对皮损总体严重程度的整体评价，关键次要终点为第16周sPGA达到0或1且较基线改善≥2级的受试者比例，sPGA与PASI同期于基线及第4、8、12、16周进行评价。DLQI用于评价皮肤病相关生活质量，其他次要终点为第16周DLQI评分较基线的变化。上述量表应按照统一标准完成评分与记录，并保证同一受试者在各评价时点结果的可比性。
+
+**User-facing evidence note**
+
+PASI、sPGA、DLQI三项工具及其对应终点，以及PASI和sPGA于基线及第4、8、12、16周评价的时点，均按已确认研究事实原值写入，未作改写或省略。医学作者需确认各量表采用的版本与评分操作细则、评价人员的统一培训要求，以及缺失量表数据的处理方式。
+
+### 14.3 实验室检查项目
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_1ce08f07f41bcedd`
+- projected review: `standard`
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节规定本研究实验室检查的目的、范围与结果评价方式。实验室检查与生命体征、12导联心电图共同构成安全性评价的客观检查部分，其具有临床意义的变化属于本研究预设的安全性终点，相关结果将纳入安全性分析。实验室检查在筛选期、双盲治疗期及安全性随访期内按计划实施，其结果的临床意义应结合受试者整体临床情况判断。对异常且有临床意义的结果，应视需要进行复查或进一步检查，并按安全性信息的记录要求完整留痕。实验室检查结果与生命体征及12导联心电图变化共同支持治疗期间出现的不良事件、严重不良事件及导致停药的不良事件的发生率评价。
+
+**User-facing evidence note**
+
+已确认事实支持：实验室检查、生命体征及12导联心电图具有临床意义的变化为预设安全性终点，研究时期为筛选期最长4周、双盲治疗期16周、安全性随访期4周。具体检查项目、样本采集时点、检测方法与异常值判定阈值未在已确认事实中给出，正文未予虚构。医学作者需核定上述项目清单与判定规则，并确认是否纳入中心实验室及参考范围要求。
+
+### 14.4 安全信息报告途径
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_0685b59028fb9fc4`
+- projected review: `required`
+- required reason: 本节直接设定高影响设计或研究实施决定（安全信息报告途径），请逐卡确认。
+- evidence count: project `2`, corpus `0`
+
+**Candidate text**
+
+本章节说明本研究安全信息收集、记录与报告的目的与范围。治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率属于本研究预设的安全性终点，因此需要在研究期间按照统一途径对安全性信息进行识别、记录和报告。安全性信息的流转应遵循适用的法律法规和监管要求，保证信息及时、完整且可追溯，并在双盲治疗期与安全性随访期内保持连续。本章节覆盖安全性信息的分类原则、报告对象与报告途径、报告时限要求、随访与结局信息收集以及相应记录方式，为各研究中心执行安全性信息报告提供统一依据。
+
+**User-facing evidence note**
+
+治疗期间出现的不良事件、严重不良事件及导致停药的不良事件发生率为已确认的安全性终点，研究时期为筛选期、双盲治疗期与安全性随访期，正文据此界定本章节应覆盖的目的与范围。报告对象、报告时限、报告表格与不良事件分类定义未在已确认事实中规定，正文未写成既定要求。医学作者需按现行监管要求核定上述事项，并确认其与安全性随访期安排的衔接。
+
+### 14.5 项目特异附录
+
+- section_id: `mwsec_greenfield_proj_user_8a5a00cb014a_c41ac953b62f7d4d`
+- projected review: `standard`
+- evidence count: project `0`, corpus `0`
+
+**Candidate text**
+
+本附录汇集适用于本项目的特异性补充材料，用于支持正文相关章节的实施。附录内容与正文中避孕的规定与方法、研究量表和评价工具、实验室检查项目以及安全信息报告途径各章节相互对应，主要包括所用量表和评价工具的使用说明与记录模板、实验室检查及生命体征与12导联心电图相关安全性评价的记录表式，以及安全信息报告与受试者避孕和妊娠管理所需材料的规范版本。附录所列材料应与正文相关章节对应使用，保持方案内部表述的一致性。附录材料的名称、版本、适用条件以及与正文条款的对应关系应清晰可查，便于各中心在实施过程中统一使用。
+
+**User-facing evidence note**
+
+本附录的范围依正文14.1至14.4各章节的主题界定，并与本项目采用的疗效、生活质量与安全性评价工具相对应。已确认事实未给出附录应收录的模板清单、版本控制方式及与正文条款的对应关系，正文因此未列出具体附录条目编号。医学作者需核定附录收录清单、版本号及引用方式，并确认其与各章节终稿的一致性。

@@ -7862,6 +7862,7 @@ def adopt_medical_writing_full_draft(project_id: str, job_id: str, request: dict
             canonical_id,
             record,
             actor=str(request.get("actor") or "medical_manager"),
+            confirmed_section_ids=request.get("confirmed_section_ids") or [],
         )
         return result
     except HTTPException:

@@ -7956,8 +7956,10 @@ function WritingPage({
   const [documentExportProgress, setDocumentExportProgress] = useState(null);
   const [fullDraftJob, setFullDraftJob] = useState(null);
   const [fullDraftArtifact, setFullDraftArtifact] = useState(null);
+  const [fullDraftConfirmedSections, setFullDraftConfirmedSections] = useState([]);
   const [fullDraftBusy, setFullDraftBusy] = useState(false);
   const [fullDraftMessage, setFullDraftMessage] = useState("");
+  const [fullDraftReviewOpen, setFullDraftReviewOpen] = useState(false);
   const documentExportRunRef = useRef(0);
   const fullDraftRunRef = useRef(0);
   const [documentPreview, setDocumentPreview] = useState(null);
@@ -8838,6 +8840,7 @@ function WritingPage({
     setDocumentPreviewBusy(false);
     setFullDraftJob(null);
     setFullDraftArtifact(null);
+    setFullDraftConfirmedSections([]);
     setFullDraftBusy(false);
     setFullDraftMessage("");
     fullDraftRunRef.current += 1;
@@ -10408,10 +10411,18 @@ function WritingPage({
     if (fullDraftRunRef.current !== runToken) return;
     setFullDraftJob((current) => ({ ...(current || {}), job_id: jobId, status: "completed" }));
     setFullDraftArtifact(payload.artifact || null);
+    setFullDraftConfirmedSections([]);
+    setFullDraftReviewOpen(true);
+    const requiredCount = Number(payload.artifact?.coverage?.required_review_count || 0);
     setFullDraftMessage(
-      `全文初稿已生成 ${payload.artifact?.coverage?.generated_count || 0}/${payload.artifact?.coverage?.target_count || 0} 个章节候选，请整体审核后采纳。`,
+      `已生成 ${payload.artifact?.coverage?.generated_count || 0} 个待补章节候选，并与当前 ${documentSession?.sections?.length || "完整"} 章方案结构合并审阅${requiredCount ? `；${requiredCount} 个高影响章节需逐卡确认` : ""}。`,
     );
-    localStorage.removeItem(fullDraftStorageKey);
+    // Keep the completed job locator until adoption so a page reload can
+    // restore the candidate and the user's review can continue safely.
+    localStorage.setItem(
+      fullDraftStorageKey,
+      JSON.stringify({ project_id: projectId, job_id: jobId }),
+    );
   };
   const startFullDraft = () => {
     if (
@@ -10426,6 +10437,7 @@ function WritingPage({
     fullDraftRunRef.current = runToken;
     setFullDraftBusy(true);
     setFullDraftArtifact(null);
+    setFullDraftConfirmedSections([]);
     setFullDraftMessage("正在创建全文初稿任务；AI会先生成候选，不会自动改写正文。");
     fetch(`/api/projects/${projectId}/medical-writing/full-drafts`, {
       method: "POST",
@@ -10445,7 +10457,7 @@ function WritingPage({
       .catch((error) => {
         if (fullDraftRunRef.current !== runToken) return;
         setFullDraftMessage(`全文初稿生成失败：${apiErrorText(error)}`);
-        localStorage.removeItem(fullDraftStorageKey);
+        if (error?.status === 404) localStorage.removeItem(fullDraftStorageKey);
       })
       .finally(() => {
         if (fullDraftRunRef.current === runToken) setFullDraftBusy(false);
@@ -10459,13 +10471,18 @@ function WritingPage({
     fetch(`/api/projects/${projectId}/medical-writing/full-drafts/${encodeURIComponent(jobId)}/adopt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ actor: "medical_manager" }),
+      body: JSON.stringify({
+        actor: "medical_manager",
+        confirmed_section_ids: fullDraftConfirmedSections,
+      }),
     })
       .then(readJsonOrThrow)
       .then(async (payload) => {
         setFullDraftMessage(
           `全文初稿已写入 ${payload.adopted_count || 0} 个章节（重放 ${payload.replayed_count || 0} 个），请继续逐章审阅后再冻结。`,
         );
+        localStorage.removeItem(fullDraftStorageKey);
+        setFullDraftReviewOpen(false);
         setWorkingCopyReloadNonce((value) => value + 1);
         await refreshDocumentSession();
         await refreshGreenfieldState();
@@ -10474,6 +10491,13 @@ function WritingPage({
       })
       .catch((error) => setFullDraftMessage(`全文初稿采纳失败：${apiErrorText(error)}`))
       .finally(() => setFullDraftBusy(false));
+  };
+  const toggleFullDraftSectionConfirmation = (sectionId) => {
+    setFullDraftConfirmedSections((current) => (
+      current.includes(sectionId)
+        ? current.filter((item) => item !== sectionId)
+        : [...current, sectionId]
+    ));
   };
   useEffect(() => {
     if (!projectId || isDemoWritingSession) return undefined;
@@ -10492,7 +10516,7 @@ function WritingPage({
       .catch((error) => {
         if (fullDraftRunRef.current === runToken) {
           setFullDraftMessage(`全文初稿恢复失败：${apiErrorText(error)}`);
-          localStorage.removeItem(fullDraftStorageKey);
+          if (error?.status === 404) localStorage.removeItem(fullDraftStorageKey);
         }
       })
       .finally(() => {
@@ -11387,9 +11411,9 @@ function WritingPage({
                     <Tag tone="success">AI主导</Tag>
                     <h3>研究方案全文初稿</h3>
                   </div>
-                  <span>{fullDraftArtifact?.coverage ? `${fullDraftArtifact.coverage.generated_count}/${fullDraftArtifact.coverage.target_count} 章` : "待生成"}</span>
+                    <span>{fullDraftArtifact?.coverage ? `已补写 ${fullDraftArtifact.coverage.generated_count} 章` : "待生成"}</span>
                 </div>
-                <p>独立AI会按当前研究设计和已绑定语料生成完整章节正文；你只需整体审核，确认后才会写入工作副本。</p>
+                <p>独立AI会补写当前文档尚无实质正文的章节，并与既有结构化章节合并；你只需审核候选，确认后才会写入工作副本。</p>
                 {fullDraftJob?.progress && !["completed", "failed", "cancelled"].includes(fullDraftJob.status) && (
                   <div className="revision-progress" role="status" aria-live="polite">
                     <strong>{fullDraftJob.progress.message || "正在生成全文初稿"}</strong>
@@ -11399,27 +11423,116 @@ function WritingPage({
                 {fullDraftMessage && <p className="revision-message">{fullDraftMessage}</p>}
                 {fullDraftArtifact && (
                   <>
-                    <div className="full-draft-review-list" aria-label="全文初稿候选正文">
-                      {(fullDraftArtifact.sections || []).map((section) => (
-                        <article className="full-draft-review-item" key={section.section_id}>
-                          <div className="full-draft-review-item-head">
-                            <strong>{section.section_number ? `${section.section_number} ` : ""}{section.heading || section.section_id}</strong>
-                            <span>{(section.evidence_span_ids || []).length} 条证据绑定</span>
-                          </div>
-                          <p>{section.proposal_text}</p>
-                          <small>{section.rationale}</small>
-                        </article>
-                      ))}
+                    <div className="full-draft-summary-actions">
+                      <button type="button" className="primary-button" onClick={() => setFullDraftReviewOpen(true)}>
+                        <BookOpenText size={14} /> 审阅全文初稿
+                      </button>
+                      <span>
+                        已确认 {fullDraftConfirmedSections.length}/{fullDraftArtifact.coverage?.required_review_count || 0} 个关键章节
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      className="primary-button"
-                      onClick={adoptFullDraft}
-                      disabled={fullDraftBusy || workingCopyDirty || editorFrozen || !workingCopyAuthoritative}
-                      title="按章节版本与幂等键整体采纳全文候选，发生冲突时停止写入"
-                    >
-                      <FileCheck2 size={14} /> {fullDraftBusy ? "采纳中" : "整体审核后采纳并写入"}
-                    </button>
+                    {fullDraftReviewOpen && (
+                      <div className="full-draft-review-overlay" role="dialog" aria-modal="true" aria-label="审阅研究方案全文初稿">
+                        <div className="full-draft-review-workspace">
+                          <header className="full-draft-review-workspace-head">
+                            <div>
+                              <Tag tone="success">AI 已完成初稿</Tag>
+                              <h2>审阅研究方案全文补写候选</h2>
+                              <p>先核对红色关键章节；其余章节已按目录收起，可按需展开。</p>
+                            </div>
+                            <div className="full-draft-review-progress">
+                              <strong>{fullDraftConfirmedSections.length}/{fullDraftArtifact.coverage?.required_review_count || 0}</strong>
+                              <span>关键章节已确认</span>
+                              <button type="button" className="icon-button" onClick={() => setFullDraftReviewOpen(false)} aria-label="关闭全文初稿审阅">
+                                <XCircle size={20} />
+                              </button>
+                            </div>
+                          </header>
+                          <div className="full-draft-review-layout">
+                            <nav className="full-draft-review-nav" aria-label="全文初稿章节目录">
+                              {(fullDraftArtifact.sections || []).map((section) => (
+                                <a
+                                  className={section.review_level === "required" ? "required" : ""}
+                                  href={`#full-draft-${section.section_id}`}
+                                  key={section.section_id}
+                                >
+                                  <span>{section.section_number || "—"}</span>
+                                  <strong>{section.heading || section.section_id}</strong>
+                                  {section.review_level === "required" && (
+                                    <em>{fullDraftConfirmedSections.includes(section.section_id) ? "已确认" : "待确认"}</em>
+                                  )}
+                                </a>
+                              ))}
+                            </nav>
+                            <div className="full-draft-review-list" aria-label="全文初稿候选正文">
+                              {(fullDraftArtifact.sections || []).map((section) => (
+                                <details
+                                  className={`full-draft-review-item ${section.review_level === "required" ? "review-required" : ""}`}
+                                  id={`full-draft-${section.section_id}`}
+                                  key={section.section_id}
+                                  open={section.review_level === "required"}
+                                >
+                                  <summary className="full-draft-review-item-head">
+                                    <div>
+                                      <strong>{section.section_number ? `${section.section_number} ` : ""}{section.heading || section.section_id}</strong>
+                                      {section.review_level === "required" && <Tag tone="danger">监管答辩级确认</Tag>}
+                                    </div>
+                                    <span>
+                                      项目事实 {section.evidence_summary?.project_fact_spans || 0} · 语料参考 {section.evidence_summary?.corpus_spans || 0}
+                                    </span>
+                                  </summary>
+                                  <div className="full-draft-review-item-body">
+                                    <p>{section.proposal_text}</p>
+                                    <div className="full-draft-evidence-note">
+                                      <strong>依据与确认点</strong>
+                                      <span>{section.rationale}</span>
+                                    </div>
+                                    {(section.review_reasons || []).length > 0 && (
+                                      <ul className="full-draft-review-reasons">
+                                        {section.review_reasons.map((reason) => <li key={reason}>{reason}</li>)}
+                                      </ul>
+                                    )}
+                                    {(section.review_advisories || []).map((reason) => (
+                                      <p className="full-draft-advisory" key={reason}>优化提示：{reason}</p>
+                                    ))}
+                                    {section.review_level === "required" && (
+                                      <label className="full-draft-confirmation">
+                                        <input
+                                          type="checkbox"
+                                          checked={fullDraftConfirmedSections.includes(section.section_id)}
+                                          onChange={() => toggleFullDraftSectionConfirmation(section.section_id)}
+                                        />
+                                        <span>我已核对本节的科学设计与实施规则</span>
+                                      </label>
+                                    )}
+                                  </div>
+                                </details>
+                              ))}
+                            </div>
+                          </div>
+                          <footer className="full-draft-review-workspace-foot">
+                            <span>本批补写 {fullDraftArtifact.coverage?.generated_count || 0} 章；当前方案结构共 {documentSession?.sections?.length || "—"} 章。</span>
+                            <button
+                              type="button"
+                              className="primary-button"
+                              onClick={adoptFullDraft}
+                              disabled={
+                                fullDraftBusy
+                                || workingCopyDirty
+                                || editorFrozen
+                                || !workingCopyAuthoritative
+                                || !(fullDraftArtifact.coverage?.required_review_section_ids || []).every(
+                                  (sectionId) => fullDraftConfirmedSections.includes(sectionId),
+                                )
+                              }
+                              title="按章节版本与幂等键整体采纳全文候选，发生冲突时停止写入"
+                            >
+                              <FileCheck2 size={14} /> {fullDraftBusy ? "采纳中" : "确认关键章节并采用全文"}
+                            </button>
+                          </footer>
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
                 {!fullDraftArtifact && !fullDraftBusy && (

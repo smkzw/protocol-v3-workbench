@@ -107,3 +107,11 @@ ego(lite) TaskSpace 12 使用 Study A 的 SQLite online-backup 副本验收。�
 执行前对`three_studies/isolated_runtime`的18个SQLite做online backup。5298独立API读取确认revision20、315候选、59/256和原确认谱系后，提交同一人工复核。结果confirmation `ct_reconf_81450fa2caf9cf004f20`，kind `human_reconfirmation`，journey revision22，原snapshot继续绑定，projection `corpus_projected`，pipeline未推进，external work未重复。
 
 一次shell变量命名错误发生在curl命令替换完成后，因此同一idempotency key随后被重放；库内只有一条durable confirmation，revision未二次增长。除authoring journey/writing reference外，两项监查SQLite仅字节头变化，前后`.dump`哈希相同。详细记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_HUMAN_RECONFIRMATION_20260921.md`。下一动作盘点Study B/C身份和节点，继续三研究完整旅程，不重跑Study A检索/分诊。
+
+## 2026-09-22 Study A 全文补写 v0.3 与独立会商
+
+执行加会商模式完成本批。产品默认路由已按用户最新要求收口为`opencode-go/deepseek-v4.1-flash:max`；Study A同一durable job完成85个空白章节补写，原始工件SHA保持`c2e98124598aa71a2e36eedb173cd24163d8a8504f41d9996a963cf241192da9`。修复大定位器持久化、完成件刷新恢复和窄侧栏审阅：1600×1000实测为312px目录+1202px正文、无横向溢出、85张候选和18张当前关键卡均可定位。用户文案已明确85章是与105章文档合并的待补批次，不再把85/85冒充全文完整度。
+
+独立会商`01a0c4df-0312-7def-ad4c-5dbe282319c9`给出REVISE。数值忠实度良好，但4.4盲法角色/揭盲职责、14.1避孕要求存在无事实支撑的规则，背景/管理章节仍有通用填充，18张章级确认也不符合决定级AI lead。会商对“缺14章”的推断经主线程读取105章真实document session后缩窄：十个正文标题已有实质种子，1.1为结构内容；1.2研究示意图、1.3研究流程表和13参考文献仍是真实缺口。v0.3未采纳。
+
+集中验证：后端受影响160通过；前端正式110 Vitest+65 Node通过；生产build 1971 modules通过；diff check通过。阶段记录见`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V03_20260922.md`。下一动作直接进入v0.4：输出显式决定项（推荐+备选）、把来源缺口与正文完成分开、拒绝无来源的项目实施规则，并把章级重复确认压缩为决定级队列；只重跑受影响生成块，不重复上游资料处理。

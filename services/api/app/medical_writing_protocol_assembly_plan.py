@@ -211,6 +211,7 @@ def _question(
     *,
     code: str = "authoritative_fact_required",
     prompt: str = "Confirm the authoritative structured design fact before projection.",
+    severity: str = "blocker",
 ) -> MedicalWritingProtocolAssemblyUnresolvedQuestion:
     token = re.sub(r"[^a-zA-Z0-9_.-]+", "_", fact_path).strip("_")
     return MedicalWritingProtocolAssemblyUnresolvedQuestion(
@@ -218,7 +219,7 @@ def _question(
         code=code,
         fact_path=fact_path,
         prompt=prompt,
-        severity="blocker",
+        severity=severity,
     )
 
 
@@ -245,6 +246,13 @@ def _resolution(
     questions: Iterable[MedicalWritingProtocolAssemblyUnresolvedQuestion] = (),
 ) -> MedicalWritingProtocolAssemblyModuleResolution:
     question_list = list(questions)
+    blocking_severity = (
+        "blocker"
+        if any(item.severity == "blocker" for item in question_list)
+        else "warning"
+        if question_list
+        else "none"
+    )
     payload = {
         "module_id": spec.module_id,
         "applicability": applicability,
@@ -253,7 +261,7 @@ def _resolution(
         "unresolved_questions": [
             item.model_dump(mode="json") for item in question_list
         ],
-        "blocking_severity": "blocker" if question_list else "none",
+        "blocking_severity": blocking_severity,
         "deterministic_projection_allowed": not question_list,
         "projection_targets": list(spec.projection_targets),
     }
@@ -314,7 +322,18 @@ def _planned_resolution(
         applicability="conditional_applicable",
         reason="authoritative planned flag is unresolved",
         references=[reference],
-        questions=[_question(spec.module_id, fact_path)],
+        questions=[
+            _question(
+                spec.module_id,
+                fact_path,
+                severity="warning",
+                prompt=(
+                    "Confirm whether this optional module is planned before "
+                    "finalizing its protocol content. The unresolved choice "
+                    "does not prevent creation of a substantive working draft."
+                ),
+            )
+        ],
     )
 
 
@@ -343,9 +362,12 @@ def _typed_complex_resolution(
                     spec.module_id,
                     f"{fact_path}.planned",
                     code=f"{spec.module_id.replace('.', '_')}_planned_required",
+                    severity="warning",
                     prompt=(
-                        "Confirm whether this complex design is planned before "
-                        "projecting its protocol content."
+                        "Confirm whether this optional complex design is planned "
+                        "before finalizing its protocol content. The unresolved "
+                        "choice does not prevent creation of a substantive "
+                        "working draft."
                     ),
                 )
             ],
@@ -939,7 +961,18 @@ def _resolve_intervention_roles(
             applicability="conditional_applicable",
             reason="investigational-product action policy is unresolved",
             references=action_references,
-            questions=[_question(role_specs["ip_actions"].module_id, adjustment_path)],
+            questions=[
+                _question(
+                    role_specs["ip_actions"].module_id,
+                    adjustment_path,
+                    severity="warning",
+                    prompt=(
+                        "Confirm the investigational-product dose-action policy "
+                        "before finalizing that section. The unresolved choice "
+                        "does not prevent creation of a substantive working draft."
+                    ),
+                )
+            ],
         )
     elif (
         rules.ip_adjustment_policy
@@ -1799,13 +1832,8 @@ class MedicalWritingProtocolAssemblyPlanService:
         blockers = [
             module.module_id
             for module in plan.modules
-            if not module.deterministic_projection_allowed
+            if module.blocking_severity == "blocker"
         ]
-        blockers.extend(
-            driver.driver_id
-            for driver in plan.design_drivers
-            if driver.decision_state == "unknown"
-        )
         return MedicalWritingProtocolAssemblyPlanCurrentState(
             project_id=project_id,
             available=True,
@@ -2141,10 +2169,16 @@ class MedicalWritingProtocolAssemblyPlanService:
                 raise MedicalWritingProtocolAssemblyPlanStaleError(
                     "StudyDefinition changed; the prior plan and confirmation are not current"
                 )
-            # Blockers are informational: modules without deterministic
-            # projection are visible to the author as 待审阅, but don't
-            # block confirmation (zero-document projects legitimately have
-            # all modules blocked — requirements-v2 R3 / T17).
+            scientific_blockers = [
+                module.module_id
+                for module in current.modules
+                if module.blocking_severity == "blocker"
+            ]
+            if scientific_blockers:
+                raise MedicalWritingProtocolAssemblyPlanBlockedError(
+                    "protocol assembly plan still has unresolved scientific design "
+                    "blockers: " + ", ".join(scientific_blockers)
+                )
             now = self.now_factory()
             if current.confirmation_status == "author_confirmed":
                 self._require_definition_unchanged(project_id, definition)

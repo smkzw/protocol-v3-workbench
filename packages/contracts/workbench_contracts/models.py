@@ -4826,8 +4826,16 @@ class MedicalWritingProtocolAssemblyModuleResolution(WorkbenchModel):
         if len(self.projection_targets) != len(set(self.projection_targets)):
             raise ValueError("protocol assembly projection targets must be unique")
         if self.unresolved_questions:
-            if self.blocking_severity != "blocker":
-                raise ValueError("unresolved protocol assembly facts must block projection")
+            expected_severity = (
+                "blocker"
+                if any(item.severity == "blocker" for item in self.unresolved_questions)
+                else "warning"
+            )
+            if self.blocking_severity != expected_severity:
+                raise ValueError(
+                    "protocol assembly resolution severity must match its "
+                    "unresolved questions"
+                )
             if self.deterministic_projection_allowed:
                 raise ValueError(
                     "unresolved protocol assembly facts cannot allow deterministic projection"

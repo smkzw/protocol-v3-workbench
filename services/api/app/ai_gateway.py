@@ -11,6 +11,7 @@ import subprocess
 import time
 import urllib.error
 import urllib.request
+import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Protocol, Tuple
@@ -83,6 +84,10 @@ ALIBABA_TOKEN_PLAN_BASE_URL = (
     "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
 )
 ALIBABA_TOKEN_PLAN_MODEL = "qwen3.8-max-preview"
+OPENCODE_GO_PROVIDER = "opencode-go"
+OPENCODE_GO_BASE_URL = "https://opencode.ai/zen/go/v1"
+OPENCODE_GO_MODEL = "deepseek-v4.1-flash"
+OPENCODE_GO_API_KEY_ENV = "OPENCODE_API_KEY"
 AI_PROVIDER_MAX_ATTEMPTS = 3
 AI_PROVIDER_RETRYABLE_HTTP_CODES = frozenset({429, 500, 502, 503, 504})
 REQUIRED_FINDING_KEYS = {"finding_id", "status", "title", "source_id", "evidence_span_ids"}
@@ -529,7 +534,11 @@ class PromptRegistry:
                 "fields": {
                     "section_id": "string; copy one requested section_id exactly",
                     "proposal_text": "string; substantive Chinese protocol body, not a heading or placeholder",
-                    "rationale": "string; concise source-bound drafting rationale",
+                    "rationale": (
+                        "string; concise user-facing evidence note: state which confirmed project facts support "
+                        "the proposal and what the medical author must verify; do not narrate drafting, prompt, "
+                        "corpus, model, candidate, or section-packet mechanics"
+                    ),
                     "evidence_span_ids": "array[string]; one or more IDs from evidence_spans",
                 },
                 "note": (
@@ -1145,13 +1154,23 @@ class OpenAICompatibleAiProvider:
             request_payload["reasoning_effort"] = reasoning_effort
         if envelope.max_output_tokens is not None:
             request_payload["max_tokens"] = int(envelope.max_output_tokens)
+        request_headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        if self.provider_name == OPENCODE_GO_PROVIDER:
+            # Console Go requires both headers.  Use a fresh opaque UUID for
+            # transport correlation; it carries no clinical or user content.
+            request_headers.update(
+                {
+                    "User-Agent": "omp/medical-writing-protocol-v3",
+                    "x-opencode-session": str(uuid.uuid4()),
+                }
+            )
         request = urllib.request.Request(
             f"{self.base_url}/chat/completions",
             data=json.dumps(request_payload, ensure_ascii=False).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-            },
+            headers=request_headers,
             method="POST",
         )
         response_body = ""
@@ -1554,6 +1573,9 @@ def _configured_direct_provider_values(values: Dict[str, str]) -> tuple[str, str
             ),
             "",
         )
+    elif provider == OPENCODE_GO_PROVIDER:
+        base_url = base_url or OPENCODE_GO_BASE_URL
+        api_key = values.get(OPENCODE_GO_API_KEY_ENV, "").strip() or api_key
     return provider, model, base_url, api_key
 
 
@@ -1690,7 +1712,11 @@ def ai_gateway_status_from_env(env: Optional[Dict[str, str]] = None) -> Dict[str
             else (
                 ALIBABA_TOKEN_PLAN_API_KEY_ENV
                 if provider == ALIBABA_TOKEN_PLAN_PROVIDER
-                else "WORKBENCH_AI_API_KEY"
+                else (
+                    OPENCODE_GO_API_KEY_ENV
+                    if provider == OPENCODE_GO_PROVIDER
+                    else "WORKBENCH_AI_API_KEY"
+                )
             )
         )
     if transport == "hermes_cli" and not hermes_provider:
@@ -1733,7 +1759,11 @@ def ai_gateway_status_from_env(env: Optional[Dict[str, str]] = None) -> Dict[str
                     else (
                         [ALIBABA_TOKEN_PLAN_API_KEY_ENV, "WORKBENCH_AI_PROVIDER"]
                         if provider == ALIBABA_TOKEN_PLAN_PROVIDER
-                        else ["WORKBENCH_AI_BASE_URL", "WORKBENCH_AI_API_KEY"]
+                        else (
+                            [OPENCODE_GO_API_KEY_ENV, "WORKBENCH_AI_PROVIDER"]
+                            if provider == OPENCODE_GO_PROVIDER
+                            else ["WORKBENCH_AI_BASE_URL", "WORKBENCH_AI_API_KEY"]
+                        )
                     )
                 )
             ),

@@ -17,7 +17,12 @@ from packages.contracts.workbench_contracts import (  # noqa: E402
     MedicalWritingStudyFraming,
 )
 from services.api.app.ai_execution_policy import AiExecutionPolicyResolver  # noqa: E402
-from services.api.app.ai_gateway import AiPromptEnvelope, AiTaskType, DisabledAiProvider  # noqa: E402
+from services.api.app.ai_gateway import (  # noqa: E402
+    AiPromptEnvelope,
+    AiProviderRuntimeError,
+    AiTaskType,
+    DisabledAiProvider,
+)
 from services.api.app.ai_task_runner import (  # noqa: E402
     AiTaskRunner,
     AiTaskStore,
@@ -36,7 +41,7 @@ class FakeProvider:
     model_name = "deepseek-v4-pro"
 
     def run(self, envelope: AiPromptEnvelope):
-        return {
+        result = {
             "task_id": envelope.task_id,
             "task_type": envelope.task_type.value,
             "provider": self.provider_name,
@@ -67,6 +72,7 @@ class FakeProvider:
             "needs_medical_confirmation": True,
             "schema_version": "ai_task_output_v0_1",
         }
+        return result
 
 
 class ExtraSourceProvider(FakeProvider):
@@ -130,6 +136,99 @@ class RepairingSynopsisProvider:
                 "field_evidence_span_ids": {},
             },
         }
+class RepairingFullDraftProvider:
+    provider_name = "buddy"
+    model_name = "deepseek-v4-pro"
+
+    def __init__(self):
+        self.envelopes = []
+
+    def run(self, envelope: AiPromptEnvelope):
+        self.envelopes.append(envelope)
+        source = envelope.payload["allowed_sources"][0]
+        section_ids = envelope.payload["task_context"]["section_ids"]
+        proposal = "正文过短" if len(self.envelopes) == 1 else "本研究将依照已确认的研究设计实施。" * 8
+        evidence_quote = (
+            "这是对来源的概括而非逐字证据。"
+            if len(self.envelopes) == 1
+            else source["text_preview"]
+        )
+        result = {
+            "task_id": envelope.task_id,
+            "task_type": envelope.task_type.value,
+            "provider": self.provider_name,
+            "model": self.model_name,
+            "prompt_version": envelope.prompt_version,
+            "input_source_ids": [
+                item["source_id"] for item in envelope.payload["allowed_sources"]
+            ],
+            "forbidden_source_ids": envelope.payload["forbidden_source_ids"],
+            "findings": [],
+            "evidence_spans": [
+                {
+                    "span_id": "full_draft_ev_1",
+                    "source_id": source["source_id"],
+                    "locator": source["locator"],
+                    "quote": evidence_quote,
+                }
+            ],
+            "uncertainties": [],
+            "needs_medical_confirmation": True,
+            "schema_version": "ai_task_output_v0_1",
+            "full_draft": {
+                "sections": [
+                    {
+                        "section_id": section_id,
+                        "proposal_text": proposal,
+                        "rationale": "依据当前项目已确认研究事实形成章节候选。",
+                        "evidence_span_ids": ["full_draft_ev_1"],
+                    }
+                    for section_id in section_ids
+                ]
+            },
+        }
+        if len(self.envelopes) == 2:
+            result.pop("schema_version")
+        return result
+
+
+class TwiceRepairingFullDraftProvider(RepairingFullDraftProvider):
+    def run(self, envelope: AiPromptEnvelope):
+        if len(self.envelopes) < 2:
+            self.envelopes.append(envelope)
+            source = envelope.payload["allowed_sources"][0]
+            section_id = envelope.payload["task_context"]["section_ids"][0]
+            if len(self.envelopes) == 1:
+                return {
+                    "section_id": section_id,
+                    "proposal_text": "正文过短",
+                    "rationale": "不完整结构",
+                    "evidence_span_ids": [],
+                }
+            return {
+                "section_id": section_id,
+                "proposal_text": "本研究将依照已确认的研究设计实施。" * 8,
+                "rationale": "仍缺少完整外层合同。",
+                "evidence_span_ids": ["full_draft_ev_1"],
+            }
+        return super().run(envelope)
+
+
+class DiagnosticFailureProvider:
+    provider_name = "buddy"
+    model_name = "deepseek-v4-pro"
+    response_model = "deepseek-v4-pro"
+
+    def run(self, envelope: AiPromptEnvelope):
+        raise AiProviderRuntimeError(
+            "provider_response_empty",
+            diagnostics={
+                "failure_code": "provider_response_empty",
+                "wire_format": "json",
+                "message_content_chars": 0,
+                "message_reasoning_content_chars": 120,
+            },
+        )
 
 
 class AiTaskRunnerTests(unittest.TestCase):
@@ -1064,6 +1163,118 @@ class AiTaskRunnerTests(unittest.TestCase):
                     for error in run.validation_errors
                 )
             )
+
+    def test_full_draft_budget_is_preserved_for_same_model_repair(self):
+        source = self.source.model_copy(
+            update={
+                "source_id": "full_draft_packet",
+                "source_type": "protocol_full_draft_selection",
+                "text_preview": "本研究为随机、双盲、安慰剂对照的III期临床研究。",
+                "project_id": "proj_full_draft",
+                "module": "medical_writing",
+            }
+        )
+        request = AiTaskRequest(
+            module="medical_writing",
+            task_type="protocol_full_draft",
+            prompt_version="protocol_full_draft_v0_3",
+            allowed_sources=[source],
+            user_instruction="生成完整章节正文。",
+            task_context={
+                "draft_version": "a" * 64,
+                "section_ids": ["section_1"],
+                "marker_open": "SECTION_ID=",
+                "marker_close": "\n",
+                "minimum_body_chars": 80,
+            },
+        )
+        provider = RepairingFullDraftProvider()
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = AiTaskRunner(
+                self.repo,
+                AiTaskStore(Path(tmp) / "ai_runs.jsonl"),
+                provider_factory=lambda resolution: provider,
+                policy_resolver=self.test_only_policy,
+            )
+
+            run = runner.submit_internal("proj_full_draft", request)
+
+        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
+        self.assertEqual(2, len(provider.envelopes))
+        self.assertEqual(
+            [32_768, 32_768],
+            [item.max_output_tokens for item in provider.envelopes],
+        )
+        self.assertEqual(
+            "ai_task_output_v0_1",
+            provider.envelopes[1].payload["repair_context"][
+                "required_top_level_identity"
+            ]["schema_version"],
+        )
+        self.assertEqual(
+            "full_draft_packet",
+            provider.envelopes[1].payload["repair_context"][
+                "exact_source_quote_options"
+            ][0]["source_id"],
+        )
+
+    def test_full_draft_allows_one_final_same_model_structural_correction(self):
+        source = self.source.model_copy(
+            update={
+                "source_id": "full_draft_packet",
+                "source_type": "protocol_full_draft_selection",
+                "text_preview": "本研究为随机、双盲、安慰剂对照的III期临床研究。",
+                "project_id": "proj_full_draft",
+                "module": "medical_writing",
+            }
+        )
+        request = AiTaskRequest(
+            module="medical_writing",
+            task_type="protocol_full_draft",
+            prompt_version="protocol_full_draft_v0_3",
+            allowed_sources=[source],
+            user_instruction="生成完整章节正文。",
+            task_context={
+                "draft_version": "a" * 64,
+                "section_ids": ["section_1"],
+                "marker_open": "SECTION_ID=",
+                "marker_close": "\n",
+                "minimum_body_chars": 80,
+            },
+        )
+        provider = TwiceRepairingFullDraftProvider()
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = AiTaskRunner(
+                self.repo,
+                AiTaskStore(Path(tmp) / "ai_runs.jsonl"),
+                provider_factory=lambda resolution: provider,
+                policy_resolver=self.test_only_policy,
+            )
+
+            run = runner.submit_internal("proj_full_draft", request)
+
+        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
+        self.assertEqual(3, len(provider.envelopes))
+        self.assertEqual(2, provider.envelopes[2].payload["repair_context"]["repair_attempt"])
+
+    def test_provider_failure_persists_only_safe_response_diagnostics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = AiTaskRunner(
+                self.repo,
+                AiTaskStore(Path(tmp) / "ai_runs.jsonl"),
+                provider_factory=lambda resolution: DiagnosticFailureProvider(),
+                policy_resolver=self.test_only_policy,
+            )
+
+            run = runner.submit_internal("proj_mgk10_sar_demo", self.request)
+
+        self.assertEqual(AiTaskRunStatus.FAILED, run.status)
+        self.assertEqual(1, len(run.artifacts))
+        diagnostics = run.artifacts[0].payload["diagnostics"]
+        self.assertEqual("provider_response_empty", diagnostics["failure_code"])
+        self.assertEqual(0, diagnostics["message_content_chars"])
+        self.assertEqual(120, diagnostics["message_reasoning_content_chars"])
+        self.assertNotIn("response_body", diagnostics)
 
     def test_source_free_non_default_synopsis_field_is_reset_to_default_and_marked_missing(
         self,

@@ -24,6 +24,17 @@ INTERNAL_TRANSPORT_VOCABULARY_RE = re.compile(
     r"evidence_span_ids|SECTION_ID=)",
     re.IGNORECASE,
 )
+# These phrases narrate how AI or a drafting workflow handled evidence.  They
+# belong in the review panel, not in protocol body text.  The expression is
+# intentionally phrase-based so ordinary uses of 确认/依据 in study conduct
+# remain valid.
+DRAFTING_PROCESS_VOCABULARY_RE = re.compile(
+    r"(?:当前项目(?:已)?确认|当前已确认|本方案不引用|本章节不(?:重复|引用)|"
+    r"未(?:继承|补充|拟定|编造)[^。；\r\n]{0,36}(?:来源|语料|项目|竞品|规则|内容)|"
+    r"(?:公司|共享)语料|章节包|候选正文|"
+    r"已确认(?:的)?研究事实|本节表述严格限定于已确认)",
+    re.IGNORECASE,
+)
 # A final protocol must not carry unresolved drafting instructions.  This is
 # deliberately narrower than a generic Chinese ``待`` search (which would
 # flag legitimate terms such as 待访视/待随访); it targets confirmation,
@@ -264,6 +275,15 @@ class MedicalWritingContentQualityDetector:
                 (
                     "正文仍包含待确认、待定稿或证据不足的草稿指令；应先补齐可核验研究事实，"
                     "再将完整表述写入方案正文。"
+                ),
+            ),
+            (
+                "drafting_process_vocabulary",
+                DRAFTING_PROCESS_VOCABULARY_RE,
+                "写作过程说明泄漏到方案正文",
+                (
+                    "正文描述了当前项目确认状态、语料使用或候选生成过程；"
+                    "这些说明应保留在审阅卡中，正文只呈现可申报的研究内容。"
                 ),
             ),
         ):

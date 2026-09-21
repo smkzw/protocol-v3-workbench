@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 DEFAULT_DEPLOYMENT_PROFILE = "local_private_clinical"
-DEFAULT_PROFILE_ID = "alibaba_qwen38"
+DEFAULT_PROFILE_ID = "opencode_go_deepseek_v41_flash"
 SETTINGS_SCHEMA_VERSION = "ai_provider_registry_v1"
 ALIBABA_TOKEN_PLAN_API_KEY_ENV = "ALIBABA_TOKEN_PLAN_CN_API_KEY"
 ALIBABA_TOKEN_PLAN_API_KEY_ENV_ALIASES = (
@@ -124,6 +124,16 @@ PROVIDER_PRESETS: tuple[AiProviderPreset, ...] = (
         base_url="https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
         default_model="qwen3.8-max-preview",
         api_key_env=ALIBABA_TOKEN_PLAN_API_KEY_ENV,
+        deployment_scope="cloud",
+        discovery_mode="manual_plus_probe",
+    ),
+    AiProviderPreset(
+        preset_id="opencode_go",
+        provider="opencode-go",
+        label="OpenCode Go",
+        base_url="https://opencode.ai/zen/go/v1",
+        default_model="deepseek-v4.1-flash",
+        api_key_env="OPENCODE_API_KEY",
         deployment_scope="cloud",
         discovery_mode="manual_plus_probe",
     ),

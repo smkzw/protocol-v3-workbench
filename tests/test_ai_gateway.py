@@ -747,6 +747,65 @@ class AiGatewayTests(unittest.TestCase):
         self.assertEqual("user", body["messages"][1]["role"])
         self.assertNotIn("thinking", body)
 
+    def test_opencode_go_provider_sends_required_transport_identity_headers(self):
+        envelope = PromptRegistry().build(
+            AiTaskSpec(
+                task_id="task_opencode_go_001",
+                task_type=AiTaskType.PROTOCOL_RULE_EXTRACTION,
+                prompt_version="protocol_rule_extraction_v0_1",
+                allowed_sources=[self.source()],
+            )
+        )
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://opencode.ai/zen/go/v1",
+            api_key="test-key",
+            model_name="deepseek-v4.1-flash",
+            provider_name="opencode-go",
+            timeout_seconds=1,
+        )
+        provider_payload = {
+            "task_id": envelope.task_id,
+            "task_type": envelope.task_type.value,
+            "provider": "opencode-go",
+            "model": "deepseek-v4.1-flash",
+            "prompt_version": envelope.prompt_version,
+            "input_source_ids": ["protocol_mgk10_v21_docx_p12"],
+            "forbidden_source_ids": [],
+            "findings": [],
+            "evidence_spans": [],
+            "uncertainties": [],
+            "needs_medical_confirmation": True,
+            "schema_version": "ai_task_output_v0_1",
+        }
+        with patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen:
+            urlopen.return_value = _FakeResponse(
+                {
+                    "model": "deepseek-v4.1-flash",
+                    "choices": [{"message": {"content": json.dumps(provider_payload)}}],
+                }
+            )
+            provider.run(envelope)
+
+        request = urlopen.call_args.args[0]
+        self.assertEqual("omp/medical-writing-protocol-v3", request.headers["User-agent"])
+        self.assertRegex(request.headers["X-opencode-session"], r"^[0-9a-f-]{36}$")
+
+    def test_opencode_go_factory_resolves_omp_credential_environment(self):
+        provider = configured_ai_provider_from_env(
+            {
+                "WORKBENCH_AI_TRANSPORT": "openai_compatible",
+                "WORKBENCH_AI_PROVIDER": "opencode-go",
+                "WORKBENCH_AI_MODEL": "deepseek-v4.1-flash",
+                "WORKBENCH_AI_BASE_URL": "https://opencode.ai/zen/go/v1",
+                "WORKBENCH_AI_EXPECTED_RESPONSE_MODEL": "deepseek-v4.1-flash",
+                "OPENCODE_API_KEY": "omp-owned-test-key",
+            }
+        )
+
+        self.assertIsInstance(provider, OpenAICompatibleAiProvider)
+        self.assertEqual("omp-owned-test-key", provider.api_key)
+        self.assertEqual("deepseek-v4.1-flash", provider.model_name)
+
     def test_openai_compatible_provider_can_disable_thinking_per_envelope(self):
         envelope = AiPromptEnvelope(
             task_id="task_flash_qc",
