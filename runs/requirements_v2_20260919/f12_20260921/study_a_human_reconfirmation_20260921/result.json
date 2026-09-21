@@ -1,0 +1,34 @@
+{
+  "schema_version": "study_a_human_reconfirmation_result_v1",
+  "project_id": "proj_user_8a5a00cb014a",
+  "changed_sqlite_files": [
+    "medical_monitoring_batches.sqlite3",
+    "medical_monitoring_daily_runs.sqlite3",
+    "medical_writing_authoring_journey.sqlite3",
+    "writing_reference.sqlite3"
+  ],
+  "logical_changes": [
+    "medical_writing_authoring_journey.sqlite3",
+    "writing_reference.sqlite3"
+  ],
+  "startup_header_only_changes": [
+    "medical_monitoring_batches.sqlite3",
+    "medical_monitoring_daily_runs.sqlite3"
+  ],
+  "startup_header_only_dump_hashes_unchanged": true,
+  "unchanged_sqlite_count": 14,
+  "journey_revision_before": 20,
+  "journey_revision_after": 22,
+  "snapshot_id": "wref_search_95d54c91e3c4fb21b234",
+  "run_id": "ct_run_64da04e8e33f89dc728f",
+  "confirmation_id": "ct_reconf_81450fa2caf9cf004f20",
+  "confirmation_kind": "human_reconfirmation",
+  "source_confirmation_id": "ct_conf_64147b6c4d57d64cb9b9",
+  "projection_status": "corpus_projected",
+  "retained_count": 59,
+  "excluded_count": 256,
+  "pipeline_advanced": false,
+  "external_work_repeated": false,
+  "durable_confirmation_count": 1,
+  "request_observation": "same idempotency key reached the endpoint twice after a zsh reserved-variable assignment failure; the second request was an idempotent replay, one durable confirmation exists and journey revision remained 22"
+}

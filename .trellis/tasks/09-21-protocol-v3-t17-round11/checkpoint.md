@@ -101,3 +101,9 @@ ego(lite) TaskSpace 12 使用 Study A 的 SQLite online-backup 副本验收。�
 干净副本实际一次确认成功：revision 20→23，snapshot仍为`wref_search_95d54c91e3c4fb21b234`，confirmation `ct_reconf_81450fa2caf9cf004f20`，kind `human_reconfirmation`，projection `corpus_projected`，59/256不变。日志无新检索、AI分诊、下载、OCR或翻译；原18个SQLite哈希清单不变。1920无横向溢出，复核卡由页面1578px前置到800px。ego截图接口三次内部超时，截图状态保持UNVERIFIED，未以其他浏览器替代。
 
 集中验证：frontend build 1971 modules；15/110 Vitest与48/65 Node全通过；diff check通过。记录见`runs/requirements_v2_20260919/t17_round11/HUMAN_RECONFIRMATION_BROWSER_ACCEPTANCE_20260921.md`与同名acceptance目录JSON。下一动作先提交推送本批，再对原Study A隔离运行库执行同一确定性复核，继续F12完整三研究旅程。
+
+## 2026-09-21 Study A 原隔离运行库完成复核
+
+执行前对`three_studies/isolated_runtime`的18个SQLite做online backup。5298独立API读取确认revision20、315候选、59/256和原确认谱系后，提交同一人工复核。结果confirmation `ct_reconf_81450fa2caf9cf004f20`，kind `human_reconfirmation`，journey revision22，原snapshot继续绑定，projection `corpus_projected`，pipeline未推进，external work未重复。
+
+一次shell变量命名错误发生在curl命令替换完成后，因此同一idempotency key随后被重放；库内只有一条durable confirmation，revision未二次增长。除authoring journey/writing reference外，两项监查SQLite仅字节头变化，前后`.dump`哈希相同。详细记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_HUMAN_RECONFIRMATION_20260921.md`。下一动作盘点Study B/C身份和节点，继续三研究完整旅程，不重跑Study A检索/分诊。
