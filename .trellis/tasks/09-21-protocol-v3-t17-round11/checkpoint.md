@@ -132,3 +132,5 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 两次身份探针均通过，声明/实际均为`opencode-go/deepseek-v4.1-flash`，role为max；不是鉴权缺失、身份漂移或总配额耗尽。真实job `mwjob_be7f1474e35f71ce2f097902`（8章批次）首答外层JSON未闭合且纠错空响应；`mwjob_3c36cdf12e46da237f93799d`（4章批次）在既定有界尝试后仍以`provider_response_empty`失败。两者均未生成工件、未采纳正文。
 
 根因修复：空`message.content`此前因helper异常分支写反而跳过有界重试，现已纠正；v0.4批大小降至4并纳入descriptor；全文max推理的最终输出预算从32768升至65536并纳入descriptor，模型/provider/强度不变。集中验证112 passed、py_compile/diff check通过。证据：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V04_PROVIDER_RECOVERY_20260922.md`。下一动作重启自有5299、再次身份探针、创建新logical work key并长轮询；不得重试两个旧失败job，不得采纳未经fresh医学会商的工件。
+
+第三个job `mwjob_96ee70138c21a86568eb3f3d`使用4章/65536后成功持久化17批68章，第18批因两章引用未返回的`span_project_center`且同模型纠错未删除而失败。新增科学保守归一化：保留有效span并删除悬空span；章节若因此无有效证据，清空正文/决定并降为明确`source_gap`，绝不补造证据。集中验证113 passed。下一动作重启5299后重试同一job，复用前17个chunk从第18批继续；不得新建第四个logical job。

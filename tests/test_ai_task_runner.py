@@ -27,6 +27,7 @@ from services.api.app.ai_task_runner import (  # noqa: E402
     AiTaskRunner,
     AiTaskStore,
     evidence_quote_matches_source,
+    normalize_protocol_full_draft_evidence_ids,
     normalize_protocol_synopsis_missing_findings,
     normalize_single_source_medical_writing_candidates,
     strip_blank_greenfield_anchor_evidence,
@@ -522,6 +523,52 @@ class AiTaskRunnerTests(unittest.TestCase):
                     )
                 ],
             ),
+        )
+
+    def test_full_draft_dangling_evidence_is_filtered_or_demoted_to_source_gap(self):
+        output = {
+            "evidence_spans": [
+                {"span_id": "valid_span", "source_id": "project", "locator": "x", "quote": "依据"}
+            ],
+            "full_draft": {
+                "sections": [
+                    {
+                        "section_id": "section_with_support",
+                        "content_status": "complete",
+                        "proposal_text": "有直接依据的完整正文。",
+                        "rationale": "依据当前项目资料。",
+                        "evidence_span_ids": ["missing_span", "valid_span"],
+                        "decision_items": [],
+                        "missing_source_classes": [],
+                    },
+                    {
+                        "section_id": "section_without_support",
+                        "content_status": "decision_required",
+                        "proposal_text": "没有有效证据绑定的正文。",
+                        "rationale": "原说明。",
+                        "evidence_span_ids": ["missing_span"],
+                        "decision_items": [{"question": "是否采用？"}],
+                        "missing_source_classes": [],
+                    },
+                ]
+            },
+        }
+
+        normalized = normalize_protocol_full_draft_evidence_ids(
+            AiTaskType.PROTOCOL_FULL_DRAFT,
+            output,
+        )
+
+        supported, unsupported = normalized["full_draft"]["sections"]
+        self.assertEqual(["valid_span"], supported["evidence_span_ids"])
+        self.assertEqual("complete", supported["content_status"])
+        self.assertEqual("source_gap", unsupported["content_status"])
+        self.assertEqual("", unsupported["proposal_text"])
+        self.assertEqual([], unsupported["decision_items"])
+        self.assertEqual([], unsupported["evidence_span_ids"])
+        self.assertEqual(
+            ["支持本章节正文的当前项目直接来源"],
+            unsupported["missing_source_classes"],
         )
 
     def test_revision_semantic_gate_rejects_ai_only_objective_and_endpoint_upgrades(

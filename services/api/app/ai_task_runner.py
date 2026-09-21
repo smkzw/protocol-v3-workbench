@@ -879,6 +879,71 @@ def strip_blank_greenfield_anchor_evidence(
     return normalized
 
 
+def normalize_protocol_full_draft_evidence_ids(
+    task_type: AiTaskType,
+    output: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Remove dangling section evidence IDs without accepting unsupported prose.
+
+    If another valid span remains, only the dangling identity is removed.  If
+    no valid span remains, the section is conservatively converted to an
+    explicit source gap and its unsupported prose and decisions are discarded.
+    """
+    if task_type != AiTaskType.PROTOCOL_FULL_DRAFT:
+        return output
+    spans = output.get("evidence_spans")
+    full_draft = output.get("full_draft")
+    sections = full_draft.get("sections") if isinstance(full_draft, dict) else None
+    if not isinstance(spans, list) or not isinstance(sections, list):
+        return output
+    valid_ids = {
+        item.get("span_id")
+        for item in spans
+        if isinstance(item, dict)
+        and isinstance(item.get("span_id"), str)
+        and item.get("span_id")
+    }
+    changed = False
+    normalized_sections: list[Any] = []
+    for section in sections:
+        if not isinstance(section, dict):
+            normalized_sections.append(section)
+            continue
+        evidence_ids = section.get("evidence_span_ids")
+        if not isinstance(evidence_ids, list):
+            normalized_sections.append(section)
+            continue
+        retained = list(
+            dict.fromkeys(item for item in evidence_ids if item in valid_ids)
+        )
+        if retained == evidence_ids:
+            normalized_sections.append(section)
+            continue
+        changed = True
+        normalized = dict(section)
+        normalized["evidence_span_ids"] = retained
+        if not retained and normalized.get("content_status") != "source_gap":
+            normalized.update(
+                {
+                    "content_status": "source_gap",
+                    "proposal_text": "",
+                    "rationale": (
+                        "本次输出未能把正文绑定到有效证据；需补充或重新绑定支持本章节的当前项目直接来源。"
+                    ),
+                    "decision_items": [],
+                    "missing_source_classes": ["支持本章节正文的当前项目直接来源"],
+                }
+            )
+        normalized_sections.append(normalized)
+    if not changed:
+        return output
+    normalized_output = dict(output)
+    normalized_full_draft = dict(full_draft)
+    normalized_full_draft["sections"] = normalized_sections
+    normalized_output["full_draft"] = normalized_full_draft
+    return normalized_output
+
+
 def bind_protocol_synopsis_source_quotes(
     task_type: AiTaskType,
     output: Dict[str, Any],
@@ -2160,6 +2225,10 @@ class AiTaskRunner:
                 task_type,
                 candidate,
                 input_sources,
+            )
+            candidate = normalize_protocol_full_draft_evidence_ids(
+                task_type,
+                candidate,
             )
             return normalize_single_source_medical_writing_candidates(
                 task_type,
