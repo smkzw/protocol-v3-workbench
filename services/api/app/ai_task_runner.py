@@ -173,13 +173,20 @@ _FULL_DRAFT_HEADING_RE = re.compile(
 _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE = re.compile(
     r"尚未(?:规定|明确)|未(?:规定|提供|明确)|事实不足|来源不足|需(?:核对|确认|补充)"
 )
-_FULL_DRAFT_HIGH_IMPACT_RULE_RE = re.compile(
-    r"(?:盲态|揭盲|避孕|妊娠|不良事件|严重不良事件|剂量调整|合并用药|洗脱|"
-    r"救援治疗|全分析集|符合方案集|安全性分析集|质量保证|稽查|分层因素|"
-    r"多重性|量表).{0,50}(?:应|必须|需)"
-    r"|(?:应|必须|需).{0,50}(?:盲态|揭盲|避孕|妊娠|不良事件|严重不良事件|"
-    r"剂量调整|合并用药|洗脱|救援治疗|全分析集|符合方案集|安全性分析集|"
-    r"质量保证|稽查|分层因素|多重性|量表)"
+_FULL_DRAFT_UNSUPPORTED_SPECIFIC_RULE_RE = re.compile(
+    r"(?:必须立即|应立即|24\s*小时|在\s*\d+\s*(?:小时|日|天|周)内|"
+    r"受试者与.{0,40}保持盲态|不得再次发放|"
+    r"双盲设计要求受试者、研究者.{0,60}(?:不知晓|保持盲态)|"
+    r"签署知情同意.{0,12}(?:后|起).{0,24}研究结束|"
+    r"所有.{0,24}(?:均应|必须)|"
+    r"(?:评估|评价)安排在(?:筛选期|基线/第1天)|"
+    r"(?:实验室检查|生命体征|12导联心电图|体格检查).{0,80}第2、4、8、12、16周|"
+    r"TEAE.{0,40}(?:双盲治疗期及安全性随访期|新发生或较基线加重)|"
+    r"DLQI在基线及第16周|"
+    r"男性受试者伴侣妊娠|(?:母亲与新生儿|新生儿健康)|"
+    r"末例受试者完成第20周|"
+    r"依从性评价.{0,40}(?:基线/第1天|第2、4、8、12、16周)|"
+    r"不良事件指受试者.{0,60}任何不良医学事件)"
 )
 
 _MEDICAL_WRITING_NUMERIC_CITATION_RE = re.compile(
@@ -882,6 +889,7 @@ def strip_blank_greenfield_anchor_evidence(
 def normalize_protocol_full_draft_evidence_ids(
     task_type: AiTaskType,
     output: Dict[str, Any],
+    allowed_sources: Iterable[Any] = (),
 ) -> Dict[str, Any]:
     """Remove dangling section evidence IDs without accepting unsupported prose.
 
@@ -896,14 +904,32 @@ def normalize_protocol_full_draft_evidence_ids(
     sections = full_draft.get("sections") if isinstance(full_draft, dict) else None
     if not isinstance(spans, list) or not isinstance(sections, list):
         return output
+    source_by_id = {
+        str(getattr(source, "source_id", "") or ""): source
+        for source in allowed_sources
+    }
+    valid_spans = []
+    for item in spans:
+        if not isinstance(item, dict):
+            continue
+        source = source_by_id.get(str(item.get("source_id") or ""))
+        quote = str(item.get("quote") or "")
+        if source_by_id and (
+            source is None
+            or str(item.get("locator") or "") != str(getattr(source, "locator", "") or "")
+            or not quote
+            or quote not in str(getattr(source, "text_preview", "") or "")
+        ):
+            continue
+        valid_spans.append(item)
     valid_ids = {
         item.get("span_id")
-        for item in spans
+        for item in valid_spans
         if isinstance(item, dict)
         and isinstance(item.get("span_id"), str)
         and item.get("span_id")
     }
-    changed = False
+    changed = len(valid_spans) != len(spans)
     normalized_sections: list[Any] = []
     for section in sections:
         if not isinstance(section, dict):
@@ -913,16 +939,47 @@ def normalize_protocol_full_draft_evidence_ids(
         if not isinstance(evidence_ids, list):
             normalized_sections.append(section)
             continue
+        status = str(section.get("content_status") or "")
         retained = list(
             dict.fromkeys(item for item in evidence_ids if item in valid_ids)
         )
-        if retained == evidence_ids:
+        force_source_gap = (
+            status == "complete"
+            and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(
+                str(section.get("rationale") or "")
+            )
+            and _FULL_DRAFT_UNSUPPORTED_SPECIFIC_RULE_RE.search(
+                str(section.get("proposal_text") or "")
+            )
+        )
+        force_neutral_decision = status == "decision_required"
+        if (
+            retained == evidence_ids
+            and status != "source_gap"
+            and not force_source_gap
+            and not force_neutral_decision
+        ):
             normalized_sections.append(section)
             continue
         changed = True
         normalized = dict(section)
         normalized["evidence_span_ids"] = retained
-        if not retained and normalized.get("content_status") != "source_gap":
+        if status == "source_gap" or force_source_gap:
+            normalized.update(
+                {
+                    "content_status": "source_gap",
+                    "proposal_text": "",
+                    "decision_items": [],
+                    "evidence_span_ids": [],
+                    "missing_source_classes": list(
+                        normalized.get("missing_source_classes")
+                        or ["支持本章节研究实施规则的项目权威资料或职能确认"]
+                    )[:4],
+                    "rationale": str(normalized.get("rationale") or "").strip()
+                    or "现有项目资料不足以支持本章节正文。",
+                }
+            )
+        elif not retained:
             normalized.update(
                 {
                     "content_status": "source_gap",
@@ -934,6 +991,9 @@ def normalize_protocol_full_draft_evidence_ids(
                     "missing_source_classes": ["支持本章节正文的当前项目直接来源"],
                 }
             )
+        elif force_neutral_decision:
+            normalized["proposal_text"] = ""
+            normalized["missing_source_classes"] = []
         normalized_sections.append(normalized)
     if not changed:
         return output
@@ -941,6 +1001,39 @@ def normalize_protocol_full_draft_evidence_ids(
     normalized_full_draft = dict(full_draft)
     normalized_full_draft["sections"] = normalized_sections
     normalized_output["full_draft"] = normalized_full_draft
+    normalized_findings: list[Any] = []
+    for finding in output.get("findings") or []:
+        if not isinstance(finding, dict):
+            normalized_findings.append(finding)
+            continue
+        evidence_ids = finding.get("evidence_span_ids")
+        if not isinstance(evidence_ids, list):
+            normalized_findings.append(finding)
+            continue
+        retained = list(
+            dict.fromkeys(item for item in evidence_ids if item in valid_ids)
+        )
+        if retained != evidence_ids:
+            changed = True
+            finding = dict(finding)
+            finding["evidence_span_ids"] = retained
+        normalized_findings.append(finding)
+    normalized_output["findings"] = normalized_findings
+    referenced_ids = {
+        span_id
+        for section in normalized_sections
+        if isinstance(section, dict)
+        for span_id in section.get("evidence_span_ids") or []
+    }
+    referenced_ids.update(
+        span_id
+        for finding in normalized_findings
+        if isinstance(finding, dict)
+        for span_id in finding.get("evidence_span_ids") or []
+    )
+    normalized_output["evidence_spans"] = [
+        item for item in valid_spans if item.get("span_id") in referenced_ids
+    ]
     return normalized_output
 
 
@@ -2229,6 +2322,7 @@ class AiTaskRunner:
             candidate = normalize_protocol_full_draft_evidence_ids(
                 task_type,
                 candidate,
+                input_sources,
             )
             return normalize_single_source_medical_writing_candidates(
                 task_type,
@@ -2902,7 +2996,7 @@ class AiTaskRunner:
             if section_id not in expected_ids:
                 errors.append(f"{prefix}.section_id is not in the requested section set")
             proposal = str(section.get("proposal_text") or "").strip()
-            if content_status != "source_gap" and len(proposal) < minimum:
+            if content_status == "complete" and len(proposal) < minimum:
                 errors.append(
                     f"{prefix}.proposal_text is not substantive: {len(proposal)} < {minimum} characters"
                 )
@@ -2965,7 +3059,7 @@ class AiTaskRunner:
             if (
                 content_status == "complete"
                 and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(rationale)
-                and _FULL_DRAFT_HIGH_IMPACT_RULE_RE.search(proposal)
+                and _FULL_DRAFT_UNSUPPORTED_SPECIFIC_RULE_RE.search(proposal)
             ):
                 errors.append(
                     f"{prefix} writes an unsupported high-impact rule as complete; "

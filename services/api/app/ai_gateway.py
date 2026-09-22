@@ -806,11 +806,10 @@ class PromptRegistry:
         decision_fact_paths = context.get("decision_fact_paths")
         if (
             not _is_string_list(decision_fact_paths)
-            or not decision_fact_paths
             or len(decision_fact_paths) != len(set(decision_fact_paths))
         ):
             raise AiGatewayConfigurationError(
-                "protocol full-draft decision_fact_paths must contain unique non-empty strings"
+                "protocol full-draft decision_fact_paths must be a list of unique non-empty strings"
             )
         if len(json.dumps(context, ensure_ascii=False).encode("utf-8")) > 32_768:
             raise AiGatewayConfigurationError(
@@ -2000,9 +1999,11 @@ def _validate_protocol_full_draft_output(
         proposal = section.get("proposal_text")
         if not isinstance(proposal, str):
             errors.append(f"{prefix}.proposal_text must be a string")
-        elif status == "source_gap" and proposal:
-            errors.append(f"{prefix}.proposal_text must be empty for source_gap")
-        elif status != "source_gap" and not proposal.strip():
+        elif status in {"source_gap", "decision_required"} and proposal:
+            errors.append(
+                f"{prefix}.proposal_text must be empty for {status}"
+            )
+        elif status == "complete" and not proposal.strip():
             errors.append(f"{prefix}.proposal_text must be non-empty")
         elif proposal and MARKDOWN_TABLE_SEPARATOR_RE.search(proposal):
             errors.append(f"{prefix}.proposal_text must not contain a Markdown table")
@@ -2034,6 +2035,7 @@ def _validate_protocol_full_draft_output(
             errors.append(f"{prefix}.decision_items must be empty unless decision_required")
         if len(decisions) > 6:
             errors.append(f"{prefix}.decision_items must contain no more than 6 decisions")
+        decision_paths_in_section: list[str] = []
         for decision_index, decision in enumerate(decisions):
             decision_prefix = f"{prefix}.decision_items[{decision_index}]"
             required = {
@@ -2072,6 +2074,9 @@ def _validate_protocol_full_draft_output(
                 errors.append(f"{decision_prefix} must identify exactly one listed recommendation")
             if decision.get("blocking_section_id") != section.get("section_id"):
                 errors.append(f"{decision_prefix}.blocking_section_id must equal section_id")
+            decision_paths_in_section.append(str(decision.get("fact_path") or ""))
+        if len(decision_paths_in_section) != len(set(decision_paths_in_section)):
+            errors.append(f"{prefix}.decision_items must use each fact_path at most once")
         missing_sources = section.get("missing_source_classes")
         if not isinstance(missing_sources, list) or any(not isinstance(item, str) or not item.strip() for item in missing_sources):
             errors.append(f"{prefix}.missing_source_classes must be a string list")

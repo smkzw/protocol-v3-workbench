@@ -139,3 +139,13 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 采用 execution-plus-conference：owner 直接修复与当前全文初稿持久化紧耦合的确定性缺陷，冻结提交后做独立工程审阅；真实 v0.5 工件形成后另启 fresh 医学会商。v0.4 已证明生成时校验有效，但最终工件未保存 evidence span 到来源/定位/摘录的映射，不能作为可采纳候选。现将证据绑定按章节持久化，避免跨批次短 ID 冲突；chunk 恢复、最终合并和采纳均重新验证引用、来源与摘录哈希。schema 已升为 artifact v5/chunk v5/descriptor v6；v3/v4 保留只读。集中回归 115 passed，py_compile 通过。阶段记录：`runs/requirements_v2_20260919/t17_round11/STUDY_A_FULL_DRAFT_V05_EVIDENCE_PROVENANCE_20260922.md`。下一动作：冻结提交与独立审阅，然后在隔离 5299 生成 Study A v0.5，逐章核对证据链并进行 fresh 医学会商；此前不得采纳。
 
 独立工程会商已完成：`zcode/zcode/GLM-5.3-Flash:max` 同一session两轮，无fallback。首轮复现“损坏最终件仍被复用”的审阅死循环并指出确定性错误误重试；owner合并修复后，续审验证最终件会从有效chunk重建且不重复模型调用，read-time adoption_ready与证据链一致。续审低风险空sections边界也已关闭。最终同一集中集117 passed，py_compile/diff check通过，会商工程范围PASS。下一动作直接提交本批并运行隔离Study A v0.5；逐章证据链与fresh医学会商通过前不得采纳。
+
+## 2026-09-22 Study A v0.5–v0.9 医学收敛与专家交接
+
+采用 execution-plus-conference：owner 连续修复生成器与证据链，真实产品候选形成后由 fresh 独立模型全量医学审阅。v0.5 的 73 张卡、预确认正文、SUSAR 错误定义和 fact_path 错绑已关闭；v0.7/v0.8 逐步关闭安全时点推断、DLQI 冲突、伴侣妊娠/新生儿规则和 21 个空 required 壳。
+
+最新 v0.9 job `mwjob_bb370670e7bc8936451212fd` 实际使用 `opencode-go/deepseek-v4.1-flash:max`，attempt 1、22/22 批、无 fallback，85/85 节，44 complete、1 decision_required、40 source_gap，2 张探索性卡、1 个统计 required。冻结 SHA `d1e5ad959fd5cdce693e86f072ae39fff9a4056d1601320b86061bfa9d216820`。fresh 会商 `mw_r11_v09_medical_review_20260922` 使用 `grok/grok-build/grok-4.7:high`，session `0384d0f2-205a-4a4b-9d9f-42a2e824631b`，无 fallback，裁决 REVISE。
+
+残留四类：§9.5 无来源安全采集起点；估计目标跨章改写且统计升级只显于§9；体格检查被写入安全性终点；公司语料被写成本项目运营/伦理义务。两张探索性卡还需原子合并。集中受影响测试106 passed，py_compile/diff check通过，v0.8/v0.9 review gate通过。v0.9不采纳、不写Word。
+
+用户要求本阶段完成后交专家审阅。完整交接为`handoff/2026-09-22/HANDOFF_PROTOCOL_V3_V09_EXPERT_REVIEW_20260922.md`，复盘为`runs/requirements_v2_20260919/t17_round11/STAGE_RETROSPECTIVE_V05_TO_V09_20260922.md`。下一动作仅在吸收专家意见后实现v0.10，不重复上游资料处理或v0.9 job。

@@ -44,13 +44,17 @@ from .medical_writing_authoring_prefill import SUPPORTED_ADOPT_PATHS
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
-FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_4"
-FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v5"
-FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v5"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v6"
+FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_9"
+FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v9"
+FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v9"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v10"
 LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {
     "protocol_full_draft_artifact_v3",
     "protocol_full_draft_artifact_v4",
+    "protocol_full_draft_artifact_v5",
+    "protocol_full_draft_artifact_v6",
+    "protocol_full_draft_artifact_v7",
+    "protocol_full_draft_artifact_v8",
 }
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
@@ -66,8 +70,46 @@ _DECISION_STRUCTURED_DESIGN_PATHS = frozenset(
     {"design.src_dmc", "design.phase1_parts", "design.arms_or_cohorts"}
 )
 FULL_DRAFT_DECISION_FACT_PATHS = tuple(
-    sorted(SUPPORTED_ADOPT_PATHS - _DECISION_STRUCTURED_DESIGN_PATHS)
+    sorted(
+        {
+            "picos.exploratory_endpoints",
+            "picos.exploratory_objectives",
+        }
+        & SUPPORTED_ADOPT_PATHS
+        - _DECISION_STRUCTURED_DESIGN_PATHS
+    )
 )
+
+# A full-draft card may fill one whole, currently unconfirmed study-definition
+# field.  It may not use a broad confirmed field as a convenient bucket for an
+# unrelated operational choice.  Each field also has one owning section so a
+# single user click cannot be duplicated across the document.
+_DECISION_PATH_HEADING_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
+    "picos.allowed_concomitant_rules": (
+        re.compile(r"^允许的合并用药/治疗$"),
+        re.compile(r"^合并用药/治疗$"),
+    ),
+    "picos.prohibited_concomitant_rules": (
+        re.compile(r"^禁止的合并用药/治疗$"),
+        re.compile(r"^合并用药/治疗$"),
+    ),
+    "picos.required_background_rules": (
+        re.compile(r"^合并用药/治疗$"),
+        re.compile(r"背景治疗"),
+    ),
+    "picos.assessment_timing_restrictions": (
+        re.compile(r"^安全性评估$"),
+        re.compile(r"^研究流程和评估$"),
+    ),
+    "picos.exploratory_objectives": (
+        re.compile(r"探索性目的"),
+        re.compile(r"^研究目的和终点$"),
+    ),
+    "picos.exploratory_endpoints": (
+        re.compile(r"探索性终点"),
+        re.compile(r"^研究目的和终点$"),
+    ),
+}
 
 _PLACEHOLDER_RE = re.compile(
     r"(?:^|[\s，。；：])(?:待补充|待确认|待定|TBD|TODO|不适用|无适用内容|由方案规定|见方案规定)(?:$|[\s，。；：])",
@@ -236,6 +278,55 @@ class MedicalWritingFullDraftService:
             )
         return targets
 
+    @staticmethod
+    def _available_decision_paths(service: Any, project_id: str) -> set[str]:
+        """Return only whole fields that are still awaiting confirmation.
+
+        When a current authoring journey is available, a confirmed field is
+        never offered to the chapter generator as a decision target.  This is
+        the decisive guard against replacing an established estimand, visit
+        strategy, safety endpoint set, or other study fact with a chapter-level
+        operational answer.  Lightweight legacy test compositions without an
+        authoring journey retain the small curated catalog.
+        """
+        journey_service = getattr(service, "authoring_journey_service", None)
+        if journey_service is None or not journey_service.has_project(project_id):
+            return set(FULL_DRAFT_DECISION_FACT_PATHS)
+        journey = journey_service.get(project_id)
+        definition = getattr(journey, "study_definition", None)
+        states = getattr(definition, "field_states", None)
+        if not isinstance(states, Mapping):
+            return set()
+        return {
+            path
+            for path in FULL_DRAFT_DECISION_FACT_PATHS
+            if getattr(states.get(path), "status", "") in {"missing", "deferred"}
+        }
+
+    @staticmethod
+    def _decision_path_owners(
+        targets: Iterable[Mapping[str, Any]],
+        available_paths: Iterable[str],
+    ) -> dict[str, str]:
+        """Assign each writable decision field to one semantically named section."""
+        target_list = list(targets)
+        owners: dict[str, str] = {}
+        for path in sorted(set(available_paths)):
+            patterns = _DECISION_PATH_HEADING_PATTERNS.get(path, ())
+            for pattern in patterns:
+                match = next(
+                    (
+                        item
+                        for item in target_list
+                        if pattern.search(_text(item.get("heading")))
+                    ),
+                    None,
+                )
+                if match is not None:
+                    owners[path] = _text(match.get("section_id"))
+                    break
+        return owners
+
     def build_descriptor(
         self,
         project_id: str,
@@ -260,6 +351,10 @@ class MedicalWritingFullDraftService:
             )
         policy = dict(service._policy_identity())
         policy["prompt_version"] = FULL_DRAFT_PROMPT_VERSION
+        decision_path_owners = self._decision_path_owners(
+            targets,
+            self._available_decision_paths(service, project_id),
+        )
         descriptor = {
             "descriptor_version": FULL_DRAFT_DESCRIPTOR_VERSION,
             "project_id": project_id,
@@ -273,6 +368,7 @@ class MedicalWritingFullDraftService:
             "chunk_size": FULL_DRAFT_CHUNK_SIZE,
             "max_output_tokens": FULL_DRAFT_MAX_OUTPUT_TOKENS,
             "ai_policy": policy,
+            "decision_path_owners": decision_path_owners,
         }
         if scope:
             # Only a scoped descriptor carries the key, so every pre-existing
@@ -382,7 +478,13 @@ class MedicalWritingFullDraftService:
         corpus_rules = "\n".join(
             f"- {rule}" for rule in CORPUS_GENERALIZATION_PROMPT_RULES
         )
-        decision_paths = "、".join(FULL_DRAFT_DECISION_FACT_PATHS)
+        section_ids = {_text(item.get("section_id")) for item in chunk}
+        decision_paths = [
+            path
+            for path, owner in (descriptor.get("decision_path_owners") or {}).items()
+            if _text(owner) in section_ids
+        ]
+        decision_path_text = "、".join(decision_paths) or "（本批次没有可写入的待确认研究字段）"
         return (
             "你是中文临床研究方案撰写专家。请生成一个可直接进入研究方案全文的章节正文候选，"
             "而不是标题清单或提纲。只依据允许来源和当前项目已确认研究事实；公司/共享语料只用于"
@@ -399,21 +501,42 @@ class MedicalWritingFullDraftService:
             "‘候选正文’等写作过程说明；这些内容只可转化为rationale中的简洁证据说明。"
             "公司或共享语料不得直接决定本项目的避孕方法、妊娠报告、AE/SAE定义与时限、"
             "剂量调整、合并/禁限用药、洗脱、救援治疗、随机揭盲、分析集或其他研究实施规则。"
-            "缺少项目事实时，只能给出不含命名系统、固定方法清单、固定时限、角色分工或停止后果的"
-            "保守通用表述，并在rationale中明确列出医学作者需核对的决策。"
+            "缺少项目实施细节时，可以先完成由已确认事实或允许来源支持的实质正文，并在rationale中"
+            "分点列出仍需医学作者核对的项目细节；不得因为局部细节待核对而把已有充分依据的整章留空。"
+            "保守正文不得包含命名系统、固定方法清单、固定时限、未经来源支持的角色分工或停止后果。"
             "若允许的当前项目来源没有明确写出某项研究实施规则，不得把该规则写成方案既定要求；"
             "妊娠处理、AE分类、报告对象与时限、随访终点、数据职责、签署要求和CRF记录方式等"
             "只能说明本章节应覆盖的目的与范围，并把可选建议写入rationale，不能在正文中虚构为已决定事项。"
+            "proposal_text必须是可以直接写入方案的规范句子，不得用‘本章节需要覆盖’、‘本节应列明’、"
+            "‘本章节说明目的与范围’等目录说明冒充正文。不得由已有访视日推断实验室检查、生命体征、"
+            "心电图、体格检查或依从性评价在每个访视都实施；不得由终点中的‘较基线变化’自行新增"
+            "DLQI采集时点；不得自行定义TEAE采集窗口、研究结束时点或安全性评估窗口。"
+            "妊娠或哺乳期排除不能推出避孕方法、伴侣妊娠报告、新生儿随访或妊娠检查日程。"
+            "下列章节采用更严格的来源判定：方案概要必须用已确认设计事实完成，并省略未确认实施细节；"
+            "疾病背景及治疗现状在缺少流行病学、疾病负担、指南或治疗现状来源时必须source_gap；"
+            "筛选失败与重新筛选、计划外访视、剂量调整/暂停/恢复/永久停药、药物过量与给药错误、"
+            "试验药包装储存与发放回收、AE/SAE/SUSAR定义与采集报告、研究药物具体风险、保险赔偿，"
+            "在缺少对应项目文件时必须source_gap，不能用条件句、范围句或通用原则标成complete。"
+            "盲法章节只能写双盲、1:1和匹配安慰剂等已确认事实，不得自行指定受试者、研究者、"
+            "评价者或其他人员的盲态范围。"
             "除方案概要、研究设计、目的终点和样本量章节外，不要重复整套样本量、剂量、主要终点、"
             "随机和盲法信息，只写与本章节直接相关的事实。"
             "每章用evidence_span_ids绑定本次evidence_spans中的直接依据，并将needs_medical_confirmation设为true。"
             "每章还必须返回content_status、decision_items和missing_source_classes。"
-            "事实充分时用complete并返回完整正文；缺少必须由项目决定的规则时用decision_required，"
-            "给出一个推荐项和1至2个备选项，但不得把选项直接写成既定正文；缺少IB、既往研究、"
-            "流行病学、量表授权或其他来源材料时用source_gap，proposal_text留空并准确列出缺少的来源类别，"
-            "禁止用通用段落凑足字数。每个决定项的fact_path只能从以下字段中按语义选择并原样复制："
-            f"{decision_paths}。不得自造字段路径。决定项只用于引导上游研究设计确认，"
-            "模型本身不得写回研究事实。"
+            "事实充分时用complete并返回完整正文。只有本批次列出的待确认研究字段能够完整承载一个"
+            "研究设计决定时才可用decision_required：给出一个推荐项和1至2个备选项，并将proposal_text"
+            "严格留空；用户确认前不得输出任何预选正文。若缺少的实施规则没有对应的待确认研究字段，"
+            "必须用source_gap说明所缺项目来源或职能确认，不能借用语义不相干的字段。缺少IB、既往研究、"
+            "流行病学、研究药物作用机制/非临床/既往临床资料等核心来源缺失，导致本章无法形成任何"
+            "有实质信息的正文时，才用source_gap；proposal_text留空并准确列出缺少的来源类别，禁止用"
+            "通用段落凑足字数。量表名称、终点及评价时点已有项目事实时，应先写入这些已确认内容，"
+            "把版本、授权和培训等待核细节列入rationale，不得把整章降为空白。每个决定项的fact_path只能从以下字段中按语义选择并原样复制："
+            f"{decision_path_text}。不得自造字段路径；同一字段最多返回一个决定项。决定项只用于引导上游研究设计确认，"
+            "模型本身不得写回研究事实。决定项的每个选项都必须是用户点选后可直接写入对应研究字段的"
+            "具体答案；如果来源不足以提出具体、互斥且可执行的选项，必须返回source_gap，不能用‘按类别列出’、"
+            "‘由团队确认’或其他写作方式选择冒充科学决定。"
+            "探索性目的与终点的选项必须包含‘本研究不设置探索性目的/终点’，不能强迫确证性研究新增"
+            "探索程序；目的和终点的推荐必须能够成对对应。"
             "\n语料泛化规则（全部适用）：\n"
             f"{corpus_rules}"
         )
@@ -432,16 +555,23 @@ class MedicalWritingFullDraftService:
             {match.group(0) for match in _REQUIRED_REVIEW_CONTENT_RE.finditer(proposal)}
         )
         if heading_signals:
-            required_reasons.append(
-                f"本节直接设定高影响设计或研究实施决定（{'、'.join(heading_signals[:6])}），请逐卡确认。"
+            advisory_reasons.append(
+                f"本节复述高影响研究设计（{'、'.join(heading_signals[:6])}）；请在合并设计摘要中统一核对。"
             )
         if embedded_signals:
             advisory_reasons.append(
                 f"本节提及高影响设计信息（{'、'.join(embedded_signals[:6])}）；系统未把重复提及升级为强制确认。"
             )
         if corpus_count and _CORPUS_CONDUCT_RE.search(proposal):
+            advisory_reasons.append(
+                "本节引用公司语料形成共性表述；定稿时请用本项目权威文件复核适用性。"
+            )
+        if (
+            heading == "统计分析"
+            and "复合策略" in proposal
+        ):
             required_reasons.append(
-                "正文使用跨项目语料支持研究实施规则；请确认该规则适用于本项目，或改为本项目权威内容。"
+                "估计目标同时出现治疗策略人群与复合策略；请由统计负责人统一伴发事件策略后再采纳。"
             )
         restatement_count = sum(
             bool(pattern.search(proposal)) for pattern in _DESIGN_RESTATEMENT_SIGNALS
@@ -758,13 +888,19 @@ class MedicalWritingFullDraftService:
         chunk: list[dict[str, Any]],
     ) -> tuple[dict[str, Any], Any, list[AiTaskSourceRef]]:
         sources = self._sources_for_chunk(service, project_id, descriptor, chunk)
+        chunk_section_ids = {item["section_id"] for item in chunk}
+        decision_fact_paths = [
+            path
+            for path, owner in (descriptor.get("decision_path_owners") or {}).items()
+            if owner in chunk_section_ids
+        ]
         context = {
             "draft_version": descriptor["digest"],
             "section_ids": [item["section_id"] for item in chunk],
             "marker_open": "SECTION_ID=",
             "marker_close": "\n",
             "minimum_body_chars": descriptor["minimum_body_chars"],
-            "decision_fact_paths": list(FULL_DRAFT_DECISION_FACT_PATHS),
+            "decision_fact_paths": decision_fact_paths,
         }
         run = service.ai_task_runner.submit_internal(
             project_id,
@@ -987,6 +1123,23 @@ class MedicalWritingFullDraftService:
             {"sections": all_sections, "source_bindings": source_bindings}
         ):
             return DurableJobResult(error="全文初稿章节证据链不完整，未写入候选", retryable=False)
+        decision_path_owners = expected.get("decision_path_owners") or {}
+        seen_decision_paths: set[str] = set()
+        for section in all_sections:
+            section_id = _text(section.get("section_id"))
+            for item in section.get("decision_items") or []:
+                fact_path = _text(item.get("fact_path"))
+                if decision_path_owners.get(fact_path) != section_id:
+                    return DurableJobResult(
+                        error=f"全文初稿决定字段未由指定章节承载：{fact_path or 'empty'}",
+                        retryable=False,
+                    )
+                if fact_path in seen_decision_paths:
+                    return DurableJobResult(
+                        error=f"全文初稿决定字段重复：{fact_path}",
+                        retryable=False,
+                    )
+                seen_decision_paths.add(fact_path)
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections
@@ -1010,6 +1163,7 @@ class MedicalWritingFullDraftService:
             "document_version": expected["document_version"],
             "precondition_digest": expected["digest"],
             "study_definition": expected["study_definition"],
+            "decision_path_owners": decision_path_owners,
             "target_sections": target,
             "sections": all_sections,
             "coverage": {
@@ -1382,6 +1536,14 @@ class MedicalWritingFullDraftService:
                 raise RuntimeStoreError(
                     f"决定项目标路径需要结构化设计取值，决定卡无法安全写入：{fact_path}；"
                     "请在研究设计中直接确认该决定"
+                )
+            if (artifact.get("decision_path_owners") or {}).get(fact_path) != entry["section_id"]:
+                raise RuntimeStoreError(
+                    f"决定项不属于该研究字段的指定章节：{fact_path}"
+                )
+            if fact_path not in self._available_decision_paths(service, project_id):
+                raise StaleRuntimeStateError(
+                    f"研究设计字段已确认或不再待决定：{fact_path}；请刷新全文初稿"
                 )
             prose = _text(option.get("summary")) or _text(option.get("label"))
             resolved.append(

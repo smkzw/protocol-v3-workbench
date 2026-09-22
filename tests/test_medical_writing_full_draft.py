@@ -249,7 +249,7 @@ class FullDraftServiceTests(unittest.TestCase):
         )
         completed = self.store.get(project, first)
         artifact = self.full.read_artifact(project, completed)
-        self.assertEqual("protocol_full_draft_artifact_v5", artifact["schema_version"])
+        self.assertEqual("protocol_full_draft_artifact_v9", artifact["schema_version"])
         for section in artifact["sections"]:
             self.assertEqual(
                 section["evidence_span_ids"],
@@ -479,18 +479,25 @@ class FullDraftServiceTests(unittest.TestCase):
         artifact["sections"][0]["content_status"] = "decision_required"
         artifact["sections"][0]["decision_items"] = [
             {
-                "question": "避孕要求是否按本项目方案规定？",
+                "question": "本研究是否设置探索性目的？",
                 "options": [
-                    {"option_id": "a", "label": "按方案规定", "summary": "按本项目方案规定执行避孕与妊娠报告。"},
-                    {"option_id": "b", "label": "参照通用做法", "summary": "参照通用实践执行避孕要求。"},
+                    {"option_id": "a", "label": "不设置", "summary": "本研究不设置探索性目的。"},
+                    {
+                        "option_id": "b",
+                        "label": "探索早期应答",
+                        "summary": "探索合成试验药A治疗后的早期疗效应答。",
+                    },
                 ],
                 "recommended_option_id": "a",
-                "rationale": "该规则必须由本项目决定。",
+                "rationale": "探索性目的必须由本项目决定。",
                 "blocking_section_id": "sec_1",
-                "fact_path": "picos.assessment_timing_restrictions",
+                "fact_path": "picos.exploratory_objectives",
             }
         ]
-        decision_id = self.full.decision_item_id("sec_1", "避孕要求是否按本项目方案规定？")
+        artifact["decision_path_owners"] = {
+            "picos.exploratory_objectives": "sec_1"
+        }
+        decision_id = self.full.decision_item_id("sec_1", "本研究是否设置探索性目的？")
         writes = []
 
         def writer(project_id, *, field_path, value, actor, idempotency_key):
@@ -521,10 +528,13 @@ class FullDraftServiceTests(unittest.TestCase):
             )
 
         self.assertEqual(1, len(writes))
-        self.assertEqual("picos.assessment_timing_restrictions", writes[0]["field_path"])
+        self.assertEqual("picos.exploratory_objectives", writes[0]["field_path"])
         # The medical manager's selected alternative, not the recommendation, is
         # written once, shaped for the declared string-list field type.
-        self.assertEqual(["参照通用实践执行避孕要求。"], writes[0]["value"])
+        self.assertEqual(
+            ["探索合成试验药A治疗后的早期疗效应答。"],
+            writes[0]["value"],
+        )
         self.assertIn("k1", writes[0]["idempotency_key"])
         self.assertEqual(["sec_1"], result["affected_section_ids"])
         self.assertEqual(completed.job_id, result["superseded_job_id"])
@@ -791,10 +801,11 @@ class FullDraftServiceTests(unittest.TestCase):
             [project_source, corpus_source],
             {"heading": "主要终点与安全性报告"},
         )
-        self.assertEqual("required", metadata["review_level"])
+        self.assertEqual("standard", metadata["review_level"])
         self.assertEqual(1, metadata["evidence_summary"]["project_fact_spans"])
         self.assertEqual(1, metadata["evidence_summary"]["corpus_spans"])
-        self.assertEqual(2, len(metadata["review_reasons"]))
+        self.assertEqual([], metadata["review_reasons"])
+        self.assertEqual(3, len(metadata["review_advisories"]))
 
     def test_review_metadata_marks_operational_safety_and_embedded_design_decisions(self):
         metadata = self.full._review_metadata(
@@ -808,9 +819,24 @@ class FullDraftServiceTests(unittest.TestCase):
             [],
             {"heading": "妊娠事件"},
         )
-        self.assertEqual("required", metadata["review_level"])
-        self.assertIn("妊娠事件", metadata["review_reasons"][0])
+        self.assertEqual("standard", metadata["review_level"])
+        self.assertTrue(any("妊娠事件" in item for item in metadata["review_advisories"]))
         self.assertTrue(any("计划入组" in item for item in metadata["review_advisories"]))
+
+    def test_review_metadata_requires_one_statistics_resolution_for_mixed_estimand(self):
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": (
+                    "治疗策略人群为所有随机受试者；停药或使用救援治疗按复合策略判定为无应答。"
+                ),
+                "evidence_span_ids": [],
+            },
+            {"evidence_spans": []},
+            [],
+            {"heading": "统计分析"},
+        )
+        self.assertEqual("required", metadata["review_level"])
+        self.assertTrue(any("伴发事件策略" in item for item in metadata["review_reasons"]))
 
     def test_review_metadata_does_not_require_confirmation_for_incidental_design_mentions(self):
         metadata = self.full._review_metadata(
@@ -880,6 +906,84 @@ class FullDraftContractTests(unittest.TestCase):
             "missing_source_classes": [],
         })
         self.assertTrue(any("exactly one listed recommendation" in item for item in validate_ai_output(output)))
+
+    def test_gateway_requires_decision_text_to_stay_empty_until_confirmation(self):
+        decision = {
+            "question": "允许的合并治疗范围如何确定？",
+            "options": [
+                {"option_id": "a", "label": "限制使用", "summary": "仅允许不影响疗效评价的局部治疗。"},
+                {"option_id": "b", "label": "研究者判断", "summary": "由研究者结合临床需要决定。"},
+            ],
+            "recommended_option_id": "a",
+            "rationale": "该规则尚未形成确认事实。",
+            "blocking_section_id": "sec",
+            "fact_path": "picos.allowed_concomitant_rules",
+        }
+        output = self._output({
+            "section_id": "sec",
+            "content_status": "decision_required",
+            "proposal_text": "研究期间仅允许不影响疗效评价的局部治疗。",
+            "rationale": "该规则尚未形成确认事实。",
+            "evidence_span_ids": ["ev"],
+            "decision_items": [decision],
+            "missing_source_classes": [],
+        })
+        self.assertTrue(
+            any("must be empty for decision_required" in item for item in validate_ai_output(output))
+        )
+        output["full_draft"]["sections"][0]["proposal_text"] = ""
+        self.assertEqual([], validate_ai_output(output))
+
+    def test_gateway_rejects_two_cards_writing_the_same_fact_path(self):
+        decision = {
+            "question": "允许的合并治疗范围如何确定？",
+            "options": [
+                {"option_id": "a", "label": "限制使用", "summary": "仅允许不影响疗效评价的局部治疗。"},
+                {"option_id": "b", "label": "研究者判断", "summary": "由研究者结合临床需要决定。"},
+            ],
+            "recommended_option_id": "a",
+            "rationale": "该规则尚未形成确认事实。",
+            "blocking_section_id": "sec",
+            "fact_path": "picos.allowed_concomitant_rules",
+        }
+        duplicate = dict(decision, question="救援治疗范围如何确定？")
+        output = self._output({
+            "section_id": "sec",
+            "content_status": "decision_required",
+            "proposal_text": "",
+            "rationale": "该规则尚未形成确认事实。",
+            "evidence_span_ids": ["ev"],
+            "decision_items": [decision, duplicate],
+            "missing_source_classes": [],
+        })
+        self.assertTrue(
+            any("each fact_path at most once" in item for item in validate_ai_output(output))
+        )
+
+    def test_decision_catalog_excludes_confirmed_fields_and_assigns_one_owner(self):
+        field_states = {
+            "picos.allowed_concomitant_rules": SimpleNamespace(status="confirmed"),
+            "picos.prohibited_concomitant_rules": SimpleNamespace(status="missing"),
+        }
+        journey = SimpleNamespace(
+            study_definition=SimpleNamespace(field_states=field_states)
+        )
+        journey_service = SimpleNamespace(
+            has_project=lambda project_id: True,
+            get=lambda project_id: journey,
+        )
+        service = SimpleNamespace(authoring_journey_service=journey_service)
+        available = MedicalWritingFullDraftService._available_decision_paths(service, "project")
+        self.assertNotIn("picos.allowed_concomitant_rules", available)
+        self.assertEqual(set(), available)
+        owners = MedicalWritingFullDraftService._decision_path_owners(
+            [
+                {"section_id": "parent", "heading": "合并用药/治疗"},
+                {"section_id": "exact", "heading": "禁止的合并用药/治疗"},
+            ],
+            available,
+        )
+        self.assertEqual({}, owners)
 
     def test_gateway_rejects_heading_only_full_draft(self):
         output = {
@@ -1010,7 +1114,7 @@ class FullDraftContractTests(unittest.TestCase):
                         "marker_open": "SECTION_ID=",
                         "marker_close": "\n",
                         "minimum_body_chars": 80,
-                        "decision_fact_paths": ["design.blinding"],
+                        "decision_fact_paths": [],
                     },
                 ),
             )

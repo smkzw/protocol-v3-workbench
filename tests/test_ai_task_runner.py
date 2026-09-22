@@ -483,6 +483,9 @@ class AiTaskRunnerTests(unittest.TestCase):
             }
         )
         output = {
+            "findings": [
+                {"finding_id": "finding", "evidence_span_ids": ["bad"]}
+            ],
             "evidence_spans": [
                 {
                     "span_id": "span_greenfield",
@@ -570,6 +573,81 @@ class AiTaskRunnerTests(unittest.TestCase):
             ["支持本章节正文的当前项目直接来源"],
             unsupported["missing_source_classes"],
         )
+
+    def test_full_draft_normalizer_clears_gap_evidence_and_demotes_unsupported_rule(self):
+        source = self.source.model_copy(
+            update={
+                "source_id": "project",
+                "locator": "loc",
+                "text_preview": "本研究采用双盲设计。",
+            }
+        )
+        output = {
+            "findings": [
+                {"finding_id": "finding", "evidence_span_ids": ["bad"]}
+            ],
+            "evidence_spans": [
+                {"span_id": "valid", "source_id": "project", "locator": "loc", "quote": "双盲设计"},
+                {"span_id": "bad", "source_id": "project", "locator": "loc", "quote": "来源中不存在"},
+            ],
+            "full_draft": {"sections": [
+                {
+                    "section_id": "unsupported",
+                    "content_status": "complete",
+                    "proposal_text": "发生紧急情况时必须立即揭盲，并记录原因。",
+                    "rationale": "具体揭盲程序尚未明确，需确认。",
+                    "evidence_span_ids": ["valid"],
+                    "decision_items": [],
+                    "missing_source_classes": [],
+                },
+                {
+                    "section_id": "supported_partial",
+                    "content_status": "complete",
+                    "proposal_text": "本研究采用双盲设计并使用匹配安慰剂；揭盲流程应在项目文件中明确。",
+                    "rationale": "双盲设计已有项目事实支持，具体揭盲程序尚未明确，需确认。",
+                    "evidence_span_ids": ["valid"],
+                    "decision_items": [],
+                    "missing_source_classes": [],
+                },
+                {
+                    "section_id": "unsupported_schedule",
+                    "content_status": "complete",
+                    "proposal_text": "生命体征和12导联心电图评估安排在筛选期、基线/第1天和第2、4、8、12、16周。",
+                    "rationale": "具体安全性评估时点未提供，需确认。",
+                    "evidence_span_ids": ["valid"],
+                    "decision_items": [],
+                    "missing_source_classes": [],
+                },
+                {
+                    "section_id": "gap",
+                    "content_status": "source_gap",
+                    "proposal_text": "不应保留的填充文字",
+                    "rationale": "缺少研究者手册。",
+                    "evidence_span_ids": ["bad"],
+                    "decision_items": [],
+                    "missing_source_classes": ["研究者手册"],
+                },
+            ]},
+        }
+        normalized = normalize_protocol_full_draft_evidence_ids(
+            AiTaskType.PROTOCOL_FULL_DRAFT,
+            output,
+            [source],
+        )
+        unsupported, supported_partial, unsupported_schedule, gap = normalized["full_draft"]["sections"]
+        self.assertEqual("source_gap", unsupported["content_status"])
+        self.assertEqual("", unsupported["proposal_text"])
+        self.assertEqual([], unsupported["evidence_span_ids"])
+        self.assertEqual("complete", supported_partial["content_status"])
+        self.assertEqual(["valid"], supported_partial["evidence_span_ids"])
+        self.assertIn("本研究采用双盲设计", supported_partial["proposal_text"])
+        self.assertEqual("source_gap", unsupported_schedule["content_status"])
+        self.assertEqual("", unsupported_schedule["proposal_text"])
+        self.assertEqual("source_gap", gap["content_status"])
+        self.assertEqual("", gap["proposal_text"])
+        self.assertEqual([], gap["evidence_span_ids"])
+        self.assertEqual(["valid"], [item["span_id"] for item in normalized["evidence_spans"]])
+        self.assertEqual([], normalized["findings"][0]["evidence_span_ids"])
 
     def test_revision_semantic_gate_rejects_ai_only_objective_and_endpoint_upgrades(
         self,
@@ -1214,7 +1292,7 @@ class AiTaskRunnerTests(unittest.TestCase):
                 )
             )
 
-    def test_full_draft_budget_is_preserved_for_same_model_repair(self):
+    def test_full_draft_invalid_evidence_is_deterministically_demoted_without_retry(self):
         source = self.source.model_copy(
             update={
                 "source_id": "full_draft_packet",
@@ -1227,7 +1305,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_4",
+            prompt_version="protocol_full_draft_v0_9",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={
@@ -1251,23 +1329,16 @@ class AiTaskRunnerTests(unittest.TestCase):
             run = runner.submit_internal("proj_full_draft", request)
 
         self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
-        self.assertEqual(2, len(provider.envelopes))
+        self.assertEqual(1, len(provider.envelopes))
         self.assertEqual(
-            [65_536, 65_536],
+            [65_536],
             [item.max_output_tokens for item in provider.envelopes],
         )
-        self.assertEqual(
-            "ai_task_output_v0_1",
-            provider.envelopes[1].payload["repair_context"][
-                "required_top_level_identity"
-            ]["schema_version"],
-        )
-        self.assertEqual(
-            "full_draft_packet",
-            provider.envelopes[1].payload["repair_context"][
-                "exact_source_quote_options"
-            ][0]["source_id"],
-        )
+        output = run.artifacts[-1].payload
+        section = output["full_draft"]["sections"][0]
+        self.assertEqual("source_gap", section["content_status"])
+        self.assertEqual("", section["proposal_text"])
+        self.assertEqual([], section["evidence_span_ids"])
 
     def test_full_draft_allows_one_final_same_model_structural_correction(self):
         source = self.source.model_copy(
@@ -1282,7 +1353,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_4",
+            prompt_version="protocol_full_draft_v0_9",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={

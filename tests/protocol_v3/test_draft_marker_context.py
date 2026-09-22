@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 from services.api.app.ai_task_runner import AiTaskRunner
+from services.api.app.medical_writing_full_draft import FULL_DRAFT_ARTIFACT_SCHEMA
 from services.api.app.medical_writing_content_quality import MedicalWritingContentQualityDetector
 
 
@@ -55,9 +56,8 @@ def test_true_draft_marker_after_legitimate_clause_preserves_cell_location():
     assert finding.content_revision == 4
 
 
-def test_legacy_adoption_accepts_conduct_clauses_without_bypassing_body_checks():
+def test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks():
     """Actual adoption method with fake repository; no product model invoked."""
-    import hashlib
     from unittest.mock import patch
     from test_medical_writing_full_draft import FullDraftServiceTests
 
@@ -68,17 +68,12 @@ def test_legacy_adoption_accepts_conduct_clauses_without_bypassing_body_checks()
                 '研究者应记录每次访视的实际日期以及检查结果。'
                 '所有检查结果按方案规定的方法评估，并记录与研究相关的临床观察。'
                 '如有方案偏离，应说明具体情况及原因，保留相关原始记录。')
-        document = harness.repo.document
-        artifact = {
-            'document_id': document.document_id, 'document_version': document.version,
-            'study_definition': harness.full._binding(harness.repo, harness.repo.project_id, document),
-            'sections': [{'section_id': 'sec_1', 'proposal_text': text}],
-            'target_sections': [{'section_id': 'sec_1', 'body_block_id': 'b1',
-                                 'expected_revision': 0, 'body_sha256': hashlib.sha256(b'').hexdigest()}],
-        }
+        completed, artifact = harness._completed_artifact()
+        assert artifact['schema_version'] == FULL_DRAFT_ARTIFACT_SCHEMA
+        artifact['sections'][0]['proposal_text'] = text
         with patch.object(harness.full, 'read_artifact', return_value=artifact):
-            result = harness.full.adopt(harness.repo.project_id, SimpleNamespace(job_id='probe'))
-        assert result['adopted_section_ids'] == ['sec_1']
+            result = harness.full.adopt(harness.repo.project_id, completed)
+        assert 'sec_1' in result['adopted_section_ids']
         assert harness.repo.working['sec_1'].content_blocks[1]['text'] == text
     finally:
         harness.tearDown()
