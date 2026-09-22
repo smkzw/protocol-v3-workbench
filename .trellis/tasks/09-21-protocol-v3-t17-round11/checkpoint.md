@@ -276,3 +276,15 @@ fresh会商`mw_protocol_v3_corpus_fallback_review_20260923`使用`zcode/zcode/GL
 集中验证：模型设置/语料/流程216 passed，Protocol v3全量2608 passed（仅既有Python 3.14 tar warning），py_compile和diff check通过。另有一条顶层准备阶段测试仍期待旧“每批暂停一次”行为，与已提交的自动连续排空设计冲突，未混入本批。MTPLX 11234仍未监听，因此不声称本地模型真实生成质量已验收。
 
 下一连续动作：提交并推送本批后，继续完成V01/V04/V06/V07以及逐章医学、统计和安全接受；MTPLX恢复时做exact identity和真实生成质量。旧竞品分诊与语料分析两条直连入口均已统一，但仍需盘点是否还有第三条遗留直连provider路径。普通失败不暂停。
+
+## 2026-09-23 模型路由阶段完成并无损暂停
+
+完成并已推送三段模型 fallback 接线：`a953fe0`（竞品分诊）、`3d26ddb`（企业语料分析）、`fb7e6ad`（事实提取与写作预填）。当前同步链保留用户 provider/model/thinking/effort，只有 408/429/500/502/503/504、transport 和 empty response 进入下一路；400、auth/config、invalid content/JSON 与 model mismatch 终止。每路由一次请求，实际 provider/model 与 fact-intake fallback 元数据可追溯；旧无链任务身份不变。
+
+fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/GLM-5.3-Flash:max，同一 session `sess_b561bbbe-5075-4299-86de-b03c7792183d` 三轮、无 fallback。首轮发现 empty 分类顺序、timeout 未广播、prefill 500、wrapper 信任提升和跨 run 状态五项，均修复；最终无 fallback-chain 发布阻断。review gate/validate-conference 通过。
+
+集中验证：交互相关九文件矩阵 297 passed；`tests/protocol_v3` 2608 passed、1 个 tar deprecation warning；py_compile/diff check 通过。三条 stale assertion 已升到当前 65536/v0.11，并补 v0.11 gap_items fixture。MTPLX 11234 仍无 listener，不声称真实本地模型质量通过。
+
+无损暂停基线：`HEAD == origin/main == fb7e6ada2dd4be2693bed74b3ac2d8d2147fb774`。工作树保留 5 tracked dirty、约 65 untracked 历史/运行制品；没有 reset/clean。无 pytest、runner 或 guard 在途；既有 Vite 服务非本批启动且未停止。handoff：`handoff/2026-09-23/HANDOFF_PROTOCOL_V3_MODEL_ROUTING_AND_WP6_20260923.md`；复盘：`runs/requirements_v2_20260919/t17_round11/STAGE_RETROSPECTIVE_MODEL_ROUTING_20260923.md`；暂停记录：`runs/MW_PROTOCOL_V3_MODEL_ROUTING_NO_LOSS_PAUSE_20260923_0639.md`。
+
+恢复后的首个安全动作：核对最新 AGENTS/0922V2/Goal/Trellis/Git/dirty/logical work；若 11234 恢复，先做 exact identity 与真实长结构化输出探针；随后继续 WP6 V01/V04/V06/V07、三研究完整旅程、ego(lite) 浏览器、原生 Word 和逐章医学/统计/安全接受。不得重放 v0.9/v0.10、9 月 21 日 source overlay 或已完成上游。
