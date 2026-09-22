@@ -867,6 +867,85 @@ class FullDraftServiceTests(unittest.TestCase):
         self.assertTrue(any("妊娠事件" in item for item in metadata["review_advisories"]))
         self.assertTrue(any("计划入组" in item for item in metadata["review_advisories"]))
 
+    def test_review_metadata_preserves_source_qualification_advisory(self):
+        source = AiTaskSourceRef(
+            source_id="project_fact",
+            source_type="current_project_study_definition",
+            title="项目事实",
+            locator="study-definition:sample-size",
+            text_preview="计划约170例；合成参数仅用于功能验收。",
+            project_id=self.repo.project_id,
+            module="medical_writing",
+        )
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": "本研究计划入组约170例受试者。",
+                "evidence_span_ids": ["ev_sample_size"],
+            },
+            {
+                "evidence_spans": [{
+                    "span_id": "ev_sample_size",
+                    "source_id": "project_fact",
+                    "quote": "计划约170例；合成参数仅用于功能验收。",
+                }],
+            },
+            [source],
+            {"heading": "样本量"},
+        )
+
+        self.assertEqual(1, len(metadata["evidence_review_advisories"]))
+        self.assertTrue(
+            any("受限使用标记" in item for item in metadata["review_advisories"])
+        )
+
+        artifact = {
+            "schema_version": FULL_DRAFT_ARTIFACT_SCHEMA,
+            "sections": [{
+                "section_id": "sec_sample_size",
+                "heading": "样本量",
+                "content_status": "complete",
+                "proposal_text": "本研究计划入组约170例受试者。",
+                "evidence_summary": metadata["evidence_summary"],
+                "evidence_review_advisories": metadata["evidence_review_advisories"],
+                "evidence_bindings": [{
+                    "span_id": "ev_sample_size",
+                    "source_id": "project_fact",
+                    "locator": "study-definition:sample-size",
+                    "quote": "计划约170例；合成参数仅用于功能验收。",
+                    "quote_sha256": "digest",
+                }],
+            }],
+            "source_bindings": [{
+                "source_id": "project_fact",
+                "locator": "study-definition:sample-size",
+            }],
+        }
+        reviewed = self.full._apply_review_policy(artifact)
+        self.assertTrue(
+            any(
+                "受限使用标记" in item
+                for item in reviewed["sections"][0]["review_advisories"]
+            )
+        )
+
+    def test_review_metadata_accepts_qualification_retained_in_proposal(self):
+        metadata = self.full._review_metadata(
+            {
+                "proposal_text": "本研究计划入组约170例；该合成参数仅用于功能验收。",
+                "evidence_span_ids": ["ev_sample_size"],
+            },
+            {
+                "evidence_spans": [{
+                    "span_id": "ev_sample_size",
+                    "source_id": "project_fact",
+                    "quote": "计划约170例；合成参数仅用于功能验收。",
+                }],
+            },
+            [],
+            {"heading": "样本量"},
+        )
+        self.assertEqual([], metadata["evidence_review_advisories"])
+
     def test_review_metadata_advises_without_reconfirming_mixed_estimand(self):
         metadata = self.full._review_metadata(
             {

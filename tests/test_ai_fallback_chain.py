@@ -127,7 +127,7 @@ class AiFallbackChainTests(unittest.TestCase):
         self.request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_10",
+            prompt_version="protocol_full_draft_v0_11",
             allowed_sources=[AiTaskSourceRef(
                 source_id="full_draft_packet",
                 source_type="protocol_full_draft_selection",

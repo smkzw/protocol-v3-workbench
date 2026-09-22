@@ -45,7 +45,7 @@ from .medical_writing_protocol_template import company_template_semantic_node_ma
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
-FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_10"
+FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_11"
 FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v10"
 FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v10"
 FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v12"
@@ -58,7 +58,7 @@ LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {
     "protocol_full_draft_artifact_v8",
     "protocol_full_draft_artifact_v9",
 }
-FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
+FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_3"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 # Four sections keep max-reasoning responses within the provider's bounded
 # final-output budget.  An eight-section v0.4 batch was observed to end before
@@ -147,6 +147,9 @@ _DESIGN_RESTATEMENT_SIGNALS = (
 _DESIGN_RESTATEMENT_ALLOWED_HEADING_RE = re.compile(
     r"方案概要|研究设计|研究目的和终点|主要目的和主要终点|样本量",
     re.IGNORECASE,
+)
+_SOURCE_QUALIFICATION_RE = re.compile(
+    r"仅用于(?:功能|隔离)?验收|仅供示例|示例参数|合成参数|合成剂量|假设参数"
 )
 _CORPUS_SOURCE_TYPES = {
     "company_protocol_reference_corpus",
@@ -691,6 +694,8 @@ class MedicalWritingFullDraftService:
             "服务器会拒绝不完整或占位内容。对于允许来源已明确给出的年龄、剂量、给药频率、治疗周期、"
             "样本量、终点、量表和访视时间点，必须在对应章节直接写入原值；不得改写成‘将在正式文本中明确’、"
             "‘未提供具体数值’、‘尚无直接证据来源支持’、‘由医学经理/医学负责人确认’或‘确认后再写入’。"
+            "来源对数值或结论附有‘仅用于验收’、‘示例’、‘合成’或‘假设参数’等限定时，正文必须保留"
+            "该限定，或将该内容移入明确的待确认项；不得把受限信息改写为项目已确认参数。"
             "当前输出就是供医学经理审核的完整候选，不得承诺后续补写；"
             "正文不得出现‘当前项目已确认’、‘本方案不引用竞品’、‘公司语料’、‘章节包’、"
             "‘候选正文’等写作过程说明；这些内容只可转化为rationale中的简洁证据说明。"
@@ -779,6 +784,26 @@ class MedicalWritingFullDraftService:
             "review_advisories": advisory_reasons,
         }
 
+    @staticmethod
+    def _source_qualification_advisories(
+        proposal: str,
+        evidence_quotes: Iterable[str],
+    ) -> list[str]:
+        source_markers = sorted(
+            {
+                match.group(0)
+                for quote in evidence_quotes
+                for match in _SOURCE_QUALIFICATION_RE.finditer(_text(quote))
+            }
+        )
+        if not source_markers or _SOURCE_QUALIFICATION_RE.search(proposal):
+            return []
+        return [
+            "本节依据含明确的受限使用标记（"
+            f"{'、'.join(source_markers[:4])}），但候选正文未保留；"
+            "请勿将相关数值或结论视为项目已确认信息。"
+        ]
+
     @classmethod
     def _review_metadata(
         cls,
@@ -811,6 +836,18 @@ class MedicalWritingFullDraftService:
             _text(section.get("proposal_text")),
             corpus_count,
         )
+        evidence_review_advisories = cls._source_qualification_advisories(
+            _text(section.get("proposal_text")),
+            (
+                _text(evidence_by_id.get(str(span_id), {}).get("quote"))
+                for span_id in section.get("evidence_span_ids") or []
+            ),
+        )
+        metadata["evidence_review_advisories"] = evidence_review_advisories
+        metadata["review_advisories"] = [
+            *metadata["review_advisories"],
+            *evidence_review_advisories,
+        ]
         metadata.update(
             {
             "evidence_summary": {
@@ -938,6 +975,9 @@ class MedicalWritingFullDraftService:
             if content_status == "partial":
                 partial_ids.append(_text(section.get("section_id")))
             evidence_summary = section.get("evidence_summary") or {}
+            evidence_review_advisories = list(
+                section.get("evidence_review_advisories") or []
+            )
             section.update(
                 cls._review_policy(
                     _text(section.get("heading")),
@@ -945,6 +985,11 @@ class MedicalWritingFullDraftService:
                     int(evidence_summary.get("corpus_spans") or 0),
                 )
             )
+            section["evidence_review_advisories"] = evidence_review_advisories
+            section["review_advisories"] = [
+                *section["review_advisories"],
+                *evidence_review_advisories,
+            ]
             if section.get("review_level") == "required":
                 required_ids.append(_text(section.get("section_id")))
         coverage = artifact.setdefault("coverage", {})

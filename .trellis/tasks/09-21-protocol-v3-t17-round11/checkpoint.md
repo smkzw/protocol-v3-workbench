@@ -246,3 +246,11 @@ fresh工程会商`mw_protocol_v3_model_fallback_review_20260923`使用`codebuddy
 fresh独立会商`mw_protocol_v3_wp6_final_review_20260923`使用`zcode/zcode-live-bigmodel/GLM-5.3-Flash:max`，同一handle约20分钟、无fallback、无P0/P1；review gate和conference validation通过。独立医学抽样发现Study C合成样本量P2：差异3、SD8、双侧alpha .05、90%把握度、15%脱落与总样本170不自洽；简单近似需总计约352，170总例数约62%把握度。该稿保持working_draft_ready=true、adoption/formal_ready=false，不得申报。
 
 下一连续动作：恢复MTPLX后做exact identity+真实生成质量；补当前源码V01截图、V04全状态、V06真实关键卡和V07点击计数；逐章医学/统计/安全接受并优先修Study C样本量与限定语保真；将仍直连provider的旧竞品分析入口迁入统一runner。普通未闭合项不暂停，只有真实科学决定或生产切换才询问用户。
+
+## 2026-09-23 来源限定语保真修复
+
+Study C医学复核确认的首个确定性缺陷已修复。全文提示升级为v0.11：来源对数值或结论附有“仅用于验收、示例、合成、假设参数”等限定时，候选正文必须保留限定或转为明确待确认项，不得升格为项目已确认参数。复核策略升级为v0.3：章节证据包含限定标记而正文遗漏时，生成非阻断医学提醒；该提醒单独持久化，并在候选重新载入和统一复核后继续保留。用户仍可保存和编辑工作稿，正式就绪判定不被安全门扩张。
+
+集中验证：全文生成与fallback合同39 passed；Protocol v3完整回归2608 passed、1条既有Python 3.14 future warning。首次全量清洁环境漏传macOS原生TMPDIR，唯一失败为`/tmp`不满足`/var`别名测试；补入`getconf DARWIN_USER_TEMP_DIR`后该项及全量均通过。尝试收集整个`tests/`还暴露三个既有环境/历史问题：虚拟环境无可选jsonschema、两个Phase 1翻译测试指向已不存在的历史脚本；本批未安装依赖或恢复已删除历史脚本。
+
+下一连续动作：检查MTPLX 11234当前可用性并在可用时做exact identity和真实生成质量；随后迁移仍绕过统一runner的旧竞品分析入口，保持现有可恢复/审计语义。继续补V01/V04/V06/V07及逐章医学、统计和安全接受；普通失败不暂停。
