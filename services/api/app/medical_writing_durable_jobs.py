@@ -839,7 +839,13 @@ class DurableJobStore:
                 )
             attempts = int(row["attempt_count"])
             max_attempts = int(row["max_attempts"])
-            new_attempts = attempts if attempts < max_attempts else 1
+            # Manual retry allocates the next execution attempt immediately.
+            # Claims from ``queued`` deliberately do not increment the counter,
+            # so leaving the old value here would make a real second attempt
+            # continue to report itself as attempt 1.  Once an automatic retry
+            # budget has been exhausted, an explicit operator retry starts a
+            # fresh bounded cycle at attempt 1.
+            new_attempts = attempts + 1 if attempts < max_attempts else 1
             connection.execute(
                 """
                 UPDATE durable_mw_jobs

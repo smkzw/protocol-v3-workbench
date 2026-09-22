@@ -1,0 +1,26 @@
+{
+  "schema_version": "study_a_route_receipt_reconciliation_v1",
+  "job_id": "mwjob_012cb0598553aad7bb5d99d3",
+  "content_sections_unchanged": true,
+  "receipts_reconciled": 18,
+  "old_artifact_sha256": "67026a050e7896f2e0e52791fedb658c50dc094929c638335b7b293880fdca60",
+  "new_artifact_sha256": "eb236647f8a37f6cdc9395a8b3e002b5f5b27eedd2ef4770dcc138c4443b7849",
+  "durable_provider": "mixed",
+  "durable_model": "mixed",
+  "route_counts": [
+    {
+      "provider": "cms-router",
+      "model": "deepseek-latest-cloud",
+      "fallback_depth": 2,
+      "legacy_inferred": false,
+      "count": 4
+    },
+    {
+      "provider": "opencode-go",
+      "model": "deepseek-v4.1-flash",
+      "fallback_depth": 0,
+      "legacy_inferred": true,
+      "count": 18
+    }
+  ]
+}

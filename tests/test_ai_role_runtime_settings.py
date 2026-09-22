@@ -15,7 +15,8 @@ from services.api.app.ai_role_runtime_settings import (
     GATE_OWNED_ROLES,
     GATE_TRANSLATION_BODY_MODEL,
     INDEPENDENT_AI_ROLE,
-    INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+    INDEPENDENT_AI_MTPLX_MODEL,
+    INDEPENDENT_AI_MTPLX_PROFILE_ID,
     LOCAL_OMLX_PROFILE_ID,
     OCR_PADDLE_PROFILE_ID,
     OCR_ROLE,
@@ -85,12 +86,12 @@ class AiRoleRuntimeSettingsTests(unittest.TestCase):
             {item.profile_id for item in self.provider_store.profiles()},
         )
         self.assertEqual(
-            INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+            INDEPENDENT_AI_MTPLX_PROFILE_ID,
             roles[INDEPENDENT_AI_ROLE]["profile_id"],
         )
-        self.assertEqual("deepseek-v4.1-flash", roles[INDEPENDENT_AI_ROLE]["model"])
+        self.assertEqual(INDEPENDENT_AI_MTPLX_MODEL, roles[INDEPENDENT_AI_ROLE]["model"])
         self.assertEqual("enabled", roles[INDEPENDENT_AI_ROLE]["thinking"])
-        self.assertEqual("max", roles[INDEPENDENT_AI_ROLE]["reasoning_effort"])
+        self.assertEqual("medium", roles[INDEPENDENT_AI_ROLE]["reasoning_effort"])
         self.assertFalse(roles[OCR_ROLE]["gate_owned_model"])
         self.assertTrue(roles[OCR_ROLE]["model_editable"])
         self.assertEqual(PADDLE_OCR_MODEL, roles[OCR_ROLE]["model"])

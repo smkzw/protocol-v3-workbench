@@ -218,12 +218,12 @@ button:disabled {
 
 .meta-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .project-meta small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1839,7 +1839,7 @@ button:disabled {
 
 .picos-workflow-stats div {
   min-width: 112px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--soft-line);
   border-radius: var(--radius);
   padding: 8px 10px;
   background: #fafafa;
@@ -2779,6 +2779,43 @@ button:disabled {
   font-weight: 700;
 }
 
+.ai-fallback-editor {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: #fbfcfd;
+}
+
+.ai-fallback-editor > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.ai-fallback-editor > div:first-child span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ai-fallback-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 108px 92px;
+  gap: 8px;
+  align-items: center;
+}
+
+.ai-fallback-row > span {
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.ai-fallback-row select {
+  min-width: 0;
+}
+
 .ai-model-inventory {
   color: #66727d;
   font-size: 11px;
@@ -2787,7 +2824,8 @@ button:disabled {
 }
 
 .ai-settings-grid input,
-.ai-settings-grid select {
+.ai-settings-grid select,
+.ai-fallback-row select {
   width: 100%;
   min-height: 38px;
   border: 1px solid #cfd6dd;
@@ -18871,7 +18909,7 @@ textarea {
 .medical-literature-list article small,
 .medical-literature-list article > footer > span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .medical-literature-panel > header strong {
@@ -18891,7 +18929,7 @@ textarea {
   display: grid;
   gap: 5px;
   color: #46515b;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -18917,7 +18955,7 @@ textarea {
 .medical-literature-import summary {
   cursor: pointer;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 

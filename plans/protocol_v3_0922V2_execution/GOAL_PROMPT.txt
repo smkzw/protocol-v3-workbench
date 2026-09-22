@@ -24,7 +24,7 @@ WP0消化已有接线证据，只补缺失或漂移；WP1–WP5连续实现，�
 
 模板仍为TP-MA-07清洁版v2.0；标题/叶/合同/实际文档节/生成目标口径分别映射，不改expected凑数。集中验收包括差异化2+1研究和盲测、真实产品模型、真实API/SQLite/浏览器、原生Word改后保存重开、字段/分页/当前版本保真、全文逐模块医学核查。渲染器要保留上游base及必要dirty patch和源码，使bundle可重建；不要只提交minified结果。eCTD仅按实际文件/元数据就绪范围交付，不冒称正式sequence已验收。
 
-产品模型按最新用户批准配置和effective回执核对，当前历史批准为opencode-go/deepseek-v4.1-flash:max，不盲回旧glm或把owner模型当产品模型。凭证仅经现有解析，不写prompt/checkpoint/trace/registry/日志/交付包。OCR和翻译走现有共享oMLX gate/lease心跳，保留已完成上游，不重跑旧分诊下载OCR翻译与5失败项。
+产品综合AI默认优先本地MTPLX的`Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed`、思考强度medium；仅在限流、超时、服务不可达、服务端错误或空响应时，依次fallback到`opencode-go/deepseek-v4.1-flash:max`和`cms-router/deepseek-latest-cloud:max`。内容/合同校验失败、模型身份不符或策略不允许时不得静默换模型。前端允许用户选择provider、model、thinking和reasoning effort，并可调整有序fallback链；每次实际调用持久化effective provider/model/effort、fallback层级和原因。凭证仅经现有解析，不写prompt/checkpoint/trace/registry/日志/交付包。OCR和翻译走现有共享oMLX gate/lease心跳，保留已完成上游，不重跑旧分诊下载OCR翻译与5失败项。
 
 个人使用不以PyMuPDF边界讨论阻断、不新增纯安全工程或专项安全测试；旧阶段约束阻挡实施且不影响科学性可评估后记录替代。保留科学准确、数据不丢、操作幂等等功能义务。禁改live8910/医学监查/共享runtime/外部SOP/只读plan-upgrade，不清库造绿、不丢dirty、不擅自生产切换或清理历史。任务包/部分测试通过不等于产品Goal complete。
 

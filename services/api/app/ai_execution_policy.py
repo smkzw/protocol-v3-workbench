@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 from typing import Any, Dict, List, Sequence
 
@@ -29,6 +29,7 @@ from .ai_gateway import (
 )
 from .medical_writing_revision_prompts import MEDICAL_WRITING_REVISION_PROMPT_VERSION
 from .ai_runtime_settings import AiRuntimeSettingsStore, runtime_ai_settings_store
+from .ai_runtime_settings import AiProviderProfile
 
 
 class AiExecutionPolicyDenied(ValueError):
@@ -146,36 +147,60 @@ _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY = TaskAiRoutePolicy(
     base_url=OPENCODE_GO_BASE_URL,
     allowed_models=frozenset({OPENCODE_GO_MODEL}),
 )
+_CMS_ROUTER_DEEPSEEK_LATEST_POLICY = TaskAiRoutePolicy(
+    provider_name="cms-router",
+    transport_name="openai_compatible",
+    base_url="http://127.0.0.1:20128/v1",
+    allowed_models=frozenset({"deepseek-latest-cloud"}),
+)
+_MTPLX_QWEN38_SPEED_POLICY = TaskAiRoutePolicy(
+    provider_name="mtplx",
+    transport_name="openai_compatible",
+    base_url="http://127.0.0.1:11234/v1",
+    allowed_models=frozenset({
+        "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+    }),
+)
 
 # Medical-writing semantic tasks accept only explicit product-owned routes.
-# OpenCode Go / DeepSeek V4.1 Flash is the default; the Alibaba and direct or
-# loopback DeepSeek routes remain available for explicit rollback choices.
+# The active profile determines the default. MTPLX, OpenCode Go and CMS Router
+# are explicit choices and may also be arranged into the fallback chain.
 TASK_AI_ROUTE_POLICIES = {
     AiTaskType.MEDICAL_WRITING_REVISION: (
+        _MTPLX_QWEN38_SPEED_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
+        _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
         _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.PROTOCOL_FULL_DRAFT: (
+        _MTPLX_QWEN38_SPEED_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
+        _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
         _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING: (
+        _MTPLX_QWEN38_SPEED_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
+        _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
     ),
     AiTaskType.DOCUMENT_SECTION_EXTRACTION: (
+        _MTPLX_QWEN38_SPEED_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
+        _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
         _LOCAL_DEEPSEEK_COMPATIBLE_POLICY,
     ),
     AiTaskType.REGULATORY_TRANSLATION_ZH: (
+        _MTPLX_QWEN38_SPEED_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
+        _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
         _DIRECT_DEEPSEEK_FLASH_OR_PRO_POLICY,
     ),
@@ -210,6 +235,8 @@ class AiExecutionResolution:
     route_identity_hash: str
     route_timeout_seconds: float
     route_api_key_env: str
+    route_thinking: str = "enabled"
+    route_reasoning_effort: str = "max"
 
 
 class AiExecutionPolicyResolver:
@@ -280,6 +307,8 @@ class AiExecutionPolicyResolver:
         self.route_profile_revision = 0
         self.route_timeout_seconds = 300.0
         self.route_api_key_env = ""
+        self.route_thinking = "enabled"
+        self.route_reasoning_effort = "max"
 
     def _capture_dynamic_route(self) -> None:
         """Freeze the effective independent-AI route from one settings read.
@@ -327,6 +356,10 @@ class AiExecutionPolicyResolver:
             float(profile.timeout_seconds) if profile is not None else 300.0
         )
         self.route_api_key_env = profile.api_key_env if profile is not None else ""
+        self.route_thinking = profile.thinking if profile is not None else "enabled"
+        self.route_reasoning_effort = (
+            profile.reasoning_effort if profile is not None else "max"
+        )
 
     def _refresh_dynamic_route(self) -> None:
         if not self._dynamic_runtime:
@@ -503,6 +536,8 @@ class AiExecutionPolicyResolver:
             route_identity_hash=self._route_identity_hash(),
             route_timeout_seconds=self.route_timeout_seconds,
             route_api_key_env=self.route_api_key_env,
+            route_thinking=self.route_thinking,
+            route_reasoning_effort=self.route_reasoning_effort,
         )
 
     def resolve_internal(
@@ -586,6 +621,98 @@ class AiExecutionPolicyResolver:
             route_identity_hash=self._route_identity_hash(),
             route_timeout_seconds=self.route_timeout_seconds,
             route_api_key_env=self.route_api_key_env,
+            route_thinking=self.route_thinking,
+            route_reasoning_effort=self.route_reasoning_effort,
+        )
+
+    def resolve_internal_for_profile(
+        self,
+        project_id: str,
+        request: AiTaskRequest,
+        profile: AiProviderProfile,
+    ) -> AiExecutionResolution:
+        """Validate the same trusted request against one configured route.
+
+        This is used only after a terminal, eligible provider failure. The
+        request, sources, prompt and task context are rebuilt from the
+        canonical request; no prior model output is forwarded.
+        """
+        resolver = AiExecutionPolicyResolver(
+            deployment_profile=profile.deployment_profile,
+            provider_name=profile.provider,
+            model_name=profile.model,
+            transport_name=profile.transport,
+            base_url=profile.base_url,
+        )
+        resolution = resolver.resolve_internal(project_id, request)
+        identity = {
+            "schema_version": "independent_ai_route_snapshot_v1",
+            "role_id": "independent_ai",
+            "profile_id": profile.profile_id,
+            "profile_revision": profile.revision,
+            "provider": profile.provider,
+            "model": profile.model,
+            "base_url": profile.base_url.rstrip("/"),
+            "transport": profile.transport,
+            "expected_response_model": profile.expected_response_model or profile.model,
+            "deployment_profile": profile.deployment_profile,
+        }
+        identity_sha256 = sha256(
+            json.dumps(identity, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest()
+        return replace(
+            resolution,
+            required_response_model=profile.expected_response_model or profile.model,
+            route_profile_id=profile.profile_id,
+            route_profile_revision=profile.revision,
+            route_identity_hash=identity_sha256,
+            route_timeout_seconds=float(profile.timeout_seconds),
+            route_api_key_env=profile.api_key_env,
+            route_thinking=profile.thinking,
+            route_reasoning_effort=profile.reasoning_effort,
+        )
+
+    def resolve_registered_for_profile(
+        self,
+        project_id: str,
+        request: Any,
+        source_registry: Any,
+        profile: AiProviderProfile,
+    ) -> AiExecutionResolution:
+        """Rebuild a registered request against an explicit fallback route."""
+        resolver = AiExecutionPolicyResolver(
+            deployment_profile=profile.deployment_profile,
+            provider_name=profile.provider,
+            model_name=profile.model,
+            transport_name=profile.transport,
+            base_url=profile.base_url,
+        )
+        resolution = resolver.resolve_registered(project_id, request, source_registry)
+        identity = {
+            "schema_version": "independent_ai_route_snapshot_v1",
+            "role_id": "independent_ai",
+            "profile_id": profile.profile_id,
+            "profile_revision": profile.revision,
+            "provider": profile.provider,
+            "model": profile.model,
+            "base_url": profile.base_url.rstrip("/"),
+            "transport": profile.transport,
+            "expected_response_model": profile.expected_response_model or profile.model,
+            "deployment_profile": profile.deployment_profile,
+        }
+        identity_sha256 = sha256(
+            json.dumps(identity, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest()
+        return replace(
+            resolution,
+            required_response_model=profile.expected_response_model or profile.model,
+            route_profile_id=profile.profile_id,
+            route_profile_revision=profile.revision,
+            route_identity_hash=identity_sha256,
+            route_timeout_seconds=float(profile.timeout_seconds),
+            route_api_key_env=profile.api_key_env,
+            route_thinking=profile.thinking,
+            route_reasoning_effort=profile.reasoning_effort,
         )
 
     def _validate_regulatory_translation_context(

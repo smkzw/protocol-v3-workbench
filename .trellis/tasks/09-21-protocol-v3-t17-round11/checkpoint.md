@@ -204,3 +204,33 @@ WP6已完成当前源码可执行的集中工程验收与失败族修复。后�
 当前只达到工程阶段验收，不构成Protocol v3整产品接受。A01–A26、V01–V08、B01–B12针对当前源码的真实产品模型、ego(lite)浏览器、原生Microsoft Word往返及逐章医学判断均保持NOT_RUN；没有启动新服务、产品模型、浏览器或Word。详细边界见`runs/requirements_v2_20260919/wp6_0922v2_20260922/PARTIAL_ACCEPTANCE_REPORT_20260922.md`。
 
 用户要求完成手头工作后无损暂停。源码、历史runtime dirty、失败证据、旧工件和两个仓库的现有工作树全部保留；没有清理、覆盖或重放旧job。下一安全动作是从本暂停点恢复，先冻结当前GitHub提交和运行时身份，再按WP6验收包依次执行真实SQLite/HTTP、产品默认模型、ego(lite)、原生Word与fresh工程/医学接受，按失败族修复；不得把本轮工程测试通过解释为F12或整产品完成。
+
+## 2026-09-22 0922V2 WP6真实产品验收恢复
+用户明确要求在当前任务继续实施。native Goal已核对为`plans/protocol_v3_0922V2_execution/GOAL_PROMPT.txt`全文且状态active；未新建或fork任务。恢复时HEAD与`origin/main`均为`fa8ec81b0fc3ae6150dbd9dc2d507044a85a6ff3`，本轮源码无新漂移；仅保留暂停前已存在的3项tracked runtime dirty及历史未跟踪运行制品。live 8910/5186/5285仍在监听且不触碰；没有pytest、产品模型、workflow guard或conference runner在途。Trellis session指针已恢复到本任务。
+
+执行模式为execution-plus-conference：owner先在隔离runtime连续完成真实SQLite/HTTP、ego(lite)、产品模型与原生Word验收并按失败族修复；源码与工件冻结后再进行fresh只读工程/医学会商，审阅任务不与owner并发改源码。下一动作从B01–B10的真实SQLite/HTTP与现有验收入口盘点开始，不重放v0.9、不触碰旧source_overlay、不重跑分诊/下载/OCR/翻译。
+
+## 2026-09-22 0922V2 WP6真实Office与原生Word验收进展
+隔离服务持续复用5301/5302/5303/5187及同一ego(lite) TaskSpace 28，未重启live 8910/5186/5285。真实HTTP已完成当前稿候选接收、旧v0.9只读拒绝、幂等恢复、同operation变更409、过期候选409、当前候选接收和项目级SOP常规运营一次确认复用；剂量/安全/统计仍被排除并分别确认。证据在`runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/http_acceptance_results.json`。
+
+GenOffice选区丢失的根因是宿主工具栏抢焦后当前ProseMirror selection变空；已在上游编辑器状态中缓存并重新核验最后一个非空真实选区，保留结构签名、原Slice、格式/内嵌对象拒绝和精确撤销，不在bridge shim另造DOM编辑链。真实浏览器已完成段落替换、撤销、保存关闭重开；项目文献完成插入两条、移动重编号、删除联动和文献表原位保留。rev3/4/5 DOCX均XML可解析。1440/1920/2560无外层横向溢出，实际可见UI字号下限12px；证据与截图均在`real_http_acceptance/`。
+
+最新rev5副本已在Microsoft Word 16.113.1真实打开，插入“原生 Word 验收标记：保存与重开成功。”后保存、关闭并重开，无修复提示；当前文件SHA-256为`69169363127907f1516f9df9abaa12636da27aabf362b90f4176ea69e21b0386`，CMS引文/文献表域仍保留。生产导出书签顺序和随机ID缺陷已修为`w:pPr`后插入及稳定SHA派生31位ID；新错误不再出现，OfficeCLI剩余71项低于权威清洁模板自身84项，均为模板继承的defaultTabStop/uiPriority顺序问题。
+
+当前唯一主要未闭合范围是差异化2+1真实产品模型旅程、V03–V07剩余交互状态、冻结后的fresh工程/医学会商和最终Git/GitHub交付。隔离three_studies运行库只含Study A；其旧v0.9 job保持只读，不重派。下一安全动作是基于当前v0.10源码和`opencode-go/deepseek-v4.1-flash:max`先做身份探针，再创建新的逻辑工作键运行Study A；随后建立实质不同的RA非劣效Study B和保留盲测的难治性MDD II期Study C。不得重复A的检索/分诊/下载/OCR/翻译，不得打印或落盘凭证。
+
+## 2026-09-23 产品模型选择与2+1自动降级链
+
+用户将综合AI默认值调整为本地`mtplx/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed:medium`，并要求未来可由用户选择provider、model、thinking与reasoning effort。当前有序fallback为`opencode-go/deepseek-v4.1-flash:max`，再到`cms-router/deepseek-latest-cloud:max`。自动fallback仅处理429、408、5xx、传输不可达和空响应；合同/内容校验、身份不符或策略失败不切换。每次运行记录实际provider/model/effort、链ID、父run、层级和原因；全文工件逐chunk保存路由回执，混合路由明确显示`mixed`。
+
+隔离5304实测配置与源码一致，未泄露凭证。当前11234的MTPLX服务未监听，OpenCode Go实际返回429，因此Study A同一旧job复用18个既有chunk并将剩余4个chunk降级到CMS完成；Study B新job的22个chunk均经MTPLX不可达、OpenCode 429后由CMS完成。该结果证明降级链有效，不代表本地MTPLX已完成真实生成验收。Study B为可继续编辑的工作稿：87/87目标节，21个source gap、56个partial、0个decision-required，不得表述为申报就绪。
+
+集中受影响回归213 passed；前端production build通过（1971 modules，只有既有chunk-size warning）；ego(lite)语义快照确认模型/provider/思考强度及两个fallback槽均可见。浏览器5187仍代理旧5301，所以显示的是旧运行配置；截图命令两次超时，不能声称已有截图证据。证据：`runs/requirements_v2_20260919/wp6_0922v2_20260922/study_a_v10_route_receipt_reconciliation.json`、`study_b_route_acceptance.json`、`study_b_terminal.json`。
+
+下一动作继续WP6：先冻结并提交本批模型路由源码与小型证据，随后完成剩余V03–V07、Study C差异化真实旅程、原生Microsoft Word保存重开和fresh工程/医学会商。不得把本次route测试、Study A/B生成或工程回归解释为Protocol v3整产品完成；不得重跑旧分诊、下载、OCR、翻译或已失败job。
+
+Study C真实旅程已完成：job `mwjob_1899993fde771e9d9f635033`，22/22批、88/88目标节，10 complete、47 partial、31 source_gap、0 decision_required，working_draft_ready=true、adoption/formal_ready=false；22批均记录MTPLX/medium不可达、OpenCode/max 429、CMS/max成功。工件SHA `de3bc490394b5d08fa72013d20aa54de03350f4a4619e90320f163d0b067c3e1`。
+
+fresh工程会商`mw_protocol_v3_model_fallback_review_20260923`使用`codebuddy/codebuddy-cli/deepseek-v4.1-flash:max`同session `01a0ca17-f0b5-7162-9cfa-9a3b8b0c57eb`两轮、无fallback。owner关闭两项P1：不适用槽不再终止后续链，停用profile不再被调用；并补备用thinking、综合AI runner范围和模型身份回执。续审无P0/P1，新增legacy嵌套快照P2已修。最终217 passed、前端build 1971 modules、diff check通过；5304重启后配置正确。两个旧竞品分析直连provider入口仍是P2迁移项，不冒称全产品所有旧入口已支持fallback。
+
+下一动作提交并推送本批；随后继续WP6剩余V03–V07、原生Microsoft Word保存重开和逐章医学接受。当前MTPLX 11234仍未监听，本地模型真实生成质量未验收。

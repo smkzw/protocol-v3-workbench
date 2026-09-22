@@ -6,6 +6,7 @@ import re
 import sqlite3
 import unicodedata
 from copy import deepcopy
+from dataclasses import replace
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
@@ -48,7 +49,7 @@ from .ai_execution_policy import (
     AiExecutionPolicyResolver,
     AiExecutionResolution,
 )
-from .ai_runtime_settings import runtime_ai_settings_store
+from .ai_runtime_settings import AiFallbackRoute, runtime_ai_settings_store
 from .ai_role_runtime_settings import INDEPENDENT_AI_ROLE, runtime_ai_role_settings_store
 from .demo_repository import DemoRepository
 from .medical_writing_legacy_reference_index import parse_legacy_reference_marker
@@ -75,6 +76,17 @@ MEDICAL_WRITING_BOUNDED_QUOTE_SOURCE_TYPES = {
     "current_project_study_definition",
     "shared_phase1_protocol_reference_corpus",
 }
+AI_FALLBACK_TASKS = {
+    AiTaskType.COMPETITIVE_INTELLIGENCE,
+    AiTaskType.PROTOCOL_DESIGN_SYNTHESIS,
+    AiTaskType.PICOS_DESIGN_COACH,
+    AiTaskType.MEDICAL_WRITING_REVISION,
+    AiTaskType.PROTOCOL_FULL_DRAFT,
+    AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING,
+    AiTaskType.DOCUMENT_SECTION_EXTRACTION,
+    AiTaskType.REGULATORY_TRANSLATION_ZH,
+}
+AI_FALLBACK_HTTP_STATUSES = {408, 429, 500, 502, 503, 504}
 REGULATORY_AUTHORITY_TERMS = (
     "CDE",
     "NMPA",
@@ -2278,13 +2290,162 @@ class AiTaskRunner:
             request,
             source_registry,
         )
-        return self._execute(resolution)
+        fallback_routes = self._fallback_routes(resolution)
+        chain_id = self._fallback_chain_id(resolution, fallback_routes)
+        run = self._execute(resolution, fallback_chain_id=chain_id)
+        if not self._fallback_reason(run):
+            return run
+
+        parent = run
+        store = runtime_ai_settings_store()
+        for depth, route in enumerate(fallback_routes, start=1):
+            try:
+                profile = store.profile(route.profile_id)
+            except KeyError:
+                continue
+            if not profile.enabled:
+                continue
+            profile = replace(
+                profile,
+                thinking=route.thinking,
+                reasoning_effort=route.reasoning_effort,
+            )
+            try:
+                fallback_resolution = (
+                    self.policy_resolver.resolve_registered_for_profile(
+                        project_id,
+                        request,
+                        source_registry,
+                        profile,
+                    )
+                )
+            except (AiExecutionPolicyDenied, ValueError):
+                continue
+            reason = self._fallback_reason(parent)
+            if not reason:
+                return parent
+            parent = self._execute(
+                fallback_resolution,
+                fallback_chain_id=chain_id,
+                fallback_parent_run_id=parent.run_id,
+                fallback_depth=depth,
+                fallback_reason=reason,
+            )
+            if parent.status == AiTaskRunStatus.COMPLETED:
+                return parent
+        return parent
 
     def submit_internal(self, project_id: str, request: AiTaskRequest) -> AiTaskRun:
         resolution = self.policy_resolver.resolve_internal(project_id, request)
-        return self._execute(resolution)
+        fallback_routes = self._fallback_routes(resolution)
+        chain_id = self._fallback_chain_id(resolution, fallback_routes)
+        run = self._execute(resolution, fallback_chain_id=chain_id)
+        if not self._fallback_reason(run):
+            return run
 
-    def _execute(self, resolution: AiExecutionResolution) -> AiTaskRun:
+        parent = run
+        store = runtime_ai_settings_store()
+        for depth, route in enumerate(fallback_routes, start=1):
+            try:
+                profile = store.profile(route.profile_id)
+            except KeyError:
+                continue
+            if not profile.enabled:
+                continue
+            profile = replace(
+                profile,
+                thinking=route.thinking,
+                reasoning_effort=route.reasoning_effort,
+            )
+            try:
+                fallback_resolution = self.policy_resolver.resolve_internal_for_profile(
+                    project_id,
+                    request,
+                    profile,
+                )
+            except (AiExecutionPolicyDenied, ValueError):
+                continue
+            reason = self._fallback_reason(parent)
+            if not reason:
+                return parent
+            parent = self._execute(
+                fallback_resolution,
+                fallback_chain_id=chain_id,
+                fallback_parent_run_id=parent.run_id,
+                fallback_depth=depth,
+                fallback_reason=reason,
+            )
+            if parent.status == AiTaskRunStatus.COMPLETED:
+                return parent
+        return parent
+
+    @staticmethod
+    def _fallback_routes(
+        resolution: AiExecutionResolution,
+    ) -> list[AiFallbackRoute]:
+        if (
+            resolution.task_type not in AI_FALLBACK_TASKS
+            or not resolution.route_profile_id
+            or resolution.test_only_provider_injection
+        ):
+            return []
+        seen = {resolution.route_profile_id}
+        routes = []
+        for route in runtime_ai_settings_store().fallback_chain():
+            if route.profile_id in seen:
+                continue
+            seen.add(route.profile_id)
+            routes.append(route)
+        return routes
+
+    @staticmethod
+    def _fallback_chain_id(
+        resolution: AiExecutionResolution,
+        routes: list[AiFallbackRoute],
+    ) -> str:
+        if not routes:
+            return ""
+        payload = {
+            "policy_decision_id": resolution.policy_decision_id,
+            "primary_profile_id": resolution.route_profile_id,
+            "fallback_profiles": [route.profile_id for route in routes],
+        }
+        return "aifb_" + sha256(
+            json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest()[:24]
+
+    @staticmethod
+    def _fallback_reason(run: AiTaskRun) -> str:
+        if run.status != AiTaskRunStatus.FAILED:
+            return ""
+        diagnostics = next(
+            (
+                dict(artifact.payload.get("diagnostics") or {})
+                for artifact in run.artifacts
+                if artifact.artifact_type == "provider_failure_diagnostics"
+            ),
+            {},
+        )
+        failure_code = str(diagnostics.get("failure_code") or "")
+        if failure_code == "provider_http_error":
+            try:
+                status = int(diagnostics.get("http_status"))
+            except (TypeError, ValueError):
+                return ""
+            return f"{failure_code}:{status}" if status in AI_FALLBACK_HTTP_STATUSES else ""
+        if failure_code in {"provider_transport_error", "provider_response_empty"}:
+            return failure_code
+        return ""
+
+    def _execute(
+        self,
+        resolution: AiExecutionResolution,
+        *,
+        fallback_chain_id: str = "",
+        fallback_parent_run_id: str = "",
+        fallback_depth: int = 0,
+        fallback_reason: str = "",
+    ) -> AiTaskRun:
         project_id = resolution.project_id
         task_type = resolution.task_type
         run_id = f"airun_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
@@ -2319,6 +2480,12 @@ class AiTaskRunner:
             "route_base_url": _audit_safe_base_url(resolution.base_url),
             "expected_response_model": resolution.required_response_model,
             "route_identity_hash": resolution.route_identity_hash,
+            "route_thinking": resolution.route_thinking,
+            "route_reasoning_effort": resolution.route_reasoning_effort,
+            "fallback_chain_id": fallback_chain_id,
+            "fallback_parent_run_id": fallback_parent_run_id,
+            "fallback_depth": fallback_depth,
+            "fallback_reason": fallback_reason,
             "created_at": now,
             "updated_at": now,
         }
@@ -2754,6 +2921,15 @@ class AiTaskRunner:
                 output = repaired_output
                 validation_errors = repaired_errors
             except (AiGatewayConfigurationError, AiProviderRuntimeError) as exc:
+                if isinstance(exc, AiProviderRuntimeError) and exc.diagnostics:
+                    attempt_artifacts.append(
+                        AiTaskArtifact(
+                            artifact_id=f"artifact_{run_id}_provider_failure_diagnostics",
+                            artifact_type="provider_failure_diagnostics",
+                            payload={"diagnostics": dict(exc.diagnostics)},
+                            validation_errors=[str(exc)],
+                        )
+                    )
                 validation_errors = [
                     *validation_errors,
                     f"{task_type.value} repair retry failed: {exc}",
@@ -3485,13 +3661,14 @@ def _configured_provider_factory(resolution: AiExecutionResolution) -> AiProvide
     """
     values = dict(os.environ)
     if resolution.route_profile_id:
-        api_key = runtime_ai_settings_store().credentials.get(
-            resolution.route_profile_id
-        )
-        if api_key:
-            values["WORKBENCH_AI_API_KEY"] = api_key
-            if resolution.route_api_key_env:
-                values[resolution.route_api_key_env] = api_key
+        store = runtime_ai_settings_store()
+        try:
+            values = store.profile_env(
+                store.profile(resolution.route_profile_id),
+                values,
+            )
+        except KeyError:
+            pass
     values.update(
         {
             "WORKBENCH_AI_PROVIDER": resolution.provider_name,
@@ -3501,6 +3678,8 @@ def _configured_provider_factory(resolution: AiExecutionResolution) -> AiProvide
             "WORKBENCH_AI_DEPLOYMENT_PROFILE": resolution.deployment_profile,
             "WORKBENCH_AI_TIMEOUT_SECONDS": str(resolution.route_timeout_seconds),
             "WORKBENCH_AI_EXPECTED_RESPONSE_MODEL": resolution.required_response_model,
+            "WORKBENCH_AI_THINKING": resolution.route_thinking,
+            "WORKBENCH_AI_REASONING_EFFORT": resolution.route_reasoning_effort,
         }
     )
     # The route identity is frozen above; role-level thinking options are

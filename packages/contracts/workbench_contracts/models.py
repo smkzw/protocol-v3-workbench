@@ -505,6 +505,12 @@ class AiTaskRun(WorkbenchModel):
     expected_response_model: str = ""
     actual_response_model: str = ""
     route_identity_hash: str = ""
+    route_thinking: str = ""
+    route_reasoning_effort: str = ""
+    fallback_chain_id: str = ""
+    fallback_parent_run_id: str = ""
+    fallback_depth: int = Field(default=0, ge=0)
+    fallback_reason: str = ""
     input_sources: List[AiTaskSourceRef] = Field(default_factory=list)
     forbidden_source_ids: List[str] = Field(default_factory=list)
     artifacts: List[AiTaskArtifact] = Field(default_factory=list)

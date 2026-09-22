@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 DEFAULT_DEPLOYMENT_PROFILE = "local_private_clinical"
-DEFAULT_PROFILE_ID = "opencode_go_deepseek_v41_flash"
+DEFAULT_PROFILE_ID = "independent_ai__mtplx_qwen38_flash_next_speed"
 SETTINGS_SCHEMA_VERSION = "ai_provider_registry_v1"
 ALIBABA_TOKEN_PLAN_API_KEY_ENV = "ALIBABA_TOKEN_PLAN_CN_API_KEY"
 ALIBABA_TOKEN_PLAN_API_KEY_ENV_ALIASES = (
@@ -35,6 +35,8 @@ class AiProviderPreset:
     discovery_mode: str
     transport: str = "openai_compatible"
     requires_api_key: bool = True
+    thinking: str = "enabled"
+    reasoning_effort: str = "max"
 
 
 @dataclass(frozen=True)
@@ -53,6 +55,44 @@ class AiProviderProfile:
     discovery_mode: str = "models_endpoint"
     enabled: bool = True
     revision: int = 1
+    thinking: str = "enabled"
+    reasoning_effort: str = "max"
+
+
+@dataclass(frozen=True)
+class AiFallbackRoute:
+    profile_id: str
+    thinking: str = "enabled"
+    reasoning_effort: str = "max"
+
+
+class AiFallbackChainUpdateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    routes: list[dict[str, str]] = Field(default_factory=list, max_length=2)
+
+    @field_validator("routes")
+    @classmethod
+    def validate_routes(cls, value: list[dict[str, str]]) -> list[dict[str, str]]:
+        normalized = []
+        seen = set()
+        for item in value:
+            profile_id = str(item.get("profile_id", "")).strip()
+            thinking = str(item.get("thinking", "enabled")).strip().lower()
+            effort = str(item.get("reasoning_effort", "max")).strip().lower()
+            if not profile_id or profile_id in seen:
+                raise ValueError("fallback routes require unique profile_id values")
+            if thinking not in {"enabled", "disabled"}:
+                raise ValueError("fallback thinking must be enabled or disabled")
+            if effort not in {"low", "medium", "high", "xhigh", "max"}:
+                raise ValueError("unsupported fallback reasoning_effort")
+            seen.add(profile_id)
+            normalized.append({
+                "profile_id": profile_id,
+                "thinking": thinking,
+                "reasoning_effort": effort,
+            })
+        return normalized
 
 
 class AiProviderProfileUpsertRequest(BaseModel):
@@ -71,6 +111,8 @@ class AiProviderProfileUpsertRequest(BaseModel):
     deployment_scope: str = "cloud"
     discovery_mode: str = "models_endpoint"
     enabled: bool = True
+    thinking: str = "enabled"
+    reasoning_effort: str = "max"
     api_key: Optional[str] = Field(default=None, max_length=4096)
     activate: bool = False
 
@@ -98,6 +140,22 @@ class AiProviderProfileUpsertRequest(BaseModel):
     @classmethod
     def strip_text(cls, value: str) -> str:
         return value.strip()
+
+    @field_validator("thinking")
+    @classmethod
+    def validate_thinking(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if cleaned not in {"enabled", "disabled"}:
+            raise ValueError("thinking must be enabled or disabled")
+        return cleaned
+
+    @field_validator("reasoning_effort")
+    @classmethod
+    def validate_reasoning_effort(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if cleaned not in {"low", "medium", "high", "xhigh", "max"}:
+            raise ValueError("unsupported reasoning_effort")
+        return cleaned
 
 
 class AiProviderActivateRequest(BaseModel):
@@ -136,6 +194,28 @@ PROVIDER_PRESETS: tuple[AiProviderPreset, ...] = (
         api_key_env="OPENCODE_API_KEY",
         deployment_scope="cloud",
         discovery_mode="manual_plus_probe",
+    ),
+    AiProviderPreset(
+        preset_id="cms_router",
+        provider="cms-router",
+        label="CMS Router / OmniRoute",
+        base_url="http://127.0.0.1:20128/v1",
+        default_model="deepseek-latest-cloud",
+        api_key_env="CMS_ROUTER_API_KEY",
+        deployment_scope="loopback",
+        discovery_mode="models_endpoint",
+    ),
+    AiProviderPreset(
+        preset_id="mtplx",
+        provider="mtplx",
+        label="MTPLX 本地模型",
+        base_url="http://127.0.0.1:11234/v1",
+        default_model="Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        api_key_env="",
+        deployment_scope="loopback",
+        discovery_mode="models_endpoint",
+        requires_api_key=False,
+        reasoning_effort="medium",
     ),
     AiProviderPreset(
         preset_id="deepseek",
@@ -352,6 +432,20 @@ class AiRuntimeSettingsStore:
             "active_profile_id": "",
             "revision": 0,
             "profiles": [],
+            "fallback_chain": [
+                asdict(
+                    AiFallbackRoute(
+                        profile_id="independent_ai__opencode_go_deepseek_v41_flash",
+                        reasoning_effort="max",
+                    )
+                ),
+                asdict(
+                    AiFallbackRoute(
+                        profile_id="independent_ai__cms_router_deepseek_latest_cloud",
+                        reasoning_effort="max",
+                    )
+                ),
+            ],
         }
 
     def load(self) -> dict[str, Any]:
@@ -366,6 +460,7 @@ class AiRuntimeSettingsStore:
         payload.setdefault("profiles", [])
         payload.setdefault("active_profile_id", "")
         payload.setdefault("revision", 0)
+        payload.setdefault("fallback_chain", [])
         return payload
 
     def save(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -375,6 +470,7 @@ class AiRuntimeSettingsStore:
             "active_profile_id": str(payload.get("active_profile_id", "")),
             "revision": int(current.get("revision", 0)) + 1,
             "profiles": list(payload.get("profiles", [])),
+            "fallback_chain": list(payload.get("fallback_chain", [])),
         }
         _atomic_write(
             self.settings_path,
@@ -483,6 +579,33 @@ class AiRuntimeSettingsStore:
         payload["active_profile_id"] = profile_id
         return self.save(payload)
 
+    def fallback_chain(self) -> list[AiFallbackRoute]:
+        routes = []
+        for item in self.load().get("fallback_chain", []):
+            try:
+                routes.append(AiFallbackRoute(**item))
+            except (TypeError, ValueError):
+                continue
+        return routes
+
+    def set_fallback_chain(self, routes: Iterable[AiFallbackRoute]) -> dict[str, Any]:
+        payload = self.load()
+        normalized = list(routes)
+        profile_by_id = {item.profile_id: item for item in self.profiles()}
+        active = self.effective_independent_profile()
+        seen = set()
+        for route in normalized:
+            profile = profile_by_id.get(route.profile_id)
+            if profile is None or not profile.enabled:
+                raise KeyError(route.profile_id)
+            if active is not None and route.profile_id == active.profile_id:
+                raise ValueError("active profile must not be repeated in fallback chain")
+            if route.profile_id in seen:
+                raise ValueError("fallback profile IDs must be unique")
+            seen.add(route.profile_id)
+        payload["fallback_chain"] = [asdict(item) for item in normalized]
+        return self.save(payload)
+
     def public_payload(self) -> dict[str, Any]:
         payload = self.load()
         public_profiles = []
@@ -505,6 +628,7 @@ class AiRuntimeSettingsStore:
             "active_profile_id": payload.get("active_profile_id", ""),
             "revision": payload.get("revision", 0),
             "profiles": public_profiles,
+            "fallback_chain": [asdict(item) for item in self.fallback_chain()],
             "presets": provider_presets(),
         }
 
@@ -583,6 +707,11 @@ class AiRuntimeSettingsStore:
             "",
         )
         api_key = api_key or values.get("WORKBENCH_AI_API_KEY", "").strip()
+        if not api_key and profile.deployment_scope == "loopback":
+            # The generic OpenAI-compatible client requires a non-empty
+            # bearer value. Local MTPLX/llama-compatible servers commonly do
+            # not authenticate, so use a fixed non-secret transport token.
+            api_key = "local-loopback"
         values.update(
             {
                 "WORKBENCH_AI_PROVIDER": profile.provider,
@@ -595,19 +724,12 @@ class AiRuntimeSettingsStore:
                     profile.expected_response_model or profile.model
                 ),
                 "WORKBENCH_AI_API_KEY": api_key,
+                "WORKBENCH_AI_THINKING": profile.thinking,
+                "WORKBENCH_AI_REASONING_EFFORT": profile.reasoning_effort,
             }
         )
         if profile.api_key_env and api_key:
             values[profile.api_key_env] = api_key
-        # Thinking/effort are deployment-level switches, not profile fields:
-        # carry the process-env choices through so profile-scoped providers
-        # resolve the same thinking contract the frozen routes captured
-        # (a narrow base_env would otherwise silently drop them and every
-        # frozen-route check would fail on 'enabled' vs None).
-        for _name in ("WORKBENCH_AI_THINKING", "WORKBENCH_AI_REASONING_EFFORT"):
-            _value = os.environ.get(_name, "").strip()
-            if _value:
-                values[_name] = _value
         return values
 
 

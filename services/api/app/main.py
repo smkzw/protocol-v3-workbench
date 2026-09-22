@@ -150,6 +150,8 @@ from .ai_gateway import (
     direct_deepseek_env,
 )
 from .ai_runtime_settings import (
+    AiFallbackChainUpdateRequest,
+    AiFallbackRoute,
     AiProviderActivateRequest,
     AiProviderProbeRequest,
     AiProviderProfile,
@@ -3621,6 +3623,8 @@ def upsert_ai_gateway_profile(
         discovery_mode=request.discovery_mode,
         enabled=request.enabled,
         revision=revision,
+        thinking=request.thinking,
+        reasoning_effort=request.reasoning_effort,
     )
     store.upsert(profile, api_key=request.api_key, activate=request.activate)
     if request.activate:
@@ -3639,6 +3643,23 @@ def activate_ai_gateway_profile(request: AiProviderActivateRequest):
         runtime_ai_role_settings_store().sync_independent_from_active()
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="AI profile not found") from exc
+    return {
+        **_combined_ai_settings_with_execution_status(),
+        "status": ai_gateway_status_from_env(),
+    }
+
+
+@app.put("/api/ai-gateway/fallback-chain")
+def update_ai_gateway_fallback_chain(request: AiFallbackChainUpdateRequest):
+    store = runtime_ai_settings_store()
+    try:
+        store.set_fallback_chain(
+            AiFallbackRoute(**item) for item in request.routes
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="fallback AI profile not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     return {
         **_combined_ai_settings_with_execution_status(),
         "status": ai_gateway_status_from_env(),

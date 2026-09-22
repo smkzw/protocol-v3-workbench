@@ -188,7 +188,7 @@ class AiExecutionPolicyTests(unittest.TestCase):
             ),
         )
 
-    def test_medical_writing_defaults_allow_opencode_go_deepseek_flash(self):
+    def test_medical_writing_defaults_prefer_local_mtplx_qwen(self):
         for task_type in (
             AiTaskType.MEDICAL_WRITING_REVISION,
             AiTaskType.PROTOCOL_FULL_DRAFT,
@@ -197,8 +197,13 @@ class AiExecutionPolicyTests(unittest.TestCase):
             AiTaskType.REGULATORY_TRANSLATION_ZH,
         ):
             policy = TASK_AI_ROUTE_POLICIES[task_type][0]
-            self.assertEqual("opencode-go", policy.provider_name)
-            self.assertEqual("deepseek-v4.1-flash", next(iter(policy.allowed_models)))
+            self.assertEqual("mtplx", policy.provider_name)
+            self.assertEqual("openai_compatible", policy.transport_name)
+            self.assertEqual("http://127.0.0.1:11234/v1", policy.base_url)
+            self.assertEqual(
+                "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+                next(iter(policy.allowed_models)),
+            )
 
     def test_medical_writing_revision_policy_accepts_plan_pin_only_as_known_optional_key(self):
         resolver = AiExecutionPolicyResolver(

@@ -44,6 +44,7 @@ class _FakeRepo:
                 ProtocolSection(
                     section_id="sec_1",
                     document_id="doc_full_draft_fake",
+                    template_node_id="cms_background",
                     heading="研究背景",
                     section_number="1",
                     node_kind="section",
@@ -61,6 +62,7 @@ class _FakeRepo:
                 ProtocolSection(
                     section_id="sec_2",
                     document_id="doc_full_draft_fake",
+                    template_node_id="cms_objectives_endpoints",
                     heading="研究目的",
                     section_number="2",
                     node_kind="section",
@@ -131,6 +133,7 @@ class _FakeFullDraftRunner:
                     "evidence_span_ids": [evidence_id],
                     "decision_items": [],
                     "missing_source_classes": [],
+                    "gap_items": [],
                 }
             )
         payload = {
@@ -172,6 +175,29 @@ class _FakeFullDraftRunner:
 
 
 class FullDraftServiceTests(unittest.TestCase):
+    def test_route_receipt_includes_effective_model_identity_and_effort(self):
+        receipt = MedicalWritingFullDraftService._run_route_receipt(
+            SimpleNamespace(
+                run_id="airun_1",
+                provider="cms-router",
+                model_name="deepseek-latest-cloud",
+                route_profile_id="independent_ai__cms",
+                route_identity_hash="a" * 64,
+                route_base_url="http://127.0.0.1:20128/v1",
+                expected_response_model="deepseek-latest-cloud",
+                actual_response_model="deepseek-latest-cloud",
+                route_thinking="enabled",
+                route_reasoning_effort="max",
+                fallback_chain_id="aifb_1",
+                fallback_depth=2,
+                fallback_reason="provider_http_error:429",
+            )
+        )
+        self.assertEqual("deepseek-latest-cloud", receipt["expected_response_model"])
+        self.assertEqual("deepseek-latest-cloud", receipt["actual_response_model"])
+        self.assertEqual("max", receipt["reasoning_effort"])
+        self.assertEqual(2, receipt["fallback_depth"])
+
     def setUp(self):
         self.tmpdir = tempfile.TemporaryDirectory()
         self.repo = _FakeRepo()
@@ -249,7 +275,7 @@ class FullDraftServiceTests(unittest.TestCase):
         )
         completed = self.store.get(project, first)
         artifact = self.full.read_artifact(project, completed)
-        self.assertEqual("protocol_full_draft_artifact_v9", artifact["schema_version"])
+        self.assertEqual("protocol_full_draft_artifact_v10", artifact["schema_version"])
         for section in artifact["sections"]:
             self.assertEqual(
                 section["evidence_span_ids"],
@@ -497,15 +523,30 @@ class FullDraftServiceTests(unittest.TestCase):
         artifact["decision_path_owners"] = {
             "picos.exploratory_objectives": "sec_1"
         }
+        artifact["authoring_journey"] = {
+            "journey_revision": 8,
+            "study_definition_id": "sd_fake",
+            "study_definition_revision": 1,
+            "study_definition_sha256": "a" * 64,
+        }
         decision_id = self.full.decision_item_id("sec_1", "本研究是否设置探索性目的？")
         writes = []
 
-        def writer(project_id, *, field_path, value, actor, idempotency_key):
+        def writer(
+            project_id,
+            *,
+            decisions,
+            expected_journey_revision,
+            authoring_journey_binding,
+            actor,
+            idempotency_key,
+        ):
             writes.append(
                 {
                     "project_id": project_id,
-                    "field_path": field_path,
-                    "value": value,
+                    "decisions": decisions,
+                    "expected_journey_revision": expected_journey_revision,
+                    "authoring_journey_binding": authoring_journey_binding,
                     "actor": actor,
                     "idempotency_key": idempotency_key,
                 }
@@ -528,14 +569,17 @@ class FullDraftServiceTests(unittest.TestCase):
             )
 
         self.assertEqual(1, len(writes))
-        self.assertEqual("picos.exploratory_objectives", writes[0]["field_path"])
+        self.assertEqual(
+            "picos.exploratory_objectives",
+            writes[0]["decisions"][0]["fact_path"],
+        )
         # The medical manager's selected alternative, not the recommendation, is
         # written once, shaped for the declared string-list field type.
         self.assertEqual(
             ["探索合成试验药A治疗后的早期疗效应答。"],
-            writes[0]["value"],
+            writes[0]["decisions"][0]["value"],
         )
-        self.assertIn("k1", writes[0]["idempotency_key"])
+        self.assertTrue(writes[0]["idempotency_key"].startswith("full-draft-decision-group:"))
         self.assertEqual(["sec_1"], result["affected_section_ids"])
         self.assertEqual(completed.job_id, result["superseded_job_id"])
         self.assertEqual(4, result["study_definition_confirmations"][0]["study_definition_revision"])
@@ -823,7 +867,7 @@ class FullDraftServiceTests(unittest.TestCase):
         self.assertTrue(any("妊娠事件" in item for item in metadata["review_advisories"]))
         self.assertTrue(any("计划入组" in item for item in metadata["review_advisories"]))
 
-    def test_review_metadata_requires_one_statistics_resolution_for_mixed_estimand(self):
+    def test_review_metadata_advises_without_reconfirming_mixed_estimand(self):
         metadata = self.full._review_metadata(
             {
                 "proposal_text": (
@@ -835,8 +879,8 @@ class FullDraftServiceTests(unittest.TestCase):
             [],
             {"heading": "统计分析"},
         )
-        self.assertEqual("required", metadata["review_level"])
-        self.assertTrue(any("伴发事件策略" in item for item in metadata["review_reasons"]))
+        self.assertEqual("standard", metadata["review_level"])
+        self.assertEqual([], metadata["review_reasons"])
 
     def test_review_metadata_does_not_require_confirmation_for_incidental_design_mentions(self):
         metadata = self.full._review_metadata(
@@ -857,6 +901,19 @@ class FullDraftServiceTests(unittest.TestCase):
 class FullDraftContractTests(unittest.TestCase):
     @staticmethod
     def _output(section):
+        section = dict(section)
+        status = section.get("content_status")
+        if status == "complete":
+            section.setdefault("gap_items", [])
+        elif status in {"partial", "decision_required", "source_gap"}:
+            missing = list(section.get("missing_source_classes") or [])
+            section.setdefault("gap_items", [{
+                "gap_id": "gap_contract_1",
+                "category": "decision_pending" if status == "decision_required" else "source_missing",
+                "target": "当前章节未解决事项",
+                "action": "补充来源或确认设计决定",
+                "missing_source_classes": [] if status == "decision_required" else missing,
+            }])
         return {
             "task_id": "run",
             "task_type": AiTaskType.PROTOCOL_FULL_DRAFT.value,
@@ -932,6 +989,7 @@ class FullDraftContractTests(unittest.TestCase):
             any("must be empty for decision_required" in item for item in validate_ai_output(output))
         )
         output["full_draft"]["sections"][0]["proposal_text"] = ""
+        output["full_draft"]["sections"][0]["evidence_span_ids"] = []
         self.assertEqual([], validate_ai_output(output))
 
     def test_gateway_rejects_two_cards_writing_the_same_fact_path(self):
@@ -1239,6 +1297,7 @@ class FullDraftContractTests(unittest.TestCase):
                         "evidence_span_ids": [evidence_id],
                         "decision_items": [],
                         "missing_source_classes": [],
+                        "gap_items": [],
                     }]},
                 }
 

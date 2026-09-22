@@ -1,0 +1,394 @@
+{
+  "schema_version": "protocol-v3-2plus1-study-specs.v1",
+  "purpose": "WP6差异化产品模型验收；仅用于隔离运行库，不代表真实申报项目科学批准。",
+  "study_b": {
+    "blind": false,
+    "acceptance_focus": "复杂适用性：稳定甲氨蝶呤背景治疗、双模拟、非劣效界值和救援治疗ICE；不得串入银屑病终点或无期中优效模板字段。",
+    "project": {
+      "project_code": "WP6-RA-NI-B",
+      "project_name": "合成试验药B联合甲氨蝶呤治疗活动性类风湿关节炎的III期非劣效研究",
+      "indication": "甲氨蝶呤应答不足的活动性类风湿关节炎",
+      "product_name": "合成试验药B",
+      "study_phase": "III期",
+      "protocol_id": "WP6-RA-NI-B",
+      "protocol_version": "V0.1",
+      "entry_mode": "from_zero",
+      "actor": "wp6_product_acceptance",
+      "idempotency_key": "wp6-create-study-b-ra-ni-20260922"
+    },
+    "framing": {
+      "protocol_id": "WP6-RA-NI-B",
+      "version": "V0.1",
+      "document_title": "合成试验药B联合甲氨蝶呤治疗活动性类风湿关节炎的随机、双盲、双模拟、阳性对照III期非劣效研究方案",
+      "indication": "甲氨蝶呤应答不足的活动性类风湿关节炎",
+      "clinicaltrials_condition_term": "Rheumatoid Arthritis",
+      "study_phase": "III期",
+      "intrinsic_objectives": [
+        "评价合成试验药B联合甲氨蝶呤相较阳性对照联合甲氨蝶呤的疗效非劣效性",
+        "评价两组安全性与耐受性"
+      ],
+      "investigational_product": "合成试验药B",
+      "product_profile": {
+        "technology_type": "small_molecule",
+        "administration_routes": [
+          "口服"
+        ],
+        "dosage_forms": [
+          "片剂"
+        ],
+        "exposure_scope": "systemic",
+        "evidence_facts": []
+      },
+      "target_mechanism": "合成靶点B抑制剂（仅用于隔离验收）",
+      "competitor_target_scope": "活动性类风湿关节炎、甲氨蝶呤背景治疗、阳性对照、非劣效设计",
+      "development_regions": [
+        "中国"
+      ],
+      "design_pattern": "多中心、随机、双盲、双模拟、阳性对照、平行组、非劣效III期研究",
+      "structured_design": {
+        "randomization_mode": "randomized",
+        "randomization_details": "1:1分层随机",
+        "blinding_mode": "double_blind",
+        "blinded_roles": [
+          "试验参与者",
+          "研究者",
+          "疗效评估者"
+        ],
+        "blinding_details": "双模拟维持盲态",
+        "comparator_type": "active",
+        "comparator_intervention": "合成阳性对照C皮下注射",
+        "assignment_model": "平行组",
+        "center_model": "多中心",
+        "sample_size_reestimation": {
+          "planned": false
+        },
+        "adaptive_design": {
+          "planned": false
+        },
+        "interim_analysis": {
+          "planned": false
+        },
+        "arm_or_cohort_kind": "parallel_arms",
+        "arm_or_cohort_labels": [
+          "合成试验药B组",
+          "阳性对照组"
+        ]
+      },
+      "population_intent": "18–75岁、稳定甲氨蝶呤治疗后仍为中高疾病活动度的类风湿关节炎成人试验参与者。",
+      "key_uncertainties": [],
+      "manual_source_ids": [],
+      "terminology_policy": "cde_participant"
+    },
+    "picos": {
+      "design_archetype": "randomized_confirmatory",
+      "population_summary": "18–75岁，符合类风湿关节炎分类标准，稳定甲氨蝶呤治疗后仍为中高疾病活动度的成人试验参与者。",
+      "inclusion_modules": [
+        "诊断类风湿关节炎至少6个月；筛选及基线时DAS28-CRP≥3.2；甲氨蝶呤稳定剂量治疗至少8周。"
+      ],
+      "exclusion_modules": [
+        "既往对研究药或阳性对照不耐受；活动性严重感染；妊娠或哺乳；研究者判断不适合参加。"
+      ],
+      "washout_rules": [
+        "除稳定甲氨蝶呤外的生物制剂或靶向合成抗风湿药按方案规定完成洗脱。"
+      ],
+      "intervention_summary": "试验组口服合成试验药B并接受阳性对照模拟注射；对照组接受匹配口服安慰剂并皮下注射合成阳性对照C；两组继续稳定甲氨蝶呤，治疗24周。",
+      "intervention_dose_regimen": "合成试验药B 50 mg口服每日一次；合成阳性对照C 40 mg皮下注射每2周一次；均为隔离验收用合成剂量。",
+      "required_background_rules": [
+        "甲氨蝶呤维持入组前稳定剂量，除安全性需要外治疗期不调整。"
+      ],
+      "allowed_concomitant_rules": [
+        "稳定剂量叶酸；符合方案限制的非甾体抗炎药。"
+      ],
+      "prohibited_concomitant_rules": [
+        "治疗期禁止新增其他生物制剂或靶向合成抗风湿药。"
+      ],
+      "comparator_summary": "合成阳性对照C联合甲氨蝶呤；1:1随机、双盲双模拟、24周平行对照。",
+      "primary_objectives": [
+        "证明第24周ACR20应答率方面合成试验药B不劣于合成阳性对照C。"
+      ],
+      "secondary_objectives": [
+        "比较DAS28-CRP变化和ACR50应答。"
+      ],
+      "exploratory_objectives": [],
+      "primary_endpoint": "第24周ACR20应答率。",
+      "key_secondary_endpoints": [
+        "第24周DAS28-CRP较基线变化。",
+        "第24周ACR50应答率。"
+      ],
+      "other_secondary_endpoints": [
+        "第12周ACR20应答率。"
+      ],
+      "exploratory_endpoints": [],
+      "safety_endpoints": [
+        "TEAE、SAE及导致停药的不良事件发生率。",
+        "实验室检查、生命体征和心电图具有临床意义的变化。"
+      ],
+      "aesi_definitions": [
+        "严重感染和机会性感染。"
+      ],
+      "study_epochs": [
+        "筛选期4周。",
+        "双盲双模拟治疗期24周。",
+        "安全性随访期4周。"
+      ],
+      "visit_strategy": "筛选、基线及第2、4、8、12、16、20、24周访视，第28周安全性随访。",
+      "estimand_strategy": "主要估计目标比较所有随机试验参与者第24周ACR20应答；因疗效不足接受救援治疗按复合策略计为无应答，单纯停用随机治疗采用治疗策略并通过多重插补处理缺失。",
+      "sample_size_strategy": "按非劣效界值-12个百分点、预期两组ACR20应答率均为60%、单侧α=0.025、把握度90%、1:1随机并考虑15%失访，计划约520例；合成参数仅用于功能验收。",
+      "statistical_strategy": "全分析集与符合方案集共同支持主要非劣效结论；以组间ACR20率差的双侧95%置信区间下限高于-12%判定非劣效。不开展期中分析；安全性集按实际治疗分析。",
+      "intervention_rules": {
+        "schema_version": "medical_writing_intervention_rules_v1",
+        "authority": "structured",
+        "ip_regimens": [
+          {
+            "regimen_id": "ip-b",
+            "product_name": "合成试验药B",
+            "product_role": "investigational_product",
+            "dose_and_frequency": "50 mg，每日一次",
+            "route": "口服",
+            "treatment_period": "24周"
+          },
+          {
+            "regimen_id": "active-c",
+            "product_name": "合成阳性对照C",
+            "product_role": "active_comparator",
+            "dose_and_frequency": "40 mg，每2周一次",
+            "route": "皮下注射",
+            "treatment_period": "24周"
+          },
+          {
+            "regimen_id": "placebo-b",
+            "product_name": "合成试验药B匹配安慰剂",
+            "product_role": "placebo",
+            "dose_and_frequency": "每日一次",
+            "route": "口服",
+            "treatment_period": "24周"
+          },
+          {
+            "regimen_id": "placebo-c",
+            "product_name": "合成阳性对照C匹配安慰剂",
+            "product_role": "placebo",
+            "dose_and_frequency": "每2周一次",
+            "route": "皮下注射",
+            "treatment_period": "24周"
+          }
+        ],
+        "ip_adjustment_policy": "no_planned_adjustment",
+        "no_planned_adjustment_statement": "不设置计划性剂量调整；因安全性需要的暂停或永久停药按方案停药标准处理。",
+        "ip_action_rules": [],
+        "non_ip_treatment_rules": [
+          {
+            "rule_id": "background-001",
+            "rule_class": "background",
+            "policy": "allowed_if_stable",
+            "agent_or_category": "甲氨蝶呤维持入组前稳定剂量，除安全性需要外治疗期不调整。"
+          },
+          {
+            "rule_id": "allowed-cm-001",
+            "rule_class": "allowed_cm",
+            "policy": "allowed_with_timing",
+            "agent_or_category": "稳定剂量叶酸；符合方案限制的非甾体抗炎药。"
+          },
+          {
+            "rule_id": "prohibited-cm-001",
+            "rule_class": "prohibited_cm",
+            "policy": "prohibited",
+            "agent_or_category": "治疗期禁止新增其他生物制剂或靶向合成抗风湿药。"
+          },
+          {
+            "rule_id": "rescue-001",
+            "rule_class": "rescue",
+            "policy": "rescue_policy",
+            "agent_or_category": "因疗效不足时可按方案启动救援治疗；主要估计目标按复合策略计为无应答。"
+          }
+        ],
+        "cross_object_links": []
+      }
+    }
+  },
+  "study_c": {
+    "blind": true,
+    "acceptance_focus": "保留盲测：口服辅助治疗、8周、安慰剂优效、MADRS连续终点；生成器不得得知独立验收金标准或套用RA/银屑病规则。",
+    "project": {
+      "project_code": "WP6-MDD-BLIND-C",
+      "project_name": "合成试验药C辅助治疗难治性重度抑郁障碍的II期研究",
+      "indication": "当前抗抑郁治疗应答不足的重度抑郁障碍",
+      "product_name": "合成试验药C",
+      "study_phase": "II期",
+      "protocol_id": "WP6-MDD-BLIND-C",
+      "protocol_version": "V0.1",
+      "entry_mode": "from_zero",
+      "actor": "wp6_product_acceptance",
+      "idempotency_key": "wp6-create-study-c-mdd-blind-20260922"
+    },
+    "framing": {
+      "protocol_id": "WP6-MDD-BLIND-C",
+      "version": "V0.1",
+      "document_title": "合成试验药C辅助治疗当前抗抑郁治疗应答不足的重度抑郁障碍随机双盲安慰剂对照II期研究方案",
+      "indication": "当前抗抑郁治疗应答不足的重度抑郁障碍",
+      "clinicaltrials_condition_term": "Major Depressive Disorder",
+      "study_phase": "II期",
+      "intrinsic_objectives": [
+        "评价合成试验药C辅助治疗8周的抗抑郁疗效",
+        "评价安全性与耐受性"
+      ],
+      "investigational_product": "合成试验药C",
+      "product_profile": {
+        "technology_type": "small_molecule",
+        "administration_routes": [
+          "口服"
+        ],
+        "dosage_forms": [
+          "胶囊"
+        ],
+        "exposure_scope": "systemic",
+        "evidence_facts": []
+      },
+      "target_mechanism": "合成中枢机制C调节剂（仅用于隔离验收）",
+      "competitor_target_scope": "重度抑郁障碍、标准抗抑郁药辅助治疗、安慰剂对照、8周疗效",
+      "development_regions": [
+        "中国"
+      ],
+      "design_pattern": "多中心、随机、双盲、安慰剂对照、平行组、II期优效研究",
+      "structured_design": {
+        "randomization_mode": "randomized",
+        "randomization_details": "1:1随机",
+        "blinding_mode": "double_blind",
+        "blinded_roles": [
+          "试验参与者",
+          "研究者",
+          "结局评估者"
+        ],
+        "blinding_details": "匹配安慰剂维持盲态",
+        "comparator_type": "placebo",
+        "comparator_intervention": "匹配安慰剂",
+        "assignment_model": "平行组",
+        "center_model": "多中心",
+        "sample_size_reestimation": {
+          "planned": false
+        },
+        "adaptive_design": {
+          "planned": false
+        },
+        "interim_analysis": {
+          "planned": false
+        },
+        "arm_or_cohort_kind": "parallel_arms",
+        "arm_or_cohort_labels": [
+          "合成试验药C辅助组",
+          "安慰剂辅助组"
+        ]
+      },
+      "population_intent": "18–65岁重度抑郁障碍成人，在稳定SSRI治疗下当前发作应答不足。",
+      "key_uncertainties": [],
+      "manual_source_ids": [],
+      "terminology_policy": "cde_participant"
+    },
+    "picos": {
+      "design_archetype": "randomized_exploratory",
+      "population_summary": "18–65岁重度抑郁障碍成人，当前发作在足量足疗程且稳定的SSRI治疗下应答不足。",
+      "inclusion_modules": [
+        "符合重度抑郁障碍诊断；当前发作持续至少8周；基线MADRS总分≥26；筛选前SSRI剂量稳定至少4周。"
+      ],
+      "exclusion_modules": [
+        "双相障碍或精神病性障碍；近期有迫切自杀风险；当前物质使用障碍；研究者判断不适合参加。"
+      ],
+      "washout_rules": [],
+      "intervention_summary": "在既有稳定SSRI治疗基础上，试验组口服合成试验药C，对照组口服匹配安慰剂，双盲治疗8周。",
+      "intervention_dose_regimen": "合成试验药C 20 mg口服每晚一次，连续8周；合成剂量仅用于功能验收。",
+      "required_background_rules": [
+        "既有SSRI在双盲期维持稳定剂量。"
+      ],
+      "allowed_concomitant_rules": [
+        "方案规定范围内的短期失眠对症用药。"
+      ],
+      "prohibited_concomitant_rules": [
+        "双盲期禁止新增其他抗抑郁药、抗精神病药或系统性心理治疗。"
+      ],
+      "comparator_summary": "匹配安慰剂辅助稳定SSRI；1:1随机、双盲、8周平行对照。",
+      "primary_objectives": [
+        "评价合成试验药C辅助治疗较安慰剂辅助治疗改善抑郁症状的优效性。"
+      ],
+      "secondary_objectives": [
+        "评价临床应答、缓解及功能改善。"
+      ],
+      "exploratory_objectives": [],
+      "primary_endpoint": "第8周MADRS总分较基线变化。",
+      "key_secondary_endpoints": [
+        "第8周MADRS应答率（总分较基线下降≥50%）。",
+        "第8周MADRS缓解率（总分≤10）。"
+      ],
+      "other_secondary_endpoints": [
+        "第8周SDS总分较基线变化。"
+      ],
+      "exploratory_endpoints": [],
+      "safety_endpoints": [
+        "TEAE、SAE及导致停药的不良事件发生率。",
+        "C-SSRS自杀意念与行为评价及生命体征、实验室检查、心电图变化。"
+      ],
+      "aesi_definitions": [
+        "自杀意念或行为。"
+      ],
+      "study_epochs": [
+        "筛选期2周。",
+        "双盲辅助治疗期8周。",
+        "安全性随访期2周。"
+      ],
+      "visit_strategy": "筛选、基线及第1、2、4、6、8周访视，第10周安全性随访；MADRS由经培训且尽量保持同一的盲态评估者完成。",
+      "estimand_strategy": "主要估计目标比较所有随机试验参与者第8周MADRS变化；停用随机治疗或启动禁止的抗抑郁救援治疗按治疗策略处理，使用基于重复测量模型的直接似然估计，并进行跳转参考多重插补敏感性分析。",
+      "sample_size_strategy": "假设组间MADRS变化差异为3分、标准差8分、双侧α=0.05、把握度90%、1:1随机并考虑15%失访，计划约170例；合成参数仅用于功能验收。",
+      "statistical_strategy": "主要终点采用MMRM，固定效应包括治疗组、访视、治疗组×访视、中心及基线MADRS，报告第8周最小二乘均值差、95%置信区间和双侧P值，以优效性为目标。不开展期中分析；安全性集按实际治疗分析。",
+      "intervention_rules": {
+        "schema_version": "medical_writing_intervention_rules_v1",
+        "authority": "structured",
+        "ip_regimens": [
+          {
+            "regimen_id": "ip-c",
+            "product_name": "合成试验药C",
+            "product_role": "investigational_product",
+            "dose_and_frequency": "20 mg，每晚一次",
+            "route": "口服",
+            "treatment_period": "8周"
+          },
+          {
+            "regimen_id": "placebo-c",
+            "product_name": "合成试验药C匹配安慰剂",
+            "product_role": "placebo",
+            "dose_and_frequency": "每晚一次",
+            "route": "口服",
+            "treatment_period": "8周"
+          }
+        ],
+        "ip_adjustment_policy": "no_planned_adjustment",
+        "no_planned_adjustment_statement": "不设置计划性剂量调整；因安全性需要的暂停或永久停药按方案停药标准处理。",
+        "ip_action_rules": [],
+        "non_ip_treatment_rules": [
+          {
+            "rule_id": "background-001",
+            "rule_class": "background",
+            "policy": "allowed_if_stable",
+            "agent_or_category": "既有SSRI在双盲期维持稳定剂量。"
+          },
+          {
+            "rule_id": "allowed-cm-001",
+            "rule_class": "allowed_cm",
+            "policy": "allowed_with_timing",
+            "agent_or_category": "方案规定范围内的短期失眠对症用药。"
+          },
+          {
+            "rule_id": "prohibited-cm-001",
+            "rule_class": "prohibited_cm",
+            "policy": "prohibited",
+            "agent_or_category": "双盲期禁止新增其他抗抑郁药、抗精神病药或系统性心理治疗。"
+          },
+          {
+            "rule_id": "rescue-001",
+            "rule_class": "rescue",
+            "policy": "rescue_policy",
+            "agent_or_category": "因临床需要启动其他抗抑郁救援治疗时记录为伴发事件，并按主要估计目标的治疗策略处理。"
+          }
+        ],
+        "cross_object_links": []
+      }
+    }
+  }
+}

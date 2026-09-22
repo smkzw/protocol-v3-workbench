@@ -33,6 +33,9 @@ TRANSLATION_BODY_OMLX_PROFILE_ID = "translation_body_local_omlx"
 TRANSLATION_SUPPORT_PROFILE_ID = "deepseek_translation_support"
 INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID = "independent_ai__deepseek_v4_flash"
 INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID = "independent_ai__opencode_go_deepseek_v41_flash"
+INDEPENDENT_AI_MTPLX_PROFILE_ID = "independent_ai__mtplx_qwen38_flash_next_speed"
+INDEPENDENT_AI_CMS_ROUTER_PROFILE_ID = "independent_ai__cms_router_deepseek_latest_cloud"
+INDEPENDENT_AI_MTPLX_MODEL = "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
 DEFAULT_OCR_MODEL = "GLM-OCR-bf16"
 PADDLE_OCR_MODEL = "PaddleOCR-VL-1.6"
 GATE_TRANSLATION_BODY_MODEL = "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
@@ -125,8 +128,8 @@ ROLE_DEFINITIONS: tuple[AiRoleDefinition, ...] = (
         role_id=INDEPENDENT_AI_ROLE,
         label="综合AI",
         description="竞品分析、方案设计、候选生成、修订与一致性核查。",
-        recommendation="默认通过 OpenCode Go 使用 DeepSeek V4.1 Flash（最大推理）；可在已配置模型之间切换。",
-        default_model="deepseek-v4.1-flash",
+        recommendation="默认使用本机 MTPLX Qwen（中等思考）；限流或服务不可用时按已设置顺序切换备用模型。",
+        default_model=INDEPENDENT_AI_MTPLX_MODEL,
     ),
     AiRoleDefinition(
         role_id=OCR_ROLE,
@@ -242,6 +245,19 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
             enabled=True,
         ),
         AiProviderProfile(
+            profile_id=INDEPENDENT_AI_MTPLX_PROFILE_ID,
+            provider="mtplx",
+            label="MTPLX 本地 Qwen 3.8 Flash Next 综合AI",
+            base_url="http://127.0.0.1:11234/v1",
+            model=INDEPENDENT_AI_MTPLX_MODEL,
+            expected_response_model=INDEPENDENT_AI_MTPLX_MODEL,
+            deployment_scope="loopback",
+            discovery_mode="models_endpoint",
+            thinking=THINKING_ENABLED,
+            reasoning_effort="medium",
+            enabled=True,
+        ),
+        AiProviderProfile(
             profile_id=INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
             provider="opencode-go",
             label="OpenCode Go · DeepSeek V4.1 Flash 综合AI",
@@ -251,6 +267,20 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
             api_key_env="OPENCODE_API_KEY",
             deployment_scope="cloud",
             discovery_mode="manual_plus_probe",
+            enabled=True,
+        ),
+        AiProviderProfile(
+            profile_id=INDEPENDENT_AI_CMS_ROUTER_PROFILE_ID,
+            provider="cms-router",
+            label="CMS Router · DeepSeek Latest Cloud 综合AI",
+            base_url="http://127.0.0.1:20128/v1",
+            model="deepseek-latest-cloud",
+            expected_response_model="deepseek-latest-cloud",
+            api_key_env="CMS_ROUTER_API_KEY",
+            deployment_scope="loopback",
+            discovery_mode="models_endpoint",
+            thinking=THINKING_ENABLED,
+            reasoning_effort="max",
             enabled=True,
         ),
         AiProviderProfile(
@@ -270,7 +300,9 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
 
 _BUILTIN_ROLE_PROFILE_IDS = {
     INDEPENDENT_AI_ROLE: {
+        INDEPENDENT_AI_MTPLX_PROFILE_ID,
         INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
+        INDEPENDENT_AI_CMS_ROUTER_PROFILE_ID,
         INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID,
     },
     OCR_ROLE: {OCR_OMLX_PROFILE_ID, OCR_PADDLE_PROFILE_ID},
@@ -382,11 +414,11 @@ class AiRoleRuntimeSettingsStore:
         return {
             INDEPENDENT_AI_ROLE: AiRoleBinding(
                 role_id=INDEPENDENT_AI_ROLE,
-                profile_id=INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID,
-                model="deepseek-v4.1-flash",
+                profile_id=INDEPENDENT_AI_MTPLX_PROFILE_ID,
+                model=INDEPENDENT_AI_MTPLX_MODEL,
                 enabled=True,
                 thinking=THINKING_ENABLED,
-                reasoning_effort="max",
+                reasoning_effort="medium",
             ),
             OCR_ROLE: AiRoleBinding(
                 role_id=OCR_ROLE,
@@ -591,6 +623,8 @@ class AiRoleRuntimeSettingsStore:
                 profile_id=active.profile_id,
                 model=active.model,
                 enabled=active.enabled,
+                thinking=active.thinking,
+                reasoning_effort=active.reasoning_effort,
             )
         )
 

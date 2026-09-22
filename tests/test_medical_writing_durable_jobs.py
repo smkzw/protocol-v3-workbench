@@ -950,6 +950,30 @@ class TestRetryGuards(unittest.TestCase):
         result = self.store.retry("proj-A", self.job.job_id)
         self.assertTrue(result.requeued)
         self.assertEqual(result.status, "queued")
+        retried = self.store.claim("proj-A", self.job.job_id)
+        self.assertTrue(retried.claimed)
+        self.assertEqual(retried.job.attempt_count, 2)
+
+    def test_retry_after_exhaustion_starts_fresh_bounded_cycle(self) -> None:
+        claim1 = self.store.claim("proj-A", self.job.job_id)
+        self.store.fail(
+            "proj-A", self.job.job_id, claim1.claim_token,
+            error_summary="transient-1", retryable=True,
+        )
+        claim2 = self.store.claim("proj-A", self.job.job_id)
+        self.store.fail(
+            "proj-A", self.job.job_id, claim2.claim_token,
+            error_summary="transient-2", retryable=True,
+        )
+        exhausted = self.store.get("proj-A", self.job.job_id)
+        self.assertEqual(exhausted.status, "failed")
+        self.assertEqual(exhausted.attempt_count, 2)
+
+        result = self.store.retry("proj-A", self.job.job_id)
+        self.assertTrue(result.requeued)
+        retried = self.store.claim("proj-A", self.job.job_id)
+        self.assertTrue(retried.claimed)
+        self.assertEqual(retried.job.attempt_count, 1)
 
     def test_retry_retry_wait_succeeds(self) -> None:
         claim = self.store.claim("proj-A", self.job.job_id)

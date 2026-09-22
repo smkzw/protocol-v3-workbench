@@ -1777,6 +1777,7 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
   const [settings, setSettings] = useState(null);
   const [activeRoleId, setActiveRoleId] = useState("independent_ai");
   const [form, setForm] = useState(null);
+  const [fallbackChain, setFallbackChain] = useState([]);
   const [discoveredModels, setDiscoveredModels] = useState([]);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -1831,6 +1832,7 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
     try {
       const payload = await fetch("/api/ai-gateway/settings").then(readJsonOrThrow);
       setSettings(payload);
+      setFallbackChain(payload.fallback_chain || []);
       selectRole(payload, activeRoleId);
       setSettingsOpen(true);
     } catch (error) {
@@ -1858,6 +1860,8 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
       api_key_env: preset.api_key_env,
       deployment_scope: preset.deployment_scope,
       discovery_mode: preset.discovery_mode,
+      thinking: preset.thinking || "enabled",
+      reasoning_effort: preset.reasoning_effort || "max",
       enabled: true,
     }));
   };
@@ -1870,8 +1874,8 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
       ...profile,
       role_id: activeRoleId,
       role_model: profile.model,
-      thinking: role?.thinking || "disabled",
-      reasoning_effort: role?.reasoning_effort || "low",
+      thinking: profile.thinking || role?.thinking || "disabled",
+      reasoning_effort: profile.reasoning_effort || role?.reasoning_effort || "low",
       api_key: "",
     });
     setDiscoveredModels(role?.profile_id === profileId ? role.available_models || [] : []);
@@ -1897,6 +1901,8 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
         deployment_scope: form.deployment_scope || "cloud",
         discovery_mode: form.discovery_mode || "models_endpoint",
         enabled: form.enabled !== false,
+        thinking: form.thinking || "disabled",
+        reasoning_effort: form.reasoning_effort || "low",
         api_key: form.api_key || null,
         activate: activeRoleId === "independent_ai",
       };
@@ -1905,7 +1911,7 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profilePayload),
       }).then(readJsonOrThrow);
-      const saved = await fetch(`/api/ai-gateway/roles/${encodeURIComponent(activeRoleId)}`, {
+      let saved = await fetch(`/api/ai-gateway/roles/${encodeURIComponent(activeRoleId)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1916,6 +1922,20 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
           reasoning_effort: form.reasoning_effort || "low",
         }),
       }).then(readJsonOrThrow);
+      if (activeRoleId === "independent_ai") {
+        const seen = new Set([form.profile_id]);
+        const routes = fallbackChain.filter((item) => {
+          if (!item.profile_id || seen.has(item.profile_id)) return false;
+          seen.add(item.profile_id);
+          return true;
+        });
+        saved = await fetch("/api/ai-gateway/fallback-chain", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ routes }),
+        }).then(readJsonOrThrow);
+        setFallbackChain(saved.fallback_chain || []);
+      }
       setSettings(saved);
       selectRole(saved, activeRoleId);
       const role = (saved.roles || []).find((item) => item.role_id === activeRoleId);
@@ -2141,6 +2161,88 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
                           />
                         </label>
                       </div>
+                      {activeRoleId === "independent_ai" && (
+                        <section className="ai-fallback-editor" aria-label="备用模型顺序">
+                          <div>
+                            <strong>备用模型顺序</strong>
+                            <span>仅在限流、服务暂不可用或空响应时依次切换；内容校验失败不会换模型。</span>
+                          </div>
+                          {[0, 1].map((index) => {
+                            const route = fallbackChain[index] || {
+                              profile_id: "",
+                              thinking: "enabled",
+                              reasoning_effort: "max",
+                            };
+                            const availableProfiles = (settings?.profiles || []).filter(
+                              (profile) => profile.profile_id !== form.profile_id && profile.enabled !== false,
+                            );
+                            return (
+                              <div className="ai-fallback-row" key={`fallback-${index}`}>
+                                <span>{index + 1}</span>
+                                <select
+                                  aria-label={`第 ${index + 1} 备用连接`}
+                                  value={route.profile_id || ""}
+                                  onChange={(event) => {
+                                    const next = [...fallbackChain];
+                                    if (!event.target.value) next.splice(index, 1);
+                                    else {
+                                      const selected = availableProfiles.find(
+                                        (profile) => profile.profile_id === event.target.value,
+                                      );
+                                      next[index] = {
+                                        ...route,
+                                        profile_id: event.target.value,
+                                        thinking: selected?.thinking || "enabled",
+                                        reasoning_effort: selected?.reasoning_effort || "max",
+                                      };
+                                    }
+                                    setFallbackChain(next.filter((item) => item?.profile_id));
+                                  }}
+                                >
+                                  <option value="">不设置</option>
+                                  {availableProfiles.map((profile) => (
+                                    <option key={profile.profile_id} value={profile.profile_id}>
+                                      {profile.label} · {profile.model}
+                                    </option>
+                                  ))}
+                                </select>
+                                <select
+                                  aria-label={`第 ${index + 1} 备用思考模式`}
+                                  value={route.thinking || "enabled"}
+                                  disabled={!route.profile_id}
+                                  onChange={(event) => {
+                                    const next = [...fallbackChain];
+                                    next[index] = { ...route, thinking: event.target.value };
+                                    setFallbackChain(next);
+                                  }}
+                                >
+                                  <option value="enabled">开启思考</option>
+                                  <option value="disabled">关闭思考</option>
+                                </select>
+                                <select
+                                  aria-label={`第 ${index + 1} 备用思考强度`}
+                                  value={route.reasoning_effort || "max"}
+                                  disabled={!route.profile_id}
+                                  onChange={(event) => {
+                                    const next = [...fallbackChain];
+                                    next[index] = {
+                                      ...route,
+                                      reasoning_effort: event.target.value,
+                                    };
+                                    setFallbackChain(next);
+                                  }}
+                                >
+                                  <option value="low">低</option>
+                                  <option value="medium">中</option>
+                                  <option value="high">高</option>
+                                  <option value="xhigh">极高</option>
+                                  <option value="max">最大</option>
+                                </select>
+                              </div>
+                            );
+                          })}
+                        </section>
+                      )}
                     </>
                   );
                 })()}

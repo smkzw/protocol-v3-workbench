@@ -1,0 +1,24 @@
+{
+  "job_id": "mwjob_1899993fde771e9d9f635033",
+  "project_id": "proj_user_0cec66a7da6e",
+  "job_type": "protocol_full_draft",
+  "status": "completed",
+  "attempt_count": 1,
+  "max_attempts": 2,
+  "progress": {
+    "phase": "persisted_candidate",
+    "percent": 1.0,
+    "step": 22,
+    "step_total": 22,
+    "message": "全文初稿已生成 88/88 个章节候选，其中 0 个高影响章节需逐卡确认"
+  },
+  "error_summary": "",
+  "artifact_locator": "{\"artifact_relpath\":\"proj_user_0cec66a7da6e/mwjob_1899993fde771e9d9f635033/full-draft.json\",\"artifact_sha256\":\"de3bc490394b5d08fa72013d20aa54de03350f4a4619e90320f163d0b067c3e1\",\"coverage\":{\"adoption_ready\":false,\"decision_required_count\":0,\"formal_ready\":false,\"generated_count\":88,\"partial_count\":47,\"required_review_count\":0,\"source_gap_count\":31,\"target_count\":88,\"working_draft_ready\":true},\"precondition_digest\":\"c315238e8975745fc5500ae52859c14372253487b00aa4718f4224a279fcb0b5\",\"schema_version\":\"protocol_full_draft_artifact_v10\"}",
+  "provider": "cms-router",
+  "model": "deepseek-latest-cloud",
+  "created_at": "2026-09-22T16:29:24.109664+00:00",
+  "updated_at": "2026-09-22T17:04:53.911896+00:00",
+  "started_at": "2026-09-22T16:29:24.111354+00:00",
+  "finished_at": "2026-09-22T17:04:53.911896+00:00",
+  "cancelled_at": null
+}

@@ -1082,6 +1082,47 @@ class MedicalWritingFullDraftService:
             raise RuntimeStoreError("全文初稿章节身份或顺序不匹配，未写入任何正文")
         return output, run, sources
 
+    @staticmethod
+    def _run_route_receipt(run: Any) -> dict[str, Any]:
+        return {
+            "ai_run_id": _text(getattr(run, "run_id", "")),
+            "provider": _text(getattr(run, "provider", "")),
+            "model": _text(getattr(run, "model_name", "")),
+            "route_profile_id": _text(getattr(run, "route_profile_id", "")),
+            "route_identity_hash": _text(getattr(run, "route_identity_hash", "")),
+            "route_base_url": _text(getattr(run, "route_base_url", "")),
+            "expected_response_model": _text(
+                getattr(run, "expected_response_model", "")
+            ),
+            "actual_response_model": _text(
+                getattr(run, "actual_response_model", "")
+            ),
+            "thinking": _text(getattr(run, "route_thinking", "")),
+            "reasoning_effort": _text(getattr(run, "route_reasoning_effort", "")),
+            "fallback_chain_id": _text(getattr(run, "fallback_chain_id", "")),
+            "fallback_depth": int(getattr(run, "fallback_depth", 0) or 0),
+            "fallback_reason": _text(getattr(run, "fallback_reason", "")),
+        }
+
+    @staticmethod
+    def _result_route_identity(
+        receipts: list[dict[str, Any]],
+        fallback_policy: Mapping[str, Any],
+    ) -> tuple[str, str]:
+        identities = {
+            (_text(item.get("provider")), _text(item.get("model")))
+            for item in receipts
+            if _text(item.get("provider")) or _text(item.get("model"))
+        }
+        if len(identities) == 1:
+            return next(iter(identities))
+        if len(identities) > 1:
+            return "mixed", "mixed"
+        return (
+            _text(fallback_policy.get("provider_name")),
+            _text(fallback_policy.get("model_name")),
+        )
+
     def run_job(
         self,
         job: Any,
@@ -1145,11 +1186,15 @@ class MedicalWritingFullDraftService:
                     },
                 }
             )
+            provider, model = self._result_route_identity(
+                list(existing_final.get("ai_route_receipts") or []),
+                expected.get("ai_policy") or {},
+            )
             return DurableJobResult(
                 output_hash=artifact_sha,
                 artifact_locator=locator,
-                provider=str((expected.get("ai_policy") or {}).get("provider_name") or ""),
-                model=str((expected.get("ai_policy") or {}).get("model_name") or ""),
+                provider=provider,
+                model=model,
                 progress=DurableJobProgressPayload(
                     phase="persisted_candidate",
                     percent=1.0,
@@ -1160,6 +1205,7 @@ class MedicalWritingFullDraftService:
             )
         all_sections: list[dict[str, Any]] = []
         run_ids: list[str] = []
+        route_receipts: list[dict[str, Any]] = []
         source_bindings: list[dict[str, Any]] = []
         total = len(chunks)
         for index, chunk in enumerate(chunks, start=1):
@@ -1183,6 +1229,59 @@ class MedicalWritingFullDraftService:
             )
             if reusable is not None:
                 run_ids.append(str(reusable.get("ai_run_id") or ""))
+                reusable_receipt = reusable.get("ai_route")
+                if isinstance(reusable_receipt, dict):
+                    route_receipts.append(dict(reusable_receipt))
+                else:
+                    frozen_policy = expected.get("ai_policy") or {}
+                    frozen_snapshot = (
+                        frozen_policy.get("route_identity_snapshot") or {}
+                    )
+                    route_receipts.append(
+                        {
+                            "ai_run_id": _text(reusable.get("ai_run_id")),
+                            "provider": _text(
+                                frozen_policy.get("provider")
+                                or frozen_policy.get("provider_name")
+                            ),
+                            "model": _text(
+                                frozen_policy.get("model")
+                                or frozen_policy.get("model_name")
+                            ),
+                            "route_profile_id": _text(
+                                frozen_policy.get("route_profile_id")
+                                or frozen_snapshot.get("profile_id")
+                            ),
+                            "route_identity_hash": _text(
+                                frozen_policy.get("route_identity_hash")
+                                or frozen_policy.get("identity_sha256")
+                            ),
+                            "route_base_url": _text(
+                                frozen_policy.get("base_url")
+                                or frozen_snapshot.get("base_url")
+                            ),
+                            "expected_response_model": _text(
+                                frozen_policy.get("required_response_model")
+                                or frozen_snapshot.get("expected_response_model")
+                                or frozen_policy.get("model")
+                                or frozen_policy.get("model_name")
+                            ),
+                            "actual_response_model": "",
+                            "thinking": _text(
+                                frozen_policy.get("thinking")
+                                or frozen_snapshot.get("thinking")
+                            ),
+                            "reasoning_effort": _text(
+                                frozen_policy.get("reasoning_effort")
+                                or frozen_snapshot.get("reasoning_effort")
+                            ),
+                            "fallback_chain_id": "",
+                            "fallback_depth": 0,
+                            "fallback_reason": "",
+                            "legacy_inferred": True,
+                            "identity_evidence": "legacy_inferred",
+                        }
+                    )
                 source_bindings.extend(
                     item
                     for item in reusable.get("source_bindings") or []
@@ -1255,6 +1354,7 @@ class MedicalWritingFullDraftService:
                     "section_ids": [item["section_id"] for item in chunk],
                     "sections": chunk_sections,
                     "ai_run_id": str(run.run_id),
+                    "ai_route": self._run_route_receipt(run),
                     "source_bindings": chunk_source_bindings,
                 }
                 try:
@@ -1271,6 +1371,7 @@ class MedicalWritingFullDraftService:
                 except Exception as exc:
                     return DurableJobResult(error=f"全文初稿分批候选持久化失败：{exc}", retryable=False)
                 run_ids.append(str(run.run_id))
+                route_receipts.append(self._run_route_receipt(run))
                 source_bindings.extend(chunk_source_bindings)
                 all_sections.extend(chunk_sections)
             if not heartbeat(
@@ -1364,6 +1465,7 @@ class MedicalWritingFullDraftService:
                 "section_ids": expected_ids,
             },
             "ai_run_ids": run_ids,
+            "ai_route_receipts": route_receipts,
             "source_bindings": source_bindings,
             "created_by": payload.get("actor") or "medical_manager",
         }
@@ -1392,11 +1494,15 @@ class MedicalWritingFullDraftService:
                 },
             }
         )
+        provider, model = self._result_route_identity(
+            route_receipts,
+            expected.get("ai_policy") or {},
+        )
         return DurableJobResult(
             output_hash=artifact_sha,
             artifact_locator=locator,
-            provider=str((expected.get("ai_policy") or {}).get("provider_name") or ""),
-            model=str((expected.get("ai_policy") or {}).get("model_name") or ""),
+            provider=provider,
+            model=model,
             progress=DurableJobProgressPayload(
                 phase="persisted_candidate",
                 percent=1.0,
