@@ -264,3 +264,15 @@ Study C医学复核确认的首个确定性缺陷已修复。全文提示升级�
 集中验证：4项针对性测试、竞品分诊全族460 passed、Protocol v3全量2608 passed（仅既有Python 3.14 future warning），py_compile和diff check通过。MTPLX 11234仍无本地listener，models探针为代理层502，因此本批只证明路由合同与模拟429降级，不证明MTPLX真实生成质量。稀有的同一分片“首答来自A、缺ID修复来自B”仍只有最终路由provenance，是已记录P2，不阻当前提交。
 
 下一连续动作：迁移`medical_writing_corpus_analysis_ai.py`的旧直连入口到同一冻结fallback语义；MTPLX恢复后做exact identity和真实质量；随后继续V01/V04/V06/V07与逐章医学、统计和安全接受。普通失败不暂停。
+
+## 2026-09-23 旧语料分析 frozen fallback 迁移
+
+`medical_writing_corpus_analysis_ai.py`已接入与综合AI设置一致的冻结模型链：默认本地MTPLX `Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed/medium`，后续按用户配置的provider/model/thinking/reasoning effort顺序执行。仅408、429、500/502/503/504、传输失败和空响应切换；400、鉴权/配置、内容无效和模型身份不符不切换。旧无链冻结任务继续使用原analysis id公式和主路由身份，不改写历史。
+
+每次成功结果现在同时保存用户选择的主路由、完整冻结fallback链、实际成功路由、层级和原因；完成审计的provider/model记录实际成功模型，主route hash继续作为不可变工作身份。不可用或重复的可选fallback在新任务冻结时跳过，不阻断健康主模型；每条fallback自选thinking/effort在执行时按冻结值生效。
+
+fresh会商`mw_protocol_v3_corpus_fallback_review_20260923`使用`zcode/zcode/GLM-5.3-Flash:max`，同一session `sess_aa7ce14d-eeba-45d2-af67-42f549e3b528`三轮、无fallback。首轮发现两个高影响缺陷：fallback强度覆盖执行时丢失、不可用fallback阻断主路由；owner修复后续审验证旧任务去重、篡改拒绝和两项修复，最终无遗留可操作缺陷。review gate和conference validation通过。
+
+集中验证：模型设置/语料/流程216 passed，Protocol v3全量2608 passed（仅既有Python 3.14 tar warning），py_compile和diff check通过。另有一条顶层准备阶段测试仍期待旧“每批暂停一次”行为，与已提交的自动连续排空设计冲突，未混入本批。MTPLX 11234仍未监听，因此不声称本地模型真实生成质量已验收。
+
+下一连续动作：提交并推送本批后，继续完成V01/V04/V06/V07以及逐章医学、统计和安全接受；MTPLX恢复时做exact identity和真实生成质量。旧竞品分诊与语料分析两条直连入口均已统一，但仍需盘点是否还有第三条遗留直连provider路径。普通失败不暂停。

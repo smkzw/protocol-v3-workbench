@@ -1601,18 +1601,11 @@ def _independent_ai_profile():
 
 
 def _independent_ai_provider_for_profile(profile):
-    """Build a frozen independent-AI provider with role-level thinking options."""
+    """Build a frozen independent-AI provider from the selected profile."""
 
     store = runtime_ai_role_settings_store()
-    binding = store.binding(INDEPENDENT_AI_ROLE)
     values = store.provider_store.profile_env(profile)
-    values.update(
-        {
-            "WORKBENCH_AI_ROLE": INDEPENDENT_AI_ROLE,
-            "WORKBENCH_AI_THINKING": binding.thinking,
-            "WORKBENCH_AI_REASONING_EFFORT": binding.reasoning_effort,
-        }
-    )
+    values["WORKBENCH_AI_ROLE"] = INDEPENDENT_AI_ROLE
     return configured_ai_provider_from_env(values)
 
 

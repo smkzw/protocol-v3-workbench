@@ -38,6 +38,8 @@ from .writing_reference_protocol_scope import protocol_corpus_span_scope
 CORPUS_ANALYSIS_PROMPT_VERSION = "competitor_protocol_corpus_analysis_v12"
 CORPUS_ANALYSIS_SCHEMA_VERSION = "competitor_protocol_corpus_analysis_v4"
 CORPUS_ANALYSIS_ROUTE_SCHEMA_VERSION = "corpus_analysis_ai_route_v1"
+CORPUS_ANALYSIS_FALLBACK_CHAIN_VERSION = "corpus_analysis_ai_fallback_v1"
+CORPUS_ANALYSIS_FALLBACK_HTTP_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 CORPUS_ANALYSIS_RESPONSE_REPAIR_POLICY_VERSION = "single_finding_root_repair_v1"
 CORPUS_ANALYSIS_TABLE = "writing_reference_corpus_analysis_runs"
 INDICATION_ALIGNMENT_POLICY_VERSION = "controlled_indication_aliases_v2"
@@ -520,7 +522,61 @@ class MedicalWritingCorpusAnalysisAiService:
             ).strip().lower(),
         ).with_hash()
         self._assert_provider_matches_route(provider, route)
-        return route.audit_payload()
+        fallback_routes: list[FrozenCorpusAnalysisAiRoute] = []
+        seen_profile_ids = {route.profile_id}
+        fallback_chain = getattr(self.runtime_settings_store, "fallback_chain", None)
+        for fallback in fallback_chain() if callable(fallback_chain) else []:
+            if fallback.profile_id in seen_profile_ids:
+                continue
+            seen_profile_ids.add(fallback.profile_id)
+            try:
+                fallback_profile = self.runtime_settings_store.profile(
+                    fallback.profile_id
+                )
+            except KeyError:
+                continue
+            if not bool(getattr(fallback_profile, "enabled", False)):
+                continue
+            effective_profile = replace(
+                fallback_profile,
+                thinking=fallback.thinking,
+                reasoning_effort=fallback.reasoning_effort,
+            )
+            try:
+                fallback_provider = self._provider_for_profile(effective_profile)
+                fallback_route = replace(
+                    self._route_from_profile(effective_profile),
+                    thinking=str(
+                        getattr(fallback_provider, "default_thinking", "") or ""
+                    ).strip().lower(),
+                    reasoning_effort=str(
+                        getattr(
+                            fallback_provider,
+                            "default_reasoning_effort",
+                            "",
+                        )
+                        or ""
+                    ).strip().lower(),
+                ).with_hash()
+                self._assert_provider_matches_route(
+                    fallback_provider, fallback_route
+                )
+            except CorpusAnalysisAiError:
+                # A missing credential or unavailable optional provider must
+                # not prevent a healthy primary route from starting. The
+                # frozen job contains only routes that were resolvable now;
+                # later credential repair applies to newly frozen work.
+                continue
+            fallback_routes.append(fallback_route)
+        payload = route.audit_payload()
+        payload["fallback_chain"] = {
+            "schema_version": CORPUS_ANALYSIS_FALLBACK_CHAIN_VERSION,
+            "routes": [item.audit_payload() for item in fallback_routes],
+        }
+        payload["fallback_chain_id"] = self._fallback_chain_id(
+            route, fallback_routes
+        )
+        return payload
 
     def analyze(
         self,
@@ -533,7 +589,7 @@ class MedicalWritingCorpusAnalysisAiService:
         frozen_route: dict[str, Any],
     ) -> dict[str, Any]:
         route = FrozenCorpusAnalysisAiRoute.parse(frozen_route)
-        provider = self._resolve_frozen_provider(route)
+        fallback_routes = self._parse_fallback_routes(frozen_route)
         project_context = self._project_context(journey)
         evidence_catalog = self._evidence_catalog(
             project_id=project_id,
@@ -559,11 +615,15 @@ class MedicalWritingCorpusAnalysisAiService:
             "required_output": self._output_contract(),
         }
         input_hash = _hash_json(input_payload)
+        route_work_identity = route.identity_hash
+        fallback_chain_id = self._fallback_chain_id(route, fallback_routes)
+        if fallback_chain_id:
+            route_work_identity += "|" + fallback_chain_id
         analysis_id = "mwca_" + sha256(
             (
                 input_hash
                 + "|"
-                + route.identity_hash
+                + route_work_identity
                 + "|"
                 + CORPUS_ANALYSIS_PROMPT_VERSION
             ).encode("utf-8")
@@ -574,11 +634,13 @@ class MedicalWritingCorpusAnalysisAiService:
             return existing
 
         input_payload["analysis_id"] = analysis_id
-        provider_output = self._run_provider(
-            provider=provider,
-            route=route,
-            analysis_id=analysis_id,
-            payload=input_payload,
+        provider_output, effective_route, fallback_depth, fallback_reason = (
+            self._run_with_fallback(
+                route=route,
+                fallback_routes=fallback_routes,
+                analysis_id=analysis_id,
+                payload=input_payload,
+            )
         )
         raw_output, response_normalization = self._normalize_response_root(
             provider_output,
@@ -627,7 +689,15 @@ class MedicalWritingCorpusAnalysisAiService:
             "input_hash": input_hash,
             "output_hash": _hash_json(validated_output),
             "ai_route": route.audit_payload(),
-            "response_model": route.model,
+            "effective_ai_route": effective_route.audit_payload(),
+            "fallback_chain": {
+                "schema_version": CORPUS_ANALYSIS_FALLBACK_CHAIN_VERSION,
+                "routes": [item.audit_payload() for item in fallback_routes],
+            },
+            "fallback_chain_id": fallback_chain_id,
+            "fallback_depth": fallback_depth,
+            "fallback_reason": fallback_reason,
+            "response_model": effective_route.expected_response_model,
             "evidence_summary_ids": [
                 str(item["finding_id"]) for item in validated_output["findings"]
             ],
@@ -768,6 +838,119 @@ class MedicalWritingCorpusAnalysisAiService:
             return None
         return result if isinstance(result, dict) else None
 
+    @staticmethod
+    def _fallback_chain_id(
+        route: FrozenCorpusAnalysisAiRoute,
+        fallback_routes: list[FrozenCorpusAnalysisAiRoute],
+    ) -> str:
+        if not fallback_routes:
+            return ""
+        return "mcaf_" + sha256(
+            _canonical_json(
+                [
+                    route.identity_hash,
+                    *(item.identity_hash for item in fallback_routes),
+                ]
+            ).encode("utf-8")
+        ).hexdigest()[:24]
+
+    def _parse_fallback_routes(
+        self,
+        payload: dict[str, Any],
+    ) -> list[FrozenCorpusAnalysisAiRoute]:
+        chain = payload.get("fallback_chain")
+        if chain is None:
+            return []
+        if (
+            not isinstance(chain, dict)
+            or chain.get("schema_version")
+            != CORPUS_ANALYSIS_FALLBACK_CHAIN_VERSION
+            or not isinstance(chain.get("routes"), list)
+        ):
+            raise CorpusAnalysisAiError(
+                "frozen corpus-analysis fallback chain is malformed"
+            )
+        try:
+            routes = [
+                FrozenCorpusAnalysisAiRoute.parse(item)
+                for item in chain["routes"]
+            ]
+        except CorpusAnalysisAiError as exc:
+            raise CorpusAnalysisAiError(
+                "frozen corpus-analysis fallback route is malformed"
+            ) from exc
+        profile_ids = [
+            str(payload.get("profile_id") or ""),
+            *(item.profile_id for item in routes),
+        ]
+        if len(profile_ids) != len(set(profile_ids)):
+            raise CorpusAnalysisAiError(
+                "frozen corpus-analysis fallback chain contains duplicates"
+            )
+        expected_chain_id = self._fallback_chain_id(
+            FrozenCorpusAnalysisAiRoute.parse(payload), routes
+        )
+        if str(payload.get("fallback_chain_id") or "") != expected_chain_id:
+            raise CorpusAnalysisAiError(
+                "frozen corpus-analysis fallback chain identity mismatch"
+            )
+        return routes
+
+    @staticmethod
+    def _fallback_reason(exc: CorpusAnalysisAiError) -> str:
+        diagnostics = dict(exc.diagnostics or {})
+        failure_code = str(diagnostics.get("failure_code") or "")
+        if failure_code == "provider_http_error":
+            try:
+                status = int(diagnostics.get("http_status"))
+            except (TypeError, ValueError):
+                return ""
+            if status in CORPUS_ANALYSIS_FALLBACK_HTTP_STATUSES:
+                return f"{failure_code}:{status}"
+            return ""
+        if failure_code in {"provider_transport_error", "provider_response_empty"}:
+            return failure_code
+        return ""
+
+    def _run_with_fallback(
+        self,
+        *,
+        route: FrozenCorpusAnalysisAiRoute,
+        fallback_routes: list[FrozenCorpusAnalysisAiRoute],
+        analysis_id: str,
+        payload: dict[str, Any],
+    ) -> tuple[dict[str, Any], FrozenCorpusAnalysisAiRoute, int, str]:
+        routes = [route, *fallback_routes]
+        last_error: CorpusAnalysisAiError | None = None
+        fallback_reason = ""
+        for depth, candidate_route in enumerate(routes):
+            try:
+                provider = self._resolve_frozen_provider(candidate_route)
+            except CorpusAnalysisAiError:
+                if depth == 0:
+                    raise
+                continue
+            try:
+                output = self._run_provider(
+                    provider=provider,
+                    route=candidate_route,
+                    analysis_id=analysis_id,
+                    payload=payload,
+                )
+            except CorpusAnalysisAiError as exc:
+                reason = self._fallback_reason(exc)
+                if not reason:
+                    raise
+                fallback_reason = reason
+                last_error = exc
+                continue
+            return output, candidate_route, depth, fallback_reason
+        if last_error is not None:
+            raise last_error
+        raise CorpusAnalysisAiError(
+            "no frozen corpus-analysis provider route is available"
+        )
+
     def _route_from_profile(self, profile: Any) -> FrozenCorpusAnalysisAiRoute:
         return FrozenCorpusAnalysisAiRoute(
             profile_id=str(profile.profile_id),
@@ -809,7 +992,16 @@ class MedicalWritingCorpusAnalysisAiService:
                 "frozen product independent-AI profile revision changed "
                 f"(expected {route.profile_revision}, current {profile.revision})"
             )
-        provider = self._provider_for_profile(profile)
+        effective_profile = profile
+        if route.thinking or route.reasoning_effort:
+            effective_profile = replace(
+                profile,
+                thinking=route.thinking or profile.thinking,
+                reasoning_effort=(
+                    route.reasoning_effort or profile.reasoning_effort
+                ),
+            )
+        provider = self._provider_for_profile(effective_profile)
         base_route = self._route_from_profile(profile)
         current_route = replace(
             base_route,
@@ -906,7 +1098,11 @@ class MedicalWritingCorpusAnalysisAiService:
                 ) from exc
             if isinstance(exc, (TimeoutError, socket.timeout)):
                 raise CorpusAnalysisAiError(
-                    "product independent-AI corpus analysis timed out without a validated result"
+                    "product independent-AI corpus analysis timed out without a validated result",
+                    diagnostics={
+                        "failure_code": "provider_transport_error",
+                        "exception_type": type(exc).__name__,
+                    },
                 ) from exc
             raise
         if not isinstance(result, dict):
@@ -2324,6 +2520,7 @@ class MedicalWritingCorpusAnalysisAiService:
             )
             append_audit = getattr(self.repository, "_append_audit", None)
             if callable(append_audit):
+                effective_route = result.get("effective_ai_route") or result["ai_route"]
                 append_audit(
                     connection,
                     result["project_id"],
@@ -2340,8 +2537,11 @@ class MedicalWritingCorpusAnalysisAiService:
                         "route_identity_hash": result["ai_route"][
                             "identity_hash"
                         ],
-                        "provider": result["ai_route"]["provider"],
-                        "model": result["ai_route"]["model"],
+                        "provider": effective_route["provider"],
+                        "model": effective_route["model"],
+                        "fallback_chain_id": result.get("fallback_chain_id", ""),
+                        "fallback_depth": result.get("fallback_depth", 0),
+                        "fallback_reason": result.get("fallback_reason", ""),
                         "finding_count": len(result["analysis"]["findings"]),
                     },
                 )

@@ -8,7 +8,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from services.api.app.ai_runtime_settings import AiProviderProfile
+from services.api.app.ai_gateway import AiProviderRuntimeError
+from services.api.app.ai_runtime_settings import AiFallbackRoute, AiProviderProfile
 from services.api.app.medical_writing_corpus_analysis_ai import (
     CORPUS_ANALYSIS_PROMPT_VERSION,
     CORPUS_ANALYSIS_RESPONSE_REPAIR_POLICY_VERSION,
@@ -75,6 +76,32 @@ class _ProfileStore:
         return dict(base_env or {})
 
 
+class _FallbackProfileStore:
+    def __init__(self, primary, fallback, *, thinking=None, reasoning_effort=None):
+        self.primary = primary
+        self.by_id = {
+            primary.profile_id: primary,
+            fallback.profile_id: fallback,
+        }
+        self.route = AiFallbackRoute(
+            profile_id=fallback.profile_id,
+            thinking=thinking or fallback.thinking,
+            reasoning_effort=reasoning_effort or fallback.reasoning_effort,
+        )
+
+    def active_profile(self):
+        return self.primary
+
+    def profile(self, profile_id):
+        try:
+            return self.by_id[profile_id]
+        except KeyError:
+            raise KeyError(profile_id) from None
+
+    def fallback_chain(self):
+        return [self.route]
+
+
 class _Provider:
     def __init__(self, output_factory):
         self.provider_name = "alibaba_token_plan"
@@ -91,6 +118,26 @@ class _Provider:
     def run(self, envelope):
         self.calls += 1
         self.response_model = self.model_name
+        return self.output_factory(envelope)
+
+
+class _ProfileProvider(_Provider):
+    def __init__(self, profile, output_factory, *, failure=None):
+        super().__init__(output_factory)
+        self.provider_name = profile.provider
+        self.model_name = profile.model
+        self.base_url = profile.base_url.rstrip("/")
+        self.transport_name = profile.transport
+        self.expected_response_model = profile.expected_response_model or profile.model
+        self.default_thinking = profile.thinking
+        self.default_reasoning_effort = profile.reasoning_effort
+        self.failure = failure
+
+    def run(self, envelope):
+        self.calls += 1
+        if self.failure is not None:
+            raise self.failure
+        self.response_model = self.expected_response_model
         return self.output_factory(envelope)
 
 
@@ -419,6 +466,200 @@ def test_frozen_route_audits_effective_thinking_and_reasoning_effort(tmp_path):
         frozen_route=route,
     )
     assert replay["ai_route"]["reasoning_effort"] == "max"
+
+
+def test_corpus_analysis_uses_frozen_fallback_after_primary_429(tmp_path):
+    repository = _Repository(tmp_path / "writing_reference.sqlite3")
+    primary = AiProviderProfile(
+        profile_id="independent_ai__mtplx",
+        provider="mtplx",
+        label="MTPLX",
+        base_url="http://127.0.0.1:11234/v1",
+        model="Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        expected_response_model=(
+            "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+        ),
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="medium",
+        revision=1,
+    )
+    fallback = AiProviderProfile(
+        profile_id="independent_ai__cms_router",
+        provider="cms-router",
+        label="CMS Router",
+        base_url="http://127.0.0.1:20128/v1",
+        model="deepseek-latest-cloud",
+        expected_response_model="deepseek-latest-cloud",
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="max",
+        revision=1,
+    )
+    providers = {
+        primary.profile_id: _ProfileProvider(
+            primary,
+            _valid_output,
+            failure=AiProviderRuntimeError(
+                "HTTP 429",
+                diagnostics={
+                    "failure_code": "provider_http_error",
+                    "http_status": 429,
+                },
+            ),
+        ),
+    }
+
+    def provider_for_profile(profile):
+        if profile.profile_id not in providers:
+            providers[profile.profile_id] = _ProfileProvider(profile, _valid_output)
+        return providers[profile.profile_id]
+
+    service = MedicalWritingCorpusAnalysisAiService(
+        repository,
+        runtime_settings_store=_FallbackProfileStore(
+            primary,
+            fallback,
+            reasoning_effort="low",
+        ),
+        profile_provider_factory=provider_for_profile,
+    )
+    frozen = service.freeze_active_route()
+
+    result = service.analyze(
+        project_id="proj_corpus_fallback",
+        pipeline_id="mwpipe_corpus_fallback",
+        snapshot_id="snapshot_corpus_fallback",
+        journey=_journey(),
+        actor="medical_manager",
+        frozen_route=frozen,
+    )
+
+    assert result["ai_route"]["profile_id"] == primary.profile_id
+    assert result["effective_ai_route"]["profile_id"] == fallback.profile_id
+    assert result["fallback_depth"] == 1
+    assert result["fallback_reason"] == "provider_http_error:429"
+    assert result["fallback_chain_id"].startswith("mcaf_")
+    assert result["fallback_chain"]["routes"][0]["reasoning_effort"] == "low"
+    assert result["effective_ai_route"]["reasoning_effort"] == "low"
+    assert providers[primary.profile_id].calls == 1
+    assert providers[fallback.profile_id].calls == 1
+
+
+def test_route_freeze_skips_unavailable_optional_fallback(tmp_path):
+    primary = AiProviderProfile(
+        profile_id="independent_ai__mtplx",
+        provider="mtplx",
+        label="MTPLX",
+        base_url="http://127.0.0.1:11234/v1",
+        model="Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        expected_response_model=(
+            "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+        ),
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="medium",
+        revision=1,
+    )
+    fallback = AiProviderProfile(
+        profile_id="independent_ai__cms_router",
+        provider="cms-router",
+        label="CMS Router",
+        base_url="http://127.0.0.1:20128/v1",
+        model="deepseek-latest-cloud",
+        expected_response_model="deepseek-latest-cloud",
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="max",
+        revision=1,
+    )
+
+    def provider_for_profile(profile):
+        if profile.profile_id == primary.profile_id:
+            return _ProfileProvider(profile, _valid_output)
+        return SimpleNamespace(
+            provider_name="disabled",
+            model_name="not_configured",
+            base_url="",
+            transport_name="disabled",
+            expected_response_model="not_configured",
+            default_thinking="",
+            default_reasoning_effort="",
+        )
+
+    service = MedicalWritingCorpusAnalysisAiService(
+        _Repository(tmp_path / "writing_reference.sqlite3"),
+        runtime_settings_store=_FallbackProfileStore(primary, fallback),
+        profile_provider_factory=provider_for_profile,
+    )
+
+    frozen = service.freeze_active_route()
+
+    assert frozen["profile_id"] == primary.profile_id
+    assert frozen["fallback_chain"]["routes"] == []
+    assert frozen["fallback_chain_id"] == ""
+
+
+def test_corpus_analysis_does_not_fallback_after_non_retryable_400(tmp_path):
+    repository = _Repository(tmp_path / "writing_reference.sqlite3")
+    primary = AiProviderProfile(
+        profile_id="independent_ai__mtplx",
+        provider="mtplx",
+        label="MTPLX",
+        base_url="http://127.0.0.1:11234/v1",
+        model="Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        expected_response_model=(
+            "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+        ),
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="medium",
+        revision=1,
+    )
+    fallback = AiProviderProfile(
+        profile_id="independent_ai__cms_router",
+        provider="cms-router",
+        label="CMS Router",
+        base_url="http://127.0.0.1:20128/v1",
+        model="deepseek-latest-cloud",
+        expected_response_model="deepseek-latest-cloud",
+        deployment_scope="loopback",
+        thinking="enabled",
+        reasoning_effort="max",
+        revision=1,
+    )
+    providers = {
+        primary.profile_id: _ProfileProvider(
+            primary,
+            _valid_output,
+            failure=AiProviderRuntimeError(
+                "HTTP 400",
+                diagnostics={
+                    "failure_code": "provider_http_error",
+                    "http_status": 400,
+                },
+            ),
+        ),
+        fallback.profile_id: _ProfileProvider(fallback, _valid_output),
+    }
+    service = MedicalWritingCorpusAnalysisAiService(
+        repository,
+        runtime_settings_store=_FallbackProfileStore(primary, fallback),
+        profile_provider_factory=lambda profile: providers[profile.profile_id],
+    )
+
+    with pytest.raises(CorpusAnalysisAiError, match="provider_http_error"):
+        service.analyze(
+            project_id="proj_corpus_no_fallback",
+            pipeline_id="mwpipe_corpus_no_fallback",
+            snapshot_id="snapshot_corpus_no_fallback",
+            journey=_journey(),
+            actor="medical_manager",
+            frozen_route=service.freeze_active_route(),
+        )
+
+    assert providers[primary.profile_id].calls == 1
+    assert providers[fallback.profile_id].calls == 0
 
 
 def test_round1_analysis_uses_frozen_product_ai_and_persists_high_confidence(
