@@ -250,8 +250,8 @@ class BulkProviderCallTests(unittest.TestCase):
 
         # DeepSeek V4 shares max_tokens between hidden reasoning and visible
         # JSON.  16K could terminate with finish_reason=length before any
-        # structured content; 32K is the bounded prefill ceiling.
-        self.assertEqual(32768, envelope.max_output_tokens)
+        # structured content; 64K is the bounded prefill ceiling.
+        self.assertEqual(65536, envelope.max_output_tokens)
 
 
 class AiRunAuditTests(unittest.TestCase):

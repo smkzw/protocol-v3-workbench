@@ -1278,10 +1278,22 @@ class OpenAICompatibleAiProvider:
             http_status=response_status,
             content_type=response_content_type,
         )
+        self.response_model = verified_response_model
+        # An exhausted HTTP-200 empty completion is a transient provider
+        # failure, not evidence that a different model answered. Classify it
+        # before response-model identity so an ordered cross-provider chain
+        # can continue without weakening non-empty identity checks.
+        if _empty_completion(response_body):
+            raise AiProviderRuntimeError(
+                "AI provider returned an empty completion (provider_response_empty)",
+                diagnostics={
+                    **self.response_diagnostics,
+                    "failure_code": "provider_response_empty",
+                },
+            )
         # Persist the observed endpoint identity before enforcing the expected
         # model so a failed run remains auditable instead of recording an empty
         # actual_response_model.
-        self.response_model = verified_response_model
         if (
             self.expected_response_model
             and verified_response_model != self.expected_response_model

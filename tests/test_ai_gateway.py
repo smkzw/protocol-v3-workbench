@@ -1081,6 +1081,35 @@ class AiGatewayTests(unittest.TestCase):
         self.assertNotIn("response_body", diagnostics)
         self.assertEqual(64, len(diagnostics["response_sha256"]))
 
+    def test_empty_completion_without_model_is_transient_not_identity_mismatch(self):
+        envelope = AiPromptEnvelope(
+            task_id="task_empty_missing_model",
+            task_type=AiTaskType.COMPETITIVE_INTELLIGENCE,
+            prompt_version="corpus_analysis_v11",
+            system_prompt="Return JSON.",
+            payload={"value": "x"},
+        )
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://ai.example.test/v1",
+            api_key="test-key",
+            model_name="deepseek-v4-flash",
+            provider_name="deepseek",
+            expected_response_model="deepseek-v4-flash",
+            timeout_seconds=1,
+            max_attempts=1,
+        )
+        with patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen:
+            urlopen.return_value = _FakeResponse(
+                {"choices": [{"message": {"content": ""}}]}
+            )
+            with self.assertRaises(AiProviderRuntimeError) as raised:
+                provider.run(envelope)
+
+        self.assertEqual(
+            "provider_response_empty",
+            raised.exception.diagnostics["failure_code"],
+        )
+
     def test_openai_compatible_provider_retries_transient_empty_final_content(self):
         envelope = AiPromptEnvelope(
             task_id="task_empty_then_complete",

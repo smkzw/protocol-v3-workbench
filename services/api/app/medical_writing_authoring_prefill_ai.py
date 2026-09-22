@@ -1188,9 +1188,12 @@ class DeepSeekPrefillAdapter:
                 f"{type(exc).__name__}: {exc}",
             )
 
+        effective_model_name = str(
+            getattr(self._provider, "model_name", "") or self._model_name
+        )
         run_audit = _build_prefill_ai_run_audit(
             provider=self._provider,
-            model_name=self._model_name,
+            model_name=effective_model_name,
             prompt_version=self._prompt_version,
             request_payload=request_payload,
             raw_response=raw_response,
@@ -1337,7 +1340,7 @@ class DeepSeekPrefillAdapter:
             return package.model_copy(
                 update={
                     **run_audit.as_package_update(),
-                    "model_name": self._model_name,
+                    "model_name": effective_model_name,
                     "prompt_version": self._prompt_version,
                     "partial_source_failures": (
                         list(package.partial_source_failures) + extra_failures
@@ -1403,7 +1406,7 @@ class DeepSeekPrefillAdapter:
             update={
                 **run_audit.as_package_update(),
                 "field_candidates": new_field_candidates,
-                "model_name": self._model_name,
+                "model_name": effective_model_name,
                 "prompt_version": self._prompt_version,
                 "evidence_catalog": catalog,
                 "partial_source_failures": partial_failures,
@@ -1436,8 +1439,11 @@ class DeepSeekPrefillAdapter:
             # generic retry budget must never be used here (worker_02
             # corrective round).
             from .ai_gateway import OpenAICompatibleAiProvider
+            from .ai_runtime_fallback_provider import RuntimeFallbackAiProvider
 
-            if isinstance(provider, OpenAICompatibleAiProvider):
+            if isinstance(
+                provider, (OpenAICompatibleAiProvider, RuntimeFallbackAiProvider)
+            ):
                 if provider.max_attempts != 1:
                     raise RuntimeError(
                         "authoring_prefill_ai requires exactly one physical "
@@ -1456,7 +1462,9 @@ class DeepSeekPrefillAdapter:
             # identity was already verified from the HTTP response. A generic
             # provider must not gain that trust merely by exposing a similarly
             # named attribute.
-            if isinstance(provider, OpenAICompatibleAiProvider):
+            if isinstance(
+                provider, (OpenAICompatibleAiProvider, RuntimeFallbackAiProvider)
+            ):
                 # The provider already compares the upstream response with
                 # its frozen expected_response_model.  The configured request
                 # alias may intentionally differ from that calibrated served
@@ -2095,6 +2103,7 @@ def build_prefill_ai_adapter(
     corpus_analysis_reader: Any | None = None,
     corpus_source_reader: Any | None = None,
     provider_env: Mapping[str, str] | None = None,
+    provider: Any | None = None,
 ) -> DeepSeekPrefillAdapter | None:
     """Build the product prefill adapter from the active independent-AI route.
 
@@ -2111,23 +2120,17 @@ def build_prefill_ai_adapter(
     # upstream POST per logical call (worker_02 corrective round): the
     # provider is built with a single-attempt transport while every other
     # AI gateway caller keeps the generic bounded retry budget.
-    provider = configured_ai_provider_from_env(
-        dict(provider_env) if provider_env is not None else None,
-        max_attempts=1,
-    )
+    if provider is None:
+        provider = configured_ai_provider_from_env(
+            dict(provider_env) if provider_env is not None else None,
+            max_attempts=1,
+        )
     if isinstance(provider, DisabledAiProvider) or not hasattr(provider, "run"):
         return None
     model_name = getattr(provider, "model_name", "")
     if not model_name:
         return None
     timeout_seconds = _resolve_prefill_timeout_seconds(provider, provider_env)
-    # Prefill-only thinking disable (empty-content mitigation): the bounded
-    # prefill response shares max_tokens with DeepSeek's reasoning stream —
-    # at effort=max over a large corpus context the reasoning consumed the
-    # entire budget and returned empty content.  The structured corpus
-    # context is already in the prompt, so prefill runs without thinking.
-    if getattr(provider, "default_thinking", None):
-        provider.default_thinking = None
     return DeepSeekPrefillAdapter(
         provider=provider,
         model_name=model_name,

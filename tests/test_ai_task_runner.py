@@ -186,6 +186,7 @@ class RepairingFullDraftProvider:
                         "evidence_span_ids": ["full_draft_ev_1"],
                         "decision_items": [],
                         "missing_source_classes": [],
+                        "gap_items": [],
                     }
                     for section_id in section_ids
                 ]
@@ -1305,7 +1306,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_9",
+            prompt_version="protocol_full_draft_v0_11",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={
@@ -1328,7 +1329,7 @@ class AiTaskRunnerTests(unittest.TestCase):
 
             run = runner.submit_internal("proj_full_draft", request)
 
-        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
+        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status, run.validation_errors)
         self.assertEqual(1, len(provider.envelopes))
         self.assertEqual(
             [65_536],
@@ -1353,7 +1354,7 @@ class AiTaskRunnerTests(unittest.TestCase):
         request = AiTaskRequest(
             module="medical_writing",
             task_type="protocol_full_draft",
-            prompt_version="protocol_full_draft_v0_9",
+            prompt_version="protocol_full_draft_v0_11",
             allowed_sources=[source],
             user_instruction="生成完整章节正文。",
             task_context={
@@ -1376,7 +1377,7 @@ class AiTaskRunnerTests(unittest.TestCase):
 
             run = runner.submit_internal("proj_full_draft", request)
 
-        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status)
+        self.assertEqual(AiTaskRunStatus.COMPLETED, run.status, run.validation_errors)
         self.assertEqual(3, len(provider.envelopes))
         self.assertEqual(2, provider.envelopes[2].payload["repair_context"]["repair_attempt"])
 

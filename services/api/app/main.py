@@ -145,10 +145,12 @@ from .ai_gateway import (
     AiTaskType,
     DIRECT_DEEPSEEK_MODEL,
     DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL,
+    OpenAICompatibleAiProvider,
     ai_gateway_status_from_env,
     configured_ai_provider_from_env,
     direct_deepseek_env,
 )
+from .ai_runtime_fallback_provider import RuntimeFallbackAiProvider
 from .ai_runtime_settings import (
     AiFallbackChainUpdateRequest,
     AiFallbackRoute,
@@ -807,6 +809,10 @@ def _build_prefill_ai_enricher():
         corpus_source_reader_for_repository,
     )
 
+    try:
+        provider = _independent_ai_provider_chain(max_attempts=1)
+    except (CompositePipelineUnavailableError, ValueError):
+        return None
     return build_prefill_ai_adapter(
         corpus_analysis_reader=corpus_analysis_reader_for_repository(
             writing_reference_repository
@@ -814,7 +820,7 @@ def _build_prefill_ai_enricher():
         corpus_source_reader=corpus_source_reader_for_repository(
             writing_reference_repository
         ),
-        provider_env=runtime_ai_role_settings_store().role_env(INDEPENDENT_AI_ROLE),
+        provider=provider,
     )
 
 
@@ -1323,6 +1329,7 @@ def _medical_writing_fact_source_context(
 
 medical_writing_fact_intake_service = MedicalWritingFactIntakeService(
     RUNTIME_DIR / "medical_writing_fact_intake.sqlite3",
+    provider_factory=lambda: _independent_ai_provider_chain(max_attempts=1),
     source_context_resolver=_medical_writing_fact_source_context,
 )
 medical_writing_synopsis_import_service = MedicalWritingSynopsisImportService(
@@ -1607,6 +1614,51 @@ def _independent_ai_provider_for_profile(profile):
     values = store.provider_store.profile_env(profile)
     values["WORKBENCH_AI_ROLE"] = INDEPENDENT_AI_ROLE
     return configured_ai_provider_from_env(values)
+
+
+def _independent_ai_provider_chain(*, max_attempts: int = 1):
+    """Freeze the current interactive comprehensive-AI chain in memory."""
+
+    binding, primary_profile, primary_env = _runtime_role_context(
+        INDEPENDENT_AI_ROLE
+    )
+    if binding.model != primary_profile.model:
+        raise CompositePipelineUnavailableError(
+            "independent_ai binding model does not match provider profile"
+        )
+    provider_store = runtime_ai_role_settings_store().provider_store
+    providers = []
+    primary = configured_ai_provider_from_env(
+        primary_env,
+        max_attempts=max_attempts,
+    )
+    if isinstance(primary, OpenAICompatibleAiProvider):
+        providers.append((primary_profile.profile_id, primary))
+    for route in provider_store.fallback_chain():
+        if route.profile_id == primary_profile.profile_id:
+            continue
+        try:
+            profile = provider_store.profile(route.profile_id)
+        except KeyError:
+            continue
+        if not profile.enabled:
+            continue
+        values = provider_store.profile_env(profile)
+        values["WORKBENCH_AI_ROLE"] = INDEPENDENT_AI_ROLE
+        values["WORKBENCH_AI_THINKING"] = route.thinking
+        values["WORKBENCH_AI_REASONING_EFFORT"] = route.reasoning_effort
+        provider = configured_ai_provider_from_env(
+            values,
+            max_attempts=max_attempts,
+        )
+        if not isinstance(provider, OpenAICompatibleAiProvider):
+            continue
+        providers.append((profile.profile_id, provider))
+    if not providers:
+        raise CompositePipelineUnavailableError(
+            "independent_ai provider chain is unavailable"
+        )
+    return RuntimeFallbackAiProvider(providers)
 
 
 _writing_reference_artifact_root = RUNTIME_DIR / "writing_reference_artifacts"

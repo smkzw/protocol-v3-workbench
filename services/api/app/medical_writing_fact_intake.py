@@ -1235,9 +1235,12 @@ class MedicalWritingFactIntakeService:
 
         # Run the AI outside the write transaction so a slow provider does
         # not hold the SQLite write lock.
-        provider = self.provider_factory()
-        provider_name = getattr(provider, "provider_name", "unknown")
-        model_name = getattr(provider, "model_name", "unknown")
+        try:
+            provider = self.provider_factory()
+        except Exception as exc:
+            raise MedicalWritingFactIntakeConflictError(
+                f"fact intake AI provider is not configured: {exc}"
+            ) from exc
         if isinstance(provider, DisabledAiProvider):
             raise MedicalWritingFactIntakeConflictError(
                 "fact intake AI provider is not configured; "
@@ -1268,6 +1271,8 @@ class MedicalWritingFactIntakeService:
             raise MedicalWritingFactIntakeConflictError(
                 f"fact intake AI provider failed: {exc}"
             ) from exc
+        provider_name = getattr(provider, "provider_name", "unknown")
+        model_name = getattr(provider, "model_name", "unknown")
 
         proposals, questions, response_text, high_impact_missing = (
             _validate_ai_response(
@@ -1397,6 +1402,18 @@ class MedicalWritingFactIntakeService:
                     "questions_count": len(questions),
                     "high_impact_missing": merged_him,
                     "ai_run_id": ai_run_id,
+                    "ai_route_profile_id": str(
+                        getattr(provider, "route_profile_id", "") or ""
+                    ),
+                    "ai_fallback_chain_id": str(
+                        getattr(provider, "fallback_chain_id", "") or ""
+                    ),
+                    "ai_fallback_depth": int(
+                        getattr(provider, "fallback_depth", 0) or 0
+                    ),
+                    "ai_fallback_reason": str(
+                        getattr(provider, "fallback_reason", "") or ""
+                    ),
                     "semantically_quarantined_legacy_proposal_ids": (
                         quarantined_legacy_ids
                     ),
