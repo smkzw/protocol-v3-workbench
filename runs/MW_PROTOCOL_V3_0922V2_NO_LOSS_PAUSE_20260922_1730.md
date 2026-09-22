@@ -13,3 +13,7 @@
 保护：旧v0.9不重放；9月21 source_overlay不应用；不重跑分诊/下载/OCR/翻译；不触碰live8910/5186/5285；不清理历史runtime、dirty、会议、日志和凭证解析配置。genoffice-upstream dirty不reset，重建包在`runs/requirements_v2_20260919/wp5_renderer_repro_20260922/`。
 
 下一安全动作：从新推送commit、Trellis checkpoint和handoff重锚定，在隔离runtime/端口先执行B01–B10真实SQLite/HTTP，再用ego(lite)执行V与Office交互；之后才调用批准产品模型和Microsoft Word。
+
+## GitHub同步
+
+本轮实现、资料包、验收证据、复盘与暂停记录已提交并推送到`origin/main`。实现提交：`10dd453dc524b1adb425a117b67017470e8802a8`（GitHub：`smkzw/protocol-v3-workbench`）。历史runtime dirty与含凭据的隔离运行目录未进入提交。

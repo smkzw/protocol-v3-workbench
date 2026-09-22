@@ -88,3 +88,7 @@ PASS：
 控制流稳定后用ego(lite)完成V01–V08和B09–B12：三种宽屏、长文本、IME、切研究、专注不重建iframe、选区富文本替换/撤销、引文增删移动、保存丢回执和下载重开身份。然后才按批准路由`opencode-go/deepseek-v4.1-flash:max`运行两个差异研究加一个盲测；保存真实effective身份。最后用Microsoft Word实际修改、保存、关闭、重开并导出PDF，冻结产物后发起fresh工程和医学会商。
 
 若在恢复前源码或runtime有新漂移，先记录差异，不覆盖。只有科学取舍、Ⅰ期模板、第三方互操作扩围或生产cutover需要用户决定。
+
+## GitHub同步
+
+本轮实现、资料包、验收证据、复盘与暂停记录已提交并推送到`origin/main`。实现提交：`10dd453dc524b1adb425a117b67017470e8802a8`（GitHub：`smkzw/protocol-v3-workbench`）。历史runtime dirty与含凭据的隔离运行目录未进入提交。
