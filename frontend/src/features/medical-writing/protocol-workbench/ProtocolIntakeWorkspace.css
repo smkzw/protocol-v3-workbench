@@ -199,7 +199,8 @@
 }
 
 /* Desktop writing: confirmed design beside the actual document, not above it. */
-.pvi-writing-desk { display:grid; grid-template-columns:clamp(340px, 24vw, 460px) minmax(720px, 1fr); gap:12px; align-items:start; margin-top:12px; }
+.pvi-writing-desk { display:grid; grid-template-columns:clamp(300px, 20vw, 380px) minmax(720px, 1fr); gap:10px; align-items:start; margin-top:10px; }
+.pvi-writing-desk--bridge { grid-template-columns:clamp(220px, 15vw, 280px) minmax(780px, 1fr); }
 .pvi-writing-desk > * { min-width:0; }
 .pvi-design-pane { position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; border:1px solid var(--kz-border); border-top:3px solid var(--kz-orange); border-radius:8px; background:white; padding:10px; box-shadow:var(--kz-shadow); }
 .pvi-design-pane > h2 { font-size:18px; margin:0 0 8px; }
@@ -207,6 +208,8 @@
 .pvi-design-pane > details > summary { cursor:pointer; font-size:14px; font-weight:700; padding:2px 0; }
 .pvi-design-pane .pvi-proposal, .pvi-design-pane .rpc-card { margin:6px 0; padding:10px; max-width:none; box-shadow:none; }
 .pvi-design-pane p, .pvi-design-pane li { font-size:14px; line-height:1.4; }
+.pvi-handoff-summary { margin:0; padding-left:18px; }
+.pvi-handoff-summary li { margin:4px 0; }
 .pvi-design-pane .pvi-research-information dl { grid-template-columns:1fr; gap:8px; }
 .pvi-document-pane { min-width:0; }
 .pvi-document-pane .kz-manuscript { margin:0; padding:10px; min-height:calc(100vh - 150px); }

@@ -1,0 +1,291 @@
+diff --git a/apps/docs/src/renderer/App.tsx b/apps/docs/src/renderer/App.tsx
+index 111e81a..d869ba9 100644
+--- a/apps/docs/src/renderer/App.tsx
++++ b/apps/docs/src/renderer/App.tsx
+@@ -86,6 +86,11 @@ import { textOutlineCssValue } from './editor/text-outline'
+ import { AiAskPopover } from './components/AiAskPopover'
+ import { EDIT_QUEUE_MAX, selectionForAnchor, type DocsEditQueueItem } from './ai/edit-queue'
+ import { addQueueAnchor, clearQueueAnchors, removeQueueAnchors } from './editor/ai-queue-anchors'
++import {
++  createProtocolOfficeState,
++  runProtocolOfficeCommand,
++  syncManagedProjectCitations,
++} from './protocol-office'
+ import { asianCharCount, countWords, nonAsianWordCount } from './word-count'
+ import { CommentsPanel } from './components/CommentsPanel'
+ import { EquationModal } from './components/EquationModal'
+@@ -872,6 +877,7 @@ export function App() {
+   const [notesDirty, setNotesDirty] = useState(false)
+   const [sources, setSources] = useState<SourceInfo[]>([])
+   const [sourcesDirty, setSourcesDirty] = useState(false)
++  const protocolOfficeStateRef = useRef(createProtocolOfficeState())
+   const [zoteroDocumentData, setZoteroDocumentDataState] = useState('')
+   const [zoteroDocumentDataDirty, setZoteroDocumentDataDirty] = useState(false)
+   const zoteroDocumentDataRef = useRef('')
+@@ -5010,6 +5016,55 @@ export function App() {
+       handleDocsControl(req, editor, doc !== null)
+   })
+ 
++  // Versioned same-origin host bridge for the protocol workbench. The host can
++  // capture one live text range, apply a baseline-checked candidate, undo that
++  // exact replacement, or insert a project citation field. No command receives
++  // the whole document and no host edit bypasses the editor transaction model.
++  useEffect(() => {
++    if (!editor || doc === null) return undefined
++    const receive = (event: MessageEvent) => {
++      if (event.origin !== window.location.origin || event.source !== window.parent) return
++      const request = event.data
++      if (request?.type !== 'protocol-office:command' || request?.version !== 1
++        || typeof request?.request_id !== 'string' || typeof request?.command !== 'string') return
++      try {
++        const result = runProtocolOfficeCommand(
++          editor,
++          protocolOfficeStateRef.current,
++          request.command,
++          request.payload,
++          sources,
++          setSources,
++          setSourcesDirty,
++        )
++        window.parent.postMessage({ type: 'protocol-office:result', version: 1,
++          request_id: request.request_id, ok: true, result }, window.location.origin)
++      } catch (error) {
++        window.parent.postMessage({ type: 'protocol-office:result', version: 1,
++          request_id: request.request_id, ok: false,
++          error: error instanceof Error ? error.message : String(error) }, window.location.origin)
++      }
++    }
++    window.addEventListener('message', receive)
++    return () => window.removeEventListener('message', receive)
++  }, [editor, doc, sources])
++
++  useEffect(() => {
++    if (!editor || doc === null) return undefined
++    let queued = false
++    const synchronize = () => {
++      if (queued) return
++      queued = true
++      queueMicrotask(() => {
++        queued = false
++        syncManagedProjectCitations(editor, protocolOfficeStateRef.current)
++      })
++    }
++    editor.on('update', synchronize)
++    synchronize()
++    return () => editor.off('update', synchronize)
++  }, [editor, doc])
++
+   // e2e/automation hook: lets tests drive open/edit/save without native dialogs
+   useEffect(() => {
+     ;(window as unknown as Record<string, unknown>).__aidocs = {
+diff --git a/package-lock.json b/package-lock.json
+index 276b922..fdc7317 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -16139,7 +16139,8 @@
+       },
+       "devDependencies": {
+         "@types/node": "^24.10.1",
+-        "typescript": "^5.9.3"
++        "typescript": "^5.9.3",
++        "vitest": "^4.1.11"
+       }
+     }
+   }
+diff --git a/packages/docx-engine/src/parse-props.ts b/packages/docx-engine/src/parse-props.ts
+index 8e8e9eb..21cc2d6 100644
+--- a/packages/docx-engine/src/parse-props.ts
++++ b/packages/docx-engine/src/parse-props.ts
+@@ -354,8 +354,9 @@ export function ptabDisplayStops(pNode: XNode): import('./types').TabStop[] {
+ export const SIMPLE_INLINE_FIELD_RE =
+   /^\s*(DATE|TIME|CREATEDATE|SAVEDATE|NUMPAGES|FILENAME|AUTHOR|PAGE)\b/
+ 
+-/** Zotero Word fields. Their cached result is the visible citation/bibliography text. */
+-export const ZOTERO_INLINE_FIELD_RE = /^\s*(?:ADDIN\s+)?(?:ZOTERO_|CSL_)(?:ITEM|BIBL|TEMP)\b/i
++/** Zotero and GenOffice-managed citation fields. Their cached result stays editable. */
++export const ZOTERO_INLINE_FIELD_RE =
++  /^\s*(?:ADDIN\s+)?(?:(?:ZOTERO_|CSL_)(?:ITEM|BIBL|TEMP)|CMS_(?:CITATION|BIBLIOGRAPHY(?:_ENTRY|_HEADING)?))\b/i
+ 
+ /** HYPERLINK "url" (optional \o "tip"): the only field form folded into an editable link run;
+  * any other switch (\l bookmark, \t frame...) keeps the protected-passthrough path */
+diff --git a/packages/docx-engine/src/sources.ts b/packages/docx-engine/src/sources.ts
+index 77cf66d..5f4b04b 100644
+--- a/packages/docx-engine/src/sources.ts
++++ b/packages/docx-engine/src/sources.ts
+@@ -34,14 +34,21 @@ export function parseSourcesXml(xml: string): SourceInfo[] {
+     }
+     const tag = field('Tag')
+     if (!tag) continue
+-    // author: person name list (Last, First) or corporate name
++    // author: ordered person name list (Last, First) or corporate name
+     let author = field('Corporate') ?? ''
++    const authors: string[] = []
+     if (!author) {
+-      const last = field('Last') ?? ''
+-      const first = field('First') ?? ''
+-      author = [last, first].filter(Boolean).join(', ')
++      for (const person of body.match(/<b:Person>[\s\S]*?<\/b:Person>/g) ?? []) {
++        const personField = (tag: string) => {
++          const value = new RegExp(`<b:${tag}>([\\s\\S]*?)</b:${tag}>`).exec(person)?.[1]
++          return value ? decodeEntities(value.trim()) : ''
++        }
++        const name = [personField('Last'), personField('First')].filter(Boolean).join(', ')
++        if (name) authors.push(name)
++      }
++      author = authors.join(', ')
+     }
+-    out.push({
++    const source: SourceInfo = {
+       tag,
+       type: field('SourceType') ?? 'Misc',
+       author,
+@@ -49,7 +56,17 @@ export function parseSourcesXml(xml: string): SourceInfo[] {
+       year: field('Year') ?? '',
+       publisher: field('Publisher') ?? field('JournalName') ?? field('InternetSiteTitle'),
+       url: field('URL'),
+-    })
++    }
++    if (authors.length > 1) source.authors = authors
++    const volume = field('Volume')
++    const issue = field('Issue')
++    const pages = field('Pages')
++    const doi = field('StandardNumber')
++    if (volume) source.volume = volume
++    if (issue) source.issue = issue
++    if (pages) source.pages = pages
++    if (doi) source.doi = doi
++    out.push(source)
+   }
+   return out
+ }
+@@ -66,15 +83,17 @@ function decodeEntities(text: string): string {
+ function sourceEntryXml(source: SourceInfo): string {
+   const t = (tag: string, value: string | undefined) =>
+     value ? `<b:${tag}>${escapeXmlText(value)}</b:${tag}>` : ''
+-  // "Last, First" splits into Last/First; anything else is stored as Last
+-  const comma = source.author.indexOf(',')
+-  const last = comma === -1 ? source.author : source.author.slice(0, comma).trim()
+-  const first = comma === -1 ? '' : source.author.slice(comma + 1).trim()
+-  const authorXml = source.author
+-    ? '<b:Author><b:Author><b:NameList><b:Person>' +
+-      t('Last', last) +
+-      t('First', first) +
+-      '</b:Person></b:NameList></b:Author></b:Author>'
++  const authorNames = source.authors?.filter(Boolean) ?? (source.author ? [source.author] : [])
++  const peopleXml = authorNames.map((name) => {
++    // A single display name remains one Word person. Structured multi-author input
++    // never collapses separate people into Last/First fields.
++    const comma = source.authors ? -1 : name.indexOf(',')
++    const last = comma === -1 ? name : name.slice(0, comma).trim()
++    const first = comma === -1 ? '' : name.slice(comma + 1).trim()
++    return '<b:Person>' + t('Last', last) + t('First', first) + '</b:Person>'
++  }).join('')
++  const authorXml = authorNames.length
++    ? '<b:Author><b:Author><b:NameList>' + peopleXml + '</b:NameList></b:Author></b:Author>'
+     : ''
+   const publisherTag =
+     source.type === 'JournalArticle'
+@@ -90,6 +109,10 @@ function sourceEntryXml(source: SourceInfo): string {
+     t('Title', source.title) +
+     t('Year', source.year) +
+     t(publisherTag, source.publisher) +
++    t('Volume', source.volume) +
++    t('Issue', source.issue) +
++    t('Pages', source.pages) +
++    t('StandardNumber', source.doi) +
+     t('URL', source.url) +
+     '</b:Source>'
+   )
+@@ -107,7 +130,7 @@ export function buildSourcesXml(sources: SourceInfo[], originalXml: string | nul
+     `<b:Sources SelectedStyle="\\APASixthEditionOfficeOnline.xsl" StyleName="APA" Version="6" xmlns:b="${SOURCES_NS}" xmlns="${SOURCES_NS}">`
+   if (originalXml) {
+     const open = /<b:Sources(?:\s[^>]*)?>/.exec(originalXml)?.[0]
+-    if (open) rootOpen = open
++    if (open) rootOpen = open.replace(/\s*\/>$/, '>')
+     for (const m of originalXml.match(/<b:Source>[\s\S]*?<\/b:Source>/g) ?? []) {
+       const parsed = parseSourcesXml(m)[0]
+       if (parsed) originals.set(parsed.tag, { xml: m, parsed })
+@@ -115,7 +138,10 @@ export function buildSourcesXml(sources: SourceInfo[], originalXml: string | nul
+   }
+   const unchanged = (a: SourceInfo, b: SourceInfo) =>
+     a.type === b.type && a.author === b.author && a.title === b.title && a.year === b.year &&
+-    (a.publisher ?? '') === (b.publisher ?? '') && (a.url ?? '') === (b.url ?? '')
++    (a.authors ?? []).join('\u0000') === (b.authors ?? []).join('\u0000') &&
++    (a.publisher ?? '') === (b.publisher ?? '') && (a.volume ?? '') === (b.volume ?? '') &&
++    (a.issue ?? '') === (b.issue ?? '') && (a.pages ?? '') === (b.pages ?? '') &&
++    (a.doi ?? '') === (b.doi ?? '') && (a.url ?? '') === (b.url ?? '')
+   const body = sources
+     .map((s) => {
+       const orig = originals.get(s.tag)
+diff --git a/packages/docx-engine/src/types.ts b/packages/docx-engine/src/types.ts
+index 6e8808d..66b5bd7 100644
+--- a/packages/docx-engine/src/types.ts
++++ b/packages/docx-engine/src/types.ts
+@@ -2065,10 +2065,17 @@ export interface SourceInfo {
+   type: string
+   /** display author string (b:Author/b:Author/b:NameList or b:Corporate) */
+   author: string
++  /** ordered individual authors; used when more than one person must survive Word round-trips */
++  authors?: string[]
+   title: string
+   year: string
+   /** publisher / journal / site name, optional */
+   publisher?: string
++  volume?: string
++  issue?: string
++  pages?: string
++  /** DOI or another standard number (b:StandardNumber) */
++  doi?: string
+   /** url for internet sources, optional */
+   url?: string
+ }
+diff --git a/packages/docx-engine/tests/watermark-theme-sources.test.ts b/packages/docx-engine/tests/watermark-theme-sources.test.ts
+index 5b82ab6..e4ad482 100644
+--- a/packages/docx-engine/tests/watermark-theme-sources.test.ts
++++ b/packages/docx-engine/tests/watermark-theme-sources.test.ts
+@@ -153,6 +153,45 @@ describe('bibliography sources', () => {
+     expect(second.sources[1].publisher).toBe('计算机学报')
+   })
+ 
++  it('expands a self-closing empty sources root before adding the first source', async () => {
++    const detailedSource = {
++      ...source,
++      type: 'JournalArticle',
++      author: '张三, 李四',
++      authors: ['张三', '李四'],
++      publisher: '中华试验杂志',
++      volume: '12',
++      issue: '3',
++      pages: '10-18',
++      doi: '10.1000/a',
++    }
++    const bytes = await buildDocx({
++      bodyXml: BODY,
++      extraParts: [
++        {
++          path: 'customXml/item1.xml',
++          xml:
++            '<b:Sources xmlns:b="http://schemas.openxmlformats.org/officeDocument/2006/bibliography"' +
++            ' xmlns="http://schemas.openxmlformats.org/officeDocument/2006/bibliography"/>',
++          contentType: 'application/xml',
++        },
++      ],
++    })
++    const doc = await parseDocx(bytes)
++    const out = await saveDocx(doc, originalOrder(doc), { sources: [detailedSource] })
++    const item = await (await JSZip.loadAsync(out)).file('customXml/item1.xml')!.async('string')
++
++    expect(item).not.toMatch(/<b:Sources[^>]*\/><b:Source>/)
++    expect(item).toContain('<b:Source>')
++    expect(item).toMatch(/<\/b:Sources>$/)
++    expect(item.match(/<b:Person>/g)).toHaveLength(2)
++    expect(item).toContain('<b:Volume>12</b:Volume>')
++    expect(item).toContain('<b:Issue>3</b:Issue>')
++    expect(item).toContain('<b:Pages>10-18</b:Pages>')
++    expect(item).toContain('<b:StandardNumber>10.1000/a</b:StandardNumber>')
++    expect((await parseDocx(out)).sources).toEqual([detailedSource])
++  })
++
+   it('citation and bibliography text formatting', () => {
+     expect(citationText(source)).toBe('(王明, 2024)')
+     expect(bibliographyLine(source)).toBe('王明. (2024). 深度学习实践. 清华出版社.')

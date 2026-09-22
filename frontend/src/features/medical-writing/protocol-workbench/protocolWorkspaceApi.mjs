@@ -122,8 +122,38 @@ export function createProtocolWorkspaceApi({ fetchImpl = globalThis.fetch } = {}
     `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/chapters/${encodeURIComponent(String(nodeId))}/draft`;
   const manuscriptPath = (projectId, studyId) =>
     `/api/projects/${projectPath(projectId)}/protocol-workflow/study-definitions/${encodeURIComponent(String(studyId))}/manuscript-draft`;
+  const authoringHandoffPath = projectId =>
+    `/api/projects/${projectPath(projectId)}/protocol-workflow/authoring-handoff`;
 
   return {
+    ensureAuthoringHandoff(projectId, actorId, { signal } = {}) {
+      return post(authoringHandoffPath(projectId), { actor_id: actorId }, signal);
+    },
+    startFullDraft(projectId, actorId, { signal } = {}) {
+      return post(`/api/projects/${projectPath(projectId)}/medical-writing/full-drafts`,
+        { actor: actorId }, signal);
+    },
+    getDurableMedicalWritingJob(projectId, jobId, { signal } = {}) {
+      return get(`/api/projects/${projectPath(projectId)}/medical-writing/jobs/${encodeURIComponent(String(jobId))}`, signal);
+    },
+    getFullDraftResult(projectId, jobId, { signal } = {}) {
+      return get(`/api/projects/${projectPath(projectId)}/medical-writing/full-drafts/${encodeURIComponent(String(jobId))}/result`, signal);
+    },
+    resolveFullDraftDecisions(projectId, jobId, intent, { signal } = {}) {
+      return post(`/api/projects/${projectPath(projectId)}/medical-writing/full-drafts/${encodeURIComponent(String(jobId))}/decisions`, intent, signal);
+    },
+    acceptFullDraftCandidate(projectId, jobId, intent, { signal } = {}) {
+      return post(`${authoringHandoffPath(projectId)}/full-draft-candidates/${encodeURIComponent(String(jobId))}/accept`, intent, signal);
+    },
+    recoverFullDraftCandidate(projectId, jobId, intent, { signal } = {}) {
+      return post(`${authoringHandoffPath(projectId)}/full-draft-candidates/${encodeURIComponent(String(jobId))}/recover`, intent, signal);
+    },
+    getFullDraftSourcePolicy(projectId, jobId, { signal } = {}) {
+      return get(`${authoringHandoffPath(projectId)}/full-draft-candidates/${encodeURIComponent(String(jobId))}/source-policy`, signal);
+    },
+    confirmFullDraftSourcePolicy(projectId, jobId, intent, { signal } = {}) {
+      return post(`${authoringHandoffPath(projectId)}/full-draft-candidates/${encodeURIComponent(String(jobId))}/source-policy`, intent, signal);
+    },
     prepareManuscriptDraft(projectId, studyId, preparation, { signal } = {}) {
       return post(`${manuscriptPath(projectId, studyId)}/prepare`, preparation, signal);
     },

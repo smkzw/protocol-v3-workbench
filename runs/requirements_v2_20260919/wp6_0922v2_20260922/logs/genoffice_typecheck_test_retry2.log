@@ -1,0 +1,33 @@
+
+> @genoffice/docx-engine@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @genoffice/docs@0.1.0 typecheck
+> tsc --noEmit
+
+src/renderer/App.tsx(5052,13): error TS2345: Argument of type '() => (() => Editor) | undefined' is not assignable to parameter of type 'EffectCallback'.
+  Type '(() => Editor) | undefined' is not assignable to type 'void | Destructor'.
+    Type '() => Editor' is not assignable to type 'void | Destructor'.
+      Type '() => Editor' is not assignable to type 'Destructor'.
+        Type 'Editor' is not assignable to type 'void | { [UNDEFINED_VOID_ONLY]: never; }'.
+../../packages/html2docx/src/convert.ts(317,5): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(iterable?: Iterable<string> | null | undefined): Set<string>', gave the following error.
+    Argument of type '(string | undefined)[]' is not assignable to parameter of type 'Iterable<string>'.
+      The types returned by '[Symbol.iterator]().next(...)' are incompatible between these types.
+        Type 'IteratorResult<string | undefined, undefined>' is not assignable to type 'IteratorResult<string, any>'.
+          Type 'IteratorYieldResult<string | undefined>' is not assignable to type 'IteratorResult<string, any>'.
+            Type 'IteratorYieldResult<string | undefined>' is not assignable to type 'IteratorYieldResult<string>'.
+              Type 'string | undefined' is not assignable to type 'string'.
+                Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 2, '(values?: readonly string[] | null | undefined): Set<string>', gave the following error.
+    Argument of type '(string | undefined)[]' is not assignable to parameter of type 'readonly string[]'.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/apps/docs
+npm error workspace @genoffice/docs@0.1.0
+npm error location /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/apps/docs
+npm error command failed
+npm error command sh -c tsc --noEmit

@@ -24,3 +24,30 @@
 
 .kz-manuscript-summary { margin:8px 0; padding-left:20px; font-size:14px; line-height:1.5; }
 .kz-manuscript-summary li { margin:3px 0; }
+
+.kz-manuscript-candidate {
+  display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr); gap:8px 12px;
+  margin:8px 0; padding:10px; border:1px solid var(--kz-border); border-radius:7px; background:#fff;
+}
+.kz-manuscript-candidate > h3 { grid-column:1 / -1; margin:0; font-size:18px; }
+.kz-manuscript-candidate > ul { margin:0; padding-left:20px; columns:2; column-gap:24px; font-size:14px; }
+.kz-manuscript-candidate > ul li { break-inside:avoid; margin:3px 0; }
+.kz-manuscript-candidate > details { margin:0; font-size:14px; }
+.kz-manuscript-candidate > details > summary { cursor:pointer; font-weight:700; }
+.kz-manuscript-candidate > button, .kz-manuscript-candidate > p,
+.kz-manuscript-decisions { grid-column:1 / -1; }
+.kz-manuscript-source-policy { margin:0; padding:8px 10px; border-left:3px solid var(--kz-orange); background:var(--kz-soft); }
+.kz-manuscript-source-policy h4, .kz-manuscript-decisions h4 { margin:0 0 4px; }
+.kz-manuscript-source-policy ul { margin:4px 0; padding-left:20px; font-size:14px; }
+.kz-manuscript-decisions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.kz-manuscript-decisions > h4, .kz-manuscript-decisions > button { grid-column:1 / -1; }
+.kz-manuscript-decisions fieldset { min-width:0; margin:0; padding:8px; border:1px solid var(--kz-border); border-radius:6px; }
+.kz-manuscript-decisions legend { padding:0 4px; font-size:14px; font-weight:700; }
+.kz-manuscript-decisions label { display:grid; grid-template-columns:auto 1fr; gap:2px 6px; align-items:start; margin:5px 0; font-size:14px; }
+.kz-manuscript-decisions label span { grid-column:2; color:var(--kz-muted); }
+@media(max-width:1180px) {
+  .kz-manuscript-candidate { grid-template-columns:1fr; }
+  .kz-manuscript-candidate > *, .kz-manuscript-decisions { grid-column:1; }
+  .kz-manuscript-decisions { grid-template-columns:1fr; }
+  .kz-manuscript-decisions > h4, .kz-manuscript-decisions > button { grid-column:1; }
+}

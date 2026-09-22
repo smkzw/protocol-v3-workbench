@@ -57,6 +57,102 @@ class ManuscriptDocumentService:
             'revision': document.revision}
 
     @staticmethod
+    def _source_policy_intent(project_id, study_id, intent):
+        return hashlib.sha256(canonical_json([
+            project_id, study_id, 'source-policy', intent['operation_id'],
+            intent['source_manifest_sha256'], sorted(intent['source_ids']),
+            list(intent['routine_scope']), list(intent['excluded_scope']),
+        ]).encode()).hexdigest()
+
+    def source_policy_status(self, project_id, study_id, source_manifest_sha256):
+        """Return the latest project-level SOP/reference applicability record."""
+        document_id = manuscript_document_id(project_id, study_id)
+        latest = None
+        with self.uow_factory() as uow:
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_source_policy_confirmed.v1':
+                    continue
+                verify_event_integrity(event)
+                latest = dict(event.payload)
+        if latest is None:
+            return {'status': 'not_confirmed', 'current': False}
+        latest['current'] = latest.get('source_manifest_sha256') == source_manifest_sha256
+        latest['status'] = 'confirmed' if latest['current'] else 'source_version_changed'
+        return latest
+
+    def confirm_source_policy(self, project_id, study_id, intent):
+        """Persist one project-level confirmation; identical source versions reuse it.
+
+        This confirms only routine operating-language reuse.  Dose, safety and
+        statistical decisions remain outside this record and keep their own
+        decision cards.
+        """
+        if not intent.get('source_manifest_sha256') or not intent.get('source_ids'):
+            raise ValueError('source_policy_sources_missing')
+        if not intent.get('routine_scope'):
+            raise ValueError('source_policy_scope_missing')
+        document_id = manuscript_document_id(project_id, study_id)
+        intent_sha = self._source_policy_intent(project_id, study_id, intent)
+        with self.uow_factory() as uow:
+            latest = None
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_source_policy_confirmed.v1':
+                    continue
+                verify_event_integrity(event)
+                payload = dict(event.payload)
+                latest = payload
+                if payload.get('operation_id') == intent['operation_id']:
+                    if payload.get('intent_sha256') != intent_sha:
+                        raise ValueError('source_policy_intent_changed')
+                    return {**payload, 'replayed': True, 'current': True}
+            if (latest is not None
+                    and latest.get('source_manifest_sha256') == intent['source_manifest_sha256']
+                    and latest.get('source_ids') == sorted(intent['source_ids'])
+                    and latest.get('routine_scope') == list(intent['routine_scope'])
+                    and latest.get('excluded_scope') == list(intent['excluded_scope'])):
+                return {**latest, 'replayed': True, 'current': True,
+                        'reused_project_confirmation': True}
+            now = self.clock()
+            payload = {
+                'operation_id': intent['operation_id'],
+                'intent_sha256': intent_sha,
+                'source_manifest_sha256': intent['source_manifest_sha256'],
+                'source_ids': sorted(intent['source_ids']),
+                'routine_scope': list(intent['routine_scope']),
+                'excluded_scope': list(intent['excluded_scope']),
+                'confirmed_by': intent['actor_id'],
+                'confirmed_at': now.isoformat(),
+                'current': True,
+                'acceptance_scope': 'routine_operational_language_only',
+            }
+            params = {
+                'domain_event_id': 'manuscript-source-policy:' + hashlib.sha256(
+                    canonical_json([document_id, intent['operation_id']]).encode()
+                ).hexdigest(),
+                'stream_id': document_id,
+                'event_type': 'manuscript_source_policy_confirmed.v1',
+                'payload_schema_version': 'mw_protocol_v3_event_v1',
+                'upcaster_id': 'noop:v1',
+                'actor_type': ActorType.USER,
+                'actor_id': intent['actor_id'],
+                'action': 'confirm_project_source_policy',
+                'reason': '项目级确认常规运营SOP适用范围；关键剂量、安全和统计决定仍分别确认。',
+                'payload': payload,
+                'emitted_at': now,
+            }
+            head = uow.event_stream_repository.get_stream_head(project_id, document_id)
+            if head is None:
+                built = self.atomic.builder.build(
+                    sequence=1, previous_event_sha256=None, **params)
+            else:
+                built = self.atomic.builder.continue_chain(
+                    head_sha256=head.last_event_sha256,
+                    head_sequence=head.last_sequence, **params)
+            uow.event_stream_repository.append_events(project_id, document_id, [built])
+            uow.commit()
+        return {**payload, 'replayed': False, 'reused_project_confirmation': False}
+
+    @staticmethod
     def _intent(project_id, study_id, run_id, intent):
         return hashlib.sha256(canonical_json([project_id, study_id, run_id, intent]).encode()).hexdigest()
 
@@ -119,6 +215,109 @@ class ManuscriptDocumentService:
             return {'document': document.model_dump(mode='json'), 'document_sha256': document_revision_hash(document),
                 'operation_id': intent['operation_id'], 'replayed': False, 'status': 'working_draft',
                 'qc': run_manuscript_qc(document.model_dump(mode='json'))}
+
+    @staticmethod
+    def _candidate_intent(project_id, study_id, intent):
+        return hashlib.sha256(canonical_json([
+            project_id, study_id, 'external-candidate', intent['operation_id'],
+            intent['candidate_id'], intent['candidate_sha256'],
+            intent.get('evidence_manifest_sha256'),
+            intent['expected_revision'], intent.get('expected_document_sha256'),
+        ]).encode()).hexdigest()
+
+    def _candidate_receipt(self, uow, project_id, study_id, intent):
+        document_id = manuscript_document_id(project_id, study_id)
+        for event in uow.event_stream_repository.read_events(project_id, document_id):
+            if event.event_type != 'manuscript_external_candidate_accepted.v1' \
+                    or event.payload.get('operation_id') != intent['operation_id']:
+                continue
+            verify_event_integrity(event)
+            if event.payload['intent_sha256'] != self._candidate_intent(
+                    project_id, study_id, intent):
+                raise ValueError('manuscript_candidate_intent_changed')
+            document = SemanticDocumentRevision.model_validate(event.payload['document'])
+            if document_revision_hash(document) != event.payload['document_sha256']:
+                raise ValueError('manuscript_candidate_document_changed')
+            return {
+                'document': document.model_dump(mode='json'),
+                'document_sha256': event.payload['document_sha256'],
+                'operation_id': intent['operation_id'], 'replayed': True,
+                'status': 'working_draft',
+                'candidate_id': intent['candidate_id'],
+                'unresolved_items': list(event.payload.get('unresolved_items') or []),
+            }
+        return None
+
+    def recover_candidate(self, project_id, study_id, intent):
+        with self.uow_factory() as uow:
+            return self._candidate_receipt(uow, project_id, study_id, intent)
+
+    def accept_candidate(self, project_id, study_id, intent, document_builder):
+        """Atomically activate one immutable candidate as the semantic work draft.
+
+        The builder is pure and receives the current study/document identities.
+        Candidate artifacts may be written before this call, but the current
+        document pointer advances only with this transaction and event receipt.
+        """
+        existing = self.recover_candidate(project_id, study_id, intent)
+        if existing is not None:
+            return existing
+        document_id = manuscript_document_id(project_id, study_id)
+        with self.uow_factory() as uow:
+            existing = self._candidate_receipt(uow, project_id, study_id, intent)
+            if existing is not None:
+                return existing
+            current = uow.semantic_document_repository.get_current(project_id, document_id)
+            if ((current.revision if current else 0) != intent['expected_revision']
+                    or (document_revision_hash(current) if current else None)
+                    != intent.get('expected_document_sha256')):
+                raise ValueError('manuscript_document_revision_changed')
+            study = uow.study_definition_repository.get_current(project_id, study_id)
+            if study is None:
+                raise ValueError('manuscript_study_missing')
+            now = self.clock()
+            document = document_builder(study, current, document_id, now)
+            if not isinstance(document, SemanticDocumentRevision):
+                raise ValueError('manuscript_candidate_document_invalid')
+            payload = {
+                'operation_id': intent['operation_id'],
+                'intent_sha256': self._candidate_intent(project_id, study_id, intent),
+                'candidate_id': intent['candidate_id'],
+                'candidate_sha256': intent['candidate_sha256'],
+                'evidence_manifest_sha256': intent.get('evidence_manifest_sha256'),
+                'document': document.model_dump(mode='json'),
+                'document_sha256': document_revision_hash(document),
+                'unresolved_items': list(intent.get('unresolved_items') or []),
+                'acceptance_scope': 'working_draft_only',
+            }
+            self.atomic.build_and_apply(
+                uow, project_id=project_id, stream_id=document_id,
+                aggregate=document,
+                cas_repository_handle_name='semantic_document_cas_repository',
+                expected_revision=intent['expected_revision'], event={
+                    'domain_event_id': 'manuscript-candidate:' + hashlib.sha256(
+                        canonical_json([document_id, intent['operation_id']]).encode()
+                    ).hexdigest(),
+                    'stream_id': document_id,
+                    'event_type': 'manuscript_external_candidate_accepted.v1',
+                    'payload_schema_version': 'mw_protocol_v3_event_v1',
+                    'upcaster_id': 'noop:v1',
+                    'actor_type': ActorType.USER,
+                    'actor_id': intent['actor_id'],
+                    'action': 'accept_external_working_draft_candidate',
+                    'reason': '采用有来源的候选正文进入当前工作稿；缺口与待决定项继续保留。',
+                    'payload': payload,
+                    'emitted_at': now,
+                })
+            return {
+                'document': document.model_dump(mode='json'),
+                'document_sha256': payload['document_sha256'],
+                'operation_id': intent['operation_id'], 'replayed': False,
+                'status': 'working_draft',
+                'candidate_id': intent['candidate_id'],
+                'unresolved_items': payload['unresolved_items'],
+                'qc': run_manuscript_qc(document.model_dump(mode='json')),
+            }
 
     # ------------------------------------------------------------------
     # Free working-draft edits (requirements-v2 R3): every edit persists as
@@ -698,11 +897,26 @@ class ManuscriptDocumentService:
     # the content hash and artifact revision; the store deduplicates bytes.
     # ------------------------------------------------------------------
 
-    def _office_snapshot_intent(self, project_id, study_id, intent):
+    def _office_snapshot_intent(self, project_id, study_id, intent, *, contract='office-snapshot-intent.v2'):
         import base64 as _base64
         content_sha = hashlib.sha256(_base64.b64decode(intent.get('content_base64') or b'')).hexdigest()
-        return hashlib.sha256(canonical_json([project_id, study_id, 'office-snapshot',
-            intent['operation_id'], intent['expected_revision'], content_sha]).encode()).hexdigest()
+        if contract == 'office-snapshot-intent.v1':
+            value = [project_id, study_id, 'office-snapshot', intent['operation_id'],
+                intent['expected_revision'], content_sha]
+        else:
+            value = {'contract': 'office-snapshot-intent.v2', 'project_id': project_id,
+                'study_definition_id': study_id, 'operation_id': intent['operation_id'],
+                'actor_id': intent['actor_id'], 'expected_revision': intent['expected_revision'],
+                'expected_document_sha256': intent['expected_document_sha256'],
+                'content_sha256': content_sha,
+                'base_artifact_revision': intent.get('base_artifact_revision'),
+                'opened_study_revision_sha256': intent.get('opened_study_revision_sha256')}
+        return hashlib.sha256(canonical_json(value).encode()).hexdigest()
+
+    def _office_snapshot_intent_matches(self, project_id, study_id, intent, payload):
+        contract = payload.get('intent_contract') or 'office-snapshot-intent.v1'
+        return payload.get('intent_sha256') == self._office_snapshot_intent(
+            project_id, study_id, intent, contract=contract)
 
     def _office_event(self, project_id, study_id, document_id, intent, payload_extra):
         params = {
@@ -747,7 +961,7 @@ class ManuscriptDocumentService:
                 verify_event_integrity(event)
                 latest = event.payload
                 if latest.get('operation_id') == intent['operation_id']:
-                    if latest['intent_sha256'] != self._office_snapshot_intent(project_id, study_id, intent):
+                    if not self._office_snapshot_intent_matches(project_id, study_id, intent, latest):
                         raise ValueError('manuscript_office_snapshot_intent_changed')
                     return {**latest, 'persisted': True, 'replayed': True}
             if latest is not None and base_artifact_revision is not None \
@@ -786,6 +1000,7 @@ class ManuscriptDocumentService:
                 media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 created_at=self.clock())
             payload = {'operation_id': intent['operation_id'],
+                'intent_contract': 'office-snapshot-intent.v2',
                 'intent_sha256': self._office_snapshot_intent(project_id, study_id, intent),
                 'snapshot_id': 'office-snapshot:' + meta.content_sha256,
                 'content_sha256': meta.content_sha256,
@@ -827,7 +1042,8 @@ class ManuscriptDocumentService:
                         or event.payload.get('operation_id') != intent['operation_id']:
                     continue
                 verify_event_integrity(event)
-                if event.payload['intent_sha256'] != self._office_snapshot_intent(project_id, study_id, intent):
+                if not self._office_snapshot_intent_matches(
+                        project_id, study_id, intent, event.payload):
                     raise ValueError('manuscript_office_snapshot_intent_changed')
                 payload = dict(event.payload)
                 payload['replayed'] = True

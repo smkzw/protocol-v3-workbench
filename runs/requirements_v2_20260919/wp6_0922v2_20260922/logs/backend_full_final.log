@@ -1,0 +1,84 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+....................F................................................... [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 77%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 91%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+................................................F....................... [ 99%]
+.........                                                                [100%]
+=================================== FAILURES ===================================
+_____________________ test_real_source_passes_drift_check ______________________
+
+    def test_real_source_passes_drift_check() -> None:
+        report = verify_inventory_drift()
+        assert isinstance(report, InventoryDriftReport)
+        assert report.ok, report.findings
+        assert report.discovered_route_handlers == 237
+>       assert report.discovered_route_mutators == 134
+E       AssertionError: assert 135 == 134
+E        +  where 135 = InventoryDriftReport(schema_version='mw_legacy_mutation_inventory_v1', ok=True, discovered_route_handlers=237, discove...service_mutators=197, findings=(), inventory_sha256='f13c34d03c96f7bc0ff778eea17d902d9bffb2f6b488aa53f0869a26873ddfe3').discovered_route_mutators
+
+tests/protocol_v3/test_legacy_mutation_guard.py:485: AssertionError
+_____ test_current_template_source_inventory_is_complete_and_deterministic _____
+
+    def test_current_template_source_inventory_is_complete_and_deterministic():
+        root = Path(__file__).resolve().parents[2]
+        template_root = root / 'config/medical_writing/protocol_v3/templates/tp_ma_07_v2'
+        source = Path('/Users/smkzw/Documents/康哲项目资料/SOP/SOP For AI/TP-MA-07 临床试验方案（2期或3期）_清洁版_v2.0_20260905.docx')
+        result = build_inventory(source, template_root)
+        assert result['counts'] == {'bookmarks': 316, 'fields': 290, 'contracts': 111}
+        assert len(result['table_sources']) == 17
+        assert result['findings'] == []
+        assert sum(f['kind'] == 'external_document_anchor' for f in result['fields']) == 1
+        assert result['source_xml_observations'][0]['end_count'] - result['source_xml_observations'][0]['start_count'] == 7
+        assert result['native_word_invoked'] is False
+        assert result == build_inventory(source, template_root)
+        stored = root / 'config/medical_writing/protocol_v3/qc/word_source_objects.json'
+>       assert json.loads(stored.read_text()) == result
+E       AssertionError: assert {'bookmarks':....}, ...], ...} == {'bookmarks':....}, ...], ...}
+E         
+E         Omitting 13 identical items, use -vv to show
+E         Differing items:
+E         {'source_inputs': {'chapter_contracts/v2_front_block.json': '1f756d4ed70fdcba2766eaabaf5e7edc8ada428e34537f6140b303df0...54696', 'chapter_contracts/v2_n_10_1_3.json': '20d7b20c45f6231c1e02cbb9151abe64d2943c1ea9bd10f53a6203d9943bbcf7', ...}} != {'source_inputs': {'chapter_contracts/v2_front_block.json': '1f756d4ed70fdcba2766eaabaf5e7edc8ada428e34537f6140b303df0...54696', 'chapter_contracts/v2_n_10_1_3.json': '20d7b20c45f6231c1e02cbb9151abe64d2943c1ea9bd10f53a6203d9943bbcf7', ...}}
+E         Use -v to get more diff
+
+tests/protocol_v3/test_word_source_objects.py:59: AssertionError
+=============================== warnings summary ===============================
+tests/protocol_v3/test_source_baseline.py::ManifestAndTarTests::test_manifest_and_tar_round_trip
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/verify_source_baseline.py:75: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+    archive.extractall(str(destination_root))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_legacy_mutation_guard.py::test_real_source_passes_drift_check
+FAILED tests/protocol_v3/test_word_source_objects.py::test_current_template_source_inventory_is_complete_and_deterministic
+2 failed, 2599 passed, 1 warning in 80.96s (0:01:20)

@@ -1000,6 +1000,16 @@ def _company_nodes() -> list[MedicalWritingProtocolTemplateNode]:
     return nodes
 
 
+def company_template_semantic_node_map() -> dict[str, str]:
+    """Return the source-authored template-node to semantic-node identity map.
+
+    The full-draft bridge uses this stable identity at generation time.  It
+    must never infer a semantic chapter from a translated heading or array
+    position because both can change independently of the template contract.
+    """
+    return {node.node_id: node.semantic_node_id for node in _company_nodes()}
+
+
 def _normalized_phase(value: str) -> str:
     token = str(value or "").upper().replace(" ", "")
     if any(item in token for item in ("Ⅲ", "III期", "PHASE3", "PHASEIII")):

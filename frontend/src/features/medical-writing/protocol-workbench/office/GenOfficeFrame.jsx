@@ -409,12 +409,13 @@ export function GenOfficeFrame({ projectId, studyDefinitionId, actorId, savedDoc
         : !reconciliation ? <p role="status">正在核对当前已保存版本…</p>
           : <>
             <ul>
-              <li>已定位 {reconciliation.located?.length || 0} 项关键事实。</li>
-              {(reconciliation.differences?.length || 0) > 0
-                ? <li><strong>需处理：</strong>{reconciliation.differences.map(item => item.message).join('；')}</li>
-                : <li>在本次可检查范围内未发现确定的数值缺失。</li>}
-              {(reconciliation.unverified?.length || 0) > 0 && <li><strong>仍需人工核对：</strong>
-                {reconciliation.unverified.map(item => item.label).join('、')}</li>}
+              {reconciliation.status === 'not_checked'
+                ? <li><strong>尚未形成可检查项：</strong>当前研究事实或 Word 内容不足以做直接定位。</li>
+                : <li><strong>已直接定位：</strong>{reconciliation.located?.length || 0} 项关键事实。</li>}
+              {(reconciliation.semantic_review?.length || 0) > 0 && <li><strong>待语义核对：</strong>
+                {reconciliation.semantic_review.map(item => item.label).join('、')}</li>}
+              {(reconciliation.uncovered?.length || 0) > 0 && <li><strong>本次未覆盖：</strong>
+                {reconciliation.uncovered.map(item => item.label).join('、')}</li>}
               {!reconciliation.study_matches_opened_baseline && <li><strong>研究设计已有更新：</strong>当前 Word 仍绑定打开时的研究版本。</li>}
             </ul>
             <p>{reconciliation.coverage_note}</p>

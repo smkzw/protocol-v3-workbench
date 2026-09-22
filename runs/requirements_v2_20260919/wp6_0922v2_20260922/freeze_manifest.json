@@ -1,0 +1,17 @@
+{
+  "schema_version": "protocol-v3-wp6-freeze.v1",
+  "main_head": "acf6d8341563d56946f934dfdac65c76997e36e3",
+  "origin_main": "acf6d8341563d56946f934dfdac65c76997e36e3",
+  "genoffice_head": "316ded6f0a39235fec8d21c068d8a0766ee6172b",
+  "python": "3.14.7",
+  "hashes": {
+    "main_patch_sha256": "091f7c374ac82f1aadeba7a9495a95e7e7304f39d3af1dfedd3b5214af99ebd2",
+    "main_status_sha256": "55d8e6fdc7851b142c75b81d30149235af61ac6da4196aa85d2b59c96b9c14d1",
+    "genoffice_patch_sha256": "86118ddbbc9430962da13da220956c42fdcfd762b49e6e59a7f796b657d3f4e6",
+    "genoffice_status_sha256": "43dd08831ed0c768b8288eba58d38166385c5fb99a79782f6a3c261b88ecbb40",
+    "route_manifest_sha256": "b47cfbfbc56b30c5405146e9d6a070bfdc8902bf5500ff5776654a9bb5a59a24",
+    "goal_prompt_sha256": "465865884e7cada961b779007a2ac1b882953041802d2147fe33465eb825a535",
+    "authority_manifest_sha256": "fc671985edda4d10cfe0dd67f66deda868f0c7262af937a8ffd10d692b2ebe95"
+  },
+  "runtime_note": "Existing live listeners and historical runtime remain untouched; WP6 uses isolated ports and copied runtime only."
+}

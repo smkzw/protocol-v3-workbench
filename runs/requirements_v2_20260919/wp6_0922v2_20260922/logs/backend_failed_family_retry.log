@@ -1,0 +1,16 @@
+.F...                                                                    [100%]
+=================================== FAILURES ===================================
+_____________________ test_real_source_passes_drift_check ______________________
+
+    def test_real_source_passes_drift_check() -> None:
+        report = verify_inventory_drift()
+        assert isinstance(report, InventoryDriftReport)
+        assert report.ok, report.findings
+>       assert report.discovered_route_handlers == 236
+E       AssertionError: assert 237 == 236
+E        +  where 237 = InventoryDriftReport(schema_version='mw_legacy_mutation_inventory_v1', ok=True, discovered_route_handlers=237, discove...service_mutators=197, findings=(), inventory_sha256='f13c34d03c96f7bc0ff778eea17d902d9bffb2f6b488aa53f0869a26873ddfe3').discovered_route_handlers
+
+tests/protocol_v3/test_legacy_mutation_guard.py:484: AssertionError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_legacy_mutation_guard.py::test_real_source_passes_drift_check
+1 failed, 4 passed in 5.34s

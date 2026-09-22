@@ -43,10 +43,11 @@ export async function pollDurableMwJob(projectId, jobId, opts = {}) {
   const intervalMs = opts.intervalMs ?? 1500;
   const maxLoops = opts.maxLoops ?? 200;
   const onUpdate = opts.onUpdate ?? null;
+  const shouldContinue = opts.shouldContinue ?? (() => true);
   let lastStatus = "queued";
   let errorSummary = "";
 
-  for (let i = 0; i < maxLoops; i++) {
+  for (let i = 0; i < maxLoops && shouldContinue(); i++) {
     await new Promise((r) => setTimeout(r, intervalMs));
     try {
       const resp = await fetch(

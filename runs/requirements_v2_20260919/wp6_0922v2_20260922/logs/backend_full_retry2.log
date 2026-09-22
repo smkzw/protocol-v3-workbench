@@ -1,0 +1,253 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+.....................................F.................................. [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+....................F................................................... [ 58%]
+........................................................................ [ 60%]
+........F...............................F............................... [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 77%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+...........................................F............................ [ 91%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+.........                                                                [100%]
+=================================== FAILURES ===================================
+_ test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks __
+
+    def test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks():
+        """Actual adoption method with fake repository; no product model invoked."""
+        from unittest.mock import patch
+        from test_medical_writing_full_draft import FullDraftServiceTests
+    
+        harness = FullDraftServiceTests()
+        harness.setUp()
+        try:
+            text = ('未提供书面知情同意者不进入筛选。数据将在生物统计人员确认后锁定。'
+                    '研究者应记录每次访视的实际日期以及检查结果。'
+                    '所有检查结果按方案规定的方法评估，并记录与研究相关的临床观察。'
+                    '如有方案偏离，应说明具体情况及原因，保留相关原始记录。')
+>           completed, artifact = harness._completed_artifact()
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_draft_marker_context.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_medical_writing_full_draft.py:384: in _completed_artifact
+    job_id, _ = self.full.submit_durable(project, self.store)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_full_draft.py:538: in submit_durable
+    descriptor = self.build_descriptor(project_id, section_ids=section_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_full_draft.py:464: in build_descriptor
+    targets = self._target_sections(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <services.api.app.medical_writing_full_draft.MedicalWritingFullDraftService object at 0x10a142330>
+service = namespace(repo=<test_medical_writing_full_draft._FakeRepo object at 0x111774fb0>, ai_task_runner=<test_medical_writing...ambda> at 0x10a14d260>, _shared_corpus_sources=<function FullDraftServiceTests.setUp.<locals>.<lambda> at 0x10a14d440>)
+project_id = 'proj_full_draft_fake'
+document = ProtocolDocument(document_id='doc_full_draft_fake', project_id='proj_full_draft_fake', document_type='clinical_study_p...urce_study_definition_sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', module_resolutions=[])
+
+    def _target_sections(
+        self,
+        service: Any,
+        project_id: str,
+        document: Any,
+        *,
+        section_ids: Iterable[str] | None = None,
+    ) -> list[dict[str, Any]]:
+        repo = service.repo
+        scope = {
+            _text(item) for item in (section_ids or ()) if _text(item)
+        } or None
+        targets: list[dict[str, Any]] = []
+        semantic_nodes = company_template_semantic_node_map()
+        for section in document.sections:
+            if scope is not None and str(section.section_id) not in scope:
+                continue
+            if (
+                section.applicability_status == "not_applicable"
+                or section.applicability_render_action == "omit"
+                or section.node_kind not in {"section", "appendix"}
+            ):
+                continue
+            revision, blocks = self._working_copy_blocks(repo, project_id, section)
+            writable = _body_blocks(blocks)
+            if not writable:
+                continue
+            body = _body_text(writable)
+            if _is_substantive(body):
+                continue
+            first = writable[0]
+            targets.append(
+                {
+                    "section_id": str(section.section_id),
+                    "section_number": str(section.section_number or ""),
+                    "heading": str(section.heading or ""),
+                    "node_kind": str(section.node_kind or "section"),
+                    "template_node_id": str(section.template_node_id or ""),
+                    "semantic_node_id": str(
+                        semantic_nodes.get(str(section.template_node_id or ""), "")
+                    ),
+                    "body_block_id": str(first["block_id"]),
+                    "expected_revision": revision,
+                    "body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
+                    "body_text": body,
+                }
+            )
+            if not targets[-1]["semantic_node_id"]:
+>               raise RuntimeStoreError(
+                    f"章节缺少稳定语义节点映射：{section.section_id}"
+                )
+E               services.api.app.sqlite_runtime_store.RuntimeStoreError: 章节缺少稳定语义节点映射：sec_1
+
+services/api/app/medical_writing_full_draft.py:287: RuntimeStoreError
+_____________________ test_real_source_passes_drift_check ______________________
+
+    def test_real_source_passes_drift_check() -> None:
+        report = verify_inventory_drift()
+        assert isinstance(report, InventoryDriftReport)
+>       assert report.ok, report.findings
+E       AssertionError: (InventoryFinding(severity='error', code='unclassified_route_mutator', operation_id='route.resolve_medical_writing_ful...', message="discovered POST route mutator 'resolve_medical_writing_full_draft_decision' has no classification entry"),)
+E       assert False
+E        +  where False = InventoryDriftReport(schema_version='mw_legacy_mutation_inventory_v1', ok=False, discovered_route_handlers=237, discov...' has no classification entry"),), inventory_sha256='5d8cc1f5d3c295044191602c0253159d5ee53813e37f121b4a32b62dbf003255').ok
+
+tests/protocol_v3/test_legacy_mutation_guard.py:483: AssertionError
+_______________ test_real_main_isolated_entrypoint[default-off] ________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-809/test_real_main_isolated_entryp0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1120d2180>
+enabled = False
+
+    @pytest.mark.parametrize("enabled", [False, True], ids=["default-off", "enabled"])
+    def test_real_main_isolated_entrypoint(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, enabled: bool
+    ) -> None:
+        assert not _MISSING_LEGACY_DEPS, (
+            f"Missing {_MISSING_LEGACY_DEPS}; use the isolated integration venv"
+        )
+        runtime = tmp_path / "child_runtime"
+        runtime.mkdir()
+        db_path = tmp_path / "real_main.sqlite"
+        child_env = dict(os.environ)
+        for key in (
+            "WORKBENCH_AI_SETTINGS_PATH",
+            "WORKBENCH_AI_ROLE_SETTINGS_PATH",
+            "WORKBENCH_ELIGIBILITY_ARTIFACT_DIR",
+        ):
+            child_env.pop(key, None)
+        child_env.update(
+            {
+                "CHECKOUT": str(ROOT),
+                "WORKBENCH_RUNTIME_DIR": str(runtime),
+                "WORKBENCH_AI_SETTINGS_PATH": str(runtime / "ai.json"),
+                "WORKBENCH_AI_ROLE_SETTINGS_PATH": str(runtime / "roles.json"),
+                "WORKBENCH_ELIGIBILITY_ARTIFACT_DIR": str(runtime / "eligibility"),
+                "WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED": "1",
+                "WORKBENCH_PROTOCOL_V3_WORKFLOW_DB": str(db_path),
+            }
+        )
+        if not enabled:
+            child_env.pop(ENV_ENABLED, None)
+        completed = subprocess.run(
+            [sys.executable, "-c", _CHILD_SCRIPT],
+            env=child_env,
+            input=json.dumps(_create_body()),
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        assert completed.returncode == 0, (
+            f"real-main child failed rc={completed.returncode}\n"
+            f"STDOUT:\n{completed.stdout[-4000:]}\n"
+            f"STDERR:\n{completed.stderr[-4000:]}"
+        )
+        payload = json.loads(completed.stdout.strip().splitlines()[-1])
+        if not enabled:
+            assert payload["disabled"] is True
+            assert not db_path.exists()
+            baseline = subprocess.run(
+                [sys.executable, "-c", _CHILD_SCRIPT],
+                env={**child_env, "BASELINE_WITHOUT_V3_MOUNT": "1"},
+                cwd=str(tmp_path), capture_output=True, text=True, timeout=300,
+            )
+>           assert baseline.returncode == 0, baseline.stderr
+E           AssertionError: Traceback (most recent call last):
+E               File "<string>", line 18, in <module>
+E               File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2582, in <module>
+E                 mount_protocol_v3_workflow_router(
+E             TypeError: <lambda>() got an unexpected keyword argument 'authoring_journey_provider'
+E             
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_p...otocol_v3_workflow_router(\nTypeError: <lambda>() got an unexpected keyword argument \'authoring_journey_provider\'\n').returncode
+
+tests/protocol_v3/test_protocol_v3_1r2_mount.py:790: AssertionError
+_ TestSharedSurfaceIsolation.test_main_py_references_only_the_1r2_composition_entrypoint _
+
+self = <test_protocol_v3_api_contract.TestSharedSurfaceIsolation object at 0x10fce14c0>
+
+    def test_main_py_references_only_the_1r2_composition_entrypoint(self) -> None:
+        # Task 1R.2 supersedes the Task 1.9 no-mount rule: the shared main
+        # may reference exactly one new-chain symbol — the composition
+        # mount — and nothing from the router factory, service or storage
+        # layers. Direct product mounting outside composition stays banned.
+        text = _MAIN_PATH.read_text(encoding="utf-8")
+>       assert text.count("mount_protocol_v3_workflow_router(app)") == 1
+E       assert 0 == 1
+E        +  where 0 = <built-in method count of str object at 0x7c55a18000>('mount_protocol_v3_workflow_router(app)')
+E        +    where <built-in method count of str object at 0x7c55a18000> = 'from __future__ import annotations\n\nfrom collections import Counter\nimport base64\nimport binascii\nfrom dataclass...tail=f"monitoring intake session not found: {canonical_id}/{session_id}")\n    return result.model_dump(mode="json")\n'.count
+
+tests/protocol_v3/test_protocol_v3_api_contract.py:1077: AssertionError
+___________ test_committed_artifacts_match_source_bound_regeneration ___________
+
+regenerated = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-809/tp_ma_07_v2_regen0')
+
+    def test_committed_artifacts_match_source_bound_regeneration(regenerated):
+        for name in ARTIFACT_NAMES:
+            committed = (DEFAULT_OUT / name).read_bytes()
+            assert committed, name
+            assert hashlib.sha256(committed).hexdigest(), name
+>           assert committed == (regenerated / name).read_bytes(), name
+E           AssertionError: template.json
+E           assert b'{\n  "autho...  }\n  }\n}\n' == b'{\n  "autho...  }\n  }\n}\n'
+E             
+E             At index 5980 diff: b'e' != b'2'
+E             Use -v to get more diff
+
+tests/protocol_v3/test_tp_ma_07_v2_registry.py:85: AssertionError
+=============================== warnings summary ===============================
+tests/protocol_v3/test_source_baseline.py::ManifestAndTarTests::test_manifest_and_tar_round_trip
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/scripts/qc/protocol_v3/verify_source_baseline.py:75: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+    archive.extractall(str(destination_root))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_draft_marker_context.py::test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks
+FAILED tests/protocol_v3/test_legacy_mutation_guard.py::test_real_source_passes_drift_check
+FAILED tests/protocol_v3/test_protocol_v3_1r2_mount.py::test_real_main_isolated_entrypoint[default-off]
+FAILED tests/protocol_v3/test_protocol_v3_api_contract.py::TestSharedSurfaceIsolation::test_main_py_references_only_the_1r2_composition_entrypoint
+FAILED tests/protocol_v3/test_tp_ma_07_v2_registry.py::test_committed_artifacts_match_source_bound_regeneration
+5 failed, 2596 passed, 1 warning in 91.02s (0:01:31)

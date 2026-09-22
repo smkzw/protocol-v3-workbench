@@ -102,9 +102,11 @@ PROTOCOL_FULL_DRAFT_REQUIRED_KEYS = {
     "evidence_span_ids",
     "decision_items",
     "missing_source_classes",
+    "gap_items",
 }
 PROTOCOL_FULL_DRAFT_CONTENT_STATUSES = {
     "complete",
+    "partial",
     "decision_required",
     "source_gap",
 }
@@ -547,10 +549,10 @@ class PromptRegistry:
                 "additional_properties": False,
                 "fields": {
                     "section_id": "string; copy one requested section_id exactly",
-                    "content_status": "complete | decision_required | source_gap",
+                    "content_status": "complete | partial | decision_required | source_gap",
                     "proposal_text": (
-                        "substantive Chinese protocol body for complete/decision_required; "
-                        "must be empty for source_gap"
+                        "substantive Chinese protocol body for complete/partial; "
+                        "must be empty only when the whole section has no supported prose"
                     ),
                     "rationale": (
                         "string; concise user-facing evidence note: state which confirmed project facts support "
@@ -565,7 +567,12 @@ class PromptRegistry:
                         "task_context.decision_fact_paths"
                     ),
                     "missing_source_classes": (
-                        "array[string]; 1-4 concrete source classes for source_gap; empty otherwise"
+                        "array[string]; concrete missing source classes for source_gap/partial; empty otherwise"
+                    ),
+                    "gap_items": (
+                        "array; each unresolved item has gap_id, category "
+                        "(source_missing | decision_pending | source_not_retrieved | mapping_failed), "
+                        "target, action, and missing_source_classes. Empty only when complete"
                     ),
                 },
                 "note": (
@@ -2003,7 +2010,7 @@ def _validate_protocol_full_draft_output(
             errors.append(
                 f"{prefix}.proposal_text must be empty for {status}"
             )
-        elif status == "complete" and not proposal.strip():
+        elif status in {"complete", "partial"} and not proposal.strip():
             errors.append(f"{prefix}.proposal_text must be non-empty")
         elif proposal and MARKDOWN_TABLE_SEPARATOR_RE.search(proposal):
             errors.append(f"{prefix}.proposal_text must not contain a Markdown table")
@@ -2017,9 +2024,9 @@ def _validate_protocol_full_draft_output(
         evidence_ids = section.get("evidence_span_ids")
         if not isinstance(evidence_ids, list) or any(not isinstance(item, str) or not item for item in evidence_ids) or len(evidence_ids) != len(set(evidence_ids)):
             errors.append(f"{prefix}.evidence_span_ids must be unique non-empty strings")
-        elif status == "source_gap" and evidence_ids:
+        elif not proposal and evidence_ids:
             errors.append(f"{prefix}.evidence_span_ids must be empty for source_gap")
-        elif status != "source_gap" and not evidence_ids:
+        elif proposal and not evidence_ids:
             errors.append(f"{prefix}.evidence_span_ids must be non-empty")
         else:
             for span_id in evidence_ids:
@@ -2031,7 +2038,7 @@ def _validate_protocol_full_draft_output(
             decisions = []
         if status == "decision_required" and not decisions:
             errors.append(f"{prefix}.decision_items must be non-empty for decision_required")
-        if status != "decision_required" and decisions:
+        if status not in {"decision_required", "partial"} and decisions:
             errors.append(f"{prefix}.decision_items must be empty unless decision_required")
         if len(decisions) > 6:
             errors.append(f"{prefix}.decision_items must contain no more than 6 decisions")
@@ -2072,6 +2079,18 @@ def _validate_protocol_full_draft_output(
                 option_ids.append(option.get("option_id"))
             if len(option_ids) != len(set(option_ids)) or decision.get("recommended_option_id") not in option_ids:
                 errors.append(f"{decision_prefix} must identify exactly one listed recommendation")
+            fact_path = str(decision.get("fact_path") or "")
+            if fact_path in {
+                "picos.exploratory_objectives", "picos.exploratory_endpoints"
+            } and not any(
+                re.search(r"(?:不设置|不设|无)探索性", " ".join([
+                    str(option.get("label") or ""), str(option.get("summary") or "")
+                ]))
+                for option in options if isinstance(option, dict)
+            ):
+                errors.append(
+                    f"{decision_prefix}.options must include an explicit no-exploratory choice"
+                )
             if decision.get("blocking_section_id") != section.get("section_id"):
                 errors.append(f"{decision_prefix}.blocking_section_id must equal section_id")
             decision_paths_in_section.append(str(decision.get("fact_path") or ""))
@@ -2082,10 +2101,44 @@ def _validate_protocol_full_draft_output(
             errors.append(f"{prefix}.missing_source_classes must be a string list")
         elif status == "source_gap" and not 1 <= len(missing_sources) <= 4:
             errors.append(f"{prefix}.missing_source_classes must contain 1-4 source classes")
+        elif status == "partial" and len(missing_sources) > 4:
+            errors.append(f"{prefix}.missing_source_classes must contain no more than 4 source classes")
         elif len(missing_sources) != len(set(missing_sources)):
             errors.append(f"{prefix}.missing_source_classes must be unique")
-        elif status != "source_gap" and missing_sources:
+        elif status not in {"source_gap", "partial"} and missing_sources:
             errors.append(f"{prefix}.missing_source_classes must be empty unless source_gap")
+        gaps = section.get("gap_items")
+        if not isinstance(gaps, list):
+            errors.append(f"{prefix}.gap_items must be a list")
+            gaps = []
+        if status == "complete" and gaps:
+            errors.append(f"{prefix}.gap_items must be empty for complete")
+        if status in {"partial", "decision_required", "source_gap"} and not gaps:
+            errors.append(f"{prefix}.gap_items must identify each unresolved item")
+        gap_ids = []
+        for gap_index, gap in enumerate(gaps):
+            gap_prefix = f"{prefix}.gap_items[{gap_index}]"
+            required = {"gap_id", "category", "target", "action", "missing_source_classes"}
+            if not isinstance(gap, dict) or set(gap) != required:
+                errors.append(f"{gap_prefix} has an invalid shape")
+                continue
+            if gap.get("category") not in {
+                "source_missing", "decision_pending", "source_not_retrieved", "mapping_failed"
+            }:
+                errors.append(f"{gap_prefix}.category is invalid")
+            for key in ("gap_id", "target", "action"):
+                if not isinstance(gap.get(key), str) or not gap[key].strip():
+                    errors.append(f"{gap_prefix}.{key} must be a non-empty string")
+            source_classes = gap.get("missing_source_classes")
+            if not isinstance(source_classes, list) or any(
+                not isinstance(item, str) or not item.strip() for item in source_classes
+            ):
+                errors.append(f"{gap_prefix}.missing_source_classes must be a string list")
+            elif gap.get("category") == "decision_pending" and source_classes:
+                errors.append(f"{gap_prefix}.missing_source_classes must be empty for a decision")
+            gap_ids.append(gap.get("gap_id"))
+        if len(gap_ids) != len(set(gap_ids)):
+            errors.append(f"{prefix}.gap_items must use unique gap_id values")
     return errors
 
 

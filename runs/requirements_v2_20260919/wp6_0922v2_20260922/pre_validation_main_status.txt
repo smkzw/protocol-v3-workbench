@@ -1,0 +1,79 @@
+ M .trellis/tasks/09-21-protocol-v3-t17-round11/checkpoint.md
+ M .trellis/tasks/09-21-protocol-v3-t17-round11/design.md
+ M .trellis/tasks/09-21-protocol-v3-t17-round11/implement.md
+ M .trellis/tasks/09-21-protocol-v3-t17-round11/prd.md
+ M .trellis/tasks/09-21-protocol-v3-t17-round11/task.json
+ M frontend/public/genoffice/bridge-shim.js
+ M frontend/src/App.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.css
+ M frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.css
+ M frontend/src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.jsx
+ M frontend/src/features/medical-writing/protocol-workbench/protocolWorkspaceApi.mjs
+ M frontend/src/features/medical-writing/useDurableMwJob.js
+ M runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/ai_provider_settings.json
+ M runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/ai_role_bindings.json
+ M runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/ai_task_runs.jsonl
+ M services/api/app/ai_execution_policy.py
+ M services/api/app/ai_gateway.py
+ M services/api/app/ai_task_runner.py
+ M services/api/app/main.py
+ M services/api/app/medical_writing_full_draft.py
+ M services/api/app/medical_writing_protocol_template.py
+ M services/api/app/protocol_workflow/agent3/consistency_gate.py
+ M services/api/app/protocol_workflow/api/composition.py
+ M services/api/app/protocol_workflow/application/manuscript_documents.py
+ M services/api/app/protocol_workflow/application/office_projection.py
+?? context/mw_0922v2_flow_review_context.md
+?? metrics/mw_0922v2_flow_review_metrics.md
+?? plans/protocol_v3_0922V2_execution.zip
+?? plans/protocol_v3_0922V2_execution.zip.sha256
+?? plans/protocol_v3_0922V2_execution/
+?? prompts/codex-subagent_mw_0922v2_flow_review.md
+?? reviews/codex_mw_0922v2_flow_review_review.md
+?? runs/conference/mw_r11_editor_review_20260921/
+?? runs/conference/mw_r11_editor_verification_20260921/
+?? runs/conference/mw_r11_recovery_review_20260921/
+?? runs/execution/mw_r11_design_choices_20260921/
+?? runs/execution/mw_r11_recovery_20260921/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/cleared_0934/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/cleared_1824/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime/e2e_test.sqlite.round8-backup-38MB
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_runtime_mw/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test.sqlite.artifacts/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test.sqlite.dispatch-locks/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test.sqlite.office-artifacts/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test_mw.sqlite.artifacts/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test_mw.sqlite.dispatch-locks/
+?? runs/mw_protocol_v3_unified_tests_20260919/e2e_test_mw.sqlite.pre-cleanup-20260921_043238
+?? runs/requirements_v2_20260919/f12_20260921/office/
+?? runs/requirements_v2_20260919/f12_20260921/office_bridge/product.sqlite.office-artifacts/
+?? runs/requirements_v2_20260919/f12_20260921/product_model_three_cases/gateway.sqlite.artifacts/
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/medical_writing_authoring_journey.sqlite3.pre-recovery.backup
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/medical_writing_authoring_journey.sqlite3.pre-recovery.backup-shm
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/medical_writing_authoring_journey.sqlite3.pre-recovery.backup-wal
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/writing_reference.sqlite3.pre-recovery.backup
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/writing_reference.sqlite3.pre-recovery.backup-shm
+?? runs/requirements_v2_20260919/f12_20260921/study_a_snapshot_binding_recovery/writing_reference.sqlite3.pre-recovery.backup-wal
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/ai_provider_secrets.json
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/ai_provider_settings.json
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/ai_role_bindings.json
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/ai_task_runs.jsonl
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime/writing_reference.sqlite3.init.lock
+?? runs/requirements_v2_20260919/f12_20260921/three_studies/study-a-failure.png
+?? runs/requirements_v2_20260919/t17_round3_interrupted/
+?? runs/requirements_v2_20260919/wp5_renderer_repro_20260922/
+?? runs/requirements_v2_20260919/wp6_0922v2_20260922/
+?? services/api/app/protocol_workflow/api/authoring_bridge.py
+?? services/api/app/protocol_workflow/application/authoring_bridge.py

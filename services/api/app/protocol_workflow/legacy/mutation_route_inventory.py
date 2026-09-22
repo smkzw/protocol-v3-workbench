@@ -229,6 +229,7 @@ _ROUTE_ROWS: tuple[tuple[str, str, str, str, str], ...] = (
     ("post", '/api/projects/{project_id}/medical-writing/authoring-journey/prefill-package/adopt', "adopt_medical_writing_authoring_prefill_candidate", "legacy_write", "journey_store"),
     ("post", '/api/projects/{project_id}/medical-writing/authoring-journey/prefill-package/adopt-composite', "adopt_medical_writing_authoring_prefill_composite", "legacy_write", "journey_store"),
     ("post", '/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/adopt', "adopt_medical_writing_full_draft", "legacy_write", "journey_store"),
+    ("post", '/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/decisions', "resolve_medical_writing_full_draft_decision", "legacy_write", "journey_store"),
     ("post", '/api/projects/{project_id}/medical-writing/references/preparation-batches/{batch_id}/advance-stage', "advance_writing_reference_preparation_batch_stage", "legacy_write", "reference_store"),
     ("post", '/api/projects/{project_id}/approvals/{approval_id}/actions', "apply_approval_action", "legacy_write", "working_copy"),
     ("post", '/api/projects/{project_id}/evidence-design/picos-workflow/{package_id}/ai-revisions/{thread_id}/actions', "apply_evidence_ai_revision_action", "legacy_write", "evidence_store"),

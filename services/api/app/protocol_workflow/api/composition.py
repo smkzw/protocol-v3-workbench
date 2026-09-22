@@ -51,6 +51,7 @@ from app.protocol_workflow.api.router import (
 )
 from app.protocol_workflow.application import ApplicationService
 from app.protocol_workflow.application.manuscript_documents import ManuscriptDocumentService
+from app.protocol_workflow.application.authoring_bridge import AuthoringJourneyBridge
 from app.protocol_workflow.agent1.source_identity import SourceIdentityService
 from app.protocol_workflow.artifacts.local_store import LocalArtifactStore
 from app.protocol_workflow.api.sources import create_source_router
@@ -69,6 +70,7 @@ from app.protocol_workflow.agent3.source_preparation import build_source_prepara
 from app.protocol_workflow.agent3.product import lazy_product_chapter_factory
 from app.protocol_workflow.api.chapter_drafts import create_chapter_draft_router
 from app.protocol_workflow.api.manuscript_drafts import create_manuscript_draft_router
+from app.protocol_workflow.api.authoring_bridge import create_authoring_bridge_router
 from app.protocol_workflow.agent3.manuscript_coordinator import build_manuscript_coordinator
 from app.protocol_workflow.errors import OWNER_PUBLIC_LABEL, ProtocolErrorOwner
 from app.protocol_workflow.registries import load_skill_registry
@@ -324,6 +326,10 @@ def create_mounted_protocol_workflow_router(
     regimen_coordinator_factory: Optional[Callable[[str], RegimenCoordinator]] = None,
     design_elements_coordinator_factory: Optional[Callable] = None,
     chapter_coordinator_factory: Optional[Callable] = None,
+    authoring_journey_provider: Optional[Callable[[str], Any]] = None,
+    full_draft_artifact_provider: Optional[
+        Callable[[str, str], tuple[dict[str, Any], str]]
+    ] = None,
 ) -> Optional[APIRouter]:
     """Build the mounted new-chain router, or ``None`` when disabled.
 
@@ -412,16 +418,35 @@ def create_mounted_protocol_workflow_router(
             uow_factory=uow_factory,
             reservation_repository_factory=build_committed_reservation_repository_factory(adapter_config),
             chapter_factory=chapters)
+    documents = ManuscriptDocumentService(
+        uow_factory,
+        lambda: datetime.now(timezone.utc),
+        office_store=_office_artifact_store(adapter_config),
+    )
     outer.include_router(
         create_manuscript_draft_router(manuscripts, preparations,
             application_service=service, template_loader=lambda: load_current_template(default_template_root()),
-            documents=ManuscriptDocumentService(uow_factory, lambda: datetime.now(timezone.utc),
-                office_store=_office_artifact_store(adapter_config)),
+            documents=documents,
             chapter_facts_deriver_factory=_chapter_facts_deriver_factory(adapter_config),
             object_revision_worker_factory=_object_revision_worker_factory(adapter_config),
             route_class=_ValidationEnvelopeRoute),
         dependencies=[Depends(_make_admission_dependency(adapter_config))],
     )
+    if authoring_journey_provider is not None and full_draft_artifact_provider is not None:
+        bridge = AuthoringJourneyBridge(
+            service,
+            documents,
+            lambda: load_current_template(default_template_root()),
+        )
+        outer.include_router(
+            create_authoring_bridge_router(
+                bridge,
+                authoring_journey_provider,
+                full_draft_artifact_provider,
+                route_class=_ValidationEnvelopeRoute,
+            ),
+            dependencies=[Depends(_make_admission_dependency(adapter_config))],
+        )
     return outer
 
 
@@ -434,6 +459,10 @@ def mount_protocol_workflow_router(
     regimen_coordinator_factory: Optional[Callable[[str], RegimenCoordinator]] = None,
     design_elements_coordinator_factory: Optional[Callable] = None,
     chapter_coordinator_factory: Optional[Callable] = None,
+    authoring_journey_provider: Optional[Callable[[str], Any]] = None,
+    full_draft_artifact_provider: Optional[
+        Callable[[str, str], tuple[dict[str, Any], str]]
+    ] = None,
 ) -> bool:
     """Mount the Protocol v3 chain on *app* iff explicitly enabled.
 
@@ -450,7 +479,9 @@ def mount_protocol_workflow_router(
         resolved, registry_path=registry_path, seed_coordinator_factory=seed_coordinator_factory,
         regimen_coordinator_factory=regimen_coordinator_factory,
         design_elements_coordinator_factory=design_elements_coordinator_factory,
-        chapter_coordinator_factory=chapter_coordinator_factory
+        chapter_coordinator_factory=chapter_coordinator_factory,
+        authoring_journey_provider=authoring_journey_provider,
+        full_draft_artifact_provider=full_draft_artifact_provider,
     )
     if router is None:
         return False

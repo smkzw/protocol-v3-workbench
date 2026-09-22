@@ -1,3 +1,21 @@
+# 当前锚点（2026-09-22 0922V2审阅包）
+本轮工程/GitHub/专家审阅与计划资料更新完成；产品未最终完成。唯一实施owner仍为01a0c203-4db6-74f0-bafd-5b32c28c7fdd。本次未发起产品模型、服务、全量回归或浏览器/原生Word验收；未改产品源码，未改native Goal。
+
+入口：plans/protocol_v3_0922V2_execution/00_START_HERE.md；Goal文本/原任务续作指令在同目录GOAL_PROMPT.txt、CONTINUE_IN_ORIGINAL_TASK.txt。下方历史状态/在途handle不应重启轮询。
+
+基线：本地main与GitHub均acf6d8341563d56946f934dfdac65c76997e36e3。当前v0.9工件hash d1e5ad959fd5cdce693e86f072ae39fff9a4056d1601320b86061bfa9d216820，85节=44正文/40来源缺口/1待决定；仍REVISE，不直接整包采纳。原3项runtime dirty和renderer上游dirty/未跟踪源码保留。
+
+新用户决定：已批准且确认项目适用的SOP允许一次项目级确认后复用常规运营，旧方案参考，剂量/安全/统计等关键决定仍单独确认。具体SOP尚未因此自动获项目适用批准。
+
+execution-plus-conference已完成：fresh readonly Hilbert审双链/Office，owner核9专家意见、真实工件与远端；第二次有界包复核3项均修订。guard preflight中文输出合同格式失败未隐瞒，不回填PASS，native reviewer实际completed报告可用；详见包evidence/OWNER_REVIEW_DISPOSITION.md。
+
+下一动作：原任务从WP0补漂移与身份映射→WP1输入/输出两端适配到单一Office当前稿→WP2恢复重组→WP3语义核对→WP4来源/SOP→WP5编辑/引用/宽屏→WP6集中完整验收。不要重新跑v0.9/检索分诊OCR翻译，不直接启动旧v0.10提示词长任务。普通完成不是暂停，构建期间不逐改测试。
+
+本次决定性检查：专家14成员checksum一致、4方法AST一致、真实bridge同字节；一次隔离8探针中5符合/3复现坏回执缺陷。不是浏览器/Word通过；真实运行flags/DB/bundle未核实。新包完整性检查见evidence/PACKAGE_VALIDATION.json。
+
+---
+## 以下为保留的历史记录
+
 # 当前锚点（2026-09-21）
 状态：in_progress，用户授权持续实施，未阶段暂停。原生Goal旧paused状态未篡改，新prompt见plans/mw_protocol_v3_goal_prompt_20260921.txt。
 本轮采用 direct 后接 independent conference：Study A 的检索快照续接、人工确认投影与当前 SQLite 状态紧密耦合，由 owner 做一个最小完整修复；冻结修复和实证后，再由 fresh reviewer 独立检查是否错误复用了已失效语料。构建期间按完整批次集中测试，不逐处测试。
@@ -149,3 +167,40 @@ v0.4 合同已实现并完成集中验证：每章显式区分 complete、decisi
 残留四类：§9.5 无来源安全采集起点；估计目标跨章改写且统计升级只显于§9；体格检查被写入安全性终点；公司语料被写成本项目运营/伦理义务。两张探索性卡还需原子合并。集中受影响测试106 passed，py_compile/diff check通过，v0.8/v0.9 review gate通过。v0.9不采纳、不写Word。
 
 用户要求本阶段完成后交专家审阅。完整交接为`handoff/2026-09-22/HANDOFF_PROTOCOL_V3_V09_EXPERT_REVIEW_20260922.md`，复盘为`runs/requirements_v2_20260919/t17_round11/STAGE_RETROSPECTIVE_V05_TO_V09_20260922.md`。下一动作仅在吸收专家意见后实现v0.10，不重复上游资料处理或v0.9 job。
+
+## 2026-09-22 0922V2专家复审与续作资料更新
+当前合同：本任务只读工程/远端并更新计划资料，不与续作任务并发写产品源码。execution-plus-conference：独立reviewer追踪双入口/Office接线，owner核对专家9项发现、真实工件、远端并整合文档。最终实现由01a0c203-4db6-74f0-bafd-5b32c28c7fdd承担。冻结基线acf6d8341563d56946f934dfdac65c76997e36e3，GitHub实时一致；所有runtime dirty保留。构建期间不逐改测试，不重复全稿模型生成验证控制流。
+新资料目录plans/protocol_v3_0922V2_execution；专家ZIP已按原内容归档，作为证据不作自动指令。
+
+## 2026-09-22 0922V2 WP0–WP3连续实施
+执行模式为direct：WP1–WP3围绕同一全文候选、StudyDefinition、Manuscript与Office所有权合同紧密修改，由owner连续集成可避免共享写冲突；独立医学/工程审阅留到WP6冻结工件后执行。本轮没有新建或fork任务，没有启动产品模型、服务、浏览器或阶段测试。
+
+WP0重锚定确认HEAD/origin均为`acf6d8341563d56946f934dfdac65c76997e36e3`；历史Trellis、运行时、审阅包和genoffice-upstream dirty均保留。native Goal与`plans/protocol_v3_0922V2_execution/GOAL_PROMPT.txt`一致。
+
+WP1源码实现、待WP6集中验收：full-draft升级v0.10混合正文+缺口合同；不可变authoring journey/StudyDefinition绑定；旧full-draft薄适配到canonical manuscript；外部候选采用以候选字节hash、evidence manifest、Study revision和CAS绑定；当前Office人工Word不被候选静默覆盖。旧v0.9只读兼容保留。
+
+WP2源码实现、待WP6集中验收：相互关联决定可1–6项原子确认；同一Study revision和原始framing/PICOS快照绑定；事实已写而续写任务未知时以同operation恢复并创建/复用局部任务；局部候选采用保留不受影响的semantic blocks。前端保留同job超长观察、固定选择和同operation核对，不再把运行中误报失败。
+
+WP3源码实现、待WP6集中验收：删除“统计分析标题+复合策略关键词”直接冲突；ICE只在同一主要estimand、同一伴发事件和同一结局语境比较，不同事件可用不同策略，“治疗策略人群”进入澄清。探索性目的/终点决定必须含明确“不设置探索性”选项但不设全局默认。Office核对升为v2：相同数字仅在相关上下文中作为语义核对线索，不能证明一致；展示已直接定位/待语义核对/未覆盖，零检查为`not_checked`，核对失败继续不阻保存。
+
+静态证据：受影响Python文件AST解析通过；frontend JSX经esbuild解析通过；mjs经node检查通过；`git diff --check`通过。按0922V2纪律尚未运行组件/API/模型/浏览器/Word测试。下一动作连续进入WP4，冻结每个full-draft任务的实际来源manifest并闭合SOP项目级一次确认复用；不重放旧job或上游资料处理。
+
+## 2026-09-22 0922V2 WP4–WP5连续实施
+WP4源码实现、待WP6集中验收：每个全文任务在持久化前冻结实际来源manifest，记录source id/version/hash/role/locator及完整source-ref；运行与恢复只从冻结版本重建输入，后续资料库变化不污染旧任务。候选工件与UI显示冻结来源版本/角色。公司SOP常规运营表述支持一次项目级确认后按相同公司来源版本复用；剂量、安全和统计决定固定排除并继续分别确认。未检索到来源与明确无来源保持不同状态。
+
+WP5源码实现、待WP6集中验收：Office保存只接受persisted、operation、内容hash、制品/文档/研究版本均与请求一致的回执；坏JSON、假成功、错身份保留同operation、pending bytes与dirty。新操作指纹升级为包含文档hash、Office基线和打开时研究版本的v2，旧v1事件继续按历史算法恢复；制品按字节去重时允许合法同revision回执。GenOffice真实选区只在同一段/单元格且文字标记一致时替换，保存structure signature和原Slice；格式变化、混合样式或内嵌对象明确拒绝且不改文档，撤销恢复原Slice。系统引文表重排保留原位置、段落/标题容器属性和已有行内样式，未知第三方域不改。
+
+前端继续使用现有双栏，不另建布局框架：桥接工作台左栏压至220–280px，正文获得主要宽度；候选摘要/来源/SOP/相关决定改成紧凑网格与bullet，打开当前Office后隐藏已采用候选长卡，减少编辑器上方滚动。正文/UI字号下限未降低，风险色和主动作继续遵循kangzhe-design-3d浅色交互规范。
+
+renderer重建证据已冻结到`runs/requirements_v2_20260919/wp5_renderer_repro_20260922/`：上游base `316ded6f0a39235fec8d21c068d8a0766ee6172b`、tracked binary patch、两个未跟踪源文件、有效源码hash和构建命令齐备；bundle hash在WP6真实构建后补记。没有向上游公共origin推送。
+
+静态证据：受影响Python AST、bridge node语法、前端JSX和renderer TypeScript的esbuild解析、两库`git diff --check`均通过。按0922V2纪律WP1–WP5期间未启动服务、产品模型、浏览器、Office或测试。下一动作进入WP6：先冻结当前源/配置/数据身份并跑合并构建与受影响测试，按失败族修复；再做真实SQLite/HTTP、ego(lite)、实际产品模型、原生Word和独立医学/工程接受。普通失败批次不暂停。
+
+## 2026-09-22 0922V2 WP6集中工程验收与无损暂停
+WP6已完成当前源码可执行的集中工程验收与失败族修复。后端`tests/protocol_v3`最终2601 passed（仅1条Python 3.14 future warning）；前端15个Vitest文件110 passed、48个Node文件66 passed；frontend与GenOffice renderer生产构建分别完成1971和483 modules；GenOffice docx-engine 1398 passed、1 skipped，两个相关TypeScript工程typecheck通过；主库与renderer库`git diff --check`通过。
+
+集中修复包括：真实Office保存回执必须核验持久化与内容/制品/文档/研究身份；相同字节去重允许合法同revision；Office intent v2纳入文档hash、基线制品、打开时研究版本并兼容历史v1；完整full-draft路由登记与挂载断言同步；应用effect cleanup、html2docx可空shotId、GenOffice feasibility类型与字段名修复；TP-MA-07派生模板/映射和Word来源清单按当前源码重新生成。所有首轮失败日志和最终通过日志保留在`runs/requirements_v2_20260919/wp6_0922v2_20260922/logs/`。
+
+当前只达到工程阶段验收，不构成Protocol v3整产品接受。A01–A26、V01–V08、B01–B12针对当前源码的真实产品模型、ego(lite)浏览器、原生Microsoft Word往返及逐章医学判断均保持NOT_RUN；没有启动新服务、产品模型、浏览器或Word。详细边界见`runs/requirements_v2_20260919/wp6_0922v2_20260922/PARTIAL_ACCEPTANCE_REPORT_20260922.md`。
+
+用户要求完成手头工作后无损暂停。源码、历史runtime dirty、失败证据、旧工件和两个仓库的现有工作树全部保留；没有清理、覆盖或重放旧job。下一安全动作是从本暂停点恢复，先冻结当前GitHub提交和运行时身份，再按WP6验收包依次执行真实SQLite/HTTP、产品默认模型、ego(lite)、原生Word与fresh工程/医学接受，按失败族修复；不得把本轮工程测试通过解释为F12或整产品完成。

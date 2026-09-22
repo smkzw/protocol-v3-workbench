@@ -4,6 +4,13 @@ import { GenOfficeFrame } from './office/GenOfficeFrame';
 import './kangzheProtocol.css';
 import './ManuscriptWorkspace.css';
 
+const SOURCE_ROLE_LABELS = {
+  confirmed_project_facts: '本项目已确认研究事实',
+  company_sop_or_protocol_reference: '公司SOP与方案参考',
+  shared_reference_only: '共享参考资料',
+  project_source: '本项目资料',
+};
+
 function savedValue(key) {
   try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch { return null; }
 }
@@ -572,6 +579,273 @@ function ManuscriptSession({ projectId, studyDefinitionId, seedRunId, actorId, a
   </section>;
 }
 
+function FullDraftBridgeSession({ projectId, studyDefinitionId, actorId, api, onNavigationGuardChange }) {
+  const storageKey = 'protocol-v3:full-draft-bridge:' + projectId;
+  const restored = savedValue(storageKey) || {};
+  const [jobId, setJobId] = useState(restored.jobId || '');
+  const [job, setJob] = useState(null);
+  const [candidate, setCandidate] = useState(null);
+  const [savedDocument, setSavedDocument] = useState(null);
+  const [pendingIntent, setPendingIntent] = useState(restored.pendingIntent || null);
+  const [decisionChoices, setDecisionChoices] = useState({});
+  const [sourcePolicy, setSourcePolicy] = useState(null);
+  const [officeOpen, setOfficeOpen] = useState(false);
+  const [showOffice, setShowOffice] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [refresh, setRefresh] = useState(0);
+  const apiRef = useRef(api); apiRef.current = api;
+
+  function remember(values) {
+    const next = { jobId, pendingIntent, ...values };
+    localStorage.setItem(storageKey, JSON.stringify(next));
+    if (Object.prototype.hasOwnProperty.call(values, 'jobId')) setJobId(values.jobId || '');
+    if (Object.prototype.hasOwnProperty.call(values, 'pendingIntent')) setPendingIntent(values.pendingIntent || null);
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId, { signal: controller.signal })
+      .then(value => { if (!controller.signal.aborted) setSavedDocument(normalizeSavedDocument(value)); })
+      .catch(reason => { if (!controller.signal.aborted && reason?.status !== 404) setError(readableError(reason)); });
+    return () => controller.abort();
+  }, [projectId, studyDefinitionId, refresh]);
+
+  useEffect(() => {
+    if (!jobId) return undefined;
+    const controller = new AbortController();
+    let timer;
+    let delay = 1500;
+    const read = async () => {
+      try {
+        const next = await apiRef.current.getDurableMedicalWritingJob(projectId, jobId, { signal: controller.signal });
+        if (controller.signal.aborted) return;
+        setJob(next); setError('');
+        if (next.status === 'completed') {
+          const result = await apiRef.current.getFullDraftResult(projectId, jobId, { signal: controller.signal });
+          if (!controller.signal.aborted) setCandidate(result?.artifact || null);
+          return;
+        }
+        if (['failed', 'cancelled'].includes(next.status)) return;
+      } catch (reason) {
+        if (!controller.signal.aborted) {
+          setError('暂时无法读取生成进度；系统会继续核对同一次任务，不会重新生成。');
+        }
+      }
+      if (!controller.signal.aborted) {
+        timer = setTimeout(read, delay);
+        delay = Math.min(delay * 2, 30000);
+      }
+    };
+    read();
+    return () => { controller.abort(); clearTimeout(timer); };
+  }, [projectId, jobId, refresh]);
+
+  useEffect(() => {
+    if (!candidate || !jobId || !apiRef.current.getFullDraftSourcePolicy) {
+      setSourcePolicy(null); return undefined;
+    }
+    const controller = new AbortController();
+    apiRef.current.getFullDraftSourcePolicy(projectId, jobId, { signal: controller.signal })
+      .then(value => { if (!controller.signal.aborted) setSourcePolicy(value); })
+      .catch(reason => {
+        if (!controller.signal.aborted) setSourcePolicy(
+          reason?.status === 404 ? { status: 'not_required', current: true } : { status: 'unavailable', current: false }
+        );
+      });
+    return () => controller.abort();
+  }, [candidate, jobId, projectId, refresh]);
+
+  async function startCandidate() {
+    if (busy || jobId) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const next = await apiRef.current.startFullDraft(projectId, actorId);
+      if (!next?.job_id) throw new Error('本次候选任务尚未登记。');
+      remember({ jobId: next.job_id, pendingIntent: null });
+      setJob(next);
+    } catch (reason) { setError(readableError(reason)); }
+    finally { setBusy(false); }
+  }
+
+  async function acceptCandidate() {
+    if (busy || !candidate || !jobId || officeOpen) return;
+    setBusy(true); setError(''); setNotice('');
+    let intent = pendingIntent;
+    try {
+      let current = savedDocument;
+      if (!current) {
+        try { current = normalizeSavedDocument(await apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId)); }
+        catch (reason) { if (reason?.status !== 404) throw reason; }
+      }
+      if (!intent) {
+        intent = {
+          operation_id: 'full-draft-candidate:' + crypto.randomUUID(),
+          actor_id: actorId,
+          expected_revision: current?.revision || 0,
+          expected_document_sha256: current?.document_sha256 || null,
+          accepted_semantic_node_ids: [],
+        };
+        remember({ pendingIntent: intent });
+      }
+      await apiRef.current.recoverFullDraftCandidate(projectId, jobId, intent);
+      const accepted = normalizeSavedDocument(
+        await apiRef.current.getSavedManuscriptDocument(projectId, studyDefinitionId)
+      );
+      setSavedDocument(accepted);
+      remember({ pendingIntent: null });
+      setNotice('候选已进入当前语义工作稿。已有 Word 人工稿仍原样保留；打开工作稿后可核对差异。');
+      setShowOffice(true);
+      setRefresh(value => value + 1);
+    } catch (reason) {
+      setError(readableError(reason));
+    } finally { setBusy(false); }
+  }
+
+  async function confirmSourcePolicy() {
+    if (busy || !jobId || sourcePolicy?.current) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const result = await apiRef.current.confirmFullDraftSourcePolicy(projectId, jobId, {
+        operation_id: `source-policy:${jobId}:${candidate?.source_manifest_sha256 || 'current'}`,
+        actor_id: actorId,
+        routine_scope: ['常规运营流程与职责表述', '通用记录与文档管理表述'],
+        excluded_scope: ['剂量取舍', '安全性医学判断', '统计设计与分析决定'],
+      });
+      setSourcePolicy({ ...sourcePolicy, ...result, status: 'confirmed', current: true });
+      setNotice('本项目的常规SOP适用范围已确认；后续章节复用该记录。剂量、安全和统计仍分别确认。');
+    } catch (reason) { setError(readableError(reason)); }
+    finally { setBusy(false); }
+  }
+
+  async function confirmRelatedDecisions(items) {
+    if (busy || !jobId || !items.length) return;
+    const decisions = items.map(item => ({
+      decision_id: item.decision_id,
+      option_id: decisionChoices[item.decision_id] || item.recommended_option_id,
+    }));
+    if (decisions.some(item => !item.option_id)) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const groupIdentity = decisions.map(item => `${item.decision_id}:${item.option_id}`).sort().join('|');
+      const result = await apiRef.current.resolveFullDraftDecisions(projectId, jobId, {
+        actor: actorId,
+        idempotency_key: `full-draft-related:${jobId}:${groupIdentity}`,
+        decisions,
+      });
+      await apiRef.current.ensureAuthoringHandoff(projectId, actorId);
+      const nextJobId = result?.regeneration?.job_id;
+      if (!nextJobId) throw new Error('相关决定已保存，续写任务尚未读回。');
+      setCandidate(null); setJob(result.regeneration); setDecisionChoices({});
+      remember({ jobId: nextJobId, pendingIntent: null });
+      setNotice('相关决定已一次保存，正在只补写受影响章节；其他工作稿内容保持不变。');
+    } catch (reason) {
+      setError(`本次确认与续写状态尚未核对：${readableError(reason)} 请保留当前选择并再次核对，不需要重新作决定。`);
+    } finally { setBusy(false); }
+  }
+
+  const coverage = candidate?.coverage || {};
+  const sourceManifest = candidate?.source_manifest || {};
+  const sourceRoles = (sourceManifest.sources || []).reduce((counts, source) => ({
+    ...counts, [source.role]: (counts[source.role] || 0) + 1,
+  }), {});
+  const requiresSourcePolicy = Boolean(sourceRoles.company_sop_or_protocol_reference);
+  const gaps = (candidate?.sections || []).flatMap(section => [
+    ...(section.gap_items || []).map(item => ({ ...item, section: section.section_id })),
+    ...(section.decision_items || []).map(item => ({
+      category: 'decision_pending', section: section.section_id,
+      action: item.question || '确认本章节科学决定',
+    })),
+  ]);
+  const decisionItems = (candidate?.sections || []).flatMap(section => section.decision_items || []);
+  const running = jobId && !candidate && !['failed', 'cancelled'].includes(job?.status);
+
+  return <section className="kz-protocol kz-manuscript kz-manuscript--bridge" aria-label="完整方案初稿">
+    <header><h2>研究方案工作稿</h2></header>
+    <ul className="kz-manuscript-summary">
+      <li><strong>研究设计：</strong>已沿用本项目此前确认的内容。</li>
+      <li><strong>当前文档：</strong>{savedDocument ? `已保存第 ${savedDocument.revision} 版` : '尚未建立工作稿'}。</li>
+      <li><strong>候选规则：</strong>有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。</li>
+    </ul>
+    {!jobId && <button type="button" className="kz-manuscript-primary" disabled={busy || !actorId} onClick={startCandidate}>
+      准备完整候选初稿
+    </button>}
+    {running && <div role="status">
+      <p>正在生成候选初稿。关闭页面后任务仍会继续；再次进入会核对同一任务。</p>
+      <button type="button" disabled={busy} onClick={() => setRefresh(value => value + 1)}>查看最新进度</button>
+    </div>}
+    {job?.status === 'failed' && <p role="alert">本次候选生成没有完成，当前工作稿未被修改。</p>}
+    {job?.status === 'cancelled' && <p role="status">本次候选已停止，当前工作稿未被修改。</p>}
+    {candidate && (!savedDocument || !showOffice) && <section className="kz-manuscript-candidate" aria-label="新候选初稿">
+      <h3>新候选初稿</h3>
+      <ul>
+        <li><strong>正文范围：</strong>{(candidate.sections || []).filter(item => item.proposal_text).length} 个章节已有正文。</li>
+        <li><strong>待处理：</strong>{gaps.length} 项；其中关键决定需在对应位置确认。</li>
+        <li><strong>正式就绪：</strong>{coverage.formal_ready ? '是' : '否，当前仅作为可编辑工作稿'}。</li>
+        <li><strong>冻结资料：</strong>{sourceManifest.source_count || 0} 个版本；本次候选始终使用提交时版本。</li>
+      </ul>
+      {(sourceManifest.sources || []).length > 0 && <details><summary>查看本次使用的资料版本</summary><ul>
+        {Object.entries(sourceRoles).map(([role, count]) => <li key={role}>{SOURCE_ROLE_LABELS[role] || role}：{count} 项</li>)}
+        {(sourceManifest.sources || []).map(source => <li key={`${source.source_id}:${source.content_sha256}`}>
+          <strong>{source.title || source.source_type}</strong> · {source.source_version || '当前版本'} · {source.locator}
+        </li>)}
+      </ul></details>}
+      {sourcePolicy && sourcePolicy.status !== 'not_required' && <section className="kz-manuscript-source-policy" aria-label="公司SOP项目适用范围">
+        <h4>公司SOP适用范围</h4>
+        <ul>
+          <li><strong>常规运营：</strong>{sourcePolicy.current ? '本项目已确认，可复用' : '需做一次项目级确认'}。</li>
+          <li><strong>仍分别确认：</strong>剂量取舍、安全性医学判断、统计设计与分析决定。</li>
+          {sourcePolicy.status === 'source_version_changed' && <li><strong>资料已换版：</strong>仅需重新核对受影响范围。</li>}
+        </ul>
+        {!sourcePolicy.current && <button type="button" className="kz-manuscript-primary" disabled={busy || !actorId}
+          onClick={confirmSourcePolicy}>确认本项目复用常规SOP</button>}
+      </section>}
+      {requiresSourcePolicy && !sourcePolicy && <p role="status">正在读取本项目已有的SOP适用确认…</p>}
+      {gaps.length > 0 && <details><summary>查看待处理事项（{gaps.length}）</summary><ul>
+        {gaps.slice(0, 20).map((item, index) => <li key={`${item.gap_id || item.section}-${index}`}>
+          {item.action || '补充本章节所需信息。'}
+        </li>)}
+        {gaps.length > 20 && <li>其余 {gaps.length - 20} 项将在工作稿对应章节中继续保留。</li>}
+      </ul></details>}
+      {decisionItems.length > 0 && <div className="kz-manuscript-decisions" role="group" aria-label="相关研究决定">
+        <h4>需要确认的相关决定</h4>
+        {decisionItems.map(item => <fieldset key={item.decision_id} disabled={busy}>
+          <legend>{item.question}</legend>
+          {(item.options || []).map(option => <label key={option.option_id}>
+            <input type="radio" name={`bridge-decision-${item.decision_id}`}
+              checked={(decisionChoices[item.decision_id] || item.recommended_option_id) === option.option_id}
+              onChange={() => setDecisionChoices(current => ({ ...current, [item.decision_id]: option.option_id }))}/>
+            <strong>{option.option_id === item.recommended_option_id ? '推荐 · ' : ''}{option.label}</strong>
+            <span>{option.summary}</span>
+          </label>)}
+        </fieldset>)}
+        <button type="button" className="kz-manuscript-primary" disabled={busy}
+          onClick={() => confirmRelatedDecisions(decisionItems)}>
+          一次确认这 {decisionItems.length} 项相关决定
+        </button>
+      </div>}
+      <button type="button" className="kz-manuscript-primary" disabled={busy || officeOpen || !coverage.working_draft_ready
+        || (requiresSourcePolicy && !sourcePolicy?.current)}
+        onClick={acceptCandidate}>{pendingIntent ? '核对并完成原候选采用' : '采用候选并打开工作稿'}</button>
+      {savedDocument && <p>采用新候选不会静默覆盖当前 Word 人工稿；系统会保留现有版本并提示核对。</p>}
+    </section>}
+    {savedDocument && !showOffice && <button type="button" className="kz-manuscript-primary" onClick={() => setShowOffice(true)}>
+      打开工作稿
+    </button>}
+    {showOffice && savedDocument && <GenOfficeFrame
+      projectId={projectId} studyDefinitionId={studyDefinitionId}
+      actorId={actorId} savedDocument={savedDocument} api={apiRef.current}
+      onSessionChange={setOfficeOpen} onNavigationGuardChange={onNavigationGuardChange}
+      onClose={() => { setShowOffice(false); setRefresh(value => value + 1); }}/>}
+    {notice && <p role="status">{notice}</p>}
+    {error && <p role="alert">{error}</p>}
+  </section>;
+}
+
 export function ManuscriptWorkspace(props) {
+  if (props.bridgeMode) {
+    return <FullDraftBridgeSession key={JSON.stringify([props.projectId, props.studyDefinitionId])} {...props}/>;
+  }
   return <ManuscriptSession key={JSON.stringify([props.projectId, props.studyDefinitionId, props.seedRunId])} {...props}/>;
 }

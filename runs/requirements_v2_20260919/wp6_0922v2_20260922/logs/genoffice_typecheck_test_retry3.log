@@ -1,0 +1,21 @@
+
+> @genoffice/docx-engine@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @genoffice/docs@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @genoffice/docx-engine@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/packages/docx-engine
+
+
+ Test Files  139 passed (139)
+      Tests  1398 passed | 1 skipped (1399)
+   Start at  17:25:58
+   Duration  3.77s (transform 6.79s, setup 0ms, import 24.36s, tests 26.11s, environment 6ms)
+

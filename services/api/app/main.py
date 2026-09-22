@@ -583,15 +583,6 @@ MGK10_SAR_PROTOCOL_PATH = Path(
 app = FastAPI(title="AI Medical Manager Workbench", version="0.1.0")
 app.include_router(eligibility_router)
 
-# Protocol v3 workflow chain (Task 1R.2): explicit default-off mount. With
-# the switch absent this call is a no-op (no routes, no database, no
-# worker); when enabled it mounts
-# ``/api/projects/{project_id}/protocol-workflow`` gated by the durable
-# product-SQLite project allowlist. Only this composition entrypoint may be
-# referenced here — never the router factory, service or storage layers.
-mount_protocol_v3_workflow_router(app)
-
-
 @app.middleware("http")
 async def enforce_medical_writing_client_contract(request: Request, call_next):
     if (
@@ -2567,6 +2558,31 @@ real_medical_writing_revision = MedicalWritingRevisionService(
 medical_writing_full_draft_service = MedicalWritingFullDraftService(
     service_resolver=_mw_service_resolver,
     artifact_root=RUNTIME_DIR / "medical_writing_full_drafts",
+)
+
+
+def _protocol_v3_authoring_journey_provider(project_id: str):
+    canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+    return medical_writing_authoring_journey_service.get(canonical_id)
+
+
+def _protocol_v3_full_draft_artifact_provider(project_id: str, job_id: str):
+    canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+    record = mw_durable_store.get(canonical_id, job_id)
+    return medical_writing_full_draft_service.read_frozen_artifact(
+        canonical_id, record
+    )
+
+
+# Protocol v3 workflow chain (Task 1R.2 + 0922V2 WP1): the default-off
+# composition is mounted only after the existing authoring journey and
+# full-draft services exist.  Both entry modes now share the canonical
+# StudyDefinition/manuscript/Office chain; the legacy full draft is only an
+# immutable candidate producer.
+mount_protocol_v3_workflow_router(
+    app,
+    authoring_journey_provider=_protocol_v3_authoring_journey_provider,
+    full_draft_artifact_provider=_protocol_v3_full_draft_artifact_provider,
 )
 
 # Attach the durable store to the translation batch service so create/retry
@@ -7854,37 +7870,93 @@ def get_medical_writing_full_draft_result(project_id: str, job_id: str):
 def _confirm_full_draft_decision_in_study_definition(
     project_id: str,
     *,
-    field_path: str,
-    value,
+    decisions: list[dict[str, Any]],
+    expected_journey_revision: int,
+    authoring_journey_binding: dict[str, Any],
     actor: str,
     idempotency_key: str,
 ):
-    """Persist one confirmed full-draft decision through the existing
-    authoring-journey StudyDefinition confirmation path.
+    """Persist one related decision group in the existing journey transaction.
 
-    No second decision store is introduced: the medical manager's single
-    explicit confirmation reuses the same CAS, idempotency and audit semantics
-    as every other study-design adoption.
+    The original journey revision is part of the immutable full-draft
+    artifact.  Repeating the same operation therefore reaches commit_stage's
+    idempotent replay before its stale-revision check, including after facts
+    committed but the continuation job response was lost.
     """
     journey = medical_writing_authoring_journey_service.get(project_id)
-    package = getattr(journey, "prefill_package", None)
-    if package is None:
-        raise RuntimeStoreError(
-            "当前项目还没有已生成的研究设计确认包，决定未写入"
-        )
-    verifier = _build_authoring_prefill_evidence_verifier(project_id)
-    return medical_writing_authoring_journey_service.adopt_prefill_candidate(
+    roots = {str(item.get("fact_path") or "").partition(".")[0] for item in decisions}
+    if len(roots) != 1 or next(iter(roots), "") not in {"framing", "picos"}:
+        raise ValueError("相关决定必须属于同一研究设计阶段，才能一次确认")
+    stage = next(iter(roots))
+    model = getattr(journey, stage)
+    payload = authoring_journey_binding.get(stage)
+    if not isinstance(payload, dict):
+        raise ValueError("全文初稿缺少原研究设计快照，决定未写入")
+    payload = json.loads(json.dumps(payload, ensure_ascii=False))
+    for item in decisions:
+        path = str(item.get("fact_path") or "")
+        value = item.get("value")
+        tokens = path.split(".")[1:]
+        if not tokens:
+            raise ValueError(f"决定字段路径无效：{path}")
+        cursor = payload
+        for token in tokens[:-1]:
+            if not isinstance(cursor, dict) or token not in cursor:
+                raise ValueError(f"决定字段路径不存在：{path}")
+            cursor = cursor[token]
+        if not isinstance(cursor, dict) or tokens[-1] not in cursor:
+            raise ValueError(f"决定字段路径不存在：{path}")
+        cursor[tokens[-1]] = value
+    updated = type(model).model_validate(payload)
+    preview_request = MedicalWritingJourneyImpactPreviewRequest(
+        expected_revision=expected_journey_revision,
+        stage=stage,
+        **{stage: updated},
+    )
+    if journey.revision == expected_journey_revision:
+        preview_id = medical_writing_authoring_journey_service.impact_preview(
+            project_id, preview_request
+        ).preview_id
+    else:
+        # Recovery after a successful commit must recreate the exact original
+        # commit request so commit_stage can replay it before checking the now
+        # stale expected revision. impact_preview compares top-level stage
+        # fields, even when the decision path itself is nested.
+        changed_fields = sorted({
+            ".".join(str(item.get("fact_path") or "").split(".")[:2])
+            for item in decisions
+        })
+        dependents = sorted({
+            dependent
+            for field_path in changed_fields
+            for dependent in medical_writing_authoring_journey_service._IMPACT_MAP.get(
+                field_path, []
+            )
+        })
+        preview_payload = {
+            "project_id": project_id,
+            "expected_revision": expected_journey_revision,
+            "stage": stage,
+            "changed_fields": changed_fields,
+            "affected_dependents": dependents,
+        }
+        preview_id = "mwimpact_" + sha256(json.dumps(
+            preview_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        ).encode("utf-8")).hexdigest()[:24]
+    return medical_writing_authoring_journey_service.commit_stage(
         project_id,
-        AuthoringPrefillAdoptRequest(
-            expected_revision=journey.revision,
-            expected_package_revision=package.package_revision,
-            field_path=field_path,
-            candidate_id="",
-            edited_value=value,
+        MedicalWritingAuthoringJourneyCommitRequest(
+            expected_revision=expected_journey_revision,
+            stage=stage,
+            impact_preview_id=preview_id,
             actor=actor,
             idempotency_key=idempotency_key,
+            **{stage: updated},
         ),
-        evidence_verifier=verifier,
     )
 
 

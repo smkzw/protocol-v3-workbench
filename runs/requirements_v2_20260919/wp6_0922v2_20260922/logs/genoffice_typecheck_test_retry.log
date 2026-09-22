@@ -1,0 +1,12 @@
+
+> @genoffice/docx-engine@0.1.0 typecheck
+> tsc --noEmit
+
+tests/protocol-feasibility.spike.test.ts(103,7): error TS2353: Object literal may only specify known properties, and 'modified' does not exist in type 'SaveOptions'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/packages/docx-engine
+npm error workspace @genoffice/docx-engine@0.1.0
+npm error location /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/packages/docx-engine
+npm error command failed
+npm error command sh -c tsc --noEmit

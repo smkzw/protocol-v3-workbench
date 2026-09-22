@@ -68,7 +68,11 @@ def test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks(
                 '研究者应记录每次访视的实际日期以及检查结果。'
                 '所有检查结果按方案规定的方法评估，并记录与研究相关的临床观察。'
                 '如有方案偏离，应说明具体情况及原因，保留相关原始记录。')
-        completed, artifact = harness._completed_artifact()
+        with patch(
+            'services.api.app.medical_writing_full_draft.company_template_semantic_node_map',
+            return_value={'': 'semantic:test:research-background'},
+        ):
+            completed, artifact = harness._completed_artifact()
         assert artifact['schema_version'] == FULL_DRAFT_ARTIFACT_SCHEMA
         artifact['sections'][0]['proposal_text'] = text
         with patch.object(harness.full, 'read_artifact', return_value=artifact):

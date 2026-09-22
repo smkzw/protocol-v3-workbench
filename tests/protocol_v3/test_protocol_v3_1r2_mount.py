@@ -667,7 +667,7 @@ if not os.environ.get("WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED"):
     before = set(threading.enumerate())
     if os.environ.get("BASELINE_WITHOUT_V3_MOUNT"):
         import app.protocol_workflow.api.composition as composition
-        composition.mount_protocol_workflow_router = lambda app: False
+        composition.mount_protocol_workflow_router = lambda app, **_providers: False
     import app.main as main_module
     started_threads = sorted(
         (thread.name, getattr(getattr(thread, "_target", None), "__qualname__", ""))

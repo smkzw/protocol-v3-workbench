@@ -118,9 +118,30 @@
       return { ok: false, retryable: true, error: '保存结果暂未核实，请保留页面并重试。' }
     }
     if (response.ok) {
-      const receipt = await response.json().catch(() => ({}))
-      if (receipt.artifact_revision) baseArtifactRevision = receipt.artifact_revision
+      let receipt
+      try { receipt = await response.json() }
+      catch {
+        window.parent.postMessage({ type: 'protocol-office:save-failed',
+          error: '保存接口未返回可核对的版本信息，本次修改仍标记为未保存。', data: requestedData }, window.location.origin)
+        return { ok: false, retryable: true, error: '保存回执无法核对，请保留页面并重试。' }
+      }
+      const persistedHash = await sha256Hex(data)
+      const expectedRevision = Number(query.get('rev') || 0)
+      const validReceipt = receipt?.persisted === true
+        && receipt.operation_id === operationId
+        && receipt.content_sha256 === persistedHash
+        && Number.isInteger(receipt.artifact_revision)
+        && receipt.artifact_revision >= baseArtifactRevision
+        && receipt.document_revision === expectedRevision
+        && receipt.study_revision_sha256 === (openedStudySha || receipt.study_revision_sha256)
+      if (!validReceipt) {
+        window.parent.postMessage({ type: 'protocol-office:save-failed',
+          error: '保存接口返回的版本身份与本次文档不一致，本次修改仍标记为未保存。', data: requestedData }, window.location.origin)
+        return { ok: false, retryable: true, error: '保存版本身份无法核对，请保留页面并重试。' }
+      }
+      baseArtifactRevision = receipt.artifact_revision
       saveDocx.operationId = null
+      saveDocx.pendingData = null
       window.parent.postMessage({ type: 'protocol-office:saved', receipt }, window.location.origin)
       requestDirtyState()
       if (hasNewChanges) return saveDocx(path, requestedData)

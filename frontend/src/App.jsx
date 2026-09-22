@@ -10397,7 +10397,8 @@ function WritingPage({
       jobId,
       {
         intervalMs: 900,
-        maxLoops: 1200,
+        maxLoops: Number.POSITIVE_INFINITY,
+        shouldContinue: () => fullDraftRunRef.current === runToken,
         onUpdate: (payload) => {
           if (fullDraftRunRef.current === runToken) setFullDraftJob(payload);
         },
@@ -10505,22 +10506,30 @@ function WritingPage({
   const fullDraftDecisionChoice = (item) => (
     fullDraftDecisionChoices[item.decision_id] || item.recommended_option_id || ""
   );
+  const fullDraftDecisionItems = (fullDraftArtifact?.sections || []).flatMap(
+    (section) => section.decision_items || [],
+  );
   const selectFullDraftDecisionOption = (decisionId, optionId) => {
     setFullDraftDecisionChoices((current) => ({ ...current, [decisionId]: optionId }));
   };
-  const resolveFullDraftDecision = (item) => {
+  const resolveFullDraftDecision = (decisionOrGroup) => {
+    const items = Array.isArray(decisionOrGroup) ? decisionOrGroup : [decisionOrGroup];
     const jobId = fullDraftJob?.job_id;
-    const optionId = fullDraftDecisionChoice(item);
-    if (!jobId || !optionId || fullDraftDecisionBusy || fullDraftBusy || editorFrozen) return;
-    setFullDraftDecisionBusy(item.decision_id);
-    setFullDraftDecisionMessage("正在把本次决定写入研究设计；确认后当前全文初稿候选将失效，并只重写受影响章节。");
+    const selections = items.map((item) => ({
+      decision_id: item.decision_id,
+      option_id: fullDraftDecisionChoice(item),
+    }));
+    if (!jobId || selections.some((item) => !item.option_id) || fullDraftDecisionBusy || fullDraftBusy || editorFrozen) return;
+    const groupId = items.map((item) => item.decision_id).sort().join(':');
+    setFullDraftDecisionBusy(groupId);
+    setFullDraftDecisionMessage(`正在一次确认 ${items.length} 项相关研究决定；事实写入后只重写受影响章节。`);
     fetch(`/api/projects/${projectId}/medical-writing/full-drafts/${encodeURIComponent(jobId)}/decisions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         actor: "medical_manager",
-        idempotency_key: `full-draft-decision-${jobId}-${item.decision_id}-${optionId}`,
-        decisions: [{ decision_id: item.decision_id, option_id: optionId }],
+        idempotency_key: `full-draft-decision-${jobId}-${groupId}-${selections.map((item) => item.option_id).join(':')}`,
+        decisions: selections,
       }),
     })
       .then(readJsonOrThrow)
@@ -10531,7 +10540,7 @@ function WritingPage({
         );
         setFullDraftDecisionChoices((current) => {
           const next = { ...current };
-          delete next[item.decision_id];
+          for (const item of items) delete next[item.decision_id];
           return next;
         });
         setFullDraftArtifact(null);
@@ -10560,9 +10569,15 @@ function WritingPage({
             if (fullDraftRunRef.current === runToken) setFullDraftBusy(false);
           }
         }
-        await refreshStudyConsistency();
+        try {
+          await refreshStudyConsistency();
+        } catch {
+          setFullDraftDecisionMessage("相关决定已经提交；页面暂未读回最新研究状态，请继续核对同一操作，不需要重新选择。");
+        }
       })
-      .catch((error) => setFullDraftDecisionMessage(`本次决定未写入：${apiErrorText(error)}`))
+      .catch((error) => setFullDraftDecisionMessage(
+        `本次确认与续写状态尚未核对：${apiErrorText(error)}。请保留当前选择并再次核对同一操作，不要重新作决定。`,
+      ))
       .finally(() => setFullDraftDecisionBusy(""));
   };
   useEffect(() => {
@@ -11511,6 +11526,13 @@ function WritingPage({
                                   待决定 {fullDraftArtifact.coverage?.decision_required_count || 0} 章 · 缺来源 {fullDraftArtifact.coverage?.source_gap_count || 0} 章。先补齐后，AI只重写受影响章节。
                                 </p>
                               )}
+                              {fullDraftDecisionItems.length > 1 && (
+                                <button type="button" className="primary-button"
+                                  disabled={Boolean(fullDraftDecisionBusy) || fullDraftBusy || editorFrozen}
+                                  onClick={() => resolveFullDraftDecision(fullDraftDecisionItems)}>
+                                  <FileCheck2 size={14} /> 一次确认这 {fullDraftDecisionItems.length} 项相关决定
+                                </button>
+                              )}
                             </div>
                             <div className="full-draft-review-progress">
                               <strong>{fullDraftConfirmedSections.length}/{fullDraftArtifact.coverage?.required_review_count || 0}</strong>
@@ -11568,7 +11590,7 @@ function WritingPage({
                                         <strong>{item.question}</strong>
                                         <fieldset
                                           className="full-draft-decision-choices"
-                                          disabled={fullDraftDecisionBusy === item.decision_id || fullDraftBusy}
+                                          disabled={Boolean(fullDraftDecisionBusy) || fullDraftBusy}
                                         >
                                           <legend>选择本次研究设计决定</legend>
                                           {(item.options || []).map((option) => (
@@ -11594,7 +11616,7 @@ function WritingPage({
                                             type="button"
                                             className="primary-button"
                                             onClick={() => resolveFullDraftDecision(item)}
-                                            disabled={fullDraftDecisionBusy === item.decision_id || fullDraftBusy || editorFrozen}
+                                            disabled={Boolean(fullDraftDecisionBusy) || fullDraftBusy || editorFrozen}
                                             title="确认后写入研究设计，当前候选失效并只重写受影响章节"
                                           >
                                             <FileCheck2 size={14} /> {fullDraftDecisionBusy === item.decision_id ? "写入中" : "确认该决定"}

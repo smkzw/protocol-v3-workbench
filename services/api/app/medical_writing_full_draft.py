@@ -41,13 +41,14 @@ from .medical_writing_content_quality import (
 from .medical_writing_corpus_policy import CORPUS_GENERALIZATION_PROMPT_RULES
 from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateError
 from .medical_writing_authoring_prefill import SUPPORTED_ADOPT_PATHS
+from .medical_writing_protocol_template import company_template_semantic_node_map
 
 
 FULL_DRAFT_JOB_TYPE = "protocol_full_draft"
-FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_9"
-FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v9"
-FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v9"
-FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v10"
+FULL_DRAFT_PROMPT_VERSION = "protocol_full_draft_v0_10"
+FULL_DRAFT_ARTIFACT_SCHEMA = "protocol_full_draft_artifact_v10"
+FULL_DRAFT_CHUNK_ARTIFACT_SCHEMA = "protocol_full_draft_chunk_v10"
+FULL_DRAFT_DESCRIPTOR_VERSION = "protocol_full_draft_descriptor_v12"
 LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {
     "protocol_full_draft_artifact_v3",
     "protocol_full_draft_artifact_v4",
@@ -55,6 +56,7 @@ LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS = {
     "protocol_full_draft_artifact_v6",
     "protocol_full_draft_artifact_v7",
     "protocol_full_draft_artifact_v8",
+    "protocol_full_draft_artifact_v9",
 }
 FULL_DRAFT_REVIEW_POLICY_VERSION = "protocol_full_draft_review_v0_2"
 FULL_DRAFT_MINIMUM_BODY_CHARS = 80
@@ -247,6 +249,7 @@ class MedicalWritingFullDraftService:
             _text(item) for item in (section_ids or ()) if _text(item)
         } or None
         targets: list[dict[str, Any]] = []
+        semantic_nodes = company_template_semantic_node_map()
         for section in document.sections:
             if scope is not None and str(section.section_id) not in scope:
                 continue
@@ -270,12 +273,20 @@ class MedicalWritingFullDraftService:
                     "section_number": str(section.section_number or ""),
                     "heading": str(section.heading or ""),
                     "node_kind": str(section.node_kind or "section"),
+                    "template_node_id": str(section.template_node_id or ""),
+                    "semantic_node_id": str(
+                        semantic_nodes.get(str(section.template_node_id or ""), "")
+                    ),
                     "body_block_id": str(first["block_id"]),
                     "expected_revision": revision,
                     "body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
                     "body_text": body,
                 }
             )
+            if not targets[-1]["semantic_node_id"]:
+                raise RuntimeStoreError(
+                    f"章节缺少稳定语义节点映射：{section.section_id}"
+                )
         return targets
 
     @staticmethod
@@ -304,6 +315,25 @@ class MedicalWritingFullDraftService:
         }
 
     @staticmethod
+    def _authoring_journey_binding(service: Any, project_id: str) -> dict[str, Any]:
+        journey_service = getattr(service, "authoring_journey_service", None)
+        if journey_service is None or not journey_service.has_project(project_id):
+            return {}
+        journey = journey_service.get(project_id)
+        definition = getattr(journey, "study_definition", None)
+        if definition is None:
+            raise RuntimeStoreError("当前研究设计不存在，全文初稿已停止")
+        return {
+            "journey_id": str(journey.journey_id),
+            "journey_revision": int(journey.revision),
+            "study_definition_id": str(definition.definition_id),
+            "study_definition_revision": int(definition.revision),
+            "study_definition_sha256": str(definition.state_sha256),
+            "framing": journey.framing.model_dump(mode="json"),
+            "picos": journey.picos.model_dump(mode="json"),
+        }
+
+    @staticmethod
     def _decision_path_owners(
         targets: Iterable[Mapping[str, Any]],
         available_paths: Iterable[str],
@@ -327,11 +357,105 @@ class MedicalWritingFullDraftService:
                     break
         return owners
 
+    @staticmethod
+    def _chunk_key(chunk: Iterable[Mapping[str, Any]]) -> str:
+        return _digest([_text(item.get("section_id")) for item in chunk])
+
+    @staticmethod
+    def _source_role(source: AiTaskSourceRef) -> str:
+        if source.source_type == "current_project_study_definition":
+            return "confirmed_project_facts"
+        if source.source_type == "company_protocol_reference_corpus":
+            return "company_sop_or_protocol_reference"
+        if source.source_type in {
+            "shared_protocol_reference_corpus", "shared_phase1_protocol_reference_corpus"
+        }:
+            return "shared_reference_only"
+        return "project_source"
+
+    @classmethod
+    def _freeze_reference_source(cls, source: AiTaskSourceRef) -> dict[str, Any]:
+        payload = source.model_dump(mode="json")
+        text_sha256 = hashlib.sha256(source.text_preview.encode("utf-8")).hexdigest()
+        return {
+            "source_id": source.source_id,
+            "source_version": source.source_entry_id or source.source_id,
+            "content_sha256": text_sha256,
+            "role": cls._source_role(source),
+            "locator": source.locator,
+            "source": payload,
+        }
+
+    @staticmethod
+    def _source_manifest_summary(manifest: Mapping[str, Any]) -> dict[str, Any]:
+        unique: dict[tuple[str, str], dict[str, Any]] = {}
+        for chunk in manifest.get("chunks") or []:
+            for item in chunk.get("sources") or []:
+                if not isinstance(item, Mapping):
+                    continue
+                payload = item.get("source") or {}
+                key = (_text(item.get("source_id")), _text(item.get("content_sha256")))
+                if not all(key):
+                    continue
+                unique[key] = {
+                    "source_id": key[0],
+                    "source_version": _text(item.get("source_version")),
+                    "content_sha256": key[1],
+                    "role": _text(item.get("role")),
+                    "source_type": _text(payload.get("source_type")),
+                    "title": _text(payload.get("title")),
+                    "locator": _text(item.get("locator")),
+                }
+        sources = sorted(unique.values(), key=lambda item: (
+            item["role"], item["title"], item["source_id"]
+        ))
+        return {
+            "schema_version": "protocol-full-draft-source-summary.v1",
+            "source_count": len(sources),
+            "sources": sources,
+        }
+
+    def _live_reference_sources(
+        self,
+        service: Any,
+        project_id: str,
+        chunk: list[dict[str, Any]],
+    ) -> list[AiTaskSourceRef]:
+        """Resolve reference material once, before the durable task exists."""
+        protocol = service.repo.protocol(project_id)
+        section_by_id = {str(item.section_id): item for item in protocol.sections}
+        sources: list[AiTaskSourceRef] = []
+        seen: set[str] = set()
+        for item in chunk:
+            section = section_by_id.get(item["section_id"])
+            if section is None:
+                raise RuntimeStoreError(f"全文初稿章节不存在：{item['section_id']}")
+            source = service._current_project_study_definition_source(protocol, section)
+            if source is not None and source.source_id not in seen:
+                sources.append(source)
+                seen.add(source.source_id)
+        if chunk:
+            query = " ".join([item["heading"] for item in chunk])
+            first_section = section_by_id[chunk[0]["section_id"]]
+            for source in [
+                *service._company_corpus_sources(
+                    protocol, first_section, query, "medical_writing_revision"
+                ),
+                *service._shared_corpus_sources(
+                    protocol, first_section, query, "medical_writing_revision"
+                ),
+            ]:
+                if source.source_id not in seen:
+                    sources.append(source)
+                    seen.add(source.source_id)
+        return sources
+
     def build_descriptor(
         self,
         project_id: str,
         *,
         section_ids: Iterable[str] | None = None,
+        freeze_sources: bool = True,
     ) -> dict[str, Any]:
         service = self._service(project_id)
         repo = service.repo
@@ -362,6 +486,7 @@ class MedicalWritingFullDraftService:
             "document_version": str(document.version),
             "template_version": str(document.template_version),
             "study_definition": self._binding(repo, project_id, document),
+            "authoring_journey": self._authoring_journey_binding(service, project_id),
             "target_sections": targets,
             "prompt_version": FULL_DRAFT_PROMPT_VERSION,
             "minimum_body_chars": FULL_DRAFT_MINIMUM_BODY_CHARS,
@@ -376,6 +501,29 @@ class MedicalWritingFullDraftService:
             # identity.  The scope is part of the digest, so a scoped
             # regeneration can never reuse the full-document job.
             descriptor["section_ids"] = scope
+        # This hash protects the editable manuscript, confirmed design and
+        # route contract.  The source manifest is frozen separately below so
+        # later corpus/library changes do not invalidate an already submitted
+        # task or cause it to consume newer bytes mid-run.
+        descriptor["execution_context_sha256"] = _digest(descriptor)
+        if not freeze_sources:
+            return descriptor
+        frozen_chunks = []
+        for start in range(0, len(targets), FULL_DRAFT_CHUNK_SIZE):
+            chunk = targets[start:start + FULL_DRAFT_CHUNK_SIZE]
+            frozen_chunks.append({
+                "chunk_key": self._chunk_key(chunk),
+                "section_ids": [item["section_id"] for item in chunk],
+                "sources": [
+                    self._freeze_reference_source(source)
+                    for source in self._live_reference_sources(service, project_id, chunk)
+                ],
+            })
+        descriptor["source_manifest"] = {
+            "schema_version": "protocol-full-draft-source-manifest.v1",
+            "chunks": frozen_chunks,
+        }
+        descriptor["source_manifest_sha256"] = _digest(descriptor["source_manifest"])
         descriptor["digest"] = _digest(descriptor)
         return descriptor
 
@@ -416,9 +564,6 @@ class MedicalWritingFullDraftService:
         descriptor: dict[str, Any],
         chunk: list[dict[str, Any]],
     ) -> list[AiTaskSourceRef]:
-        repo = service.repo
-        protocol = repo.protocol(project_id)
-        section_by_id = {str(item.section_id): item for item in protocol.sections}
         packet_lines = []
         for item in chunk:
             packet_lines.append(
@@ -443,8 +588,8 @@ class MedicalWritingFullDraftService:
             AiTaskSourceRef(
                 source_id=f"protocol_full_draft_selection:{packet_id}",
                 source_type="protocol_full_draft_selection",
-                title=f"{protocol.protocol_id or project_id} 全文初稿章节包",
-                locator=f"document:{protocol.document_id}:full-draft:{packet_id}",
+                title=f"{descriptor.get('project_id') or project_id} 全文初稿章节包",
+                locator=f"document:{descriptor.get('document_id')}:full-draft:{packet_id}",
                 text_preview=packet,
                 project_id=project_id,
                 module="medical_writing",
@@ -452,24 +597,28 @@ class MedicalWritingFullDraftService:
             )
         ]
         seen = {sources[0].source_id}
-        for item in chunk:
-            section = section_by_id.get(item["section_id"])
-            if section is None:
-                raise RuntimeStoreError(f"全文初稿章节不存在：{item['section_id']}")
-            source = service._current_project_study_definition_source(protocol, section)
-            if source is not None and source.source_id not in seen:
+        manifest = descriptor.get("source_manifest") or {}
+        if _digest(manifest) != descriptor.get("source_manifest_sha256"):
+            raise RuntimeStoreError("全文初稿冻结来源清单完整性校验失败")
+        chunk_key = self._chunk_key(chunk)
+        frozen = next((item for item in manifest.get("chunks") or []
+                       if item.get("chunk_key") == chunk_key), None)
+        if frozen is None or frozen.get("section_ids") != [item["section_id"] for item in chunk]:
+            raise RuntimeStoreError("全文初稿冻结来源清单与章节范围不一致")
+        for item in frozen.get("sources") or []:
+            payload = item.get("source") if isinstance(item, Mapping) else None
+            if not isinstance(payload, Mapping):
+                raise RuntimeStoreError("全文初稿冻结来源条目损坏")
+            source = AiTaskSourceRef(**dict(payload))
+            if (item.get("source_id") != source.source_id
+                    or item.get("locator") != source.locator
+                    or item.get("content_sha256") != hashlib.sha256(
+                        source.text_preview.encode("utf-8")
+                    ).hexdigest()):
+                raise RuntimeStoreError("全文初稿冻结来源身份校验失败")
+            if source.source_id not in seen:
                 sources.append(source)
                 seen.add(source.source_id)
-        if chunk:
-            query = " ".join([item["heading"] for item in chunk])
-            first_section = section_by_id[chunk[0]["section_id"]]
-            for source in [
-                *service._company_corpus_sources(protocol, first_section, query, "medical_writing_revision"),
-                *service._shared_corpus_sources(protocol, first_section, query, "medical_writing_revision"),
-            ]:
-                if source.source_id not in seen:
-                    sources.append(source)
-                    seen.add(source.source_id)
         return sources
 
     @staticmethod
@@ -501,8 +650,10 @@ class MedicalWritingFullDraftService:
             "‘候选正文’等写作过程说明；这些内容只可转化为rationale中的简洁证据说明。"
             "公司或共享语料不得直接决定本项目的避孕方法、妊娠报告、AE/SAE定义与时限、"
             "剂量调整、合并/禁限用药、洗脱、救援治疗、随机揭盲、分析集或其他研究实施规则。"
-            "缺少项目实施细节时，可以先完成由已确认事实或允许来源支持的实质正文，并在rationale中"
-            "分点列出仍需医学作者核对的项目细节；不得因为局部细节待核对而把已有充分依据的整章留空。"
+            "缺少项目实施细节时，必须先完成由已确认事实或允许来源支持的实质正文，并把每个未决事项"
+            "写入gap_items；此时content_status使用partial，不得因为局部细节待核对而把已有充分依据的整章留空。"
+            "gap_items必须给出稳定gap_id、类别、正文目标位置、下一动作和缺少的来源类别；资料已经存在但"
+            "尚未检索到时使用source_not_retrieved，格式或语义节点无法映射时使用mapping_failed，不能误报为用户未上传。"
             "保守正文不得包含命名系统、固定方法清单、固定时限、未经来源支持的角色分工或停止后果。"
             "若允许的当前项目来源没有明确写出某项研究实施规则，不得把该规则写成方案既定要求；"
             "妊娠处理、AE分类、报告对象与时限、随访终点、数据职责、签署要求和CRF记录方式等"
@@ -565,13 +716,6 @@ class MedicalWritingFullDraftService:
         if corpus_count and _CORPUS_CONDUCT_RE.search(proposal):
             advisory_reasons.append(
                 "本节引用公司语料形成共性表述；定稿时请用本项目权威文件复核适用性。"
-            )
-        if (
-            heading == "统计分析"
-            and "复合策略" in proposal
-        ):
-            required_reasons.append(
-                "估计目标同时出现治疗策略人群与复合策略；请由统计负责人统一伴发事件策略后再采纳。"
             )
         restatement_count = sum(
             bool(pattern.search(proposal)) for pattern in _DESIGN_RESTATEMENT_SIGNALS
@@ -726,6 +870,7 @@ class MedicalWritingFullDraftService:
         required_ids: list[str] = []
         decision_ids: list[str] = []
         source_gap_ids: list[str] = []
+        partial_ids: list[str] = []
         for section in artifact.get("sections") or []:
             content_status = _text(section.get("content_status")) or "complete"
             if content_status == "decision_required":
@@ -744,6 +889,8 @@ class MedicalWritingFullDraftService:
                 })
                 source_gap_ids.append(_text(section.get("section_id")))
                 continue
+            if content_status == "partial":
+                partial_ids.append(_text(section.get("section_id")))
             evidence_summary = section.get("evidence_summary") or {}
             section.update(
                 cls._review_policy(
@@ -761,15 +908,23 @@ class MedicalWritingFullDraftService:
         coverage["decision_required_section_ids"] = decision_ids
         coverage["source_gap_count"] = len(source_gap_ids)
         coverage["source_gap_section_ids"] = source_gap_ids
+        coverage["partial_count"] = len(partial_ids)
+        coverage["partial_section_ids"] = partial_ids
         is_legacy = artifact.get("schema_version") in LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS
         evidence_chain_resolvable = (
             not is_legacy and cls._artifact_evidence_is_resolvable(artifact)
         )
         coverage["legacy_read_only"] = is_legacy
         coverage["evidence_chain_resolvable"] = evidence_chain_resolvable
-        coverage["adoption_ready"] = (
-            evidence_chain_resolvable and not decision_ids and not source_gap_ids
+        coverage["working_draft_ready"] = (
+            evidence_chain_resolvable
+            and any(_text(item.get("proposal_text")) for item in artifact.get("sections") or [])
         )
+        coverage["formal_ready"] = (
+            evidence_chain_resolvable and not decision_ids and not source_gap_ids
+            and not partial_ids
+        )
+        coverage["adoption_ready"] = coverage["formal_ready"]
         artifact["review_policy_version"] = FULL_DRAFT_REVIEW_POLICY_VERSION
         return artifact
 
@@ -941,10 +1096,12 @@ class MedicalWritingFullDraftService:
             current = self.build_descriptor(
                 job.project_id,
                 section_ids=expected.get("section_ids"),
+                freeze_sources=False,
             )
         except Exception as exc:
             return DurableJobResult(error=f"全文初稿上下文不可用：{exc}", retryable=False)
-        if current.get("digest") != expected.get("digest"):
+        if (current.get("execution_context_sha256")
+                != expected.get("execution_context_sha256")):
             return DurableJobResult(error="全文初稿上下文已变化，请重新生成候选", retryable=False)
         expected_policy = (expected.get("ai_policy") or {}).get("route_identity_hash")
         current_policy = service._policy_identity()
@@ -1047,8 +1204,20 @@ class MedicalWritingFullDraftService:
                     {
                         "source_id": source.source_id,
                         "source_type": source.source_type,
+                        "source_version": source.source_entry_id or source.source_id,
+                        "role": (
+                            "current_working_draft_packet"
+                            if source.source_type == "protocol_full_draft_selection"
+                            else self._source_role(source)
+                        ),
                         "locator": source.locator,
-                        "text_sha256": hashlib.sha256(source.text_preview.encode("utf-8")).hexdigest(),
+                        "content_sha256": hashlib.sha256(
+                            source.text_preview.encode("utf-8")
+                        ).hexdigest(),
+                        # Legacy read compatibility for v5-v9 evidence readers.
+                        "text_sha256": hashlib.sha256(
+                            source.text_preview.encode("utf-8")
+                        ).hexdigest(),
                     }
                     for source in sources
                 ]
@@ -1155,6 +1324,11 @@ class MedicalWritingFullDraftService:
             for item in all_sections
             if item.get("content_status") == "source_gap"
         ]
+        partial_ids = [
+            str(item.get("section_id") or "")
+            for item in all_sections
+            if item.get("content_status") == "partial"
+        ]
         artifact = {
             "schema_version": FULL_DRAFT_ARTIFACT_SCHEMA,
             "job_id": job.job_id,
@@ -1162,7 +1336,12 @@ class MedicalWritingFullDraftService:
             "document_id": expected["document_id"],
             "document_version": expected["document_version"],
             "precondition_digest": expected["digest"],
+            "source_manifest_sha256": expected.get("source_manifest_sha256", ""),
+            "source_manifest": self._source_manifest_summary(
+                expected.get("source_manifest") or {}
+            ),
             "study_definition": expected["study_definition"],
+            "authoring_journey": expected.get("authoring_journey") or {},
             "decision_path_owners": decision_path_owners,
             "target_sections": target,
             "sections": all_sections,
@@ -1175,7 +1354,13 @@ class MedicalWritingFullDraftService:
                 "decision_required_section_ids": decision_required_ids,
                 "source_gap_count": len(source_gap_ids),
                 "source_gap_section_ids": source_gap_ids,
-                "adoption_ready": not decision_required_ids and not source_gap_ids,
+                "partial_count": len(partial_ids),
+                "partial_section_ids": partial_ids,
+                "working_draft_ready": any(
+                    _text(item.get("proposal_text")) for item in all_sections
+                ),
+                "formal_ready": not decision_required_ids and not source_gap_ids and not partial_ids,
+                "adoption_ready": not decision_required_ids and not source_gap_ids and not partial_ids,
                 "section_ids": expected_ids,
             },
             "ai_run_ids": run_ids,
@@ -1202,6 +1387,7 @@ class MedicalWritingFullDraftService:
                         "required_review_section_ids",
                         "decision_required_section_ids",
                         "source_gap_section_ids",
+                        "partial_section_ids",
                     }
                 },
             }
@@ -1252,6 +1438,19 @@ class MedicalWritingFullDraftService:
         return index
 
     def read_artifact(self, project_id: str, job: Any) -> dict[str, Any]:
+        artifact, _ = self.read_frozen_artifact(project_id, job)
+        return self._with_decision_identity(self._apply_review_policy(artifact))
+
+    def read_frozen_artifact(
+        self, project_id: str, job: Any
+    ) -> tuple[dict[str, Any], str]:
+        """Read the exact persisted candidate and its verified byte identity.
+
+        Normal reads project decision identities and review policy into an
+        in-memory copy.  Candidate acceptance must instead bind its receipt to
+        the immutable bytes written by the durable job, so a later read-time
+        projection can never change the accepted candidate identity.
+        """
         if job.project_id != project_id or job.job_type != FULL_DRAFT_JOB_TYPE:
             raise RuntimeStoreError("全文初稿任务不属于当前项目")
         if job.status != "completed":
@@ -1264,15 +1463,18 @@ class MedicalWritingFullDraftService:
         if self.artifact_root not in path.parents:
             raise RuntimeStoreError("全文初稿候选越界")
         raw = path.read_bytes()
-        if hashlib.sha256(raw).hexdigest() != str(locator.get("artifact_sha256") or ""):
+        artifact_sha256 = hashlib.sha256(raw).hexdigest()
+        if artifact_sha256 != str(locator.get("artifact_sha256") or ""):
             raise RuntimeStoreError("全文初稿候选完整性校验失败")
+        if job.output_hash and artifact_sha256 != str(job.output_hash):
+            raise RuntimeStoreError("全文初稿任务与候选身份不一致")
         artifact = json.loads(raw.decode("utf-8"))
         if artifact.get("schema_version") not in {
             FULL_DRAFT_ARTIFACT_SCHEMA,
             *LEGACY_FULL_DRAFT_ARTIFACT_SCHEMAS,
         }:
             raise RuntimeStoreError("全文初稿候选版本不受支持")
-        return self._with_decision_identity(self._apply_review_policy(artifact))
+        return artifact, artifact_sha256
 
     @classmethod
     def _with_decision_identity(cls, artifact: dict[str, Any]) -> dict[str, Any]:
@@ -1475,9 +1677,6 @@ class MedicalWritingFullDraftService:
             document.version
         ) != str(artifact.get("document_version")):
             raise StaleRuntimeStateError("全文初稿所属文档已变化，决定未写入")
-        if self._binding(repo, project_id, document) != artifact.get("study_definition"):
-            # The existing binding check already superseded this artifact.
-            raise StaleRuntimeStateError("研究设计绑定已变化，本次决定未写入")
         key = _text(idempotency_key)
         if not key:
             raise ValueError("全文初稿决定确认需要 idempotency_key")
@@ -1488,10 +1687,11 @@ class MedicalWritingFullDraftService:
                 "全文初稿决定尚未绑定研究设计确认通道，未写入任何研究事实"
             )
         submitted = list(decisions)
-        if len(submitted) != 1:
-            raise ValueError("每次只能确认一个全文初稿决定")
+        if not 1 <= len(submitted) <= 6:
+            raise ValueError("一次可确认1至6个相互关联的全文初稿决定")
         resolved: list[dict[str, Any]] = []
         seen: set[str] = set()
+        seen_fact_paths: set[str] = set()
         for raw in submitted:
             if not isinstance(raw, Mapping):
                 raise ValueError("全文初稿决定必须是对象")
@@ -1505,7 +1705,7 @@ class MedicalWritingFullDraftService:
             entry = index.get(decision_id)
             if entry is None:
                 raise RuntimeStoreError(f"全文初稿候选不存在该决定项：{decision_id}")
-            if entry["content_status"] != "decision_required":
+            if entry["content_status"] not in {"decision_required", "partial"}:
                 raise RuntimeStoreError(
                     f"该章节当前不是待决定状态，不能按决定项确认：{entry['section_id']}"
                 )
@@ -1532,6 +1732,9 @@ class MedicalWritingFullDraftService:
                 raise RuntimeStoreError(
                     f"决定项目标不是既有研究设计字段：{fact_path}"
                 )
+            if fact_path in seen_fact_paths:
+                raise ValueError(f"同一研究字段不能在一组决定中重复确认：{fact_path}")
+            seen_fact_paths.add(fact_path)
             if fact_path in _DECISION_STRUCTURED_DESIGN_PATHS:
                 raise RuntimeStoreError(
                     f"决定项目标路径需要结构化设计取值，决定卡无法安全写入：{fact_path}；"
@@ -1540,10 +1743,6 @@ class MedicalWritingFullDraftService:
             if (artifact.get("decision_path_owners") or {}).get(fact_path) != entry["section_id"]:
                 raise RuntimeStoreError(
                     f"决定项不属于该研究字段的指定章节：{fact_path}"
-                )
-            if fact_path not in self._available_decision_paths(service, project_id):
-                raise StaleRuntimeStateError(
-                    f"研究设计字段已确认或不再待决定：{fact_path}；请刷新全文初稿"
                 )
             prose = _text(option.get("summary")) or _text(option.get("label"))
             resolved.append(
@@ -1560,32 +1759,36 @@ class MedicalWritingFullDraftService:
         if not resolved:
             raise ValueError("全文初稿决定确认为空")
 
-        confirmations: list[dict[str, Any]] = []
         for entry in resolved:
             value = entry["value"]
             if not value:
                 raise RuntimeStoreError(
                     f"决定项选项缺少可写入的实质内容：{entry['decision_id']}"
                 )
-            outcome = writer(
-                project_id,
-                field_path=entry["fact_path"],
-                value=value,
-                actor=actor,
-                idempotency_key=f"full-draft-decision:{job.job_id}:{entry['decision_id']}:{key}",
-            )
-            confirmations.append(
-                {
-                    "decision_id": entry["decision_id"],
-                    "section_id": entry["section_id"],
-                    "fact_path": entry["fact_path"],
-                    "option_id": entry["option_id"],
-                    "study_definition_revision": getattr(
-                        getattr(outcome, "study_definition", None), "revision", None
-                    ),
-                    "journey_revision": getattr(outcome, "revision", None),
-                }
-            )
+        journey_binding = artifact.get("authoring_journey") or {}
+        expected_journey_revision = journey_binding.get("journey_revision")
+        if not isinstance(expected_journey_revision, int):
+            raise RuntimeStoreError("全文初稿缺少可恢复的研究确认版本，决定未写入")
+        outcome = writer(
+            project_id,
+            decisions=resolved,
+            expected_journey_revision=expected_journey_revision,
+            authoring_journey_binding=journey_binding,
+            actor=actor,
+            idempotency_key=(
+                f"full-draft-decision-group:{job.job_id}:{_digest(key)[:24]}"
+            ),
+        )
+        confirmations = [{
+            "decision_id": entry["decision_id"],
+            "section_id": entry["section_id"],
+            "fact_path": entry["fact_path"],
+            "option_id": entry["option_id"],
+            "study_definition_revision": getattr(
+                getattr(outcome, "study_definition", None), "revision", None
+            ),
+            "journey_revision": getattr(outcome, "revision", None),
+        } for entry in resolved]
 
         affected_section_ids = sorted(
             {entry["section_id"] for entry in resolved}

@@ -1074,7 +1074,7 @@ class TestSharedSurfaceIsolation:
         # mount — and nothing from the router factory, service or storage
         # layers. Direct product mounting outside composition stays banned.
         text = _MAIN_PATH.read_text(encoding="utf-8")
-        assert text.count("mount_protocol_v3_workflow_router(app)") == 1
+        assert text.count("mount_protocol_v3_workflow_router(") == 1
         assert "protocol_workflow.api.composition" in text
         assert "create_protocol_workflow_router" not in text
         assert "ApplicationService" not in text

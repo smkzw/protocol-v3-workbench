@@ -242,8 +242,52 @@ function IntakeProject({ projectId, api, studyDefinitionId, actorId, onNavigatio
   </main>;
 }
 
+function ProtocolEntry({ projectId, api, studyDefinitionId, actorId, onNavigationGuardChange }) {
+  const [handoff, setHandoff] = useState(null);
+  const [fallback, setFallback] = useState(Boolean(studyDefinitionId || !actorId || !api?.ensureAuthoringHandoff));
+  const [error, setError] = useState('');
+  const [refresh, setRefresh] = useState(0);
+
+  useEffect(() => {
+    if (fallback) return undefined;
+    const controller = new AbortController();
+    api.ensureAuthoringHandoff(projectId, actorId, { signal: controller.signal })
+      .then(value => {
+        if (!controller.signal.aborted) {
+          if (value?.study_definition_id && ['ready', 'source_changed'].includes(value.status)) {
+            setHandoff(value); setError('');
+          } else setFallback(true);
+        }
+      })
+      .catch(reason => {
+        if (controller.signal.aborted) return;
+        if (reason?.status === 404) setFallback(true);
+        else setError(publicError(reason));
+      });
+    return () => controller.abort();
+  }, [projectId, actorId, api, fallback, refresh]);
+
+  if (handoff) return <main className="pvi-workspace pvi-workspace--writing">
+    <header className="pvi-heading">
+      <img src={protocolLogo} width="121" height="25" alt="康哲药业"/>
+      <h2>研究方案工作台</h2>
+      <p>已接续本项目确认过的研究设计。打开工作稿即可继续，无需重新上传或抄录。</p>
+    </header>
+    {handoff.status === 'source_changed' && <p role="status">研究设计已有较新确认版本；现有工作稿会保留，采用新候选前请核对差异。</p>}
+    <ProtocolWritingDesk projectId={projectId} studyDefinitionId={handoff.study_definition_id}
+      actorId={actorId} api={api} bridgeMode onNavigationGuardChange={onNavigationGuardChange}/>
+  </main>;
+  if (!fallback) return <main className="pvi-workspace" aria-busy="true">
+    <p role="status">正在接续本项目已确认的研究设计和工作稿。</p>
+    {error && <div className="pvi-message" role="alert"><p>{error}</p>
+      <button type="button" onClick={() => setRefresh(value => value + 1)}>重新核对</button></div>}
+  </main>;
+  return <IntakeProject projectId={projectId} api={api} studyDefinitionId={studyDefinitionId}
+    actorId={actorId} onNavigationGuardChange={onNavigationGuardChange}/>;
+}
+
 export function ProtocolIntakeWorkspace({ projectId, api, studyDefinitionId, actorId, onNavigationGuardChange }) {
   const defaultApi = useMemo(() => createProtocolWorkspaceApi(), []);
-  return <IntakeProject key={projectId} projectId={projectId} api={api || defaultApi}
+  return <ProtocolEntry key={projectId} projectId={projectId} api={api || defaultApi}
     studyDefinitionId={studyDefinitionId} actorId={actorId} onNavigationGuardChange={onNavigationGuardChange} />;
 }

@@ -12,6 +12,14 @@ from typing import Any, Mapping
 _TIMEPOINT = re.compile(r'第[0-9一二两三四五六七八九十百]+周')
 _FREQUENCY = re.compile(r'每[0-9一二两三四五六七八九十]*[周月日天]')
 _SCALE_TOKEN = re.compile(r'[A-Za-z][A-Za-z0-9-]{1,15}')
+_AMBIGUOUS_TREATMENT_POPULATION = re.compile(r'治疗策略人群')
+_STRATEGY_SIGNALS = (
+    ('treatment_policy', ('治疗策略', 'treatment policy')),
+    ('composite', ('复合策略', 'composite strategy')),
+    ('hypothetical', ('假想策略', 'hypothetical strategy')),
+    ('while_on_treatment', ('在治策略', 'while on treatment', 'while-on-treatment')),
+    ('principal_stratum', ('主层策略', 'principal stratum')),
+)
 
 
 def _text(value: Any) -> str:
@@ -30,6 +38,73 @@ def _text(value: Any) -> str:
 def _first(pattern, text: str):
     match = pattern.search(text)
     return match.group(0) if match else None
+
+
+def _normalized_identity(value: Any) -> str:
+    return re.sub(r'[\W_]+', '', _text(value).lower(), flags=re.UNICODE)
+
+
+def _strategy_identity(value: Any) -> str | None:
+    text = _text(value).strip().lower()
+    if not text:
+        return None
+    if _AMBIGUOUS_TREATMENT_POPULATION.search(text):
+        return 'ambiguous_treatment_population'
+    found = [identity for identity, signals in _STRATEGY_SIGNALS
+             if any(signal in text for signal in signals)]
+    return found[0] if len(found) == 1 else None
+
+
+def _ice_records(value: Any, *, default_outcome: str, default_strategy: Any = None) -> list[dict]:
+    """Extract only records whose event and strategy identities are explicit.
+
+    Free prose without an identifiable event remains uncomparable.  That is
+    deliberate: seeing two strategy words in different chapters does not show
+    that they describe the same intercurrent event.
+    """
+    records: list[dict] = []
+    if isinstance(value, list):
+        for item in value:
+            records.extend(_ice_records(
+                item, default_outcome=default_outcome,
+                default_strategy=default_strategy))
+        return records
+    if isinstance(value, dict):
+        event = next((value.get(key) for key in (
+            'event', 'event_name', 'intercurrent_event', 'ice', 'name')
+            if value.get(key)), None)
+        strategy = next((value.get(key) for key in (
+            'strategy', 'ice_strategy', 'handling', 'approach')
+            if value.get(key)), default_strategy)
+        outcome = next((value.get(key) for key in (
+            'outcome', 'variable', 'endpoint') if value.get(key)), default_outcome)
+        if event is not None:
+            records.append({
+                'event': _normalized_identity(event),
+                'event_label': _text(event).strip(),
+                'outcome': _normalized_identity(outcome),
+                'strategy': _strategy_identity(strategy),
+            })
+            return records
+        # A footnote map may use the ICE event as its key and the handling as
+        # its value.  Metadata keys are excluded from that interpretation.
+        metadata = {'note', 'notes', 'text', 'description', 'timing', 'definition'}
+        for key, item in value.items():
+            if key in metadata or isinstance(item, (dict, list)):
+                records.extend(_ice_records(
+                    item, default_outcome=default_outcome,
+                    default_strategy=default_strategy))
+                continue
+            strategy_id = _strategy_identity(item)
+            if strategy_id:
+                records.append({
+                    'event': _normalized_identity(key),
+                    'event_label': str(key),
+                    'outcome': _normalized_identity(default_outcome),
+                    'strategy': strategy_id,
+                })
+        return records
+    return records
 
 
 def cross_check(facts: Mapping[str, Any]) -> dict:
@@ -84,12 +159,60 @@ def cross_check(facts: Mapping[str, Any]) -> dict:
     left = _text(facts.get('intervention.dose_regimen'))
     anchored('给药频次', 'intervention.dose_regimen', 'statistics.sample_size.soa_alignment',
              _first(_FREQUENCY, left) if left else None)
-    # 4) ICE策略：估计目标存在时，SOA脚注绑定须提及同一处理口径
-    both = pair('ICE治疗策略', 'estimand.primary.ice_strategy', 'soa.footnote_bindings')
-    if both:
-        left, right = both
-        conclude('ICE治疗策略', 'estimand.primary.ice_strategy', 'soa.footnote_bindings',
-                 'consistent' if ('ICE' in right or '伴发事件' in right) else 'contradiction')
+    # 4) ICE策略：只比较同一estimand、同一ICE事件、同一结局语境。
+    # 不同事件允许使用不同策略；“治疗策略人群”不是可推断的策略名称。
+    strategy = facts.get('estimand.primary.ice_strategy')
+    rationale = facts.get('estimand.primary.ice_rationale')
+    events = facts.get('estimand.primary.intercurrent_events')
+    if not events and isinstance(rationale, dict):
+        events = rationale.get('ice_events')
+    footnotes = facts.get('soa.footnote_bindings')
+    outcome = _text(facts.get('estimand.primary.variable'))
+    if not strategy or not events or not footnotes or not outcome:
+        findings.append({
+            'item': '主要估计目标ICE策略', 'scientific_issue_id': 'primary-estimand-ice',
+            'status': 'unknown',
+            'locations': ('estimand.primary.ice_strategy',
+                          'estimand.primary.intercurrent_events',
+                          'estimand.primary.variable', 'soa.footnote_bindings'),
+            'detail': '缺少可按同一估计目标、ICE事件和结局语境比对的结构化事实',
+        })
+    elif _strategy_identity(strategy) == 'ambiguous_treatment_population':
+        findings.append({
+            'item': '主要估计目标ICE策略', 'scientific_issue_id': 'primary-estimand-ice',
+            'status': 'unknown',
+            'locations': ('estimand.primary.ice_strategy', 'soa.footnote_bindings'),
+            'detail': '“治疗策略人群”含义不明确，需澄清人群定义与ICE处理策略，不能自动解释为治疗策略',
+        })
+    else:
+        expected = _ice_records(events, default_outcome=outcome, default_strategy=strategy)
+        observed = _ice_records(footnotes, default_outcome=outcome)
+        comparable = []
+        for left_record in expected:
+            for right_record in observed:
+                if (left_record['event'] == right_record['event']
+                        and left_record['outcome'] == right_record['outcome']):
+                    comparable.append((left_record, right_record))
+        conflicts = [(left_record, right_record) for left_record, right_record in comparable
+                     if left_record['strategy'] and right_record['strategy']
+                     and left_record['strategy'] != right_record['strategy']]
+        unresolved = [(left_record, right_record) for left_record, right_record in comparable
+                      if not left_record['strategy'] or not right_record['strategy']]
+        status = ('contradiction' if conflicts else 'unknown'
+                  if not comparable or unresolved else 'consistent')
+        detail = ('同一ICE事件在估计目标与SOA中使用了不同策略' if conflicts else
+                  '存在同一ICE事件记录，但策略表述仍需澄清' if unresolved else
+                  '未找到同一ICE事件与结局语境的可比记录' if not comparable else
+                  '同一ICE事件与结局语境的策略一致')
+        findings.append({
+            'item': '主要估计目标ICE策略', 'scientific_issue_id': 'primary-estimand-ice',
+            'status': status,
+            'locations': ('estimand.primary.ice_strategy',
+                          'estimand.primary.intercurrent_events',
+                          'estimand.primary.variable', 'soa.footnote_bindings'),
+            'detail': detail,
+            'events': sorted({left['event_label'] for left, _ in comparable}),
+        })
     # 5) 样本量：估算假设与SOA对齐事实须锚定同一主要终点时间窗
     left = _text(facts.get('statistics.sample_size.assumptions'))
     anchored('样本量对齐', 'statistics.sample_size.assumptions',

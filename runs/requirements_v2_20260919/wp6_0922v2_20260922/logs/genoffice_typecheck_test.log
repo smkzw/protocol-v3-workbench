@@ -1,0 +1,30 @@
+
+> @genoffice/docx-engine@0.1.0 typecheck
+> tsc --noEmit
+
+tests/protocol-feasibility.spike.test.ts(74,42): error TS2345: Argument of type '{ kind: "original"; docxIndex: number | null; }[]' is not assignable to parameter of type 'SaveBlock[]'.
+  Type '{ kind: "original"; docxIndex: number | null; }' is not assignable to type 'SaveBlock'.
+    Type '{ kind: "original"; docxIndex: number | null; }' is not assignable to type '{ kind: "original"; docxIndex: number; } & { revision?: { kind: "ins" | "del"; author: string; date?: string | undefined; id?: string | undefined; } | undefined; }'.
+      Type '{ kind: "original"; docxIndex: number | null; }' is not assignable to type '{ kind: "original"; docxIndex: number; }'.
+        Types of property 'docxIndex' are incompatible.
+          Type 'number | null' is not assignable to type 'number'.
+            Type 'null' is not assignable to type 'number'.
+tests/protocol-feasibility.spike.test.ts(87,7): error TS18048: 'target' is possibly 'undefined'.
+tests/protocol-feasibility.spike.test.ts(87,7): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+tests/protocol-feasibility.spike.test.ts(94,25): error TS18048: 'target' is possibly 'undefined'.
+tests/protocol-feasibility.spike.test.ts(98,42): error TS2345: Argument of type '({ kind: "xml"; xml: string | null; docxIndex: number | null; } | { kind: "original"; docxIndex: number | null; xml?: undefined; })[]' is not assignable to parameter of type 'SaveBlock[]'.
+  Type '{ kind: "xml"; xml: string | null; docxIndex: number | null; } | { kind: "original"; docxIndex: number | null; xml?: undefined; }' is not assignable to type 'SaveBlock'.
+    Type '{ kind: "xml"; xml: string | null; docxIndex: number | null; }' is not assignable to type 'SaveBlock'.
+      Type '{ kind: "xml"; xml: string | null; docxIndex: number | null; }' is not assignable to type '{ kind: "xml"; xml: string; docxIndex?: number | undefined; replaceImage?: { base64: string; mime: "image/png" | "image/jpeg" | "image/gif"; } | undefined; } & { revision?: { kind: "ins" | "del"; author: string; date?: string | undefined; id?: string | undefined; } | undefined; }'.
+        Type '{ kind: "xml"; xml: string | null; docxIndex: number | null; }' is not assignable to type '{ kind: "xml"; xml: string; docxIndex?: number | undefined; replaceImage?: { base64: string; mime: "image/png" | "image/jpeg" | "image/gif"; } | undefined; }'.
+          Types of property 'xml' are incompatible.
+            Type 'string | null' is not assignable to type 'string'.
+              Type 'null' is not assignable to type 'string'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/packages/docx-engine
+npm error workspace @genoffice/docx-engine@0.1.0
+npm error location /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/genoffice-upstream/packages/docx-engine
+npm error command failed
+npm error command sh -c tsc --noEmit

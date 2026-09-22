@@ -944,7 +944,7 @@ def normalize_protocol_full_draft_evidence_ids(
             dict.fromkeys(item for item in evidence_ids if item in valid_ids)
         )
         force_source_gap = (
-            status == "complete"
+            status in {"complete", "partial"}
             and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(
                 str(section.get("rationale") or "")
             )
@@ -965,6 +965,18 @@ def normalize_protocol_full_draft_evidence_ids(
         normalized = dict(section)
         normalized["evidence_span_ids"] = retained
         if status == "source_gap" or force_source_gap:
+            gap_items = list(normalized.get("gap_items") or [])
+            if not gap_items:
+                gap_items = [{
+                    "gap_id": "gap:unsupported-evidence",
+                    "category": "source_missing",
+                    "target": str(normalized.get("section_id") or "本章节"),
+                    "action": "补充或重新绑定能够直接支持本章节主张的当前项目来源。",
+                    "missing_source_classes": list(
+                        normalized.get("missing_source_classes")
+                        or ["支持本章节研究实施规则的项目权威资料或职能确认"]
+                    )[:4],
+                }]
             normalized.update(
                 {
                     "content_status": "source_gap",
@@ -977,6 +989,7 @@ def normalize_protocol_full_draft_evidence_ids(
                     )[:4],
                     "rationale": str(normalized.get("rationale") or "").strip()
                     or "现有项目资料不足以支持本章节正文。",
+                    "gap_items": gap_items,
                 }
             )
         elif not retained:
@@ -989,11 +1002,29 @@ def normalize_protocol_full_draft_evidence_ids(
                     ),
                     "decision_items": [],
                     "missing_source_classes": ["支持本章节正文的当前项目直接来源"],
+                    "gap_items": [{
+                        "gap_id": "gap:evidence-binding",
+                        "category": "mapping_failed",
+                        "target": str(normalized.get("section_id") or "本章节"),
+                        "action": "恢复本章节正文与当前项目来源的证据绑定后重新核对。",
+                        "missing_source_classes": [],
+                    }],
                 }
             )
         elif force_neutral_decision:
             normalized["proposal_text"] = ""
             normalized["missing_source_classes"] = []
+            if not normalized.get("gap_items"):
+                decisions = list(normalized.get("decision_items") or [])
+                normalized["gap_items"] = [{
+                    "gap_id": "gap:decision:" + hashlib.sha256(
+                        str(item.get("question") or index).encode("utf-8")
+                    ).hexdigest()[:20],
+                    "category": "decision_pending",
+                    "target": str(normalized.get("section_id") or "本章节"),
+                    "action": str(item.get("question") or "确认本章节科学决定"),
+                    "missing_source_classes": [],
+                } for index, item in enumerate(decisions)]
         normalized_sections.append(normalized)
     if not changed:
         return output
@@ -2996,7 +3027,7 @@ class AiTaskRunner:
             if section_id not in expected_ids:
                 errors.append(f"{prefix}.section_id is not in the requested section set")
             proposal = str(section.get("proposal_text") or "").strip()
-            if content_status == "complete" and len(proposal) < minimum:
+            if content_status in {"complete", "partial"} and len(proposal) < minimum:
                 errors.append(
                     f"{prefix}.proposal_text is not substantive: {len(proposal)} < {minimum} characters"
                 )
@@ -3037,9 +3068,9 @@ class AiTaskRunner:
             ):
                 errors.append(f"{prefix}.proposal_text contains a Markdown table")
             candidate_evidence = section.get("evidence_span_ids")
-            if content_status == "source_gap" and candidate_evidence:
+            if not proposal and candidate_evidence:
                 errors.append(f"{prefix}.evidence_span_ids must be empty for source_gap")
-            elif content_status != "source_gap" and (
+            elif proposal and (
                 not isinstance(candidate_evidence, list) or not candidate_evidence
             ):
                 errors.append(f"{prefix}.evidence_span_ids must be non-empty")
@@ -3057,7 +3088,7 @@ class AiTaskRunner:
                         f"{prefix}.decision_items[{decision_index}].fact_path is not an allowed study-definition path"
                     )
             if (
-                content_status == "complete"
+                content_status in {"complete", "partial"}
                 and _FULL_DRAFT_UNSUPPORTED_RATIONALE_RE.search(rationale)
                 and _FULL_DRAFT_UNSUPPORTED_SPECIFIC_RULE_RE.search(proposal)
             ):

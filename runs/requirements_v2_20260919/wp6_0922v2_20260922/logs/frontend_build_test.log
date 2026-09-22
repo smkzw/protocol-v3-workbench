@@ -1,0 +1,511 @@
+
+> frontend@0.0.0 build
+> vite build
+
+vite v6.4.2 building for production...
+transforming...
+✓ 1971 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/runtime-build.json                   0.27 kB │ gzip:   0.20 kB
+dist/index.html                           0.50 kB │ gzip:   0.35 kB
+dist/assets/logo_bot-DpbzF3lR.svg         9.54 kB │ gzip:   3.25 kB
+dist/assets/header_logo-clkbaD-d.png     10.06 kB
+dist/assets/index-BFu4Ok-P.css          485.84 kB │ gzip:  73.97 kB
+dist/assets/index-Dtr4i9Pe.js         2,240.63 kB │ gzip: 647.10 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.96s
+
+> frontend@0.0.0 test:unit
+> node tests/protocol_v3_test_inventory.mjs --run all
+
+[protocol-v3-test-inventory] runner=vitest tests=15
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+
+ Test Files  15 passed (15)
+      Tests  110 passed (110)
+   Start at  17:21:20
+   Duration  1.76s (transform 1.84s, setup 0ms, import 4.33s, tests 2.82s, environment 12.89s)
+
+[protocol-v3-test-inventory] runner=node tests=48
+TAP version 13
+# medicalMonitoringApi: 130 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringApi.test.mjs
+ok 1 - src/features/medical-monitoring/medicalMonitoringApi.test.mjs
+  ---
+  duration_ms: 61.226459
+  type: 'test'
+  ...
+# medicalMonitoringAssurance: 46 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs
+ok 2 - src/features/medical-monitoring/medicalMonitoringAssurance.test.mjs
+  ---
+  duration_ms: 46.172667
+  type: 'test'
+  ...
+# medicalMonitoringAssuranceRemediation: contract checks passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs
+ok 3 - src/features/medical-monitoring/medicalMonitoringAssuranceRemediation.test.mjs
+  ---
+  duration_ms: 39.30025
+  type: 'test'
+  ...
+# medicalMonitoringAssuranceRollup: 16 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs
+ok 4 - src/features/medical-monitoring/medicalMonitoringAssuranceRollup.test.mjs
+  ---
+  duration_ms: 43.521833
+  type: 'test'
+  ...
+# medicalMonitoringAssuranceView: 31 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs
+ok 5 - src/features/medical-monitoring/medicalMonitoringAssuranceView.test.mjs
+  ---
+  duration_ms: 40.678459
+  type: 'test'
+  ...
+# medicalMonitoringBatchView: 13 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs
+ok 6 - src/features/medical-monitoring/medicalMonitoringBatchView.test.mjs
+  ---
+  duration_ms: 39.114708
+  type: 'test'
+  ...
+# medicalMonitoringChecklistState: 20 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs
+ok 7 - src/features/medical-monitoring/medicalMonitoringChecklistState.test.mjs
+  ---
+  duration_ms: 35.231917
+  type: 'test'
+  ...
+# medicalMonitoringConsumerContract: 33 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs
+ok 8 - src/features/medical-monitoring/medicalMonitoringConsumerContract.test.mjs
+  ---
+  duration_ms: 46.549416
+  type: 'test'
+  ...
+# medicalMonitoringDailyAiCandidates: contract checks passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs
+ok 9 - src/features/medical-monitoring/medicalMonitoringDailyAiCandidates.test.mjs
+  ---
+  duration_ms: 38.802875
+  type: 'test'
+  ...
+# medicalMonitoringDailyAiEvidence: 36 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs
+ok 10 - src/features/medical-monitoring/medicalMonitoringDailyAiEvidence.test.mjs
+  ---
+  duration_ms: 35.449625
+  type: 'test'
+  ...
+# medicalMonitoringDailyDiffView: 27 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs
+ok 11 - src/features/medical-monitoring/medicalMonitoringDailyDiffView.test.mjs
+  ---
+  duration_ms: 40.941292
+  type: 'test'
+  ...
+# medicalMonitoringDailyRunEvidence: 31 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs
+ok 12 - src/features/medical-monitoring/medicalMonitoringDailyRunEvidence.test.mjs
+  ---
+  duration_ms: 42.569084
+  type: 'test'
+  ...
+# medicalMonitoringDailyRunStartGate: 7 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs
+ok 13 - src/features/medical-monitoring/medicalMonitoringDailyRunStartGate.test.mjs
+  ---
+  duration_ms: 38.705792
+  type: 'test'
+  ...
+# medicalMonitoringDailyRunView: 41 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs
+ok 14 - src/features/medical-monitoring/medicalMonitoringDailyRunView.test.mjs
+  ---
+  duration_ms: 43.767917
+  type: 'test'
+  ...
+# medicalMonitoringFieldMappingState: 8 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs
+ok 15 - src/features/medical-monitoring/medicalMonitoringFieldMappingState.test.mjs
+  ---
+  duration_ms: 40.552
+  type: 'test'
+  ...
+# medicalMonitoringFieldMappingView: 15 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs
+ok 16 - src/features/medical-monitoring/medicalMonitoringFieldMappingView.test.mjs
+  ---
+  duration_ms: 36.428375
+  type: 'test'
+  ...
+# medicalMonitoringMetricConfiguration: 18 checks passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs
+ok 17 - src/features/medical-monitoring/medicalMonitoringMetricConfiguration.test.mjs
+  ---
+  duration_ms: 41.366458
+  type: 'test'
+  ...
+# medicalMonitoringModeCatalog: 18 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs
+ok 18 - src/features/medical-monitoring/medicalMonitoringModeCatalog.test.mjs
+  ---
+  duration_ms: 40.64875
+  type: 'test'
+  ...
+# medicalMonitoringModels: 84 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringModels.test.mjs
+ok 19 - src/features/medical-monitoring/medicalMonitoringModels.test.mjs
+  ---
+  duration_ms: 46.008958
+  type: 'test'
+  ...
+# Subtest: src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs
+ok 20 - src/features/medical-monitoring/medicalMonitoringOwnership.test.mjs
+  ---
+  duration_ms: 40.104
+  type: 'test'
+  ...
+# medicalMonitoringPrincipal: 17 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs
+ok 21 - src/features/medical-monitoring/medicalMonitoringPrincipal.test.mjs
+  ---
+  duration_ms: 38.20925
+  type: 'test'
+  ...
+# medicalMonitoringProjectNeutralContract: 66 production files scanned
+# Subtest: src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs
+ok 22 - src/features/medical-monitoring/medicalMonitoringProjectNeutralContract.test.mjs
+  ---
+  duration_ms: 45.113916
+  type: 'test'
+  ...
+# medicalMonitoringProjectRequestScope: 14 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs
+ok 23 - src/features/medical-monitoring/medicalMonitoringProjectRequestScope.test.mjs
+  ---
+  duration_ms: 37.155833
+  type: 'test'
+  ...
+# medicalMonitoringProjectSwitchIsolation: 69 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs
+ok 24 - src/features/medical-monitoring/medicalMonitoringProjectSwitchIsolation.test.mjs
+  ---
+  duration_ms: 42.684833
+  type: 'test'
+  ...
+# medicalMonitoringProtocolPreparation: 32 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs
+ok 25 - src/features/medical-monitoring/medicalMonitoringProtocolPreparation.test.mjs
+  ---
+  duration_ms: 45.865
+  type: 'test'
+  ...
+# medicalMonitoringRiskEvidenceContext: 24 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs
+ok 26 - src/features/medical-monitoring/medicalMonitoringRiskEvidenceContext.test.mjs
+  ---
+  duration_ms: 38.119792
+  type: 'test'
+  ...
+# medicalMonitoringRiskHistoryTrend: 23 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs
+ok 27 - src/features/medical-monitoring/medicalMonitoringRiskHistoryTrend.test.mjs
+  ---
+  duration_ms: 38.299333
+  type: 'test'
+  ...
+# medicalMonitoringRiskProjection: 26 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs
+ok 28 - src/features/medical-monitoring/medicalMonitoringRiskProjection.test.mjs
+  ---
+  duration_ms: 42.309208
+  type: 'test'
+  ...
+# medicalMonitoringRouteState: 56 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs
+ok 29 - src/features/medical-monitoring/medicalMonitoringRouteState.test.mjs
+  ---
+  duration_ms: 37.215959
+  type: 'test'
+  ...
+# medicalMonitoringRuleRelease: 71 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs
+ok 30 - src/features/medical-monitoring/medicalMonitoringRuleRelease.test.mjs
+  ---
+  duration_ms: 49.757667
+  type: 'test'
+  ...
+# medicalMonitoringRuleReleaseView: 21 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs
+ok 31 - src/features/medical-monitoring/medicalMonitoringRuleReleaseView.test.mjs
+  ---
+  duration_ms: 40.484291
+  type: 'test'
+  ...
+# medicalMonitoringRuleTemplateRecommendation: 24 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs
+ok 32 - src/features/medical-monitoring/medicalMonitoringRuleTemplateRecommendation.test.mjs
+  ---
+  duration_ms: 38.552458
+  type: 'test'
+  ...
+# medicalMonitoringRuleTemplateView: 13 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs
+ok 33 - src/features/medical-monitoring/medicalMonitoringRuleTemplateView.test.mjs
+  ---
+  duration_ms: 40.91375
+  type: 'test'
+  ...
+# medicalMonitoringScopeSummary: 29 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs
+ok 34 - src/features/medical-monitoring/medicalMonitoringScopeSummary.test.mjs
+  ---
+  duration_ms: 38.233959
+  type: 'test'
+  ...
+# medicalMonitoringScrollState: 8 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs
+ok 35 - src/features/medical-monitoring/medicalMonitoringScrollState.test.mjs
+  ---
+  duration_ms: 34.480167
+  type: 'test'
+  ...
+# medicalMonitoringServerIdentity: 56 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs
+ok 36 - src/features/medical-monitoring/medicalMonitoringServerIdentity.test.mjs
+  ---
+  duration_ms: 47.276417
+  type: 'test'
+  ...
+# medicalMonitoringSourceReadiness: 25 passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs
+ok 37 - src/features/medical-monitoring/medicalMonitoringSourceReadiness.test.mjs
+  ---
+  duration_ms: 33.220375
+  type: 'test'
+  ...
+# medicalMonitoringSubjectModels tests passed
+# Subtest: src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs
+ok 38 - src/features/medical-monitoring/medicalMonitoringSubjectModels.test.mjs
+  ---
+  duration_ms: 40.087208
+  type: 'test'
+  ...
+# 52 passed, 0 failed
+# Subtest: src/features/medical-writing/durableJobState.test.mjs
+ok 39 - src/features/medical-writing/durableJobState.test.mjs
+  ---
+  duration_ms: 32.125125
+  type: 'test'
+  ...
+# Subtest: document identity and opened study identity remain distinct; parent sees save receipt
+not ok 40 - document identity and opened study identity remain distinct; parent sees save receipt
+  ---
+  duration_ms: 4.444334
+  type: 'test'
+  location: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/office/bridge-shim.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/smkzw/Documents/%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/office/bridge-shim.test.mjs:21:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: missing study baseline remains null
+ok 41 - missing study baseline remains null
+  ---
+  duration_ms: 1.178208
+  type: 'test'
+  ...
+# Subtest: conflict does not silently adopt another window revision
+ok 42 - conflict does not silently adopt another window revision
+  ---
+  duration_ms: 0.969166
+  type: 'test'
+  ...
+# Subtest: a lost receipt is recovered with original bytes before later typing is saved
+not ok 43 - a lost receipt is recovered with original bytes before later typing is saved
+  ---
+  duration_ms: 1.404084
+  type: 'test'
+  location: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/office/bridge-shim.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/smkzw/Documents/%E5%BA%B7%E5%93%B2%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99/AI/%E5%8C%BB%E5%AD%A6%E7%BB%8F%E7%90%86%E5%B7%A5%E4%BD%9C%E5%8F%B0/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/protocol-workbench/office/bridge-shim.test.mjs:42:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: regimen design uses the stored seed and preserves lookup versus execution
+ok 44 - regimen design uses the stored seed and preserves lookup versus execution
+  ---
+  duration_ms: 1.455917
+  type: 'test'
+  ...
+# Subtest: metadata correction changes descriptors without uploading file bytes
+ok 45 - metadata correction changes descriptors without uploading file bytes
+  ---
+  duration_ms: 0.180917
+  type: 'test'
+  ...
+# Subtest: source upload preserves bytes and lets the browser provide multipart boundary
+ok 46 - source upload preserves bytes and lets the browser provide multipart boundary
+  ---
+  duration_ms: 10.010459
+  type: 'test'
+  ...
+# Subtest: source conflict retains the server's actionable explanation
+ok 47 - source conflict retains the server's actionable explanation
+  ---
+  duration_ms: 0.318375
+  type: 'test'
+  ...
+# Subtest: parse and original download use the selected immutable source
+ok 48 - parse and original download use the selected immutable source
+  ---
+  duration_ms: 0.170375
+  type: 'test'
+  ...
+# Subtest: research intake carries selected identities and reads the same durable job
+ok 49 - research intake carries selected identities and reads the same durable job
+  ---
+  duration_ms: 0.232666
+  type: 'test'
+  ...
+# Subtest: research context lists selected inputs and recovers original writes
+ok 50 - research context lists selected inputs and recovers original writes
+  ---
+  duration_ms: 0.169
+  type: 'test'
+  ...
+# Subtest: study-bound design transports the same prepared identity for start and recovery
+ok 51 - study-bound design transports the same prepared identity for start and recovery
+  ---
+  duration_ms: 0.101458
+  type: 'test'
+  ...
+# Subtest: basic research information preserves original adoption and recovery intent
+ok 52 - basic research information preserves original adoption and recovery intent
+  ---
+  duration_ms: 0.329208
+  type: 'test'
+  ...
+# Subtest: manuscript preparation reads current research without sending invented facts
+ok 53 - manuscript preparation reads current research without sending invented facts
+  ---
+  duration_ms: 0.262459
+  type: 'test'
+  ...
+# Subtest: manuscript sources and chapter generation preserve original identities and recovery
+ok 54 - manuscript sources and chapter generation preserve original identities and recovery
+  ---
+  duration_ms: 0.220042
+  type: 'test'
+  ...
+# progressJourneyLogic: 12 passed
+# Subtest: src/features/writing-reference/progressJourneyLogic.test.mjs
+ok 42 - src/features/writing-reference/progressJourneyLogic.test.mjs
+  ---
+  duration_ms: 32.75725
+  type: 'test'
+  ...
+# Subtest: candidate selection replaces a cross-study artifact with the current study artifact
+ok 56 - candidate selection replaces a cross-study artifact with the current study artifact
+  ---
+  duration_ms: 0.40975
+  type: 'test'
+  ...
+# Subtest: candidate selection preserves an artifact already bound to the same study
+ok 57 - candidate selection preserves an artifact already bound to the same study
+  ---
+  duration_ms: 0.063834
+  type: 'test'
+  ...
+# Subtest: candidate selection clears artifact state when the study has no prepared document
+ok 58 - candidate selection clears artifact state when the study has no prepared document
+  ---
+  duration_ms: 0.046917
+  type: 'test'
+  ...
+# triagePresentationState: 19 passed
+# Subtest: src/features/writing-reference/triagePresentationState.test.mjs
+ok 44 - src/features/writing-reference/triagePresentationState.test.mjs
+  ---
+  duration_ms: 30.780958
+  type: 'test'
+  ...
+# {"completed":{"status":0},"timedOut":{"status":null,"timeoutSignal":"SIGKILL"},"descendant":{"status":null,"timeoutSignal":"SIGKILL","pid":21380,"alive":false}}
+# Subtest: tests/final_matrix_process.test.mjs
+ok 45 - tests/final_matrix_process.test.mjs
+  ---
+  duration_ms: 911.624042
+  type: 'test'
+  ...
+# {"fieldMapping":"stale-read-clears","protocolPreparation":"stale-read-clears","ruleRelease":"auxiliary-read-visible","dailyRun":"readiness-and-ai-progress-errors-visible"}
+# Subtest: tests/monitoring_child_read_contract_qc.mjs
+ok 46 - tests/monitoring_child_read_contract_qc.mjs
+  ---
+  duration_ms: 31.952334
+  type: 'test'
+  ...
+# monitoring_source_only_ui_qc: 10 passed
+# Subtest: tests/monitoring_source_only_ui_qc.mjs
+ok 47 - tests/monitoring_source_only_ui_qc.mjs
+  ---
+  duration_ms: 30.528917
+  type: 'test'
+  ...
+# Subtest: the frontend inventory discovers every supported test exactly once
+ok 63 - the frontend inventory discovers every supported test exactly once
+  ---
+  duration_ms: 9.696375
+  type: 'test'
+  ...
+# Subtest: the inventory validator rejects duplicate, unknown, or uncollected tests
+ok 64 - the inventory validator rejects duplicate, unknown, or uncollected tests
+  ---
+  duration_ms: 0.261916
+  type: 'test'
+  ...
+# Subtest: runner commands remain explicit and separate
+ok 65 - runner commands remain explicit and separate
+  ---
+  duration_ms: 0.09925
+  type: 'test'
+  ...
+1..65
+# tests 65
+# suites 0
+# pass 63
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1009.917875
