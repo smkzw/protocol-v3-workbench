@@ -6,7 +6,7 @@ import sqlite3
 import pytest
 
 from app.protocol_workflow.runtime.omp_credentials import (
-    OmpCredentialError, resolve_omp_zhipu_key,
+    OmpCredentialError, resolve_omp_opencode_go_key, resolve_omp_zhipu_key,
 )
 
 
@@ -71,3 +71,29 @@ def test_empty_resolved_binding_reports_unavailable_before_dispatch(tmp_path):
     path = _database(tmp_path, [(1, "zhipu-coding-plan", "SYNTHETIC_KEY", "login", None)])
     with pytest.raises(OmpCredentialError, match="omp_credentials_unavailable"):
         resolve_omp_zhipu_key(path, environ={"SYNTHETIC_KEY": ""})
+
+
+def test_opencode_go_binding_reads_only_named_omp_env_assignment(tmp_path):
+    path = tmp_path / ".env"
+    path.write_text(
+        "UNRELATED=do-not-use\nexport OPENCODE_API_KEY='synthetic-opencode'\n",
+        encoding="utf-8",
+    )
+    before = path.read_bytes()
+    assert resolve_omp_opencode_go_key(path, environ={}) == "synthetic-opencode"
+    assert path.read_bytes() == before
+
+
+def test_opencode_go_process_binding_wins_without_reading_file(tmp_path):
+    absent = tmp_path / "absent.env"
+    assert resolve_omp_opencode_go_key(
+        absent, environ={"OPENCODE_API_KEY": "process-only"}
+    ) == "process-only"
+    assert not absent.exists()
+
+
+def test_opencode_go_missing_or_ambiguous_binding_fails_closed(tmp_path):
+    path = tmp_path / ".env"
+    path.write_text("OPENCODE_API_KEY=one\nOPENCODE_API_KEY=two\n", encoding="utf-8")
+    with pytest.raises(OmpCredentialError, match="omp_credentials_unavailable"):
+        resolve_omp_opencode_go_key(path, environ={})

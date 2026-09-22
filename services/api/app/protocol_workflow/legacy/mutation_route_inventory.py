@@ -224,6 +224,7 @@ _ROUTE_ROWS: tuple[tuple[str, str, str, str, str], ...] = (
     ("post", '/api/projects/{project_id}/revision-threads/{thread_id}/accept-and-apply', "accept_and_apply_revision_candidate", "legacy_write", "working_copy"),
     ("post", '/api/projects/{project_id}/medical-writing/working-copies/{section_id}/accept-and-bind', "accept_and_bind_medical_writing_working_copy", "legacy_write", "working_copy"),
     ("post", '/api/ai-gateway/active-profile', "activate_ai_gateway_profile", "excluded", "ai_gateway"),
+    ("put", '/api/ai-gateway/fallback-chain', "update_ai_gateway_fallback_chain", "excluded", "ai_gateway"),
     ("post", '/api/medical-writing/shared-corpus/phase1/{segment_id}/admissions', "admit_phase1_shared_corpus_candidate", "legacy_write", "reference_store"),
     ("post", '/api/projects/{project_id}/medical-writing/references/translations/{translation_id}/admissions', "admit_writing_reference_translation", "legacy_write", "reference_store"),
     ("post", '/api/projects/{project_id}/medical-writing/authoring-journey/prefill-package/adopt', "adopt_medical_writing_authoring_prefill_candidate", "legacy_write", "journey_store"),

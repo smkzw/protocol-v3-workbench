@@ -26,6 +26,7 @@ class CurrentTemplate:
     rules_catalog: ApplicabilityRuleCatalog
     chapter_order: tuple[str, ...]
     chapter_titles: dict[str, str] = field(default_factory=dict)
+    legacy_to_v2_nodes: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
 
 def load_current_template(root: Path) -> CurrentTemplate:
@@ -36,6 +37,7 @@ def load_current_template(root: Path) -> CurrentTemplate:
     roles["v2_front_block"] = "cover"
     bindings = FactBindingCatalog.model_validate_json((root / "fact_bindings.json").read_text())
     rules = ApplicabilityRuleCatalog.model_validate_json((root / "applicability_rules.json").read_text())
+    legacy_mapping = json.loads((root / "v1_to_v2_mapping.json").read_text())
     chapters, contracts, claims = [], [], set()
     for path in sorted((root / "chapter_contracts").glob("*.json")):
         contract = ChapterContractV2.model_validate_json(path.read_text())
@@ -89,6 +91,10 @@ def load_current_template(root: Path) -> CurrentTemplate:
         chapter_titles={**{node['id']: ' '.join(filter(None, (node.get('section_number'), node['title_zh'])))
             for key in ('heading_style_tree', 'outlined_tree') for node in tree[key]['nodes']},
             'v2_front_block': '封面与方案基本信息'},
+        legacy_to_v2_nodes={
+            str(row["semantic_node_id"]): tuple(str(node_id) for node_id in row["target_v2_node_ids"])
+            for row in legacy_mapping["forward_mapping"]
+        },
     )
 
 

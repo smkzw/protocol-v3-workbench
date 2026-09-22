@@ -760,6 +760,9 @@ function FullDraftBridgeSession({ projectId, studyDefinitionId, actorId, api, on
   ]);
   const decisionItems = (candidate?.sections || []).flatMap(section => section.decision_items || []);
   const running = jobId && !candidate && !['failed', 'cancelled'].includes(job?.status);
+  const candidateAlreadyAdopted = Boolean(
+    candidate && jobId && savedDocument?.accepted_candidate_id === jobId
+  );
 
   return <section className="kz-protocol kz-manuscript kz-manuscript--bridge" aria-label="完整方案初稿">
     <header><h2>研究方案工作稿</h2></header>
@@ -777,8 +780,9 @@ function FullDraftBridgeSession({ projectId, studyDefinitionId, actorId, api, on
     </div>}
     {job?.status === 'failed' && <p role="alert">本次候选生成没有完成，当前工作稿未被修改。</p>}
     {job?.status === 'cancelled' && <p role="status">本次候选已停止，当前工作稿未被修改。</p>}
-    {candidate && (!savedDocument || !showOffice) && <section className="kz-manuscript-candidate" aria-label="新候选初稿">
-      <h3>新候选初稿</h3>
+    {candidate && (!savedDocument || !showOffice) && <section className="kz-manuscript-candidate"
+      aria-label={candidateAlreadyAdopted ? '已采用的候选依据' : '新候选初稿'}>
+      <h3>{candidateAlreadyAdopted ? '已采用的候选依据' : '新候选初稿'}</h3>
       <ul>
         <li><strong>正文范围：</strong>{(candidate.sections || []).filter(item => item.proposal_text).length} 个章节已有正文。</li>
         <li><strong>待处理：</strong>{gaps.length} 项；其中关键决定需在对应位置确认。</li>
@@ -787,9 +791,12 @@ function FullDraftBridgeSession({ projectId, studyDefinitionId, actorId, api, on
       </ul>
       {(sourceManifest.sources || []).length > 0 && <details><summary>查看本次使用的资料版本</summary><ul>
         {Object.entries(sourceRoles).map(([role, count]) => <li key={role}>{SOURCE_ROLE_LABELS[role] || role}：{count} 项</li>)}
-        {(sourceManifest.sources || []).map(source => <li key={`${source.source_id}:${source.content_sha256}`}>
+        {(sourceManifest.sources || []).slice(0, 8).map(source => <li key={`${source.source_id}:${source.content_sha256}`}>
           <strong>{source.title || source.source_type}</strong> · {source.source_version || '当前版本'} · {source.locator}
         </li>)}
+        {(sourceManifest.sources || []).length > 8 && <li>
+          其余 {(sourceManifest.sources || []).length - 8} 个冻结版本已记录，可在来源台账按章节查看。
+        </li>}
       </ul></details>}
       {sourcePolicy && sourcePolicy.status !== 'not_required' && <section className="kz-manuscript-source-policy" aria-label="公司SOP项目适用范围">
         <h4>公司SOP适用范围</h4>
@@ -825,10 +832,13 @@ function FullDraftBridgeSession({ projectId, studyDefinitionId, actorId, api, on
           一次确认这 {decisionItems.length} 项相关决定
         </button>
       </div>}
-      <button type="button" className="kz-manuscript-primary" disabled={busy || officeOpen || !coverage.working_draft_ready
-        || (requiresSourcePolicy && !sourcePolicy?.current)}
-        onClick={acceptCandidate}>{pendingIntent ? '核对并完成原候选采用' : '采用候选并打开工作稿'}</button>
-      {savedDocument && <p>采用新候选不会静默覆盖当前 Word 人工稿；系统会保留现有版本并提示核对。</p>}
+      {!candidateAlreadyAdopted && <button type="button" className="kz-manuscript-primary"
+        disabled={busy || officeOpen || !coverage.working_draft_ready
+          || (requiresSourcePolicy && !sourcePolicy?.current)}
+        onClick={acceptCandidate}>{pendingIntent ? '核对并完成原候选采用' : '采用候选并打开工作稿'}</button>}
+      {savedDocument && <p>{candidateAlreadyAdopted
+        ? '该候选已进入当前语义工作稿。已有 Word 人工稿仍原样保留；打开工作稿后可选择编辑新候选或继续当前 Word。'
+        : '采用新候选不会静默覆盖当前 Word 人工稿；系统会保留现有版本并提示核对。'}</p>}
     </section>}
     {savedDocument && !showOffice && <button type="button" className="kz-manuscript-primary" onClick={() => setShowOffice(true)}>
       打开工作稿

@@ -17,7 +17,7 @@ cms-router/OmniRoute 本机网关（key 轮转池，响应 model 字段会被网
 """
 import os
 
-from app.protocol_workflow.runtime.omp_credentials import resolve_omp_deepseek_key
+from app.protocol_workflow.runtime.omp_credentials import resolve_omp_opencode_go_key
 from .zhipu_api import build_zhipu_api_adapter
 
 DEEPSEEK_CHAT_COMPLETIONS_ENDPOINT = "https://api.deepseek.com/chat/completions"
@@ -72,7 +72,7 @@ def build_deepseek_api_adapter(
         model=model,
         provider_id=DEEPSEEK_PROVIDER_ID,
         provider_label="deepseek",
-        credential_resolver=credential_resolver,
+        credential_resolver=credential_resolver or resolve_omp_opencode_go_key,
         endpoint=endpoint,
         expected_response_model_override=expected_response_model_override,
         **kwargs,

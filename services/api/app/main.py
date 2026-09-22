@@ -7866,6 +7866,21 @@ def start_medical_writing_full_draft(project_id: str, request: dict):
         raise HTTPException(status_code=409, detail=str(exc))
 
 
+@app.get("/api/projects/{project_id}/medical-writing/full-drafts/current")
+def get_current_medical_writing_full_draft(project_id: str):
+    """Rediscover the newest completed candidate that still targets this draft."""
+    canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+    records = mw_durable_store.list_by_project(
+        canonical_id,
+        job_type=FULL_DRAFT_JOB_TYPE,
+        status="completed",
+    )
+    for record in reversed(records):
+        if medical_writing_full_draft_service.candidate_is_current(canonical_id, record):
+            return _public_durable_job_dict(record)
+    return Response(status_code=204)
+
+
 @app.get("/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/result")
 def get_medical_writing_full_draft_result(project_id: str, job_id: str):
     try:

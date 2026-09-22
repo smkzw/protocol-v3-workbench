@@ -10690,22 +10690,42 @@ function WritingPage({
     } catch {
       localStorage.removeItem(fullDraftStorageKey);
     }
-    if (!stored?.job_id || stored.project_id !== projectId) return undefined;
-    const runToken = fullDraftRunRef.current + 1;
-    fullDraftRunRef.current = runToken;
-    setFullDraftBusy(true);
-    setFullDraftMessage("正在恢复全文初稿任务状态。");
-    monitorFullDraft(stored.job_id, runToken)
-      .catch((error) => {
+    let cancelled = false;
+    const restore = async () => {
+      if (!stored?.job_id || stored.project_id !== projectId) {
+        const response = await fetch(
+          `/api/projects/${projectId}/medical-writing/full-drafts/current`,
+        );
+        if (response.status === 204 || cancelled) return;
+        stored = await readJsonOrThrow(response);
+        if (!stored?.job_id || cancelled) return;
+        localStorage.setItem(
+          fullDraftStorageKey,
+          JSON.stringify({ project_id: projectId, job_id: stored.job_id }),
+        );
+      }
+      if (cancelled) return;
+      const runToken = fullDraftRunRef.current + 1;
+      fullDraftRunRef.current = runToken;
+      setFullDraftBusy(true);
+      setFullDraftMessage("正在恢复全文初稿任务状态。");
+      try {
+        await monitorFullDraft(stored.job_id, runToken);
+      } catch (error) {
         if (fullDraftRunRef.current === runToken) {
           setFullDraftMessage(`全文初稿恢复失败：${apiErrorText(error)}`);
           if (error?.status === 404) localStorage.removeItem(fullDraftStorageKey);
         }
-      })
-      .finally(() => {
+      } finally {
         if (fullDraftRunRef.current === runToken) setFullDraftBusy(false);
-      });
+      }
+    };
+    restore().catch((error) => {
+      if (!cancelled) setFullDraftMessage(`全文初稿状态读取失败：${apiErrorText(error)}`);
+    });
     return () => {
+      cancelled = true;
+      const runToken = fullDraftRunRef.current;
       if (fullDraftRunRef.current === runToken) fullDraftRunRef.current += 1;
     };
   }, [projectId, isDemoWritingSession]);

@@ -43,9 +43,9 @@ class ObjectRevisionWorker:
             from app.protocol_workflow.runtime.adapters.deepseek_api import (
                 build_deepseek_api_adapter)
             from app.protocol_workflow.runtime.omp_credentials import (
-                resolve_omp_deepseek_key)
+                resolve_omp_opencode_go_key)
             return build_deepseek_api_adapter(
-                credential_resolver=resolve_omp_deepseek_key,
+                credential_resolver=resolve_omp_opencode_go_key,
                 artifact_text_resolver=self._resolver, max_input_bytes=2_000_000,
                 receipt_sink=self._receipt_sink(key))
         from app.protocol_workflow.runtime.adapters.zhipu_api import (

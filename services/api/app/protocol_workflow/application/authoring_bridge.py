@@ -204,6 +204,38 @@ class AuthoringJourneyBridge:
             canonical_state=CanonicalState.PROPOSED,
         )
 
+    @staticmethod
+    def _current_nodes_for_legacy(template: Any, legacy_node_id: str) -> tuple[str, ...]:
+        """Resolve one legacy authoring node through the frozen v1→v2 map.
+
+        The mapping may point at a v2 container while the semantic manuscript
+        stores only authored leaf contracts.  Expand such containers in real
+        document order.  The caller deliberately chooses one primary leaf for
+        each legacy section so a broad legacy paragraph is never duplicated
+        across several current chapters.
+        """
+        entries = {entry.node_id for entry in template.registry.chapters}
+        ordered = tuple(template.chapter_order)
+        resolved: list[str] = []
+        for target in template.legacy_to_v2_nodes.get(legacy_node_id, ()):
+            if target in entries:
+                resolved.append(target)
+                continue
+            prefix = target + "_"
+            resolved.extend(node_id for node_id in ordered if node_id.startswith(prefix))
+        return tuple(dict.fromkeys(resolved))
+
+    @staticmethod
+    def _normalize_candidate_text(content: str) -> str:
+        """Apply the product-wide protocol terminology to generated prose.
+
+        Full-draft proposals are authored text rather than quoted evidence, so
+        accepting them into the current TP-MA-07 v2 manuscript also applies
+        its required participant term.  Source extracts and evidence locators
+        remain unchanged in the candidate artifact and manifest.
+        """
+        return content.replace("受试者", "试验参与者")
+
     def _candidate_document(self, artifact: Mapping[str, Any], journey: Any,
                             accepted_nodes: set[str], study: Any, current: Any,
                             document_id: str, now: datetime) -> SemanticDocumentRevision:
@@ -219,14 +251,13 @@ class AuthoringJourneyBridge:
             for item in artifact.get("sections") or []
             if isinstance(item, Mapping)
         }
-        candidate_by_node: dict[str, tuple[Mapping[str, Any], Mapping[str, Any]]] = {}
+        candidate_by_node: dict[str, list[tuple[Mapping[str, Any], Mapping[str, Any]]]] = {}
         for section_id, target in targets.items():
-            node_id = str(target.get("semantic_node_id") or "")
-            if not node_id or node_id not in entries or section_id not in sections:
+            legacy_node_id = str(target.get("semantic_node_id") or "")
+            current_nodes = self._current_nodes_for_legacy(template, legacy_node_id)
+            if not legacy_node_id or not current_nodes or section_id not in sections:
                 raise ValueError("full_draft_semantic_mapping_missing")
-            if node_id in candidate_by_node:
-                raise ValueError("full_draft_semantic_mapping_ambiguous")
-            candidate_by_node[node_id] = (target, sections[section_id])
+            candidate_by_node.setdefault(current_nodes[0], []).append((target, sections[section_id]))
         current_by_node: dict[str, list[SemanticBlock]] = {}
         if current is not None:
             for block in current.semantic_blocks:
@@ -261,44 +292,47 @@ class AuthoringJourneyBridge:
             if status == "not_applicable":
                 continue
             contract_hashes.append(contract.material_sha256())
-            candidate = candidate_by_node.get(node_id)
-            replace = candidate is not None and node_id in accepted_nodes
+            candidates = [
+                item for item in candidate_by_node.get(node_id, [])
+                if str(item[0].get("semantic_node_id") or "") in accepted_nodes
+            ]
+            replace = bool(candidates)
             if current_by_node.get(node_id) and not replace:
                 blocks.extend(current_by_node[node_id])
                 continue
-            if candidate is not None and replace:
-                target, section = candidate
-                proposal = str(section.get("proposal_text") or "").strip()
-                if proposal:
-                    block_id = "manuscript-block:" + hashlib.sha256(
-                        canonical_json([artifact.get("job_id"), node_id, "proposal"]).encode()
-                    ).hexdigest()
-                    blocks.append(self._block(
-                        node_id=node_id, contract=contract,
-                        block_id=block_id, content=proposal,
-                    ))
-                gap_items = list(section.get("gap_items") or [])
-                for decision in section.get("decision_items") or []:
-                    gap_items.append({
-                        "gap_id": "decision:" + hashlib.sha256(canonical_json(
-                            [node_id, decision.get("question")]
-                        ).encode()).hexdigest()[:24],
-                        "category": "decision_pending",
-                        "target": node_id,
-                        "action": str(decision.get("question") or "确认本章节科学决定"),
-                        "missing_source_classes": [],
-                    })
-                for gap in gap_items:
-                    unresolved.append({"semantic_node_id": node_id, **dict(gap)})
-                    text = "【待处理】" + str(gap.get("action") or "补充本章节所需信息。")
-                    block_id = "manuscript-block:" + hashlib.sha256(
-                        canonical_json([artifact.get("job_id"), node_id, gap.get("gap_id")]).encode()
-                    ).hexdigest()
-                    blocks.append(self._block(
-                        node_id=node_id, contract=contract,
-                        block_id=block_id, content=text,
-                    ))
-                if proposal or gap_items:
+            if replace:
+                candidate_has_material = False
+                for target, section in candidates:
+                    proposal = self._normalize_candidate_text(
+                        str(section.get("proposal_text") or "").strip()
+                    )
+                    if proposal:
+                        block_id = "manuscript-block:" + hashlib.sha256(
+                            canonical_json([
+                                artifact.get("job_id"), node_id,
+                                target.get("section_id"), "proposal",
+                            ]).encode()
+                        ).hexdigest()
+                        blocks.append(self._block(
+                            node_id=node_id, contract=contract,
+                            block_id=block_id, content=proposal,
+                        ))
+                        candidate_has_material = True
+                    gap_items = list(section.get("gap_items") or [])
+                    for decision in section.get("decision_items") or []:
+                        gap_items.append({
+                            "gap_id": "decision:" + hashlib.sha256(canonical_json(
+                                [node_id, decision.get("question")]
+                            ).encode()).hexdigest()[:24],
+                            "category": "decision_pending",
+                            "target": node_id,
+                            "action": str(decision.get("question") or "确认本章节科学决定"),
+                            "missing_source_classes": [],
+                        })
+                    for gap in gap_items:
+                        unresolved.append({"semantic_node_id": node_id, **dict(gap)})
+                    candidate_has_material = candidate_has_material or bool(gap_items)
+                if candidate_has_material:
                     continue
             gap_id = "gap:unmapped:" + hashlib.sha256(node_id.encode()).hexdigest()[:20]
             unresolved.append({
@@ -307,13 +341,6 @@ class AuthoringJourneyBridge:
                 "action": "补充或映射本模板章节内容。",
                 "missing_source_classes": [],
             })
-            blocks.append(self._block(
-                node_id=node_id, contract=contract,
-                block_id="manuscript-block:" + hashlib.sha256(
-                    canonical_json([artifact.get("job_id"), node_id, gap_id]).encode()
-                ).hexdigest(),
-                content="【待处理】补充或映射本模板章节内容。",
-            ))
         ruleset_payload = [item.model_dump(mode="json") for item in applicability_entries]
         ruleset_sha = hashlib.sha256(canonical_json(ruleset_payload).encode()).hexdigest()
         snapshot = ApplicabilitySnapshot(

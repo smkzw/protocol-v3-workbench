@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 
 from app.protocol_workflow.runtime.omp_credentials import (
-    resolve_omp_deepseek_key,
+    resolve_omp_opencode_go_key,
     resolve_omp_zhipu_key,
 )
 from app.protocol_workflow.runtime.product_profiles import (
@@ -51,7 +51,7 @@ def profile_bindings(profile: str) -> dict:
     if profile == PROFILE_DEEPSEEK:
         return {
             "registry_kwargs": {"confirm_alternative": True},
-            "credential_resolver": resolve_omp_deepseek_key,
+            "credential_resolver": resolve_omp_opencode_go_key,
         }
     if profile == PROFILE_GLM:
         return {

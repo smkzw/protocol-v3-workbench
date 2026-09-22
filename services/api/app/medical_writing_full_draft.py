@@ -236,6 +236,52 @@ class MedicalWritingFullDraftService:
             return int(current.revision), [dict(block) for block in current.content_blocks]
         return 0, [dict(block) for block in section.content_blocks]
 
+    def candidate_is_current(self, project_id: str, job: Any) -> bool:
+        """Return whether a completed candidate still targets the current draft.
+
+        This is used only to rediscover a durable candidate after a browser
+        refresh.  Once the document binding, version, section revision, or
+        target body changes, the older candidate remains in history but is no
+        longer offered as the current review item.
+        """
+        try:
+            artifact = self.read_artifact(project_id, job)
+            service = self._service(project_id)
+            repo = service.repo
+            document = repo.protocol(project_id)
+            if str(document.document_id) != str(artifact.get("document_id") or ""):
+                return False
+            if str(document.version) != str(artifact.get("document_version") or ""):
+                return False
+            if self._binding(repo, project_id, document) != artifact.get("study_definition"):
+                return False
+            targets = artifact.get("target_sections") or []
+            if not targets:
+                return False
+            for target in targets:
+                section_id = _text(target.get("section_id"))
+                body_block_id = _text(target.get("body_block_id"))
+                if not section_id or not body_block_id:
+                    return False
+                current = repo.working_copy(project_id, section_id)
+                if int(current.revision) != int(target.get("expected_revision") or 0):
+                    return False
+                body = next(
+                    (
+                        _text(block.get("text"))
+                        for block in current.content_blocks
+                        if _text(block.get("block_id")) == body_block_id
+                    ),
+                    None,
+                )
+                if body is None:
+                    return False
+                if hashlib.sha256(body.encode("utf-8")).hexdigest() != _text(target.get("body_sha256")):
+                    return False
+            return True
+        except (KeyError, FileNotFoundError, RuntimeStoreError, StaleRuntimeStateError, TypeError, ValueError):
+            return False
+
     def _target_sections(
         self,
         service: Any,

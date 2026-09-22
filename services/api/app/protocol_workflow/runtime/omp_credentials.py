@@ -1,4 +1,4 @@
-"""Read-only binding to omp's stored zhipu-coding-plan API credentials.
+"""Read-only binding to credentials already managed by omp.
 
 No global AuthStorage constructor: it may migrate or deduplicate the source.
 For a fresh no-session binding, omp selects login credentials in ascending row
@@ -18,6 +18,7 @@ from typing import Mapping
 
 PROVIDER = "zhipu-coding-plan"
 PROVIDER_DEEPSEEK = "deepseek"
+OPENCODE_GO_ENV = "OPENCODE_API_KEY"
 
 
 class OmpCredentialError(RuntimeError):
@@ -81,3 +82,42 @@ def resolve_omp_deepseek_key(
     """DeepSeek product credential: the same stored key omp's opencode-go
     provider binding uses.  Memory-only; identical read-only discipline."""
     return _resolve_omp_api_key(PROVIDER_DEEPSEEK, path, now_ms, environ)
+
+
+def resolve_omp_opencode_go_key(
+    path: Path | None = None,
+    *,
+    environ: Mapping[str, str] | None = None,
+) -> str:
+    """Resolve the same ``OPENCODE_API_KEY`` binding used by current omp.
+
+    Omp's built-in ``opencode-go`` provider is configured from its private
+    ``~/.omp/agent/.env`` file rather than an ``auth_credentials`` row.  Read
+    only the named assignment without sourcing or executing the file.  An
+    already supplied process environment wins, which keeps container and test
+    deployments explicit.  The returned value remains memory-only.
+    """
+    environ = os.environ if environ is None else environ
+    current = str(environ.get(OPENCODE_GO_ENV, "") or "").strip()
+    if current:
+        return current
+    path = path if path is not None else Path.home() / ".omp/agent/.env"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        raise OmpCredentialError("omp_credentials_unavailable") from None
+    prefix = OPENCODE_GO_ENV + "="
+    matches = []
+    for raw in lines:
+        line = raw.strip()
+        if line.startswith("export "):
+            line = line[7:].lstrip()
+        if not line.startswith(prefix):
+            continue
+        value = line[len(prefix):].strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        matches.append(value.strip())
+    if len(matches) != 1 or not matches[0] or matches[0].startswith("!"):
+        raise OmpCredentialError("omp_credentials_unavailable")
+    return matches[0]

@@ -63,3 +63,29 @@ test('partial blockage continues to observe progressing siblings without redispa
   expect(api.recoverManuscriptDraft).toHaveBeenCalledTimes(2);
   expect(api.resumeManuscriptDraft).not.toHaveBeenCalled();
 });
+
+test('an already adopted full-draft candidate cannot be adopted a second time', async () => {
+  localStorage.setItem('protocol-v3:full-draft-bridge:p', JSON.stringify({ jobId: 'job-adopted' }));
+  const api = {
+    getSavedManuscriptDocument: vi.fn(async () => ({
+      document: { revision: 2, study_definition_sha256: 'b'.repeat(64) },
+      document_sha256: 'a'.repeat(64),
+      accepted_candidate_id: 'job-adopted',
+    })),
+    getDurableMedicalWritingJob: vi.fn(async () => ({ job_id: 'job-adopted', status: 'completed' })),
+    getFullDraftResult: vi.fn(async () => ({ artifact: {
+      job_id: 'job-adopted', sections: [{ section_id: 's1', proposal_text: '已有正文。' }],
+      coverage: { working_draft_ready: true, formal_ready: false },
+      source_manifest: { source_count: 0, sources: [] },
+    } })),
+    getFullDraftSourcePolicy: vi.fn(async () => ({ status: 'not_required', current: true })),
+    recoverFullDraftCandidate: vi.fn(),
+  };
+  render(<ManuscriptWorkspace bridgeMode projectId="p" studyDefinitionId="s"
+    actorId="a" api={api}/>);
+  await screen.findByText('已采用的候选依据');
+  expect(screen.queryByText('采用候选并打开工作稿')).toBeNull();
+  expect(screen.getByText(/该候选已进入当前语义工作稿/)).toBeTruthy();
+  expect(screen.getByText('打开工作稿')).toBeTruthy();
+  expect(api.recoverFullDraftCandidate).not.toHaveBeenCalled();
+});

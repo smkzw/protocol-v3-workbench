@@ -70,7 +70,10 @@ def test_current_adoption_accepts_conduct_clauses_without_bypassing_body_checks(
                 '如有方案偏离，应说明具体情况及原因，保留相关原始记录。')
         with patch(
             'services.api.app.medical_writing_full_draft.company_template_semantic_node_map',
-            return_value={'': 'semantic:test:research-background'},
+            return_value={
+                'cms_background': 'semantic:test:research-background',
+                'cms_objectives_endpoints': 'semantic:test:objectives-endpoints',
+            },
         ):
             completed, artifact = harness._completed_artifact()
         assert artifact['schema_version'] == FULL_DRAFT_ARTIFACT_SCHEMA

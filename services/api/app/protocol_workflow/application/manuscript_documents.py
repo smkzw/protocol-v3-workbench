@@ -50,11 +50,18 @@ class ManuscriptDocumentService:
         document_id = manuscript_document_id(project_id, study_id)
         with self.uow_factory() as uow:
             document = uow.semantic_document_repository.get_current(project_id, document_id)
+            accepted_candidate_id = None
+            for event in uow.event_stream_repository.read_events(project_id, document_id):
+                if event.event_type != 'manuscript_external_candidate_accepted.v1':
+                    continue
+                verify_event_integrity(event)
+                accepted_candidate_id = event.payload.get('candidate_id') or None
         if document is None:
             return None
         return {'document': document.model_dump(mode='json'),
             'document_sha256': document_revision_hash(document),
-            'revision': document.revision}
+            'revision': document.revision,
+            'accepted_candidate_id': accepted_candidate_id}
 
     @staticmethod
     def _source_policy_intent(project_id, study_id, intent):

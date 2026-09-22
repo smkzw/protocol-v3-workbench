@@ -68,15 +68,20 @@ def _real_values(study_facts: Mapping[str, Any], document: Mapping[str, Any]) ->
     if isinstance(title_fact, dict):
         title_fact = title_fact.get('text') or title_fact.get('title') or '临床研究方案'
     real_title = str(title_fact or '临床研究方案')
+    prefixed_version = version if version.lower().startswith('v') else f'v{version}'
     return {'title': real_title,
+            '(申办者名称)': sponsor,
+            '此信息属<申办者名称>所有': f'此信息属{sponsor or "申办者"}所有',
+            '此信息属申办者名称所有': f'此信息属{sponsor or "申办者"}所有',
             '申办者名称': sponsor, 'vX.X 版': f'{version} 版', 'vX.X': version,
             'XXXXXX': protocol_id, 'XXXX/0X/XX': date,
             'XXX/0X/XX': date, 'XXXXXXXXXX': '', 'XXX': '',
         '<编号>': protocol_id, '<年月日>': date,
         '<主要研究者姓名>': '＿＿＿＿＿＿', '<医院名称>': '＿＿＿＿＿＿＿＿',
         '<申办者名称>': sponsor, '<供应商名称>': '＿＿＿＿＿＿',
-        '<合同研究组织名称>': '＿＿＿＿＿＿', 'v <x.x>': f'v{version}',
-        'v<x.x>': f'v{version}', '<x.x>': version,
+        '<合同研究组织名称>': '＿＿＿＿＿＿', 'v <x.x>': prefixed_version,
+        'v<x.x>': prefixed_version, '<x.x>': version,
+        '[我已阅读': '我已阅读', '年     月     日]': '年     月     日',
         }
 
 
@@ -201,9 +206,22 @@ def _find_toc_end(doc) -> int | None:
 
 
 def _bookmark(paragraph, name: str) -> None:
-    start = paragraph._p.makeelement(qn('w:bookmarkStart'), {qn('w:id'): str(abs(hash(name)) % 100000), qn('w:name'): name})
+    # ``w:pPr`` must be the first child of ``w:p``.  Inserting the bookmark
+    # unconditionally at index zero placed it before an existing pPr and made
+    # every generated heading schema-invalid (Word may repair or reject such
+    # files depending on version).  The bookmark id also must not use Python's
+    # process-randomized ``hash()`` because the same saved manuscript should
+    # produce the same XML identity on recovery/re-render.
+    # ST_DecimalNumber is signed 32-bit in the WordprocessingML schema.
+    bookmark_id = str(
+        int(hashlib.sha256(name.encode('utf-8')).hexdigest()[:8], 16)
+        % 2_147_483_647
+    )
+    start = paragraph._p.makeelement(qn('w:bookmarkStart'), {
+        qn('w:id'): bookmark_id, qn('w:name'): name})
     end = paragraph._p.makeelement(qn('w:bookmarkEnd'), {qn('w:id'): start.get(qn('w:id'))})
-    paragraph._p.insert(0, start)
+    p_pr = paragraph._p.find(qn('w:pPr'))
+    paragraph._p.insert(1 if p_pr is not None else 0, start)
     paragraph._p.append(end)
 
 

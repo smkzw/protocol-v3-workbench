@@ -46,6 +46,27 @@ def _all_text(doc):
     return '\n'.join(parts)
 
 
+def test_bookmark_preserves_paragraph_schema_order_and_stable_identity():
+    import hashlib
+    from docx import Document
+    from docx.oxml.ns import qn
+    from app.protocol_workflow.agent3.word_export_production import _bookmark
+
+    paragraph = Document().add_heading('稳定标题', level=1)
+    _bookmark(paragraph, 'chap_v2_n_1_1')
+
+    children = list(paragraph._p)
+    assert children[0].tag == qn('w:pPr')
+    assert children[1].tag == qn('w:bookmarkStart')
+    expected_id = str(
+        int(hashlib.sha256(b'chap_v2_n_1_1').hexdigest()[:8], 16)
+        % 2_147_483_647
+    )
+    assert children[1].get(qn('w:id')) == expected_id
+    assert children[-1].tag == qn('w:bookmarkEnd')
+    assert children[-1].get(qn('w:id')) == expected_id
+
+
 def test_table_first_chapter_never_gets_not_applicable_text(tmp_path):
     template_path, template_dir = _template_paths()
     blocks = [_para('v2_n_11_1_1', '第一章正文。'),
@@ -222,3 +243,32 @@ def test_template_header_uses_width_aware_tabs_and_retains_cover_section(tmp_pat
     source = Document(template_path)
     assert doc.sections[0]._sectPr.xml == source.sections[0]._sectPr.xml
     assert len(list(doc.element.body.iter(qn('w:sectPr')))) >= 2
+
+
+def test_front_matter_has_clean_version_sponsor_and_signature_text(tmp_path):
+    from docx import Document
+    from docx.oxml.ns import qn
+
+    template_path, template_dir = _template_paths()
+    out = tmp_path / 'front-matter.docx'
+    render_production_docx(
+        template_path,
+        template_dir,
+        _document([_para('v2_n_11_1_1', '试验参与者完成筛选后进入研究。')]),
+        out,
+        {
+            'framing.document_title': '合成研究方案',
+            'framing.version': 'v0.1',
+            'framing.sponsor': '',
+        },
+    )
+    doc = Document(out)
+    text = _all_text(doc)
+    all_xml_text = ''.join(node.text or '' for node in doc.element.body.iter(qn('w:t')))
+    assert 'vV0.1' not in text
+    assert 'v0.1' in text
+    assert '(申办者名称)' not in text
+    assert '()' not in text
+    assert '此信息属申办者所有' in all_xml_text
+    assert '[我已阅读' not in text
+    assert '年     月     日]' not in text
