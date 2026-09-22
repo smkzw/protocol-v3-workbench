@@ -234,3 +234,15 @@ Study C真实旅程已完成：job `mwjob_1899993fde771e9d9f635033`，22/22批�
 fresh工程会商`mw_protocol_v3_model_fallback_review_20260923`使用`codebuddy/codebuddy-cli/deepseek-v4.1-flash:max`同session `01a0ca17-f0b5-7162-9cfa-9a3b8b0c57eb`两轮、无fallback。owner关闭两项P1：不适用槽不再终止后续链，停用profile不再被调用；并补备用thinking、综合AI runner范围和模型身份回执。续审无P0/P1，新增legacy嵌套快照P2已修。最终217 passed、前端build 1971 modules、diff check通过；5304重启后配置正确。两个旧竞品分析直连provider入口仍是P2迁移项，不冒称全产品所有旧入口已支持fallback。
 
 下一动作提交并推送本批；随后继续WP6剩余V03–V07、原生Microsoft Word保存重开和逐章医学接受。当前MTPLX 11234仍未监听，本地模型真实生成质量未验收。
+
+## 2026-09-23 WP6 当前验收闭环与模型默认值
+
+用户确认综合AI默认值为本地`mtplx/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed:medium`，并要求用户可选择provider/model/thinking/reasoning effort及fallback顺序。当前源码与设置页已实现该默认值和两级有序fallback：OpenCode Go `deepseek-v4.1-flash:max`，再到CMS Router `deepseek-latest-cloud:max`；仅允许的传输/429/408/5xx/空响应触发切换，实际identity与route receipt持久化。MTPLX 11234本轮未监听，故本地模型生成质量仍未验收；Study B/C由CMS fallback完成。
+
+冻结提交`e8966d508600ad5a37c868cf2ef85c7005379b92`已推送GitHub。该批闭合v1→v2模板映射、候选正文术语、Word书签/封面、当前全文任务再发现、已采用候选重复采用UI、OpenCode Go凭证绑定及mutation inventory。后端完整回归`2608 passed`；前端111 Vitest+66 Node和1971-module build通过。
+
+真实产品证据：Study C 22/22批完成，候选r2为176段/5表/试验参与者58/受试者0/正文零占位符；真实GenOffice与原生Word保存重开完成；三视口DOM无外层溢出且当前writing desk字号下限12px，但当前截图命令均超时。V05选区/专注模式不重建iframe，V08历史不替换head成立。完整逐项口径见`runs/requirements_v2_20260919/wp6_0922v2_20260922/ACCEPTANCE_CHECKPOINT_20260923.md`。
+
+fresh独立会商`mw_protocol_v3_wp6_final_review_20260923`使用`zcode/zcode-live-bigmodel/GLM-5.3-Flash:max`，同一handle约20分钟、无fallback、无P0/P1；review gate和conference validation通过。独立医学抽样发现Study C合成样本量P2：差异3、SD8、双侧alpha .05、90%把握度、15%脱落与总样本170不自洽；简单近似需总计约352，170总例数约62%把握度。该稿保持working_draft_ready=true、adoption/formal_ready=false，不得申报。
+
+下一连续动作：恢复MTPLX后做exact identity+真实生成质量；补当前源码V01截图、V04全状态、V06真实关键卡和V07点击计数；逐章医学/统计/安全接受并优先修Study C样本量与限定语保真；将仍直连provider的旧竞品分析入口迁入统一runner。普通未闭合项不暂停，只有真实科学决定或生产切换才询问用户。

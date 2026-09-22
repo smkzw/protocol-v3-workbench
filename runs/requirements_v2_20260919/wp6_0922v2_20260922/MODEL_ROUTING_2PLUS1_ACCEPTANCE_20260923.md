@@ -44,5 +44,6 @@
 ## 尚未完成
 
 - 本地MTPLX服务恢复后的真实生成质量与effective模型身份验收。
-- Study C差异化真实旅程。
-- WP6剩余浏览器状态、原生Microsoft Word保存重开、逐章医学判断和fresh独立审阅。
+- Study C差异化真实旅程已经完成；其工作稿与Office往返证据见`study_c_route_acceptance.json`及`ego_v03_v08/`。该稿仍为working draft，不是申报就绪稿。
+- 原生Microsoft Word保存重开已经完成；逐章医学接受仍未完成。fresh独立审阅已发现Study C样本量假设不自洽，需在真实项目参数明确后由医学/统计负责人修订。
+- 当前源码的V03–V05、V08已有实测；V01因本轮截图工具超时、V04/V06/V07因未覆盖全部状态仍为PARTIAL。
