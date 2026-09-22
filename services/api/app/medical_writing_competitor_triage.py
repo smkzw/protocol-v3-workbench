@@ -31,7 +31,7 @@ import os
 import re
 import sqlite3
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from hashlib import sha256
 from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple
@@ -57,6 +57,7 @@ from packages.contracts.workbench_contracts import (
     DurableJobCreateRequest,
     DurableJobProgressPayload,
     DurableJobRecord,
+    DurableJobRequestConflict,
     MedicalWritingAuthoringJourney,
     MedicalWritingCompetitorSearchExecuteRequest,
     MedicalWritingCorpusTriageFinalizeRequest,
@@ -100,7 +101,10 @@ MAX_DETERMINISTIC_RESULTS_PER_CHUNK = 250
 TRIAGE_DETERMINISTIC_POLICY_VERSION = "competitor_triage_registry_gate_v2"
 _DETERMINISTIC_CHUNK_PREFIX = "ct_det_"
 TRIAGE_DURABLE_JOB_TYPE = "competitor_triage"
-TRIAGE_ROUTE_SNAPSHOT_VERSION = "competitor_triage_ai_route_v1"
+TRIAGE_ROUTE_SNAPSHOT_VERSION = "competitor_triage_ai_route_v2"
+TRIAGE_LEGACY_ROUTE_SNAPSHOT_VERSION = "competitor_triage_ai_route_v1"
+TRIAGE_ROUTE_CHAIN_VERSION = "competitor_triage_ai_route_chain_v1"
+TRIAGE_FALLBACK_HTTP_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 TRIAGE_LEGACY_ROUTE_ERROR = (
     "legacy competitor-triage durable job has no frozen AI route; "
     "cancel it and submit an explicit retry to create a versioned route snapshot"
@@ -144,11 +148,13 @@ class FrozenTriageAiRoute:
     expected_response_model: str
     deployment_profile: str
     source: str
+    thinking: str = ""
+    reasoning_effort: str = ""
     identity_hash: str = ""
     schema_version: str = TRIAGE_ROUTE_SNAPSHOT_VERSION
 
     def identity_payload(self) -> Dict[str, Any]:
-        return {
+        payload = {
             "schema_version": self.schema_version,
             "profile_id": self.profile_id,
             "profile_revision": self.profile_revision,
@@ -160,6 +166,14 @@ class FrozenTriageAiRoute:
             "deployment_profile": self.deployment_profile,
             "source": self.source,
         }
+        if self.schema_version == TRIAGE_ROUTE_SNAPSHOT_VERSION:
+            payload.update(
+                {
+                    "thinking": self.thinking,
+                    "reasoning_effort": self.reasoning_effort,
+                }
+            )
+        return payload
 
     def with_hash(self) -> "FrozenTriageAiRoute":
         identity_hash = sha256(
@@ -192,6 +206,10 @@ class FrozenTriageAiRoute:
                 ).strip(),
                 deployment_profile=str(payload["deployment_profile"]).strip(),
                 source=str(payload["source"]).strip(),
+                thinking=str(payload.get("thinking", "")).strip().lower(),
+                reasoning_effort=str(
+                    payload.get("reasoning_effort", "")
+                ).strip().lower(),
                 identity_hash=str(payload["identity_hash"]).strip(),
                 schema_version=str(payload["schema_version"]).strip(),
             )
@@ -200,13 +218,20 @@ class FrozenTriageAiRoute:
                 "durable AI route snapshot is incomplete or malformed"
             ) from exc
         if (
-            route.schema_version != TRIAGE_ROUTE_SNAPSHOT_VERSION
+            route.schema_version not in {
+                TRIAGE_LEGACY_ROUTE_SNAPSHOT_VERSION,
+                TRIAGE_ROUTE_SNAPSHOT_VERSION,
+            }
             or not route.profile_id
             or route.profile_revision < 1
             or not route.provider
             or not route.model
             or not route.base_url
             or route.source not in {"runtime_profile", "test_override"}
+            or route.thinking not in {"", "enabled", "disabled"}
+            or route.reasoning_effort not in {
+                "", "low", "medium", "high", "xhigh", "max"
+            }
         ):
             raise CompetitorTriageError(
                 "durable AI route snapshot has unsupported identity fields"
@@ -264,6 +289,10 @@ class VerifiedTriageProvider:
         )
         self.expected_response_model = getattr(
             inner, "expected_response_model", ""
+        )
+        self.default_thinking = getattr(inner, "default_thinking", "") or ""
+        self.default_reasoning_effort = (
+            getattr(inner, "default_reasoning_effort", "") or ""
         )
         if test_only_injection:
             if self.provider_name != TRIAGE_PROVIDER_NAME:
@@ -392,6 +421,95 @@ class VerifiedTriageProvider:
     @property
     def response_model(self) -> str:
         return self._response_model
+
+
+class FallbackTriageProvider:
+    """Run a frozen ordered provider chain without changing business input."""
+
+    def __init__(
+        self,
+        providers: List[Tuple[FrozenTriageAiRoute, VerifiedTriageProvider]],
+        *,
+        frozen_route_hashes: List[str] | None = None,
+    ) -> None:
+        if not providers:
+            raise CompetitorTriageError("triage provider chain is empty")
+        self._providers = providers
+        self._active_index = 0
+        self._attempted_index = 0
+        self.fallback_reason = ""
+        self.fallback_chain_id = "ctfb_" + sha256(
+            _canonical_json(
+                frozen_route_hashes
+                or [route.identity_hash for route, _provider in providers]
+            ).encode("utf-8")
+        ).hexdigest()[:24]
+
+    @staticmethod
+    def _fallback_reason(exc: Exception) -> str:
+        from .ai_gateway import AiProviderRuntimeError
+
+        if not isinstance(exc, AiProviderRuntimeError):
+            return ""
+        diagnostics = dict(exc.diagnostics or {})
+        failure_code = str(diagnostics.get("failure_code") or "")
+        if failure_code == "provider_http_error":
+            try:
+                status = int(diagnostics.get("http_status"))
+            except (TypeError, ValueError):
+                return ""
+            if status in TRIAGE_FALLBACK_HTTP_STATUSES:
+                return f"{failure_code}:{status}"
+            return ""
+        if failure_code in {"provider_transport_error", "provider_response_empty"}:
+            return failure_code
+        return ""
+
+    @property
+    def _active(self) -> Tuple[FrozenTriageAiRoute, VerifiedTriageProvider]:
+        return self._providers[self._attempted_index]
+
+    @property
+    def provider_name(self) -> str:
+        return self._active[1].provider_name
+
+    @property
+    def response_model(self) -> str:
+        return self._active[1].response_model
+
+    @property
+    def route_profile_id(self) -> str:
+        return self._active[0].profile_id
+
+    @property
+    def route_identity_hash(self) -> str:
+        return self._active[0].identity_hash
+
+    @property
+    def fallback_depth(self) -> int:
+        return self._active_index
+
+    def triage_run(
+        self, system_prompt: str, payload: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        last_error: Exception | None = None
+        for index in range(self._active_index, len(self._providers)):
+            _route, provider = self._providers[index]
+            self._attempted_index = index
+            try:
+                result = provider.triage_run(system_prompt, payload)
+            except Exception as exc:
+                reason = self._fallback_reason(exc)
+                if not reason or index == len(self._providers) - 1:
+                    raise
+                self.fallback_reason = reason
+                last_error = exc
+                continue
+            self._active_index = index
+            self._attempted_index = index
+            return result
+        assert last_error is not None
+        raise last_error
 
 
 # ---------------------------------------------------------------------------
@@ -3677,7 +3795,7 @@ class CompetitorTriageExecutor:
             provider = self._service._build_provider_for_durable_run(
                 project_id, run_id, frozen_route
             )
-            verified = (
+            primary_verified = (
                 provider
                 if isinstance(provider, VerifiedTriageProvider)
                 else VerifiedTriageProvider(
@@ -3686,6 +3804,63 @@ class CompetitorTriageExecutor:
                         getattr(provider, "test_only_injection", False)
                     ),
                 )
+            )
+            frozen_fallback_routes: List[FrozenTriageAiRoute] = []
+            route_chain = payload.get("ai_route_chain")
+            if route_chain is not None:
+                if (
+                    not isinstance(route_chain, dict)
+                    or route_chain.get("schema_version")
+                    != TRIAGE_ROUTE_CHAIN_VERSION
+                    or not isinstance(route_chain.get("fallback_routes"), list)
+                ):
+                    raise CompetitorTriageError(
+                        "durable AI fallback route chain is malformed"
+                    )
+                try:
+                    frozen_fallback_routes = [
+                        FrozenTriageAiRoute.parse(item)
+                        for item in route_chain["fallback_routes"]
+                    ]
+                except CompetitorTriageError as exc:
+                    raise CompetitorTriageError(
+                        "durable AI fallback route entry is malformed"
+                    ) from exc
+                profile_ids = [
+                    frozen_route.profile_id,
+                    *(item.profile_id for item in frozen_fallback_routes),
+                ]
+                if len(profile_ids) != len(set(profile_ids)):
+                    raise CompetitorTriageError(
+                        "durable AI fallback route chain contains duplicates"
+                    )
+            provider_chain = [(frozen_route, primary_verified)]
+            for fallback_route in frozen_fallback_routes:
+                try:
+                    fallback_provider = (
+                        self._service._build_provider_for_durable_run(
+                            project_id, run_id, fallback_route
+                        )
+                    )
+                    fallback_verified = (
+                        fallback_provider
+                        if isinstance(fallback_provider, VerifiedTriageProvider)
+                        else VerifiedTriageProvider(fallback_provider)
+                    )
+                except CompetitorTriageError:
+                    logger.warning(
+                        "frozen triage fallback route is unavailable: profile=%s identity=%s",
+                        fallback_route.profile_id,
+                        fallback_route.identity_hash,
+                    )
+                    continue
+                provider_chain.append((fallback_route, fallback_verified))
+            verified = FallbackTriageProvider(
+                provider_chain,
+                frozen_route_hashes=[
+                    frozen_route.identity_hash,
+                    *(item.identity_hash for item in frozen_fallback_routes),
+                ],
             )
         except CompetitorTriageError as exc:
             return DurableJobResult(error=str(exc), retryable=False)
@@ -4200,8 +4375,12 @@ class CompetitorTriageService:
             updated_at=now,
         )
         frozen_route = None
+        frozen_fallback_routes: List[FrozenTriageAiRoute] = []
         if self._durable_store is not None:
             frozen_route = self._freeze_route_for_creation(provider)
+            frozen_fallback_routes = self._freeze_fallback_routes_for_creation(
+                frozen_route
+            )
         self.repository.store_triage_run(run)
 
         # --- Durable path: return immediately with job_id ---
@@ -4212,9 +4391,11 @@ class CompetitorTriageService:
 
             business_key = f"{snapshot.snapshot_id}:{run.run_id}"
             request_hash = self._durable_request_hash(
-                canonical_input_hash, frozen_route
+                canonical_input_hash, frozen_route, frozen_fallback_routes
             )
-            payload_json = self._durable_payload(run.run_id, frozen_route)
+            payload_json = self._durable_payload(
+                run.run_id, frozen_route, frozen_fallback_routes
+            )
             durable_request = DurableJobCreateRequest(
                 project_id=project_id,
                 job_type=TRIAGE_DURABLE_JOB_TYPE,
@@ -4227,7 +4408,7 @@ class CompetitorTriageService:
                 provider=frozen_route.provider,
                 model=frozen_route.model,
             )
-            start_resp = self._durable_store.create_or_reuse(durable_request)
+            start_resp = self._create_or_reuse_durable_job(durable_request)
             # Wake the durable worker if available
             if self._durable_worker is not None:
                 try:
@@ -4275,6 +4456,12 @@ class CompetitorTriageService:
                 ),
                 deployment_profile="test",
                 source="test_override",
+                thinking=str(
+                    getattr(provider, "default_thinking", "") or ""
+                ).strip().lower(),
+                reasoning_effort=str(
+                    getattr(provider, "default_reasoning_effort", "") or ""
+                ).strip().lower(),
             ).with_hash()
             return route
 
@@ -4291,8 +4478,40 @@ class CompetitorTriageService:
         self._assert_provider_matches_route(provider, route)
         return route
 
+    def _freeze_fallback_routes_for_creation(
+        self,
+        primary: FrozenTriageAiRoute,
+    ) -> List[FrozenTriageAiRoute]:
+        if primary.source == "test_override":
+            return []
+        routes: List[FrozenTriageAiRoute] = []
+        seen = {primary.profile_id}
+        for fallback in self._runtime_settings_store.fallback_chain():
+            if fallback.profile_id in seen:
+                continue
+            seen.add(fallback.profile_id)
+            try:
+                profile = self._runtime_settings_store.profile(
+                    fallback.profile_id
+                )
+            except KeyError:
+                continue
+            if not profile.enabled:
+                continue
+            effective = replace(
+                profile,
+                thinking=fallback.thinking,
+                reasoning_effort=fallback.reasoning_effort,
+            )
+            routes.append(self._route_from_profile(effective))
+        return routes
+
     @staticmethod
-    def _route_from_profile(profile: Any) -> FrozenTriageAiRoute:
+    def _route_from_profile(
+        profile: Any,
+        *,
+        schema_version: str = TRIAGE_ROUTE_SNAPSHOT_VERSION,
+    ) -> FrozenTriageAiRoute:
         return FrozenTriageAiRoute(
             profile_id=str(profile.profile_id),
             profile_revision=int(profile.revision),
@@ -4305,6 +4524,11 @@ class CompetitorTriageService:
             ),
             deployment_profile=str(profile.deployment_profile),
             source="runtime_profile",
+            thinking=str(getattr(profile, "thinking", "") or "").strip().lower(),
+            reasoning_effort=str(
+                getattr(profile, "reasoning_effort", "") or ""
+            ).strip().lower(),
+            schema_version=schema_version,
         ).with_hash()
 
     @staticmethod
@@ -4327,31 +4551,60 @@ class CompetitorTriageService:
         expected_response_model = str(
             getattr(provider, "expected_response_model", "") or model_name
         )
+        thinking = str(
+            getattr(provider, "default_thinking", route.thinking) or ""
+        ).strip().lower()
+        reasoning_effort = str(
+            getattr(
+                provider,
+                "default_reasoning_effort",
+                route.reasoning_effort,
+            )
+            or ""
+        ).strip().lower()
         if (
             provider_name != route.provider
             or model_name != route.model
             or base_url != route.base_url
             or transport != route.transport
             or expected_response_model != route.expected_response_model
+            or (
+                route.schema_version == TRIAGE_ROUTE_SNAPSHOT_VERSION
+                and (
+                    thinking != route.thinking
+                    or reasoning_effort != route.reasoning_effort
+                )
+            )
         ):
             raise CompetitorTriageError(
                 "resolved provider identity does not match the frozen durable route: "
                 f"resolved=(provider={provider_name!r}, model={model_name!r}, "
                 f"base_url={base_url!r}, transport={transport!r}, "
-                f"expected={expected_response_model!r}) "
+                f"expected={expected_response_model!r}, thinking={thinking!r}, "
+                f"reasoning_effort={reasoning_effort!r}) "
                 f"frozen=(provider={route.provider!r}, model={route.model!r}, "
                 f"base_url={route.base_url!r}, transport={getattr(route, 'transport', '')!r}, "
-                f"expected={route.expected_response_model!r})"
+                f"expected={route.expected_response_model!r}, thinking={route.thinking!r}, "
+                f"reasoning_effort={route.reasoning_effort!r})"
             )
 
     @staticmethod
     def _durable_payload(
-        run_id: str, route: FrozenTriageAiRoute
+        run_id: str,
+        route: FrozenTriageAiRoute,
+        fallback_routes: List[FrozenTriageAiRoute] | None = None,
     ) -> str:
         return json.dumps(
             {
                 "run_id": run_id,
                 "ai_route": route.audit_payload(),
+                "ai_route_chain": {
+                    "schema_version": TRIAGE_ROUTE_CHAIN_VERSION,
+                    "fallback_routes": [
+                        item.audit_payload()
+                        for item in (fallback_routes or [])
+                    ],
+                },
             },
             ensure_ascii=False,
             sort_keys=True,
@@ -4362,6 +4615,7 @@ class CompetitorTriageService:
     def _durable_request_hash(
         canonical_input_hash: str,
         route: FrozenTriageAiRoute,
+        fallback_routes: List[FrozenTriageAiRoute] | None = None,
         *,
         idempotency_key: str = "",
     ) -> str:
@@ -4370,10 +4624,22 @@ class CompetitorTriageService:
                 {
                     "canonical_input_hash": canonical_input_hash,
                     "ai_route_identity_hash": route.identity_hash,
+                    "fallback_route_identity_hashes": [
+                        item.identity_hash for item in (fallback_routes or [])
+                    ],
                     "idempotency_key": idempotency_key,
                 }
             ).encode("utf-8")
         ).hexdigest()
+
+    def _create_or_reuse_durable_job(
+        self,
+        request: DurableJobCreateRequest,
+    ) -> Any:
+        try:
+            return self._durable_store.create_or_reuse(request)
+        except DurableJobRequestConflict as exc:
+            raise CompetitorTriageConflictError(str(exc)) from exc
 
     def _build_provider_for_durable_run(
         self,
@@ -4416,14 +4682,24 @@ class CompetitorTriageService:
                 "frozen independent-AI profile revision changed "
                 f"(expected {route.profile_revision}, current {profile.revision})"
             )
-        current_route = self._route_from_profile(profile)
+        effective_profile = replace(
+            profile,
+            thinking=route.thinking or profile.thinking,
+            reasoning_effort=(
+                route.reasoning_effort or profile.reasoning_effort
+            ),
+        )
+        current_route = self._route_from_profile(
+            effective_profile,
+            schema_version=route.schema_version,
+        )
         if current_route.identity_hash != route.identity_hash:
             raise CompetitorTriageError(
                 "frozen independent-AI profile identity changed"
             )
 
         if self._profile_provider_factory is not None:
-            provider = self._profile_provider_factory(profile)
+            provider = self._profile_provider_factory(effective_profile)
         else:
             from .ai_gateway import configured_ai_provider_from_env
 
@@ -4431,7 +4707,9 @@ class CompetitorTriageService:
             if profile.api_key_env and os.environ.get(profile.api_key_env):
                 base_env[profile.api_key_env] = os.environ[profile.api_key_env]
             provider = configured_ai_provider_from_env(
-                self._runtime_settings_store.profile_env(profile, base_env)
+                self._runtime_settings_store.profile_env(
+                    effective_profile, base_env
+                )
             )
         self._assert_provider_matches_route(provider, route)
         return provider
@@ -4496,15 +4774,13 @@ class CompetitorTriageService:
         # are not the independent-AI route.  Prefer a real provider provenance
         # whenever at least one AI batch executed so run-level route fields do
         # not falsely claim ``not_applicable`` for a mixed run.
-        first_prov = next(
-            (
-                chunk.provenance
-                for chunk in succeeded
-                if not chunk.chunk_id.startswith(_DETERMINISTIC_CHUNK_PREFIX)
-                and chunk.provenance is not None
-            ),
-            None,
-        )
+        ai_provenances = [
+            chunk.provenance
+            for chunk in succeeded
+            if not chunk.chunk_id.startswith(_DETERMINISTIC_CHUNK_PREFIX)
+            and chunk.provenance is not None
+        ]
+        first_prov = ai_provenances[0] if ai_provenances else None
         if first_prov is None:
             first_prov = next(
                 (
@@ -4520,9 +4796,20 @@ class CompetitorTriageService:
             "updated_at": _utc_now(),
         }
         if first_prov:
-            update_fields["provider"] = first_prov.provider
-            update_fields["response_model"] = first_prov.response_model
-            update_fields["canonical_output_hash"] = first_prov.canonical_output_hash
+            route_identities = {
+                (item.provider, item.response_model)
+                for item in ai_provenances
+            }
+            if len(route_identities) > 1:
+                update_fields["provider"] = "mixed"
+                update_fields["response_model"] = "mixed"
+                update_fields["canonical_output_hash"] = _hash_value(
+                    [item.canonical_output_hash for item in ai_provenances]
+                )
+            else:
+                update_fields["provider"] = first_prov.provider
+                update_fields["response_model"] = first_prov.response_model
+                update_fields["canonical_output_hash"] = first_prov.canonical_output_hash
 
         run = run.model_copy(update=update_fields)
         self.repository.store_triage_run(run)
@@ -4602,12 +4889,30 @@ class CompetitorTriageService:
 
     def _execute_chunk(
         self,
-        verified: VerifiedTriageProvider,
+        verified: Any,
         chunk: CompetitorTriageChunkRecord,
         chunk_input: Dict[str, Any],
         expected_nct_ids: List[str],
     ) -> CompetitorTriageChunkRecord:
         system_prompt = _build_system_prompt()
+        def route_fields() -> Dict[str, Any]:
+            return {
+                "route_profile_id": str(
+                    getattr(verified, "route_profile_id", "") or ""
+                ),
+                "route_identity_hash": str(
+                    getattr(verified, "route_identity_hash", "") or ""
+                ),
+                "fallback_chain_id": str(
+                    getattr(verified, "fallback_chain_id", "") or ""
+                ),
+                "fallback_depth": int(
+                    getattr(verified, "fallback_depth", 0) or 0
+                ),
+                "fallback_reason": str(
+                    getattr(verified, "fallback_reason", "") or ""
+                ),
+            }
         try:
             raw_response = verified.triage_run(system_prompt, chunk_input)
         except Exception as exc:
@@ -4650,6 +4955,7 @@ class CompetitorTriageService:
                             canonical_input_hash=chunk.input_hash,
                             canonical_output_hash=_hash_value(raw_response),
                             snapshot_id="",
+                            **route_fields(),
                             created_at=_utc_now(),
                         ),
                     }
@@ -4699,6 +5005,7 @@ class CompetitorTriageService:
                             canonical_input_hash=chunk.input_hash,
                             canonical_output_hash=_hash_value(output_material),
                             snapshot_id="",
+                            **route_fields(),
                             created_at=_utc_now(),
                         ),
                     }
@@ -4716,6 +5023,7 @@ class CompetitorTriageService:
                 else _hash_value(raw_response)
             ),
             snapshot_id="",
+            **route_fields(),
             created_at=_utc_now(),
         )
 
@@ -4826,6 +5134,9 @@ class CompetitorTriageService:
                     incomplete_chunk_ids,
                 )
                 frozen_route = self._freeze_route_for_creation(provider)
+                frozen_fallback_routes = self._freeze_fallback_routes_for_creation(
+                    frozen_route
+                )
                 if frozen_route.source == "test_override":
                     self._set_test_provider_override(
                         project_id, run.run_id, provider
@@ -4833,10 +5144,11 @@ class CompetitorTriageService:
                 retry_request_hash = self._durable_request_hash(
                     run.canonical_input_hash,
                     frozen_route,
+                    frozen_fallback_routes,
                     idempotency_key=request.idempotency_key,
                 )
                 payload_json = self._durable_payload(
-                    run.run_id, frozen_route
+                    run.run_id, frozen_route, frozen_fallback_routes
                 )
                 durable_request = DurableJobCreateRequest(
                     project_id=project_id,
@@ -4850,9 +5162,7 @@ class CompetitorTriageService:
                     provider=frozen_route.provider,
                     model=frozen_route.model,
                 )
-                start_resp = self._durable_store.create_or_reuse(
-                    durable_request
-                )
+                start_resp = self._create_or_reuse_durable_job(durable_request)
                 # If reused (idempotent duplicate), don't mutate the run.
                 if not start_resp.reused:
                     # New retry job — mutate the business run to reset
@@ -4864,15 +5174,20 @@ class CompetitorTriageService:
             else:
                 # No existing job — create a new one.
                 frozen_route = self._freeze_route_for_creation(provider)
+                frozen_fallback_routes = self._freeze_fallback_routes_for_creation(
+                    frozen_route
+                )
                 if frozen_route.source == "test_override":
                     self._set_test_provider_override(
                         project_id, run.run_id, provider
                     )
                 request_hash = self._durable_request_hash(
-                    run.canonical_input_hash, frozen_route
+                    run.canonical_input_hash,
+                    frozen_route,
+                    frozen_fallback_routes,
                 )
                 payload_json = self._durable_payload(
-                    run.run_id, frozen_route
+                    run.run_id, frozen_route, frozen_fallback_routes
                 )
                 durable_request = DurableJobCreateRequest(
                     project_id=project_id,
@@ -4886,9 +5201,7 @@ class CompetitorTriageService:
                     provider=frozen_route.provider,
                     model=frozen_route.model,
                 )
-                start_resp = self._durable_store.create_or_reuse(
-                    durable_request
-                )
+                start_resp = self._create_or_reuse_durable_job(durable_request)
                 job_id = start_resp.job_id
 
             # Defect 5 fix: perform durable transition BEFORE mutating the

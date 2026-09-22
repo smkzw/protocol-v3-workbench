@@ -8763,8 +8763,10 @@ def finalize_medical_writing_corpus_triage(
 
 def _resolve_triage_provider():
     """Resolve the active product-owned independent AI for triage."""
+    profile = _independent_ai_profile()
+    role_store = runtime_ai_role_settings_store()
     provider = configured_ai_provider_from_env(
-        _runtime_role_context(INDEPENDENT_AI_ROLE)[2]
+        role_store.provider_store.profile_env(profile)
     )
     configured_model = getattr(provider, "model_name", "")
     if not hasattr(provider, "run") or not configured_model or configured_model == "not_configured":

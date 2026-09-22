@@ -254,3 +254,13 @@ Study C医学复核确认的首个确定性缺陷已修复。全文提示升级�
 集中验证：全文生成与fallback合同39 passed；Protocol v3完整回归2608 passed、1条既有Python 3.14 future warning。首次全量清洁环境漏传macOS原生TMPDIR，唯一失败为`/tmp`不满足`/var`别名测试；补入`getconf DARWIN_USER_TEMP_DIR`后该项及全量均通过。尝试收集整个`tests/`还暴露三个既有环境/历史问题：虚拟环境无可选jsonschema、两个Phase 1翻译测试指向已不存在的历史脚本；本批未安装依赖或恢复已删除历史脚本。
 
 下一连续动作：检查MTPLX 11234当前可用性并在可用时做exact identity和真实生成质量；随后迁移仍绕过统一runner的旧竞品分析入口，保持现有可恢复/审计语义。继续补V01/V04/V06/V07及逐章医学、统计和安全接受；普通失败不暂停。
+
+## 2026-09-23 旧竞品分诊 durable fallback 迁移
+
+执行模式为execution-plus-conference：owner实现与集中测试，冻结工作树后由fresh ZCode/GLM-5.3-Flash:max只读审阅，同一session三轮、无fallback。旧竞品分诊现在冻结主路由及有序fallback链；仅429/408/5xx、传输不可达和空响应允许切换，400/身份/合同/内容校验失败不切换。每个AI分片记录实际profile、route identity、chain、depth和reason；同一run成功使用多个provider/model时摘要标`mixed`。fallback链改变但logical work key相同返回明确409，不静默复用或500。
+
+历史兼容已闭合：v1冻结任务按v1身份字段和哈希继续恢复，v2新增thinking/effort但不改写v1；创建、冻结和恢复统一使用profile的thinking/effort，默认仍为本地MTPLX `Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed/medium`，后接OpenCode Go和CMS Router。独立审阅首轮发现v1恢复P0和冲突P1，续审发现profile/binding强度漂移P1，均由owner复现并修复。review与metrics gate通过。
+
+集中验证：4项针对性测试、竞品分诊全族460 passed、Protocol v3全量2608 passed（仅既有Python 3.14 future warning），py_compile和diff check通过。MTPLX 11234仍无本地listener，models探针为代理层502，因此本批只证明路由合同与模拟429降级，不证明MTPLX真实生成质量。稀有的同一分片“首答来自A、缺ID修复来自B”仍只有最终路由provenance，是已记录P2，不阻当前提交。
+
+下一连续动作：迁移`medical_writing_corpus_analysis_ai.py`的旧直连入口到同一冻结fallback语义；MTPLX恢复后做exact identity和真实质量；随后继续V01/V04/V06/V07与逐章医学、统计和安全接受。普通失败不暂停。

@@ -21,6 +21,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
+from unittest.mock import patch
 
 from packages.contracts.workbench_contracts import (
     CompetitorTriageChunkStatus,
@@ -44,9 +45,11 @@ from services.api.app.medical_writing_authoring_journey import (
 from services.api.app.ai_gateway import (
     ALIBABA_TOKEN_PLAN_BASE_URL,
     ALIBABA_TOKEN_PLAN_MODEL,
+    AiProviderRuntimeError,
     DIRECT_DEEPSEEK_BASE_URL,
 )
 from services.api.app.ai_runtime_settings import (
+    AiFallbackRoute,
     AiProviderProfile,
     AiRuntimeSettingsStore,
 )
@@ -58,6 +61,7 @@ from services.api.app.medical_writing_competitor_triage import (
     FrozenTriageAiRoute,
     MAX_AI_CANDIDATES_PER_CHUNK,
     TRIAGE_LEGACY_ROUTE_ERROR,
+    TRIAGE_LEGACY_ROUTE_SNAPSHOT_VERSION,
     TRIAGE_DURABLE_JOB_TYPE,
     TRIAGE_MODEL_NAME,
     TRIAGE_PROVIDER_NAME,
@@ -158,6 +162,71 @@ class TestApiResultPayloadSerialization(unittest.TestCase):
             },
             _api_result_payload(result),
         )
+
+    def test_http_triage_provider_uses_same_profile_effort_as_frozen_route(self):
+        from services.api.app import main as app_main
+
+        profile = AiProviderProfile(
+            profile_id="independent_ai__mtplx",
+            provider="mtplx",
+            label="MTPLX",
+            base_url="http://127.0.0.1:11234/v1",
+            model="Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+            expected_response_model=(
+                "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+            ),
+            deployment_scope="loopback",
+            thinking="enabled",
+            reasoning_effort="medium",
+        )
+        captured: dict[str, str] = {}
+
+        class _ProviderStore:
+            @staticmethod
+            def profile_env(resolved_profile):
+                self.assertEqual(profile, resolved_profile)
+                return {
+                    "WORKBENCH_AI_PROVIDER": profile.provider,
+                    "WORKBENCH_AI_MODEL": profile.model,
+                    "WORKBENCH_AI_BASE_URL": profile.base_url,
+                    "WORKBENCH_AI_EXPECTED_RESPONSE_MODEL": profile.model,
+                    "WORKBENCH_AI_THINKING": profile.thinking,
+                    "WORKBENCH_AI_REASONING_EFFORT": profile.reasoning_effort,
+                }
+
+        class _RoleStore:
+            provider_store = _ProviderStore()
+
+        class _RawProvider:
+            provider_name = profile.provider
+            model_name = profile.model
+            base_url = profile.base_url
+            transport_name = profile.transport
+            expected_response_model = profile.model
+            default_thinking = profile.thinking
+            default_reasoning_effort = profile.reasoning_effort
+
+            @staticmethod
+            def run(envelope):
+                raise AssertionError("provider must not run during resolution")
+
+        def build(values):
+            captured.update(values)
+            return _RawProvider()
+
+        with (
+            patch.object(app_main, "_independent_ai_profile", return_value=profile),
+            patch.object(
+                app_main,
+                "runtime_ai_role_settings_store",
+                return_value=_RoleStore(),
+            ),
+            patch.object(app_main, "configured_ai_provider_from_env", side_effect=build),
+        ):
+            provider = app_main._resolve_triage_provider()
+
+        self.assertIsInstance(provider, VerifiedTriageProvider)
+        self.assertEqual("medium", captured["WORKBENCH_AI_REASONING_EFFORT"])
 
 
 class DurableTriageTestBase(unittest.TestCase):
@@ -2035,6 +2104,7 @@ class _ProfileBoundTriageProvider:
         classification: str = "direct_competitor",
         calls: list[str] | None = None,
         delay_seconds: float = 0.0,
+        fail_http_status: int | None = None,
     ) -> None:
         self.provider_name = profile.provider
         self.model_name = profile.model
@@ -2048,12 +2118,21 @@ class _ProfileBoundTriageProvider:
         self._classification = classification
         self._calls = calls
         self._delay_seconds = delay_seconds
+        self._fail_http_status = fail_http_status
 
     def run(self, envelope: Any) -> Dict[str, Any]:
         if self._delay_seconds:
             time.sleep(self._delay_seconds)
         if self._calls is not None:
             self._calls.append(self._profile_id)
+        if self._fail_http_status is not None:
+            raise AiProviderRuntimeError(
+                f"provider HTTP {self._fail_http_status}",
+                diagnostics={
+                    "failure_code": "provider_http_error",
+                    "http_status": self._fail_http_status,
+                },
+            )
         return {
             "results": [
                 _make_candidate_result(
@@ -2217,6 +2296,119 @@ class TestFrozenRuntimeProfileRouting(DurableTriageTestBase):
         self.assertEqual(64, len(route.identity_hash))
         self.assertNotIn("route-a-secret", job.payload_json)
         self.assertNotIn("api_key", job.payload_json)
+
+    def test_legacy_v1_frozen_route_resumes_with_v1_identity_semantics(self):
+        profile = self.settings.profile(self.profile_a.profile_id)
+        legacy_route = FrozenTriageAiRoute(
+            profile_id=profile.profile_id,
+            profile_revision=profile.revision,
+            provider=profile.provider,
+            model=profile.model,
+            base_url=profile.base_url.rstrip("/"),
+            transport=profile.transport,
+            expected_response_model=profile.expected_response_model or profile.model,
+            deployment_profile=profile.deployment_profile,
+            source="runtime_profile",
+            schema_version=TRIAGE_LEGACY_ROUTE_SNAPSHOT_VERSION,
+        ).with_hash()
+
+        provider = self._service()._build_provider_for_durable_run(
+            self.project_id,
+            "legacy_v1_run",
+            legacy_route,
+        )
+
+        self.assertEqual(profile.provider, provider.provider_name)
+        self.assertEqual(profile.model, provider.model_name)
+
+    def test_fallback_chain_change_returns_conflict_for_same_logical_work(self):
+        snapshot = self._bind_snapshot([_make_candidate("NCT00000001")])
+        service = self._service()
+        self.settings.set_fallback_chain([
+            AiFallbackRoute(profile_id=self.profile_b.profile_id)
+        ])
+        first = self._create_queued(
+            service,
+            project_id=self.project_id,
+            snapshot=snapshot,
+            profile=self.profile_a,
+            idempotency_key="same-work-chain-change",
+        )
+        self.assertTrue(first.job_id)
+        self.settings.set_fallback_chain([])
+
+        with self.assertRaises(CompetitorTriageConflictError):
+            self._create_queued(
+                service,
+                project_id=self.project_id,
+                snapshot=snapshot,
+                profile=self.profile_a,
+                idempotency_key="same-work-chain-change",
+            )
+
+    def test_frozen_fallback_chain_uses_next_route_only_for_retryable_provider_failure(self):
+        snapshot = self._bind_snapshot([_make_candidate("NCT00000001")])
+        self.settings.set_fallback_chain([
+            AiFallbackRoute(
+                profile_id=self.profile_b.profile_id,
+                thinking="disabled",
+                reasoning_effort="medium",
+            )
+        ])
+        calls: list[str] = []
+
+        def build(profile: AiProviderProfile):
+            return _ProfileBoundTriageProvider(
+                profile,
+                calls=calls,
+                fail_http_status=(
+                    429 if profile.profile_id == self.profile_a.profile_id else None
+                ),
+            )
+
+        service = CompetitorTriageService(
+            self.repo,
+            self.journey_service,
+            durable_store=self.store,
+            runtime_settings_store=AiRuntimeSettingsStore(self.settings_path),
+            profile_provider_factory=build,
+        )
+        result = self._create_queued(
+            service,
+            project_id=self.project_id,
+            snapshot=snapshot,
+            profile=self.profile_a,
+            idempotency_key="frozen-fallback-429",
+        )
+        job = self.store.get(self.project_id, result.job_id)
+        payload = json.loads(job.payload_json)
+        self.assertEqual(
+            [self.profile_b.profile_id],
+            [
+                item["profile_id"]
+                for item in payload["ai_route_chain"]["fallback_routes"]
+            ],
+        )
+
+        executed = CompetitorTriageExecutor(service).execute(
+            job,
+            "claim",
+            cancel_check=lambda: False,
+            heartbeat=lambda progress: True,
+        )
+
+        self.assertEqual("", executed.error)
+        self.assertEqual(
+            [self.profile_a.profile_id, self.profile_b.profile_id], calls
+        )
+        run = self.repo.triage_run(self.project_id, result.run_id)
+        self.assertIsNotNone(run)
+        provenance = run.chunks[-1].provenance
+        self.assertIsNotNone(provenance)
+        self.assertEqual(self.profile_b.profile_id, provenance.route_profile_id)
+        self.assertEqual(1, provenance.fallback_depth)
+        self.assertEqual("provider_http_error:429", provenance.fallback_reason)
+        self.assertTrue(provenance.fallback_chain_id.startswith("ctfb_"))
 
     def test_active_profile_switch_does_not_change_queued_job_route(self):
         snapshot = self._bind_snapshot([_make_candidate("NCT00000001")])

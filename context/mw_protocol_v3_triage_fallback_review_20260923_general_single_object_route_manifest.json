@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "policy": "beijing-daily-peak-off-peak-v3",
+  "timezone": "Asia/Shanghai",
+  "peak_start": "11:00",
+  "peak_end": "19:00",
+  "days": "all",
+  "period_labels": {
+    "peak": "高峰",
+    "off_peak": "非高峰"
+  },
+  "packet_period": "off_peak",
+  "packet_evaluated_at": "2026-09-23T03:58:54.081578+08:00",
+  "variants": {
+    "peak": {
+      "agent": "codebuddy",
+      "provider": "codebuddy-cli",
+      "model": "deepseek-v4.1-flash",
+      "effort": "max",
+      "default_provider": "codebuddy-cli",
+      "default_model": "deepseek-v4.1-flash",
+      "default_effort": "max",
+      "escalate_provider": "codebuddy-cli",
+      "escalate_model": "deepseek-v4.1-flash",
+      "escalate_effort": "max",
+      "primary": {
+        "agent": "codebuddy",
+        "provider": "codebuddy-cli",
+        "model": "deepseek-v4.1-flash",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "pi",
+          "provider": "cursor",
+          "model": "default",
+          "effort": "",
+          "dynamic_model": true
+        },
+        {
+          "agent": "pi",
+          "provider": "openai-codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "codebuddy/codebuddy-cli/deepseek-v4.1-flash:max -> pi/cursor/default -> pi/openai-codex/gpt-5.6-sol:medium"
+    },
+    "off_peak": {
+      "agent": "zcode",
+      "provider": "zcode",
+      "model": "GLM-5.3-Flash",
+      "effort": "max",
+      "default_provider": "zcode",
+      "default_model": "GLM-5.3-Flash",
+      "default_effort": "max",
+      "escalate_provider": "zcode",
+      "escalate_model": "GLM-5.3-Flash",
+      "escalate_effort": "max",
+      "primary": {
+        "agent": "zcode",
+        "provider": "zcode",
+        "model": "GLM-5.3-Flash",
+        "effort": "max"
+      },
+      "fallbacks": [
+        {
+          "agent": "codebuddy",
+          "provider": "codebuddy-cli",
+          "model": "deepseek-v4.1-flash",
+          "effort": "max"
+        },
+        {
+          "agent": "codex-subagent",
+          "provider": "codex",
+          "model": "gpt-5.6-sol",
+          "effort": "medium"
+        }
+      ],
+      "execution_route": "zcode/zcode/GLM-5.3-Flash:max -> codebuddy/codebuddy-cli/deepseek-v4.1-flash:max -> codex-subagent/codex/gpt-5.6-sol:medium"
+    }
+  }
+}

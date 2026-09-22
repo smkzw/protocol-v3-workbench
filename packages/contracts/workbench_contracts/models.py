@@ -8164,6 +8164,11 @@ class CompetitorTriageProvenance(WorkbenchModel):
     snapshot_hash: str = ""
     journey_revision: int = 0
     material_facts_hash: str = ""
+    route_profile_id: str = ""
+    route_identity_hash: str = ""
+    fallback_chain_id: str = ""
+    fallback_depth: int = Field(default=0, ge=0)
+    fallback_reason: str = ""
     created_at: datetime
 
 
