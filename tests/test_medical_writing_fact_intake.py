@@ -149,6 +149,9 @@ class FactIntakeValidationTests(unittest.TestCase):
         self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
         self.assertEqual("", proposals[0].value)
         self.assertIn("降级", proposals[0].rationale)
+        # Conference hardening: the audit trail must show what the AI tried
+        # to answer on a high-impact field.
+        self.assertIn("3 mg/kg", proposals[0].rationale)
 
     def test_off_vocabulary_enum_value_downgrades_to_unknown(self):
         """R13 P0-A: immunogenicity relevance phrased outside the closed
@@ -174,26 +177,29 @@ class FactIntakeValidationTests(unittest.TestCase):
         self.assertEqual("", proposals[0].value)
         self.assertIn("几乎肯定相关", proposals[0].rationale)
 
-    def test_enum_value_containing_alias_still_normalizes(self):
-        loosely = _ra_response(
+    def test_negated_enum_phrasing_must_not_invert_semantics(self):
+        """Conference review 2026-09-24: contains-match normalized
+        "not expected" to "expected" — a silent semantic inversion. Any
+        phrasing without an exact alias must downgrade to unknown, never
+        map onto a token it merely contains."""
+        inverted = _ra_response(
             proposals=[
                 {
                     "proposal_id": "p1",
                     "field_path": "framing.product_profile.immunogenicity_relevance",
                     "fact_kind": "user_stated",
-                    "value": "说明书提示预期相关风险",
-                    "rationale": "用户口头补充",
+                    "value": "not expected",
+                    "rationale": "小分子口服，预期无免疫原性",
                 }
             ]
         )
         proposals, _questions, _text, _him = _validate_ai_response(
-            MedicalWritingFactIntakeScope.STUDY_FRAMING, loosely
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, inverted
         )
         self.assertEqual(1, len(proposals))
-        self.assertEqual("expected", proposals[0].value)
-        self.assertEqual(
-            MedicalWritingFactIntakeFactKind.USER_STATED, proposals[0].fact_kind
-        )
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
+        self.assertIn("not expected", proposals[0].rationale)
 
     def test_unknown_fact_with_value_is_quietly_cleared(self):
         response = _ra_response(

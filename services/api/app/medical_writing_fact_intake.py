@@ -245,24 +245,16 @@ FIELD_VALUE_ALIASES: Dict[str, Dict[str, str]] = {
 
 
 def _normalize_enum_value(field_path: str, value: str) -> str:
-    """Best-effort mapping of a free-phrased value onto the closed vocabulary.
-
-    Exact alias lookup happens at the call site first. This pass tolerates
-    phrasings that CONTAIN a known alias or an enum token (e.g. "预期无关"
-    contains "无关"; "unlikely / low risk" contains "expected" after alias
-    lookup misses). Returns "" when nothing maps.
+    """Exact-alias lookup kept separate so call sites can distinguish
+    normalization from downgrade. Substring/contains matching is
+    deliberately NOT used: "not expected" contains "expected" and "无潜在
+    风险" contains "潜在" — fuzzy matching silently INVERTED semantics
+    (conference review 2026-09-24). Only exact alias keys map.
     """
     folded = value.casefold().strip()
     if not folded:
         return ""
-    best = ""
-    for alias, target in FIELD_VALUE_ALIASES.get(field_path, {}).items():
-        if alias and alias.casefold() in folded and len(alias) > len(best):
-            best = target
-    for token in FIELD_ENUM_VALUES.get(field_path, ()):
-        if token and token.casefold() in folded and len(token) > len(best):
-            best = token
-    return best
+    return FIELD_VALUE_ALIASES.get(field_path, {}).get(folded, "")
 
 # Mapping from a missing high-impact field to the deterministic writing
 # clauses that locally depend on it. This is what makes "missing IB only
@@ -664,6 +656,7 @@ def _validate_ai_response(
         fact_kind = _FACT_KIND_BY_TOKEN[fact_kind_token]
 
         downgrade_notes: List[str] = []
+        raw_value = str(raw.get("value", "")).strip()
         # High-impact quantitative fields may only be recorded as unknown.
         if field_path.startswith(HIGH_IMPACT_MISSING_PREFIX):
             if fact_kind != MedicalWritingFactIntakeFactKind.UNKNOWN:
@@ -671,10 +664,12 @@ def _validate_ai_response(
                 # the model repeats the same phrasing on every retry and the
                 # user could never complete step 1. Downgrade instead: the
                 # anti-fabrication invariant is preserved because nothing is
-                # recorded as verified.
+                # recorded as verified. Keep what the AI wanted to answer in
+                # the rationale so the audit shows it.
                 fact_kind = MedicalWritingFactIntakeFactKind.UNKNOWN
                 downgrade_notes.append(
-                    "高影响字段仅接受“未知”，AI不得代答；本提议已降级为“未知”，请人工补答"
+                    f"高影响字段仅接受“未知”，AI不得代答（AI曾提议“{raw_value}”）；"
+                    "本提议已降级为“未知”，请人工补答"
                 )
         if field_path in _ALLOWED_CONFIRMED_HIGH_IMPACT and fact_kind not in {
             MedicalWritingFactIntakeFactKind.USER_STATED,
@@ -685,7 +680,7 @@ def _validate_ai_response(
                 "该字段必须由用户明示或来源提取；AI 提议已降级为“未知”，请人工补答"
             )
 
-        value = str(raw.get("value", "")).strip()
+        value = raw_value
         if value and field_path in FIELD_ENUM_VALUES:
             original_phrasing = value
             value = FIELD_VALUE_ALIASES.get(field_path, {}).get(
