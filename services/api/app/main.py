@@ -1616,6 +1616,28 @@ def _independent_ai_provider_for_profile(profile):
     return configured_ai_provider_from_env(values)
 
 
+def _independent_ai_primary_unusable_reason(env: Dict[str, str]) -> str:
+    """Reason the primary independent-AI provider cannot run, or "" if usable.
+
+    R02: the production chain only accepts OpenAICompatibleAiProvider;
+    a disabled/unsupported primary must terminate the chain with a
+    structured configuration error instead of letting a fallback run as
+    a depth-0 "success" from the wrong model.
+    """
+    missing = [
+        name
+        for name, key in (
+            ("WORKBENCH_AI_BASE_URL", "WORKBENCH_AI_BASE_URL"),
+            ("WORKBENCH_AI_API_KEY", "WORKBENCH_AI_API_KEY"),
+            ("WORKBENCH_AI_MODEL", "WORKBENCH_AI_MODEL"),
+        )
+        if not str(env.get(key, "")).strip()
+    ]
+    if missing:
+        return "missing required configuration: " + ", ".join(missing)
+    return ""
+
+
 def _independent_ai_provider_chain(*, max_attempts: int = 1):
     """Freeze the current interactive comprehensive-AI chain in memory."""
 
@@ -1632,8 +1654,20 @@ def _independent_ai_provider_chain(*, max_attempts: int = 1):
         primary_env,
         max_attempts=max_attempts,
     )
-    if isinstance(primary, OpenAICompatibleAiProvider):
-        providers.append((primary_profile.profile_id, primary))
+    if not isinstance(primary, OpenAICompatibleAiProvider):
+        reason = _independent_ai_primary_unusable_reason(primary_env)
+        if not reason:
+            reason = (
+                "transport does not support the production chain "
+                "(OpenAICompatibleAiProvider required)"
+            )
+        raise CompositePipelineUnavailableError(
+            "independent_ai primary provider "
+            f"'{primary_profile.profile_id}' is not usable "
+            f"(provider={primary.provider_name}); {reason}"
+        )
+    primary.profile_revision = str(getattr(primary_profile, "revision", "") or "")
+    providers.append((primary_profile.profile_id, primary))
     for route in provider_store.fallback_chain():
         if route.profile_id == primary_profile.profile_id:
             continue
@@ -1653,6 +1687,7 @@ def _independent_ai_provider_chain(*, max_attempts: int = 1):
         )
         if not isinstance(provider, OpenAICompatibleAiProvider):
             continue
+        provider.profile_revision = str(getattr(profile, "revision", "") or "")
         providers.append((profile.profile_id, provider))
     if not providers:
         raise CompositePipelineUnavailableError(

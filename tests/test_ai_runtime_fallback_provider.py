@@ -89,3 +89,56 @@ def test_prefill_accepts_gateway_verified_fallback_chain_without_fake_model_key(
 
     assert adapter._call_provider({"project": "synthetic"}) == {"status": "ok"}
     assert chain.model_name == "deepseek-latest-cloud"
+
+
+# ---------------------------------------------------------------------------
+# R03/R05: execution-route identity and per-attempt trail
+# ---------------------------------------------------------------------------
+
+
+def test_chain_identity_changes_when_endpoint_changes():
+    class _Routed(_Provider):
+        pass
+
+    def _chain(base_url, expected=""):
+        provider = _Routed("mtplx", "qwen-local")
+        provider.base_url = base_url
+        provider.transport_name = "openai_compatible"
+        provider.expected_response_model = expected
+        provider.profile_revision = "7"
+        return RuntimeFallbackAiProvider([("profile_mtplx", provider)])
+
+    on_8002 = _chain("http://127.0.0.1:8002/v1")
+    on_11234 = _chain("http://127.0.0.1:11234/v1")
+    same_again = _chain("http://127.0.0.1:8002/v1")
+    assert on_8002.fallback_chain_id != on_11234.fallback_chain_id
+    assert on_8002.fallback_chain_id == same_again.fallback_chain_id
+
+
+def test_run_records_per_attempt_metadata_trail():
+    primary = _Provider(
+        "mtplx",
+        "qwen-local",
+        failure=_http_error(429),
+    )
+    primary.base_url = "http://127.0.0.1:8002/v1"
+    primary.expected_response_model = "mtplx-flash-next-optimized-speed"
+    fallback = _Provider("cms-router", "deepseek-latest-cloud")
+    fallback.base_url = "http://localhost:20128/v1"
+    chain = RuntimeFallbackAiProvider(
+        [("profile_mtplx", primary), ("profile_cms", fallback)]
+    )
+    chain.run(SimpleNamespace())
+
+    attempts = chain.attempts
+    assert [item["depth"] for item in attempts] == [0, 1]
+    assert attempts[0]["ok"] is False
+    assert attempts[0]["failure_reason"] == "provider_http_error:429"
+    assert attempts[0]["endpoint"] == "http://127.0.0.1:8002/v1"
+    assert attempts[0]["expected_response_model"] == (
+        "mtplx-flash-next-optimized-speed"
+    )
+    assert attempts[1]["ok"] is True
+    assert "started_at" in attempts[1] and "duration_ms" in attempts[1]
+    # no prompt/response bodies in the trail
+    assert all("envelope" not in item for item in attempts)

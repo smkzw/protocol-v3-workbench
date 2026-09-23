@@ -5,6 +5,7 @@ import os
 import tempfile
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
@@ -752,6 +753,37 @@ def runtime_ai_env(base_env: Dict[str, str] | None = None) -> dict[str, str]:
     return runtime_ai_settings_store().active_env(base_env)
 
 
+class ModelDiscoveryError(RuntimeError):
+    """Model catalog discovery failure with the failing layer preserved.
+
+    R04: 401/403, 404, other HTTP statuses, transport failures and JSON
+    shape problems carry different remediation actions; collapsing them
+    into one untyped message hid the actionable difference.  The endpoint
+    is echoed without credentials; request bodies never carry clinical
+    content.  Subclasses RuntimeError so existing handlers keep working.
+    """
+
+    def __init__(
+        self, layer: str, endpoint: str, *, status: int | None = None
+    ) -> None:
+        self.layer = layer
+        self.endpoint = endpoint
+        self.status = status
+        detail = f"model discovery failed at {layer} for {endpoint}"
+        if status is not None:
+            detail = f"{detail} (HTTP {status})"
+        super().__init__(detail)
+
+
+def _discovery_loopback(endpoint: str) -> bool:
+    """True when the endpoint host is a loopback address (R04: no proxy)."""
+    try:
+        host = (urlparse(endpoint).hostname or "").strip("[]").lower()
+    except ValueError:
+        return False
+    return host in {"127.0.0.1", "::1", "localhost"}
+
+
 def discover_models(
     profile: AiProviderProfile,
     api_key: str = "",
@@ -770,12 +802,30 @@ def discover_models(
     headers = {"Accept": "application/json"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
+    # R04: loopback discovery must bypass system/env proxies; cloud
+    # endpoints keep the default opener policy.
+    opener: urllib.request.OpenerDirector = urllib.request.build_opener()
+    if _discovery_loopback(endpoint):
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     request = urllib.request.Request(endpoint, headers=headers, method="GET")
     try:
-        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except (OSError, ValueError, urllib.error.URLError) as exc:
-        raise RuntimeError(f"model discovery failed: {type(exc).__name__}") from exc
+        with opener.open(request, timeout=timeout_seconds) as response:
+            raw = response.read().decode("utf-8")
+    except urllib.error.HTTPError as exc:
+        layer = {
+            401: "auth_required",
+            403: "auth_required",
+            404: "path_not_found",
+        }.get(exc.code, f"http_{exc.code}")
+        raise ModelDiscoveryError(layer, endpoint, status=exc.code) from None
+    except (OSError, urllib.error.URLError) as exc:
+        raise ModelDiscoveryError("transport_error", endpoint) from exc
+    try:
+        payload = json.loads(raw)
+    except ValueError as exc:
+        raise ModelDiscoveryError("invalid_json", endpoint) from exc
+    if not isinstance(payload, dict):
+        raise ModelDiscoveryError("invalid_schema", endpoint)
     if profile.discovery_mode == "ollama_tags":
         candidates: Iterable[Any] = payload.get("models", [])
         return sorted(

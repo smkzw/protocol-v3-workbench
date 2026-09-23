@@ -1,0 +1,58 @@
+{
+ "schema": "local_endpoint_discovery_0923v1",
+ "observed_at": "2026-09-23T08:44:39.692293+08:00",
+ "host": "MacBook-Pro-4.local",
+ "namespace": "user-mac-local (direct shell, same host as workbench backend)",
+ "configured_endpoint": "http://127.0.0.1:11234/v1 (PROVIDER_PRESETS mtplx preset; per handoff §7/§9)",
+ "configured_endpoint_result": "connection refused / no listener on 11234 (lsof full enumeration, 25 unique listeners, none on 11234)",
+ "listeners_enumerated": 25,
+ "candidates_probed": [
+  {
+   "endpoint": "http://127.0.0.1:8002/v1",
+   "match": true
+  },
+  {
+   "endpoint": "http://127.0.0.1:8001/v1",
+   "match": false,
+   "note": "omlx-server (PID 30392), different engine"
+  },
+  {
+   "endpoint": "http://127.0.0.1:8000/v1",
+   "match": false,
+   "note": "no listener (local_omlx profiles point here — separate mismatch, out of MTPLX scope)"
+  }
+ ],
+ "found": {
+  "endpoint": "http://127.0.0.1:8002/v1",
+  "pid": 97315,
+  "started": "2026-09-23 08:39:51 +0800",
+  "process_identity": "MTPLX runtime-venv python -m mtplx.server.openai --model ~/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed --backend-id native_mtp --port 8002 --generation-mode mtp --profile turbo --reasoning-mode auto --preserve-thinking auto",
+  "served_model_id": "mtplx-flash-next-optimized-speed",
+  "catalog": {
+   "context_length": 262144,
+   "modalities": [
+    "text",
+    "image"
+   ],
+   "owned_by": "mtplx"
+  },
+  "models_http": 200,
+  "generation_probe": {
+   "http": 200,
+   "finish_reason": "stop",
+   "latency_s": 1.08,
+   "structured_json_exact": true,
+   "reasoning_content_present": true,
+   "served_model_matches_request": true
+  },
+  "runtime_notes": "server log shows memory-pressure guards (level 2/4 trims, one allocation_failure_shed) — record only, no action taken"
+ },
+ "identity_mapping_required": "settings expected_response_model must be 'mtplx-flash-next-optimized-speed' (served id) — the HF-style directory name 'Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed' is NOT the API id",
+ "not_covered": [
+  "auth-scoped checks (server is unauthenticated on loopback)",
+  "long-generation quality (next step N4 after wiring)",
+  "IPv6-only listeners (none observed for candidates)",
+  "remote/network namespaces"
+ ],
+ "actions_taken": "read-only lsof/ps/curl GET /v1/models + one synthetic 3-token-class generation probe; no config changed, no process started/stopped"
+}

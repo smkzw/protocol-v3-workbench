@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from hashlib import sha256
 import json
+import time
+from datetime import datetime, timezone
 from typing import Any, Iterable
 
 from .ai_gateway import AiProviderRuntimeError
@@ -25,6 +27,11 @@ class RuntimeFallbackAiProvider:
             raise ValueError("AI provider chain is empty")
         self._active_index = 0
         self.fallback_reason = ""
+        # R03: the chain identity must change when the effective execution
+        # route changes (endpoint/base_url, transport, expected response
+        # model, profile revision), not only when the logical preference
+        # changes.  Old receipts keep their persisted ids; only new runs
+        # compute the upgraded identity.
         self.fallback_chain_id = "raif_" + sha256(
             _canonical_json(
                 [
@@ -32,6 +39,14 @@ class RuntimeFallbackAiProvider:
                         "profile_id": profile_id,
                         "provider": str(getattr(provider, "provider_name", "")),
                         "model": str(getattr(provider, "model_name", "")),
+                        "base_url": str(getattr(provider, "base_url", "") or ""),
+                        "transport": str(getattr(provider, "transport_name", "") or ""),
+                        "expected_response_model": str(
+                            getattr(provider, "expected_response_model", "") or ""
+                        ),
+                        "profile_revision": str(
+                            getattr(provider, "profile_revision", "") or ""
+                        ),
                         "thinking": str(getattr(provider, "default_thinking", "") or ""),
                         "reasoning_effort": str(
                             getattr(provider, "default_reasoning_effort", "") or ""
@@ -41,6 +56,7 @@ class RuntimeFallbackAiProvider:
                 ]
             ).encode("utf-8")
         ).hexdigest()[:24]
+        self.last_attempts: list[dict[str, Any]] = []
 
     @property
     def _active(self) -> tuple[str, Any]:
@@ -89,16 +105,47 @@ class RuntimeFallbackAiProvider:
     def run(self, envelope: Any) -> Any:
         self._active_index = 0
         self.fallback_reason = ""
+        attempts: list[dict[str, Any]] = []
+        self.last_attempts = attempts
         last_error: Exception | None = None
-        for index, (_profile_id, provider) in enumerate(self._providers):
+        for index, (profile_id, provider) in enumerate(self._providers):
             self._active_index = index
+            # R05: per-attempt metadata (no prompt/response bodies, no
+            # credentials) so route evidence explains what actually ran.
+            started_wall = datetime.now(timezone.utc)
+            started_perf = time.perf_counter()
+            entry: dict[str, Any] = {
+                "depth": index,
+                "profile_id": profile_id,
+                "provider": str(getattr(provider, "provider_name", "")),
+                "model": str(getattr(provider, "model_name", "")),
+                "endpoint": str(getattr(provider, "base_url", "") or ""),
+                "expected_response_model": str(
+                    getattr(provider, "expected_response_model", "") or ""
+                ),
+                "started_at": started_wall.isoformat(timespec="milliseconds"),
+            }
             try:
-                return provider.run(envelope)
+                result = provider.run(envelope)
             except Exception as exc:
                 reason = self._reason(exc)
+                entry["ok"] = False
+                entry["duration_ms"] = int((time.perf_counter() - started_perf) * 1000)
+                entry["failure_reason"] = reason or type(exc).__name__
+                attempts.append(entry)
                 if not reason or index == len(self._providers) - 1:
                     raise
                 self.fallback_reason = reason
                 last_error = exc
+            else:
+                entry["ok"] = True
+                entry["duration_ms"] = int((time.perf_counter() - started_perf) * 1000)
+                attempts.append(entry)
+                return result
         assert last_error is not None
         raise last_error
+
+    @property
+    def attempts(self) -> list[dict[str, Any]]:
+        """Metadata for the most recent run (empty before the first run)."""
+        return list(self.last_attempts)

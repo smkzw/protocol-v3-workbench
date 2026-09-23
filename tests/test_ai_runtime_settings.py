@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import io
 import json
 import os
 import stat
 import tempfile
 import unittest
+import urllib.request
+
+import pytest
 from pathlib import Path
 from unittest.mock import patch
 
@@ -366,3 +370,132 @@ class AiRuntimeSettingsApiTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------------------
+# R04: model discovery error classification and loopback proxy isolation
+# ---------------------------------------------------------------------------
+
+
+def _discovery_profile(base_url="http://127.0.0.1:8002/v1"):
+    from services.api.app.ai_runtime_settings import AiProviderProfile
+
+    return AiProviderProfile(
+        profile_id="mtplx_local",
+        provider="openai_compatible",
+        label="MTPLX local",
+        base_url=base_url,
+        model="mtplx-flash-next-optimized-speed",
+    )
+
+
+def test_discovery_loopback_classification():
+    from services.api.app.ai_runtime_settings import _discovery_loopback
+
+    assert _discovery_loopback("http://127.0.0.1:8002/v1/models") is True
+    assert _discovery_loopback("http://localhost:8002/v1/models") is True
+    assert _discovery_loopback("http://[::1]:8002/v1/models") is True
+    assert _discovery_loopback("https://api.deepseek.com/v1/models") is False
+
+
+def test_discovery_401_reports_auth_required_with_status():
+    import io
+    import urllib.error
+    from services.api.app import ai_runtime_settings as m
+
+    def _fake_opener(*_args, **_kwargs):
+        class _Op:
+            def open(self, request, timeout=None):
+                raise urllib.error.HTTPError(
+                    request.full_url, 401, "Unauthorized", {}, io.BytesIO(b"")
+                )
+
+        return _Op()
+
+    original = m.urllib.request.build_opener
+    m.urllib.request.build_opener = _fake_opener
+    try:
+        with pytest.raises(m.ModelDiscoveryError) as excinfo:
+            m.discover_models(_discovery_profile())
+    finally:
+        m.urllib.request.build_opener = original
+    assert excinfo.value.layer == "auth_required"
+    assert excinfo.value.status == 401
+    assert "127.0.0.1:8002" in str(excinfo.value)
+
+
+def test_discovery_array_json_root_reports_invalid_schema():
+    from services.api.app import ai_runtime_settings as m
+
+    def _fake_opener(*_args, **_kwargs):
+        class _Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return b'[{"id":"not-an-openai-shape"}]'
+
+        class _Op:
+            def open(self, request, timeout=None):
+                return _Response()
+
+        return _Op()
+
+    original = m.urllib.request.build_opener
+    m.urllib.request.build_opener = _fake_opener
+    try:
+        with pytest.raises(m.ModelDiscoveryError) as excinfo:
+            m.discover_models(_discovery_profile())
+    finally:
+        m.urllib.request.build_opener = original
+    assert excinfo.value.layer == "invalid_schema"
+
+
+def test_discovery_loopback_bypasses_proxy_and_cloud_keeps_default():
+    from services.api.app import ai_runtime_settings as m
+
+    captured = []
+
+    def _fake_build_opener(*handlers):
+        captured.append(handlers)
+
+        class _Op:
+            def __init__(self, payload):
+                self._payload = payload
+
+            def open(self, request, timeout=None):
+                class _Response:
+                    def __enter__(self):
+                        return self
+
+                    def __exit__(self, *args):
+                        return False
+
+                    def read(self):
+                        import json as _json
+
+                        return _json.dumps({"data": []}).encode("utf-8")
+
+                return _Response()
+
+        return _Op({"data": []})
+
+    original = m.urllib.request.build_opener
+    m.urllib.request.build_opener = _fake_build_opener
+    try:
+        m.discover_models(_discovery_profile("http://127.0.0.1:8002/v1"))
+        m.discover_models(_discovery_profile("https://api.example.com/v1"))
+    finally:
+        m.urllib.request.build_opener = original
+    # loopback path builds the no-proxy opener as the ProxyHandler call;
+    # the cloud endpoint (last call) must keep the default opener policy.
+    proxy_calls = [
+        index
+        for index, handlers in enumerate(captured)
+        if any(isinstance(h, urllib.request.ProxyHandler) for h in handlers)
+    ]
+    assert proxy_calls, "loopback discovery never built a no-proxy opener"
+    assert captured[-1] == (), "cloud discovery must not receive proxy handlers"
