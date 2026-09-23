@@ -288,3 +288,10 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 无损暂停基线：`HEAD == origin/main == fb7e6ada2dd4be2693bed74b3ac2d8d2147fb774`。工作树保留 5 tracked dirty、约 65 untracked 历史/运行制品；没有 reset/clean。无 pytest、runner 或 guard 在途；既有 Vite 服务非本批启动且未停止。handoff：`handoff/2026-09-23/HANDOFF_PROTOCOL_V3_MODEL_ROUTING_AND_WP6_20260923.md`；复盘：`runs/requirements_v2_20260919/t17_round11/STAGE_RETROSPECTIVE_MODEL_ROUTING_20260923.md`；暂停记录：`runs/MW_PROTOCOL_V3_MODEL_ROUTING_NO_LOSS_PAUSE_20260923_0639.md`。
 
 恢复后的首个安全动作：核对最新 AGENTS/0922V2/Goal/Trellis/Git/dirty/logical work；若 11234 恢复，先做 exact identity 与真实长结构化输出探针；随后继续 WP6 V01/V04/V06/V07、三研究完整旅程、ego(lite) 浏览器、原生 Word 和逐章医学/统计/安全接受。不得重放 v0.9/v0.10、9 月 21 日 source overlay 或已完成上游。
+
+## 2026-09-23 0923V1 模型路由落地+本地MTPLX实锤+WP6部分验收（无损暂停点）
+**MTPLX已找到并接线**：实际运行在 http://127.0.0.1:8002/v1（PID 97315，native_mtp，serve id=`mtplx-flash-next-optimized-speed` ≠ 配置目录名——这就是此前身份校验失败根因）。N1交付=runs/requirements_v2_20260919/LOCAL_ENDPOINT_DISCOVERY_0923V1.json；N4质量验证全绿（小JSON 1.08s/effort支持/截断=length/长结构化820tok 13s全字段零工程标记/产品网关探针passed）。
+**代码修复（3555563已push，GPT Pro R02/R03/R04/R05）**：main.py主provider禁用→结构化终止（_independent_ai_primary_unusable_reason可直测）；discover_models分层错误ModelDiscoveryError（auth_required/path_not_found/http_N/transport/invalid_json/invalid_schema）+loopback禁代理+数组根判invalid_schema；链身份v2含base_url/transport/expected_model/profile_revision；run()尝试轨迹.attempts。测试+7聚焦，tests/protocol_v3 2608全绿。
+**WP6接线**：5301后端用当前源码重启（原旧代码被版本门禁正确拦截；补装python3.14 xlrd/python-multipart）；isolated runtime通过产品API接线：profile independent_ai__mtplx_qwen38_local + independent_ai角色绑定(medium) + fallback=opencode_go_deepseek_v41_flash(max)。vite 5186→5301本会话启动。
+**N5证据**：wp6_0922v2_20260922/n5_0923V1/N5_EVIDENCE.md+4张截图——V01三视口截图PASS（历史CDP超时已破，scrollWidth<innerWidth）、V06真实动态章节卡持久化+复原PASS（greenfield_events两笔resolution事件）。**未闭合如实**：A16局部AI修订被"已保存工作副本"前置卡住（85章补写候选审阅未完成→保存按钮disabled；设计器单元格已选中、rail已切"单元格替换候选"文案，差最后一步）；V04/A13/A14/A21未跑；V07部分计数。恢复入口见N5_EVIDENCE.md表格。
+**下次恢复顺序**：①完成Study A候选审阅（审阅全文初稿→确认→采用）→保存工作副本 ②设计器选单元格→提交AI修订（MTPLX真链）→选用写入 ③V04断网/失败出口 ④A13/A14摘要SOA修改重开+IME ⑤V07完整计数 ⑥剩余WP6项。遵守：不逐次测试（批量构建后集中回归）；不重复检索/分诊/OCR/翻译；Study C统计数值不代选。

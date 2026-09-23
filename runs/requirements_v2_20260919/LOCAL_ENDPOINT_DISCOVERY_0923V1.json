@@ -54,5 +54,39 @@
   "IPv6-only listeners (none observed for candidates)",
   "remote/network namespaces"
  ],
- "actions_taken": "read-only lsof/ps/curl GET /v1/models + one synthetic 3-token-class generation probe; no config changed, no process started/stopped"
+ "actions_taken": "read-only lsof/ps/curl GET /v1/models + one synthetic 3-token-class generation probe; no config changed, no process started/stopped",
+ "n4_real_local_quality": {
+  "endpoint": "http://127.0.0.1:8002/v1",
+  "exact_identity": "served model == request model == mtplx-flash-next-optimized-speed (verified on /v1/models, small probe, long probe, and product gateway probe)",
+  "small_structured": {
+   "finish": "stop",
+   "valid_json_exact": true,
+   "latency_s": 1.08
+  },
+  "reasoning_effort": "accepted (medium); reasoning_tokens observed in usage",
+  "truncation_behavior": "max_tokens=60 → finish_reason=length (recorded, not an error)",
+  "long_structured": {
+   "finish": "stop",
+   "latency_s": 12.99,
+   "completion_tokens": 820,
+   "reasoning_tokens": 503,
+   "strict_json_all_fields": true,
+   "engineering_markers": "clean",
+   "input": "synthetic PD-L1 II期 trial brief (no clinical/PII content)"
+  },
+  "product_gateway_probe": {
+   "endpoint": "POST http://127.0.0.1:5301/api/ai-gateway/probe",
+   "profile": "independent_ai__mtplx_qwen38_local",
+   "passed": true,
+   "response_model_exact_match": true,
+   "elapsed_ms": 2597
+  },
+  "wiring": {
+   "runtime": "wp6_0922v2_20260922/real_http_acceptance/isolated_runtime",
+   "profile_added": "independent_ai__mtplx_qwen38_local (base_url 8002, expected model = served id, api_key stored via product API)",
+   "role_binding": "independent_ai → mtplx profile, reasoning_effort=medium (per Goal default recommendation)",
+   "fallback_chain": "[independent_ai__opencode_go_deepseek_v41_flash (max)]",
+   "note": "wired via product's own PUT /api/ai-gateway/* endpoints; only new calls use it, no frozen job identities touched"
+  }
+ }
 }
