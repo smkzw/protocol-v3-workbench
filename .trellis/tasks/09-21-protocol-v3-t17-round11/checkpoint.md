@@ -317,3 +317,8 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 **修复实装**：`medical_writing.py` 新增 `_lineage_digest_payload`（排除 working_copy 块、semantic.anchor_path、table_cell_anchor.block_hash/source_kind——均为执行期回填/升级字段）；build与revalidate统一哈希该归一化payload；版本升至 mw_gen_ctx_v4。**关键认知修正**：单独排除 working_copy 不够——真正时点不对称的是 executor 回填的 anchor_path 与升级的 source_kind。回归2608全绿后重启5301。
 **A16闭环成功**：重走单元格修订全链（提交→durable→策略过→云端opencode-go调用→解析→质量门过→候选浮现4个→**选用并写入成功**）。DB实证：working copy revision 0→1、applied_revision_thread_ids=[thread_075a7efaf5]、thread status=author_selected。V4b标记未出现是因为云端模型正确拒绝了AI自述性占位标记（质量判断正确），写入的是其术语候选文本——写入路径本身已验证（WC rev bump+applied ids）。
 **残留未闭合（下批）**：①V04等待/失败/断网出口（UI）②A13/A14摘要SOA人工修改保存重开③A21 IME④V07完整计数⑤WP6剩余（三研究逐章医学接受/最终Word真实申办者信息）⑥第十一轮重派（r11 prompt已备，编队锁定，派发前删旧项目）。
+
+## 2026-09-23 V04/A13完成+第十一轮准备
+**V04 PASS**：云端死端点场景→任务failed→UI显示类型化错误"AI修订失败：AiExecutionPolicyDenied…base URL must be…"（出口可见可重试不损坏状态）；等待出口=多轮running期间UI显示进行中无假失败。opencode-go profile已恢复真实端点。
+**A13 PASS**：全屏编辑正文手动键盘输入→保存→版本2已保存→重载持久化验证（a13_manual_edit_persisted.png）。
+**第十一轮准备**：gemini配额已于03:23Z重置（理论上可用）；派发前需删旧项目（round-10 tester项目在共享runtime user_projects.sqlite3）；r11 prompt四份已备（t17_prompts/r11_*.md）。
