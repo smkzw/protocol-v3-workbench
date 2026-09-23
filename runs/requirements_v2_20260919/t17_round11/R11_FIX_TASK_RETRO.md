@@ -40,3 +40,17 @@ LOOP = 测试 → QC → 会商 → 修复提交 → 清理 → 重派。本批�
 3. P1 批修复（标记按钮原因提示 / 文献 DOI 耦合说明 / 卷期页来源）。
 4. 删旧项目（备份后，保留出厂 demo）→ 重派第十二轮（四场景 lineup 不变）。
 5. 会商审阅与 docx QC 等第十二轮产出初稿后再启动。
+
+---
+
+## 追记（同日 21:0x）：R12 已派发
+1. P1 批三项已修并推送（0874ab3）：分诊标记/锁定按钮 disabled 原因提示；文献手动确认与上方来源输入的耦合说明+步骤提示；DOI 解析记录与手动题名冲突时不再把他刊卷期页混入确认卡（后端 + 2 回归测试）。
+2. 环境已重启载入全部修复：后端 5301（PID 变更，含 P1 文献修复）、前端 5186（vite 重启）。四服务 200。
+3. 旧项目已清理：5 个测试项目（银屑病/MS/MDD/COPD/膝OA）外科手术删除，三库备份 .pre-cleanup-20260923_204421，保留 9 个出厂 demo 种子；durable jobs、writing_reference、审计 jsonl 全部保留为证据。
+4. 第十二轮已按锁定编队派发（r12 prompt=r11 场景复用+轮次/截图目录更新）：
+   - tester1 COPD/入口A = opencode-go/muse-spark-1.3-contributor (max)
+   - tester2 MS/入口B = google-antigravity/gemini-3.8-flash (high)
+   - tester3 MDD/盲测 = cursor/cursor-grok-4.6 (high)（首派遭 harness 空消息，杀掉重派后正常）
+   - tester4 膝OA/入口B = opencode-go/deepseek-v4.1-flash (max)
+   日志 /tmp/t17_r12_testerN_report.md，尾部 EXIT= 标记。
+5. 坑：bash heredoc 未加引号导致 $() 被外层 shell 提前展开，首轮四进程拿到空 prompt 即退——重派修复；grok 首消息被 harness 丢弃一次，重派自愈。两坑都已记录。
