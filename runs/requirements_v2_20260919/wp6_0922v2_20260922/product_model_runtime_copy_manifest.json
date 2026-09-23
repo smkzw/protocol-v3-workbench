@@ -1,0 +1,101 @@
+{
+  "schema_version": "protocol-v3-product-runtime-copy.v1",
+  "copied_at": "2026-09-22T13:16:57.270147+00:00",
+  "source": "runs/requirements_v2_20260919/f12_20260921/three_studies/isolated_runtime",
+  "destination": "runs/requirements_v2_20260919/wp6_0922v2_20260922/product_model_2plus1_runtime",
+  "excluded": [
+    "ai_provider_secrets.json"
+  ],
+  "sqlite_files": [
+    {
+      "path": "medical_monitoring_ai.sqlite3",
+      "size": 217088,
+      "sha256": "57f23202bb1469b36e058b72ed2a2b6111b3addb5d889549018186397cccb977"
+    },
+    {
+      "path": "medical_monitoring_assurance.sqlite3",
+      "size": 86016,
+      "sha256": "5199d2dbd26a03eec06ac6a7e5a04a30efd76527d440cfaac564b5ec7b86f373"
+    },
+    {
+      "path": "medical_monitoring_batches.sqlite3",
+      "size": 155648,
+      "sha256": "4e69d5a9c832a5ae744c5504502aebaea381dbd461475143d6d46c502c52cb59"
+    },
+    {
+      "path": "medical_monitoring_daily_runs.sqlite3",
+      "size": 90112,
+      "sha256": "64766a8914536b993a7c7c18b6e0712e06e5ba501f9dc048994e98ed905f4563"
+    },
+    {
+      "path": "medical_risks.sqlite3",
+      "size": 40960,
+      "sha256": "f26f8b07658402e05b4aeb37bcc673d011734317659f054fe828c84b0eb09999"
+    },
+    {
+      "path": "medical_writing_authoring_journey.sqlite3",
+      "size": 2170880,
+      "sha256": "e56e74f7a8b80b8e8dc255a004ec9934fccea7139a5b92697d19b5c776091481"
+    },
+    {
+      "path": "medical_writing_durable_jobs.sqlite3",
+      "size": 503808,
+      "sha256": "02ee6ec91ba8a3f8c0785c25285e65993c0c2d4b239b2f592a7a0d59fbbb6e68"
+    },
+    {
+      "path": "medical_writing_fact_intake.sqlite3",
+      "size": 32768,
+      "sha256": "0e74a28deaf024c6566f7ce57886c077d3ad2256580a05f3c5cdbb0c369ba487"
+    },
+    {
+      "path": "medical_writing_greenfield.sqlite3",
+      "size": 1036288,
+      "sha256": "6cc340760e06438c8b92d49fa91aed43ea9fd1856cb686de7bc66008975c57e8"
+    },
+    {
+      "path": "medical_writing_literature.sqlite3",
+      "size": 49152,
+      "sha256": "5f0cb713af0dcdc4579b2715d1e957d2fad86f4399743c4cf4728d09f593b4e1"
+    },
+    {
+      "path": "medical_writing_protocol_assembly_plan.sqlite3",
+      "size": 737280,
+      "sha256": "690668b1eed768b0676293549f4a44c41f4b7087928104beb0136ceceefb91e3"
+    },
+    {
+      "path": "medical_writing_shared_corpus.sqlite3",
+      "size": 77824,
+      "sha256": "1fc200a4d5853d4a14378be5d0c9fcf7d14d9a6fec981a5f0f11ddd5ac96a59c"
+    },
+    {
+      "path": "medical_writing_synopsis_import.sqlite3",
+      "size": 28672,
+      "sha256": "d64379f613a91d306606f1c18b827dc9c35f0ecc62aabcd0a5add790e7da7d39"
+    },
+    {
+      "path": "monitoring_protocol_rules.sqlite3",
+      "size": 270336,
+      "sha256": "afc3b4292eb0431706980c91fb1e6d4dd7275174bbb3b3aca3c6f0ec18c37826"
+    },
+    {
+      "path": "source_content_validations.sqlite3",
+      "size": 32768,
+      "sha256": "f31a3f53d40e8efbced7eac5ebda287e73d4fdc8d2c68b13de3928e810e6582a"
+    },
+    {
+      "path": "user_projects.sqlite3",
+      "size": 20480,
+      "sha256": "f8ebe357890b097edd454dac548b2b5ac53c74fc4fa06a032cbb53ecd194eb7a"
+    },
+    {
+      "path": "workbench_runtime.sqlite3",
+      "size": 692224,
+      "sha256": "6303a92fd7c97bdd53feea5d834f73bc263eb68b391da103b6074495fae6226b"
+    },
+    {
+      "path": "writing_reference.sqlite3",
+      "size": 8658944,
+      "sha256": "72c7476c9bfcb0f4481b14b2229e7b62fb1b0d9ed685113055633bc61c69c4ec"
+    }
+  ]
+}

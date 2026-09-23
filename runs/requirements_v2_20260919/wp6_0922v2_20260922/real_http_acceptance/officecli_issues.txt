@@ -1,0 +1,68 @@
+Found 47 issue(s):
+
+Structure Issues (37):
+  [S1] /body/p[@paraId=3E190770]: Empty paragraph
+  [S2] /body/p[@paraId=3E68E8DD]: Empty paragraph
+  [S3] /body/p[@paraId=59BA2D17]: Empty paragraph
+  [S4] /body/p[@paraId=1E0A1104]: Empty paragraph
+  [S5] /body/p[@paraId=2D91E8B9]: Empty paragraph
+  [S6] /body/p[@paraId=5199D919]: Empty paragraph
+  [S7] /body/p[@paraId=6FED480A]: Empty paragraph
+  [S8] /body/p[@paraId=7CF18C55]: Empty paragraph
+  [S9] /body/p[@paraId=59A19DE0]: Empty paragraph
+  [S10] /body/p[@paraId=77FDFA9D]: Empty paragraph
+  [S11] /body/p[@paraId=772A6153]: Empty paragraph
+  [S12] /body/p[@paraId=1F9CFF4A]: Empty paragraph
+  [S14] /body/p[@paraId=778145BC]: Empty paragraph
+  [S15] /body/p[@paraId=355D3FF9]: Empty paragraph
+  [S16] /body/p[@paraId=2C04FCC4]: Empty paragraph
+  [S19] /body/p[@paraId=4AE500BC]: Empty paragraph
+  [S20] /body/p[@paraId=1776759E]: Empty paragraph
+  [S21] /body/p[@paraId=0D023C7B]: Empty paragraph
+  [S22] /body/p[@paraId=36D73CEB]: Empty paragraph
+  [S23] /body/p[@paraId=584CD2EF]: Empty paragraph
+  [S25] /body/p[@paraId=46823F86]: Empty paragraph
+  [S26] /body/p[@paraId=0DCBDD49]: Empty paragraph
+  [S27] /body/p[@paraId=30F53023]: Empty paragraph
+  [S28] /body/p[@paraId=60CAF436]: Empty paragraph
+  [S30] /body/p[@paraId=7737AF66]: Empty paragraph
+  [S32] /body/p[@paraId=46823F86]: Empty paragraph
+  [S33] /body/p[@paraId=0DCBDD49]: Empty paragraph
+  [S34] /body/p[@paraId=30F53023]: Empty paragraph
+  [S35] /body/p[@paraId=60CAF436]: Empty paragraph
+  [S37] /body/p[@paraId=7737AF66]: Empty paragraph
+  [S39] /body/p[@paraId=46823F86]: Empty paragraph
+  [S40] /body/p[@paraId=0DCBDD49]: Empty paragraph
+  [S41] /body/p[@paraId=30F53023]: Empty paragraph
+  [S42] /body/p[@paraId=60CAF436]: Empty paragraph
+  [S44] /body/p[@paraId=7737AF66]: Empty paragraph
+  [S45] /body/p[@paraId=01FC4423]: Empty paragraph
+  [S46] /body/p[@paraId=45C870EE]: Empty paragraph
+
+Content Issues (10):
+  [C13] /body/p[@paraId=64FA75AC]/r[1]: Mixed CJK/Latin punctuation
+       Context: "[我已阅读此临床试验方案（方案编号：MW-III-AEA61047-DRAFT，版本号：v草案"
+  [C17] /body/p[@paraId=7FEDC75F]/r[2]: Consecutive spaces
+       Context: "                       "
+       Suggestion: Merge into a single space
+  [C18] /body/p[@paraId=6006846A]/r[2]: Consecutive spaces
+       Context: "年     月     日]"
+       Suggestion: Merge into a single space
+  [C24] /body/p[@paraId=36110890]/r[1]: Mixed CJK/Latin punctuation
+       Context: "[我已阅读此临床试验方案（方案编号：MW-III-AEA61047-DRAFT，版本号：v草案"
+  [C29] /body/p[@paraId=6507A171]/r[2]: Consecutive spaces
+       Context: "年     月     日"
+       Suggestion: Merge into a single space
+  [C31] /body/p[@paraId=36110890]/r[1]: Mixed CJK/Latin punctuation
+       Context: "[我已阅读此临床试验方案（方案编号：MW-III-AEA61047-DRAFT，版本号：v草案，版本日期：），同意依照此方案的所有条款、现行法规和赫尔辛基宣言中的伦理原则进行临床试验。"
+  [C36] /body/p[@paraId=6507A171]/r[1]: Consecutive spaces
+       Context: "年     月     日]"
+       Suggestion: Merge into a single space
+  [C38] /body/p[@paraId=36110890]/r[1]: Mixed CJK/Latin punctuation
+       Context: "[我已阅读此临床试验方案（方案编号：MW-III-AEA61047-DRAFT，版本号：v草案，版本日期：），同意依照此方案的所有条款、现行法规和赫尔辛基宣言中的伦理原则进行临床试验。"
+  [C43] /body/p[@paraId=6507A171]/r[1]: Consecutive spaces
+       Context: "年     月     日]"
+       Suggestion: Merge into a single space
+  [U47] /body: Field marked dirty with cached result (Word will re-render on open; cached value may differ from re-evaluation)
+       Context: "{ TOC \o "1-3" \h \z \u }"
+       Suggestion: Open the document in Word once (or run a TOC update) so the result run is populated.

@@ -1,0 +1,648 @@
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/__main__.py", line 4, in <module>
+    uvicorn.main()
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/click/core.py", line 1569, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/click/core.py", line 1490, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/click/core.py", line 1353, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/click/core.py", line 907, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/main.py", line 423, in main
+    run(
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/main.py", line 593, in run
+    server.run()
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2584, in <module>
+    mount_protocol_v3_workflow_router(
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/composition.py", line 478, in mount_protocol_workflow_router
+    router = create_mounted_protocol_workflow_router(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/composition.py", line 343, in create_mounted_protocol_workflow_router
+    adapter_config = config.adapter_config()  # fail closed without a db path
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/protocol_workflow/api/composition.py", line 128, in adapter_config
+    raise ValueError(
+ValueError: WORKBENCH_PROTOCOL_V3_WORKFLOW_DB must be set when the Protocol v3 workflow chain is explicitly enabled
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+INFO:     Started server process [28404]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5304 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64232 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64234 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64236 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64238 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64240 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64242 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64245 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64247 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64249 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64251 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64253 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64255 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64257 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64260 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64262 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64264 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64266 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64268 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64270 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64276 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64278 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64282 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64286 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64288 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64290 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64292 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64294 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64296 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64298 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64300 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64302 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64304 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64306 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64308 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64310 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64312 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64314 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64316 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64318 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64320 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64322 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64324 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64326 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64328 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64330 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64332 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64336 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64338 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64340 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64353 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64355 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64358 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64360 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64364 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64366 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64368 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64371 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64373 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64375 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64377 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64379 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64381 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64383 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64385 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64387 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64389 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64393 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64395 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64397 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64399 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64401 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64403 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64405 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64407 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64410 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64412 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64414 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64416 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64418 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64420 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64422 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64424 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64426 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64428 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64430 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64432 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64434 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64436 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64438 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64440 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64442 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64444 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64446 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64448 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64450 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64452 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64454 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64456 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64459 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64461 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64515 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64516 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64518 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64514 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64519 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64517 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64523 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:64527 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:64524 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:64525 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:64677 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64675 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64678 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64679 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65258 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65259 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65261 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65257 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65260 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65262 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65267 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65268 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65270 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65269 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65320 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65321 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65323 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65319 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65328 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65322 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65324 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65329 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65330 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65332 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:65338 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65337 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65340 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65339 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65356 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65358 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65351 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65349 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65353 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65362 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65364 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65355 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65354 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65366 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65370 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65368 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65372 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65374 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65381 - "GET /api/medical-writing/protocol-templates/cms_protocol_zh_cn/cms_protocol_zh_cn_company_authority_2026_07_19_v2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65383 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65386 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/greenfield-document HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65384 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/study-consistency HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65390 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session/sections/mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65388 - "GET /api/projects/proj_user_0cec66a7da6e/revision-threads HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65394 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/content-quality?section_id=mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65392 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/working-copies/mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65397 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65398 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/study-consistency HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65360 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65382 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/freeze-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65419 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65434 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65436 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65438 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49740 - "POST /api/projects/proj_user_0cec66a7da6e/medical-writing/working-copies/mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49749 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49750 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/study-consistency HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49743 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/content-quality?section_id=mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49744 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/freeze-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49748 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-index HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:49811 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49812 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49814 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49815 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49820 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:49821 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:49822 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:49823 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:49810 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49813 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49829 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49831 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49828 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49830 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49854 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49851 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49850 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49856 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49853 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49847 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49858 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49852 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49866 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49862 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49860 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49868 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49867 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49872 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49877 - "GET /api/medical-writing/protocol-templates/cms_protocol_zh_cn/cms_protocol_zh_cn_company_authority_2026_07_19_v2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49882 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/greenfield-document HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49880 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49886 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-session/sections/mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49884 - "GET /api/projects/proj_user_0cec66a7da6e/revision-threads HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49881 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/study-consistency HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49888 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/working-copies/mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49890 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/content-quality?section_id=mwsec_greenfield_proj_user_0cec66a7da6e_3b91c9ccdce05031 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49895 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49896 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/study-consistency HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49903 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49905 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49907 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49909 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49911 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49879 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/freeze-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49894 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/document-index HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:50179 - "POST /api/projects/proj_user_0cec66a7da6e/medical-writing/document-exports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50202 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50215 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50220 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50223 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50227 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50234 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50236 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_0a41743f502e76acea736d83/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50538 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28404]
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+INFO:     Started server process [34559]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5304 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50880 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50882 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50884 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50886 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50888 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50890 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50892 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50894 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50896 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50898 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50900 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50902 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50904 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50906 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50909 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50911 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50913 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50915 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50917 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50919 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50921 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50924 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50926 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50928 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50930 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50932 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50934 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50936 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50938 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50940 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50942 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50944 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50946 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50948 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50950 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50952 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50954 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50959 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50961 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50963 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50965 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50967 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50969 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50971 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50973 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50975 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50977 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50979 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50981 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50983 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50985 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50987 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50989 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50992 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50994 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50996 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50998 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51000 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51002 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51004 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51006 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51008 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51010 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51012 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51015 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51017 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51019 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51021 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51023 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51027 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51029 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51031 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51035 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51039 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51041 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51043 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51047 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51049 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51051 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51053 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51055 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51057 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51059 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51061 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51063 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51065 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51067 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51069 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51073 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51075 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51077 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51079 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51081 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51083 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51085 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51087 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51089 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51093 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51095 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51097 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51099 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51102 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51104 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51106 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51108 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51112 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51115 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51117 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51119 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51123 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51125 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51127 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51131 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51133 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51135 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51137 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51139 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51141 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51143 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51145 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51148 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51150 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51152 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51154 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51156 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51158 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51160 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51162 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51164 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51166 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51170 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51172 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51174 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51176 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51178 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51180 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51182 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51184 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51186 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51188 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51191 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51196 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51198 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51200 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51202 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51204 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51206 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51210 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51222 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51225 - "GET /api/runtime-build HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51227 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51256 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51341 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34559]
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+INFO:     Started server process [35451]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5304 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51696 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51698 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51827 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51910 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51911 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51913 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51914 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51919 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51920 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51912 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51909 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51921 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51922 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51992 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51993 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51995 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51996 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52001 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:51991 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51994 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52002 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:52004 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:52003 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:52010 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52011 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52009 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52012 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52018 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52017 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52023 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52022 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52066 - "POST /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:52089 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52091 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52093 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52690 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52792 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52794 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/recover HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:53214 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/recover HTTP/1.1" 422 Unprocessable Entity
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35451]
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+INFO:     Started server process [39793]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5304 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56358 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56402 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56404 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/recover HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56406 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56412 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56414 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56411 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56413 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56418 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56417 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56420 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56422 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56424 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56426 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56428 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/candidate/docx HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56784 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56786 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/reconciliation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56874 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56873 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56875 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56877 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56879 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56915 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56917 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56921 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56920 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/reconciliation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56924 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56925 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/office-save%3Ae5451b72-2687-4f60-846e-d8582c6bb740/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57079 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57081 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57083 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/office-save%3Ae5451b72-2687-4f60-846e-d8582c6bb740/content HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [39793]
+Usage: python -m uvicorn [OPTIONS] APP
+Try 'python -m uvicorn --help' for help.
+
+Error: Got unexpected extra arguments (BUDDY_API_KEY=[redacted] BUN_INSTALL=/Users/smkzw/.bun CMS_ROUTER_API_KEY=[redacted] CMS_SMK_API_KEY=[redacted] CODEX_APP_TOOLS_PIPE_PATH=/tmp/codex-browser-use/9392d795-5b15-4819-a67b-5d80f7682231.sock CODEX_CI=1 CODEX_INTERNAL_ORIGINATOR_OVERRIDE=Codex CODEX_MCP_NODE_PATH=/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node CODEX_PERMISSION_PROFILE=:danger-full-access CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE=1 CODEX_SESSION_ID=01a0c203-4db6-74f0-bafd-5b32c28c7fdd CODEX_SHELL=1 CODEX_THREAD_ID=01a0c203-4db6-74f0-bafd-5b32c28c7fdd CODEX_VERSION=0.155.0-alpha.9.2 COLORTERM= COMMAND_MODE=unix2003 DISABLE_AUTO_UPDATE=true GH_PAGER=cat GIT_PAGER=cat GLM_API_KEY=[redacted] HOME=/Users/smkzw HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 LANG=C.UTF-8 LC_ALL=C.UTF-8 LC_CTYPE=C.UTF-8 LOGNAME=smkzw LOG_FORMAT=json MTPLX_API_KEY=[redacted] MallocNanoZone=0 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S=9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df NO_COLOR=1 NO_PROXY=8.210.203.217,.cmsinfo.net OLDPWD=/Users/smkzw/Documents/^TyvDe/AI/S;[f~t^F]OS/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313 OMLX_API_KEY=[redacted] OSLogRateLimit=64 PAGER=cat PATH=/Users/smkzw/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/smkzw/.codex/tmp/arg0/codex-arg0cdWkWZ:/Users/smkzw/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/smkzw/.bun/bin:/Users/smkzw/.kimi-code/bin:/Users/smkzw/.grok/bin:/Users/smkzw/.local/bin:/Users/smkzw/.omlx/bin:/Users/smkzw/bin:/Users/smkzw/.lmstudio/bin:/Users/smkzw/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources PWD=/Users/smkzw/Documents/^TyvDe/AI/S;[f~t^F]OS/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313 RUST_LOG=warn SHELL=/bin/zsh SHLVL=1 SSH_AUTH_SOCK=/var/run/com.apple.launchd.tPiv4fRKYD/Listeners TERM=dumb TMPDIR=/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/ USER=smkzw WEIXIN_TOKEN=[redacted] XPC_FLAGS=0x0 XPC_SERVICE_NAME=0 ZAI_ROUTER_API_KEY=[redacted] ZSH_TMUX_AUTOSTART=false ZSH_TMUX_AUTOSTARTED=true __CF_USER_TEXT_ENCODING=0x1F5:0x19:0x34 http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 no_proxy=8.210.203.217,.cmsinfo.net _=/Users/smkzw/.local/bin/python3 PYTHONPATH=services/api:. WORKBENCH_RUNTIME_DIR=runs/requirements_v2_20260919/wp6_0922v2_20260922/product_model_2plus1_runtime OPENCODE_API_KEY=[redacted] __PYVENV_LAUNCHER__=/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/mw_protocol_v3_1r_integration_20260905/venv/bin/python WORKBENCH_PROTOCOL_V3_WORKFLOW_ENABLED=1 WORKBENCH_PROTOCOL_V3_WORKFLOW_DB=runs/requirements_v2_20260919/wp6_0922v2_20260922/product_model_2plus1_runtime/protocol_v3_workflow.sqlite3)
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+INFO:     Started server process [43846]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5304 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60106 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60170 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60210 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60261 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60344 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/candidate/docx HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60752 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60753 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60756 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60761 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:60762 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:60763 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:60764 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:60751 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60754 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60854 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60853 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60855 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60856 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60860 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60861 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60866 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60869 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60868 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60865 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60871 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60873 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61481 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61487 - "GET /api/projects/proj_user_6e4142d7822b/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61494 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61580 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61587 - "GET /api/projects/proj_user_6e4142d7822b/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61602 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61665 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/full-drafts/mwjob_012cb0598553aad7bb5d99d3/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61667 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/jobs/mwjob_012cb0598553aad7bb5d99d3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61756 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/full-drafts/mwjob_012cb0598553aad7bb5d99d3/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61850 - "GET /api/projects/proj_user_8a5a00cb014a/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61852 - "GET /api/projects/proj_user_8a5a00cb014a/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61849 - "GET /api/projects/proj_user_8a5a00cb014a/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61851 - "GET /api/projects/proj_user_8a5a00cb014a/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61999 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61998 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62003 - "GET /api/projects/proj_user_8a5a00cb014a/protocol-workflow/sources HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62004 - "GET /api/projects/proj_user_8a5a00cb014a/protocol-workflow/sources HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62087 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62203 - "GET /api/projects/proj_user_8a5a00cb014a/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63784 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63871 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63872 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63874 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63875 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63880 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:63881 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:63883 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:63882 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:63870 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63873 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63893 - "GET /api/projects/proj_user_8a5a00cb014a/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63892 - "GET /api/projects/proj_user_8a5a00cb014a/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63895 - "GET /api/projects/proj_user_8a5a00cb014a/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63894 - "GET /api/projects/proj_user_8a5a00cb014a/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63902 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63901 - "POST /api/projects/proj_user_8a5a00cb014a/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63905 - "GET /api/projects/proj_user_8a5a00cb014a/protocol-workflow/study-definitions/study%3Av3%3A1ded2281210281a3b8a04ce523d2756c/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63906 - "GET /api/projects/proj_user_8a5a00cb014a/protocol-workflow/study-definitions/study%3Av3%3A1ded2281210281a3b8a04ce523d2756c/manuscript-draft/saved HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65116 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65237 - "GET /api/projects/proj_user_0cec66a7da6e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65238 - "GET /api/projects/proj_user_0cec66a7da6e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65236 - "GET /api/projects/proj_user_0cec66a7da6e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65239 - "GET /api/projects/proj_user_0cec66a7da6e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65323 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65322 - "POST /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65327 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65329 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/jobs/mwjob_1899993fde771e9d9f635033 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65326 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65331 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/saved HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65333 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/mwjob_1899993fde771e9d9f635033/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65335 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/authoring-handoff/full-draft-candidates/mwjob_1899993fde771e9d9f635033/source-policy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65351 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65353 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65357 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65356 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/reconciliation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65436 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65438 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65441 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65442 - "GET /api/projects/proj_user_0cec66a7da6e/protocol-workflow/study-definitions/study%3Av3%3Af76f9971b2e912d7b623f022baf31a67/manuscript-draft/office-draft/snapshots/office-save%3Ae5451b72-2687-4f60-846e-d8582c6bb740/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49533 - "GET /api/projects/proj_user_0cec66a7da6e/medical-writing/full-drafts/current HTTP/1.1" 200 OK

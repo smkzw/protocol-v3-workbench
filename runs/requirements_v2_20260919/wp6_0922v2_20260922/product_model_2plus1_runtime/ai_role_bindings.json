@@ -1,0 +1,58 @@
+{
+  "bindings": {
+    "independent_ai": {
+      "capability_evidence_model": "",
+      "capability_evidence_profile_id": "",
+      "capability_reason": "",
+      "capability_status": "unverified",
+      "capability_verified_at": "",
+      "enabled": true,
+      "model": "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+      "profile_id": "independent_ai__mtplx_qwen38_flash_next_speed",
+      "reasoning_effort": "medium",
+      "role_id": "independent_ai",
+      "thinking": "enabled"
+    },
+    "ocr": {
+      "capability_evidence_model": "",
+      "capability_evidence_profile_id": "",
+      "capability_reason": "专用 OCR 模型已进入白名单",
+      "capability_status": "specialized_whitelisted",
+      "capability_verified_at": "",
+      "enabled": true,
+      "model": "PaddleOCR-VL-1.6",
+      "profile_id": "ocr_paddle_official",
+      "reasoning_effort": "low",
+      "role_id": "ocr",
+      "thinking": "disabled"
+    },
+    "translation_body": {
+      "capability_evidence_model": "",
+      "capability_evidence_profile_id": "",
+      "capability_reason": "",
+      "capability_status": "unverified",
+      "capability_verified_at": "",
+      "enabled": true,
+      "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
+      "profile_id": "translation_body_local_omlx",
+      "reasoning_effort": "low",
+      "role_id": "translation_body",
+      "thinking": "disabled"
+    },
+    "translation_support": {
+      "capability_evidence_model": "",
+      "capability_evidence_profile_id": "",
+      "capability_reason": "",
+      "capability_status": "unverified",
+      "capability_verified_at": "",
+      "enabled": true,
+      "model": "deepseek-flash",
+      "profile_id": "translation_support__deepseek_gateway",
+      "reasoning_effort": "max",
+      "role_id": "translation_support",
+      "thinking": "enabled"
+    }
+  },
+  "revision": 5,
+  "schema_version": "ai_role_bindings_v2"
+}

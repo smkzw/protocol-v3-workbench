@@ -1,0 +1,2446 @@
+{
+  "plan": {
+    "schema_version": "medical_writing_protocol_assembly_plan_v1",
+    "plan_id": "protocol_assembly_plan_ace846adc197b5363d2e5d3c",
+    "revision": 2,
+    "project_id": "proj_user_6e4142d7822b",
+    "source_definition_id": "mwdefinition_ace846adc197b5363d2e",
+    "source_definition_revision": 4,
+    "source_definition_sha256": "20fc48105f14cc3c9c1be9a671cf2d281e69aa8cfe063eecdd7c3f2227d53aa9",
+    "modules": [
+      {
+        "module_id": "core.population_endpoints",
+        "applicability": "required",
+        "reason": "required protocol module is bound to authoritative facts",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.population_summary",
+            "fact_path": "picos.population_summary",
+            "value_sha256": "b1997de3f8e2d56bf8877318df30676170d922c4933b848c50682894e72515f3"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.primary_endpoint",
+            "fact_path": "picos.primary_endpoint",
+            "value_sha256": "3b927dea3bf6bc1ede2cf3411dccf20fbc701eae05374f8723043bfd489143a0"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "69b28c2e01614e94f119d1bc2bb21026c29785cf6fc52befdad121c1b16509e3"
+      },
+      {
+        "module_id": "core.protocol_identity",
+        "applicability": "required",
+        "reason": "required protocol module is bound to authoritative facts",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.protocol_id",
+            "fact_path": "framing.protocol_id",
+            "value_sha256": "1ab6e5cba3fef8a5d03ca42196c527b5cb599f045107b2f1a1f766e1140fb5ad"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.indication",
+            "fact_path": "framing.indication",
+            "value_sha256": "72eec29c9b3759cec96e79d85a69f7709bf88d4c4faca2f40cfafd25b78c7de1"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "9716d786ead8abf7a4e7b56838eb01f819daa6b29a9cff82b7abd71c77d8de4f"
+      },
+      {
+        "module_id": "design.adaptive",
+        "applicability": "not_applicable",
+        "reason": "authoritative typed design excludes the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.adaptive_design",
+            "fact_path": "framing.structured_design.adaptive_design",
+            "value_sha256": "a98ec1bc530be2cc6e22ac9490f7986dbfaa621e21dc4c1bdb6053b88e664ff3"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "56aa72441af1b7b874432c0e5de519a2d6260870242a0abf692185b694734a03"
+      },
+      {
+        "module_id": "design.allocation_model",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative allocation model enables the design module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.assignment_model",
+            "fact_path": "framing.structured_design.assignment_model",
+            "value_sha256": "217869f48bb242b2a5285206b087bb18caa1bfe184a19be2c98699daf5d8d483"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "d100463be68fc9eec53ed8cfa333d71224096dde8f320519d29de80adbbfddbb"
+      },
+      {
+        "module_id": "design.blinding",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative design choice enables the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.blinding_mode",
+            "fact_path": "framing.structured_design.blinding_mode",
+            "value_sha256": "4bdfa1998c565677457cd1c95ba753480042d6d7ca1cefb91596164840a06767"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "e5552f9484c0a637c5ae5446ab651fee56fae90f6c540b0cdd08638db9ad7e7d"
+      },
+      {
+        "module_id": "design.comparator_control",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative design choice enables the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.comparator_type",
+            "fact_path": "framing.structured_design.comparator_type",
+            "value_sha256": "db0fb2bf5ebc424454c3e11b5ee8bfb43af24a52e561aa49e94143831dc6fd93"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "1f945deee53e68b6e5669f98fced2d75105477536d8ac52e68549e69e528bfac"
+      },
+      {
+        "module_id": "design.crossover",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative typed design planned status is unresolved",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.crossover",
+            "fact_path": "framing.structured_design.crossover",
+            "value_sha256": "290a8abac3ed75064a818eb6826620d45ddaea32e1e3a22f127b1042b6e959e3"
+          }
+        ],
+        "unresolved_questions": [
+          {
+            "question_id": "design.crossover:framing.structured_design.crossover.planned:design_crossover_planned_required",
+            "code": "design_crossover_planned_required",
+            "fact_path": "framing.structured_design.crossover.planned",
+            "prompt": "Confirm whether this optional complex design is planned before finalizing its protocol content. The unresolved choice does not prevent creation of a substantive working draft.",
+            "severity": "warning"
+          }
+        ],
+        "blocking_severity": "warning",
+        "deterministic_projection_allowed": false,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "3cf67ea2a2fd670a0fc27f028a622af0d814b1700a8701ca509aa17427951931"
+      },
+      {
+        "module_id": "design.interim_analysis",
+        "applicability": "not_applicable",
+        "reason": "authoritative planned flag excludes the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.interim_analysis.planned",
+            "fact_path": "framing.structured_design.interim_analysis.planned",
+            "value_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "a93459a15eb6db703b3333002313ebfe43020812d30fad8ae7b7bfeaa6257770"
+      },
+      {
+        "module_id": "design.open_label_extension",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative typed design planned status is unresolved",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.open_label_extension",
+            "fact_path": "framing.structured_design.open_label_extension",
+            "value_sha256": "bef9f23c44c3f8f685345910b509161991e5e2ffcbbd6bc54d2616316cee6e5b"
+          }
+        ],
+        "unresolved_questions": [
+          {
+            "question_id": "design.open_label_extension:framing.structured_design.open_label_extension.planned:design_open_label_extension_planned_required",
+            "code": "design_open_label_extension_planned_required",
+            "fact_path": "framing.structured_design.open_label_extension.planned",
+            "prompt": "Confirm whether this optional complex design is planned before finalizing its protocol content. The unresolved choice does not prevent creation of a substantive working draft.",
+            "severity": "warning"
+          }
+        ],
+        "blocking_severity": "warning",
+        "deterministic_projection_allowed": false,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "39e7324e2c4e9059f46d61d91f3377d774c275fbd674a7406c70b86fd56f931b"
+      },
+      {
+        "module_id": "design.phase1.ba_be",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "1df185d3df9eff0bc6852d977c101ec92ae01f1897c6230eba2b0874f61ff2fd"
+      },
+      {
+        "module_id": "design.phase1.ddi",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "2acb68aeccc86a6f79f8d70433f940234d711480831a1fbf764bcc837dd58bf7"
+      },
+      {
+        "module_id": "design.phase1.first_in_patient",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "07059fc57c7f385b1f5431698121229d836ce986fa06cf016a269687f8b99627"
+      },
+      {
+        "module_id": "design.phase1.food_effect",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "ece23079bbce2a6422d863d2278dfc2a54d0ee1768ffd43bbe5331ff5d791422"
+      },
+      {
+        "module_id": "design.phase1.hepatic_impairment",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "3534c398e91537706c62a3f00e44fe6019a91c34546f27e2af6fdd85eb9eeb61"
+      },
+      {
+        "module_id": "design.phase1.mad",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "a68285c7b014088a607adbeaf06cb008ea8a7c1cfc735925a5f01a8e8fdd272b"
+      },
+      {
+        "module_id": "design.phase1.mass_balance",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "d3091e464f2887bf7fd03394c5d0458ac47e1d78f7e53a6fae5e34bee6b4dfc0"
+      },
+      {
+        "module_id": "design.phase1.other",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "44621d3a233863479d4ec9079aa0c325047058d194854207e50719090b587a3c"
+      },
+      {
+        "module_id": "design.phase1.qt",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "71ce1914b9af1b6f086d1af3691fc2f9772325ee1025d36981606a7a35244bba"
+      },
+      {
+        "module_id": "design.phase1.renal_impairment",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "7361f6581585768d6c6a4776f56e120550cba4ab15e4a44cb6583e3ef6db8ad5"
+      },
+      {
+        "module_id": "design.phase1.sad",
+        "applicability": "not_applicable",
+        "reason": "authoritative study phase excludes phase-I part modules",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "77a6808f4eeb7d4e4d41e3d3462bc5ff69dcaa3a0608e8218d1004ad270e3bef"
+      },
+      {
+        "module_id": "design.randomization",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative design choice enables the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.randomization_mode",
+            "fact_path": "framing.structured_design.randomization_mode",
+            "value_sha256": "715774f0b054b513bc23108134d7e02f1a46a6f5871d6faa90c06f38e241fc56"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "b57ebd27923194055d22dfd1f489c089e2358f750a3d7cefdadf3f8797e7f0bc"
+      },
+      {
+        "module_id": "design.sample_size_reestimation",
+        "applicability": "not_applicable",
+        "reason": "authoritative typed design excludes the conditional module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.sample_size_reestimation",
+            "fact_path": "framing.structured_design.sample_size_reestimation",
+            "value_sha256": "20e92c39fb275963cd27b9c81ba9a66d579e7325dcca0e953d7c9a8dad4cec55"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "8164de611dbc11d4b3eeaf1349216af32bc604a07ad2c4bedcda68da14322732"
+      },
+      {
+        "module_id": "design.treatment_switch",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative typed design planned status is unresolved",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.treatment_switch",
+            "fact_path": "framing.structured_design.treatment_switch",
+            "value_sha256": "744bd5df8a0e09df8c888daafbe51b5e6a6bb656a9b3607fd02442f78c2370e7"
+          }
+        ],
+        "unresolved_questions": [
+          {
+            "question_id": "design.treatment_switch:framing.structured_design.treatment_switch.planned:design_treatment_switch_planned_required",
+            "code": "design_treatment_switch_planned_required",
+            "fact_path": "framing.structured_design.treatment_switch.planned",
+            "prompt": "Confirm whether this optional complex design is planned before finalizing its protocol content. The unresolved choice does not prevent creation of a substantive working draft.",
+            "severity": "warning"
+          }
+        ],
+        "blocking_severity": "warning",
+        "deterministic_projection_allowed": false,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "5db08059f15e57065d000bce447319acbf4909532cf8e5eb561395848c7cd680"
+      },
+      {
+        "module_id": "evidence.systemic_oral_defaults",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative route and exposure permit systemic oral defaults",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.administration_routes",
+            "fact_path": "framing.product_profile.administration_routes",
+            "value_sha256": "d8a3fb16763eee407f0393847ed244ab6bd68030865250911e2cb21ed4f607a7"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.exposure_scope",
+            "fact_path": "framing.product_profile.exposure_scope",
+            "value_sha256": "d75d1631021a043163873e1ad00380736a51d46c261ccc90cddf9b1876786228"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "evidence_intent",
+          "ai_candidate_intent"
+        ],
+        "resolution_sha256": "b6d7b224735e16651df0f56a1b0985774532f80672305e314ecfdb3b98061f7b"
+      },
+      {
+        "module_id": "governance.dmc",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative planned flag is unresolved",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.dmc_planned",
+            "fact_path": "framing.structured_design.dmc_planned",
+            "value_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+          }
+        ],
+        "unresolved_questions": [
+          {
+            "question_id": "governance.dmc:framing.structured_design.dmc_planned:authoritative_fact_required",
+            "code": "authoritative_fact_required",
+            "fact_path": "framing.structured_design.dmc_planned",
+            "prompt": "Confirm whether this optional module is planned before finalizing its protocol content. The unresolved choice does not prevent creation of a substantive working draft.",
+            "severity": "warning"
+          }
+        ],
+        "blocking_severity": "warning",
+        "deterministic_projection_allowed": false,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "674f68ab9fc1748e9b9f11fbdadfb32f1328972e402103958bbd1100708add51"
+      },
+      {
+        "module_id": "governance.src",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative planned flag is unresolved",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.src_planned",
+            "fact_path": "framing.structured_design.src_planned",
+            "value_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+          }
+        ],
+        "unresolved_questions": [
+          {
+            "question_id": "governance.src:framing.structured_design.src_planned:authoritative_fact_required",
+            "code": "authoritative_fact_required",
+            "fact_path": "framing.structured_design.src_planned",
+            "prompt": "Confirm whether this optional module is planned before finalizing its protocol content. The unresolved choice does not prevent creation of a substantive working draft.",
+            "severity": "warning"
+          }
+        ],
+        "blocking_severity": "warning",
+        "deterministic_projection_allowed": false,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "21c3f3906d87a72ce3f801e1d71c4ad1f61e33d8fd70132c5cebf8baef03c3b3"
+      },
+      {
+        "module_id": "intervention.active_comparator_regimen",
+        "applicability": "conditional_applicable",
+        "reason": "active-comparator role requires one authoritative regimen",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.comparator_type",
+            "fact_path": "framing.structured_design.comparator_type",
+            "value_sha256": "db0fb2bf5ebc424454c3e11b5ee8bfb43af24a52e561aa49e94143831dc6fd93"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "1f5e3976bfd5e8f0290072f453f82d38b2e2dbd5b0127fa2ff4e5c306c5417f8"
+      },
+      {
+        "module_id": "intervention.background_treatment",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative non-IP rule class enables its role-distinct module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.non_ip_treatment_rules",
+            "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+            "value_sha256": "0e5614fc698645c9f9435167f2a3ce503ee0a5098d249920b9b9642ac168d836"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "e1015d8adf604b1b5533e2ae8c2b8b80bfb1f4cc3937458cc88b05391531e78e"
+      },
+      {
+        "module_id": "intervention.investigational_product_dose_actions",
+        "applicability": "not_applicable",
+        "reason": "authoritative IP policy has no planned dose adjustment",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_adjustment_policy",
+            "fact_path": "picos.intervention_rules.ip_adjustment_policy",
+            "value_sha256": "e7375875972c0015ec917e0c1cdea3754446b41776ed5acb1f82b5bcdaba666e"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_action_rules",
+            "fact_path": "picos.intervention_rules.ip_action_rules",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "844a4dd8f03473f42adcec86f0137ab325d5c4c289f6bfc11132d413dea2aff8"
+      },
+      {
+        "module_id": "intervention.investigational_product_regimen",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative investigational-product regimen is role-bound",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "ecec79e33086a6ede9ac908902f703f24fbd50c04baa8ffb5d9c83d3555138b7"
+      },
+      {
+        "module_id": "intervention.permitted_concomitant_treatment",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative non-IP rule class enables its role-distinct module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.non_ip_treatment_rules",
+            "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+            "value_sha256": "0e5614fc698645c9f9435167f2a3ce503ee0a5098d249920b9b9642ac168d836"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "767923f84926ca5584e223f937e5e52be01016e9873abd40ab46ff810d7c54b8"
+      },
+      {
+        "module_id": "intervention.placebo_regimen",
+        "applicability": "conditional_applicable",
+        "reason": "placebo remains a distinct intervention role",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.comparator_type",
+            "fact_path": "framing.structured_design.comparator_type",
+            "value_sha256": "db0fb2bf5ebc424454c3e11b5ee8bfb43af24a52e561aa49e94143831dc6fd93"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "a7cfb43ee110d193a2ebe16d1d08cd2d9f05950a6b3566cf948f3f977fcaea69"
+      },
+      {
+        "module_id": "intervention.prohibited_concomitant_treatment",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative non-IP rule class enables its role-distinct module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.non_ip_treatment_rules",
+            "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+            "value_sha256": "0e5614fc698645c9f9435167f2a3ce503ee0a5098d249920b9b9642ac168d836"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "26865f4614b2f7e63d5f6c4a28fb85817f5844a71c0c445e67399daeb0423052"
+      },
+      {
+        "module_id": "intervention.rescue_treatment",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative non-IP rule class enables its role-distinct module",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.non_ip_treatment_rules",
+            "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+            "value_sha256": "0e5614fc698645c9f9435167f2a3ce503ee0a5098d249920b9b9642ac168d836"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "fb87863a116f5789d0df22069b91f3cbc3b54657ab4cb92ba326d9ecd98f9329"
+      },
+      {
+        "module_id": "product.dosage_form",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative product facet enables route-specific projection",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.dosage_forms",
+            "fact_path": "framing.product_profile.dosage_forms",
+            "value_sha256": "6468ca7bb7ca5a2833c8da2a482db2f5abefd3a7c403ef398be0241c96c9032d"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "806fc953cb858fd625ae2d7757c38c95e3317697d7431de6f50acd8cee12b1a8"
+      },
+      {
+        "module_id": "product.exposure_scope",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative product facet enables route-specific projection",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.exposure_scope",
+            "fact_path": "framing.product_profile.exposure_scope",
+            "value_sha256": "d75d1631021a043163873e1ad00380736a51d46c261ccc90cddf9b1876786228"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "3b4510b01a0f2562dc2634b23fc613e18eaa8c93108c52fa3916b295bd039205"
+      },
+      {
+        "module_id": "product.modality",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative product facet enables route-specific projection",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.technology_type",
+            "fact_path": "framing.product_profile.technology_type",
+            "value_sha256": "9fbfd270f1e681094821fa65c0afc7aa843b2ec18488f4d7c98b50a488951f22"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "03e673de710d9813573f88f11bc575bee9ad4021f562515dc4db1a52bc9ac45d"
+      },
+      {
+        "module_id": "product.route",
+        "applicability": "conditional_applicable",
+        "reason": "authoritative product facet enables route-specific projection",
+        "fact_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.administration_routes",
+            "fact_path": "framing.product_profile.administration_routes",
+            "value_sha256": "d8a3fb16763eee407f0393847ed244ab6bd68030865250911e2cb21ed4f607a7"
+          }
+        ],
+        "unresolved_questions": [],
+        "blocking_severity": "none",
+        "deterministic_projection_allowed": true,
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "resolution_sha256": "e3a1eca5896c79822c7de2e92c08a22da2507542c0604f3d3b7e66c7861412e1"
+      }
+    ],
+    "design_drivers": [
+      {
+        "driver_id": "core.indication",
+        "driver_kind": "indication",
+        "decision_state": "required",
+        "fact_path": "framing.indication",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.indication",
+            "fact_path": "framing.indication",
+            "value_sha256": "72eec29c9b3759cec96e79d85a69f7709bf88d4c4faca2f40cfafd25b78c7de1"
+          }
+        ],
+        "rationale": "authoritative fact is required across the targeted projections",
+        "value_summary": "甲氨蝶呤应答不足的活动性类风湿关节炎",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "4030a889f8c6f5c59a43e0d0f33bd53c4564f471c840c2e28540fd55006811af"
+      },
+      {
+        "driver_id": "core.phase",
+        "driver_kind": "phase",
+        "decision_state": "required",
+        "fact_path": "framing.study_phase",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative fact is required across the targeted projections",
+        "value_summary": "III期",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "2a9dce4ed0331408999a5b02f0f2eef997649e782ccff831328e6ec1a1945f8f"
+      },
+      {
+        "driver_id": "design.adaptive",
+        "driver_kind": "adaptive_design",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.adaptive_design",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.adaptive_design",
+            "fact_path": "framing.structured_design.adaptive_design",
+            "value_sha256": "a98ec1bc530be2cc6e22ac9490f7986dbfaa621e21dc4c1bdb6053b88e664ff3"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "not planned",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "d9ac780000ca65b148a7b0d4f2767eb5693237c8321960d7c388d2eeb5d38824"
+      },
+      {
+        "driver_id": "design.allocation",
+        "driver_kind": "allocation",
+        "decision_state": "design_driven",
+        "fact_path": "framing.structured_design.assignment_model",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.assignment_model",
+            "fact_path": "framing.structured_design.assignment_model",
+            "value_sha256": "217869f48bb242b2a5285206b087bb18caa1bfe184a19be2c98699daf5d8d483"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "平行组",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "8f2907c8ee6230329bef8801a79b4f9a538ba61f5e79ca4ed4ed2cc253eb851f"
+      },
+      {
+        "driver_id": "design.blinding",
+        "driver_kind": "blinding",
+        "decision_state": "design_driven",
+        "fact_path": "framing.structured_design.blinding_mode",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.blinding_mode",
+            "fact_path": "framing.structured_design.blinding_mode",
+            "value_sha256": "4bdfa1998c565677457cd1c95ba753480042d6d7ca1cefb91596164840a06767"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "double_blind",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "2916b2ea29e2fce4e61e6c2b2b9a6c639ca9e2df59209589b487893cedff643f"
+      },
+      {
+        "driver_id": "design.control",
+        "driver_kind": "control",
+        "decision_state": "design_driven",
+        "fact_path": "framing.structured_design.comparator_type",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.comparator_type",
+            "fact_path": "framing.structured_design.comparator_type",
+            "value_sha256": "db0fb2bf5ebc424454c3e11b5ee8bfb43af24a52e561aa49e94143831dc6fd93"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "active",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "1ff10cd1c5e65a03444de490e45c164201df932cf1dc5cd12a58d5855de8effc"
+      },
+      {
+        "driver_id": "design.crossover",
+        "driver_kind": "crossover",
+        "decision_state": "unknown",
+        "fact_path": "framing.structured_design.crossover",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.crossover",
+            "fact_path": "framing.structured_design.crossover",
+            "value_sha256": "290a8abac3ed75064a818eb6826620d45ddaea32e1e3a22f127b1042b6e959e3"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "5bde720aad86b98f3f9403f84ac64b898a739a75fcf05b9ac7e4bd1b20985e56"
+      },
+      {
+        "driver_id": "design.interim_analysis",
+        "driver_kind": "interim_analysis",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.interim_analysis.planned",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.interim_analysis.planned",
+            "fact_path": "framing.structured_design.interim_analysis.planned",
+            "value_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "not planned",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "c53063f3e5ab16f0a8bbdebde679fca30df9bb37e6af23c4e2243fd173d06581"
+      },
+      {
+        "driver_id": "design.open_label_extension",
+        "driver_kind": "open_label_extension",
+        "decision_state": "unknown",
+        "fact_path": "framing.structured_design.open_label_extension",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.open_label_extension",
+            "fact_path": "framing.structured_design.open_label_extension",
+            "value_sha256": "bef9f23c44c3f8f685345910b509161991e5e2ffcbbd6bc54d2616316cee6e5b"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "aa5102a19265159b03e6dae3ec5d4ac9fdf9b04b913e9816349886fa6cdfe000"
+      },
+      {
+        "driver_id": "design.phase1_part.ba_be",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "964b2654028f3ca7e9fa819eec70aba97432f1481d4786614eadb74d4e599d62"
+      },
+      {
+        "driver_id": "design.phase1_part.ddi",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "cdfa61ea33fe78ff7e7ea1d71c5c802b7f7a91955857baea2fdd8731fae448a8"
+      },
+      {
+        "driver_id": "design.phase1_part.first_in_patient",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "34dd1a6ab871ad5bcde1e9cf902db327909059b5d3c015044a13106f6dd56b0f"
+      },
+      {
+        "driver_id": "design.phase1_part.food_effect",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "010b3f3e3b5b21ef85b459ede00872e2568573aa205c1d4939a7639cd7fef917"
+      },
+      {
+        "driver_id": "design.phase1_part.hepatic_impairment",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "340ad580e908a81b552a9f1611b43c7a1bf90c6d418d16f38710d0b4a98327ad"
+      },
+      {
+        "driver_id": "design.phase1_part.mad",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "d8eb11966a2006fa2a3e34ce3692c779f57e57707f3bc0d7fa89333f75b5041f"
+      },
+      {
+        "driver_id": "design.phase1_part.mass_balance",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "ef1edbb5f4fe8440e764ee8f622ee3162385c2ee11514c422e05a53508166fb5"
+      },
+      {
+        "driver_id": "design.phase1_part.qt",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "dd8fc37bdd100cba9fe85bb117b18bbd9643997c3654bb34c732e92eb043ecdc"
+      },
+      {
+        "driver_id": "design.phase1_part.renal_impairment",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "a20cc39704b4124bb15270567076291c946086171a92b43d4ce576040203b253"
+      },
+      {
+        "driver_id": "design.phase1_part.sad",
+        "driver_kind": "phase1_part",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.phase1_parts",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.phase1_parts",
+            "fact_path": "framing.structured_design.phase1_parts",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.study_phase",
+            "fact_path": "framing.study_phase",
+            "value_sha256": "703c7b06b3d856118f7f1417e9de8dae24bf0c870f319236d2cef05b4e421ae5"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "study phase excludes phase-I parts",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "48dd54e44e51df329333a191219cec269bec89fd1432f1db926bf0bedf26c26f"
+      },
+      {
+        "driver_id": "design.randomization",
+        "driver_kind": "randomization",
+        "decision_state": "design_driven",
+        "fact_path": "framing.structured_design.randomization_mode",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.randomization_mode",
+            "fact_path": "framing.structured_design.randomization_mode",
+            "value_sha256": "715774f0b054b513bc23108134d7e02f1a46a6f5871d6faa90c06f38e241fc56"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "randomized",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "52dd552f400237693ac2a23f6a8fd1a7098d1c2cdc33938b3b289c66798340f1"
+      },
+      {
+        "driver_id": "design.sample_size_reestimation",
+        "driver_kind": "sample_size_reestimation",
+        "decision_state": "not_applicable",
+        "fact_path": "framing.structured_design.sample_size_reestimation",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.sample_size_reestimation",
+            "fact_path": "framing.structured_design.sample_size_reestimation",
+            "value_sha256": "20e92c39fb275963cd27b9c81ba9a66d579e7325dcca0e953d7c9a8dad4cec55"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "not planned",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "8ea5d16358a13fb343c1a153abe7eeb7ddbb06768dd911dafb6dba898cfad584"
+      },
+      {
+        "driver_id": "design.treatment_switch",
+        "driver_kind": "treatment_switch",
+        "decision_state": "unknown",
+        "fact_path": "framing.structured_design.treatment_switch",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.treatment_switch",
+            "fact_path": "framing.structured_design.treatment_switch",
+            "value_sha256": "744bd5df8a0e09df8c888daafbe51b5e6a6bb656a9b3607fd02442f78c2370e7"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "eda614d4096b7f85784cdb94ce61f05430ed26c216a2aa1605c63f8328208058"
+      },
+      {
+        "driver_id": "governance.dmc",
+        "driver_kind": "dmc",
+        "decision_state": "unknown",
+        "fact_path": "framing.structured_design.dmc_planned",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.dmc_planned",
+            "fact_path": "framing.structured_design.dmc_planned",
+            "value_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "3123440bbca6514096dd822007cfb6c372f5e8c41d655f493bf287f1da634e93"
+      },
+      {
+        "driver_id": "governance.src",
+        "driver_kind": "src",
+        "decision_state": "unknown",
+        "fact_path": "framing.structured_design.src_planned",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.structured_design.src_planned",
+            "fact_path": "framing.structured_design.src_planned",
+            "value_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "e4dca98d0d45d05d90d512d3501a52dc952d0ffdd75e4e653f2f7b2e426530b3"
+      },
+      {
+        "driver_id": "intervention.active_comparator",
+        "driver_kind": "active_comparator",
+        "decision_state": "design_driven",
+        "fact_path": "picos.intervention_rules.ip_regimens",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "1 role-bound regimen(s)",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "559aecfa01e6c66baecfea00639d4ca25dfacbba3a37ac72ec426a3ea7549d10"
+      },
+      {
+        "driver_id": "intervention.background_treatment",
+        "driver_kind": "background_treatment",
+        "decision_state": "design_driven",
+        "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.non_ip_treatment_rules",
+            "fact_path": "picos.intervention_rules.non_ip_treatment_rules",
+            "value_sha256": "0e5614fc698645c9f9435167f2a3ce503ee0a5098d249920b9b9642ac168d836"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "1 background treatment rule(s)",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "272c9d9b8abe893769166f1ddee0301a68f825edd42a778baccec6c8df8c1c7d"
+      },
+      {
+        "driver_id": "intervention.dose_action",
+        "driver_kind": "dose_action",
+        "decision_state": "not_applicable",
+        "fact_path": "picos.intervention_rules.ip_adjustment_policy",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_adjustment_policy",
+            "fact_path": "picos.intervention_rules.ip_adjustment_policy",
+            "value_sha256": "e7375875972c0015ec917e0c1cdea3754446b41776ed5acb1f82b5bcdaba666e"
+          }
+        ],
+        "rationale": "authoritative design fact excludes the targeted conditional content",
+        "value_summary": "no_planned_adjustment",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "b6bf02b144ca60f9db935c65b8ad1e6d90d04e52ae52499bc95fd3b5c397bc9f"
+      },
+      {
+        "driver_id": "intervention.ip_regimen",
+        "driver_kind": "ip_regimen",
+        "decision_state": "design_driven",
+        "fact_path": "picos.intervention_rules.ip_regimens",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "1 role-bound regimen(s)",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "5e6914ad3f6f3dd482133d0d19b8e4b6604753c5b6fd73a09e5b538e4cebbb94"
+      },
+      {
+        "driver_id": "intervention.placebo",
+        "driver_kind": "placebo",
+        "decision_state": "design_driven",
+        "fact_path": "picos.intervention_rules.ip_regimens",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.intervention_rules.ip_regimens",
+            "fact_path": "picos.intervention_rules.ip_regimens",
+            "value_sha256": "5cb0570d291cf5da5bdcddea39cf061b2e74a83aab6b1b4ce7abab7ed8767bf6"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "2 role-bound regimen(s)",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "5076b5ede28534ac52d84d806685fce36fe09a3ec70b748aedf211ffa65eb956"
+      },
+      {
+        "driver_id": "operations.soa",
+        "driver_kind": "soa",
+        "decision_state": "design_driven",
+        "fact_path": "picos.visit_strategy",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.visit_strategy",
+            "fact_path": "picos.visit_strategy",
+            "value_sha256": "324d4dcb7a07a7f4ecfc1c3ac31870c3ba9ecf4dc1a251e33d60af99374c1891"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "筛选、基线及第2、4、8、12、16、20、24周访视，第28周安全性随访。",
+        "projection_targets": [
+          "soa",
+          "evidence_intent",
+          "ai_candidate_intent"
+        ],
+        "driver_sha256": "e919ca616589ee0d96d3cdb9dba956852e6545a12588aea121bd5de0f7a9638f"
+      },
+      {
+        "driver_id": "operations.study_schema_flowchart",
+        "driver_kind": "study_schema_flowchart",
+        "decision_state": "unknown",
+        "fact_path": "study_schema",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:study_schema",
+            "fact_path": "study_schema",
+            "value_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent"
+        ],
+        "driver_sha256": "0fb360efb6e976822c44ee1ec2f82aa0ed3853359d80a81cd6ef13ae0181e114"
+      },
+      {
+        "driver_id": "product.dosage_form",
+        "driver_kind": "dosage_form",
+        "decision_state": "design_driven",
+        "fact_path": "framing.product_profile.dosage_forms",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.dosage_forms",
+            "fact_path": "framing.product_profile.dosage_forms",
+            "value_sha256": "6468ca7bb7ca5a2833c8da2a482db2f5abefd3a7c403ef398be0241c96c9032d"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "片剂",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "f55ab5dd5d1e64e8ca62541a0a3be7dbd7934f8a608d0d1bbf67bfb10de7d43e"
+      },
+      {
+        "driver_id": "product.exposure_scope",
+        "driver_kind": "exposure_scope",
+        "decision_state": "design_driven",
+        "fact_path": "framing.product_profile.exposure_scope",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.exposure_scope",
+            "fact_path": "framing.product_profile.exposure_scope",
+            "value_sha256": "d75d1631021a043163873e1ad00380736a51d46c261ccc90cddf9b1876786228"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "systemic",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "5e73037dc18dfbaef6123f667595c0c35ee97a0328b8aa36eb18f64539f6fe3b"
+      },
+      {
+        "driver_id": "product.modality",
+        "driver_kind": "drug_modality",
+        "decision_state": "design_driven",
+        "fact_path": "framing.product_profile.technology_type",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.technology_type",
+            "fact_path": "framing.product_profile.technology_type",
+            "value_sha256": "9fbfd270f1e681094821fa65c0afc7aa843b2ec18488f4d7c98b50a488951f22"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "small_molecule",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "0d6f0dab9ba0575e194904bceb2ea158a1a5119bd88114768bca675134538bd6"
+      },
+      {
+        "driver_id": "product.route",
+        "driver_kind": "drug_route",
+        "decision_state": "design_driven",
+        "fact_path": "framing.product_profile.administration_routes",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.administration_routes",
+            "fact_path": "framing.product_profile.administration_routes",
+            "value_sha256": "d8a3fb16763eee407f0393847ed244ab6bd68030865250911e2cb21ed4f607a7"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "口服",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "1da50a13990d0322b74e85c0a9850de7dbc4214712dee4b1c1be221bb3645a30"
+      },
+      {
+        "driver_id": "safety.aesi",
+        "driver_kind": "aesi",
+        "decision_state": "design_driven",
+        "fact_path": "picos.aesi_definitions",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.aesi_definitions",
+            "fact_path": "picos.aesi_definitions",
+            "value_sha256": "172e787dac88150cfb71f5d16b1498a93c2226d8c61ac253f5597becd603a1a7"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "1 AESI definition(s)",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "5e16d64e9f21c359de643ad4e2c9c50d0904755b80c8b4dfbc7f43157572039d"
+      },
+      {
+        "driver_id": "science.pk_pd",
+        "driver_kind": "pk_pd",
+        "decision_state": "unknown",
+        "fact_path": "framing.product_profile.pk_pd_considerations",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:framing.product_profile.pk_pd_considerations",
+            "fact_path": "framing.product_profile.pk_pd_considerations",
+            "value_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        ],
+        "rationale": "authoritative design fact is unresolved; consumers must not infer a clinical default",
+        "value_summary": "",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "soa",
+          "study_schema_flowchart",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "192dbb6415a975a495c491f20a6c5fe2bf17ba4801bb6b36c0b18af86e0c1a83"
+      },
+      {
+        "driver_id": "statistics.analysis_set",
+        "driver_kind": "analysis_set",
+        "decision_state": "design_driven",
+        "fact_path": "picos.statistical_strategy",
+        "source_references": [
+          {
+            "fact_id": "study_definition:mwdefinition_ace846adc197b5363d2e:picos.statistical_strategy",
+            "fact_path": "picos.statistical_strategy",
+            "value_sha256": "d53a0b0ba09356edab0c60457b0a44c86a70f200171454f655ce5d780a7366b2"
+          }
+        ],
+        "rationale": "authoritative design fact shapes the targeted projections",
+        "value_summary": "全分析集与符合方案集共同支持主要非劣效结论；以组间ACR20率差的双侧95%置信区间下限高于-12%判定非劣效。不开展期中分析；安全性集按实际治疗分析。",
+        "projection_targets": [
+          "synopsis",
+          "sections_toc",
+          "evidence_intent",
+          "ai_candidate_intent",
+          "docx_toc"
+        ],
+        "driver_sha256": "e5c5ce4d9cee3df598aaa9746d5b5e211fd6fedd3a093e18574eb4ad5d144914"
+      }
+    ],
+    "projection_manifest": [
+      {
+        "projection": "synopsis",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.blinding",
+          "design.comparator_control",
+          "design.randomization",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "design.sample_size_reestimation",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "ea4c0957de7da7fd3b4d93b1fea8dda141269c4ad6cd9f18dd43297f5b88d6ae"
+      },
+      {
+        "projection": "sections_toc",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.blinding",
+          "design.comparator_control",
+          "design.randomization",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "design.sample_size_reestimation",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "627db25f129a1b56861c452025333e757aa5e84f6c181e99615d4fb2109b8f81"
+      },
+      {
+        "projection": "soa",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.comparator_control",
+          "design.randomization",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "662be35db6465884e8dbcbf820430f5550e89ed9e6a3b714052a281c4d99dbd5"
+      },
+      {
+        "projection": "study_schema_flowchart",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.comparator_control",
+          "design.randomization",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "d4029182ce0ac13192c39b1546e0a798057d6255acded13a5e6c7578412fdd66"
+      },
+      {
+        "projection": "evidence_intent",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.blinding",
+          "design.comparator_control",
+          "design.randomization",
+          "evidence.systemic_oral_defaults",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "design.sample_size_reestimation",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "c8f50fdf41f74c3b13c75a8a2b8c6ac8dcaf8cd77045eac4c47a4f3c03fc4849"
+      },
+      {
+        "projection": "ai_candidate_intent",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.blinding",
+          "design.comparator_control",
+          "design.randomization",
+          "evidence.systemic_oral_defaults",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "design.sample_size_reestimation",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "d0ad2de0f4ec577fe775695b7d7f9867638842d4ac969ef76ef0951c5a3b0698"
+      },
+      {
+        "projection": "docx_toc",
+        "applicable_module_ids": [
+          "core.population_endpoints",
+          "core.protocol_identity",
+          "design.allocation_model",
+          "design.blinding",
+          "design.comparator_control",
+          "design.randomization",
+          "intervention.active_comparator_regimen",
+          "intervention.background_treatment",
+          "intervention.investigational_product_regimen",
+          "intervention.permitted_concomitant_treatment",
+          "intervention.placebo_regimen",
+          "intervention.prohibited_concomitant_treatment",
+          "intervention.rescue_treatment",
+          "product.dosage_form",
+          "product.exposure_scope",
+          "product.modality",
+          "product.route"
+        ],
+        "not_applicable_module_ids": [
+          "design.adaptive",
+          "design.interim_analysis",
+          "design.phase1.ba_be",
+          "design.phase1.ddi",
+          "design.phase1.first_in_patient",
+          "design.phase1.food_effect",
+          "design.phase1.hepatic_impairment",
+          "design.phase1.mad",
+          "design.phase1.mass_balance",
+          "design.phase1.other",
+          "design.phase1.qt",
+          "design.phase1.renal_impairment",
+          "design.phase1.sad",
+          "design.sample_size_reestimation",
+          "intervention.investigational_product_dose_actions"
+        ],
+        "unresolved_module_ids": [
+          "design.crossover",
+          "design.open_label_extension",
+          "design.treatment_switch",
+          "governance.dmc",
+          "governance.src"
+        ],
+        "content_sha256": "580765dec49957b74fb06b52c61a960481b474c0b2ab469c35a7f73aff1fa636"
+      }
+    ],
+    "previous_plan_revision": 1,
+    "affected_module_ids": [
+      "intervention.active_comparator_regimen",
+      "intervention.background_treatment",
+      "intervention.investigational_product_dose_actions",
+      "intervention.investigational_product_regimen",
+      "intervention.permitted_concomitant_treatment",
+      "intervention.placebo_regimen",
+      "intervention.prohibited_concomitant_treatment",
+      "intervention.rescue_treatment"
+    ],
+    "affected_projections": [
+      "synopsis",
+      "sections_toc",
+      "soa",
+      "study_schema_flowchart",
+      "evidence_intent",
+      "ai_candidate_intent",
+      "docx_toc"
+    ],
+    "confirmation_status": "draft",
+    "confirmation_kind": "author_plan_confirmation",
+    "created_by": "wp6_product_acceptance",
+    "created_at": "2026-09-22T15:39:47.664564Z",
+    "updated_by": "wp6_product_acceptance",
+    "updated_at": "2026-09-22T15:42:11.660787Z",
+    "confirmed_by": "",
+    "confirmed_at": null,
+    "state_sha256": "070cbaebebc4c019f74e79ea8bd567be9d8c3cff0fb57ce5671ccb1900537e14"
+  },
+  "previous_revision": 1,
+  "affected_module_ids": [
+    "intervention.active_comparator_regimen",
+    "intervention.background_treatment",
+    "intervention.investigational_product_dose_actions",
+    "intervention.investigational_product_regimen",
+    "intervention.permitted_concomitant_treatment",
+    "intervention.placebo_regimen",
+    "intervention.prohibited_concomitant_treatment",
+    "intervention.rescue_treatment"
+  ],
+  "affected_projections": [
+    "synopsis",
+    "sections_toc",
+    "soa",
+    "study_schema_flowchart",
+    "evidence_intent",
+    "ai_candidate_intent",
+    "docx_toc"
+  ],
+  "replayed": false
+}

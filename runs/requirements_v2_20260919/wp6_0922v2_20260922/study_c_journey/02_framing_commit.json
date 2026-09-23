@@ -1,0 +1,1400 @@
+{
+  "schema_version": "medical_writing_authoring_journey_v4",
+  "journey_id": "mwjourney_f76f9971b2e912d7b623",
+  "project_id": "proj_user_0cec66a7da6e",
+  "revision": 2,
+  "entry_mode": "guided_greenfield",
+  "synopsis_import": {
+    "status": "not_started",
+    "source": null,
+    "proposed_framing": {
+      "protocol_id": "",
+      "version": "V0.1",
+      "document_title": "",
+      "indication": "",
+      "clinicaltrials_condition_term": "",
+      "study_phase": "",
+      "intrinsic_objectives": [],
+      "investigational_product": "",
+      "product_profile": {
+        "technology_type": "unknown",
+        "technology_description": "",
+        "administration_routes": [],
+        "dosage_forms": [],
+        "exposure_scope": "unknown",
+        "device_dependency": "unknown",
+        "immunogenicity_relevance": "unknown",
+        "pharmacology_considerations": [],
+        "safety_considerations": [],
+        "pk_pd_considerations": [],
+        "historical_study_summaries": [],
+        "historical_dose_regimens": [],
+        "historical_population_designs": [],
+        "evidence_facts": []
+      },
+      "minimum_product_fact_packet": {
+        "ib_status": "not_provided",
+        "ib_source_ids": [],
+        "ib_validation_status": "not_assessed",
+        "ib_warning_codes": [],
+        "ib_override_reason": "",
+        "status": "not_started",
+        "supporting_source_ids": [],
+        "unresolved_high_impact_fields": [],
+        "safe_to_start_competitor_research": false,
+        "safe_to_generate_protocol_candidates": false,
+        "assessed_at": null
+      },
+      "target_mechanism": "",
+      "competitor_target_scope": "",
+      "development_regions": [
+        "中国"
+      ],
+      "design_pattern": "",
+      "structured_design": {
+        "schema_version": "medical_writing_structured_study_design_v2",
+        "randomization_mode": "undecided",
+        "randomization_details": "",
+        "blinding_mode": "undecided",
+        "blinded_roles": [],
+        "blinding_details": "",
+        "comparator_type": "undecided",
+        "comparator_intervention": "",
+        "assignment_model": "",
+        "center_model": "",
+        "treatment_switch": {
+          "planned": null,
+          "trigger_or_timing": "",
+          "eligible_population": "",
+          "destination_treatment": "",
+          "blinding_strategy": "",
+          "analysis_handling": "",
+          "notes": ""
+        },
+        "crossover": {
+          "planned": null,
+          "sequences": [],
+          "periods": [],
+          "washout_strategy": "",
+          "carryover_assessment": "",
+          "period_sequence_analysis": "",
+          "notes": ""
+        },
+        "open_label_extension": {
+          "planned": null,
+          "entry_source": "",
+          "entry_eligibility": "",
+          "treatment_regimen": "",
+          "duration": "",
+          "blind_break_and_transition": "",
+          "long_term_objectives": [],
+          "notes": ""
+        },
+        "sample_size_reestimation": {
+          "planned": null,
+          "reestimation_mode": "undecided",
+          "timing_or_information": "",
+          "reestimated_parameter": "",
+          "decision_rule": "",
+          "alpha_protection": "",
+          "operational_protection": "",
+          "notes": ""
+        },
+        "adaptive_design": {
+          "planned": null,
+          "adaptive_type": "undecided",
+          "adaptation_timing": "",
+          "decision_criteria": "",
+          "adaptable_elements": [],
+          "simulation_operating_characteristics": "",
+          "type_i_error_control": "",
+          "operational_control": "",
+          "notes": ""
+        },
+        "src_planned": null,
+        "dmc_planned": null,
+        "interim_analysis": {
+          "planned": null,
+          "purpose": "",
+          "timing": "",
+          "information_fraction": "",
+          "statistical_boundary": "",
+          "alpha_control": "",
+          "independent_committee": "",
+          "operational_firewall": "",
+          "notes": ""
+        },
+        "phase1_parts": [],
+        "phase1_sequence": "",
+        "arm_or_cohort_kind": "",
+        "arm_or_cohort_labels": [],
+        "other_design_notes": ""
+      },
+      "population_intent": "",
+      "key_uncertainties": [],
+      "manual_source_ids": [],
+      "terminology_policy": "cde_participant"
+    },
+    "proposed_picos": {
+      "design_archetype": "",
+      "field_applicability": {},
+      "population_summary": "",
+      "inclusion_modules": [],
+      "exclusion_modules": [],
+      "washout_rules": [],
+      "intervention_summary": "",
+      "intervention_dose_regimen": "",
+      "allowed_concomitant_rules": [],
+      "required_background_rules": [],
+      "prohibited_concomitant_rules": [],
+      "assessment_timing_restrictions": [],
+      "intervention_rules": null,
+      "comparator_summary": "",
+      "primary_objectives": [],
+      "secondary_objectives": [],
+      "exploratory_objectives": [],
+      "primary_endpoint": "",
+      "key_secondary_endpoints": [],
+      "other_secondary_endpoints": [],
+      "exploratory_endpoints": [],
+      "safety_endpoints": [],
+      "aesi_definitions": [],
+      "assessment_instruments": [],
+      "study_epochs": [],
+      "visit_strategy": "",
+      "estimand_strategy": "",
+      "sample_size_strategy": "",
+      "statistical_strategy": ""
+    },
+    "proposed_synopsis_text": "",
+    "proposed_synopsis_origin": "imported_text",
+    "synopsis_bound_value_sha256": {},
+    "missing_fields": [],
+    "conflict_notes": [],
+    "field_evidence_span_ids": {},
+    "field_extracted_value_sha256": {},
+    "evidence_spans": [],
+    "ai_run_id": "",
+    "failure_reason": "",
+    "confirmed_at": null,
+    "confirmed_by": ""
+  },
+  "study_definition": {
+    "definition_id": "mwdefinition_f76f9971b2e912d7b623",
+    "project_id": "proj_user_0cec66a7da6e",
+    "revision": 2,
+    "schema_version": "medical_writing_study_definition_v2",
+    "origin": "guided_greenfield",
+    "framing": {
+      "protocol_id": "WP6-MDD-BLIND-C",
+      "version": "V0.1",
+      "document_title": "合成试验药C辅助治疗当前抗抑郁治疗应答不足的重度抑郁障碍随机双盲安慰剂对照II期研究方案",
+      "indication": "当前抗抑郁治疗应答不足的重度抑郁障碍",
+      "clinicaltrials_condition_term": "Major Depressive Disorder",
+      "study_phase": "II期",
+      "intrinsic_objectives": [
+        "评价合成试验药C辅助治疗8周的抗抑郁疗效",
+        "评价安全性与耐受性"
+      ],
+      "investigational_product": "合成试验药C",
+      "product_profile": {
+        "technology_type": "small_molecule",
+        "technology_description": "",
+        "administration_routes": [
+          "口服"
+        ],
+        "dosage_forms": [
+          "胶囊"
+        ],
+        "exposure_scope": "systemic",
+        "device_dependency": "unknown",
+        "immunogenicity_relevance": "unknown",
+        "pharmacology_considerations": [],
+        "safety_considerations": [],
+        "pk_pd_considerations": [],
+        "historical_study_summaries": [],
+        "historical_dose_regimens": [],
+        "historical_population_designs": [],
+        "evidence_facts": []
+      },
+      "minimum_product_fact_packet": {
+        "ib_status": "not_provided",
+        "ib_source_ids": [],
+        "ib_validation_status": "not_assessed",
+        "ib_warning_codes": [],
+        "ib_override_reason": "",
+        "status": "not_started",
+        "supporting_source_ids": [],
+        "unresolved_high_impact_fields": [],
+        "safe_to_start_competitor_research": false,
+        "safe_to_generate_protocol_candidates": false,
+        "assessed_at": null
+      },
+      "target_mechanism": "合成中枢机制C调节剂（仅用于隔离验收）",
+      "competitor_target_scope": "重度抑郁障碍、标准抗抑郁药辅助治疗、安慰剂对照、8周疗效",
+      "development_regions": [
+        "中国"
+      ],
+      "design_pattern": "多中心、随机、双盲、安慰剂对照、平行组、II期优效研究",
+      "structured_design": {
+        "schema_version": "medical_writing_structured_study_design_v2",
+        "randomization_mode": "randomized",
+        "randomization_details": "1:1随机",
+        "blinding_mode": "double_blind",
+        "blinded_roles": [
+          "试验参与者",
+          "研究者",
+          "结局评估者"
+        ],
+        "blinding_details": "匹配安慰剂维持盲态",
+        "comparator_type": "placebo",
+        "comparator_intervention": "匹配安慰剂",
+        "assignment_model": "平行组",
+        "center_model": "多中心",
+        "treatment_switch": {
+          "planned": null,
+          "trigger_or_timing": "",
+          "eligible_population": "",
+          "destination_treatment": "",
+          "blinding_strategy": "",
+          "analysis_handling": "",
+          "notes": ""
+        },
+        "crossover": {
+          "planned": null,
+          "sequences": [],
+          "periods": [],
+          "washout_strategy": "",
+          "carryover_assessment": "",
+          "period_sequence_analysis": "",
+          "notes": ""
+        },
+        "open_label_extension": {
+          "planned": null,
+          "entry_source": "",
+          "entry_eligibility": "",
+          "treatment_regimen": "",
+          "duration": "",
+          "blind_break_and_transition": "",
+          "long_term_objectives": [],
+          "notes": ""
+        },
+        "sample_size_reestimation": {
+          "planned": false,
+          "reestimation_mode": "undecided",
+          "timing_or_information": "",
+          "reestimated_parameter": "",
+          "decision_rule": "",
+          "alpha_protection": "",
+          "operational_protection": "",
+          "notes": ""
+        },
+        "adaptive_design": {
+          "planned": false,
+          "adaptive_type": "undecided",
+          "adaptation_timing": "",
+          "decision_criteria": "",
+          "adaptable_elements": [],
+          "simulation_operating_characteristics": "",
+          "type_i_error_control": "",
+          "operational_control": "",
+          "notes": ""
+        },
+        "src_planned": null,
+        "dmc_planned": null,
+        "interim_analysis": {
+          "planned": false,
+          "purpose": "",
+          "timing": "",
+          "information_fraction": "",
+          "statistical_boundary": "",
+          "alpha_control": "",
+          "independent_committee": "",
+          "operational_firewall": "",
+          "notes": ""
+        },
+        "phase1_parts": [],
+        "phase1_sequence": "",
+        "arm_or_cohort_kind": "parallel_arms",
+        "arm_or_cohort_labels": [
+          "合成试验药C辅助组",
+          "安慰剂辅助组"
+        ],
+        "other_design_notes": ""
+      },
+      "population_intent": "18–65岁重度抑郁障碍成人，在稳定SSRI治疗下当前发作应答不足。",
+      "key_uncertainties": [],
+      "manual_source_ids": [],
+      "terminology_policy": "cde_participant"
+    },
+    "picos": {
+      "design_archetype": "",
+      "field_applicability": {},
+      "population_summary": "",
+      "inclusion_modules": [],
+      "exclusion_modules": [],
+      "washout_rules": [],
+      "intervention_summary": "",
+      "intervention_dose_regimen": "",
+      "allowed_concomitant_rules": [],
+      "required_background_rules": [],
+      "prohibited_concomitant_rules": [],
+      "assessment_timing_restrictions": [],
+      "intervention_rules": null,
+      "comparator_summary": "",
+      "primary_objectives": [],
+      "secondary_objectives": [],
+      "exploratory_objectives": [],
+      "primary_endpoint": "",
+      "key_secondary_endpoints": [],
+      "other_secondary_endpoints": [],
+      "exploratory_endpoints": [],
+      "safety_endpoints": [],
+      "aesi_definitions": [],
+      "assessment_instruments": [],
+      "study_epochs": [],
+      "visit_strategy": "",
+      "estimand_strategy": "",
+      "sample_size_strategy": "",
+      "statistical_strategy": ""
+    },
+    "study_schema": null,
+    "synopsis_text": "研究题目：合成试验药C辅助治疗当前抗抑郁治疗应答不足的重度抑郁障碍随机双盲安慰剂对照II期研究方案\n方案编号：WP6-MDD-BLIND-C\n方案版本：V0.1\n研究分期：II期\n适应症：当前抗抑郁治疗应答不足的重度抑郁障碍\n内在研究目的：评价合成试验药C辅助治疗8周的抗抑郁疗效；评价安全性与耐受性\n试验药物：合成试验药C\n靶点/作用机制：合成中枢机制C调节剂（仅用于隔离验收）\n总体研究设计：随机化（1:1随机）；双盲；安慰剂对照（匹配安慰剂）；平行组；多中心\n目标研究人群：18–65岁重度抑郁障碍成人，在稳定SSRI治疗下当前发作应答不足。",
+    "synopsis_origin": "deterministic_projection",
+    "field_states": {
+      "framing.protocol_id": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.version": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.document_title": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.indication": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.clinicaltrials_condition_term": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.study_phase": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.intrinsic_objectives": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.investigational_product": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile.technology_type": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile.administration_routes": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile.dosage_forms": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile.exposure_scope": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.product_profile.device_dependency": {
+        "status": "deferred",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.product_profile.immunogenicity_relevance": {
+        "status": "deferred",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.minimum_product_fact_packet": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.target_mechanism": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.competitor_target_scope": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.development_regions": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.design_pattern": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.randomization_mode": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.randomization_details": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.blinding_mode": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.blinded_roles": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.blinding_details": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.comparator_type": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.comparator_intervention": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.assignment_model": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.center_model": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.sample_size_reestimation": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.sample_size_reestimation.planned": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.sample_size_reestimation.reestimation_mode": {
+        "status": "deferred",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.structured_design.adaptive_design": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.adaptive_design.planned": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.adaptive_design.adaptive_type": {
+        "status": "deferred",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.structured_design.interim_analysis": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.interim_analysis.planned": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.arm_or_cohort_kind": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.structured_design.arm_or_cohort_labels": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.population_intent": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "framing.key_uncertainties": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.manual_source_ids": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "framing.terminology_policy": {
+        "status": "confirmed",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "wp6_product_acceptance",
+        "confirmed_at": "2026-09-22T16:29:13.488378Z"
+      },
+      "picos.design_archetype": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.population_summary": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.inclusion_modules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.exclusion_modules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.washout_rules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.intervention_summary": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.intervention_dose_regimen": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.allowed_concomitant_rules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.required_background_rules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.prohibited_concomitant_rules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.assessment_timing_restrictions": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.intervention_rules": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.comparator_summary": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.primary_objectives": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.secondary_objectives": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.exploratory_objectives": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.primary_endpoint": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.key_secondary_endpoints": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.other_secondary_endpoints": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.exploratory_endpoints": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.safety_endpoints": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.aesi_definitions": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.assessment_instruments": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.study_epochs": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.visit_strategy": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.estimand_strategy": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.sample_size_strategy": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      },
+      "picos.statistical_strategy": {
+        "status": "missing",
+        "evidence": [],
+        "value_origin": "manual_entry",
+        "reviewed_by": "",
+        "reviewed_at": null,
+        "confirmed_by": "",
+        "confirmed_at": null
+      }
+    },
+    "module_resolutions": {},
+    "source_artifact_ids": [],
+    "unresolved_paths": [
+      "framing.key_uncertainties",
+      "framing.manual_source_ids",
+      "framing.product_profile.device_dependency",
+      "framing.product_profile.immunogenicity_relevance",
+      "framing.structured_design.adaptive_design.adaptive_type",
+      "framing.structured_design.sample_size_reestimation.reestimation_mode",
+      "picos.aesi_definitions",
+      "picos.allowed_concomitant_rules",
+      "picos.assessment_instruments",
+      "picos.assessment_timing_restrictions",
+      "picos.comparator_summary",
+      "picos.design_archetype",
+      "picos.estimand_strategy",
+      "picos.exclusion_modules",
+      "picos.exploratory_endpoints",
+      "picos.exploratory_objectives",
+      "picos.inclusion_modules",
+      "picos.intervention_dose_regimen",
+      "picos.intervention_rules",
+      "picos.intervention_summary",
+      "picos.key_secondary_endpoints",
+      "picos.other_secondary_endpoints",
+      "picos.population_summary",
+      "picos.primary_endpoint",
+      "picos.primary_objectives",
+      "picos.prohibited_concomitant_rules",
+      "picos.required_background_rules",
+      "picos.safety_endpoints",
+      "picos.sample_size_strategy",
+      "picos.secondary_objectives",
+      "picos.statistical_strategy",
+      "picos.study_epochs",
+      "picos.visit_strategy",
+      "picos.washout_rules"
+    ],
+    "state_sha256": "0c87614c34ccc348fea86c824ddaf0746299d8d53df6402f0866c998a91cbe1c",
+    "created_at": "2026-09-22T16:29:13.470794Z",
+    "updated_at": "2026-09-22T16:29:13.488378Z",
+    "updated_by": "wp6_product_acceptance"
+  },
+  "study_schema_presentation": null,
+  "status": "stage1_complete",
+  "current_stage": "picos",
+  "framing": {
+    "protocol_id": "WP6-MDD-BLIND-C",
+    "version": "V0.1",
+    "document_title": "合成试验药C辅助治疗当前抗抑郁治疗应答不足的重度抑郁障碍随机双盲安慰剂对照II期研究方案",
+    "indication": "当前抗抑郁治疗应答不足的重度抑郁障碍",
+    "clinicaltrials_condition_term": "Major Depressive Disorder",
+    "study_phase": "II期",
+    "intrinsic_objectives": [
+      "评价合成试验药C辅助治疗8周的抗抑郁疗效",
+      "评价安全性与耐受性"
+    ],
+    "investigational_product": "合成试验药C",
+    "product_profile": {
+      "technology_type": "small_molecule",
+      "technology_description": "",
+      "administration_routes": [
+        "口服"
+      ],
+      "dosage_forms": [
+        "胶囊"
+      ],
+      "exposure_scope": "systemic",
+      "device_dependency": "unknown",
+      "immunogenicity_relevance": "unknown",
+      "pharmacology_considerations": [],
+      "safety_considerations": [],
+      "pk_pd_considerations": [],
+      "historical_study_summaries": [],
+      "historical_dose_regimens": [],
+      "historical_population_designs": [],
+      "evidence_facts": []
+    },
+    "minimum_product_fact_packet": {
+      "ib_status": "not_provided",
+      "ib_source_ids": [],
+      "ib_validation_status": "not_assessed",
+      "ib_warning_codes": [],
+      "ib_override_reason": "",
+      "status": "not_started",
+      "supporting_source_ids": [],
+      "unresolved_high_impact_fields": [],
+      "safe_to_start_competitor_research": false,
+      "safe_to_generate_protocol_candidates": false,
+      "assessed_at": null
+    },
+    "target_mechanism": "合成中枢机制C调节剂（仅用于隔离验收）",
+    "competitor_target_scope": "重度抑郁障碍、标准抗抑郁药辅助治疗、安慰剂对照、8周疗效",
+    "development_regions": [
+      "中国"
+    ],
+    "design_pattern": "多中心、随机、双盲、安慰剂对照、平行组、II期优效研究",
+    "structured_design": {
+      "schema_version": "medical_writing_structured_study_design_v2",
+      "randomization_mode": "randomized",
+      "randomization_details": "1:1随机",
+      "blinding_mode": "double_blind",
+      "blinded_roles": [
+        "试验参与者",
+        "研究者",
+        "结局评估者"
+      ],
+      "blinding_details": "匹配安慰剂维持盲态",
+      "comparator_type": "placebo",
+      "comparator_intervention": "匹配安慰剂",
+      "assignment_model": "平行组",
+      "center_model": "多中心",
+      "treatment_switch": {
+        "planned": null,
+        "trigger_or_timing": "",
+        "eligible_population": "",
+        "destination_treatment": "",
+        "blinding_strategy": "",
+        "analysis_handling": "",
+        "notes": ""
+      },
+      "crossover": {
+        "planned": null,
+        "sequences": [],
+        "periods": [],
+        "washout_strategy": "",
+        "carryover_assessment": "",
+        "period_sequence_analysis": "",
+        "notes": ""
+      },
+      "open_label_extension": {
+        "planned": null,
+        "entry_source": "",
+        "entry_eligibility": "",
+        "treatment_regimen": "",
+        "duration": "",
+        "blind_break_and_transition": "",
+        "long_term_objectives": [],
+        "notes": ""
+      },
+      "sample_size_reestimation": {
+        "planned": false,
+        "reestimation_mode": "undecided",
+        "timing_or_information": "",
+        "reestimated_parameter": "",
+        "decision_rule": "",
+        "alpha_protection": "",
+        "operational_protection": "",
+        "notes": ""
+      },
+      "adaptive_design": {
+        "planned": false,
+        "adaptive_type": "undecided",
+        "adaptation_timing": "",
+        "decision_criteria": "",
+        "adaptable_elements": [],
+        "simulation_operating_characteristics": "",
+        "type_i_error_control": "",
+        "operational_control": "",
+        "notes": ""
+      },
+      "src_planned": null,
+      "dmc_planned": null,
+      "interim_analysis": {
+        "planned": false,
+        "purpose": "",
+        "timing": "",
+        "information_fraction": "",
+        "statistical_boundary": "",
+        "alpha_control": "",
+        "independent_committee": "",
+        "operational_firewall": "",
+        "notes": ""
+      },
+      "phase1_parts": [],
+      "phase1_sequence": "",
+      "arm_or_cohort_kind": "parallel_arms",
+      "arm_or_cohort_labels": [
+        "合成试验药C辅助组",
+        "安慰剂辅助组"
+      ],
+      "other_design_notes": ""
+    },
+    "population_intent": "18–65岁重度抑郁障碍成人，在稳定SSRI治疗下当前发作应答不足。",
+    "key_uncertainties": [],
+    "manual_source_ids": [],
+    "terminology_policy": "cde_participant"
+  },
+  "picos": {
+    "design_archetype": "",
+    "field_applicability": {},
+    "population_summary": "",
+    "inclusion_modules": [],
+    "exclusion_modules": [],
+    "washout_rules": [],
+    "intervention_summary": "",
+    "intervention_dose_regimen": "",
+    "allowed_concomitant_rules": [],
+    "required_background_rules": [],
+    "prohibited_concomitant_rules": [],
+    "assessment_timing_restrictions": [],
+    "intervention_rules": null,
+    "comparator_summary": "",
+    "primary_objectives": [],
+    "secondary_objectives": [],
+    "exploratory_objectives": [],
+    "primary_endpoint": "",
+    "key_secondary_endpoints": [],
+    "other_secondary_endpoints": [],
+    "exploratory_endpoints": [],
+    "safety_endpoints": [],
+    "aesi_definitions": [],
+    "assessment_instruments": [],
+    "study_epochs": [],
+    "visit_strategy": "",
+    "estimand_strategy": "",
+    "sample_size_strategy": "",
+    "statistical_strategy": ""
+  },
+  "framing_draft": null,
+  "picos_draft": null,
+  "document_creation_reservation": null,
+  "framing_complete": true,
+  "picos_complete": false,
+  "search_plan": {
+    "plan_id": "mwsearch_47ec5eb61303121cb9fbedca",
+    "plan_revision": 2,
+    "strategy": "broad_then_triage",
+    "queries": [
+      "疾病/适应症：Major Depressive Disorder",
+      "研究分期：PHASE2",
+      "研究类型：INTERVENTIONAL",
+      "适用性重排特征：technology:small_molecule；route:口服；dosage_form:胶囊；exposure:systemic"
+    ],
+    "registry_filter": {
+      "condition_term": "Major Depressive Disorder",
+      "phases": [
+        "PHASE2"
+      ],
+      "study_type": "INTERVENTIONAL",
+      "regions": [],
+      "intervention_terms": []
+    },
+    "triage_criteria": [
+      {
+        "criterion_id": "target_mechanism",
+        "label": "靶点/作用机制相近",
+        "value": "重度抑郁障碍、标准抗抑郁药辅助治疗、安慰剂对照、8周疗效",
+        "source_field_paths": [
+          "framing.competitor_target_scope",
+          "framing.target_mechanism"
+        ]
+      },
+      {
+        "criterion_id": "intrinsic_objectives",
+        "label": "内在研究目的相近",
+        "value": "评价合成试验药C辅助治疗8周的抗抑郁疗效、评价安全性与耐受性",
+        "source_field_paths": [
+          "framing.intrinsic_objectives"
+        ]
+      },
+      {
+        "criterion_id": "design_pattern",
+        "label": "总体设计相近",
+        "value": "多中心、随机、双盲、安慰剂对照、平行组、II期优效研究",
+        "source_field_paths": [
+          "framing.design_pattern"
+        ]
+      },
+      {
+        "criterion_id": "population_intent",
+        "label": "目标研究人群相近",
+        "value": "18–65岁重度抑郁障碍成人，在稳定SSRI治疗下当前发作应答不足。",
+        "source_field_paths": [
+          "framing.population_intent"
+        ]
+      },
+      {
+        "criterion_id": "product_technology",
+        "label": "研究药物技术类型相近",
+        "value": "small_molecule",
+        "source_field_paths": [
+          "framing.product_profile.technology_type"
+        ]
+      },
+      {
+        "criterion_id": "administration_route",
+        "label": "给药途径相近",
+        "value": "口服",
+        "source_field_paths": [
+          "framing.product_profile.administration_routes"
+        ]
+      },
+      {
+        "criterion_id": "exposure_scope",
+        "label": "系统或局部暴露特征相近",
+        "value": "systemic",
+        "source_field_paths": [
+          "framing.product_profile.exposure_scope"
+        ]
+      }
+    ],
+    "document_roles": [
+      "protocol"
+    ],
+    "status": "planned",
+    "latest_snapshot_id": "",
+    "returned_count": 0,
+    "public_document_count": 0,
+    "searched_at": null,
+    "source_study_definition_revision": 2,
+    "generated_at": "2026-09-22T16:29:13.488378Z"
+  },
+  "prefill_package": null,
+  "corpus_triage": {
+    "status": "pending",
+    "snapshot_id": "",
+    "retained_candidate_ids": [],
+    "reason": "",
+    "actor": "",
+    "finalized_at": null
+  },
+  "discovery_basket_projection": {
+    "confirmation_id": "",
+    "confirmation_hash": "",
+    "snapshot_id": "",
+    "retained_nct_ids": [],
+    "excluded_nct_ids": [],
+    "run_id": "",
+    "actor": "",
+    "reason": "",
+    "projected_at": null
+  },
+  "picos_corpus_alignment": {
+    "status": "pending",
+    "source_picos_sha256": "",
+    "conflict_count": 0,
+    "disposition_summary": "",
+    "evidence_brief_ids": [],
+    "actor": "",
+    "assessed_at": null
+  },
+  "corpus_gate": {
+    "readiness_status": "not_ready",
+    "access_permitted": false,
+    "missing_requirements": [
+      "竞品候选研究已完成人工相关性分诊",
+      "至少一份相关Protocol已完成内容校验与结构化解析",
+      "英文竞品方案关键章节已形成监管中文参考译文",
+      "项目适用中文语料已完成医学准入",
+      "PICOS关键设计事实与语料冲突已处置"
+    ],
+    "covered_requirements": [],
+    "requirements": [],
+    "bound_snapshot_id": "",
+    "source_state_hash": "",
+    "evaluated_at": null,
+    "stale": true,
+    "override": {
+      "active": false,
+      "reason": "",
+      "actor": "",
+      "recorded_at": null,
+      "acknowledged_missing_requirements": []
+    }
+  },
+  "research_pipeline": {},
+  "invalidated_dependents": [
+    "competitor_search_plan",
+    "corpus_coverage",
+    "eligibility_sections",
+    "front_matter",
+    "intervention_sections",
+    "m11_section_applicability",
+    "objectives_endpoints",
+    "picos_recommendations",
+    "protocol_synopsis",
+    "safety_assessments",
+    "schedule_of_activities",
+    "statistical_design",
+    "study_schema",
+    "trial_rationale"
+  ],
+  "created_at": "2026-09-22T16:29:13.470794Z",
+  "updated_at": "2026-09-22T16:29:13.488378Z",
+  "updated_by": "wp6_product_acceptance"
+}

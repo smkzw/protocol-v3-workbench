@@ -1,0 +1,1002 @@
+{
+  "schema_version": "wp6-real-http-isolated-runtime.v1",
+  "source": "f12_20260921/three_studies/isolated_runtime",
+  "excluded": [
+    "writing_reference_artifacts",
+    "ai_provider_secrets.json",
+    "*.wal",
+    "*.shm"
+  ],
+  "files": [
+    {
+      "path": "ai_provider_settings.json",
+      "size": 5290,
+      "sha256": "761427a99093ce827c22202ec34845d4a7741b710e36cb43b41eae6b2c54d0bc"
+    },
+    {
+      "path": "ai_role_bindings.json",
+      "size": 1870,
+      "sha256": "7d866716d501bb801bcdbc52a8d8b494c435baa3125dfebe66a3851616e9a12f"
+    },
+    {
+      "path": "ai_task_runs.jsonl",
+      "size": 1747594,
+      "sha256": "28e0e5c9f320fd5e8edba91ed8fb5327010dc1ae42c0683fcaa22d6e66d938da"
+    },
+    {
+      "path": "medical_monitoring_ai.sqlite3",
+      "size": 217088,
+      "sha256": "57f23202bb1469b36e058b72ed2a2b6111b3addb5d889549018186397cccb977"
+    },
+    {
+      "path": "medical_monitoring_assurance.sqlite3",
+      "size": 86016,
+      "sha256": "5199d2dbd26a03eec06ac6a7e5a04a30efd76527d440cfaac564b5ec7b86f373"
+    },
+    {
+      "path": "medical_monitoring_batches.sqlite3",
+      "size": 155648,
+      "sha256": "4e69d5a9c832a5ae744c5504502aebaea381dbd461475143d6d46c502c52cb59"
+    },
+    {
+      "path": "medical_monitoring_daily_runs.sqlite3",
+      "size": 90112,
+      "sha256": "64766a8914536b993a7c7c18b6e0712e06e5ba501f9dc048994e98ed905f4563"
+    },
+    {
+      "path": "medical_risks.sqlite3",
+      "size": 40960,
+      "sha256": "f26f8b07658402e05b4aeb37bcc673d011734317659f054fe828c84b0eb09999"
+    },
+    {
+      "path": "medical_writing_authoring_journey.sqlite3",
+      "size": 2170880,
+      "sha256": "e56e74f7a8b80b8e8dc255a004ec9934fccea7139a5b92697d19b5c776091481"
+    },
+    {
+      "path": "medical_writing_authoring_journey.sqlite3-shm",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "path": "medical_writing_authoring_journey.sqlite3-wal",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "medical_writing_durable_jobs.sqlite3",
+      "size": 503808,
+      "sha256": "02ee6ec91ba8a3f8c0785c25285e65993c0c2d4b239b2f592a7a0d59fbbb6e68"
+    },
+    {
+      "path": "medical_writing_fact_intake.sqlite3",
+      "size": 32768,
+      "sha256": "0e74a28deaf024c6566f7ce57886c077d3ad2256580a05f3c5cdbb0c369ba487"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0001-56c0326daf4f1e844cace977.json",
+      "size": 27335,
+      "sha256": "7427b6881b486e955c1c7d534292d4efd4bde02e2163109b39341756927a5b81"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0002-307fc85bddcdf9ac984820c5.json",
+      "size": 18569,
+      "sha256": "87d99635b5f43a5aa82f4262cfb618536af890b0bd0a38a01547453bca372e23"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0003-766727f54515189878dfd671.json",
+      "size": 26890,
+      "sha256": "931a313e0b3fcb75fb98f82572133a5207cadb9b3c8da5ae0f306f1998a3cc70"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0004-6cbbc93dbcf6729c05e7d5da.json",
+      "size": 24881,
+      "sha256": "7f768a1f5545611c4a0620a2976596c44bc582e75a6b59109516f45e9e585b08"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0005-9e77e0215df38430d0af04fa.json",
+      "size": 14881,
+      "sha256": "e7c55e24b9a36a61c986c4186eef63fcd9fe71d91027906498320973a213a194"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0006-5ab83cc29c6c5e24a4590f39.json",
+      "size": 13249,
+      "sha256": "ab254d058dfe2eb838759d386fbbb4b094f5f146f1a7c79bbb9f959294ecc38a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0007-88efe2189933b4312fd4ef0f.json",
+      "size": 19602,
+      "sha256": "de7df1e82e8363fea9aca9c5d35fc9f4550262dcca71e46bf9ab8bb1ebdd945b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0008-7fc0da2604dd9d56d78955e7.json",
+      "size": 19208,
+      "sha256": "1f5c96204632e98984030796486e5f7fecce8c3390220bafb3184f2cbf1cbbe9"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0009-0a0131bb62f0e77f2b6f4573.json",
+      "size": 18763,
+      "sha256": "db848a5816fbc6d8d173fe2a84865e95083cb4b5456141088030423531de2c9f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0010-25bc3bb84a4bd804068b8a04.json",
+      "size": 16484,
+      "sha256": "65da0711091fcec55405fec458c4a74ec1ef7f1b0880f97b9e52c457cee539cc"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0011-a2650cafc9474d1ca9779a4a.json",
+      "size": 14416,
+      "sha256": "29010b3452ef24f4452879c86e3dcb8e8aebc579557ca83748222a40282ca554"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0012-6002cd14768995da13cd45f3.json",
+      "size": 20418,
+      "sha256": "d1392330ba7e5ce0a34ddb672779f08bc4f4dc3366e43ef6b9961de9ec40564f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0013-355fc523bd1869a658a16b0d.json",
+      "size": 28983,
+      "sha256": "1e5b9922e83bf1723ff71cbd434f855554cc0b259faf5037ed09b0595e03b0a5"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0014-97f30771fa4000efa22ebf6c.json",
+      "size": 19171,
+      "sha256": "dd6027bb3986cd1d2ccb541171dc6c0c3ab398f63be45cac9e73558cc690cc74"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0015-8e2e299d3f898b9cd640b1fa.json",
+      "size": 27872,
+      "sha256": "2df1549ac447e7d685de3e7d5f2946281d2f16f50d377119874f0f4fa504b617"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0016-7b847c8b4e873d39ad736084.json",
+      "size": 20328,
+      "sha256": "33c8f644d158f4c9ff0c1ca5eed5377ea552303a7ea146279356451aabe74787"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0017-aed5b68b8e9d3625f2cd1280.json",
+      "size": 16290,
+      "sha256": "16897f99ebf22154a7a8f42d8d1fd7bef64e137f384fd85bc65489278fd11658"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0018-87b90b572171e110cee6e00f.json",
+      "size": 24523,
+      "sha256": "2d729b2c6ef497785fef9cf0a3292f005b216f91610c4914229ac3b08813fb7a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0019-4a24b1d0cd0217473df3fd3b.json",
+      "size": 19382,
+      "sha256": "91681b8f93c8c92c1ec366a6130cfa35c12bb15a401213f6f4fb3a4173e78815"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0020-19bb74dbfa8515cf50191aae.json",
+      "size": 21989,
+      "sha256": "33906a197b0a3554a4afeea67b635ec6801337626f9204a016b42649adfa928e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0021-81be3aff4725983f8ccfc35a.json",
+      "size": 20302,
+      "sha256": "687f73b73d46743e84099f9dc95f7a5747bfe008b0f4940c17f07fc730639931"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/chunks/chunk-0022-d3ed655224d33e6d99d03891.json",
+      "size": 5859,
+      "sha256": "6cd9168c8935d7f6908777a2582cb691ff600d1f33fec5bd70b30035869fe7cb"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_6ea88e6715579409992c43ee/full-draft.json",
+      "size": 468825,
+      "sha256": "e199d57fd14d6d78ea630e02bdc8ba20592f01dc06233f4fd83d32f41c1a99ce"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0001-ee35aea4568a74aa8b0fdd42.json",
+      "size": 9457,
+      "sha256": "9ee9a2019d392c80ea76e9974c982d8f0939ed0c16d96f241f2d0aea66df4b9b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0002-51ef16f3f0f528c419219e4a.json",
+      "size": 11974,
+      "sha256": "165b4db2842d410c229085a5a2ff33bfd96fae546f85e53d2221c415827089e7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0003-982209dab2d682567f8a2b45.json",
+      "size": 29404,
+      "sha256": "6300436217543ad7f5e75b0e7dbe0cb7a75d3b8677cacd15c42d3f40020a141c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0004-33fd3b1c564e3726e0462a03.json",
+      "size": 17234,
+      "sha256": "e2be9ca439c83066321f4ae32773919f700f0ef7648a65c124e9b612186946f7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0005-2d0bab2369a9ed65d35cd0d2.json",
+      "size": 15070,
+      "sha256": "499a69fa3f1db15da6176d80b2b96ebc9e8d4825cad636e01a90ed769efc07ee"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0006-82e347aff8cdc583ca059a6a.json",
+      "size": 10986,
+      "sha256": "cf02e69f1f33d4a082bf8e0a017e7adbaaebb0094033ef33c58ec7996470e20d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0007-e306ffe1f086c33875d59197.json",
+      "size": 15994,
+      "sha256": "9babfb7c9894c13e91a876358b046921a7ed36f7d939e82dd8411126358d43ee"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0008-9f1ae97a0292357d497c6784.json",
+      "size": 7625,
+      "sha256": "6ee4a7474edd45d539250a76a762d8dcbdd695133d7e62ab1c250b08acd02921"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0009-f83ee27792ccba98b6766f9b.json",
+      "size": 17835,
+      "sha256": "4e1fb7bdcb7f4378e89becab397ba92a065d903e09e134ac7d933454496c5677"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0010-667308046161e61dde1dde74.json",
+      "size": 6011,
+      "sha256": "819e6568779da67c6f93fad1aa93186df12607c31a18f310739d1034b438bc71"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0011-b7fa5f78c4ad8164340fd70e.json",
+      "size": 16392,
+      "sha256": "55e17c26bc1f4c56590314b8af0fb95b121b028f0fe263e30238034334af2e2d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0012-09d7dfb5fab62e610194ff2c.json",
+      "size": 14469,
+      "sha256": "43cef17fb1423169fe4e91b9f29af274c37f07f1e29acaa82897d3c1c498cc51"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0013-53482acd48aecb74d3a1f309.json",
+      "size": 8885,
+      "sha256": "59364ce18e080fea387effa4f8e1f6354792ccbd8de3085cca166480653f5f42"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0014-09cd5cca90a97517eaf9cea6.json",
+      "size": 12606,
+      "sha256": "3f1d04a1808583c43a43aa0e7f4c1598db52befca245ce2f7bf51d384e14c23a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0015-c28fd3c28cf8c6bd70eaa0ef.json",
+      "size": 19183,
+      "sha256": "1f99f27f127f756b46a17c8d28eae2d5b83f2bd2804516d0a90fa299b726a6f7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0016-77372701692fa8d7afe37b73.json",
+      "size": 8016,
+      "sha256": "96d5f7f08c9974fade7632d07b83c92215737e762221449a28af83f4337b6863"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0017-b18973838e784a87cb64fb11.json",
+      "size": 5284,
+      "sha256": "4cd1e8a5a4ac63106ed4bf00578ab013badd73fd72f8a145b60710708e57667e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0018-eec6940b0ff6d043164130fc.json",
+      "size": 8248,
+      "sha256": "c750b31de50dec9f76fa0a1e30171b47803a9749af1f25bfb442b7dacb58911c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0019-053ede25f4578565d8ab8e7e.json",
+      "size": 16897,
+      "sha256": "d825b14ce3e2aa9aa213ce97e57ec5dadacdc2fd74b11faa7f6f0b78f3664010"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0020-4374074be4508e3c8c9c7559.json",
+      "size": 10290,
+      "sha256": "5f3d71f21e659ced07060e3831ab2b53662bcf5908377c8669e624f4d4ef5100"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0021-6d49938f648888995549cada.json",
+      "size": 8636,
+      "sha256": "eac05dcfe1d01c60530d44128e65615fd134469bb060d4051aafbe5242b7e028"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/chunks/chunk-0022-465e196a47cce668fffb4c88.json",
+      "size": 9781,
+      "sha256": "4f4d3d18f4f3b3e695b2b8f41d3ea0f578c01cd16e7e8f86d37b113c4c23d524"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_8447f85a17afe47f1dddc26c/full-draft.json",
+      "size": 311832,
+      "sha256": "002352b9d27f3dcbcd128022c19bbd81351e87fbac4a72c7f74a835980d8b26c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0001-aac2ec9a2cacb6b4a19b395f.json",
+      "size": 13825,
+      "sha256": "49636070f3976bee4f92f858079bc3e4cbeda80dcd1e800f59857472a8ba6383"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0002-e86fc3f3af80828d090bc466.json",
+      "size": 12996,
+      "sha256": "9863b73557333354981125d3282484e75aafc2245ab07b85295d2723b02e81a4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0003-734db6be3c8c13294ea27366.json",
+      "size": 17590,
+      "sha256": "5ce16a85a74ff7469c9ceb1da69f6a08fad70d34ed1c8661ad203ccb8316f7b1"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0004-791601cb52fa2307f466b833.json",
+      "size": 17460,
+      "sha256": "11d88ff383882bbdef0c5172e6cd25041910f3370c308e6b97852b96db29fb97"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0005-5fd1b4944636d41e4c8e9840.json",
+      "size": 10070,
+      "sha256": "6b5c3a3c61a721100169cc513be34a0c4d07d8880a8b8a8d9baa5ccd0399ead2"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0006-3493d2bf0bb4643dfbb45330.json",
+      "size": 12307,
+      "sha256": "ee5f3e6cfe749aa272fc7d92f9f8df900fe7f23fb86f2cf70c3efa706183735c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0007-183d28058c2111323674fe0a.json",
+      "size": 11675,
+      "sha256": "5ecffc6b111cb4313a9957e28b2a657d91f6744a48243422082faeb7c4376a91"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0008-8df91f9220b22a9b40803733.json",
+      "size": 12859,
+      "sha256": "1112b01e40811579c80ac5fe4f0de3a16d0bc143a828498e59ed88a3ef369614"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0009-708040ff3c6fd18038e64845.json",
+      "size": 13972,
+      "sha256": "76ac09a0c058efdbe92b439c736df69b317346838838c4d8ca95fc1b0df1481b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0010-3ccd63026ca08537bae5f0ba.json",
+      "size": 12421,
+      "sha256": "319f25b99954580d765d63153f9aad20ca15114a201020601b8afb9e8d2a308f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0011-ebb544f90b3560aefe5209b6.json",
+      "size": 13250,
+      "sha256": "2b9ca71730f81ef378839781e9a984ccf80e24614abb3472b671bdb3af61b97a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0012-dff373603878bab5b779b4a0.json",
+      "size": 11045,
+      "sha256": "d99b6e6ad9373fe144aa28263102fc879cf1842f60b4fd46459c6a6c11c5c5f7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0013-48462e89ff8f8c2301af3b82.json",
+      "size": 14687,
+      "sha256": "549c2591aeb75e8e3d270c2b1358c33885afa3f8b2ee871533314639ed68f53d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0014-6f2ee41ccf78a66455b877f9.json",
+      "size": 18411,
+      "sha256": "db3d8bc165aebcbb3c1f6f7ee81d7327d242c701300fd6d85b7c49f1c87b3898"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0015-877b97e547998f2a67def91e.json",
+      "size": 15748,
+      "sha256": "a0cd111df19d5d3b9f19698d0d8f029a8f75ab44af3a94abcf46e0e3f91cac02"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0016-c11ea8c13944d79832787fce.json",
+      "size": 12359,
+      "sha256": "c595e29a258b4d9ecc217d06c8a48a69a94735f4716bf255485598e7e3dbb80e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0017-eba51b82e54b74fcfb8505ab.json",
+      "size": 12509,
+      "sha256": "1c260758cca25ffb1c44f2836ebae672740877200673a0f71e15740f1bda6223"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0018-85363f62f79051b3f88ee810.json",
+      "size": 13786,
+      "sha256": "6525f22c0fc99334b44116c966ffd1aec590d6c256e78557d83c6e77c88f4aa8"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0019-a4e22c7a6968e769869116e3.json",
+      "size": 15415,
+      "sha256": "dad317b77c66fa87148415b1366014104e1df06e34282cf45b2843371e1d9d5f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0020-cd95a8fdb82be1d762e83928.json",
+      "size": 12990,
+      "sha256": "f73e3fe0df26f8cc9849fa10796803c09ba3444060d6177a824aa69dbff29fd4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0021-cf1e8ef8f253f20dd92a82fd.json",
+      "size": 14911,
+      "sha256": "9439bc4bcd70fb0340a2152d2b8aaf9105912cd898935311254c364d078ef2ee"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/chunks/chunk-0022-7f6d728bec250e838e9171e0.json",
+      "size": 4010,
+      "sha256": "d4b6127bff95d8c45fd181b8b730035d1536cb390e13982a429a0bc77ded88d2"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_96ee70138c21a86568eb3f3d/full-draft.json",
+      "size": 326094,
+      "sha256": "6e86f7e7faeaaee1e6f4ec5e7830cd8c69028d5893db72a4a03d426e9277c400"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0001-94734a76ca84a0d403682257.json",
+      "size": 21483,
+      "sha256": "d61e1dc90f939c3a64cb44bf4e75617b97419851cc0cf59b02d3cab4ee405a8e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0002-71ced0bdac123e50061220aa.json",
+      "size": 20528,
+      "sha256": "492f4455904115addb442e4f9bbc9ff438d2ca7f6aa790846c5b46595881ad1b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0003-c4a8664ecae277aef4acbb75.json",
+      "size": 27887,
+      "sha256": "743170fea13ead8625293e1dbb6e1ad57a84f09f6d49e1e4c60ea29790ad9b37"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0004-49c69b22c99a639aec8019a3.json",
+      "size": 29241,
+      "sha256": "55d81337fe4531c17a5df55682ad3fc8d1209fd1cd8a7340def65eb9a744bb36"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0005-a8e7ec716cd9603e942f9cab.json",
+      "size": 13609,
+      "sha256": "3500f9853ab1bf7db6178f4348e857817ae1b95064cb828b22de913d4bc699f4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0006-551239cad911146f9d8f2ca0.json",
+      "size": 12289,
+      "sha256": "6431e87a7803c5bc4f46e953bd0acb3401236eb12de4e47ade4ae8eb17c6d517"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0007-ef60c20ffd0d64440d1a531a.json",
+      "size": 14490,
+      "sha256": "f0bf2259065b34e116fa5cc758042dff83cf2cd76ab017e5f3020d5966ab9b8a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0008-39d211847f2495c61efec199.json",
+      "size": 7810,
+      "sha256": "c1c7c693d94734b04810c6ce92bd3d3164fe501e0b9a75ec814eb17053d459da"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0009-66998617289d638155885122.json",
+      "size": 11873,
+      "sha256": "22be3b74dd7ab3b01636f24a3f9e28846c6c1b0c48f2779a9d65e37cc74d00d1"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0010-80832710146bc4a16cfb90c0.json",
+      "size": 13601,
+      "sha256": "1f4d3f109e36188594ca0778e29eaa47bd5b1a3452856e746ed827699bd36c12"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0011-43fb1b54c361b8608a7b329a.json",
+      "size": 18698,
+      "sha256": "9d75af7e9642dcd389db455aa0a5716046022a2a5e11ae14f480099a08725144"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0012-17482aa685024937cb7ec314.json",
+      "size": 9370,
+      "sha256": "6b0b646c9ef097d4c541f53096c2f059f7b4ae7141c53ba7070b9e35a8c0c87d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0013-8491a025fce50475c1a2c37a.json",
+      "size": 9227,
+      "sha256": "29aa0347b8e2f446f931aaa434fef45cbef05c3d995c664ac678264cd309e33e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0014-b42fa17fe31cbff8cd5ba401.json",
+      "size": 8499,
+      "sha256": "0c83bd836818155804efe07f5ff4576930f0e08b09e628fdb1571719c4b9803f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0015-2218f9bfe6836789b5c61b69.json",
+      "size": 17799,
+      "sha256": "a95516697f5dc5f8ab9276d1e8995eb6385cd988b2a5c71760cbb17a1e141d3d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0016-2de7e41732231a1430ee0b61.json",
+      "size": 13696,
+      "sha256": "2481b7b861f1ef1cd86406685c9b3786db593c393c300b1d2421767590c85077"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0017-ebef12a039081a6489a0b1ed.json",
+      "size": 5434,
+      "sha256": "10822e38668c2fcf9ed31c3ae2e30a01e36dbc4ef2accc56b1d32bb807f1cd38"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0018-9c464241dd0d051bbe922a29.json",
+      "size": 13932,
+      "sha256": "46d6dfc4bd9a2661d81ef00e877390386ce93bfda5da9f363ee30db3788dc09a"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0019-8fe9c2621d4f5dfb7a111c6e.json",
+      "size": 16022,
+      "sha256": "ecf2a113e825506ad4088e7f19139a51e6833e1502f082360e87a51840e3ddb6"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0020-882e00c6dbabd83c56f50fab.json",
+      "size": 8366,
+      "sha256": "5396fd95f43be199416e522af0e5fd6f17d49b517be7efbd974a6426061fbabd"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0021-2caa01955723fed592fff445.json",
+      "size": 11207,
+      "sha256": "8eedca051be620a7c650d666a8d6081f4f48dad1f353c800f60932922ec1e08f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/chunks/chunk-0022-5de6bffe7e93b1061177fd1f.json",
+      "size": 6751,
+      "sha256": "2b4c95e343aa3c1fdfbc80d284477deef8e04d48f2b35d9b867c81b3ac4b087b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bb370670e7bc8936451212fd/full-draft.json",
+      "size": 341510,
+      "sha256": "d1e5ad959fd5cdce693e86f072ae39fff9a4056d1601320b86061bfa9d216820"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0001-c747126efcb24486aa2d577b.json",
+      "size": 20333,
+      "sha256": "b77b4cd2b09f9bb371f9495d6655bd914b679517eeb2f7284d761742e34133dd"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0002-a1fea95b2f10547225640a48.json",
+      "size": 10827,
+      "sha256": "45b7ffaa765f7a9d9549a53848bb147f8a216b719c886894a12575e03538a2c8"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0003-2520cb526f39d5a003aab5f7.json",
+      "size": 30188,
+      "sha256": "0f1a37bb4fb31406890f5e1ae97efef386222e608f3a29fb4110d04ca46e2f4e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0004-a5fc0d8125d822b2695b49e1.json",
+      "size": 30773,
+      "sha256": "7087095307b4c45fc737ea7f240c30a7f5fa8404adfd30d83322e845b2e32dd7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0005-74d9f0f9259be3d4d2788c4f.json",
+      "size": 20069,
+      "sha256": "78aab17d7b58dc10d7666d7ff39cc292e00533c323c86208f83327b1430ad128"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0006-8d2cd58f850ec6198ec865a8.json",
+      "size": 16442,
+      "sha256": "655fd2989c35c69fdec58af77bab0809ea2150294aaf27553c03f0b8e9a2c44e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0007-280820c47ea1c55ba1cd8e12.json",
+      "size": 22830,
+      "sha256": "357f9e4511fc55520fcc4433c8dfa932418e5fb3c9ccd88a55456a2433ddcf94"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0008-55673b34337e09e997411e78.json",
+      "size": 21377,
+      "sha256": "3d12828a9b3c2397d9acec3e68c0f58322756e3ead18d249b91fda322fca6952"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0009-0f9db1d4cfbdb4f8763a7971.json",
+      "size": 20499,
+      "sha256": "0355c6d0288ae5b7101b4569b868f0a57752289200699d2908a8f51d4717ebf8"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0010-964385f5dc9ea576300c4050.json",
+      "size": 20053,
+      "sha256": "8972f9f2250dd261ab9287591fbf6968ecf040484ed182658c70807146836f78"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0011-a58cee7e4296c7610c84db5c.json",
+      "size": 18902,
+      "sha256": "f70ef53ade1a4b72876ae1e4d539d29dc0ce4c9c97c07d41a2d1918edec09076"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0012-28d4e70030316eac6363b3e5.json",
+      "size": 22036,
+      "sha256": "cb2ad8895f3f4939018121dd5218ea1b92b9485d872baa51d16e56b65104fdf4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0013-51f6163dda79affeb96dcfbe.json",
+      "size": 18923,
+      "sha256": "b618d0607d9359c31def810dfc8d676d79a3eb7bdad1a08d75515858d7c98996"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0014-a767d15e2b9d8c902b3042c0.json",
+      "size": 22867,
+      "sha256": "1a08882da00ad264c301a368e98d7820e41304a99bca7041ae34545f02dac00c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0015-4aedf29f5a6afa8e3911473d.json",
+      "size": 38351,
+      "sha256": "95a18a5ed0a0e3a1a0303ca31dd0d4563b8743c0a277958ccde97acbd612e9de"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0016-ba96ccd2d727e088a902b755.json",
+      "size": 20788,
+      "sha256": "88a12a6129c9bebf3c376da39251bf20a6e851da822e67dd311a9001efb7c96c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0017-98a1b86cd9b70351c5f98ecc.json",
+      "size": 18670,
+      "sha256": "a727a62d3c48eb7ba7cebbcc3438dbc678c3a19cffa449943a1630b1aa5838af"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0018-0eab252ef8e77acdda3d5285.json",
+      "size": 17248,
+      "sha256": "2c1232b7baef3e185fa65c854a2c91752d4f551e893c063ea9f4f111f28df92c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0019-6e7ee9d50564c3fe51082834.json",
+      "size": 21445,
+      "sha256": "06035153061d1374d184db67708ebbb753da3cdc5f7ed7176d79e91346c2b396"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0020-6b0ef14120da91c1b5d85ad1.json",
+      "size": 16106,
+      "sha256": "f466c1f33eecc0ba6f1adec56a9318ab669a7211595fe28b56136cfda4e9d50f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0021-149fd2bede8a8dcafe01123d.json",
+      "size": 23522,
+      "sha256": "a79c3423ce345236a8cd8991479f5c15de28a092a4d85ca818799a48d9871e8b"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/chunks/chunk-0022-0d27f4328d3c115d5fb69694.json",
+      "size": 3983,
+      "sha256": "3d257f8e40f33e0956bb1e3465afac545348a398976704c6c203b5a2db168989"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_bf28987c132c1b13527f252a/full-draft.json",
+      "size": 488030,
+      "sha256": "a9731b65bf919ac83cb32da94b16fae6a24e857c08df39d6a83cb8b1d6c59c40"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0001-432fbbf3ffe8108e7995c3c0.json",
+      "size": 17175,
+      "sha256": "a56f8afffdd2750ddc921a87873c64d56e4a19811766302fa57702723f685642"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0002-8361fb5148ff89d54c4860ed.json",
+      "size": 16130,
+      "sha256": "ce8394cf0abb9ec3052311e1db65d2918bfc90e69c4ab0531d9a5a8a98ccfd4d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0003-8df3c1a5b2665a0e03f1ccbc.json",
+      "size": 11175,
+      "sha256": "759ec88062e54880de443ad288cc17f7ffbd523a85778ceac4a23f898b30e9f8"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0004-e9f6091f1dce607ec2c80739.json",
+      "size": 11245,
+      "sha256": "05a0abec6a1cb0f6dde0935436db7ac71213abdf5bf0b7d8cad10c044db4d464"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0005-1025366f930dc71c2536a34a.json",
+      "size": 14565,
+      "sha256": "cde26ac1f802fb289584a16c8ccf4b4705b01c8413bf1c4acc20dd7b7aad3613"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0006-b296a4647e341a834c9f139a.json",
+      "size": 11772,
+      "sha256": "4249a6e70454aa37bd437d77aa7ada4514a1824edf953d286e70856f94287609"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0007-6738ee6476afb2c4f6635afa.json",
+      "size": 17520,
+      "sha256": "87c5589cd923baec854f74cf34973a55bf888024a30fa2256eae1dcd2ba54c14"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0008-f00e2165435c5e6eaac5af85.json",
+      "size": 14068,
+      "sha256": "540483e266233016c33a7b5e127c8841c261d8ce3a7f283ce3d0ff0755228782"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0009-e8c3786f3efe8764217f6b88.json",
+      "size": 16592,
+      "sha256": "e52a8387dd8336eeaf436f410baf1a5bde29f3831d78c9312b88cb148ffdf2a1"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0010-3c792bc73187aafee3c3557c.json",
+      "size": 13686,
+      "sha256": "03ad42ff4c7a32196f05619e7b69fb6538d87d7da0ca4439f518a68ef54e8d14"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/chunks/chunk-0011-d73ca041d88955fcb7a3c21e.json",
+      "size": 11531,
+      "sha256": "52b90dfaaf9d15ab4c2cdf2e5326e398d14486cb16655abe0a550586df1cd5de"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ca1eb8feb6baceb8d4fb9eb7/full-draft.json",
+      "size": 185540,
+      "sha256": "4d8dc645f045ba9991d42e81618b5c30fc474132b0a4581b524d9893f354ad76"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0001-a81b50548647e2029a24ae4e.json",
+      "size": 22354,
+      "sha256": "6de050fe7f11aad1a45209f6d1cca75b53b8aea578c777bb4e8f12d7316cbd4f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0002-ac43f95760aa019d2c5ee69c.json",
+      "size": 19130,
+      "sha256": "919597bea03803fb16bec0bf08b02723a9de82164c5eb385c151352303a4ba46"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0003-a55d7265dbbc29682865f77d.json",
+      "size": 12808,
+      "sha256": "f10b8b819fefc9497ead67ada6271bd0e36fedfd65f62d12c6f3ff96745ee708"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0004-769370e99afdb34aa31c7263.json",
+      "size": 14806,
+      "sha256": "0c282ab1a589fa52c1187542016f2c797727d6bedb08e81e8a2b9b40a2516626"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0005-1880895d60144408abdb44e2.json",
+      "size": 15719,
+      "sha256": "60592e077a038e164b5da1a13687c366d91af885d8413c7c2c3b6b33e408e723"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0006-f994c90d362d40f9d370232d.json",
+      "size": 12330,
+      "sha256": "420d9597ef9c79578ca16b36398d155693ad490ddc13519fd2eaeacdeac3667f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0007-b36b4289b47367b6e0d66a54.json",
+      "size": 18945,
+      "sha256": "3061d7fb0f786118090673cf805feb3b31a5eb5da6602a4346f8cac75a13664c"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0008-353daf39ad6a8dba7e2bd631.json",
+      "size": 17789,
+      "sha256": "3b1e2ceec030a9cd9dd6384dcf2b0d43fdda0abf9c0a55e2d031951ffb6e944d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0009-decb3dad8d9c3a4ef46f7c53.json",
+      "size": 15641,
+      "sha256": "bbc64c7c0b36b6361b23b638760bcbd8c72e1be6f5767e9e849228ab9ce7d673"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0010-3a64ce0f1c83bbcf0b8240c6.json",
+      "size": 16239,
+      "sha256": "634b5c60e934f5715818cbbae1f860465d72f3bb865b05ae331ad860c4579a3d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/chunks/chunk-0011-e43d6459f8dd13f4d0a4ef79.json",
+      "size": 13010,
+      "sha256": "55edfce8dd296a110f3e36c277a71d1c3647db41717117ddfb6b1a55a1299e68"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_ccfa294601420a96bd660cf9/full-draft.json",
+      "size": 212864,
+      "sha256": "c2e98124598aa71a2e36eedb173cd24163d8a8504f41d9996a963cf241192da9"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0001-6df08cf0180fd7bfe854fc0a.json",
+      "size": 15298,
+      "sha256": "9e3e72783703d2e403a4847f7213ac4924af18634fad525fe48e7af973cd9640"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0002-6e9fbb2a9321a9f5e7abd8fa.json",
+      "size": 18874,
+      "sha256": "3dc5bb0ffbd7e3241b32465ac4d43f698fdc491e30835a1c8435237e0fd18eaa"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0003-8eb0d7b9830dbe758244457c.json",
+      "size": 29239,
+      "sha256": "e70f3f35b7a8ad0733abec54c8bed61bac946ed02a8afa7ed0032dc115192cfc"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0004-15f9c2dd801c92185c0914d9.json",
+      "size": 21930,
+      "sha256": "a8d610806d940bfb02b718142b04dd428710deb0cbb7b5907ad2e256d68d88f4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0005-7f8a4d6f7fb6396e308263d3.json",
+      "size": 14029,
+      "sha256": "8972ff91f0dce944c767c3089d67ddb7ddcf076eee21153e1ad781183aa4c9be"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0006-abe36b7834d4df2da350d28e.json",
+      "size": 15048,
+      "sha256": "7d021c6e0e0b98c5272f07c072c7d782dfc12c9ddfd9a7260ebcbcd93a4e878f"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0007-ee5efe9041275905ca070eee.json",
+      "size": 20178,
+      "sha256": "9ebc78030e48cf2bce9729a36772c8517d60eedf5e97363fb726f3ba45b63348"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0008-0aace9851d633f67df22685c.json",
+      "size": 18837,
+      "sha256": "f783a0e872d5fb4678e23e38e877bbf1e9538e2eb798c616beb2a498e98830ae"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0009-37729c5fa2b04482d3ac49ea.json",
+      "size": 22184,
+      "sha256": "a09e3019ab45b69d62b57ab215bf1d0bb0918bbf8c5447007f56d311ab0a5ad9"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0010-86d58a46a466414c06628a49.json",
+      "size": 20608,
+      "sha256": "69dcfb4c07eb2503d0ff82875e573ac226bf3dea5bb3b6f97ad8ed97a15d095e"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0011-918b21927a5b111ef3aeb2b6.json",
+      "size": 15032,
+      "sha256": "ed6894ff1095a2018723e01fe9f8362a892673843f3d06b423f2126e6f4b0a85"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0012-500e57be6b06717d8ea3387c.json",
+      "size": 8075,
+      "sha256": "1f669f7ebcf2aa1edad5e6e1bd00745eb0e2cf4e74f7868a7dff35f82c1948e4"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0013-b9276372d28e13358c612e8a.json",
+      "size": 23046,
+      "sha256": "49cdcaa274a40f711fed621c551110c7a03b3c9ed2bc1f6f86ec6188ab0e8b64"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0014-a8e3d8c06822916390b63dba.json",
+      "size": 17517,
+      "sha256": "7889f11253450d3d7455c5b3ce8b43b4e4cf2cd20cbe2be0ba6d76d21e25b5c7"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0015-04880a503197691b430e3992.json",
+      "size": 21022,
+      "sha256": "1babdefb0cba2131448a0ec729a6af8fb2c3435500d9619c71c65e7c5c56ac49"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0016-35fc5c17eab87fe8b1e59945.json",
+      "size": 12982,
+      "sha256": "12839d8eb4bf3b74e3a57a41c56b5f86df5d1826a6b86ff43ef5550eff680895"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0017-8fe321f0f02b20c9b826d8d6.json",
+      "size": 21042,
+      "sha256": "d20b88c7ab2559eb78d2234fb4223b21e15c875c385f8ed4ee864f1883a2f5fb"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0018-b0a76ed0cd46607a5feb2920.json",
+      "size": 20193,
+      "sha256": "6c123507193be86e5e32c686ca7d630d07f3c7ce51cc09e3768439ceb11a74de"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0019-c43f8481b466a34481740012.json",
+      "size": 18647,
+      "sha256": "ba27e120790536dca0c3a62689b4477a095b84452c6ee75448b3868c77c97d57"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0020-dafb03ca0a9926f908b639bd.json",
+      "size": 15453,
+      "sha256": "eadcb0398a7d5f6dc77d492fe58b25d1b89bb7b6e28b04337ae15fb6b1fc679d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0021-3c2ae205499223fa8cb96056.json",
+      "size": 12250,
+      "sha256": "ce7a36236c2fa62bc72424b66d3daf654d27b710ef3011f13e8ae92142d9ca85"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/chunks/chunk-0022-93068827759c5ec48f41ec0c.json",
+      "size": 7675,
+      "sha256": "c8df27dbe99f2bfbcc5d08dd2ac07d8aa366abf967c9f5813a7f373aa1a7ca81"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_cffd00bfa3697e3b95523084/full-draft.json",
+      "size": 417646,
+      "sha256": "767923242f5cc7ca95837e67a68322990a14b2b7a1512793ccf0ce9023259133"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0001-1dd29e40aa6abbe83cbc625f.json",
+      "size": 20259,
+      "sha256": "9be36542c3ec4f1dc0db547ceccc3c49f3c7f94f2a230fb8ab9ff844a008efdf"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0002-cd3a4b7d18f2ee8911d81eb8.json",
+      "size": 18208,
+      "sha256": "6bc33e640e0cdfa2a64df696d75e87cc66a8325a89e6521ea1d6ca1fe23b8884"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0003-dc84064fc08aabfa72287a1f.json",
+      "size": 11925,
+      "sha256": "918fad4844edca588d600850bd7ad13ae4f904295da876a0ba9e85f8c24328ca"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0004-2014c47b0d70943e146a2437.json",
+      "size": 11938,
+      "sha256": "1e6e793ec8d148e14e02db39e4ddb367cb937da60fb0cf04c5a1992f5d1974fc"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0005-33a9a5bcf5a807b3d0ca45b6.json",
+      "size": 13282,
+      "sha256": "06a07bb933816c9cf3891720beb6068b7ef85d205b4213a812c8091889aa07e5"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0006-81cb427308ce808eced5a1e7.json",
+      "size": 14557,
+      "sha256": "74e0357a0a4c877d4520509e971c9d4c881d8d090cb60f545e8581f63555e6e3"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0007-d35759ecf4a685fcce11b6e7.json",
+      "size": 17635,
+      "sha256": "3be35d3a0ecb0257457c26cd52a11385299bf42f99db609050207ff9905335ab"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0008-5c344dafa8eb4d60fe6836bd.json",
+      "size": 18462,
+      "sha256": "00887319d886bb99b7fc84c7e60c74a20ac660aa4fcfd0c4c99e0cb8a9ade277"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0009-e934d9d7ae086fb40d193712.json",
+      "size": 13503,
+      "sha256": "31c82a7b576243c8ad279b56a4b5723983dcd7e5feb2737a528a1529c83b17ba"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0010-391decc1de81861de3996653.json",
+      "size": 13622,
+      "sha256": "3e1f728a5419b6ed69518cd66c321eddbc7954caad6b2cd1bb1e0f87bd2df227"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/chunks/chunk-0011-e406051f28d9a1f1031f58ab.json",
+      "size": 10879,
+      "sha256": "cd6269e1f77ade2a2ee02d6b7b8fc7ba8370af9206d3dcc13245c3dfa884c93d"
+    },
+    {
+      "path": "medical_writing_full_drafts/proj_user_8a5a00cb014a/mwjob_dfe2e471ead95adc895c5484/full-draft.json",
+      "size": 195118,
+      "sha256": "b3574b38ac0150f42581d7da240f391429c6df8db1272be6bf5ab1b7e05d4bf9"
+    },
+    {
+      "path": "medical_writing_greenfield.sqlite3",
+      "size": 1036288,
+      "sha256": "6cc340760e06438c8b92d49fa91aed43ea9fd1856cb686de7bc66008975c57e8"
+    },
+    {
+      "path": "medical_writing_literature.sqlite3",
+      "size": 49152,
+      "sha256": "5f0cb713af0dcdc4579b2715d1e957d2fad86f4399743c4cf4728d09f593b4e1"
+    },
+    {
+      "path": "medical_writing_protocol_assembly_plan.sqlite3",
+      "size": 737280,
+      "sha256": "690668b1eed768b0676293549f4a44c41f4b7087928104beb0136ceceefb91e3"
+    },
+    {
+      "path": "medical_writing_shared_corpus.sqlite3",
+      "size": 77824,
+      "sha256": "1fc200a4d5853d4a14378be5d0c9fcf7d14d9a6fec981a5f0f11ddd5ac96a59c"
+    },
+    {
+      "path": "medical_writing_synopsis_import.sqlite3",
+      "size": 28672,
+      "sha256": "d64379f613a91d306606f1c18b827dc9c35f0ecc62aabcd0a5add790e7da7d39"
+    },
+    {
+      "path": "monitoring_protocol_rules.sqlite3",
+      "size": 270336,
+      "sha256": "afc3b4292eb0431706980c91fb1e6d4dd7275174bbb3b3aca3c6f0ec18c37826"
+    },
+    {
+      "path": "source_content_validations.sqlite3",
+      "size": 32768,
+      "sha256": "f31a3f53d40e8efbced7eac5ebda287e73d4fdc8d2c68b13de3928e810e6582a"
+    },
+    {
+      "path": "user_projects.sqlite3",
+      "size": 20480,
+      "sha256": "f8ebe357890b097edd454dac548b2b5ac53c74fc4fa06a032cbb53ecd194eb7a"
+    },
+    {
+      "path": "workbench_runtime.sqlite3",
+      "size": 692224,
+      "sha256": "6303a92fd7c97bdd53feea5d834f73bc263eb68b391da103b6074495fae6226b"
+    },
+    {
+      "path": "writing_reference.sqlite3",
+      "size": 8658944,
+      "sha256": "72c7476c9bfcb0f4481b14b2229e7b62fb1b0d9ed685113055633bc61c69c4ec"
+    },
+    {
+      "path": "writing_reference.sqlite3.init.lock",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
