@@ -41,3 +41,12 @@
 - 实测：durable job `mwjob_872085bf`（版本单元格，provider=opencode-go，model=deepseek-v4.1-flash）**completed**，云端产出4个互异候选（标准推荐/精炼/结构重排/保守，各带依据说明）
 **新P1发现（A16采用链）**：绿地桌面（无已保存工作副本）上，新完成候选在"选用并写入"时**必被stale守卫拒绝**："candidate generation context is stale relative to current authoritative state; re-generate"。regenerate→adopt循环复现2次（不同单元格）。根因假设：无保存工作副本时authoritative状态基线持续移动（绿地候选基线vs工作副本双轨），候选digest永远追不上。**修复方向**：①采用前以当前digest重新校验而非拒绝 ②绿地桌面先强制"创建并保存工作副本"再开放AI修订入口（前置门控已存在但创建按钮不可达/保存按钮disabled的链条有断点）。此缺陷使A16的"写入"一步在绿地新项目上不可达=用户视角P1。
 **MTPLX本地模型质量（非缺陷，owner已决策云端）**：4次尝试两签名（alternatives 2-4不足/候选雷同）→决策=修订任务路由云端（已实现）；MTPLX仍为其他任务主模型。
+
+## 追加3（2026-09-23 13:4x）：A16 stale 守卫精确根因（实证 diff）
+诊断方法：digest 构建处临时记录完整 semantic JSON（证据=gencx_semantic_evidence.jsonl，5 行），对比同线程"提交时"vs"采纳时"重建。
+**精确根因**：digest 构建时点不对称——
+- 提交时：`submit_revision_durable` 在表格锚解析**之前**构建 digest（semantic.anchor_path=""、table_cell_anchor.block_hash=""）
+- 执行器/采纳时：锚已解析回填（anchor_path=结构化 block/cell/row ids、block_hash=内容哈希）→ 重建 semantic 必然不同 → 采纳永远 stale
+次要混淆：同 section 多线程按 DOM 顺序堆叠，"选用第一个"会采到旧路由时代的线程（跨线程误采，非缺陷但易混淆）。
+**修复方向（下批）**：将 digest 构建统一移到锚解析回填之后（submit 与 executor 同点构建）；或 revalidate 先复现提交时的解析前状态。建议同时：采纳失败时 UI 提示应指引"重新生成"而非静默（当前已有提示文本，合格）。
+**暂行状态**：本轮已交付修复的前半（digest 排除 working_copy 块 + 版本升 v3 + 错误分层/可诊断日志已移除但方法保留）；后半（时点统一）需动 submit/executor 构建时序+回归，独立成批。

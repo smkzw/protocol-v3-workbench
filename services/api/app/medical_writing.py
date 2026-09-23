@@ -2469,7 +2469,9 @@ class MedicalWritingRevisionService:
     # Durable job integration: section AI candidate generation
     # -----------------------------------------------------------------
 
-    GENERATION_CONTEXT_VERSION = "mw_gen_ctx_v2"
+    # v3: working-copy instance block excluded from the lineage digest —
+# the editor buffer is the moving part (A16 adoption stale-guard fix).
+    GENERATION_CONTEXT_VERSION = "mw_gen_ctx_v3"
     _REQUIRED_AI_PROJECTIONS = ("evidence_intent", "ai_candidate_intent")
 
     class GenerationContextError(ValueError):
@@ -3496,7 +3498,18 @@ class MedicalWritingRevisionService:
             ),
             "ai_policy": policy,
         }
-        digest = self._digest_canonical(descriptor)
+        # A16 fix: the working-copy instance (id/revision/buffer hash) is the
+        # editor's moving part — each resubmission or autosave mints a new
+        # one, which made every previously generated candidate fail the
+        # adoption stale-check.  The candidate lineage anchor is the section
+        # semantic + study facts + plan/corpus/evidence/source binding + the
+        # frozen AI route; the working-copy block stays in the descriptor for
+        # display but is excluded from the digest.
+        digest_payload = {
+            key: value for key, value in descriptor.items()
+            if key != "working_copy"
+        }
+        digest = self._digest_canonical(digest_payload)
         return {
             "version": self.GENERATION_CONTEXT_VERSION,
             "digest": digest,
