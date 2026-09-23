@@ -306,3 +306,6 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 **owner决策已落地**："修订任务路由云端"——`ai_execution_policy.py` resolver新增`_capture_revision_cloud_route`（MEDICAL_WRITING_REVISION主路由=批准fallback链第一个cloud profile=opencode-go v41 max）；resolve_internal与route_identity_snapshot(task_type)两处一致应用；medical_writing._policy_identity传revision任务类型。**实测**：durable job mwjob_872085bf（版本单元格）经opencode-go/deepseek-v4.1-flash **completed**，4个互异候选（推荐/精炼/结构重排/保守）已浮现设计器。MTPLX仍为其他任务主路由（local-first保持）。回归2608全绿。
 **新P1（下批修）**：绿地桌面无已保存工作副本时，新候选在选用写入时必被stale守卫拒（"generation context is stale…re-generate"，regenerate→adopt循环2次复现）。假设=无工作副本时authoritative基线移动；修复方向①采用时以当前digest重校验②绿地先强制创建保存工作副本再开放AI修订（现有门控链有断点：创建按钮点击后变保存按钮但disabled循环）。
 **下批顺序**：①修A16采用链P1（上述）②V04等待/失败/断网出口 ③A13/A14摘要SOA人工修改保存重开 ④A21 IME ⑤V07完整计数 ⑥剩余WP6（三研究逐章医学接受/最终Word真实申办者信息）。
+
+## 2026-09-23 0923V1追加2：A16 stale守卫精确根因实证（d93b605后）
+诊断=语义JSON全量对比（证据 runs/requirements_v2_20260919/wp6_0922v2_20260922/n5_0923V1/gencx_semantic_evidence.jsonl 5行）。**精确根因**：提交时 digest 在表格锚解析回填前构建（anchor_path=""/block_hash=""），采纳时在线程回填后重建（结构化ids+内容哈希）→ 重建必不匹配 → 采纳永远stale。**下批修复**：digest统一移到锚解析回填后构建（submit/executor同点）或revalidate复现解析前状态；同时注意同section多线程DOM顺序（btns[0]=最老线程易误采）。临时stderr诊断已移除，方法与证据留存。A16其余链路（单元格选择/提交/策略/云端调用/解析/质量门/候选浮现）全部实测通过。
