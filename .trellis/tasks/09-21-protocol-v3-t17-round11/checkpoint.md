@@ -295,3 +295,14 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 **WP6接线**：5301后端用当前源码重启（原旧代码被版本门禁正确拦截；补装python3.14 xlrd/python-multipart）；isolated runtime通过产品API接线：profile independent_ai__mtplx_qwen38_local + independent_ai角色绑定(medium) + fallback=opencode_go_deepseek_v41_flash(max)。vite 5186→5301本会话启动。
 **N5证据**：wp6_0922v2_20260922/n5_0923V1/N5_EVIDENCE.md+4张截图——V01三视口截图PASS（历史CDP超时已破，scrollWidth<innerWidth）、V06真实动态章节卡持久化+复原PASS（greenfield_events两笔resolution事件）。**未闭合如实**：A16局部AI修订被"已保存工作副本"前置卡住（85章补写候选审阅未完成→保存按钮disabled；设计器单元格已选中、rail已切"单元格替换候选"文案，差最后一步）；V04/A13/A14/A21未跑；V07部分计数。恢复入口见N5_EVIDENCE.md表格。
 **下次恢复顺序**：①完成Study A候选审阅（审阅全文初稿→确认→采用）→保存工作副本 ②设计器选单元格→提交AI修订（MTPLX真链）→选用写入 ③V04断网/失败出口 ④A13/A14摘要SOA修改重开+IME ⑤V07完整计数 ⑥剩余WP6项。遵守：不逐次测试（批量构建后集中回归）；不重复检索/分诊/OCR/翻译；Study C统计数值不代选。
+
+## 2026-09-23 0923V1 追加：A16全链打通至质量门+策略层修复（d93b605已push）
+**第二层策略修复**：section_ai_candidate 在 ai_execution_policy.py 被拒——`_MTPLX_QWEN38_SPEED_POLICY` 仍为11234+目录名。三处批量修正（策略表/角色默认profile常量INDEPENDENT_AI_MTPLX_MODEL/preset）→8002+`mtplx-flash-next-optimized-speed`。**provider字段语义**：profile的provider必须是五个具名provider之一（`mtplx`），`openai_compatible`是传输名——已通过产品API修正WP6 profile。
+**A16全链实测（MTPLX真链）**：设计器单元格选中（第7行/第1列）→提交→durable job→策略通过→MTPLX综合AI调用→结构化解析→**质量门正确拦截**（4次尝试两签名交替：alternatives 2-4不足/候选雷同）。**结论=本地模型质量发现**：MTPLX speed档在2-4互异候选任务上不可靠；系统按L09正确终止不绕过。可选方向（owner决策）：①服务端采样调参②revision路由云端③本地单候选模式。**UI幂等发现**：同章节重复提交create_or_reuse复用同business_key（含失败态），换指令不产生新任务——需产品语义决策。
+**V07累计**：≈26 clicks/3 texts。**恢复后**：independent_ai=MTPLX(medium)主，fallback=opencode-go(max)；5301当前源码；vite5186→5301。
+**下次恢复顺序**：①owner对MTPLX候选质量三选一决策后完成A16选用写入 ②V04断网/失败出口 ③A13/A14摘要SOA修改重开 ④A21 IME ⑤V07完整计数 ⑥剩余WP6（三研究逐章医学接受/最终Word申办者信息）。
+
+## 2026-09-23 0923V1终版（831e7ba已push）：修订路由云端生效+A16采用链P1定位
+**owner决策已落地**："修订任务路由云端"——`ai_execution_policy.py` resolver新增`_capture_revision_cloud_route`（MEDICAL_WRITING_REVISION主路由=批准fallback链第一个cloud profile=opencode-go v41 max）；resolve_internal与route_identity_snapshot(task_type)两处一致应用；medical_writing._policy_identity传revision任务类型。**实测**：durable job mwjob_872085bf（版本单元格）经opencode-go/deepseek-v4.1-flash **completed**，4个互异候选（推荐/精炼/结构重排/保守）已浮现设计器。MTPLX仍为其他任务主路由（local-first保持）。回归2608全绿。
+**新P1（下批修）**：绿地桌面无已保存工作副本时，新候选在选用写入时必被stale守卫拒（"generation context is stale…re-generate"，regenerate→adopt循环2次复现）。假设=无工作副本时authoritative基线移动；修复方向①采用时以当前digest重校验②绿地先强制创建保存工作副本再开放AI修订（现有门控链有断点：创建按钮点击后变保存按钮但disabled循环）。
+**下批顺序**：①修A16采用链P1（上述）②V04等待/失败/断网出口 ③A13/A14摘要SOA人工修改保存重开 ④A21 IME ⑤V07完整计数 ⑥剩余WP6（三研究逐章医学接受/最终Word真实申办者信息）。
