@@ -27,3 +27,15 @@
 - digest v4 lineage normalization（排除 anchor_path/block_hash/source_kind）已实装并实证
 - 修订任务云端路由已实装并实证（opencode-go completed + 4互异候选）
 - 下批需修：竞品分诊 MTPLX 空响应的 fallback 路径
+
+## 追加（09-23 17:2x）：tester2(gemini MS) 完整报告到手
+EXIT=OK，产品FAILED——核心发现：
+1. 文献引用部分存在（库层可用）但文内层不可达（编辑器从未出现→编号/联动/回跳均未观察到）
+2. 目录与图表缺失（导出/预览不可达）
+3. 流程图缺失
+4. 全屏正文编辑器中手动编辑成功（含格式工具栏、交叉引用、表格）
+5. 反拟合23项全合规、MS场景隔离严密
+6. 新P1：文献库导入时混合来源（GOLD题名+NEJM DOI）未作冲突提示即入库
+7. 已知限制：protocol_full_draft 路由白名单硬编码限制必须使用 127.0.0.1:8002/v1 mtplx 路由
+
+**A16 digest v4 验证结论**：全屏编辑正文→AI修订指令→提交→云端opencode-go调用→4互异候选→选用写入→WC rev 0→1→重载持久化 ✓ 全链在digest v4下已打通。
