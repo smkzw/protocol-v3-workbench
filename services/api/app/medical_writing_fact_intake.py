@@ -243,6 +243,27 @@ FIELD_VALUE_ALIASES: Dict[str, Dict[str, str]] = {
     },
 }
 
+
+def _normalize_enum_value(field_path: str, value: str) -> str:
+    """Best-effort mapping of a free-phrased value onto the closed vocabulary.
+
+    Exact alias lookup happens at the call site first. This pass tolerates
+    phrasings that CONTAIN a known alias or an enum token (e.g. "预期无关"
+    contains "无关"; "unlikely / low risk" contains "expected" after alias
+    lookup misses). Returns "" when nothing maps.
+    """
+    folded = value.casefold().strip()
+    if not folded:
+        return ""
+    best = ""
+    for alias, target in FIELD_VALUE_ALIASES.get(field_path, {}).items():
+        if alias and alias.casefold() in folded and len(alias) > len(best):
+            best = target
+    for token in FIELD_ENUM_VALUES.get(field_path, ()):
+        if token and token.casefold() in folded and len(token) > len(best):
+            best = token
+    return best
+
 # Mapping from a missing high-impact field to the deterministic writing
 # clauses that locally depend on it. This is what makes "missing IB only
 # locally blocks dependent clauses" explicit and auditable.
@@ -642,36 +663,50 @@ def _validate_ai_response(
             )
         fact_kind = _FACT_KIND_BY_TOKEN[fact_kind_token]
 
+        downgrade_notes: List[str] = []
         # High-impact quantitative fields may only be recorded as unknown.
         if field_path.startswith(HIGH_IMPACT_MISSING_PREFIX):
             if fact_kind != MedicalWritingFactIntakeFactKind.UNKNOWN:
-                raise ValueError(
-                    f"fact intake proposal[{index}] high-impact field {field_path} "
-                    "must be fact_kind=unknown; the AI must not invent a value"
+                # R13: raising here failed the WHOLE turn deterministically —
+                # the model repeats the same phrasing on every retry and the
+                # user could never complete step 1. Downgrade instead: the
+                # anti-fabrication invariant is preserved because nothing is
+                # recorded as verified.
+                fact_kind = MedicalWritingFactIntakeFactKind.UNKNOWN
+                downgrade_notes.append(
+                    "高影响字段仅接受“未知”，AI不得代答；本提议已降级为“未知”，请人工补答"
                 )
         if field_path in _ALLOWED_CONFIRMED_HIGH_IMPACT and fact_kind not in {
             MedicalWritingFactIntakeFactKind.USER_STATED,
             MedicalWritingFactIntakeFactKind.SOURCE_EXTRACTED,
         }:
-            raise ValueError(
-                f"fact intake proposal[{index}] exact high-impact field {field_path} "
-                "must be explicitly user_stated or source_extracted"
+            fact_kind = MedicalWritingFactIntakeFactKind.UNKNOWN
+            downgrade_notes.append(
+                "该字段必须由用户明示或来源提取；AI 提议已降级为“未知”，请人工补答"
             )
 
         value = str(raw.get("value", "")).strip()
         if value and field_path in FIELD_ENUM_VALUES:
+            original_phrasing = value
             value = FIELD_VALUE_ALIASES.get(field_path, {}).get(
                 value.casefold(), value
             )
             if value not in FIELD_ENUM_VALUES[field_path]:
-                raise ValueError(
-                    f"fact intake proposal[{index}] value for {field_path} must be "
-                    f"one of {FIELD_ENUM_VALUES[field_path]}"
+                value = _normalize_enum_value(field_path, original_phrasing)
+            if value not in FIELD_ENUM_VALUES[field_path]:
+                # R13: an off-vocabulary phrasing (e.g. immunogenicity
+                # relevance worded in an unmapped way) used to raise and kill
+                # the entire intake turn. Downgrade to an explicit unknown
+                # proposal and keep the phrasing in the rationale for the
+                # human reviewer instead.
+                downgrade_notes.append(
+                    f"AI原始表述“{original_phrasing}”不在该字段可选值内，"
+                    "已按“未知”记录，请人工确认"
                 )
+                value = ""
+                fact_kind = MedicalWritingFactIntakeFactKind.UNKNOWN
         if fact_kind == MedicalWritingFactIntakeFactKind.UNKNOWN and value:
-            raise ValueError(
-                f"fact intake proposal[{index}] unknown fact must have an empty value"
-            )
+            value = ""
 
         confidence = str(raw.get("confidence", "unknown")).strip()
         if confidence not in _CONFIDENCE_VALUES:
@@ -743,6 +778,11 @@ def _validate_ai_response(
         ):
             quarantined_mappings.append(field_path)
             continue
+
+        if downgrade_notes:
+            rationale = "；".join(
+                [rationale, *downgrade_notes] if rationale else downgrade_notes
+            )
 
         proposals.append(
             MedicalWritingFactIntakeProposal(

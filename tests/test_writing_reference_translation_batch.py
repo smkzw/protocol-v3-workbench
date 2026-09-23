@@ -1749,6 +1749,55 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
             )
         )
 
+    def test_unexpected_error_code_without_lineage_retries_as_ordinary(self) -> None:
+        """R13: a failed item carrying an unexpected error code with no
+        planner lineage used to abort the whole retry as
+        "document_plan_contract_source_missing_or_ambiguous". It must route
+        through the ordinary fresh-planner recovery path instead."""
+        artifact = self._seed_artifact(
+            "artifact_unexpected_code_lineage_retry",
+            [
+                (
+                    "span_unexpected_eligibility",
+                    "eligibility",
+                    "Adults with chronic spontaneous urticaria may enroll.",
+                ),
+                (
+                    "span_unexpected_safety",
+                    "safety",
+                    "Safety assessments are collected through Week 24.",
+                ),
+            ],
+        )
+        batch = self.service.create(
+            PROJECT_ID,
+            self._create_request(
+                "translation-batch-unexpected-code-lineage-retry",
+                anchors=["eligibility", "safety"],
+            ),
+        )
+        failed_items = [
+            item.model_copy(
+                update={
+                    "generation_status": "failed_retryable",
+                    "error_code": "some_future_unclassified_code",
+                    "document_plan_failure_source_stage_run_id": "",
+                    "document_plan_failure_is_derived": index != 0,
+                },
+                deep=True,
+            )
+            for index, item in enumerate(batch.items)
+        ]
+        with self.repo._connect() as connection:
+            prepared = self.service._prepare_document_plan_contract_lineage(
+                connection,
+                failed_items,
+                retry_generation=2,
+                created_at=NOW,
+                persist_migrations=False,
+            )
+        self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
+
     def test_concurrent_integration_winner_drives_translation_lineage(self) -> None:
         self._seed_artifact(
             "artifact_integration_race",

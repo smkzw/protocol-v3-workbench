@@ -142,8 +142,77 @@ class FactIntakeValidationTests(unittest.TestCase):
                 }
             ]
         )
-        with self.assertRaises(ValueError):
-            _validate_ai_response(MedicalWritingFactIntakeScope.STUDY_FRAMING, bad)
+        proposals, _questions, _text, _him = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, bad
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
+        self.assertIn("降级", proposals[0].rationale)
+
+    def test_off_vocabulary_enum_value_downgrades_to_unknown(self):
+        """R13 P0-A: immunogenicity relevance phrased outside the closed
+        vocabulary must not fail the whole intake turn; it degrades to an
+        unknown proposal whose rationale keeps the AI's original phrasing."""
+        off = _ra_response(
+            proposals=[
+                {
+                    "proposal_id": "p1",
+                    "field_path": "framing.product_profile.immunogenicity_relevance",
+                    "fact_kind": "ai_inferred",
+                    "value": "几乎肯定相关（大分子注射剂）",
+                    "rationale": "大分子药物一般具有免疫原性潜力",
+                    "confidence": "medium",
+                }
+            ]
+        )
+        proposals, _questions, _text, _him = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, off
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
+        self.assertIn("几乎肯定相关", proposals[0].rationale)
+
+    def test_enum_value_containing_alias_still_normalizes(self):
+        loosely = _ra_response(
+            proposals=[
+                {
+                    "proposal_id": "p1",
+                    "field_path": "framing.product_profile.immunogenicity_relevance",
+                    "fact_kind": "user_stated",
+                    "value": "说明书提示预期相关风险",
+                    "rationale": "用户口头补充",
+                }
+            ]
+        )
+        proposals, _questions, _text, _him = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, loosely
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual("expected", proposals[0].value)
+        self.assertEqual(
+            MedicalWritingFactIntakeFactKind.USER_STATED, proposals[0].fact_kind
+        )
+
+    def test_unknown_fact_with_value_is_quietly_cleared(self):
+        response = _ra_response(
+            proposals=[
+                {
+                    "proposal_id": "p1",
+                    "field_path": "framing.indication",
+                    "fact_kind": "unknown",
+                    "value": "类风湿关节炎",
+                    "rationale": "待确认",
+                }
+            ]
+        )
+        proposals, _questions, _text, _him = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, response
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
 
     def test_high_impact_missing_only_as_unknown(self):
         good = _ra_response(
@@ -191,7 +260,7 @@ class FactIntakeValidationTests(unittest.TestCase):
 
         self.assertEqual("3 mg/kg，静脉输注", proposals[0].value)
 
-    def test_ai_inferred_high_impact_value_is_rejected(self):
+    def test_ai_inferred_high_impact_value_is_downgraded(self):
         bad = _ra_response(
             proposals=[
                 {
@@ -208,8 +277,12 @@ class FactIntakeValidationTests(unittest.TestCase):
             ],
         )
 
-        with self.assertRaises(ValueError):
-            _validate_ai_response(MedicalWritingFactIntakeScope.STUDY_FRAMING, bad)
+        proposals, _, _, _ = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, bad
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
 
     def test_source_extracted_high_impact_value_requires_source_id(self):
         bad = _ra_response(
@@ -483,7 +556,7 @@ class FactIntakeValidationTests(unittest.TestCase):
         self.assertEqual("I期", proposals[0].value)
         self.assertEqual("monoclonal_antibody", proposals[1].value)
 
-    def test_invalid_enum_value_is_rejected_before_framing_write(self):
+    def test_invalid_enum_value_downgrades_to_unknown_before_framing_write(self):
         response = _ra_response(
             proposals=[
                 {
@@ -497,8 +570,13 @@ class FactIntakeValidationTests(unittest.TestCase):
             ],
         )
 
-        with self.assertRaises(ValueError):
-            _validate_ai_response(MedicalWritingFactIntakeScope.STUDY_FRAMING, response)
+        proposals, _, _, _ = _validate_ai_response(
+            MedicalWritingFactIntakeScope.STUDY_FRAMING, response
+        )
+        self.assertEqual(1, len(proposals))
+        self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
+        self.assertEqual("", proposals[0].value)
+        self.assertIn("随便写的剂型", proposals[0].rationale)
 
     def test_more_than_three_questions_rejected(self):
         bad = _ra_response(questions=["q1", "q2", "q3", "q4"])

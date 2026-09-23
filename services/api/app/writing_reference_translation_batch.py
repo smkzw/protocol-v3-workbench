@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from hashlib import sha256
 from typing import Any, Callable
+
+logger = logging.getLogger(__name__)
 
 from packages.contracts.workbench_contracts.models import (
     ChapterIntegrationResult,
@@ -2296,9 +2299,25 @@ class WritingReferenceTranslationBatchService:
                 prompt_version=FLASH_PLANNING_PREVIOUS_PROMPT_VERSION,
             )
             if len(source_plans) > 1:
-                raise ValueError(
-                    "document_plan_contract_source_missing_or_ambiguous"
+                # R13: multiple previous-contract plans used to abort the
+                # whole retry as "ambiguous". Deterministically continue the
+                # lineage from the LATEST previous plan instead — migration
+                # writes a new immutable row, so nothing historical mutates.
+                source_plans.sort(
+                    key=lambda plan: (
+                        plan.created_at,
+                        plan.plan_id,
+                    )
                 )
+                source_plan_latest = source_plans[-1]
+                logger.warning(
+                    "document plan contract lineage ambiguous for artifact "
+                    "%s: %d previous plans, migrating from the latest %s",
+                    artifact_id,
+                    len(source_plans),
+                    source_plan_latest.plan_id,
+                )
+                source_plans = [source_plan_latest]
             if len(source_plans) == 1:
                 source_plan = source_plans[0]
                 migration_plan = self._build_contract_migration_plan(
@@ -2377,9 +2396,39 @@ class WritingReferenceTranslationBatchService:
                 # immutable plan existed.  This is an ordinary failed-item
                 # retry with no planner supersession lineage to allocate.
                 continue
-            raise ValueError(
-                "document_plan_contract_source_missing_or_ambiguous"
+            # R13: any other failure shape with no planner lineage used to
+            # abort the whole retry as
+            # "document_plan_contract_source_missing_or_ambiguous", leaving
+            # items permanently unretryable (e.g. failures recorded under an
+            # unexpected error code before a plan existed). With no current
+            # and no previous plan there is no supersession lineage to
+            # allocate — treat these as ordinary failed items and let the
+            # allocator run a fresh planner call against the same frozen
+            # source, which is exactly the no-lineage recovery path above.
+            logger.warning(
+                "document plan contract lineage missing for artifact %s "
+                "(error codes: %s); retrying as ordinary planner candidates",
+                artifact_id,
+                sorted({item.error_code or "" for item in items}),
             )
+            # Reclassify as the internal "needs a fresh planner call" shape so
+            # the allocator accepts them: document_plan_failed is the retry
+            # classification, and document_plan_failed_earlier_in_same_run is
+            # the honest structural marker that no plan lineage survived (the
+            # persisted rows are rewritten by the retry machinery anyway).
+            ordinary_candidates.extend(
+                item.model_copy(
+                    update={
+                        "error_code": "document_plan_failed",
+                        "document_plan_failure_codes": [
+                            "document_plan_failed_earlier_in_same_run"
+                        ],
+                    },
+                    deep=True,
+                )
+                for item in items
+            )
+            continue
 
         if ordinary_candidates:
             ordinary = self._allocate_document_plan_retry_lineage(
