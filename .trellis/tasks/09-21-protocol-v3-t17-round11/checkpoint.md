@@ -328,3 +328,6 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 
 ## 2026-09-23 第十一轮已派发（4进程setsid脱离）
 编队严格按owner指定：tester1=opencode-go/muse-spark-1.3-contributor(max) COPD入口A、tester2=google-antigravity/gemini-3.8-flash(high) MS入口B、tester3=cursor/cursor-grok-4.6(high) MDD盲测、tester4=opencode-go/deepseek-v4.1-flash(max) 膝OA+易用性专题。日志=/tmp/t17_r11_tester{1..4}_*.log。派发前已备份并删除round-10项目（6个tester项目从shared runtime清除）。A16 digest v4修复已实装——本轮tester不应再遇到stale守卫拒绝。
+
+## 2026-09-23 R11完整状态+tester2报告到手（无损暂停）
+tester2(gemini MS/入口B) EXIT=OK 产品FAILED——反拟合23项全合规、MS场景隔离严密；但7章/104缺口、无文献/目录/流程图。tester1 COPD(muse-spark max) EXIT=BLOCKED、tester3 MDD(grok high) EXIT=BLOCKED、tester4 膝OA(deepseek max) 静默死亡(90B无EXIT)。**P0共性根因确认**：旅程状态对比——gemini唯一到达writing（反拟合全合规），其余三个framing冻结；根因=MTPLX本地模型对部分分诊chunk返回空响应(provider_response_empty)→竞品分诊流水线在该chunk冻结/回退→framing不可穿透。fallback chain虽然存在(provider_response_empty属于可fallback错误集合)但流水线上层仍然冻结——需查fallback chain是否实际部署到该流程（role binding当前=MTPLX，fallback=opencode-go，但竞品分诊的routing可能用单独的durable worker路径而非interactive chain）。**下批首任务**：修竞品分诊的MTPLX空响应fallback路径（或将competitor_triage路由直接改云端）；修复后重派r11同场景。全部报告归档于runs/requirements_v2_20260919/t17_round11/（tester1/2/3/4_report.md）。
