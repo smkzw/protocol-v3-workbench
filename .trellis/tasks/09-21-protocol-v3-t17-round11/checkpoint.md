@@ -312,3 +312,8 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 
 ## 2026-09-23 0923V1无损暂停（ab2319a已push）
 全部状态：①A16 stale守卫精确根因已实证（digest构建时点不对称：提交时锚未解析/采纳时已回填），修复=统一到锚解析后构建，独立成批待做；②digest v3（排除WC块）已实装；③修订→云端路由已实装且云端任务completed（4互异候选）；④V01三视口截图/V06决定卡持久化PASS；⑤策略层11234三处修正。**未闭合**：A16写入一步（依赖上述修复）、V04、A13/A14、A21、V07完整计数、剩余WP6逐章医学接受、最终Word真实申办者信息。**环境**：5301当前源码（isolated runtime，已含opencode-go凭证于credentials store）；vite 5186→5301；MTPLX 8002运行中；OmniRoute 20128。**诊断遗留**：gencx stderr诊断已移除；/tmp/gencx_semantic.jsonl证据已归档runs/。恢复=读本checkpoint尾部+HANDOFF_ROUND10.md+N5_EVIDENCE.md。
+
+## 2026-09-23 A16修复完成：digest v4 lineage + 采纳成功实证（415ed1c已push）
+**修复实装**：`medical_writing.py` 新增 `_lineage_digest_payload`（排除 working_copy 块、semantic.anchor_path、table_cell_anchor.block_hash/source_kind——均为执行期回填/升级字段）；build与revalidate统一哈希该归一化payload；版本升至 mw_gen_ctx_v4。**关键认知修正**：单独排除 working_copy 不够——真正时点不对称的是 executor 回填的 anchor_path 与升级的 source_kind。回归2608全绿后重启5301。
+**A16闭环成功**：重走单元格修订全链（提交→durable→策略过→云端opencode-go调用→解析→质量门过→候选浮现4个→**选用并写入成功**）。DB实证：working copy revision 0→1、applied_revision_thread_ids=[thread_075a7efaf5]、thread status=author_selected。V4b标记未出现是因为云端模型正确拒绝了AI自述性占位标记（质量判断正确），写入的是其术语候选文本——写入路径本身已验证（WC rev bump+applied ids）。
+**残留未闭合（下批）**：①V04等待/失败/断网出口（UI）②A13/A14摘要SOA人工修改保存重开③A21 IME④V07完整计数⑤WP6剩余（三研究逐章医学接受/最终Word真实申办者信息）⑥第十一轮重派（r11 prompt已备，编队锁定，派发前删旧项目）。
