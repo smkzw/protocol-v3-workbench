@@ -309,3 +309,6 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 
 ## 2026-09-23 0923V1追加2：A16 stale守卫精确根因实证（d93b605后）
 诊断=语义JSON全量对比（证据 runs/requirements_v2_20260919/wp6_0922v2_20260922/n5_0923V1/gencx_semantic_evidence.jsonl 5行）。**精确根因**：提交时 digest 在表格锚解析回填前构建（anchor_path=""/block_hash=""），采纳时在线程回填后重建（结构化ids+内容哈希）→ 重建必不匹配 → 采纳永远stale。**下批修复**：digest统一移到锚解析回填后构建（submit/executor同点）或revalidate复现解析前状态；同时注意同section多线程DOM顺序（btns[0]=最老线程易误采）。临时stderr诊断已移除，方法与证据留存。A16其余链路（单元格选择/提交/策略/云端调用/解析/质量门/候选浮现）全部实测通过。
+
+## 2026-09-23 0923V1无损暂停（ab2319a已push）
+全部状态：①A16 stale守卫精确根因已实证（digest构建时点不对称：提交时锚未解析/采纳时已回填），修复=统一到锚解析后构建，独立成批待做；②digest v3（排除WC块）已实装；③修订→云端路由已实装且云端任务completed（4互异候选）；④V01三视口截图/V06决定卡持久化PASS；⑤策略层11234三处修正。**未闭合**：A16写入一步（依赖上述修复）、V04、A13/A14、A21、V07完整计数、剩余WP6逐章医学接受、最终Word真实申办者信息。**环境**：5301当前源码（isolated runtime，已含opencode-go凭证于credentials store）；vite 5186→5301；MTPLX 8002运行中；OmniRoute 20128。**诊断遗留**：gencx stderr诊断已移除；/tmp/gencx_semantic.jsonl证据已归档runs/。恢复=读本checkpoint尾部+HANDOFF_ROUND10.md+N5_EVIDENCE.md。
