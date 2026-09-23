@@ -153,12 +153,16 @@ _CMS_ROUTER_DEEPSEEK_LATEST_POLICY = TaskAiRoutePolicy(
     base_url="http://127.0.0.1:20128/v1",
     allowed_models=frozenset({"deepseek-latest-cloud"}),
 )
+# Route mirrors the owner's actual MTPLX deployment as discovered on
+# 2026-09-23 (LOCAL_ENDPOINT_DISCOVERY_0923V1.json): the server runs on
+# 127.0.0.1:8002 and advertises the API id "mtplx-flash-next-optimized-
+# speed"; the HF-style directory name is not the served id.
 _MTPLX_QWEN38_SPEED_POLICY = TaskAiRoutePolicy(
     provider_name="mtplx",
     transport_name="openai_compatible",
-    base_url="http://127.0.0.1:11234/v1",
+    base_url="http://127.0.0.1:8002/v1",
     allowed_models=frozenset({
-        "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        "mtplx-flash-next-optimized-speed",
     }),
 )
 

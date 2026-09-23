@@ -35,7 +35,10 @@ INDEPENDENT_AI_DEEPSEEK_FLASH_PROFILE_ID = "independent_ai__deepseek_v4_flash"
 INDEPENDENT_AI_OPENCODE_GO_PROFILE_ID = "independent_ai__opencode_go_deepseek_v41_flash"
 INDEPENDENT_AI_MTPLX_PROFILE_ID = "independent_ai__mtplx_qwen38_flash_next_speed"
 INDEPENDENT_AI_CMS_ROUTER_PROFILE_ID = "independent_ai__cms_router_deepseek_latest_cloud"
-INDEPENDENT_AI_MTPLX_MODEL = "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+# Served API id advertised by the local MTPLX server (discovered 2026-09-23);
+# the model directory name "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-
+# Speed" is not the id the OpenAI-compatible endpoint returns.
+INDEPENDENT_AI_MTPLX_MODEL = "mtplx-flash-next-optimized-speed"
 DEFAULT_OCR_MODEL = "GLM-OCR-bf16"
 PADDLE_OCR_MODEL = "PaddleOCR-VL-1.6"
 GATE_TRANSLATION_BODY_MODEL = "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
@@ -248,7 +251,7 @@ def _builtin_profiles() -> tuple[AiProviderProfile, ...]:
             profile_id=INDEPENDENT_AI_MTPLX_PROFILE_ID,
             provider="mtplx",
             label="MTPLX 本地 Qwen 3.8 Flash Next 综合AI",
-            base_url="http://127.0.0.1:11234/v1",
+            base_url="http://127.0.0.1:8002/v1",
             model=INDEPENDENT_AI_MTPLX_MODEL,
             expected_response_model=INDEPENDENT_AI_MTPLX_MODEL,
             deployment_scope="loopback",

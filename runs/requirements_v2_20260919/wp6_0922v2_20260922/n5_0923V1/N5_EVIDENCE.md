@@ -23,3 +23,13 @@
 ## 环境备注
 - 5301 已用当前源码重启（原进程为旧代码，build gate 正确拦截）；启动 env 与上一 Agent 完全一致（isolated runtime + product DB），仅补装 python3.14 缺失依赖 xlrd/python-multipart（--break-system-packages）
 - vite 5186（本会话启动）→ 5301；历史 vite 5187/5188/5199 代理目标已漂移（5303/5304/5299）勿混淆
+
+## 追加（2026-09-23 11:0x）：A16 全链打通至质量门 + 本地模型质量发现
+**执行策略第二层修复**：section_ai_candidate 任务在 `ai_execution_policy.py` 被拒（AiExecutionPolicyDenied）——策略表 `_MTPLX_QWEN38_SPEED_POLICY` 仍为 11234+目录名（R01 的策略层化身）。已批量修正三处（策略表/角色默认 profile 常量/preset 模板）→ 8002 + served id。同时发现并修正 profile `provider` 字段语义：必须为五个产品具名 provider 之一（`mtplx`），`openai_compatible` 是传输名不是 provider 名。
+**A16 全链实测（MTPLX 真链）**：全屏编辑正文→全屏表格设计器→选中"方案标题"单元格（rail="当前目标：第 7 行 / 第 1 列"）→填修订指令→提交→durable job 入队→策略通过→调用综合AI（MTPLX）→结构化输出解析→**质量门正确拦截**：
+- 4 次尝试（1 次自动重试+2 次手动 retry）两种失败签名交替：`revision.alternatives must contain 2 to 4 candidates`（只回 1 个候选）与 `revision candidates must be textually distinct`（候选雷同）
+- 按契约 L09：内容校验失败终止，不换模型绕过——系统行为正确
+- 结论=**本地模型质量发现（非代码缺陷）**：MTPLX speed 优化档在"一次产出 2-4 个互异候选"的结构化任务上不可靠。可选方向（需 owner 决策）：①MTPLX 服务端采样温度/多样性调参 ②revision 类任务路由到云端（fallback 已配置 opencode-go）③产品支持本地单候选模式
+**UI 提交幂等发现**：同章节重复提交走 create_or_reuse 复用同一 business_key（含失败态），换指令不产生新任务——重提规则需产品语义决策（与本 findings 无关，记录备查）。
+**V07 累计计数**：至 A16 提交完成 ≈26 clicks / 3 texts（含门禁重检、模式切换、候选审阅、设计卡应用+复原、单元格选择、指令填写、提交、两次重试）。
+**恢复后环境**：independent_ai 绑定已恢复 MTPLX(medium) 主路由；fallback=opencode-go(max)；5301=当前源码（含策略修复）；vite 5186→5301。
