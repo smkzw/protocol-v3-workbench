@@ -4072,10 +4072,15 @@ class CompetitorTriageExecutor:
                 update={
                     "provider": frozen_route.provider,
                     "response_model": frozen_route.model,
-                    "updated_at": _utc_now(),
                 }
             )
-            self._service.repository.store_triage_run(run)
+        # The terminal status (review_ready / partial_failed / failed) must
+        # reach the store: the parent pipeline reconciles against THIS record
+        # when the child job completes. Leaving the last intermediate write
+        # (which still carries the stale queued status) as the visible state
+        # made the parent read a phantom in-progress run and froze journeys.
+        run = run.model_copy(update={"updated_at": _utc_now()})
+        self._service.repository.store_triage_run(run)
 
         # Build artifact locator
         artifact_locator = json.dumps(
@@ -4358,22 +4363,33 @@ class CompetitorTriageService:
         )
 
         now = _utc_now()
-        run = CompetitorTriageRun(
-            run_id=f"ct_run_{canonical_input_hash[:20]}",
-            project_id=project_id,
-            journey_id=journey.journey_id,
-            snapshot_id=snapshot.snapshot_id,
-            status=CompetitorTriageRunStatus.QUEUED,
-            prompt_version=TRIAGE_PROMPT_VERSION,
-            schema_version=TRIAGE_SCHEMA_VERSION,
-            canonical_input_hash=canonical_input_hash,
-            snapshot_hash=snap_hash,
-            journey_revision=journey.revision,
-            material_facts_hash=facts_hash,
-            chunks=chunk_records,
-            created_at=now,
-            updated_at=now,
-        )
+        run_id = f"ct_run_{canonical_input_hash[:20]}"
+        existing_run = self.repository.triage_run(project_id, run_id)
+        if existing_run is not None:
+            # Deterministic re-entry (e.g. a parent durable-job retry
+            # replaying execute_stages with unchanged inputs regenerates the
+            # same run_id). Overwriting would erase chunk progress the
+            # durable executor already committed and strand the run at its
+            # initial state forever, because the terminal durable job is
+            # reused by business_key and never re-executes.
+            run = existing_run
+        else:
+            run = CompetitorTriageRun(
+                run_id=run_id,
+                project_id=project_id,
+                journey_id=journey.journey_id,
+                snapshot_id=snapshot.snapshot_id,
+                status=CompetitorTriageRunStatus.QUEUED,
+                prompt_version=TRIAGE_PROMPT_VERSION,
+                schema_version=TRIAGE_SCHEMA_VERSION,
+                canonical_input_hash=canonical_input_hash,
+                snapshot_hash=snap_hash,
+                journey_revision=journey.revision,
+                material_facts_hash=facts_hash,
+                chunks=chunk_records,
+                created_at=now,
+                updated_at=now,
+            )
         frozen_route = None
         frozen_fallback_routes: List[FrozenTriageAiRoute] = []
         if self._durable_store is not None:
@@ -4381,7 +4397,8 @@ class CompetitorTriageService:
             frozen_fallback_routes = self._freeze_fallback_routes_for_creation(
                 frozen_route
             )
-        self.repository.store_triage_run(run)
+        if existing_run is None:
+            self.repository.store_triage_run(run)
 
         # --- Durable path: return immediately with job_id ---
         if self._durable_store is not None:

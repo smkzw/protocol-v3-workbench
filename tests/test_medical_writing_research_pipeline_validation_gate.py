@@ -135,7 +135,11 @@ def _admission_service(status: str):
     return service, repository
 
 
-def test_preparation_stage_waiting_resume_advances_only_next_batch() -> None:
+def test_preparation_stage_waiting_resume_drains_with_no_progress_guard() -> None:
+    # Since b14a56a resume_waiting drains bounded preparation stages
+    # continuously instead of pausing at every stage gate. The drain must
+    # still stop on the no-progress guard when a stage stalls, preserving
+    # completed work rather than spinning forever.
     service, _repository = _admission_service("confirmed")
     batch = service.preparation_batch_service.batch
     batch.deferred_item_count = 9
@@ -147,12 +151,12 @@ def test_preparation_stage_waiting_resume_advances_only_next_batch() -> None:
     def admit_next_stage(_project_id, _batch_id, _request):
         calls["admit"] += 1
         batch.admission_stage_index = 2
-        # One item remains deferred, so the service must pause again rather
-        # than silently entering translation or replaying completed items.
+        # One item remains deferred after the first automatic stage and the
+        # stubbed stage never drains further, so the guard must fire.
         batch.deferred_item_count = 1
         return batch
 
-    def run_pending(_project_id, _batch_id, _actor):
+    def run_pending(_project_id, _batch_id, _actor, progress_callback=None):
         calls["run_pending"] += 1
 
     service.preparation_batch_service.admit_next_stage = admit_next_stage
@@ -176,19 +180,17 @@ def test_preparation_stage_waiting_resume_advances_only_next_batch() -> None:
         "state", next_state
     ) or next_state
 
-    resumed = service.resume_waiting(
-        PROJECT_ID,
-        actor="medical_manager",
-        idempotency_key="resume-preparation-stage-1",
-        expected_pipeline_id=PIPELINE_ID,
-        expected_stage="awaiting_preparation_admission",
-    )
+    with pytest.raises(ResearchPipelineError) as excinfo:
+        service.resume_waiting(
+            PROJECT_ID,
+            actor="medical_manager",
+            idempotency_key="resume-preparation-stage-1",
+            expected_pipeline_id=PIPELINE_ID,
+            expected_stage="awaiting_preparation_admission",
+        )
 
-    assert resumed.stage == "awaiting_preparation_admission"
-    assert resumed.error_summary == "preparation_stage_admission_required"
-    assert calls == {"admit": 1, "run_pending": 1}
-    assert resumed.prep_batch_id == batch.batch_id
-    assert resumed.translation_batch_id == ""
+    assert "未产生进展" in str(excinfo.value)
+    assert calls == {"admit": 2, "run_pending": 2}
 
 
 def test_production_waiting_resume_enqueues_one_durable_continuation() -> None:

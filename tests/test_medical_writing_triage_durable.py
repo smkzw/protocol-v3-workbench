@@ -475,6 +475,89 @@ class TestDedupeOnDoubleCreate(DurableTriageTestBase):
 
 
 # ---------------------------------------------------------------------------
+# Test: parent-retry replay must never clobber committed chunk progress
+# (R11 P0-A: attempt-2 replay re-created the run at its initial state after
+# the terminal child job was reused, freezing journeys at a phantom banner)
+# ---------------------------------------------------------------------------
+
+
+class TestParentRetryReplayPreservesRun(DurableTriageTestBase):
+    def test_replayed_create_run_keeps_terminal_partial_failed_state(self):
+        deterministic = _make_candidate("NCT00000001").model_copy(
+            update={"public_documents": []}
+        )
+        ai_candidate = _make_candidate("NCT00000002")
+        snapshot = self._bind_snapshot([deterministic, ai_candidate])
+        journey = self.journey_service.get(self.project_id)
+        provider = FakeTriageProvider(
+            responses_by_chunk={1: {"results": []}},
+            fail_chunks={1},
+        )
+
+        request_kwargs = dict(
+            snapshot_id=snapshot.snapshot_id,
+            expected_journey_revision=journey.revision,
+        )
+        first = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                idempotency_key="ct-replay-first", **request_kwargs
+            ),
+            provider,
+        )
+        self.assertEqual(
+            "completed",
+            self._wait_for_terminal(first.job_id, timeout=10.0),
+        )
+
+        # Terminal truth must reach the store (R11: stale queued status was
+        # the last visible state and the parent read a phantom in-progress run).
+        run = self.repo.triage_run(self.project_id, first.run_id)
+        self.assertEqual(
+            CompetitorTriageRunStatus.PARTIAL_FAILED,
+            run.status,
+        )
+        failed_ai = [
+            c
+            for c in run.chunks
+            if c.chunk_id.startswith("ct_chunk_")
+            and c.status == CompetitorTriageChunkStatus.FAILED
+        ]
+        self.assertEqual(1, len(failed_ai))
+
+        # Simulate the parent durable-job retry replaying execute_stages with
+        # unchanged inputs: same canonical hash → same run_id. The stored run
+        # must be reused as-is, never reset to its initial queued state.
+        second = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                idempotency_key="ct-replay-second", **request_kwargs
+            ),
+            provider,
+        )
+        self.assertEqual(first.job_id, second.job_id)
+        self.assertTrue(second.reused)
+
+        replayed = self.repo.triage_run(self.project_id, first.run_id)
+        self.assertEqual(
+            CompetitorTriageRunStatus.PARTIAL_FAILED,
+            replayed.status,
+        )
+        self.assertEqual(
+            run.created_at,
+            replayed.created_at,
+            "replayed create_run must not re-create the run record",
+        )
+        replayed_failed_ai = [
+            c
+            for c in replayed.chunks
+            if c.chunk_id.startswith("ct_chunk_")
+            and c.status == CompetitorTriageChunkStatus.FAILED
+        ]
+        self.assertEqual(1, len(replayed_failed_ai))
+
+
+# ---------------------------------------------------------------------------
 # Test: cold recovery
 # ---------------------------------------------------------------------------
 
