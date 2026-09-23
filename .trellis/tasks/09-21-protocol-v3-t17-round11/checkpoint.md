@@ -322,3 +322,9 @@ fresh 会商 `mw_protocol_v3_interactive_fallback_review_20260923` 使用 ZCode/
 **V04 PASS**：云端死端点场景→任务failed→UI显示类型化错误"AI修订失败：AiExecutionPolicyDenied…base URL must be…"（出口可见可重试不损坏状态）；等待出口=多轮running期间UI显示进行中无假失败。opencode-go profile已恢复真实端点。
 **A13 PASS**：全屏编辑正文手动键盘输入→保存→版本2已保存→重载持久化验证（a13_manual_edit_persisted.png）。
 **第十一轮准备**：gemini配额已于03:23Z重置（理论上可用）；派发前需删旧项目（round-10 tester项目在共享runtime user_projects.sqlite3）；r11 prompt四份已备（t17_prompts/r11_*.md）。
+
+## 2026-09-23 第十一轮已派发（4进程setsid脱离）
+编队严格按owner指定：tester1=opencode-go/muse-spark-1.3-contributor(max) COPD入口A、tester2=google-antigravity/gemini-3.8-flash(high) MS入口B、tester3=cursor/cursor-grok-4.6(high) MDD盲测、tester4=opencode-go/deepseek-v4.1-flash(max) 膝OA+易用性专题。日志=/tmp/t17_r11_tester{1..4}_*.log。派发前已备份并删除round-10项目（6个tester项目从shared runtime清除）。A16 digest v4修复已实装——本轮tester不应再遇到stale守卫拒绝。
+
+## 2026-09-23 第十一轮已派发（4进程setsid脱离）
+编队严格按owner指定：tester1=opencode-go/muse-spark-1.3-contributor(max) COPD入口A、tester2=google-antigravity/gemini-3.8-flash(high) MS入口B、tester3=cursor/cursor-grok-4.6(high) MDD盲测、tester4=opencode-go/deepseek-v4.1-flash(max) 膝OA+易用性专题。日志=/tmp/t17_r11_tester{1..4}_*.log。派发前已备份并删除round-10项目（6个tester项目从shared runtime清除）。A16 digest v4修复已实装——本轮tester不应再遇到stale守卫拒绝。
