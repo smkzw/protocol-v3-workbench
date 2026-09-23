@@ -314,6 +314,72 @@ class AiExecutionPolicyResolver:
         self.route_thinking = "enabled"
         self.route_reasoning_effort = "max"
 
+    def _apply_route_profile(
+        self,
+        profile: AiProviderProfile,
+        values: Dict[str, str],
+        *,
+        thinking: str | None = None,
+        reasoning_effort: str | None = None,
+    ) -> None:
+        """Freeze resolver route fields from one settings profile + env overlay."""
+        self.deployment_profile = (
+            values.get("WORKBENCH_AI_DEPLOYMENT_PROFILE", "").strip()
+            or "disabled"
+        )
+        self.model_name = (
+            values.get("WORKBENCH_AI_MODEL", "").strip() or "not_configured"
+        )
+        self.provider_name = (
+            values.get("WORKBENCH_AI_PROVIDER", "").strip()
+            or ("openai_compatible" if self.model_name != "not_configured" else "disabled")
+        )
+        self.transport_name = (
+            values.get("WORKBENCH_AI_TRANSPORT", "").strip()
+            or "openai_compatible"
+        )
+        configured_base_url = values.get("WORKBENCH_AI_BASE_URL", "").strip()
+        if self.provider_name == "deepseek" and not configured_base_url:
+            configured_base_url = DIRECT_DEEPSEEK_BASE_URL
+        self.base_url = configured_base_url.rstrip("/")
+        self.required_response_model = (
+            values.get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL", "").strip()
+            or self.model_name
+        )
+        self.route_profile_id = profile.profile_id
+        self.route_profile_revision = profile.revision
+        self.route_timeout_seconds = float(profile.timeout_seconds)
+        self.route_api_key_env = profile.api_key_env
+        self.route_thinking = thinking or profile.thinking
+        self.route_reasoning_effort = reasoning_effort or profile.reasoning_effort
+
+    def _capture_revision_cloud_route(self) -> bool:
+        """Owner decision 2026-09-23: revision tasks route to cloud.
+
+        The local MTPLX speed model cannot reliably satisfy the medical-
+        writing revision contract (2-4 textually distinct candidates), so
+        MEDICAL_WRITING_REVISION resolves its primary route from the first
+        enabled cloud profile in the approved fallback chain.  Other tasks
+        keep the bound primary (local-first).  Returns True when a cloud
+        route was applied; False leaves the bound primary in place.
+        """
+        store = runtime_ai_settings_store()
+        for route in store.fallback_chain():
+            try:
+                profile = store.profile(route.profile_id)
+            except KeyError:
+                continue
+            if not profile.enabled or profile.deployment_scope != "cloud":
+                continue
+            self._apply_route_profile(
+                profile,
+                store.profile_env(profile, dict(os.environ)),
+                thinking=route.thinking,
+                reasoning_effort=route.reasoning_effort,
+            )
+            return True
+        return False
+
     def _capture_dynamic_route(self) -> None:
         """Freeze the effective independent-AI route from one settings read.
 
@@ -370,15 +436,28 @@ class AiExecutionPolicyResolver:
             return
         self._capture_dynamic_route()
 
-    def route_identity_snapshot(self, *, refresh: bool = True) -> Dict[str, Any]:
+    def route_identity_snapshot(
+        self,
+        *,
+        refresh: bool = True,
+        task_type: str | None = None,
+    ) -> Dict[str, Any]:
         """Return the current complete route identity without credentials.
 
         Durable callers persist this snapshot and later compare the executing
         ``AiTaskRun.route_identity_hash`` with ``identity_sha256``. They must
-        never rebuild a provider from these fields themselves.
+        never rebuild a provider from these fields themselves.  Pass the
+        task_type so task-scoped routing (revision→cloud) is reflected in
+        the submit-time identity.
         """
         if refresh:
             self._refresh_dynamic_route()
+        if task_type:
+            try:
+                if self._task_type(task_type) == AiTaskType.MEDICAL_WRITING_REVISION:
+                    self._capture_revision_cloud_route()
+            except AiExecutionPolicyDenied:
+                pass
         payload = {
             "schema_version": "independent_ai_route_snapshot_v1",
             "role_id": "independent_ai",
@@ -551,6 +630,8 @@ class AiExecutionPolicyResolver:
     ) -> AiExecutionResolution:
         self._refresh_dynamic_route()
         task_type = self._task_type(request.task_type)
+        if task_type == AiTaskType.MEDICAL_WRITING_REVISION:
+            self._capture_revision_cloud_route()
         prompt_version = self._validate_common(
             request.module,
             task_type,

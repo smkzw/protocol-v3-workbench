@@ -2504,7 +2504,12 @@ class MedicalWritingRevisionService:
             raise self.GenerationContextError(
                 "AI execution policy resolver must expose route_identity_snapshot"
             )
-        snapshot = snapshot_builder(refresh=True)
+        # Owner decision 2026-09-23: revision tasks route to cloud — the
+        # submit-time identity must reflect the same task-scoped route the
+        # executor resolves.
+        snapshot = snapshot_builder(
+            refresh=True, task_type="medical_writing_revision"
+        )
         if not isinstance(snapshot, dict):
             raise self.GenerationContextError(
                 "AI execution policy route snapshot is invalid"

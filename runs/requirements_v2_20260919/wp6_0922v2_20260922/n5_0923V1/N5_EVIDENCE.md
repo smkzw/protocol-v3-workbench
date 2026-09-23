@@ -33,3 +33,11 @@
 **UI 提交幂等发现**：同章节重复提交走 create_or_reuse 复用同一 business_key（含失败态），换指令不产生新任务——重提规则需产品语义决策（与本 findings 无关，记录备查）。
 **V07 累计计数**：至 A16 提交完成 ≈26 clicks / 3 texts（含门禁重检、模式切换、候选审阅、设计卡应用+复原、单元格选择、指令填写、提交、两次重试）。
 **恢复后环境**：independent_ai 绑定已恢复 MTPLX(medium) 主路由；fallback=opencode-go(max)；5301=当前源码（含策略修复）；vite 5186→5301。
+
+## 追加2（2026-09-23 12:2x）：修订路由云端已生效+A16采用链P1缺陷定位
+**云端路由生效实证**：owner决策"修订任务路由云端"已实现并验证——
+- 代码：`ai_execution_policy.py` resolver新增 `_capture_revision_cloud_route`（MEDICAL_WRITING_REVISION主路由=批准fallback链中第一个cloud profile）；`resolve_internal`与`route_identity_snapshot(task_type=...)`两处应用；`medical_writing._policy_identity`提交时传revision任务类型（提交/执行身份一致）
+- 回归：tests/protocol_v3 2608全绿（一次批量）
+- 实测：durable job `mwjob_872085bf`（版本单元格，provider=opencode-go，model=deepseek-v4.1-flash）**completed**，云端产出4个互异候选（标准推荐/精炼/结构重排/保守，各带依据说明）
+**新P1发现（A16采用链）**：绿地桌面（无已保存工作副本）上，新完成候选在"选用并写入"时**必被stale守卫拒绝**："candidate generation context is stale relative to current authoritative state; re-generate"。regenerate→adopt循环复现2次（不同单元格）。根因假设：无保存工作副本时authoritative状态基线持续移动（绿地候选基线vs工作副本双轨），候选digest永远追不上。**修复方向**：①采用前以当前digest重新校验而非拒绝 ②绿地桌面先强制"创建并保存工作副本"再开放AI修订入口（前置门控已存在但创建按钮不可达/保存按钮disabled的链条有断点）。此缺陷使A16的"写入"一步在绿地新项目上不可达=用户视角P1。
+**MTPLX本地模型质量（非缺陷，owner已决策云端）**：4次尝试两签名（alternatives 2-4不足/候选雷同）→决策=修订任务路由云端（已实现）；MTPLX仍为其他任务主模型。
