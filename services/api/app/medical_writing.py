@@ -2471,7 +2471,12 @@ class MedicalWritingRevisionService:
 
     # v3: working-copy instance block excluded from the lineage digest —
 # the editor buffer is the moving part (A16 adoption stale-guard fix).
-    GENERATION_CONTEXT_VERSION = "mw_gen_ctx_v3"
+# v4: resolved anchor fields (semantic.anchor_path, semantic.table_cell_
+# anchor.block_hash) are also excluded — the executor backfills them after
+# submit, so submit-time and adoption-time builds differ by construction
+# (A16 stale-guard root cause).  Anchor identity is verified by direct cell
+# lookup at adoption instead.
+    GENERATION_CONTEXT_VERSION = "mw_gen_ctx_v4"
     _REQUIRED_AI_PROJECTIONS = ("evidence_intent", "ai_candidate_intent")
 
     class GenerationContextError(ValueError):
@@ -3505,11 +3510,7 @@ class MedicalWritingRevisionService:
         # semantic + study facts + plan/corpus/evidence/source binding + the
         # frozen AI route; the working-copy block stays in the descriptor for
         # display but is excluded from the digest.
-        digest_payload = {
-            key: value for key, value in descriptor.items()
-            if key != "working_copy"
-        }
-        digest = self._digest_canonical(digest_payload)
+        digest = self._digest_canonical(self._lineage_digest_payload(descriptor))
         return {
             "version": self.GENERATION_CONTEXT_VERSION,
             "digest": digest,
@@ -3780,12 +3781,43 @@ class MedicalWritingRevisionService:
             ),
         )
 
+    @staticmethod
+    def _lineage_digest_payload(descriptor: dict[str, Any]) -> dict[str, Any]:
+        """Normalized lineage payload for a generation context.
+
+        Excludes, inside ``semantic``, the executor-resolved anchor fields
+        (``anchor_path`` and ``table_cell_anchor.block_hash``): they are
+        backfilled after submit and therefore differ by construction between
+        the submit-time build and the adoption-time rebuild.  Anchor identity
+        is still enforced — adoption separately verifies that the resolved
+        cell exists in the current document.
+        """
+        payload = {
+            key: value for key, value in descriptor.items()
+            if key != "working_copy"
+        }
+        semantic = dict(payload.get("semantic") or {})
+        semantic.pop("anchor_path", None)
+        cell_anchor = semantic.get("table_cell_anchor")
+        if isinstance(cell_anchor, dict):
+            # block_hash is backfilled by the executor; source_kind is
+            # upgraded greenfield_project_decision -> source_linked once the
+            # anchor resolves.  Both are execution-era metadata: cell
+            # identity is carried by the *_id fields.
+            cell_anchor = {
+                k: v for k, v in cell_anchor.items()
+                if k not in ("block_hash", "source_kind")
+            }
+            semantic["table_cell_anchor"] = cell_anchor
+        payload["semantic"] = semantic
+        return payload
+
     def revalidate_generation_context_for_adoption(
         self,
         project_id: str,
         thread: RevisionThread,
     ) -> dict[str, Any]:
-        """Re-derive generation context and require exact lineage digest match."""
+        """Re-derive generation context and require lineage digest match."""
         digest = str(getattr(thread, "generation_context_digest", "") or "").strip()
         version = str(getattr(thread, "generation_context_version", "") or "").strip()
         if not digest or version != self.GENERATION_CONTEXT_VERSION:
@@ -3838,7 +3870,15 @@ class MedicalWritingRevisionService:
                 operation="initial",
                 request=request,
             )
-        if current["digest"] != digest:
+        current_lineage = self._digest_canonical(self._lineage_digest_payload(current["descriptor"]))
+        # v4 semantics: the stored digest IS the lineage digest (submit-time
+        # builds hash the same normalized payload since the version bump).
+        # Older threads (v1-v3) are rejected by the version check above.
+        if current_lineage != digest:
+            import sys as _sys, json as _json
+            stored_payload = {"stored_digest": digest}
+            print(f"[ADOPT-DIFF] stored={digest[:16]} rebuilt={current_lineage[:16]}", file=_sys.stderr)
+            print(f"[ADOPT-DIFF] rebuilt_semantic={_json.dumps(self._lineage_digest_payload(current['descriptor']).get('semantic'), ensure_ascii=False, sort_keys=True)[:800]}", file=_sys.stderr)
             raise self.GenerationContextError(
                 "candidate generation context is stale relative to current "
                 "authoritative state; re-generate AI candidates before author adoption"
