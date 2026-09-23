@@ -1379,6 +1379,26 @@ class MedicalWritingResearchPipelineService:
             return self._persist(project_id, state)
         return state
 
+    def error_summary_indicates_triage_failure(self, error_summary: str) -> bool:
+        """Whether a failed pipeline state is recoverable from the triage node.
+
+        Kept inclusive on purpose: every shape below was once a real 409
+        deadlock reported from a test round. R12 added "竞品分诊仅部分完成" —
+        honest partial_failed runs (terminal status now persisted) must stay
+        recoverable instead of being rejected as a non-triage failure.
+        """
+        summary = str(error_summary or "")
+        return (
+            "分诊超时" in summary
+            or "分诊任务结束为 failed" in summary
+            or "分诊任务结束为 cancelled" in summary
+            or "竞品分诊仅部分完成" in summary
+            or summary.startswith("competitor_triage_")
+            or "CompetitorTriageError" in summary
+            or "frozen durable route" in summary
+            or "provider identity" in summary
+        )
+
     def retry_triage(
         self,
         project_id: str,
@@ -1428,21 +1448,7 @@ class MedicalWritingResearchPipelineService:
                 )
             if state.stage == "failed":
                 error_summary = str(state.error_summary or "")
-                triage_failure = (
-                    "分诊超时" in error_summary
-                    or "分诊任务结束为 failed" in error_summary
-                    or "分诊任务结束为 cancelled" in error_summary
-                    or error_summary.startswith("competitor_triage_")
-                    # P1#4: the triage node's own failure surfaces as
-                    # "CompetitorTriageError: ..." — treat it as a triage
-                    # failure too, otherwise the offered retry 409-deadlocks.
-                    or "CompetitorTriageError" in error_summary
-                    # Provider-contract failures at the triage node are also
-                    # recoverable from the triage entry (identity recalibration).
-                    or "frozen durable route" in error_summary
-                    or "provider identity" in error_summary
-                )
-                if not triage_failure:
+                if not self.error_summary_indicates_triage_failure(error_summary):
                     raise ResearchPipelineConflictError(
                         "当前失败不属于竞品分诊节点，不能从分诊入口恢复"
                     )
@@ -1559,9 +1565,7 @@ class MedicalWritingResearchPipelineService:
             if state.stage == "failed":
                 error_summary = str(state.error_summary or "")
                 stopped_in_triage_wait = (
-                    "分诊超时" in error_summary
-                    or "分诊任务结束为 failed" in error_summary
-                    or "分诊任务结束为 cancelled" in error_summary
+                    self.error_summary_indicates_triage_failure(error_summary)
                 )
                 if not stopped_in_triage_wait:
                     return state

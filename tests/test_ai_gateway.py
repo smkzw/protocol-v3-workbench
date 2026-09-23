@@ -858,6 +858,64 @@ class AiGatewayTests(unittest.TestCase):
         self.assertEqual({"type": "enabled"}, body["thinking"])
         self.assertEqual("xhigh", body["reasoning_effort"])
 
+    def test_mtplx_provider_normalizes_max_effort_to_xhigh(self):
+        """R12: the local MTPLX server rejects reasoning_effort "max" with
+        HTTP 400, which is not fallback-eligible — every triage chunk died
+        on the primary route. The adapter normalizes the top effort instead.
+        """
+        envelope = AiPromptEnvelope(
+            task_id="task_mtplx_triage",
+            task_type=AiTaskType.COMPETITIVE_INTELLIGENCE,
+            prompt_version="competitor_triage_v20",
+            system_prompt="Return JSON.",
+            payload={"value": "x"},
+            thinking="enabled",
+            reasoning_effort="max",
+        )
+        provider = OpenAICompatibleAiProvider(
+            base_url="http://127.0.0.1:8002/v1",
+            api_key="test-key",
+            model_name="mtplx-flash-next-optimized-speed",
+            provider_name="mtplx",
+            timeout_seconds=1,
+            default_thinking="enabled",
+            default_reasoning_effort="max",
+        )
+        with patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen:
+            urlopen.return_value = _FakeResponse(
+                {"choices": [{"message": {"content": '{"ok":true}'}}]}
+            )
+            self.assertEqual({"ok": True}, provider.run(envelope))
+
+        body = json.loads(urlopen.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual("xhigh", body["reasoning_effort"])
+
+    def test_non_mtplx_provider_keeps_max_effort(self):
+        envelope = AiPromptEnvelope(
+            task_id="task_deepseek_max",
+            task_type=AiTaskType.COMPETITIVE_INTELLIGENCE,
+            prompt_version="competitor_triage_v20",
+            system_prompt="Return JSON.",
+            payload={"value": "x"},
+            reasoning_effort="max",
+        )
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://opencode.ai/zen/go/v1",
+            api_key="test-key",
+            model_name="deepseek-v4.1-flash",
+            provider_name="opencode-go",
+            timeout_seconds=1,
+            default_reasoning_effort="max",
+        )
+        with patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen:
+            urlopen.return_value = _FakeResponse(
+                {"choices": [{"message": {"content": '{"ok":true}'}}]}
+            )
+            self.assertEqual({"ok": True}, provider.run(envelope))
+
+        body = json.loads(urlopen.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual("max", body["reasoning_effort"])
+
     def test_openai_compatible_provider_retries_incomplete_response(self):
         spec = AiTaskSpec(
             task_id="task_protocol_rules_retry",

@@ -85,6 +85,7 @@ ALIBABA_TOKEN_PLAN_BASE_URL = (
 )
 ALIBABA_TOKEN_PLAN_MODEL = "qwen3.8-max-preview"
 OPENCODE_GO_PROVIDER = "opencode-go"
+MTPLX_PROVIDER = "mtplx"
 OPENCODE_GO_BASE_URL = "https://opencode.ai/zen/go/v1"
 OPENCODE_GO_MODEL = "deepseek-v4.1-flash"
 OPENCODE_GO_API_KEY_ENV = "OPENCODE_API_KEY"
@@ -1196,6 +1197,12 @@ class OpenAICompatibleAiProvider:
             request_payload["reasoning_effort"] = reasoning_effort
         if envelope.max_output_tokens is not None:
             request_payload["max_tokens"] = int(envelope.max_output_tokens)
+        if self.provider_name == MTPLX_PROVIDER and reasoning_effort == "max":
+            # The local MTPLX ladder tops at xhigh and rejects "max" with
+            # HTTP 400 (R12: every triage chunk died on the primary because
+            # 400 is not fallback-eligible). Normalize the top effort instead
+            # of letting the whole chain fail on an incompatible parameter.
+            request_payload["reasoning_effort"] = "xhigh"
         request_headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",

@@ -1493,3 +1493,26 @@ def test_round1_recovery_materializes_stale_corpus_gate_once_without_ai() -> Non
     service._recalculate_gate_after_round1_recovery(PROJECT_ID, state)
 
     assert calls == {"recalculate": 1}
+
+
+def test_triage_failure_predicate_accepts_partial_failed_shape() -> None:
+    """R12: honest partial_failed summaries (竞品分诊仅部分完成) must stay
+    recoverable from the triage entry instead of 409-deadlocking."""
+    from services.api.app.medical_writing_research_pipeline import (
+        MedicalWritingResearchPipelineService,
+    )
+
+    service = object.__new__(MedicalWritingResearchPipelineService)
+
+    assert service.error_summary_indicates_triage_failure(
+        "ResearchPipelineError: 竞品分诊仅部分完成：AI provider request failed: HTTP 400"
+    )
+    assert service.error_summary_indicates_triage_failure(
+        "分诊超时：子任务已完成但分诊结果未达到可审核状态"
+    )
+    assert service.error_summary_indicates_triage_failure(
+        "分诊任务结束为 failed: all chunks failed"
+    )
+    assert not service.error_summary_indicates_triage_failure(
+        "研究流水线失败：文档准备批次未产生进展"
+    )
