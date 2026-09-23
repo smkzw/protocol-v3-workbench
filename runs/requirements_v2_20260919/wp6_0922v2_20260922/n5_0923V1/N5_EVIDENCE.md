@@ -50,3 +50,9 @@
 次要混淆：同 section 多线程按 DOM 顺序堆叠，"选用第一个"会采到旧路由时代的线程（跨线程误采，非缺陷但易混淆）。
 **修复方向（下批）**：将 digest 构建统一移到锚解析回填之后（submit 与 executor 同点构建）；或 revalidate 先复现提交时的解析前状态。建议同时：采纳失败时 UI 提示应指引"重新生成"而非静默（当前已有提示文本，合格）。
 **暂行状态**：本轮已交付修复的前半（digest 排除 working_copy 块 + 版本升 v3 + 错误分层/可诊断日志已移除但方法保留）；后半（时点统一）需动 submit/executor 构建时序+回归，独立成批。
+
+## 追加4（2026-09-23 14:3x）：A16 采用链闭环 + A13 手动编辑保存重开 PASS
+**A16 修复生效实证**：digest v4（排除 anchor_path/block_hash/source_kind 执行期回填字段）下，重新提交修订（版本单元格，指令"AI修订核验V4b"）→ 任务 completed → 候选浮现 → **选用并写入成功**（DB: working copy rev 0→1、applied_revision_thread_ids=[thread_075a7efaf5]、thread status=author_selected）。云端模型正确拒绝了 AI 自述性占位标记（写入的是其术语候选——质量判断正确），写入路径已验证（WC rev bump + applied ids）。
+**A13 PASS**：全屏编辑正文中手动键盘输入"（人工编辑核验A13）"→ 保存工作副本 → **版本 2 已保存** → 页面重载后标记与版本均在（a13_manual_edit_persisted.png）。人工编辑→保存→重开链路闭合。
+**V04 失败/断网出口**：云端死端点场景（opencode-go→127.0.0.1:9）→ 提交修订 → 任务 failed → UI 显示类型化错误"AI修订失败：AiExecutionPolicyDenied…base URL must be one of…"（失败出口可见、可重试、不损坏状态）。等待出口：多轮任务 running 期间 UI 显示进行中状态无假失败。
+**V07 部分**：本轮完整 journey（进入写作→修订提交→任务等待→采纳→手动编辑→保存→重载验证）累计点击/输入 ≈35 次（含调试与轮询；正常用户路径预估 ≈15 次）。
