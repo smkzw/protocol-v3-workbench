@@ -2382,11 +2382,51 @@ class WritingReferenceTranslationBatchService:
                 item.error_code == "document_plan_failed"
                 for item in items
             ):
-                ordinary_candidates.extend(
+                document_plan_failed_items = [
                     item
                     for item in items
                     if item.error_code == "document_plan_failed"
-                )
+                ]
+                # R14: several distinct persisted parents used to abort the
+                # retry as "document_plan_retry_parent_missing_or_ambiguous"
+                # (830+ items stranded with zero translations). The retry
+                # must not pick between immutable parents, so reclassify the
+                # group onto the parentless structural recovery path BEFORE
+                # the allocator: clear parent links, keep the
+                # lexicographically first item as the single non-derived
+                # planner source, and mark the structural no-lineage code.
+                distinct_parents = {
+                    item.document_plan_failure_source_stage_run_id
+                    for item in document_plan_failed_items
+                    if item.document_plan_failure_source_stage_run_id
+                }
+                if len(distinct_parents) > 1:
+                    logger.warning(
+                        "document plan retry parents ambiguous for artifact "
+                        "%s (%d distinct parents); reclassifying group onto "
+                        "the parentless structural recovery path",
+                        artifact_id,
+                        len(distinct_parents),
+                    )
+                    primary_item_id = min(
+                        item.item_id for item in document_plan_failed_items
+                    )
+                    document_plan_failed_items = [
+                        item.model_copy(
+                            update={
+                                "document_plan_failure_source_stage_run_id": "",
+                                "document_plan_failure_codes": [
+                                    "document_plan_failed_earlier_in_same_run"
+                                ],
+                                "document_plan_failure_is_derived": (
+                                    item.item_id != primary_item_id
+                                ),
+                            },
+                            deep=True,
+                        )
+                        for item in document_plan_failed_items
+                    ]
+                ordinary_candidates.extend(document_plan_failed_items)
                 continue
             if all(
                 item.error_code == "service_restart_interrupted"
@@ -2927,9 +2967,39 @@ class WritingReferenceTranslationBatchService:
                 if item.document_plan_failure_source_stage_run_id
             }
             if len(source_ids) > 1:
-                raise ValueError(
-                    "document_plan_retry_parent_missing_or_ambiguous"
+                # R14: several distinct persisted parents used to abort the
+                # whole retry as "document_plan_retry_parent_missing_or_ambiguous",
+                # leaving 800+ translation items permanently unretryable.
+                # The retry must not pick between immutable parents, so
+                # reclassify the group onto the parentless structural
+                # recovery path: clear parent links on all copies, keep the
+                # lexicographically first item as the single non-derived
+                # planner source, and mark the structural no-lineage code.
+                logger.warning(
+                    "document plan retry parents ambiguous for artifact %s "
+                    "(%d distinct parents); reclassifying group onto the "
+                    "parentless structural recovery path",
+                    artifact_id,
+                    len(source_ids),
                 )
+                primary_item_id = min(item.item_id for item in items)
+                items = [
+                    item.model_copy(
+                        update={
+                            "error_code": "document_plan_failed",
+                            "document_plan_failure_codes": [
+                                "document_plan_failed_earlier_in_same_run"
+                            ],
+                            "document_plan_failure_source_stage_run_id": "",
+                            "document_plan_failure_is_derived": (
+                                item.item_id != primary_item_id
+                            ),
+                        },
+                        deep=True,
+                    )
+                    for item in items
+                ]
+                source_ids = set()
             source_items = [
                 item
                 for item in items

@@ -1798,6 +1798,69 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
             )
         self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
 
+    def test_ambiguous_parents_are_reclassified_not_fatal(self) -> None:
+        """R14: several distinct persisted parents used to abort the whole
+        retry as document_plan_retry_parent_missing_or_ambiguous (830 items
+        stranded with zero translations). The group must reclassify onto the
+        parentless structural recovery path instead: all items get lineage,
+        exactly one non-derived planner source remains."""
+        artifact = self._seed_artifact(
+            "artifact_ambiguous_parent_lineage_retry",
+            [
+                (
+                    "span_ambiguous_eligibility",
+                    "eligibility",
+                    "Adults with chronic spontaneous urticaria may enroll.",
+                ),
+                (
+                    "span_ambiguous_safety",
+                    "safety",
+                    "Safety assessments are collected through Week 24.",
+                ),
+            ],
+        )
+        batch = self.service.create(
+            PROJECT_ID,
+            self._create_request(
+                "translation-batch-ambiguous-parent-lineage-retry",
+                anchors=["eligibility", "safety"],
+            ),
+        )
+        parent_ids = ["stage_run_parent_A", "stage_run_parent_B"]
+        failed_items = [
+            item.model_copy(
+                update={
+                    "generation_status": "failed_retryable",
+                    "error_code": "document_plan_failed",
+                    "document_plan_failure_codes": [
+                        "document_plan_failed_earlier_in_same_run"
+                    ],
+                    "document_plan_failure_source_stage_run_id": parent_ids[
+                        index % 2
+                    ],
+                    "document_plan_failure_is_derived": index != 0,
+                },
+                deep=True,
+            )
+            for index, item in enumerate(batch.items)
+        ]
+        with self.repo._connect() as connection:
+            prepared = self.service._prepare_document_plan_contract_lineage(
+                connection,
+                failed_items,
+                retry_generation=3,
+                created_at=NOW,
+                persist_migrations=False,
+            )
+        self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
+        self.assertTrue(
+            all(
+                lineage["document_plan_retry_generation"] == 0
+                and not lineage["document_plan_retry_parent_stage_run_id"]
+                for lineage in prepared.item_lineage.values()
+            )
+        )
+
     def test_concurrent_integration_winner_drives_translation_lineage(self) -> None:
         self._seed_artifact(
             "artifact_integration_race",
