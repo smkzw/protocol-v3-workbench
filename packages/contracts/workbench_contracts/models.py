@@ -11634,6 +11634,12 @@ class MedicalWritingFactIntakeProposal(WorkbenchModel):
     fact_kind: MedicalWritingFactIntakeFactKind
     value: str = Field(default="", max_length=20_000)
     rationale: str = Field(default="", max_length=4_000)
+    # R14 conference hardening (§3.1.4): transparency for automatic value
+    # mapping and safe downgrades. normalized_from keeps the AI's original
+    # phrasing when an exact alias mapped it onto the closed vocabulary;
+    # downgrade_reason explains why a proposal no longer carries a value.
+    normalized_from: str = Field(default="", max_length=2_000)
+    downgrade_reason: str = Field(default="", max_length=2_000)
     source_ids: List[str] = Field(default_factory=list, max_length=50)
     confidence: Literal["unknown", "low", "medium", "high"] = "unknown"
     decision: MedicalWritingFactIntakeProposalDecision = (

@@ -100,7 +100,7 @@ def authoring_write_blocker_detail(stage: str) -> str:
     return (
         "研究流水线当前处于 "
         f"{normalized}；为保持检索/分诊快照与 AI 输入冻结，暂不能修改研究框架。"
-        "请等待当前节点结束或先处理页面显示的用户等待项。"
+        "可等待本阶段完成后再提交，或取消本次流水线后立即提交。"
     )
 
 # ICH M11 anchors the corpus gate treats as "critical" for design-relevant

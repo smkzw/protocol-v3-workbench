@@ -681,11 +681,18 @@ def _validate_ai_response(
             )
 
         value = raw_value
+        normalized_from = ""
         if value and field_path in FIELD_ENUM_VALUES:
             original_phrasing = value
             value = FIELD_VALUE_ALIASES.get(field_path, {}).get(
                 value.casefold(), value
             )
+            if value in FIELD_ENUM_VALUES[field_path] and (
+                value != original_phrasing
+            ):
+                # Conference §3.1.4: an automatic alias mapping is recorded
+                # so the UI can show what the AI originally said.
+                normalized_from = original_phrasing
             if value not in FIELD_ENUM_VALUES[field_path]:
                 value = _normalize_enum_value(field_path, original_phrasing)
             if value not in FIELD_ENUM_VALUES[field_path]:
@@ -788,6 +795,8 @@ def _validate_ai_response(
                 rationale=rationale,
                 source_ids=source_ids,
                 confidence=confidence,
+                normalized_from=normalized_from,
+                downgrade_reason="；".join(downgrade_notes),
             )
         )
 

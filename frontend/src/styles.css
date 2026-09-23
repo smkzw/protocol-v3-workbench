@@ -17134,6 +17134,25 @@ textarea {
   line-height: 1.4;
 }
 
+.authoring-fact-proposal-normalized,
+.authoring-fact-proposal-downgrade {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.4;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.authoring-fact-proposal-normalized {
+  color: #0b6bcb;
+  background: rgba(11, 107, 203, 0.08);
+}
+
+.authoring-fact-proposal-downgrade {
+  color: #b45309;
+  background: rgba(217, 119, 6, 0.12);
+}
+
 .authoring-fact-proposal-conflict {
   color: var(--warning, #856404);
 }
@@ -17258,6 +17277,21 @@ textarea {
   align-items: center;
   justify-content: flex-end;
   gap: 7px;
+}
+
+.authoring-impact-wait {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--warning, #d97706);
+  background: rgba(217, 119, 6, 0.08);
+  border-radius: 4px;
+  font-size: 12.5px;
+  color: var(--text-secondary, #5a6472);
+}
+
+.authoring-impact-wait[data-state="queued"] {
+  border-left-color: var(--success, #16a34a);
+  background: rgba(22, 163, 74, 0.08);
 }
 
 .authoring-journey-footer button,

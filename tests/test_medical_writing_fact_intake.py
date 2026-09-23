@@ -152,6 +152,7 @@ class FactIntakeValidationTests(unittest.TestCase):
         # Conference hardening: the audit trail must show what the AI tried
         # to answer on a high-impact field.
         self.assertIn("3 mg/kg", proposals[0].rationale)
+        self.assertIn("AI不得代答", proposals[0].downgrade_reason)
 
     def test_off_vocabulary_enum_value_downgrades_to_unknown(self):
         """R13 P0-A: immunogenicity relevance phrased outside the closed
@@ -176,6 +177,8 @@ class FactIntakeValidationTests(unittest.TestCase):
         self.assertEqual(MedicalWritingFactIntakeFactKind.UNKNOWN, proposals[0].fact_kind)
         self.assertEqual("", proposals[0].value)
         self.assertIn("几乎肯定相关", proposals[0].rationale)
+        self.assertIn("几乎肯定相关", proposals[0].downgrade_reason)
+        self.assertEqual("", proposals[0].normalized_from)
 
     def test_negated_enum_phrasing_must_not_invert_semantics(self):
         """Conference review 2026-09-24: contains-match normalized
