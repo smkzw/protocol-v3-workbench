@@ -458,7 +458,10 @@ class FallbackTriageProvider:
                 status = int(diagnostics.get("http_status"))
             except (TypeError, ValueError):
                 return ""
-            if status in TRIAGE_FALLBACK_HTTP_STATUSES:
+            # Every 5xx is a server-side condition (R13: the local MTPLX
+            # saturates under concurrent triage load and answers 507) — the
+            # fallback chain must absorb it instead of failing the chunk.
+            if 500 <= status <= 599 or status in TRIAGE_FALLBACK_HTTP_STATUSES:
                 return f"{failure_code}:{status}"
             return ""
         if failure_code in {"provider_transport_error", "provider_response_empty"}:

@@ -95,7 +95,7 @@ class RuntimeFallbackAiProvider:
                 return ""
             return (
                 f"{failure_code}:{status}"
-                if status in FALLBACK_HTTP_STATUSES
+                if 500 <= status <= 599 or status in FALLBACK_HTTP_STATUSES
                 else ""
             )
         if failure_code in {"provider_transport_error", "provider_response_empty"}:

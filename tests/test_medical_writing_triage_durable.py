@@ -2789,3 +2789,58 @@ class TestFrozenRuntimeProfileRouting(DurableTriageTestBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestFallbackEligibility5xx(unittest.TestCase):
+    """R13: the local MTPLX answers HTTP 507 under concurrent triage load;
+    every 5xx must be fallback-eligible so the chain absorbs overflow."""
+
+    def test_triage_fallback_reason_accepts_all_5xx(self):
+        from services.api.app.ai_gateway import AiProviderRuntimeError
+        from services.api.app.medical_writing_competitor_triage import (
+            FallbackTriageProvider,
+        )
+
+        for status in (500, 502, 503, 504, 507, 529):
+            exc = AiProviderRuntimeError(
+                f"AI provider request failed: HTTP {status}",
+                diagnostics={
+                    "failure_code": "provider_http_error",
+                    "http_status": status,
+                },
+            )
+            reason = FallbackTriageProvider._fallback_reason(exc)
+            self.assertEqual(f"provider_http_error:{status}", reason, status)
+
+    def test_triage_fallback_reason_still_rejects_4xx(self):
+        from services.api.app.ai_gateway import AiProviderRuntimeError
+        from services.api.app.medical_writing_competitor_triage import (
+            FallbackTriageProvider,
+        )
+
+        for status in (400, 401, 403, 404, 422):
+            exc = AiProviderRuntimeError(
+                f"AI provider request failed: HTTP {status}",
+                diagnostics={
+                    "failure_code": "provider_http_error",
+                    "http_status": status,
+                },
+            )
+            self.assertEqual("", FallbackTriageProvider._fallback_reason(exc))
+
+    def test_runtime_fallback_reason_accepts_507(self):
+        from services.api.app.ai_gateway import AiProviderRuntimeError
+        from services.api.app.ai_runtime_fallback_provider import (
+            RuntimeFallbackAiProvider,
+        )
+
+        exc = AiProviderRuntimeError(
+            "AI provider request failed: HTTP 507",
+            diagnostics={
+                "failure_code": "provider_http_error",
+                "http_status": 507,
+            },
+        )
+        self.assertEqual(
+            "provider_http_error:507", RuntimeFallbackAiProvider._reason(exc)
+        )
