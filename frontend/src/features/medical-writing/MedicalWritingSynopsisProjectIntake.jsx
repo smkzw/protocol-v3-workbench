@@ -82,9 +82,26 @@ export function synopsisJobState(job) {
   return job?.status || job?.phase || "pending";
 }
 
+export function synopsisJobErrorKind(job) {
+  const raw = String(job?.error_message || "");
+  if (/approved direct route|route configuration changed|route_identity/i.test(raw)) {
+    return "route_config";
+  }
+  return "";
+}
+
 export function synopsisJobMessage(job) {
   const state = synopsisJobState(job);
-  if (job?.error_message) return job.error_message;
+  if (state === "failed" || state === "recoverable") {
+    // A route/policy denial can never be fixed by "resume": the frozen route
+    // identity check blocks re-entry after any settings change, so the only
+    // real path is re-importing the file. Say so plainly instead of showing
+    // internal jargon next to a dead-end button.
+    if (synopsisJobErrorKind(job) === "route_config") {
+      return "解析未完成：本次使用的模型服务地址不在已批准列表中（常见于模型配置调整）。请在 AI 设置中确认模型配置，然后重新选择文件重新导入。";
+    }
+    if (job?.error_message) return job.error_message;
+  }
   if (state === "failed") return "方案摘要解析失败。已完成的解析进度仍会保留，您可以继续处理。";
   if (state === "recoverable") return "方案摘要解析已暂停，已完成的进度仍会保留。";
   if (state === "cancelled") return "本次解析已取消。您可以重新选择文件。";
@@ -479,7 +496,7 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
         {message && (
           <div className="file-first-error" role="alert">
             <AlertTriangle size={17} /><span>{message}</span>
-            {intake && ["failed", "recoverable"].includes(synopsisJobState(job)) && (
+            {intake && ["failed", "recoverable"].includes(synopsisJobState(job)) && synopsisJobErrorKind(job) !== "route_config" && (
               <button type="button" onClick={resume}><RotateCcw size={14} /> 继续处理</button>
             )}
             {intake && !["failed", "recoverable", "cancelled"].includes(synopsisJobState(job)) && (

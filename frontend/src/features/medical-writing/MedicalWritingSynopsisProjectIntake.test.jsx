@@ -9,6 +9,7 @@ import {
   cancelSynopsisJob,
   pollSynopsisJob,
   requestJsonWithTimeout,
+  synopsisJobErrorKind,
   synopsisJobMessage,
   synopsisJobState,
 } from "./MedicalWritingSynopsisProjectIntake";
@@ -66,6 +67,63 @@ describe("synopsis intake recovery", () => {
     expect(synopsisJobState(terminal)).toBe("failed");
     expect(synopsisJobMessage(terminal)).toBe("产品 AI 结构化调用超时");
     expect(onJob).toHaveBeenCalledWith(failed);
+  });
+
+  it("translates route-policy denials into plain guidance and hides the dead-end resume button", async () => {
+    const denied = {
+      status: "failed",
+      phase: "failed",
+      error_message:
+        "chunk 0 AI call failed: AI task protocol_synopsis_structuring requires a product-owned approved direct route: base URL must be one of http://127.0.0.1:8002/v1",
+    };
+
+    expect(synopsisJobErrorKind(denied)).toBe("route_config");
+    expect(synopsisJobMessage(denied)).toContain("重新选择文件重新导入");
+    expect(synopsisJobMessage(denied)).not.toContain("approved direct route");
+
+    vi.stubGlobal("crypto", webcrypto);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ...startedJob, ...denied }),
+    }));
+    const { container } = render(
+      <StrictMode><MedicalWritingSynopsisProjectIntake /></StrictMode>,
+    );
+    const file = new File(["source"], "synopsis.docx");
+    file.arrayBuffer = async () => new Uint8Array([1, 2, 3]).buffer;
+    fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: "导入并提取" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("重新选择文件重新导入");
+    expect(screen.queryByRole("button", { name: "继续处理" })).toBeNull();
+    expect(screen.getByRole("button", { name: /重新选择/ })).toBeTruthy();
+  });
+
+  it("keeps the resume button for transient failures without route-policy markers", async () => {
+    const transient = {
+      status: "failed",
+      phase: "failed",
+      error_message: "产品 AI 结构化调用超时",
+    };
+
+    expect(synopsisJobErrorKind(transient)).toBe("");
+
+    vi.stubGlobal("crypto", webcrypto);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ...startedJob, ...transient }),
+    }));
+    const { container } = render(
+      <StrictMode><MedicalWritingSynopsisProjectIntake /></StrictMode>,
+    );
+    const file = new File(["source"], "synopsis.docx");
+    file.arrayBuffer = async () => new Uint8Array([1, 2, 3]).buffer;
+    fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: "导入并提取" }));
+
+    const alertBox = await screen.findByRole("alert");
+    expect(alertBox).toBeTruthy();
+    expect(screen.getByRole("button", { name: "继续处理" })).toBeTruthy();
   });
 
   it("aborts polling before issuing an independent cancel command", async () => {
