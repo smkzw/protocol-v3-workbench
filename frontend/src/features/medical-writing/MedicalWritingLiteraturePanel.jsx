@@ -164,6 +164,10 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
         </label>
         <details>
           <summary>官网链接无法自动识别时，手动确认基本信息</summary>
+          <p className="medical-literature-manual-hint">
+            手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。
+            {manualMetadata.title.trim() && !sourceInput.trim() && " 还差一步：在上方输入框填入来源标识后，即可点击「确认信息并导入」。"}
+          </p>
           <div className="medical-literature-manual-grid">
             <label>题名<input value={manualMetadata.title} onChange={(event) => setManualMetadata((current) => ({ ...current, title: event.target.value }))} /></label>
             <label>作者<input value={manualMetadata.authors} onChange={(event) => setManualMetadata((current) => ({ ...current, authors: event.target.value }))} placeholder="多位作者用逗号分隔" /></label>
@@ -172,7 +176,19 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
             <label className="span-2">文献官网链接<input value={manualMetadata.url} onChange={(event) => setManualMetadata((current) => ({ ...current, url: event.target.value }))} /></label>
             <label className="span-2">补充说明（可选）<textarea value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可说明已核对的原始页面或确认依据" /></label>
           </div>
-          <button onClick={() => importReference({ override: true })} disabled={Boolean(busy) || !canOverride}>确认信息并导入</button>
+          <button
+            onClick={() => importReference({ override: true })}
+            disabled={Boolean(busy) || !canOverride}
+            title={
+              busy
+                ? "正在处理中，请稍候"
+                : !manualMetadata.title.trim()
+                  ? "请先填写题名"
+                  : !sourceInput.trim()
+                    ? "请先在上方输入框填入 DOI、PMID 或官网链接作为来源标识"
+                    : "以手动确认的信息导入文献"
+            }
+          >确认信息并导入</button>
         </details>
       </div>
 

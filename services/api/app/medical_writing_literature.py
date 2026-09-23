@@ -626,7 +626,25 @@ class MedicalWritingLiteratureService:
             ):
                 raise MedicalWritingLiteratureError(str(exc)) from exc
             metadata = {}
+        resolved_metadata = dict(metadata)
         metadata = _merge_manual_metadata(metadata, request.manual_metadata)
+        if (
+            request.override_validation
+            and request.manual_metadata is not None
+            and not _titles_compatible(
+                resolved_metadata.get("title"), metadata.get("title")
+            )
+        ):
+            # Manual override with a conflicting resolved record: the DOI/PMID
+            # hit belongs to a different work, so its unconfirmed bibliographic
+            # fields must not leak into the manually confirmed entry (R11 P1:
+            # a GOLD 2024 title paired with a trial DOI produced the trial's
+            # journal volume/issue/pages on the card).
+            for field in ("journal", "year", "volume", "issue", "pages"):
+                if not str(
+                    getattr(request.manual_metadata, field, "") or ""
+                ).strip():
+                    metadata[field] = ""
         metadata = _sanitize_metadata(metadata)
         if not metadata["title"]:
             raise MedicalWritingLiteratureError("reference title is required")
@@ -851,6 +869,23 @@ def _merge_manual_metadata(metadata: dict[str, Any], manual) -> dict[str, Any]: 
         if value not in ("", [], None):
             merged[key] = value
     return merged
+
+
+def _norm_title_text(value: Any) -> str:
+    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
+
+
+def _titles_compatible(resolved_title: Any, manual_title: Any) -> bool:
+    """True unless both sides are present and clearly about different works.
+
+    An empty/missing resolved title means there is nothing to conflict with.
+    Containment is tolerated so abbreviated manual titles still match.
+    """
+    resolved = _norm_title_text(resolved_title)
+    manual = _norm_title_text(manual_title)
+    if not resolved or not manual:
+        return True
+    return resolved == manual or resolved in manual or manual in resolved
 
 
 def _metadata_warnings(metadata: dict[str, Any]) -> list[str]:

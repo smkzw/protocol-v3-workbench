@@ -1454,10 +1454,23 @@ export function WritingReferencePanel({
             && !(authoringMode && aiTriageRun?.run?.status === "review_ready") && (
             <div className="writing-reference-actions">
               <label>医学分类理由<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="说明适应症、分期、机制、设计或人群的参照关系。" /></label>
+              {!reason.trim() && <p className="writing-reference-actions-hint">填写左侧医学分类理由后，即可标记该候选。</p>}
               <div className="button-row">
-                <button onClick={() => recordRelevance("direct_competitor")} disabled={!reason.trim() || Boolean(busyAction)}>标记为直接竞品</button>
-                <button onClick={() => recordRelevance("indirect_reference")} disabled={!reason.trim() || Boolean(busyAction)}>标记为间接参照</button>
-                <button onClick={() => recordRelevance("excluded")} disabled={!reason.trim() || Boolean(busyAction)}>排除</button>
+                <button
+                  onClick={() => recordRelevance("direct_competitor")}
+                  disabled={!reason.trim() || Boolean(busyAction)}
+                  title={busyAction ? "正在处理中，请稍候" : !reason.trim() ? "请先填写医学分类理由" : "将该候选标记为直接竞品"}
+                >标记为直接竞品</button>
+                <button
+                  onClick={() => recordRelevance("indirect_reference")}
+                  disabled={!reason.trim() || Boolean(busyAction)}
+                  title={busyAction ? "正在处理中，请稍候" : !reason.trim() ? "请先填写医学分类理由" : "将该候选标记为间接参照"}
+                >标记为间接参照</button>
+                <button
+                  onClick={() => recordRelevance("excluded")}
+                  disabled={!reason.trim() || Boolean(busyAction)}
+                  title={busyAction ? "正在处理中，请稍候" : !reason.trim() ? "请先填写医学分类理由" : "排除该候选"}
+                >排除</button>
               </div>
             </div>
           )}
@@ -1574,7 +1587,22 @@ export function WritingReferencePanel({
           {authoringMode && !triageFinalized && aiTriageRun?.run?.status !== "review_ready" && aiTriageRun?.run?.status !== "confirmed" && !triageReconfirmationRequired && <div className="writing-reference-triage-finalize">
             <div><strong>锁定深度处理篮子</strong><span>当前已有 {relatedDecisionIds.length} 项直接竞品/间接参照；锁定后仍保留所有候选和分诊审计。</span></div>
             <label>分诊定稿理由<textarea value={triageReason} onChange={(event) => setTriageReason(event.target.value)} placeholder="说明为何当前篮子足以进入Protocol深度处理。" /></label>
-            <button className="primary-button" onClick={finalizeTriage} disabled={!relatedDecisionIds.length || triageReason.trim().length < 10 || Boolean(busyAction)}>{busyAction === "finalize-triage" ? "锁定中" : "锁定竞品篮子"}</button>
+            {!relatedDecisionIds.length && <p className="writing-reference-actions-hint">请先在候选列表中至少标记一项「直接竞品」或「间接参照」，再锁定篮子。</p>}
+            {relatedDecisionIds.length > 0 && triageReason.trim().length < 10 && <p className="writing-reference-actions-hint">填写定稿理由（至少10字）后即可锁定。</p>}
+            <button
+              className="primary-button"
+              onClick={finalizeTriage}
+              disabled={!relatedDecisionIds.length || triageReason.trim().length < 10 || Boolean(busyAction)}
+              title={
+                busyAction
+                  ? "正在处理中，请稍候"
+                  : !relatedDecisionIds.length
+                    ? "请先至少标记一项直接竞品或间接参照"
+                    : triageReason.trim().length < 10
+                      ? "请先填写分诊定稿理由（至少10字）"
+                      : "锁定当前竞品篮子并进入深度处理"
+              }
+            >{busyAction === "finalize-triage" ? "锁定中" : "锁定竞品篮子"}</button>
           </div>}
         </div>
       )}

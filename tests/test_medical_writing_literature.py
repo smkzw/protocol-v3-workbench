@@ -855,3 +855,58 @@ def test_identity_graph_is_project_scoped_and_replay_remains_idempotent(
     assert project_a.reference.reference_id != project_b.reference.reference_id
     assert len(literature.library("project-a").references) == 1
     assert len(literature.library("project-b").references) == 1
+
+
+def test_manual_override_with_conflicting_doi_drops_unconfirmed_fields(service):
+    """R11 P1: GOLD-style manual title + unrelated trial DOI must not show the
+    trial's journal volume/issue/pages on the confirmed card."""
+    literature, _ = service
+    result = literature.import_reference(
+        "project-a",
+        MedicalWritingReferenceImportRequest(
+            source_input="10.1234/example.2025.01",
+            manual_metadata=MedicalWritingReferenceManualMetadata(
+                title="Global strategy for the diagnosis report 2024",
+                authors=["GOLD Science Committee"],
+                journal="Guideline Report",
+                year="2024",
+            ),
+            override_validation=True,
+            override_reason="已核对官网原始页面",
+            idempotency_key="manual-conflict-0001",
+        ),
+    )
+
+    reference = result.reference
+    assert reference.title == "Global strategy for the diagnosis report 2024"
+    assert reference.journal == "Guideline Report"
+    assert reference.year == "2024"
+    # The DOI still anchors provenance, but the unrelated record's
+    # bibliographic fields must not leak into the confirmed entry.
+    assert reference.volume == ""
+    assert reference.issue == ""
+    assert reference.pages == ""
+    assert reference.validation_status == "overridden"
+
+
+def test_manual_override_with_compatible_title_keeps_resolved_fields(service):
+    literature, _ = service
+    result = literature.import_reference(
+        "project-a",
+        MedicalWritingReferenceImportRequest(
+            source_input="10.1234/example.2025.01",
+            manual_metadata=MedicalWritingReferenceManualMetadata(
+                title="Efficacy and safety of a study treatment",
+                authors=["Zhang Wei, Smith John"],
+            ),
+            override_validation=True,
+            idempotency_key="manual-compatible-0001",
+        ),
+    )
+
+    reference = result.reference
+    assert reference.title.casefold() == "efficacy and safety of a study treatment"
+    assert reference.journal == "Journal of Clinical Research"
+    assert reference.volume == "18"
+    assert reference.issue == "4"
+    assert reference.pages == "101-112"
