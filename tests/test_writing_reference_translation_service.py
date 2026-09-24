@@ -816,3 +816,25 @@ def test_fidelity_accepts_chinese_magnitude_scaled_numerals():
         "由此产生的年度总费用高达6350亿美元(1)。",
     )
     assert "numeric_tokens_changed" in drift.failure_codes
+
+
+def test_fidelity_accepts_full_chinese_term_for_known_abbreviation():
+    """0924V2 §5 R14 evidence: OA/LDN/VA/SAE rendered as their full Chinese
+    terms (骨关节炎/低剂量纳曲酮/退伍军人事务部/严重不良事件) must not be
+    flagged missing; a genuinely dropped abbreviation still fails."""
+    from services.api.app.writing_reference import evaluate_translation_fidelity
+
+    ok = evaluate_translation_fidelity(
+        "Knee osteoarthritis (OA) patients received low-dose naltrexone (LDN) "
+        "under VA supervision. Serious adverse events (SAEs) were monitored "
+        "by the FDA.",
+        "膝骨关节炎（OA）患者在退伍军人事务部监督下接受低剂量纳曲酮（LDN）"
+        "治疗。严重不良事件（SAEs）受到美国食品药品监督管理局的监测。",
+    )
+    assert "source_abbreviation_missing" not in ok.failure_codes
+
+    dropped = evaluate_translation_fidelity(
+        "Knee osteoarthritis (OA) patients received low-dose naltrexone (LDN).",
+        "膝关节炎患者接受了治疗。",
+    )
+    assert "source_abbreviation_missing" in dropped.failure_codes

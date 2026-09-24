@@ -92,8 +92,11 @@ _ABBREVIATION_STOPWORDS = frozenset(
         "AND",
         "BY",
         "DRUG",
+        "FIRST",
         "INSTITUTION",
         "INVESTIGATOR",
+        "MATLAB",
+        "NOT",
         "NOTE",
         "OR",
         "PROTOCOL",
@@ -3433,6 +3436,21 @@ def evaluate_translation_fidelity(
         failures.append("approximation_marker_duplicated")
     abbreviation_equivalents = {
         "AD": ("特应性皮炎", "阿尔茨海默病"),
+        # 0924V2 §5 R14 evidence: these equivalents appeared in the real
+        # blocked translations; the source abbreviation was rendered as its
+        # full Chinese term, so "missing" was a table gap, not a drift.
+        "FDA": ("美国食品药品监督管理局", "食品药品监督管理局", "食药局", "美国食药局"),
+        "LDN": ("低剂量纳曲酮",),
+        "MD": ("医生", "医师"),
+        "MDs": ("医生", "医师"),
+        "OA": ("骨关节炎", "骨性关节炎"),
+        "PI": ("主要研究者", "研究者", "首席研究者"),
+        "SAE": ("严重不良事件",),
+        "SAEs": ("严重不良事件",),
+        "VA": ("退伍军人事务部", "退伍军人", "退伍军人医疗系统", "退伍军人医院"),
+        "BPI": ("简明疼痛量表", "简版疼痛量表"),
+        "NSAIDs": ("非甾体抗炎药", "非甾体类抗炎药"),
+        "NSAID": ("非甾体抗炎药", "非甾体类抗炎药"),
         "ADA": ("抗药抗体",),
         "ADSD": ("特应性皮炎症状日记", "特应性皮炎症状评分"),
         "AE": ("不良事件",),
