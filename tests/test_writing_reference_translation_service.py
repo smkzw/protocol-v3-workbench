@@ -838,3 +838,26 @@ def test_fidelity_accepts_full_chinese_term_for_known_abbreviation():
         "膝关节炎患者接受了治疗。",
     )
     assert "source_abbreviation_missing" in dropped.failure_codes
+
+
+def test_cardinality_ignores_sentence_final_week_numbers():
+    """0924V2 §5 R14 evidence: 'weeks (Wks) 8 and 16.' ends a sentence with
+    '16.' — the temporal reference means it is a date, not a list label.
+    A genuine numbered list in either language is still enforced."""
+    from services.api.app.chapter_translation_pipeline import (
+        structural_cardinality_failures,
+    )
+
+    src = (
+        "In-person visits are at screening / enrollment and weeks (Wks) 8 "
+        "and 16. Wk 0 (Baseline) may occur within 14 days at home."
+    )
+    tr = (
+        "现场访视安排在筛选/入组时以及第8周和第16周进行。基线检查可在入组后"
+        "14天内于受试者家中进行。"
+    )
+    assert structural_cardinality_failures(src, tr) == ()
+
+    real_list = "1. Enroll the patient. 2. Collect samples."
+    real_list_tr = "1. 入组患者。2. 采集样本。"
+    assert structural_cardinality_failures(real_list, "仅一项。") != ()

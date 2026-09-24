@@ -2360,7 +2360,13 @@ _STRUCT_NUMBERED_CANDIDATE_RE = re.compile(
 _STRUCT_TABLE_ROW_RE = re.compile(r"^\s*\|.*\|\s*$", re.MULTILINE)
 _STRUCT_NON_CRITERION_PREFIX_RE = re.compile(
     r"(?:week|day|visit|section|appendix|panel|table|figure|part|chapter|"
-    r"phase|dose|version)\s*$",
+    r"phase|dose|version)\s*$"
+    # 0924V2 §5 R14 evidence: "weeks (Wks) 8 and 16." ends a sentence with
+    # "16." — the temporal unit appears ANYWHERE in the short preceding
+    # context (not only immediately before the number), and a sentence-final
+    # "N." after a temporal reference is a date, not a list label.
+    r"|\b(?:weeks?|wks?|days?|months?|years?|visit)\b[^.;]{0,32}$"
+    r"|(?:周|日|天|月|周岁|岁)[^。；;]{0,16}$",
     re.IGNORECASE,
 )
 
