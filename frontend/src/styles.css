@@ -12457,12 +12457,18 @@ textarea {
 }
 
 .writing-ai-candidates article p {
-  max-height: 112px;
+  /* 0924V2 §6: full candidate text — no 112px nested-scroll box, no
+     ellipsis hiding scientific content. The candidate body renders in
+     full inside the panel's single main scroll region. */
   margin: 8px 0;
-  overflow-y: auto;
   color: #36414b;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.writing-ai-candidates article p.writing-ai-candidate-body {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .writing-ai-candidates article > button {
@@ -23635,4 +23641,28 @@ textarea {
   .authoring-competitor-toolbar {
     flex-wrap: wrap;
   }
+}
+
+.writing-diagnostic-details {
+  margin: 6px 0;
+  font-size: 12px;
+  color: var(--text-secondary, #5a6472);
+}
+
+.writing-diagnostic-details summary {
+  cursor: pointer;
+  color: #0b6bcb;
+}
+
+.writing-diagnostic-details .writing-diagnostic-pre {
+  margin: 6px 0 0;
+  padding: 8px;
+  max-height: 200px;
+  overflow: auto;
+  background: #f5f6f8;
+  border: 1px solid var(--soft-line, #d8dee6);
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
