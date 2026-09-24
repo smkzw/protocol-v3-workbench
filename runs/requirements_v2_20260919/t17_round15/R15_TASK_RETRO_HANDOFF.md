@@ -74,3 +74,12 @@
 6. 全屏编辑器首页核验标记未进入导出件（首页表=受控结构，设计内）；T17 的编辑验证应在正文章节执行。
 
 **四状态口径**：process=已完成本轮会话；test_run=T15 导出腿 PASSED；business_flow=采用/冻结/导出腿已通，Office 编辑腿未开始；artifact_validation=DOCX 71,671B 实质验证通过。
+
+---
+
+## 0924V1 第二批执行结果（2026-09-24 上午 · T14/T11-T13 + T16/T17 边界记录）
+
+1. **T14 入口A正向链 PASSED**（真实 UI）：LibreOffice headless 生成 6.9KB 真实摘要 docx → 入口A上传 → AI 提取 8 字段全对（TRD/II期/120例/四组1:1:1:1/8周MADRS/干预/对照/人群）→ 诚实列出 7 个后续补字段 → 确认建项 MW-II-9DE75AA7 → 自动进入写作工作区。注意：真实摘要提取需 ~8 分钟（MTPLX 慢推理），UI 有进度显示非死路。
+2. **T11-T13 PASSED（恢复路径集成验证）**：外科恢复 K3 项目（a5f104df，allowlist 行）→ 打开结构与译文确认 tab（228/230 失败、可重试）→ 点击"仅重试失败项"→ **重试启动成功**（8a36f3a 修复生效：失败 228→227 开始收敛，AI 逐文档重新规划中）。已知残余：规划器根因（document_plan_anchor_filter 0/5）在审计日志（"ancestry unresolved"警告保留全部父 ID），formal 导出前需按审阅要求复核。
+3. **T16/T17 边界记录（诚实口径）**：桌面 Word 已打开下载件并用 AppleScript 写入正文标记；继续键盘自动化时截图发现**用户正在前台使用桌面**——立即停止 GUI 自动化并无损退出（磁盘 hash 未变 d6cf304d…，零污染）。桌面 Office 腿需在用户桌面空闲时执行或由用户明确授权；不采用后台静默键击冒险。
+4. 四状态：process=会话完成；test_run=T14/T11-T13 PASSED；business_flow=入口A→写作 PASSED、翻译恢复已启动收敛中；artifact_validation=摘要提取表单8字段+失败数收敛证据。
