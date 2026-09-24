@@ -2471,11 +2471,44 @@ class WritingReferenceTranslationBatchService:
             continue
 
         if ordinary_candidates:
-            ordinary = self._allocate_document_plan_retry_lineage(
-                connection,
-                ordinary_candidates,
-                retry_generation=retry_generation,
-            )
+            fallback_parentless = False
+            try:
+                ordinary = self._allocate_document_plan_retry_lineage(
+                    connection,
+                    ordinary_candidates,
+                    retry_generation=retry_generation,
+                )
+            except ValueError as exc:
+                if "parent_missing_or_ambiguous" not in str(exc):
+                    raise
+                fallback_parentless = True
+                # 0924V1-R04: ancestry cannot be reconstructed safely, but a
+                # retry must still converge. Allocate the parentless
+                # zero-generation lineage directly (same shape as the
+                # allocator's structural path), keeping every known parent
+                # auditable in the warning log instead of leaving hundreds
+                # of items permanently unretryable.
+                known_parents = sorted(
+                    {
+                        item.document_plan_failure_source_stage_run_id or ""
+                        for item in ordinary_candidates
+                    }
+                )
+                logger.warning(
+                    "document plan retry ancestry unresolved for %d items; "
+                    "known parents=%s; allocating parentless structural "
+                    "recovery (audit required before formal export)",
+                    len(ordinary_candidates),
+                    known_parents,
+                )
+                ordinary = {
+                    item.item_id: {
+                        "document_plan_retry_generation": 0,
+                        "document_plan_retry_parent_stage_run_id": "",
+                        "document_plan_retry_source_item_id": "",
+                    }
+                    for item in ordinary_candidates
+                }
             by_parent: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
             for item_id, lineage in ordinary.items():
                 by_parent[
@@ -2491,7 +2524,7 @@ class WritingReferenceTranslationBatchService:
                 # it will run a fresh planner call against the same frozen
                 # source document and remains auditable in the retry event.
                 if not parent_id:
-                    if not all(
+                    if not fallback_parentless and not all(
                         _item_has_structural_planner_failure(item)
                         and not item.document_plan_failure_source_stage_run_id
                         for item in ordinary_candidates
