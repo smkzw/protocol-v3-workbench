@@ -106,3 +106,12 @@
 1. 对 4 个失败文档逐一运行 flash planner 并抓取实际失败码（此前仅 2 项带码：flash_planner_structural_failure/product_ai_provider_transient——大量 items 无码为可观测性缺口，建议规划器失败时持久化原始结构错误）。
 2. 修复 document_plan_anchor_filter 的锚过滤逻辑（R14 根因）或规划提示对复杂文档结构的覆盖。
 3. 预算参数：reference_translation max_attempts=3 且 retry 端点对耗尽 job 不再重排——多轮恢复需要"重试轮次"与"单 job 尝试"分离的语义。
+
+---
+
+## 无损暂停点（0924 下午晚些 · 26 项收敛受重试语义限制）
+
+1. **基础设施恢复完成**：用户授权并执行——MTPLX 应用退出（释放 ~30GB）、oMLX 应用重启（改听 **8001**）→ 翻译模型 dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX（31.25GB）加载成功（200 OK / 0.5s 响应）。运行时三个 omlx profile 已对齐 8001 rev2（备份 .pre-omlx-port-20260924）。
+2. **26 项重试已点击，job 立即终态**：reference_translation attempt 预算（3/3）在上轮已耗尽，本次重排队复用了 attempt 3 记录 → 未产生新的规划器派发 → 26 项状态不变（38 ready + 164 fidelity_blocked + 26 failed）。这正是已记录的"重试轮次 vs 单 job 尝试"语义工程项——**下批第一步：bump reference_translation max_attempts（仿照 full_draft 2→3 先例）或实现轮次分离，然后重排队即得全新派发**。
+3. **环境快照（交班）**：后端/前端指纹一致（api-b4f0eb2bfa571bde 运行 38965/38966 后又经重试重启，以 runtime-readiness 为准）；**MTPLX 已退出（用户手）——分诊/全文类需要 MTPLX 的操作前必须先重开 MTPLX 应用**；oMLX 在 8001 存活且模型已驻留；10 份清理备份在位；R15 项目 4 个在库（K3 已恢复可操作）。
+4. 下批顺序：①bump reference_translation 尝试预算并重排队 26 项（观察是否暴露规划器原始错误——oMLX 现在在线，失败码应能采集）②按真实失败码修规划器根因 ③T16/T17 桌面 Office（需桌面空闲）④R16 集中验收含 T18。
