@@ -601,7 +601,11 @@ class MedicalWritingFullDraftService:
             created_by=str(actor or "medical_manager"),
             provider=str(policy.get("provider_name") or ""),
             model=str(policy.get("model_name") or ""),
-            max_attempts=2,
+            # R14/R15 evidence: a saturation-window 429 at the synthesis call
+            # exhausted a 2-attempt budget and stranded an otherwise healthy
+            # 13/21-batch draft (completed batches are preserved, so an
+            # extra attempt resumes, it never replays finished work).
+            max_attempts=3,
         )
         response = durable_store.create_or_reuse(request)
         return response.job_id, bool(response.reused)
