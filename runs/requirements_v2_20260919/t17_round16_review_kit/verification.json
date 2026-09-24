@@ -1,0 +1,33 @@
+{
+  "round": "0924V1",
+  "repository": "smkzw/protocol-v3-workbench",
+  "base_commit": "372360cbad8e5a4bf48cfdf44fd013ea36fe2212",
+  "review_commit": "455b37ee4530628736bd6b37b622796f13e9498f",
+  "head_rechecked": "455b37ee4530628736bd6b37b622796f13e9498f",
+  "ahead_by_reported": 36,
+  "direct_git_access": "DNS failure, ls-remote failed; clone not performed",
+  "repository_write": false,
+  "source_route_module_blob_verified": true,
+  "isolated_scenarios": 12,
+  "scenario_groups": {
+    "reservation": 5,
+    "cancel": 4,
+    "route_controls": 3
+  },
+  "observation_assertions": "all completed successfully; some intentionally assert current defective behavior, not product acceptance",
+  "test_environment": {
+    "system": "Linux",
+    "python": "3.13.5"
+  },
+  "not_run": [
+    "full repository test suite",
+    "real product backend API/SQLite integration",
+    "user Mac listener/MTPLX probe",
+    "real model inference",
+    "React browser rendering/reload",
+    "GenOffice runtime",
+    "native Microsoft Word",
+    "full medical content review",
+    "translation parent recovery in current product database"
+  ]
+}

@@ -1,0 +1,100 @@
+[
+  {
+    "id": "0924V1-R01",
+    "priority": "P1",
+    "category": "工程缺陷",
+    "title": "stale in_flight force path never reaches existing deadline recovery",
+    "evidence_level": "isolated method + temporary SQLite",
+    "work_package": "WP-A",
+    "sources": [
+      "S07",
+      "S08"
+    ]
+  },
+  {
+    "id": "0924V1-R02",
+    "priority": "P1",
+    "category": "工程缺陷",
+    "title": "queued impact is local component state despite leave/reload promise",
+    "evidence_level": "static source; browser not run",
+    "work_package": "WP-B",
+    "sources": [
+      "S08",
+      "S09"
+    ]
+  },
+  {
+    "id": "0924V1-R03",
+    "priority": "P1",
+    "category": "工程缺陷",
+    "title": "cancel errors/context changes still lead to confirm attempt",
+    "evidence_level": "isolated original function bodies; not proof of backend writes",
+    "work_package": "WP-B",
+    "sources": [
+      "S08"
+    ]
+  },
+  {
+    "id": "0924V1-R04",
+    "priority": "P1",
+    "category": "恢复语义风险",
+    "title": "ambiguous parent references cleared; conditional lineage generation reset to zero",
+    "evidence_level": "static source and added test; current real DB migration not run",
+    "work_package": "WP-C",
+    "sources": [
+      "S10"
+    ]
+  },
+  {
+    "id": "0924V1-R05",
+    "priority": "P1",
+    "category": "验收结论缺陷",
+    "title": "running full draft and blocked export summarized as full-chain success",
+    "evidence_level": "contradiction within frozen reports",
+    "work_package": "WP-E",
+    "sources": [
+      "S01",
+      "S02",
+      "S12"
+    ]
+  },
+  {
+    "id": "0924V1-R06",
+    "priority": "P1",
+    "category": "验收缺口",
+    "title": "entry substitution, business-step counts and visible controls used as functional acceptance",
+    "evidence_level": "raw reports vs acceptance contract",
+    "work_package": "WP-D/WP-E",
+    "sources": [
+      "S11",
+      "S12",
+      "S13"
+    ]
+  },
+  {
+    "id": "0924V1-R07",
+    "priority": "P2",
+    "category": "验证过程风险",
+    "title": "mixed deployment window/runtime identities and cleanup before task reconciliation",
+    "evidence_level": "recorded process; present live states not inspected",
+    "work_package": "WP-E",
+    "sources": [
+      "S01",
+      "S11",
+      "S12"
+    ]
+  },
+  {
+    "id": "0924V1-R08",
+    "priority": "P1",
+    "category": "验收缺口",
+    "title": "empty-template negative test not substitute for partial working-draft positive path",
+    "evidence_level": "no claim of a new backend export bug",
+    "work_package": "WP-D",
+    "sources": [
+      "S01",
+      "S12",
+      "S13"
+    ]
+  }
+]
