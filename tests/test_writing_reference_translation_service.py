@@ -790,3 +790,29 @@ class WritingReferenceTranslationServiceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_fidelity_accepts_chinese_magnitude_scaled_numerals():
+    """0924V2 §5: "116 million … $635 billion" faithfully renders as
+    "1.16亿 … 6350亿" — the magnitude moves into 万/亿 suffixes. The bare
+    numeric-token check must not label this as numeric drift (R14 live
+    false positive). Real semantic drift (a changed count) still fails."""
+    from services.api.app.writing_reference import evaluate_translation_fidelity
+
+    ok = evaluate_translation_fidelity(
+        "According to an Institute of Medicine report, 116 million Americans "
+        "are affected by chronic pain, at an overall annual cost of $635 "
+        "billion (1).",
+        "根据美国医学研究所的报告，约有1.16亿美国人受到慢性疼痛的困扰，"
+        "由此产生的年度总费用高达6350亿美元(1)。",
+    )
+    assert "numeric_tokens_changed" not in ok.failure_codes
+
+    drift = evaluate_translation_fidelity(
+        "According to an Institute of Medicine report, 116 million Americans "
+        "are affected by chronic pain, at an overall annual cost of $635 "
+        "billion (1).",
+        "根据美国医学研究所的报告，约有2.50亿美国人受到慢性疼痛的困扰，"
+        "由此产生的年度总费用高达6350亿美元(1)。",
+    )
+    assert "numeric_tokens_changed" in drift.failure_codes

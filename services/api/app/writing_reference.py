@@ -3107,6 +3107,41 @@ def evaluate_translation_fidelity(
     source_number_counts = Counter(source_numbers)
     translated_number_counts = Counter(translated_numbers)
 
+    def _chinese_scaled_number_tokens(text: str) -> Counter:
+        """Decode Chinese magnitude-scaled numerals to their bare tokens.
+
+        0924V2 §5 fidelity diagnosis: a faithful translation renders
+        "116 million" as "1.16亿" and "$635 billion" as "6350亿" — the
+        magnitude moves into the unit suffix, so the bare numeric-token
+        comparison mislabels these as numeric drift (checker false
+        positive). A scaled token contributes BOTH its mantissa and its
+        digit-collapsed form (1.16亿 → "1.16" and "116") so the pair
+        (source "116", translated "1.16") compares equal; "6350亿" also
+        re-credits the source-side bare token 6350.
+        """
+        scaled: Counter = Counter()
+        for match in re.finditer(r"(\d+(?:\.\d+)?)([万亿])", text):
+            mantissa, unit = match.group(1), match.group(2)
+            try:
+                float(mantissa)
+            except ValueError:
+                continue
+            digits = mantissa.replace(".", "")
+            if digits:
+                scaled[digits] += 1
+            if mantissa != digits:
+                scaled[mantissa] += 1
+        return scaled
+
+    scaled_source_tokens = _chinese_scaled_number_tokens(source_text)
+    scaled_translated_tokens = _chinese_scaled_number_tokens(translated_text)
+    # Symmetric credit: each side additionally recognizes the other side's
+    # scaled forms, so a faithful magnitude conversion never produces a
+    # difference while a genuinely changed count still does (the true count
+    # digit string appears on only one side).
+    source_number_counts += scaled_translated_tokens
+    translated_number_counts += scaled_source_tokens + scaled_translated_tokens
+
     def unexpanded_frequency_numbers(text: str) -> list[str]:
         values: list[str] = []
         for match in re.finditer(
@@ -3131,6 +3166,65 @@ def evaluate_translation_fidelity(
     missing_source_numbers = source_number_counts - translated_number_counts
     extra_translated_numbers = translated_number_counts - source_number_counts
     unlicensed_extra_numbers = extra_translated_numbers - source_word_numbers
+    # 0924V2 §5: leftover "missing" tokens that differ from a translated
+    # token ONLY by decimal-point scaling are magnitude-scaled renderings
+    # (116 ↔ 1.16亿). A faithful "635 billion" → "6350亿" additionally
+    # appends the unit's zero (billion = 10^9 vs 亿 = 10^8), producing
+    # 635 ↔ 6350 — the translated token starting with the source token's
+    # digit string and extending it ONLY with unit-conversion zeros is the
+    # same number, not drift. Genuinely changed counts alter the significant
+    # digits and never satisfy either shape.
+    def _digit_key(token: str) -> str:
+        return token.replace(".", "")
+
+    def _is_magnitude_rewire(source_token: str, translated_token: str) -> bool:
+        source_digits = _digit_key(source_token)
+        translated_digits = _digit_key(translated_token)
+        if not source_digits or not translated_digits:
+            return False
+        if translated_digits.startswith(source_digits):
+            return set(translated_digits[len(source_digits):]) <= {"0"}
+        return translated_digits == source_digits
+
+    translated_digit_keys = Counter(
+        _digit_key(token)
+        for token in translated_number_counts
+        for _ in range(translated_number_counts[token])
+    )
+    forgiven_missing = set()
+    for token, count in missing_source_numbers.items():
+        if translated_digit_keys.get(_digit_key(token), 0) >= count:
+            forgiven_missing.add(token)
+            continue
+        if any(
+            _is_magnitude_rewire(token, other)
+            for other in translated_number_counts
+        ):
+            forgiven_missing.add(token)
+    # 0924V2 §5: the mirrored direction — a scaled translated token
+    # (1.16 from 1.16亿, 6350 from 6350亿) is licensed when a source token
+    # rewires to it, so it must not count as an unlicensed extra either.
+    source_digit_keys = Counter(
+        _digit_key(token)
+        for token in source_number_counts
+        for _ in range(source_number_counts[token])
+    )
+    forgiven_extra = set()
+    for token, count in unlicensed_extra_numbers.items():
+        if source_digit_keys.get(_digit_key(token), 0) >= count:
+            forgiven_extra.add(token)
+            continue
+        if any(
+            _is_magnitude_rewire(source_token, token)
+            for source_token in source_number_counts
+        ):
+            forgiven_extra.add(token)
+    missing_source_numbers = Counter(
+        {token: count for token, count in missing_source_numbers.items() if token not in forgiven_missing}
+    )
+    unlicensed_extra_numbers = Counter(
+        {token: count for token, count in unlicensed_extra_numbers.items() if token not in forgiven_extra}
+    )
     if missing_source_numbers or unlicensed_extra_numbers:
         failures.append("numeric_tokens_changed")
     source_comparators = tuple(
