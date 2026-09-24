@@ -60,3 +60,17 @@
 3. **R05 验收口径更正**已入库（原始报告未覆写）。
 4. **WP-D 第一步完成**：tester2 的原 job（mwjob_4f6a049a）按"恢复原 job"纪律重试——根因=饱和窗口 429；attempt 预算 2→3（提交在案）；attempt 3 从批次 14 续跑至 **21/21 completed**，产物 full-draft.json 444KB 实质验证：81 节 / 18,584 字提案 / content_status=4 complete+46 partial+31 source_gap（诚实缺口）/ 本场景适应症词汇非串染。
 5. **下一门槛（T15-T17）**：采用→工作稿保存→真实 Office 打开/编辑/保存/关闭/重开/下载；以及 T14 入口A 正向链、T11-T13 翻译批次集成验证。这些需要真实 UI 会话，为下批主体。
+
+---
+
+## T15 执行结果（0924V1 WP-D · 2026-09-24 追加）
+
+真实 UI 会话（ego TaskSpace 74，PROJECT=proj_user_97189da36a75 / MW-II-00990781）：
+1. 生成全文初稿 → 幂等复用已完成 job，81 节候选审阅面板打开（0 待决定/31 缺来源）。
+2. 发现"采纳需先有已保存工作副本"（创建→保存禁用"无未保存修订"）→ 通过全屏编辑正文写入核验标记→保存工作副本 v1。
+3. 采纳初遇 adoption_ready=false 硬禁 → 定位为 R08 语义缺陷（adoption_ready ≡ formal_ready）→ 修复（af79074：服务端分区写入/前端改用 working_draft_ready）→ 采纳成功：51 节工作副本 rev1/ai_draft 落库、35 节实质正文、31 缺来源节跳过保留占位。
+4. 冻结当前版本 → 成功（"当前作者确认版本/已冻结"）。
+5. 预览 Word 导出初遇两门合并（draft_preview 也被 substantive gate 拦）→ 修复（4e07ab6：两门分离+占位块注入+空白模板仍双门拦截）→ **草稿预览 DOCX 导出成功**：27,247 字/372 段/6 表/31 待补齐标记/零串染。产物归档 t17_round16_office_chain/。
+6. 全屏编辑器首页核验标记未进入导出件（首页表=受控结构，设计内）；T17 的编辑验证应在正文章节执行。
+
+**四状态口径**：process=已完成本轮会话；test_run=T15 导出腿 PASSED；business_flow=采用/冻结/导出腿已通，Office 编辑腿未开始；artifact_validation=DOCX 71,671B 实质验证通过。
