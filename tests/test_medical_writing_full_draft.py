@@ -382,7 +382,10 @@ class FullDraftServiceTests(unittest.TestCase):
             )
         self.assertEqual(2, adopted["adopted_count"])
 
-    def test_decision_or_source_gap_blocks_adoption_before_any_write(self):
+    def test_source_gap_section_is_skipped_not_fatal_on_adoption(self):
+        """0924V1-R08: adoption creates an EDITABLE working draft. A
+        source-gap section keeps its 待补齐 placeholder (skipped, never
+        written over) instead of blocking the other sections."""
         project = self.repo.project_id
         job_id, _ = self.full.submit_durable(project, self.store)
         claim = self.store.claim(project, job_id)
@@ -399,10 +402,14 @@ class FullDraftServiceTests(unittest.TestCase):
         )
         completed = self.store.get(project, job_id)
         artifact = self.full.read_artifact(project, completed)
+        gap_section_id = str(artifact["sections"][0]["section_id"])
         artifact["sections"][0]["content_status"] = "source_gap"
         with patch.object(self.full, "read_artifact", return_value=artifact):
-            with self.assertRaisesRegex(RuntimeStoreError, "待决定或来源缺口"):
-                self.full.adopt(project, completed)
+            adopt_result = self.full.adopt(project, completed)
+        self.assertIn(gap_section_id, adopt_result["gap_section_ids"])
+        self.assertEqual(1, adopt_result["gap_count"])
+        # every non-gap section was still adopted
+        self.assertEqual(len(artifact["sections"]) - 1, adopt_result["adopted_count"])
 
     def _completed_artifact(self):
         """Complete one full-draft job and return its projected artifact."""

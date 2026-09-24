@@ -11775,8 +11775,8 @@ function WritingPage({
                             </div>
                           </div>
                           <footer className="full-draft-review-workspace-foot">
-                            <span>本批补写 {fullDraftArtifact.coverage?.generated_count || 0} 章；当前方案结构共 {documentSession?.sections?.length || "—"} 章。</span>
-                            {fullDraftArtifact.coverage?.adoption_ready === false && (
+                            <span>本批补写 {fullDraftArtifact.coverage?.generated_count || 0} 章；当前方案结构共 {documentSession?.sections?.length || "—"} 章。{fullDraftArtifact.coverage?.source_gap_count ? `缺来源 ${fullDraftArtifact.coverage.source_gap_count} 章将保留待补齐标记，可后续补充。` : ""}</span>
+                            {fullDraftArtifact.coverage?.working_draft_ready === false && (
                               <button type="button" className="secondary-button" onClick={() => { setFullDraftReviewOpen(false); setStudyDesignOpen(true); }}>
                                 <ListChecks size={14} /> 补充研究设计与资料
                               </button>
@@ -11790,12 +11790,12 @@ function WritingPage({
                                 || workingCopyDirty
                                 || editorFrozen
                                 || !workingCopyAuthoritative
-                                || fullDraftArtifact.coverage?.adoption_ready === false
+                                || fullDraftArtifact.coverage?.working_draft_ready === false
                                 || !(fullDraftArtifact.coverage?.required_review_section_ids || []).every(
                                   (sectionId) => fullDraftConfirmedSections.includes(sectionId),
                                 )
                               }
-                              title="按章节版本与幂等键整体采纳全文候选，发生冲突时停止写入"
+                              title="按章节版本与幂等键整体采纳全文候选；缺来源章节保留待补齐标记，发生冲突时停止写入"
                             >
                               <FileCheck2 size={14} /> {fullDraftBusy ? "采纳中" : "确认关键章节并采用全文"}
                             </button>

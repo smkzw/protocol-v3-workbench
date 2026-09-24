@@ -1726,15 +1726,22 @@ class MedicalWritingFullDraftService:
         target_by_id = {str(item.get("section_id")): item for item in artifact.get("target_sections") or []}
         if set(candidates) != set(target_by_id):
             raise RuntimeStoreError("全文初稿候选覆盖与目标章节不一致")
-        unresolved = [
-            section_id
-            for section_id, candidate in candidates.items()
-            if candidate.get("content_status", "complete") != "complete"
-        ]
-        if unresolved:
-            raise RuntimeStoreError(
-                f"仍有 {len(unresolved)} 个章节存在待决定或来源缺口，全文初稿未写入"
-            )
+        # 0924V1-R08: adoption creates an EDITABLE WORKING DRAFT, not the
+        # formal deliverable. Non-critical gaps no longer hard-block:
+        # - partial sections (substantive proposal text) are written as-is;
+        # - source-gap sections are SKIPPED, keeping their existing 待补齐
+        #   placeholder blocks so the missing-evidence semantics stay visible;
+        # - required-review sections must still be explicitly confirmed
+        #   (checked below) — that gate is unchanged.
+        gap_section_ids: list[str] = []
+        partial_section_ids: list[str] = []
+        for section_id, candidate in candidates.items():
+            status = str(candidate.get("content_status", "complete"))
+            if status == "partial":
+                partial_section_ids.append(section_id)
+            elif status != "complete":
+                gap_section_ids.append(section_id)
+        gap_section_id_set = set(gap_section_ids)
         required_review_ids = {
             section_id
             for section_id, candidate in candidates.items()
@@ -1752,6 +1759,11 @@ class MedicalWritingFullDraftService:
         adopted: list[str] = []
         replayed: list[str] = []
         for section_id, target in target_by_id.items():
+            if section_id in gap_section_id_set:
+                # Source-gap section: leave the existing 待补齐 placeholder
+                # blocks untouched — the missing-evidence semantics must stay
+                # visible in the working draft instead of being written over.
+                continue
             candidate = candidates[section_id]
             proposal = _text(candidate.get("proposal_text"))
             if (
@@ -1802,6 +1814,12 @@ class MedicalWritingFullDraftService:
             "replayed_section_ids": replayed,
             "adopted_count": len(adopted),
             "replayed_count": len(replayed),
+            # 0924V1-R08: gap sections stay as visible 待补齐 placeholders in
+            # the working draft; partial sections were written as-is.
+            "gap_section_ids": sorted(gap_section_id_set),
+            "gap_count": len(gap_section_id_set),
+            "partial_section_ids": sorted(partial_section_ids),
+            "partial_written_count": len(partial_section_ids),
             "coverage": artifact.get("coverage") or {},
         }
 
