@@ -11,6 +11,9 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 from packages.contracts.workbench_contracts import (
     InterventionRulesAuthority,
@@ -5567,6 +5570,91 @@ class MedicalWritingAuthoringJourneyService:
             connection.commit()
         return logical_call_id if cursor.rowcount == 1 else None
 
+    _GENERATION_RESERVATION_RECLAIM_SECONDS = 3600.0
+
+    def _reclaim_stale_in_flight_reservation(
+        self,
+        project_id: str,
+        expected_revision: int,
+        operation: str,
+        row: Any,
+    ) -> bool:
+        """CAS-reclaim an in_flight reservation whose owner has shown no
+        activity far longer than any legitimate enrichment call.
+
+        0924V1-R01: ``force`` was rejected forever on a dead owner's row —
+        no recovery path converged. A reclaim must never mistake a LIVE
+        call for a dead owner, so the threshold is an owner-absence bound
+        (1h, far beyond the transport timeout) measured on the row's own
+        ``updated_at``, and the flip is a CAS bound to the observed
+        logical_call_id AND updated_at: a completion or supersede landing
+        between read and write turns the UPDATE into a no-op and the caller
+        simply re-loops. Attempt history keeps the reclaimed call
+        auditable; a late owner result cannot overwrite the new state
+        because owner completion updates are bound to their logical call id
+        and pre-status.
+        """
+        try:
+            updated_at = datetime.fromisoformat(str(row["updated_at"]))
+        except (TypeError, ValueError):
+            return False
+        age_seconds = (
+            datetime.now(timezone.utc) - updated_at
+        ).total_seconds()
+        if age_seconds < self._GENERATION_RESERVATION_RECLAIM_SECONDS:
+            return False
+        observed_call_id = str(row["logical_call_id"])
+        now_iso = datetime.now(timezone.utc).isoformat()
+        history = json.loads(str(row["attempt_history"] or "[]"))
+        history.append(
+            {
+                "logical_call_id": observed_call_id,
+                "transport_attempt_count": int(
+                    row["transport_attempt_count"] or 0
+                ),
+                "status": "in_flight",
+                "failure_note": (
+                    "owner absent beyond reclaim bound; reclaimed to "
+                    "unknown_outcome (0924V1-R01)"
+                ),
+                "updated_at": row["updated_at"],
+            }
+        )
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "UPDATE "
+                "medical_writing_authoring_journey_generation_reservations "
+                "SET status = 'unknown_outcome', failure_note = ?, "
+                "attempt_history = ?, updated_at = ? "
+                "WHERE project_id = ? AND expected_revision = ? "
+                "AND operation = ? AND logical_call_id = ? "
+                "AND status = 'in_flight' AND updated_at = ?",
+                (
+                    "owner absent beyond reclaim bound (0924V1-R01)",
+                    json.dumps(history, ensure_ascii=False),
+                    now_iso,
+                    project_id,
+                    expected_revision,
+                    operation,
+                    observed_call_id,
+                    row["updated_at"],
+                ),
+            )
+            connection.commit()
+            reclaimed = cursor.rowcount == 1
+        if reclaimed:
+            logger.warning(
+                "generation reservation reclaimed to unknown_outcome after "
+                "owner absence: project=%s revision=%s operation=%s "
+                "call=%s age_seconds=%.0f",
+                project_id,
+                expected_revision,
+                operation,
+                observed_call_id,
+                age_seconds,
+            )
+        return reclaimed
+
     def _supersede_generation_reservation(
         self,
         project_id: str,
@@ -5748,7 +5836,15 @@ class MedicalWritingAuthoringJourneyService:
                     )
                 continue
             # status == "in_flight": wait for a terminal state within the
-            # bounded window (the winner may still be enriching).
+            # bounded window (the winner may still be enriching).  Before
+            # anything else, an owner that has shown NO activity far beyond
+            # any legitimate enrichment call is CAS-reclaimed to
+            # unknown_outcome (0924V1-R01/T01) so force is not rejected
+            # forever on a dead owner's row.
+            if self._reclaim_stale_in_flight_reservation(
+                project_id, expected_revision, operation, row
+            ):
+                continue
             if force:
                 # Worker_03 corrective: force must never interrupt a live
                 # call.  Fail fast with an accurate message naming the

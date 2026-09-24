@@ -40,3 +40,13 @@
 - R15 四项目在库（下轮开工前备份清理）；tester3 会话脱离运行中。
 - 测试运行方式：后端 `PYTHONPATH=services/api:. python3.14 -m pytest …`；前端 `npm run test:unit:vitest`（勿裸跑 vitest）；测试者派发=omp setsid + EXIT 标记（提示词放 runs/requirements_v2_20260919/t17_prompts/r15_*.md）。
 - 红线不变：不触碰 live 8910/医学监查/共享 runtime；不删历史 immutable rows/runs/logs/evidence；一切提交同步 GitHub；测试全程 UI 黑盒。
+
+---
+
+## 审阅更正（0924V1 · R05，2026-09-24 追加；原始报告不覆写）
+
+1. tester2 的 EXIT=OK **范围更正**：实际验证到"文档初始化+各模块存在性+导出负向门禁"，全文 21 批当时"运行中"、Office 链未到达——不构成全链完成。业务完成状态与进程/报告完成状态从此分开记录（process_exit_code / test_run_status / business_flow_status / artifact_validation_status）。
+2. tester1 的 EXIT=BLOCKED 与 EXIT=0 并存为"报告进程正常结束+业务判定 BLOCKED"，非矛盾。
+3. tester3（10.5KB BLOCKED）与 tester4（中期状态）为部分结果，不据此宣称四场景通过。
+4. 点击口径更正："16 次核心决策点击"是业务决策组数，另含 113 次混合交互；不得表述为"总点击≤20"。
+5. 入口A在 tester1 改走从零后不算通过；摘要自动预填正向链（T14）仍待独立验证。

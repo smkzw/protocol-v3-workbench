@@ -915,6 +915,9 @@ export function MedicalWritingAuthoringJourneySetup({
     };
   }, [projectId, journey?.revision, readOnly, pipelinePollNonce]);
 
+  // 0924V1-R03: cancellation returns a typed outcome instead of swallowing
+  // failures — callers must stop on failed/stale_context and may only treat
+  // confirmed_terminal as an unlock (accepted_pending keeps waiting).
   const cancelResearchPipeline = async () => {
     const requestProjectId = projectId;
     setBusy("pipeline-cancel");
@@ -923,11 +926,16 @@ export function MedicalWritingAuthoringJourneySetup({
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ actor: "medical_manager" }),
       }).then(readJson);
-      if (activeProjectRef.current !== requestProjectId) return;
+      if (activeProjectRef.current !== requestProjectId) return { kind: "stale_context" };
       setPipelineStatus((current) => ({ ...(current || {}), pipeline: result.pipeline }));
       setPipelinePollNonce((current) => current + 1);
+      const stage = result.pipeline?.stage || "";
+      return PIPELINE_TERMINAL_STAGES.has(stage)
+        ? { kind: "confirmed_terminal", pipelineId: result.pipeline?.pipeline_id || "" }
+        : { kind: "accepted_pending", pipelineId: result.pipeline?.pipeline_id || "" };
     } catch (error) {
       if (activeProjectRef.current === requestProjectId) setMessage(`取消研究流水线失败：${error.message}`);
+      return { kind: "failed", code: String(error?.message || "cancel_error") };
     } finally {
       if (activeProjectRef.current === requestProjectId) setBusy("");
     }
@@ -2311,11 +2319,7 @@ export function MedicalWritingAuthoringJourneySetup({
     let cancelled = false;
     (async () => {
       try {
-        const preview = await fetch(`/api/projects/${projectId}/medical-writing/authoring-journey/impact-preview`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ expected_revision: journey.revision, stage: queuedImpact.targetStage, [queuedImpact.targetStage]: queuedImpact.payload }),
-        }).then(readJson);
+        const preview = await fetchImpactPreviewFor(queuedImpact.targetStage, queuedImpact.payload);
         if (cancelled) return;
         setQueuedImpact(null);
         if (preview.requires_confirmation) {
@@ -2335,10 +2339,42 @@ export function MedicalWritingAuthoringJourneySetup({
 
   // Exit B: cancel the running pipeline through the existing endpoint, then
   // the frozen-input guard lifts and the staged change can be committed.
+  // 0924V1-R03: every non-confirmed outcome ABORTS the combined action —
+  // zero confirm attempts on failure, stale context, or accepted-but-pending
+  // cancellation. On confirmed_terminal the impact preview is RECOMPUTED
+  // fresh before committing (the pre-cancel preview_id is never reused).
+  const fetchImpactPreviewFor = async (targetStage, payload) =>
+    fetch(`/api/projects/${projectId}/medical-writing/authoring-journey/impact-preview`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ expected_revision: journey.revision, stage: targetStage, [targetStage]: payload }),
+    }).then(readJson);
+
   const cancelPipelineThenSubmit = async () => {
-    await cancelResearchPipeline();
+    const outcome = await cancelResearchPipeline();
     setImpactCancelArmed(false);
-    await confirmImpact();
+    if (!impact) return;
+    if (outcome.kind === "stale_context" || outcome.kind === "failed") return;
+    if (outcome.kind === "accepted_pending") {
+      // Cancellation accepted but the pipeline is not terminal yet: queue
+      // the change — the queued effect reopens and re-verifies on terminal.
+      setQueuedImpact(impact);
+      setMessage("取消请求已受理：等待流水线结束后将自动重新核验本次变更。");
+      return;
+    }
+    setBusy("confirm-impact"); setMessage("");
+    try {
+      const preview = await fetchImpactPreviewFor(impact.targetStage, impact.payload);
+      if (preview.requires_confirmation) {
+        setImpact({ preview, targetStage: impact.targetStage, payload: impact.payload, waitedForPipeline: true });
+        setMessage("流水线已取消：请重新核验下方变更影响后确认提交。");
+      } else {
+        await commitPayload(impact.targetStage, impact.payload);
+        setImpact(null);
+      }
+    } catch (error) {
+      setMessage(`变更未提交：${error.message}`);
+    } finally { setBusy(""); }
   };
 
   const overrideCorpusGate = async () => {
@@ -2701,7 +2737,7 @@ export function MedicalWritingAuthoringJourneySetup({
         </details>}
         {stage === "corpus" && <CorpusGate projectId={projectId} journey={journey} setJourney={setJourney} selectedBriefIds={selectedCorpusBriefIds} setSelectedBriefIds={setSelectedCorpusBriefIds} searchMessage={searchMessage} busy={busy} onSearch={() => runPublicSearch(journey)} acknowledged={acknowledged} setAcknowledged={setAcknowledged} overrideReason={overrideReason} setOverrideReason={setOverrideReason} allAcknowledged={allAcknowledged} onOverride={overrideCorpusGate} onCreateDocument={createDocument} onReviewAssemblyPlan={() => { setStage("picos"); setGroup("intervention"); }} readOnly={readOnly} existingDocument={existingDocument} />}
       </fieldset></main>
-      {impact && <section className="authoring-impact-panel" aria-live="polite"><div><ShieldAlert size={18} /><span><strong>该变更会使下游内容失效</strong><small>确认后系统保留旧版本，并把以下对象标记为需要重新核验。</small></span></div><ul>{impact.preview.affected_dependents.map((item) => <li key={item}>{DEPENDENT_LABELS[item] || item}</li>)}</ul>{authoringWriteBlocked && <p className="authoring-impact-wait" data-state="pipeline-busy">{authoringWaitHint}本次变更可以排队等待：流水线结束后会自动重新核验并请您确认，不会静默写入；若不想等待，也可以取消本次流水线后立即提交（已完成的检索/分诊将作废并重新检索）。</p>}{queuedImpact && <p className="authoring-impact-wait" data-state="queued">已排队：流水线结束后将自动重新核验本次变更，无需停留在本页。</p>}<div className="authoring-impact-actions"><button type="button" onClick={() => { setImpact(null); setQueuedImpact(null); setImpactCancelArmed(false); }}>返回修改</button>{authoringWriteBlocked && <button type="button" onClick={() => { setQueuedImpact(impact); setImpactCancelArmed(false); }} disabled={Boolean(queuedImpact)}>等待流水线结束后自动提交{queuedImpact ? "（已排队）" : ""}</button>}{authoringWriteBlocked && (impactCancelArmed ? <><button type="button" onClick={cancelPipelineThenSubmit} disabled={busy === "pipeline-cancel"}>确认取消流水线并提交变更</button><button type="button" onClick={() => setImpactCancelArmed(false)}>先不取消</button></> : <button type="button" onClick={() => setImpactCancelArmed(true)} title="已完成的检索/分诊结果将作废，提交后系统将重新检索">取消本次流水线并立即提交</button>)}<button className="primary-button" type="button" onClick={confirmImpact} disabled={busy === "confirm-impact" || authoringWriteBlocked} title={authoringWriteBlocked ? `${authoringWaitHint}可等待结束后自动提交，或取消本次流水线后提交` : busy === "confirm-impact" ? "正在确认变更" : "确认变更并重新核验"}>确认变更并重新核验</button></div></section>}
+      {impact && <section className="authoring-impact-panel" aria-live="polite"><div><ShieldAlert size={18} /><span><strong>该变更会使下游内容失效</strong><small>确认后系统保留旧版本，并把以下对象标记为需要重新核验。</small></span></div><ul>{impact.preview.affected_dependents.map((item) => <li key={item}>{DEPENDENT_LABELS[item] || item}</li>)}</ul>{authoringWriteBlocked && <p className="authoring-impact-wait" data-state="pipeline-busy">{authoringWaitHint}本次变更可以排队等待：流水线结束后会自动重新核验并请您确认，不会静默写入（排队仅在本页面生效，离开页面后需重新提交，已填写的内容不会丢失）；若不想等待，也可以取消本次流水线后立即提交（已完成的检索/分诊将作废并重新检索）。</p>}{queuedImpact && <p className="authoring-impact-wait" data-state="queued">已排队（仅本页有效）：流水线结束后将自动重新核验本次变更并请您确认；刷新页面后需重新提交，已填写内容不会丢失。</p>}<div className="authoring-impact-actions"><button type="button" onClick={() => { setImpact(null); setQueuedImpact(null); setImpactCancelArmed(false); }}>返回修改</button>{authoringWriteBlocked && <button type="button" onClick={() => { setQueuedImpact(impact); setImpactCancelArmed(false); }} disabled={Boolean(queuedImpact)}>等待流水线结束后自动提交{queuedImpact ? "（已排队）" : ""}</button>}{authoringWriteBlocked && (impactCancelArmed ? <><button type="button" onClick={cancelPipelineThenSubmit} disabled={busy === "pipeline-cancel"}>确认取消流水线并提交变更</button><button type="button" onClick={() => setImpactCancelArmed(false)}>先不取消</button></> : <button type="button" onClick={() => setImpactCancelArmed(true)} title="已完成的检索/分诊结果将作废，提交后系统将重新检索">取消本次流水线并立即提交</button>)}<button className="primary-button" type="button" onClick={confirmImpact} disabled={busy === "confirm-impact" || authoringWriteBlocked} title={authoringWriteBlocked ? `${authoringWaitHint}可等待结束后自动提交，或取消本次流水线后提交` : busy === "confirm-impact" ? "正在确认变更" : "确认变更并重新核验"}>确认变更并重新核验</button></div></section>}
       {(message || hasUncommittedChanges) && <p className={`authoring-journey-message ${message.includes("失败") ? "danger" : ""}`} role="status"><span>{message || (hasUnsavedChanges ? "当前有尚未保存的修改。" : "草稿已保存，尚未提交当前阶段。")}</span>{researchRecovery?.projectId === projectId && <button type="button" onClick={retryAutomaticResearch} disabled={Boolean(busy)}><RefreshCw size={13} /> 重试</button>}</p>}
       {stage !== "corpus" && !impact && !readOnly && <footer className="authoring-journey-footer"><span>{authoringWriteBlockedMessage || (unresolvedPhase1PartCount > 0 ? `还有 ${unresolvedPhase1PartCount} 个I期Part缺少研究人群或队列/剂量方案；可先保存草稿，但投影与阶段完成继续阻断。` : stage === "framing" ? "研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。" : framingPendingDraft ? "研究设计已写入第一步草稿；请返回第一步完成变更后再提交PICOS。" : "先采用或微调调研建议；精确剂量、阈值和终点仍需项目证据支持。")}</span><div>{stage === "picos" && <button type="button" onClick={() => { setStage("framing"); setGroup(isPhaseOneStudy(framing.study_phase) ? "design" : "identity"); setPrefillSection("identity"); setAdvancedRefinementOpen(true); }} disabled={authoringWriteBlocked}><ArrowLeft size={14} /> 返回第一步</button>}<button type="button" onClick={saveCurrentDrafts} disabled={authoringWriteBlocked || Boolean(busy) || (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty))} title={authoringWriteBlocked ? authoringWriteBlockedMessage : busy ? "正在处理中，请稍候" : (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty)) ? "当前没有需要保存的修改" : "保存当前草稿"}><Save size={14} /> {String(busy).startsWith("draft-") ? "保存中" : "保存草稿"}</button><button className="primary-button" type="button" onClick={() => saveStage(stage)} disabled={authoringWriteBlocked || Boolean(busy) || (stage === "framing" ? !framingReady : !picosReady || framingDirty || framingPendingDraft || !typedPhase1PartsReady)} title={authoringWriteBlockedMessage ? authoringWriteBlockedMessage : busy ? "正在处理中，请稍候" : stage === "framing" ? (!framingReady ? "请先补齐第一步必填项；未知产品技术类型不会阻断此步骤" : "提交并完成第一步") : framingDirty || framingPendingDraft ? "请先保存并完成第一步变更后再提交PICOS" : !typedPhase1PartsReady ? "请先补齐I期Part必填项" : !picosReady ? "请先补齐第二步必填项后再完成" : "提交并完成第二步"}>{busy === `save-${stage}` ? "提交中" : stage === "framing" ? "完成第一步" : "完成第二步"}<ArrowRight size={14} /></button></div></footer>}
       <AuthoringCompetitorDrawer

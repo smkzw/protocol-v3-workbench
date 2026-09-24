@@ -15,7 +15,7 @@ import threading
 import time
 import unittest
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -2266,6 +2266,116 @@ class GenerationReservationTests(unittest.TestCase):
         self.assertEqual("completed", detail["ai_outcome"])
         self.assertEqual(new_row["logical_call_id"], detail["ai_logical_call_id"])
         self.assertEqual(1, detail["ai_transport_attempt_count"])
+
+    def _insert_in_flight_reservation(
+        self, project_id, revision, call_id, *, age_seconds
+    ):
+        stale_iso = (
+            datetime.now(timezone.utc) - timedelta(seconds=age_seconds)
+        ).isoformat()
+        with self.service._connect() as connection:
+            connection.execute(
+                "INSERT INTO "
+                "medical_writing_authoring_journey_generation_reservations("
+                "project_id, expected_revision, operation, logical_call_id, "
+                "transport_attempt_count, status, event_id, failure_note, "
+                "created_at, updated_at) VALUES (?, ?, ?, ?, 1, "
+                "'in_flight', NULL, NULL, ?, ?)",
+                (
+                    project_id,
+                    revision,
+                    "prefill_generate",
+                    call_id,
+                    stale_iso,
+                    stale_iso,
+                ),
+            )
+            connection.commit()
+
+    def test_stale_in_flight_owner_is_reclaimed_without_wait(self):
+        """0924V1-R01/T01: an in_flight reservation whose owner has been
+        absent far beyond any legitimate enrichment call is CAS-reclaimed
+        immediately — force recovers without waiting out the bound."""
+        project_id = "proj_ra"
+        revision = self.journey.revision
+        dead_call_id = "mwprefillcall_deadownerabsent00000000"
+        self._insert_in_flight_reservation(
+            project_id, revision, dead_call_id, age_seconds=7200
+        )
+        enricher = self._counting_enricher()
+        generated = self.service.generate_prefill(
+            project_id,
+            self._generate_request("reservation-reclaim-001", force=True),
+            ai_enricher=enricher,
+        )
+        self.assertEqual(revision + 1, generated.revision)
+        self.assertEqual(1, enricher.call_count)
+        row = self._reservation_row(self.service, project_id, revision)
+        self.assertEqual("completed", row["status"])
+        self.assertNotEqual(dead_call_id, row["logical_call_id"])
+        history = json.loads(row["attempt_history"] or "[]")
+        self.assertTrue(
+            any(
+                "owner absent beyond reclaim bound" in str(entry.get("failure_note", ""))
+                for entry in history
+            )
+        )
+
+    def test_fresh_in_flight_force_is_still_refused(self):
+        """0924V1-R01/T02: a LIVE call (owner activity within the reclaim
+        bound) must never be interrupted — force fails fast exactly as
+        before the reclaim path existed."""
+        project_id = "proj_ra"
+        revision = self.journey.revision
+        self._insert_in_flight_reservation(
+            project_id, revision, "mwprefillcall_livelongcall00000000",
+            age_seconds=30,
+        )
+        enricher = self._counting_enricher()
+        with self.assertRaisesRegex(
+            MedicalWritingAuthoringJourneyConflictError,
+            "force cannot interrupt the live call",
+        ):
+            self.service.generate_prefill(
+                project_id,
+                self._generate_request("reservation-reclaim-002", force=True),
+                ai_enricher=enricher,
+            )
+        self.assertEqual(0, enricher.call_count)
+        row = self._reservation_row(self.service, project_id, revision)
+        self.assertEqual("in_flight", row["status"])
+        self.assertEqual(
+            "mwprefillcall_livelongcall00000000", row["logical_call_id"]
+        )
+
+    def test_reclaim_is_single_shot_cas(self):
+        """The reclaim CAS is bound to status+updated_at: after one reclaim
+        the row is unknown_outcome, a second attempt is a no-op returning
+        False, and attempt history records the reclaim exactly once."""
+        project_id = "proj_ra"
+        revision = self.journey.revision
+        self._insert_in_flight_reservation(
+            project_id, revision, "mwprefillcall_reclaimcas0000000000",
+            age_seconds=7200,
+        )
+        row = self._reservation_row(self.service, project_id, revision)
+        first = self.service._reclaim_stale_in_flight_reservation(
+            project_id, revision, "prefill_generate", row
+        )
+        self.assertTrue(first)
+        row_after = self._reservation_row(self.service, project_id, revision)
+        self.assertEqual("unknown_outcome", row_after["status"])
+        second = self.service._reclaim_stale_in_flight_reservation(
+            project_id, revision, "prefill_generate", row_after
+        )
+        self.assertFalse(second)
+        history = json.loads(row_after["attempt_history"] or "[]")
+        reclaim_notes = [
+            entry
+            for entry in history
+            if "owner absent beyond reclaim bound" in str(entry.get("failure_note", ""))
+        ]
+        self.assertEqual(1, len(reclaim_notes))
 
     def test_interrupted_in_flight_reservation_fails_closed_then_force_recovers(self):
         """A reservation left in_flight by a crashed worker is preserved as

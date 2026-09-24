@@ -8498,29 +8498,43 @@ def _build_authoring_prefill_evidence_verifier(canonical_id: str):
         if pkg.journey_revision != journey.revision:
             # The journey moved past the package.  This is normally a stage
             # draft save or synopsis confirmation (both bump the revision
-            # while the package keeps its generation revision) — the only
-            # deterministic recovery is regeneration, which rebinds the
-            # catalog to the effective (draft-wins) state.  Name the draft
-            # when one diverges so callers get a precise diagnosis instead
-            # of a generic tamper/stale error.
+            # while the package keeps its generation revision).  0924V1-R01
+            # (T05): a revision bump alone must not orphan the package —
+            # recompute the input fingerprint; when the frozen inputs are
+            # byte-identical (only unrelated progress events moved the
+            # revision), adoption proceeds and the catalog binds to the
+            # CURRENT revision without mutating the historical package row.
+            # Only genuinely changed inputs require regeneration; name the
+            # draft when one diverges so callers get a precise diagnosis.
             effective_framing, effective_picos = effective_authoring_values(
                 journey
             )
-            draft_note = ""
-            if (
-                effective_framing != journey.framing
-                or effective_picos != journey.picos
-            ):
-                draft_note = (
-                    "; a stage draft diverges from the persisted "
-                    "framing/picos — regenerate the prefill package to "
-                    "rebind the evidence catalog"
-                )
-            raise ValueError(
-                "prefill package journey revision is stale: expected "
-                f"{journey.revision}, package {pkg.journey_revision}"
-                f"{draft_note}"
+            from .medical_writing_authoring_prefill import (
+                journey_input_fingerprint,
             )
+
+            current_input_fp = journey_input_fingerprint(journey)
+            if (
+                pkg.input_fingerprint
+                and current_input_fp == pkg.input_fingerprint
+            ):
+                pass  # frozen inputs unchanged — package stays adoptable
+            else:
+                draft_note = ""
+                if (
+                    effective_framing != journey.framing
+                    or effective_picos != journey.picos
+                ):
+                    draft_note = (
+                        "; a stage draft diverges from the persisted "
+                        "framing/picos — regenerate the prefill package to "
+                        "rebind the evidence catalog"
+                    )
+                raise ValueError(
+                    "prefill package journey revision is stale: expected "
+                    f"{journey.revision}, package {pkg.journey_revision}"
+                    f"{draft_note}"
+                )
 
         planned_snapshot_id = (
             journey.search_plan.latest_snapshot_id
