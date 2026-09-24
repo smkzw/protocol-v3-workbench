@@ -50,3 +50,13 @@
 3. tester3（10.5KB BLOCKED）与 tester4（中期状态）为部分结果，不据此宣称四场景通过。
 4. 点击口径更正："16 次核心决策点击"是业务决策组数，另含 113 次混合交互；不得表述为"总点击≤20"。
 5. 入口A在 tester1 改走从零后不算通过；摘要自动预填正向链（T14）仍待独立验证。
+
+---
+
+## 0924V1 首批执行结果（2026-09-24 上午追加）
+
+1. **WP-A 落地**（T01/T02/T05）：预约 owner-absence 回收（1h 阈值 + CAS 绑定 call_id/status/updated_at + attempt_history 审计）；活跃调用永不打断；stale 包改为输入指纹核验（journey_input_fingerprint 逐字节一致即放行采用，历史包行不篡改）。预约套件 21/21。
+2. **WP-B 落地**（T06-T10 前端面）：取消返回四态类型化结果；failed/stale_context 零提交尝试；accepted_pending 入队等待；confirmed_terminal 后**重算新 preview** 再提交（旧 preview_id 不复用）；排队意图如实标注"仅本页有效"（草稿端点在 triaging 冻结期不可写，服务端持久化列为后续项）。
+3. **R05 验收口径更正**已入库（原始报告未覆写）。
+4. **WP-D 第一步完成**：tester2 的原 job（mwjob_4f6a049a）按"恢复原 job"纪律重试——根因=饱和窗口 429；attempt 预算 2→3（提交在案）；attempt 3 从批次 14 续跑至 **21/21 completed**，产物 full-draft.json 444KB 实质验证：81 节 / 18,584 字提案 / content_status=4 complete+46 partial+31 source_gap（诚实缺口）/ 本场景适应症词汇非串染。
+5. **下一门槛（T15-T17）**：采用→工作稿保存→真实 Office 打开/编辑/保存/关闭/重开/下载；以及 T14 入口A 正向链、T11-T13 翻译批次集成验证。这些需要真实 UI 会话，为下批主体。
