@@ -339,11 +339,53 @@ class MedicalWritingRuntimeRepository:
             deep=True,
         )
         substantive_gaps = self._substantive_body_gaps(assembled_document)
-        if substantive_gaps:
+        applicable_count = sum(
+            1
+            for section in assembled_document.sections
+            if (
+                section.applicability_status != "not_applicable"
+                and section.applicability_render_action != "omit"
+                and section.node_kind in {"section", "appendix"}
+                and not any(
+                    str(block.get("source_kind") or "") == "original_protocol_docx"
+                    for block in section.content_blocks
+                )
+            )
+        )
+        # A completely blank document (every applicable section lacks
+        # substance) stays blocked in BOTH modes — that is the
+        # empty-template negative gate. A draft preview with SOME
+        # substantive bodies may ship with explicit per-section markers.
+        blank_template = bool(substantive_gaps) and len(substantive_gaps) >= applicable_count
+        if substantive_gaps and (mode == "approved_final" or blank_template):
+            # 0924V1-R08: the FORMAL deliverable stays gated on complete
+            # substantive bodies — a gap-marked draft must never pass as
+            # 正式稿.
             raise RuntimeStoreError(
                 "医学写作 Word 导出已阻断：仍有适用正文章节缺少实质正文。请先完成全文初稿候选审核与采纳；"
                 + json.dumps(substantive_gaps, ensure_ascii=False, sort_keys=True)
             )
+        if substantive_gaps and mode == "draft_preview":
+            # 0924V1-R08 (two gates must not merge): a DRAFT PREVIEW is the
+            # editable working draft — gap sections stay exportable but must
+            # be locatable in the document itself. Inject an explicit
+            # placeholder block per gap section so the DOCX carries the
+            # 待补齐 marker instead of silently shipping a blank heading.
+            gap_ids = {gap["section_id"] for gap in substantive_gaps}
+            for section in assembled_document.sections:
+                if str(section.section_id) not in gap_ids:
+                    continue
+                section.content_blocks.append(
+                    {
+                        "block_id": f"gap_marker_{section.section_id}",
+                        "block_type": "paragraph",
+                        "text": (
+                            "【待补齐】本章正文尚缺来源证据支持，将在补充资料后"
+                            "由 AI 重写本节；当前为占位标记，正式导出前必须补齐。"
+                        ),
+                        "source_kind": "full_draft_gap_marker",
+                    }
+                )
         if mode == "approved_final":
             self._require_content_quality_clear(assembled_document)
         return assembled_document
