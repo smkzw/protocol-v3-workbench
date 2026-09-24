@@ -115,3 +115,26 @@
 2. **26 项重试已点击，job 立即终态**：reference_translation attempt 预算（3/3）在上轮已耗尽，本次重排队复用了 attempt 3 记录 → 未产生新的规划器派发 → 26 项状态不变（38 ready + 164 fidelity_blocked + 26 failed）。这正是已记录的"重试轮次 vs 单 job 尝试"语义工程项——**下批第一步：bump reference_translation max_attempts（仿照 full_draft 2→3 先例）或实现轮次分离，然后重排队即得全新派发**。
 3. **环境快照（交班）**：后端/前端指纹一致（api-b4f0eb2bfa571bde 运行 38965/38966 后又经重试重启，以 runtime-readiness 为准）；**MTPLX 已退出（用户手）——分诊/全文类需要 MTPLX 的操作前必须先重开 MTPLX 应用**；oMLX 在 8001 存活且模型已驻留；10 份清理备份在位；R15 项目 4 个在库（K3 已恢复可操作）。
 4. 下批顺序：①bump reference_translation 尝试预算并重排队 26 项（观察是否暴露规划器原始错误——oMLX 现在在线，失败码应能采集）②按真实失败码修规划器根因 ③T16/T17 桌面 Office（需桌面空闲）④R16 集中验收含 T18。
+
+---
+
+## 0924V2 第一批执行结果（SOURCE_COMMIT=f36f1d2+前端 2872868 + 本报告）
+
+### CHANGESET
+1. 28d03bf §5族1：数量级换算(116→1.16亿/635→6350亿)不再误判 numeric_tokens_changed（对称 mantissa/digits 信用 + 小数点/单位零宽恕）；真实计数漂移(2.50亿)仍拦截。
+2. 3434809 §5族2：缩写等价表扩容(OA/LDN/VA/FDA/MD/PI/SAE/NSAIDs/BPI) + 检测器噪声词扩展(NOT/FIRST/MATLAB/T2)。
+3. f36f1d2 §5族3：句末周次 "weeks (Wks) 8 and 16." 不再算作编号条目（时间单位出现在前文任意位置即抑制）。
+4. fc9bda9 §3：通用 ingest 端点补服务端 Protocol-only 门（batch/retry/auto-refill 之外的第4入口补齐）。
+5. 2872868 §6+§7：候选正文 112px 嵌套滚动框移除（14px 全文渲染）；错误分层 — 默认中文安全摘要 + 显式"展开诊断详情"承载 raw 文本。
+
+### 验收记录
+- U01：三档截图 1440/1920/2560 已存 t17_round17_uat/。
+- U02：候选正文全渲染（CSS 契约：无 112px/无 overflow-y:auto 于候选段）；全 DOM 扫描 0 个旧式 112px 框。
+- U03：泄漏扫描（Traceback/mwjob_/wref_span_/expected_revision/Pydantic/docplan_）在当前工作区 0 命中；sanitizer 单测随套件。
+- T01 数据复检：38 ready + 164 fidelity_blocked + 26 failed 三态分账保持；164 不做批量确认（修复后待新一轮恢复尝试复检）。
+- NOT_RUN：T16/T17 桌面 Office 腿（等待桌面空闲窗口）；26 项新恢复尝试（受 attempt 预算限制，需按 §5 实现新关联恢复尝试语义后派发）；S 系列深读范围验收（需 600 项级检索样本，等 K3 翻译收敛后随 R16 执行）。
+
+### 环境身份
+- 后端 96946 / 前端 96947（指纹 api-f74375aa2c3f52c7 一致）
+- MTPLX 8002 = 用户已退出（分诊/全文类操作前须重开）；oMLX 8001 = 翻译模型驻留
+- NEXT_GATE：①实现"关联原 job 的新恢复尝试"语义后派发 26 项 ②重开 MTPLX ③T16/T17 ④R16 集中验收含 T18
