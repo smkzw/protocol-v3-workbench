@@ -235,6 +235,11 @@ class WritingReferencePreparationBatchService:
                 "snapshot_id": request.snapshot_id,
                 "retained_candidate_ids": retained_ids,
                 "entries": scope_entries,
+                # 0924V2 §4 shortlist freeze: the frozen scope binds the
+                # study-facts identity, so a changed research design creates
+                # a new scope version instead of silently reusing batch or
+                # cache identities keyed on snapshot_id alone.
+                "study_facts_sha256": _study_facts_hash(journey),
             }
         )
         admission_plan_id = "wref_prep_plan_" + _payload_hash(
@@ -565,6 +570,19 @@ class WritingReferencePreparationBatchService:
                 (TENANT_ID, project_id, batch_id, status),
             ).fetchall()
         return [str(row["item_id"]) for row in rows]
+
+    @staticmethod
+    def _study_facts_hash(journey) -> str:
+        """Hash the study-facts identity bound into the frozen scope.
+
+        0924V2 §4: preparation/translation/analysis cache and idempotency
+        identities must include the shortlist's study-facts hash so a changed
+        research design creates a new scope version; reuse of the same
+        identity is only safe while the facts are unchanged.
+        """
+        from .medical_writing_competitor_triage import _material_facts_hash
+
+        return _material_facts_hash(journey)
 
     def _frozen_scope(self, project_id: str, snapshot_id: str) -> tuple[list[str], list[dict[str, Any]]]:
         journey = self.journey_service.get(project_id)
