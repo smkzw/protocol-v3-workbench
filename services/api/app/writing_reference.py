@@ -697,6 +697,17 @@ class WritingReferenceDocumentService:
         )
         if source_document is None:
             raise ValueError("public document does not belong to candidate")
+        # 0924V2 §3: server-side Protocol-only gate — the generic ingest is a
+        # download entry just like batch preparation, retry, and auto-refill,
+        # so it enforces the same boundary. Standalone SAP, ICF, and unknown
+        # types never enter the competitor Protocol download/translation main
+        # chain; server-side enforcement, not a frontend-only hide.
+        if source_document.document_type not in {"protocol", "protocol_sap"}:
+            raise ValueError(
+                "仅 Protocol（研究方案）或 Protocol+SAP 合并文件可进入竞品方案"
+                f"下载主链；该文件类型为 {source_document.document_type or 'unknown'}，"
+                "独立统计分析计划、知情同意书及其他文件不参与本轮下载与翻译。"
+            )
         artifact_id = (
             "wref_doc_"
             + hashlib.sha256(

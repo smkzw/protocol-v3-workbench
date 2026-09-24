@@ -1448,7 +1448,13 @@ class BatchDocumentPipelineRound8Tests(unittest.TestCase):
         item = self.service.get(PID, batch.batch_id).items[0]
         self.assertIn(item.generation_status, {"failed_retryable", "failed_terminal"})
 
-    def test_document_plan_retry_without_persisted_parent_fails_closed(self) -> None:
+    def test_document_plan_retry_without_persisted_parent_recovers_audited(self) -> None:
+        """0924V2 §5/T03: a retry with no persisted planner lineage no longer
+        deadlocks on document_plan_retry_parent_missing_or_ambiguous. The
+        parentless zero-generation recovery path is allocated with audit
+        (known parents logged), and the retry proceeds to a fresh planner
+        dispatch; the batch attempt counter advances."""
+
         from tests.test_writing_reference_translation_batch import PROJECT_ID as PID, SNAPSHOT_ID as SID
 
         self.helper._seed_artifact(
@@ -1488,25 +1494,20 @@ class BatchDocumentPipelineRound8Tests(unittest.TestCase):
             {"document_plan_failed"}, {item.error_code for item in failed}
         )
 
-        with self.assertRaisesRegex(
-            ValueError,
-            "document_plan_retry_parent_missing_or_ambiguous",
-        ):
-            self.service.retry(
-                PID,
-                batch.batch_id,
-                WritingReferenceTranslationBatchRetryRequest(
-                    actor="medical_manager",
-                    idempotency_key="r8-plan-fuse-retry",
-                ),
-            )
-        self.assertEqual(2, len(calls))
-        unchanged = self.service.get(PID, batch.batch_id)
-        self.assertEqual(1, unchanged.attempt)
-        self.assertEqual(
-            {"failed_retryable"},
-            {item.generation_status for item in unchanged.items},
+        # 0924V2: retry now converges via audited parentless recovery and
+        # re-dispatches the planner (calls grows beyond the original 2).
+        self.service.retry(
+            PID,
+            batch.batch_id,
+            WritingReferenceTranslationBatchRetryRequest(
+                actor="medical_manager",
+                idempotency_key="r8-plan-fuse-retry",
+            ),
         )
+        self.service.run_failed(PID, batch.batch_id, "medical_manager")
+        self.assertGreater(len(calls), 2)
+        retried = self.service.get(PID, batch.batch_id)
+        self.assertEqual(2, retried.attempt)
 
     def test_modern_explicit_interrupted_plan_parent_allocates_next_generation(
         self,
