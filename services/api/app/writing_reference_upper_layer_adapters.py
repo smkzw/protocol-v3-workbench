@@ -525,7 +525,11 @@ class DeepSeekUpperLayerAdapter:
                 stage=request.stage,
             )
         except (ConnectionError, TimeoutError) as exc:
-            raise UpperLayerTransientError("product_ai_provider_transient") from exc
+            # 0924V2 §7: transport metadata is safe diagnostics (no secrets);
+            # carrying the cause keeps the audit chain actionable.
+            raise UpperLayerTransientError(
+                f"product_ai_provider_transient: {exc}"
+            ) from exc
         except Exception:
             return self._terminal("upper_layer_adapter_terminal_error")
 
@@ -824,7 +828,14 @@ class DeepSeekUpperLayerAdapter:
                 "product_ai_deterministic_response_invalid",
                 is_escalation=is_escalation,
             )
-        raise UpperLayerTransientError("product_ai_provider_transient") from exc
+        # 0924V2 §7: the cause message here is provider transport metadata
+        # (AiProviderRuntimeError diagnostics are designed safe — no secrets),
+        # so carrying it in the exception text puts the real failure into the
+        # audit chain and the diagnostic-ref layer while the default UI keeps
+        # its controlled Chinese summary.
+        raise UpperLayerTransientError(
+            f"product_ai_provider_transient: {exc}"
+        ) from exc
 
     def _run_provider(self, provider: Any, envelope: AiPromptEnvelope) -> Any:
         output = provider.run(envelope)
