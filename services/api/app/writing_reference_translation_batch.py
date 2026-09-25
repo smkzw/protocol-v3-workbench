@@ -5264,10 +5264,9 @@ class WritingReferenceTranslationBatchService:
             item_id=item.item_id,
             plan_id=plan.plan_id,
             chapter_id=chapter_id,
-            retry_generation=int(
-                getattr(item, "document_plan_retry_generation", 0) or 0
-            )
-            + max(0, int(batch.attempt) - 1),
+            # Round discriminator: batch attempt (minus 1 for the original
+            # round) keeps recovery rounds on distinct stage identities.
+            retry_generation=max(0, int(batch.attempt) - 1),
             retry_parent_stage_run_id=str(
                 getattr(
                     item,
