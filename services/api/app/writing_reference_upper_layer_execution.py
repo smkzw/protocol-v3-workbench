@@ -352,13 +352,15 @@ class WritingReferenceUpperLayerExecutionService:
             replayed_status = str(
                 getattr(replayed_run, "status", "") or ""
             )
-            if replayed_status in {"succeeded", "completed_degraded"}:
+            if replayed_status not in {"succeeded", "completed_degraded"}:
+                # Failed replay: fall through to the fingerprint path, which
+                # will re-invoke with a fresh generation.
+                pass
+            else:
                 return self._outcome_from_persisted_run(
                     request.project_id,
                     replay_run_id,
                 )
-            # Failed replay: fall through to fingerprint path, which will
-            # re-invoke into the same stage_run_id.
 
         flash_fingerprint = self._execution_fingerprint(
             request,
@@ -375,15 +377,16 @@ class WritingReferenceUpperLayerExecutionService:
         ):
             # 0924V2 root-cause fix: a run that previously FAILED (e.g.
             # transient provider outage) has no usable output to replay.
-            # Re-dispatch into the same immutable stage_run_id so the
-            # executor's own retry policy applies, and the successful result
-            # lands under the identical fingerprint the rest of the system
-            # keys on.
+            # Stage runs are IMMUTABLE (DB trigger), so re-invocation derives
+            # a recovery-suffixed stage_run_id — a fresh, auditable run that
+            # supersedes the failed one under the same fingerprint.
+            flash_run = None
+            flash_run_id = flash_run_id + "-r2"
             flash_run, flash_output = self._invoke_and_persist(
                 request,
                 requested_model=self.default_model,
                 stage_run_id=flash_run_id,
-                execution_fingerprint=flash_fingerprint,
+                execution_fingerprint=flash_fingerprint + "-r2",
                 max_attempts=self.flash_max_attempts,
             )
         else:
