@@ -1,0 +1,109 @@
+{
+  "round": "0924V2",
+  "repository": "smkzw/protocol-v3-workbench",
+  "source_commit": "ee12adc88a8110c2443393ac7b4134356053c684",
+  "commit_time_utc": "2026-09-24T14:48:18Z",
+  "commit_time_beijing": "2026-09-24T22:48:18+08:00",
+  "baseline": "455b37ee4530628736bd6b37b622796f13e9498f",
+  "commits_ahead": 12,
+  "head_rechecked": true,
+  "access": "GitHub connected read actions; container git DNS failed",
+  "files": [
+    {
+      "path": "runs/requirements_v2_20260919/t17_round15/R15_TASK_RETRO_HANDOFF.md",
+      "upstream_blob_sha_from_connector": "b595adbe4e30936322d0f63b309b7f757d8cae41",
+      "reviewed_scope": "Latest appended handoff sections, including recovery figures and local runtime change.",
+      "citation_base": "turn223file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/runs/requirements_v2_20260919/t17_round15/R15_TASK_RETRO_HANDOFF.md"
+    },
+    {
+      "path": "services/api/app/medical_writing_research_pipeline.py",
+      "upstream_blob_sha_from_connector": "c6f2887d373c495cc75069f69fbb3e7611260cce",
+      "reviewed_scope": "Lines 1–190 and relevant preparation/progress excerpts; not the whole large file.",
+      "citation_base": "turn199file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/medical_writing_research_pipeline.py"
+    },
+    {
+      "path": "services/api/app/writing_reference_preparation_batch.py",
+      "upstream_blob_sha_from_connector": "f04d1ce858c295b93efed0a5a32354d2e9b0f786",
+      "reviewed_scope": "Lines 1–245,520–735,740–970,1110–1290,1320–1580,1670–1925.",
+      "citation_base": "turn208file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/writing_reference_preparation_batch.py"
+    },
+    {
+      "path": "services/api/app/writing_reference_protocol_scope.py",
+      "upstream_blob_sha_from_connector": "8eba1ecb8c382a59caa3dd25b012c45e044ee376",
+      "reviewed_scope": "Complete small module.",
+      "citation_base": "turn200file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/writing_reference_protocol_scope.py"
+    },
+    {
+      "path": "services/api/app/writing_reference.py",
+      "upstream_blob_sha_from_connector": "aefa48af9879a94782977d6f81da96d8bf6843e2",
+      "reviewed_scope": "Lines 1–245,460–635,630–803,800–1030 and document-type classifier excerpts.",
+      "citation_base": "turn217file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/writing_reference.py"
+    },
+    {
+      "path": "services/api/app/medical_writing_competitor_triage.py",
+      "upstream_blob_sha_from_connector": "612d49beb5ce2aeac7a508e6e052a97feab29e79",
+      "reviewed_scope": "Lines1–200; route/constants and matching dimensions only.",
+      "citation_base": "turn213file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/medical_writing_competitor_triage.py"
+    },
+    {
+      "path": "services/api/app/medical_writing_authoring_journey.py",
+      "upstream_blob_sha_from_connector": "1b3ffb1680271bccfe9e22bcae0437e450a60727",
+      "reviewed_scope": "Lines5560–5860, reclaim and acquire paths.",
+      "citation_base": "turn224file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/medical_writing_authoring_journey.py"
+    },
+    {
+      "path": "services/api/app/main.py",
+      "upstream_blob_sha_from_connector": "a5acc8a0e807b6c4732668d30d73b2b139de2154",
+      "reviewed_scope": "Lines180–490, actual imports/composition surface only.",
+      "citation_base": "turn211file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/services/api/app/main.py"
+    },
+    {
+      "path": "frontend/src/styles.css",
+      "upstream_blob_sha_from_connector": null,
+      "reviewed_scope": "Relevant writing-layout, writing-ai-core, writing-ai-candidates and full-draft-review selectors from returned content; not full-file cascade/render audit.",
+      "citation_base": "turn218file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/frontend/src/styles.css"
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "upstream_blob_sha_from_connector": null,
+      "reviewed_scope": "Relevant writing-ai-core and direct progress.message rendering excerpts; not full App review.",
+      "citation_base": "turn219file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/frontend/src/App.jsx"
+    },
+    {
+      "path": "frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.css",
+      "upstream_blob_sha_from_connector": "110e8d7e33c16862d5bb72ccf813782e6f816fc0",
+      "reviewed_scope": "Complete small stylesheet.",
+      "citation_base": "turn215file0",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/ee12adc88a8110c2443393ac7b4134356053c684/frontend/src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.css"
+    }
+  ],
+  "external_primary_sources": [
+    {
+      "title": "FDA — Approved Drugs: Questions and Answers",
+      "url": "https://www.fda.gov/drugs/information-consumers-drugs/approved-drugs-questions-and-answers",
+      "use": "Approval concerns intended use and benefit-risk; does not establish blanket endorsement of all prior trial designs."
+    },
+    {
+      "title": "FDA — About Drugs@FDA",
+      "url": "https://www.fda.gov/drugs/drug-approvals-and-databases/about-drugsfda",
+      "use": "Official source of approval letters, reviews and labeling for covered products; trial-to-approval linkage must be verified case by case."
+    },
+    {
+      "title": "FDA — E17 General Principles for Planning and Design of Multi-Regional Clinical Trials",
+      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/e17-general-principles-planning-and-design-multi-regional-clinical-trials",
+      "use": "Regional relevance context only; does not prescribe the proposed shortlist rule or 25/30 budget."
+    }
+  ],
+  "official_api_documentation_limit": "CT.gov API HTML returned a JavaScript shell. Exact current field names/country/enrollment semantics not independently verified here; Agent must verify live API contract before implementing enrichment.",
+  "excerpt_integrity": "Probe excerpts intentionally abbreviate comments/annotations/format. They are source-derived control-flow probes, NOT byte-identical copies of complete upstream modules."
+}

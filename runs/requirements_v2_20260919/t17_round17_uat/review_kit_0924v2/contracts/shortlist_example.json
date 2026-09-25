@@ -1,0 +1,45 @@
+{
+  "contract_status": "proposal_not_existing_product_api",
+  "schema_version": "research_shortlist_v1",
+  "project_id": "synthetic-project",
+  "study_definition_sha256": "<actual-hash>",
+  "search_snapshot_id": "<existing-snapshot>",
+  "revision": 1,
+  "policy_version": "0924V2-proposed",
+  "eligible_unique_study_count": 120,
+  "target_count": 25,
+  "maximum_count": 30,
+  "selected_study_ids": [
+    "<canonical-study-id>"
+  ],
+  "reserve_study_ids": [
+    "<metadata-only>"
+  ],
+  "selection_reason_schema": [
+    "relevance_tier",
+    "phase_purpose_match",
+    "population_match",
+    "modality_route_match",
+    "date_basis",
+    "china_center_evidence",
+    "approval_relation",
+    "material_unknowns"
+  ],
+  "document_scope": [
+    {
+      "study_id": "<canonical-study-id>",
+      "document_id": "<registered-doc-id>",
+      "document_type": "protocol",
+      "version_label": "<actual-protocol-version>",
+      "selection_reason": "latest appropriate complete protocol; actual version verified",
+      "content_sha256": null,
+      "protocol_segment_scope_status": "pending_extraction"
+    }
+  ],
+  "rules": {
+    "download_requires_membership": true,
+    "automatic_standalone_sap_or_icf": false,
+    "reserve_is_metadata_only": true,
+    "legacy_completed_artifacts": "preserve_read_only"
+  }
+}

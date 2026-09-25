@@ -1,0 +1,58 @@
+[
+  {
+    "id": "F01",
+    "priority": "high",
+    "classification": "new_requirement_gap",
+    "title": "研究级深读预算和单研究方案版本选择尚未落实",
+    "evidence_level": "source-derived offline probes; no upper-level/manual-selection absence claimed"
+  },
+  {
+    "id": "F02",
+    "priority": "high",
+    "classification": "service_boundary_gap",
+    "title": "通用单文件ingest可到达SAP/other下载调用",
+    "evidence_level": "simulated client sentinel before network/PDF validation; actual UI route not proven"
+  },
+  {
+    "id": "F03",
+    "priority": "high",
+    "classification": "new_requirement_gap",
+    "title": "轻量检索字段不足以支持中国中心与设计新近性",
+    "evidence_level": "static projected request fields only"
+  },
+  {
+    "id": "F04",
+    "priority": "high",
+    "classification": "acceptance_and_product_direction",
+    "title": "技术失败减少不能替代译文忠实度与可用性",
+    "evidence_level": "latest handoff counts, not independently generated translations"
+  },
+  {
+    "id": "F05",
+    "priority": "medium_high",
+    "classification": "ux_static_and_user_report",
+    "title": "窄AI栏及112px嵌套阅读区不适合完整候选",
+    "evidence_level": "CSS/markup review; no current rendered dimensions or screenshot audit"
+  },
+  {
+    "id": "F06",
+    "priority": "medium_high",
+    "classification": "presentation_boundary",
+    "title": "原始工程阶段和异常进入默认进度",
+    "evidence_level": "static backend formatting and frontend direct rendering"
+  },
+  {
+    "id": "F07",
+    "priority": "medium",
+    "classification": "requires_real_document_validation",
+    "title": "合并包SAP边界可能与方案内部章节混淆",
+    "evidence_level": "first-heading cutoff behavior, actual failure corpus not executed"
+  },
+  {
+    "id": "F08",
+    "priority": "high",
+    "classification": "open_acceptance",
+    "title": "恢复意图持久化及当前Word末端链尚未闭合",
+    "evidence_level": "handoff acknowledges limits; do not erase prior bounded evidence"
+  }
+]

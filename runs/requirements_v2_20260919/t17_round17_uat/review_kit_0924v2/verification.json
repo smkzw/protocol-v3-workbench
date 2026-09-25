@@ -1,0 +1,27 @@
+{
+  "round": "0924V2",
+  "source_commit": "ee12adc88a8110c2443393ac7b4134356053c684",
+  "changes_to_user_repository": false,
+  "github_writes": false,
+  "full_clone": "NOT_COMPLETED_DNS_FAILURE",
+  "source_read": "CONNECTED_GITHUB_TARGETED_REVIEW",
+  "source_derived_probe_cases": 8,
+  "probe_results": "evidence/scope_probe_results.json",
+  "probe_status": "EXECUTED; some cases intentionally expose gaps, not a production PASS score",
+  "offline_execution": "python tools/run_scope_probes.py exited 0",
+  "not_run": [
+    "whole repository pytest/build",
+    "actual product SQLite/API integration",
+    "live study/document downloads",
+    "user Mac runtime/model calls",
+    "actual viewport screenshots/computed layout",
+    "GenOffice/desktop Word round trip"
+  ],
+  "proposals_not_implemented": [
+    "research ranking/shortlist contract",
+    "unified purpose/scope guard",
+    "public Chinese status DTO",
+    "frontend layout and dimensions"
+  ],
+  "package_validation": "JSON parsed, Python probe rerun, ZIP integrity checked"
+}
