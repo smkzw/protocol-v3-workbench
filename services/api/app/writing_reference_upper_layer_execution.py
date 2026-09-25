@@ -378,11 +378,16 @@ class WritingReferenceUpperLayerExecutionService:
             # 0924V2 root-cause fix: a run that previously FAILED (e.g.
             # transient provider outage) has no usable output to replay.
             # Stage runs are IMMUTABLE (DB trigger), so re-invocation derives
-            # a recovery-suffixed stage_run_id — a fresh, auditable run that
-            # supersedes the failed one under the same fingerprint.
+            # a fresh recovery-suffixed stage_run_id using a timestamp —
+            # each retry round gets a genuinely unique identity.
             flash_run = None
+            import time as _time_mod
+
             recovery_fingerprint = _sha256_json(
-                {"base": flash_fingerprint, "recovery_round": 2}
+                {
+                    "base": flash_fingerprint,
+                    "recovery_epoch": _time_mod.time(),
+                }
             )
             recovery_run_id = "wref_ulrun_" + recovery_fingerprint[:24]
             flash_run, flash_output = self._invoke_and_persist(
