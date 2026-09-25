@@ -4696,6 +4696,17 @@ class WritingReferenceTranslationBatchService:
         except Exception as exc:
             if cancel_check is not None and cancel_check():
                 return None
+            # 0924V2 §5 temporary diagnostics: the generic wrapper hides the
+            # real cause for the 26 stuck items (failure precedes stage-run
+            # creation). Full stack goes to the operational log; remove once
+            # the root cause is fixed.
+            import traceback as _tb
+
+            logger.error(
+                "translation item %s failed with full stack:\n%s",
+                item.item_id,
+                _tb.format_exc(),
+            )
             self._fail_claim(
                 item,
                 "failed_retryable",
@@ -5234,6 +5245,11 @@ class WritingReferenceTranslationBatchService:
         final_envelope_output_hash = ""
         flash_passed = True
         integration_executions: list[UpperLayerStageExecutionResult] = []
+        # 0924V2 root-cause fix: the retry generation MUST flow into the
+        # upper-layer request identity. Without it every recovery attempt
+        # regenerated the same execution fingerprint and the shared executor
+        # replayed the old failed run forever (26 items stuck as
+        # failed_retryable across three recovery rounds).
         integration_owner = UpperLayerStageOwner(
             project_id=item.project_id,
             owner_type="translation_batch_item",
@@ -5244,6 +5260,17 @@ class WritingReferenceTranslationBatchService:
             item_id=item.item_id,
             plan_id=plan.plan_id,
             chapter_id=chapter_id,
+            retry_generation=int(
+                getattr(item, "document_plan_retry_generation", 0) or 0
+            ),
+            retry_parent_stage_run_id=str(
+                getattr(
+                    item,
+                    "document_plan_retry_parent_stage_run_id",
+                    "",
+                )
+                or ""
+            ),
         )
 
         if hy_block_codes:
