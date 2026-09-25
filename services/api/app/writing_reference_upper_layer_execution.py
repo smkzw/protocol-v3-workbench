@@ -341,10 +341,24 @@ class WritingReferenceUpperLayerExecutionService:
             request_hash=request_hash,
         )
         if replay_run_id:
-            return self._outcome_from_persisted_run(
+            # 0924V2 §5/T03: a replayed run that previously FAILED (never
+            # succeeded) is not a result — skip the replay so the failed-run
+            # re-dispatch logic below can invoke a fresh attempt. Only
+            # successful runs are idempotent replays.
+            replayed_run = self.repository.upper_layer_stage_run(
                 request.project_id,
                 replay_run_id,
             )
+            replayed_status = str(
+                getattr(replayed_run, "status", "") or ""
+            )
+            if replayed_status in {"succeeded", "completed_degraded"}:
+                return self._outcome_from_persisted_run(
+                    request.project_id,
+                    replay_run_id,
+                )
+            # Failed replay: fall through to fingerprint path, which will
+            # re-invoke into the same stage_run_id.
 
         flash_fingerprint = self._execution_fingerprint(
             request,
