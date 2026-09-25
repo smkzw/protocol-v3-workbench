@@ -3101,8 +3101,10 @@ class WritingReferenceTranslationBatchService:
                         raise ValueError(
                             "document_plan_retry_parent_missing_or_ambiguous"
                         )
+                    # 0924V2: use the current retry_generation parameter so
+                    # each recovery round gets a distinct stage identity.
                     allocated_lineage = {
-                        "document_plan_retry_generation": 0,
+                        "document_plan_retry_generation": retry_generation,
                         "document_plan_retry_parent_stage_run_id": "",
                         "document_plan_retry_source_item_id": "",
                     }
