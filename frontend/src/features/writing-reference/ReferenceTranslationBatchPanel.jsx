@@ -266,7 +266,6 @@ export function ReferenceTranslationBatchPanel({
   const batchGenerationRef = useRef(0);
   const batchRequestInFlightRef = useRef(false);
   const createKeyRef = useRef("");
-  const retryKeyRef = useRef({ batchId: "", key: "" });
   const batchReviewKeyRef = useRef({ batchId: "", key: "" });
   const selectionKeyRef = useRef("");
   const settledMarkerRef = useRef("");
@@ -372,7 +371,6 @@ export function ReferenceTranslationBatchPanel({
     batchGenerationRef.current += 1;
     batchRequestInFlightRef.current = false;
     createKeyRef.current = "";
-    retryKeyRef.current = { batchId: "", key: "" };
     batchReviewKeyRef.current = { batchId: "", key: "" };
     selectionKeyRef.current = "";
     settledMarkerRef.current = "";
@@ -625,14 +623,16 @@ export function ReferenceTranslationBatchPanel({
     setAction("retry");
     setBatchError("");
     setNotice("");
-    if (retryKeyRef.current.batchId !== batchId || !retryKeyRef.current.key) {
-      retryKeyRef.current = { batchId, key: requestKey("reference-translation-retry") };
-    }
+    // 0924V2 §5: every deliberate click is a NEW recovery attempt with its
+    // own idempotency key — an exhausted prior job must never be replayed
+    // as a no-op. Rapid double-clicks are already blocked by the button's
+    // busy state, so per-click keys cannot fan out duplicate work.
+    const retryKey = requestKey("reference-translation-retry");
     try {
       const response = await fetch(`/api/projects/${projectId}/medical-writing/references/translation-batches/${encodeURIComponent(batchId)}/retry`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actor: "medical_manager", idempotency_key: retryKeyRef.current.key }),
+        body: JSON.stringify({ actor: "medical_manager", idempotency_key: retryKey }),
       });
       const payload = await readJson(response);
       setBatch(payload);
@@ -680,8 +680,7 @@ export function ReferenceTranslationBatchPanel({
       }
       setPollSuspended(false);
       setNotice("已仅重新提交可重试失败项；成功项、忠实度阻断项和终止失败项不会重复生成。");
-      retryKeyRef.current = { batchId: "", key: "" };
-    } catch (error) {
+      } catch (error) {
       setBatchError(`失败项重试未启动：${error.message}`);
     } finally {
       setAction("");
