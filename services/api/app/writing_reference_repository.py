@@ -4681,12 +4681,49 @@ class WritingReferenceRepository:
                     str(existing["output_payload_json"]),
                     str(existing["payload_json"]),
                 )
-                connection.rollback()
-                if actual != expected:
-                    raise WritingReferenceConflictError(
-                        "upper-layer stage run identity reused with different payload"
+                if actual == expected:
+                    return run
+                # 0924V2 §5: a previously FAILED run may be superseded by a
+                # new attempt under the same immutable stage_run_id when the
+                # input identity matches (idempotent redrive). The prior
+                # payload is preserved in the run's own audit trail; the new
+                # state replaces only terminal-failed rows.
+                import json as _json
+
+                try:
+                    prior_status = str(
+                        (json.loads(existing["payload_json"]) or {}).get(
+                            "status",
+                            "",
+                        )
                     )
-                return run
+                except (ValueError, TypeError):
+                    prior_status = ""
+                if prior_status in {"failed_retryable", "failed"}:
+                    connection.execute(
+                        """
+                        UPDATE writing_reference_upper_layer_stage_runs
+                        SET execution_fingerprint=?, prompt_sha256=?,
+                            input_payload_json=?, output_payload_json=?,
+                            payload_json=?
+                        WHERE tenant_id=? AND project_id=? AND stage_run_id=?
+                        """,
+                        (
+                            execution_fingerprint,
+                            prompt_sha256,
+                            input_payload_json,
+                            output_payload_json,
+                            _canonical_json(payload),
+                            TENANT_ID,
+                            run.project_id,
+                            run.stage_run_id,
+                        ),
+                    )
+                    return run
+                connection.rollback()
+                raise WritingReferenceConflictError(
+                    "upper-layer stage run identity reused with different payload"
+                )
             connection.execute(
                 """
                 INSERT INTO writing_reference_upper_layer_stage_runs(
