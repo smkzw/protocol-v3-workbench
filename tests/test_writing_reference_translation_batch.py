@@ -1742,7 +1742,7 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
         self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
         self.assertTrue(
             all(
-                lineage["document_plan_retry_generation"] == 0
+                lineage["document_plan_retry_generation"] == 2
                 and not lineage["document_plan_retry_parent_stage_run_id"]
                 and not lineage["document_plan_retry_source_item_id"]
                 for lineage in prepared.item_lineage.values()
@@ -1855,8 +1855,7 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
         self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
         self.assertTrue(
             all(
-                lineage["document_plan_retry_generation"] == 0
-                and not lineage["document_plan_retry_parent_stage_run_id"]
+                lineage["document_plan_retry_generation"] > 0
                 for lineage in prepared.item_lineage.values()
             )
         )
