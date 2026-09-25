@@ -5264,22 +5264,25 @@ class WritingReferenceTranslationBatchService:
             item_id=item.item_id,
             plan_id=plan.plan_id,
             chapter_id=chapter_id,
-            # Round discriminator: batch attempt (minus 1 for the original
-            # round) keeps recovery rounds on distinct stage identities. The
-            # retry parent must COEXIST with a nonzero generation — items
-            # without a real persisted parent carry the batch's own marker so
-            # the executor's joint-presence validation passes.
-            retry_generation=max(0, int(batch.attempt) - 1),
-            retry_parent_stage_run_id=(
-                str(
-                    getattr(
-                        item,
-                        "document_plan_retry_parent_stage_run_id",
-                        "",
-                    )
-                    or ""
+            # 0924V2: integration QC recovery does NOT use retry lineage —
+            # the executor restricts retry lineage to document planning. The
+            # oMLX transport now carries safe cause metadata, and a healthy
+            # provider makes the original identity succeed on retry.
+            retry_generation=int(
+                getattr(
+                    item,
+                    "document_plan_retry_generation",
+                    0,
                 )
-                or f"batch_recovery_{batch.attempt - 1}_{batch.batch_id}"
+                or 0
+            ),
+            retry_parent_stage_run_id=str(
+                getattr(
+                    item,
+                    "document_plan_retry_parent_stage_run_id",
+                    "",
+                )
+                or ""
             ),
         )
 
