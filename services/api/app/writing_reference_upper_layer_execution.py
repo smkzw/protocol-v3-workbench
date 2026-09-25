@@ -355,7 +355,16 @@ class WritingReferenceUpperLayerExecutionService:
             request.project_id,
             flash_run_id,
         )
-        if flash_run is None:
+        if flash_run is None or str(flash_run.status) not in (
+            "succeeded",
+            "completed_degraded",
+        ):
+            # 0924V2 root-cause fix: a run that previously FAILED (e.g.
+            # transient provider outage) has no usable output to replay.
+            # Re-dispatch into the same immutable stage_run_id so the
+            # executor's own retry policy applies, and the successful result
+            # lands under the identical fingerprint the rest of the system
+            # keys on.
             flash_run, flash_output = self._invoke_and_persist(
                 request,
                 requested_model=self.default_model,
