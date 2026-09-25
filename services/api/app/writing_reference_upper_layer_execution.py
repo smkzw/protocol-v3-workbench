@@ -381,12 +381,15 @@ class WritingReferenceUpperLayerExecutionService:
             # a recovery-suffixed stage_run_id — a fresh, auditable run that
             # supersedes the failed one under the same fingerprint.
             flash_run = None
-            flash_run_id = flash_run_id + "-r2"
+            recovery_fingerprint = _sha256_json(
+                {"base": flash_fingerprint, "recovery_round": 2}
+            )
+            recovery_run_id = "wref_ulrun_" + recovery_fingerprint[:24]
             flash_run, flash_output = self._invoke_and_persist(
                 request,
                 requested_model=self.default_model,
-                stage_run_id=flash_run_id,
-                execution_fingerprint=flash_fingerprint + "-r2",
+                stage_run_id=recovery_run_id,
+                execution_fingerprint=recovery_fingerprint,
                 max_attempts=self.flash_max_attempts,
             )
         else:
