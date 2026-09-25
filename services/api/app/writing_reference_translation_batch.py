@@ -5249,7 +5249,11 @@ class WritingReferenceTranslationBatchService:
         # upper-layer request identity. Without it every recovery attempt
         # regenerated the same execution fingerprint and the shared executor
         # replayed the old failed run forever (26 items stuck as
-        # failed_retryable across three recovery rounds).
+        # failed_retryable across three recovery rounds). Batch recovery
+        # rounds that allocate parentless lineage keep generation 0, so the
+        # batch attempt is folded in as the round discriminator — each
+        # recovery round gets a fresh stage identity while audit fields
+        # remain intact.
         integration_owner = UpperLayerStageOwner(
             project_id=item.project_id,
             owner_type="translation_batch_item",
@@ -5262,7 +5266,8 @@ class WritingReferenceTranslationBatchService:
             chapter_id=chapter_id,
             retry_generation=int(
                 getattr(item, "document_plan_retry_generation", 0) or 0
-            ),
+            )
+            + max(0, int(batch.attempt) - 1),
             retry_parent_stage_run_id=str(
                 getattr(
                     item,
