@@ -5265,15 +5265,21 @@ class WritingReferenceTranslationBatchService:
             plan_id=plan.plan_id,
             chapter_id=chapter_id,
             # Round discriminator: batch attempt (minus 1 for the original
-            # round) keeps recovery rounds on distinct stage identities.
+            # round) keeps recovery rounds on distinct stage identities. The
+            # retry parent must COEXIST with a nonzero generation — items
+            # without a real persisted parent carry the batch's own marker so
+            # the executor's joint-presence validation passes.
             retry_generation=max(0, int(batch.attempt) - 1),
-            retry_parent_stage_run_id=str(
-                getattr(
-                    item,
-                    "document_plan_retry_parent_stage_run_id",
-                    "",
+            retry_parent_stage_run_id=(
+                str(
+                    getattr(
+                        item,
+                        "document_plan_retry_parent_stage_run_id",
+                        "",
+                    )
+                    or ""
                 )
-                or ""
+                or f"batch_recovery_{batch.attempt - 1}_{batch.batch_id}"
             ),
         )
 
