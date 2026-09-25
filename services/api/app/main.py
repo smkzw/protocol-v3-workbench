@@ -5842,6 +5842,14 @@ def retry_writing_reference_translation_batch(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        # 0924V2 §5: warm the translation model before dispatching so the
+        # first chunk doesn't burn its provider-call budget on a cold load.
+        try:
+            from .model_phase_scheduler import warm_translation_model
+
+            warm_translation_model()
+        except Exception:
+            pass  # warm-up is best-effort; the fallback chain handles failures
         batch = writing_reference_translation_batch_service.retry(
             canonical_id,
             batch_id,
