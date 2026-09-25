@@ -50,6 +50,7 @@ from .writing_reference import (
 )
 from .chapter_translation_pipeline import (
     ChapterTranslationPipeline,
+    ChapterTranslationPipelineError,
     CompositePipelineUnavailableError,
     DocumentPlanRequest,
     DocumentPlanValidationError,
@@ -1007,6 +1008,34 @@ class WritingReferenceTranslationBatchService:
         batch_id: str,
         request: WritingReferenceTranslationBatchRetryRequest,
     ) -> WritingReferenceTranslationBatch:
+        # 0925 UAT temporary diagnostics: same pure bypass as
+        # _process_claimed_item.  Retry dispatch for the 0924V2 acceptance
+        # batch dies before any item claim, so the claim-entry diag alone
+        # cannot observe it.  Log the live exception with its full chain,
+        # then re-raise — retry semantics are untouched.  Remove once the
+        # root cause is fixed.
+        try:
+            return self._retry_with_entry_diag(project_id, batch_id, request)
+        except Exception:
+            logger.exception(
+                "[MW-ENTRY-DIAG] retry batch=%s idempotency_key=%s unhandled before dispatch",
+                batch_id,
+                request.idempotency_key,
+            )
+            raise
+
+    def _retry_with_entry_diag(
+        self,
+        project_id: str,
+        batch_id: str,
+        request: WritingReferenceTranslationBatchRetryRequest,
+    ) -> WritingReferenceTranslationBatch:
+        # 0925 fix: repair a0cc222-era illegal retry lineage payloads
+        # ({generation > 0, parent: '', source: ''}) BEFORE any item
+        # deserialization — the idempotent-replay self.get and the retry
+        # preflight below parse every payload and would 422 otherwise.
+        # No-op once all payloads validate.
+        self._repair_invalid_retry_lineage_payloads(project_id, batch_id)
         request_hash = _payload_hash(
             {"batch_id": batch_id, "idempotency_key": request.idempotency_key}
         )
@@ -3103,13 +3132,27 @@ class WritingReferenceTranslationBatchService:
                         )
                     # 0924V2: use the current retry_generation parameter so
                     # each recovery round gets a distinct stage identity.
-                    allocated_lineage = {
-                        "document_plan_retry_generation": retry_generation,
-                        "document_plan_retry_parent_stage_run_id": "",
-                        "document_plan_retry_source_item_id": "",
-                    }
+                    # 0925 fix: the retry fields must satisfy the item
+                    # model's coexistence invariant (generation > 0 requires
+                    # BOTH parent and source non-empty), so reuse the 0924V2
+                    # §5 prepare-fallback shape: one synthetic parent per
+                    # round plus a self-referencing source item.  The
+                    # by_parent grouping skips the synthetic prefix without
+                    # a DB lookup.  Known tension (inherited from the 0924V2
+                    # fallback): self-referencing sources make
+                    # document_plan_retry_source_item_id differ per item, so
+                    # such a group must not later enter the contract
+                    # migration branch — _transition_source_item_id would
+                    # reject it as document_plan_contract_source_missing_or_
+                    # ambiguous.
                     for item in items:
-                        allocated[item.item_id] = allocated_lineage
+                        allocated[item.item_id] = {
+                            "document_plan_retry_generation": retry_generation,
+                            "document_plan_retry_parent_stage_run_id": (
+                                f"synthetic_recovery_{retry_generation}"
+                            ),
+                            "document_plan_retry_source_item_id": item.item_id,
+                        }
                     continue
             elif len(source_items) == len(items):
                 # Legacy payloads omit both source-lineage fields, so every
@@ -4651,16 +4694,39 @@ class WritingReferenceTranslationBatchService:
         # Check ownership before expensive product AI work.
         if cancel_check is not None and cancel_check():
             return None
+        # 0925 UAT temporary diagnostics: the 26 failed_retryable items of the
+        # 0924V2 acceptance batch failed before stage-run creation and only a
+        # bare code survived into the audit.  This wrapper is a pure bypass —
+        # it records the live exception with its full cause chain, then
+        # re-raises so every handler below keeps its original failure-write
+        # semantics.  Remove once the root cause is fixed.
+        logger.warning(
+            "[MW-ENTRY-DIAG] enter item=%s batch=%s attempt=%s stage=%s active_upper=%s",
+            item.item_id,
+            item.batch_id,
+            item.attempt,
+            item.pipeline_stage,
+            item.active_upper_layer_stage,
+        )
         try:
-            self._validate_frozen_lineage(item, preparation_batch_id)
-            if self.chapter_pipeline is None:
-                # Production must fail closed — no silent legacy fallback.
-                raise CompositePipelineUnavailableError(
-                    "composite chapter translation pipeline is not configured"
+            try:
+                self._validate_frozen_lineage(item, preparation_batch_id)
+                if self.chapter_pipeline is None:
+                    # Production must fail closed — no silent legacy fallback.
+                    raise CompositePipelineUnavailableError(
+                        "composite chapter translation pipeline is not configured"
+                    )
+                self._process_with_composite_pipeline(
+                    item, actor, cancel_check=cancel_check
                 )
-            self._process_with_composite_pipeline(
-                item, actor, cancel_check=cancel_check
-            )
+            except Exception:
+                logger.exception(
+                    "[MW-ENTRY-DIAG] item=%s 阶段=%s attempt=%s unhandled before failure-write",
+                    item.item_id,
+                    item.pipeline_stage,
+                    item.attempt,
+                )
+                raise
             return None
         except _OwnershipLostError:
             # Ownership lost during pipeline execution.  Do NOT write any
@@ -5081,6 +5147,10 @@ class WritingReferenceTranslationBatchService:
         hy_block_codes: list[str] = []
         hy_block_text = ""
         hy_block_raw_text = ""
+        # The UNTRIMMED aligned text the deterministic gate evaluated (unit
+        # markers intact) — persisted on the integration row so a later
+        # offline re-evaluation can replay the exact evaluated text.
+        hy_block_aligned_text = ""
         hy_block_chunk_id = ""
         for chunk_spec in chapter_chunks:
             existing_chunk = existing_by_fp.get(chunk_spec.chunk_fingerprint)
@@ -5155,6 +5225,7 @@ class WritingReferenceTranslationBatchService:
                 hy_block_raw_text = strip_unit_markers(
                     exc.raw_provider_output
                 )
+                hy_block_aligned_text = exc.last_output
                 hy_block_chunk_id = chunk_spec.chunk_id
                 chunk_failed += 1
                 chunk_running = 0
@@ -5257,15 +5328,15 @@ class WritingReferenceTranslationBatchService:
         final_envelope_output_hash = ""
         flash_passed = True
         integration_executions: list[UpperLayerStageExecutionResult] = []
-        # 0924V2 root-cause fix: the retry generation MUST flow into the
-        # upper-layer request identity. Without it every recovery attempt
-        # regenerated the same execution fingerprint and the shared executor
-        # replayed the old failed run forever (26 items stuck as
-        # failed_retryable across three recovery rounds). Batch recovery
-        # rounds that allocate parentless lineage keep generation 0, so the
-        # batch attempt is folded in as the round discriminator — each
-        # recovery round gets a fresh stage identity while audit fields
-        # remain intact.
+        # Retry lineage is document-planning only (enforced by the executor's
+        # _validate_request and the stage-run contract model).  The
+        # plan_owner threads the item's lineage into planning; integration QC
+        # deliberately carries none — carrying it here would fail every
+        # retried item at "retry lineage is document-planning only" once its
+        # payload holds a synthetic recovery parent (0925 fix).  A failed
+        # integration run is never replayed either: execute() re-invokes
+        # failures under a fresh recovery_epoch, so the lineage-free identity
+        # stays unique per recovery round.
         integration_owner = UpperLayerStageOwner(
             project_id=item.project_id,
             owner_type="translation_batch_item",
@@ -5276,26 +5347,6 @@ class WritingReferenceTranslationBatchService:
             item_id=item.item_id,
             plan_id=plan.plan_id,
             chapter_id=chapter_id,
-            # 0924V2: integration QC recovery does NOT use retry lineage —
-            # the executor restricts retry lineage to document planning. The
-            # oMLX transport now carries safe cause metadata, and a healthy
-            # provider makes the original identity succeed on retry.
-            retry_generation=int(
-                getattr(
-                    item,
-                    "document_plan_retry_generation",
-                    0,
-                )
-                or 0
-            ),
-            retry_parent_stage_run_id=str(
-                getattr(
-                    item,
-                    "document_plan_retry_parent_stage_run_id",
-                    "",
-                )
-                or ""
-            ),
         )
 
         if hy_block_codes:
@@ -5662,6 +5713,12 @@ class WritingReferenceTranslationBatchService:
             blocked_raw_provider_output_sha256=(
                 _pipeline_sha256(hy_block_raw_text)
                 if hy_block_raw_text
+                else ""
+            ),
+            blocked_aligned_output=hy_block_aligned_text,
+            blocked_aligned_output_sha256=(
+                _pipeline_sha256(hy_block_aligned_text)
+                if hy_block_aligned_text
                 else ""
             ),
             integration_windowed=integration_windowed,
@@ -8484,6 +8541,371 @@ class WritingReferenceTranslationBatchService:
             if affected:
                 self._refresh_batch_status_with(connection, project_id, batch_id)
             connection.commit()
+
+    def _repair_invalid_retry_lineage_payloads(
+        self, project_id: str, batch_id: str
+    ) -> int:
+        """One-shot repair of a0cc222-era illegal retry lineage payloads.
+
+        a0cc222..9771a64 persisted the shape
+        ``{retry_generation > 0, parent: '', source: ''}``, which the item
+        model's coexistence validator rejects at parse time — every later
+        deserialization of the batch (get / retry preflight / durable job)
+        dies before dispatch.  Bounded working-state repair only: SQLite
+        JSON1 selects the candidate rows, the lineage parent/source and
+        updated_at are rewritten to the legal synthetic shape and fully
+        re-validated through the item model, and the write-back keeps the
+        optimistic lock.  Immutable history (audit chain, stage runs,
+        durable job records) is untouched.
+        """
+        with self.repository._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            rows = connection.execute(
+                """
+                SELECT item_id, attempt, payload_json
+                FROM writing_reference_translation_batch_items
+                WHERE tenant_id=? AND project_id=? AND batch_id=?
+                  AND json_extract(payload_json,'$.document_plan_retry_generation') > 0
+                  AND json_extract(payload_json,'$.document_plan_retry_parent_stage_run_id') = ''
+                  AND json_extract(payload_json,'$.document_plan_retry_source_item_id') = ''
+                ORDER BY item_id
+                """,
+                (TENANT_ID, project_id, batch_id),
+            ).fetchall()
+            repaired = 0
+            for row in rows:
+                payload = json.loads(row["payload_json"])
+                generation = int(payload["document_plan_retry_generation"])
+                synthetic_parent = f"synthetic_recovery_{generation}"
+                payload["document_plan_retry_parent_stage_run_id"] = (
+                    synthetic_parent
+                )
+                payload["document_plan_retry_source_item_id"] = payload["item_id"]
+                payload["updated_at"] = self.clock().isoformat()
+                repaired_item = WritingReferenceTranslationBatchItem.model_validate(
+                    payload
+                )
+                cursor = self._write_item_with(
+                    connection,
+                    repaired_item,
+                    expected_status="failed_retryable",
+                    expected_attempt=int(row["attempt"]),
+                )
+                if cursor.rowcount != 1:
+                    logger.warning(
+                        "retry lineage repair skipped item %s in batch %s: "
+                        "optimistic lock lost (expected failed_retryable "
+                        "attempt %s)",
+                        row["item_id"],
+                        batch_id,
+                        row["attempt"],
+                    )
+                    continue
+                self.repository._append_audit(
+                    connection,
+                    project_id,
+                    "translation_batch_item_retry_lineage_repaired",
+                    row["item_id"],
+                    "system_recovery",
+                    {
+                        "batch_id": batch_id,
+                        "retry_generation": generation,
+                        "document_plan_retry_parent_stage_run_id": (
+                            synthetic_parent
+                        ),
+                        "document_plan_retry_source_item_id": payload["item_id"],
+                        "attempt": repaired_item.attempt,
+                    },
+                )
+                repaired += 1
+            if repaired:
+                logger.info(
+                    "repaired %d invalid retry lineage payloads in batch %s",
+                    repaired,
+                    batch_id,
+                )
+                # Re-aggregate from the now-parseable payloads; this also
+                # clears the stale 'running' batch status left by the killed
+                # attempt-22 process.
+                self._refresh_batch_status_with(connection, project_id, batch_id)
+            connection.commit()
+        return repaired
+
+    def reevaluate_fidelity_blocked(
+        self, project_id: str, batch_id: str, actor: str
+    ) -> dict[str, int]:
+        """Deterministically re-evaluate fidelity_blocked items offline.
+
+        Zero model calls: each blocked item's persisted chapter integration
+        row and its completed Hy-MT2 chunks are replayed through the current
+        deterministic aligned-units fidelity checker — the same gate the
+        pipeline runs.  An item is flipped to candidate_ready only when the
+        re-evaluation covers the COMPLETE chapter candidate and produces no
+        failure codes.  Any lineage gap (missing integration row, empty
+        chunk list, a Hy-blocked raw fragment, an incomplete unit_targets
+        map) is reported data_missing and never heuristically admitted;
+        items whose codes persist stay blocked and are reported rejected.
+        """
+        current_batch = self.get(project_id, batch_id)
+        # Mirror the retry running gate: the loop below ends with a batch
+        # status refresh, and refreshing inside the 'batch running but no
+        # running item' window would re-open the retry gates against a
+        # half-finished durable run.
+        if current_batch.status == "running":
+            raise WritingReferenceConflictError(
+                "cannot re-evaluate fidelity while the batch is running"
+            )
+        with self.repository._connect() as connection:
+            transition_child = connection.execute(
+                """
+                SELECT transition_id
+                FROM writing_reference_translation_downstream_transition_records
+                WHERE tenant_id=? AND project_id=? AND target_batch_id=?
+                """,
+                (TENANT_ID, project_id, batch_id),
+            ).fetchone()
+        if transition_child is not None:
+            raise ValueError(
+                "downstream_contract_transition_child_requires_exact_executor"
+            )
+
+        with self.repository._connect() as connection:
+            blocked_rows = connection.execute(
+                """
+                SELECT payload_json
+                FROM writing_reference_translation_batch_items
+                WHERE tenant_id=? AND project_id=? AND batch_id=?
+                  AND generation_status='fidelity_blocked'
+                ORDER BY item_id
+                """,
+                (TENANT_ID, project_id, batch_id),
+            ).fetchall()
+        items = [
+            WritingReferenceTranslationBatchItem.model_validate_json(
+                row["payload_json"]
+            )
+            for row in blocked_rows
+        ]
+        if not items:
+            return {"admitted": 0, "rejected": 0, "data_missing": 0}
+
+        groups: dict[
+            tuple[str, str], list[WritingReferenceTranslationBatchItem]
+        ] = defaultdict(list)
+        for item in items:
+            groups[(item.document_structure_plan_id, item.chapter_id)].append(
+                item
+            )
+
+        # Phase 1 (read-only): resolve one integration row per group and
+        # evaluate it once — sibling items of the same chapter amortize the
+        # deterministic re-check.
+        evaluations: dict[tuple[str, str], tuple[str, list[str], str, list[str]]] = {}
+        for key in groups:
+            integration = self._find_integration_for_reeval(project_id, *key)
+            if integration is None:
+                evaluations[key] = ("data_missing", [], "", [])
+                continue
+            outcome, new_codes = self._evaluate_integration_for_reeval(
+                project_id, integration
+            )
+            evaluations[key] = (
+                outcome,
+                new_codes,
+                integration.integration_id,
+                list(integration.chunk_ids),
+            )
+
+        # Phase 2 (single transaction): apply flips + audits + batch refresh.
+        with self.repository._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            summary = {"admitted": 0, "rejected": 0, "data_missing": 0}
+            now = self.clock()
+            for item in items:
+                key = (item.document_structure_plan_id, item.chapter_id)
+                outcome, new_codes, integration_id, chunk_ids = evaluations[key]
+                old_codes = list(item.fidelity_failure_codes)
+                detail = {
+                    "batch_id": batch_id,
+                    "actor": actor,
+                    "integration_id": integration_id,
+                    "chunk_ids": chunk_ids,
+                    "previous_failure_codes": old_codes,
+                }
+                if outcome == "admitted":
+                    # Mirror the eight ready-state fields exactly as the
+                    # pipeline writes them — flipping only generation_status
+                    # would leave a candidate_ready item with a
+                    # fidelity_blocked stage projection.
+                    updated = item.model_copy(
+                        update={
+                            "generation_status": "candidate_ready",
+                            "fidelity_status": "passed",
+                            "fidelity_failure_codes": [],
+                            "blocker_kind": "",
+                            "blocker_message": "",
+                            "pipeline_stage": "candidate_ready",
+                            "pipeline_stage_detail": "翻译完成，可核对并使用",
+                            "updated_at": now,
+                        },
+                        deep=True,
+                    )
+                    cursor = self._write_item_with(
+                        connection,
+                        updated,
+                        expected_status="fidelity_blocked",
+                        expected_attempt=item.attempt,
+                    )
+                    if cursor.rowcount != 1:
+                        logger.warning(
+                            "fidelity re-eval lost optimistic lock for item "
+                            "%s in batch %s; item left untouched",
+                            item.item_id,
+                            batch_id,
+                        )
+                        continue
+                    # The admitted audit MUST sit behind the rowcount guard
+                    # and share this transaction with the item write so a
+                    # lost race can never leave an admitted audit for a
+                    # still-blocked item.
+                    self.repository._append_audit(
+                        connection,
+                        project_id,
+                        "translation_batch_item_fidelity_reeval_admitted",
+                        item.item_id,
+                        actor,
+                        {**detail, "failure_codes": []},
+                    )
+                    summary["admitted"] += 1
+                elif outcome == "rejected":
+                    # Keep the item blocked with its historical codes; the
+                    # audit records the fresh codes from the current checker.
+                    self.repository._append_audit(
+                        connection,
+                        project_id,
+                        "translation_batch_item_fidelity_reeval_rejected",
+                        item.item_id,
+                        actor,
+                        {**detail, "failure_codes": new_codes},
+                    )
+                    summary["rejected"] += 1
+                else:
+                    self.repository._append_audit(
+                        connection,
+                        project_id,
+                        "translation_batch_item_fidelity_reeval_data_missing",
+                        item.item_id,
+                        actor,
+                        {**detail, "failure_codes": old_codes},
+                    )
+                    summary["data_missing"] += 1
+            self._refresh_batch_status_with(connection, project_id, batch_id)
+            connection.commit()
+        return summary
+
+    def _find_integration_for_reeval(
+        self,
+        project_id: str,
+        plan_id: str,
+        chapter_id: str,
+    ) -> ChapterIntegrationResult | None:
+        """Locate the integration row backing a blocked item.
+
+        Exact plan/chapter join first; research-span chapters persist a
+        span-scoped chapter id, so fall back to a prefix match.  When
+        several candidates exist, prefer a complete chapter candidate with
+        a chunk list over a fragment, then the latest row.
+        """
+        with self.repository._connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT payload_json
+                FROM writing_reference_chapter_integration_results
+                WHERE tenant_id=? AND project_id=? AND plan_id=? AND chapter_id=?
+                """,
+                (TENANT_ID, project_id, plan_id, chapter_id),
+            ).fetchall()
+            if not rows:
+                rows = connection.execute(
+                    """
+                    SELECT payload_json
+                    FROM writing_reference_chapter_integration_results
+                    WHERE tenant_id=? AND project_id=? AND plan_id=?
+                      AND chapter_id LIKE ?
+                    ORDER BY created_at DESC
+                    """,
+                    (TENANT_ID, project_id, plan_id, chapter_id + ":%"),
+                ).fetchall()
+        candidates = [
+            ChapterIntegrationResult.model_validate_json(row["payload_json"])
+            for row in rows
+        ]
+        if not candidates:
+            return None
+        candidates.sort(
+            key=lambda result: (
+                bool(result.chunk_ids) and result.status == "completed",
+                result.created_at,
+            ),
+            reverse=True,
+        )
+        return candidates[0]
+
+    def _evaluate_integration_for_reeval(
+        self,
+        project_id: str,
+        integration: ChapterIntegrationResult,
+    ) -> tuple[str, list[str]]:
+        """Replay one integration's chunks through the deterministic gate.
+
+        Returns (outcome, codes): outcome is "admitted" only when every
+        chunk completes with a full unit_targets map and the aggregated
+        checker output is empty; any completeness gap fails closed as
+        "data_missing".
+        """
+        if str(integration.blocked_raw_provider_output or "").strip():
+            # A Hy-blocked chapter only ever produced a diagnostic fragment;
+            # re-checking it against the full chapter source would fabricate
+            # chapter-wide omissions and mask the unit-level root cause.
+            return "data_missing", []
+        chunk_ids = list(integration.chunk_ids or [])
+        if not chunk_ids:
+            return "data_missing", []
+        # Load ONLY the chunks the integration row names — never the whole
+        # plan — so the re-check covers exactly the chapter candidate.
+        chunks_by_id = {
+            chunk.chunk_id: chunk
+            for chunk in self.repository.translation_chunks_for_plan(
+                project_id, integration.plan_id
+            )
+        }
+        all_codes: list[str] = []
+        for chunk_id in chunk_ids:
+            chunk = chunks_by_id.get(chunk_id)
+            if (
+                chunk is None
+                or chunk.status != "completed"
+                or not chunk.source_text.strip()
+                or not chunk.translated_text.strip()
+            ):
+                return "data_missing", []
+            try:
+                units = split_source_into_units(chunk.source_text)
+                target_map = reconstruct_unit_map(
+                    chunk.translated_text,
+                    chunk.unit_targets,
+                    units,
+                )
+            except ChapterTranslationPipelineError:
+                # Fail closed: an incomplete unit_targets map cannot be
+                # heuristically reconstructed (missing units would silently
+                # attach content to the wrong source unit).
+                return "data_missing", []
+            all_codes.extend(
+                evaluate_translation_fidelity_aligned_units(units, target_map)
+            )
+        codes = list(dict.fromkeys(all_codes))
+        return ("rejected" if codes else "admitted"), codes
 
 
 class TranslationBatchDurableExecutor:

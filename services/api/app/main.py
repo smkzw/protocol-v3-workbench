@@ -131,6 +131,7 @@ from packages.contracts.workbench_contracts.models import (
     WritingReferencePreparationBatchStageAdvanceRequest,
     WritingReferencePreparationBatchRetryRequest,
     WritingReferenceTranslationBatchCreateRequest,
+    WritingReferenceTranslationBatchFidelityReevalRequest,
     WritingReferenceTranslationBatchMedicalReviewRequest,
     WritingReferenceTranslationBatchMedicalReviewResult,
     WritingReferenceTranslationBatchPreviewRequest,
@@ -5871,6 +5872,50 @@ def retry_writing_reference_translation_batch(
         result = batch.model_dump(mode="json")
         result["durable_job_id"] = retry_job_id
         return result
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail="writing reference translation batch not found",
+        )
+    except WritingReferenceConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.post(
+    "/api/projects/{project_id}/medical-writing/references/"
+    "translation-batches/{batch_id}/fidelity-reeval",
+    status_code=200,
+)
+def reevaluate_writing_reference_translation_batch_fidelity(
+    project_id: str,
+    batch_id: str,
+    request: WritingReferenceTranslationBatchFidelityReevalRequest,
+):
+    """Offline deterministic re-check of fidelity_blocked items.
+
+    Zero model calls, no durable job, no warm-up: the persisted chunk and
+    integration lineage is replayed through the current deterministic
+    fidelity checker.  No idempotency key is required — admitted items
+    leave the blocked population (cannot be re-admitted) and a repeated
+    call on a rejected item appends a fresh rejected audit, which is
+    deterministic and harmless.
+    """
+    try:
+        canonical_id = _canonical_module_project_id(
+            project_id,
+            "medical_writing",
+        )
+        summary = (
+            writing_reference_translation_batch_service
+            .reevaluate_fidelity_blocked(
+                canonical_id,
+                batch_id,
+                request.actor,
+            )
+        )
+        return summary
     except KeyError:
         raise HTTPException(
             status_code=404,

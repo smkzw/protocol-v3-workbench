@@ -9020,6 +9020,14 @@ class ChapterIntegrationResult(WorkbenchModel):
     fidelity_advisory_codes: List[str] = Field(default_factory=list)
     blocked_raw_provider_output: str = ""
     blocked_raw_provider_output_sha256: str = ""
+    # 0926 offline re-evaluation lineage: the UNTRIMMED aligned-unit text the
+    # deterministic gate actually evaluated when a Hy chunk blocked
+    # (FidelityBlockedError.last_output).  Retaining it lets a later
+    # deterministic re-evaluation replay the exact evaluated text instead of
+    # a stripped fragment.  Empty for rows written before this field existed;
+    # persisted rows stay immutable.
+    blocked_aligned_output: str = ""
+    blocked_aligned_output_sha256: str = ""
     integration_windowed: bool = False
     # Additive ordered window lineage.  Empty when integration_windowed=False.
     integration_windows: List[ChapterIntegrationWindow] = Field(default_factory=list)
@@ -9473,6 +9481,25 @@ class WritingReferenceTranslationBatchRetryRequest(WorkbenchModel):
         self.idempotency_key = self.idempotency_key.strip()
         if not self.actor or not self.idempotency_key:
             raise ValueError("translation batch retry fields must not be blank")
+        return self
+
+
+class WritingReferenceTranslationBatchFidelityReevalRequest(WorkbenchModel):
+    """Request body for the offline deterministic fidelity re-evaluation.
+
+    Deliberately no idempotency key: admitted items leave the blocked
+    population so they cannot be re-admitted, and a repeated call on a
+    rejected item appends a fresh rejected audit — deterministic and
+    harmless (the re-check is a pure function of immutable lineage).
+    """
+
+    actor: str = Field(default="medical_manager", min_length=2, max_length=80)
+
+    @model_validator(mode="after")
+    def normalize_translation_batch_fidelity_reeval(self):
+        self.actor = self.actor.strip()
+        if not self.actor:
+            raise ValueError("translation batch fidelity reeval actor must not be blank")
         return self
 
 

@@ -16,6 +16,8 @@ from pydantic import ValidationError
 
 from packages.contracts.workbench_contracts.models import (
     AiTaskArtifact,
+    ChapterIntegrationResult,
+    TranslationChunkRecord,
     WritingReferenceDocumentArtifact,
     WritingReferenceDocumentValidationRecord,
     WritingReferenceExtractedSpan,
@@ -1740,12 +1742,16 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
                 persist_migrations=False,
             )
         self.assertEqual(set(item.item_id for item in failed_items), set(prepared.item_lineage))
+        # 0925 fix: the parentless structural path now allocates the legal
+        # synthetic shape — the item model requires parent and source to
+        # coexist with a nonzero generation.
         self.assertTrue(
             all(
                 lineage["document_plan_retry_generation"] == 2
-                and not lineage["document_plan_retry_parent_stage_run_id"]
-                and not lineage["document_plan_retry_source_item_id"]
-                for lineage in prepared.item_lineage.values()
+                and lineage["document_plan_retry_parent_stage_run_id"]
+                == "synthetic_recovery_2"
+                and lineage["document_plan_retry_source_item_id"] == item_id
+                for item_id, lineage in prepared.item_lineage.items()
             )
         )
 
@@ -3651,6 +3657,263 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
         )
         # No medical review or admission side effect for a blocked candidate.
         self.assertEqual([], self.repo.medical_reviews(PROJECT_ID))
+
+    # -- Offline deterministic fidelity re-evaluation (0926). ------------
+
+    _REEVAL_SOURCE = "Participants must not receive SCS within 14 days."
+    _REEVAL_GOOD_TARGET = FakeTranslationRunner.TRANSLATIONS[
+        "Participants must not receive SCS within 14 days."
+    ]
+
+    def _seed_fidelity_blocked_item(
+        self,
+        label: str,
+        *,
+        codes: list[str],
+        translated_text: str = "",
+        unit_targets: dict[str, str] | None = None,
+        chunk_ids: list[str] | None = None,
+        persist_chunk: bool = True,
+        blocked_raw: str = "",
+    ):
+        """Seed one fidelity_blocked item plus its chunk/integration lineage."""
+        artifact = self._seed_artifact(
+            f"artifact_reeval_{label}",
+            [("span_reeval_" + label, "eligibility", self._REEVAL_SOURCE)],
+        )
+        batch = self.service.create(
+            PROJECT_ID,
+            self._create_request(f"translation-batch-reeval-{label}"),
+        )
+        item = batch.items[0]
+        plan_id = f"plan_reeval_{label}"
+        chapter_id = f"chapter_reeval_{label}"
+        blocked_item = item.model_copy(
+            update={
+                "generation_status": "fidelity_blocked",
+                "fidelity_status": "blocked",
+                "fidelity_failure_codes": list(codes),
+                "blocker_kind": "retryable",
+                "blocker_message": "译文忠实度校验未通过，请处理异常",
+                "pipeline_stage": "fidelity_blocked",
+                "pipeline_stage_detail": "译文忠实度校验未通过，请处理异常",
+                "document_structure_plan_id": plan_id,
+                "chapter_id": chapter_id,
+                "updated_at": NOW,
+            },
+            deep=True,
+        )
+        with self.repo._connect() as connection:
+            cursor = self.service._write_item_with(
+                connection,
+                blocked_item,
+                expected_status="pending",
+                expected_attempt=item.attempt,
+            )
+            self.assertEqual(1, cursor.rowcount)
+            connection.commit()
+        resolved_chunk_ids = (
+            [f"chunk_reeval_{label}"] if chunk_ids is None else chunk_ids
+        )
+        if persist_chunk:
+            chunk = TranslationChunkRecord(
+                chunk_id=f"chunk_reeval_{label}",
+                plan_id=plan_id,
+                project_id=PROJECT_ID,
+                artifact_id=artifact.artifact_id,
+                chapter_id=chapter_id,
+                chunk_order=1,
+                source_span_ids=[item.span_id],
+                source_text=self._REEVAL_SOURCE,
+                source_text_sha256=sha256(
+                    self._REEVAL_SOURCE.encode("utf-8")
+                ).hexdigest(),
+                chunk_fingerprint=f"fp_reeval_{label}",
+                hy_mt2_model="fake-hy",
+                hy_mt2_prompt_version="fake-v1",
+                hy_mt2_input_hash="0" * 64,
+                translated_text=translated_text,
+                translated_text_sha256=sha256(
+                    (translated_text or "x").encode("utf-8")
+                ).hexdigest(),
+                unit_targets=unit_targets or {},
+                status="completed",
+                created_at=NOW,
+            )
+            self.repo.save_translation_chunk(
+                chunk, idempotency_key=f"reeval-chunk-{label}"
+            )
+        integration = ChapterIntegrationResult(
+            integration_id=f"integration_reeval_{label}",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id=artifact.artifact_id,
+            chapter_id=chapter_id,
+            chunk_ids=resolved_chunk_ids,
+            chunk_hashes=[],
+            integrated_chinese_text=translated_text,
+            integrated_text_sha256=sha256(
+                (translated_text or "x").encode("utf-8")
+            ).hexdigest(),
+            flash_model="fake-flash",
+            flash_prompt_version="fake-v1",
+            flash_input_hash="",
+            flash_output_hash="",
+            fidelity_status="blocked",
+            fidelity_failure_codes=list(codes),
+            blocked_raw_provider_output=blocked_raw,
+            status="completed",
+            created_at=NOW,
+        )
+        self.repo.save_chapter_integration_result(
+            integration, idempotency_key=f"reeval-integration-{label}"
+        )
+        return batch
+
+    def _reeval_audit_events(self, item_id: str) -> list[str]:
+        with self.repo._connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT event_type FROM writing_reference_audit_chain
+                WHERE tenant_id=? AND project_id=? AND target_id=?
+                  AND event_type LIKE 'translation_batch_item_fidelity_reeval_%'
+                """,
+                (TENANT_ID, PROJECT_ID, item_id),
+            ).fetchall()
+        return [row["event_type"] for row in rows]
+
+    def test_fidelity_reeval_admits_complete_candidate_with_stale_codes(self) -> None:
+        batch = self._seed_fidelity_blocked_item(
+            "admit",
+            codes=["unit_1:numbered_criterion_cardinality_changed"],
+            translated_text=self._REEVAL_GOOD_TARGET,
+            unit_targets={"1": self._REEVAL_GOOD_TARGET},
+        )
+        summary = self.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager"
+        )
+        self.assertEqual(1, summary["admitted"])
+        self.assertEqual(0, summary["rejected"])
+        self.assertEqual(0, summary["data_missing"])
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        # Eight-field ready-state mirror, exactly as the pipeline writes it.
+        self.assertEqual("candidate_ready", item.generation_status)
+        self.assertEqual("passed", item.fidelity_status)
+        self.assertEqual([], list(item.fidelity_failure_codes))
+        self.assertEqual("", item.blocker_kind)
+        self.assertEqual("", item.blocker_message)
+        self.assertEqual("candidate_ready", item.pipeline_stage)
+        self.assertEqual("翻译完成，可核对并使用", item.pipeline_stage_detail)
+        self.assertIn(
+            "translation_batch_item_fidelity_reeval_admitted",
+            self._reeval_audit_events(item.item_id),
+        )
+
+    def test_fidelity_reeval_reports_missing_chunk_list_as_data_missing(self) -> None:
+        batch = self._seed_fidelity_blocked_item(
+            "no_chunks",
+            codes=["unit_1:numeric_tokens_changed"],
+            chunk_ids=[],
+            persist_chunk=False,
+        )
+        summary = self.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager"
+        )
+        self.assertEqual(0, summary["admitted"])
+        self.assertEqual(0, summary["rejected"])
+        self.assertEqual(1, summary["data_missing"])
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        self.assertEqual("fidelity_blocked", item.generation_status)
+        self.assertIn(
+            "translation_batch_item_fidelity_reeval_data_missing",
+            self._reeval_audit_events(item.item_id),
+        )
+
+    def test_fidelity_reeval_reports_incomplete_unit_targets_as_data_missing(self) -> None:
+        # unit_targets is a JSON OBJECT keyed by unit ordinal; a key set that
+        # does not cover every source unit must fail closed, never admit.
+        batch = self._seed_fidelity_blocked_item(
+            "partial_targets",
+            codes=["unit_1:numeric_tokens_changed"],
+            translated_text=self._REEVAL_GOOD_TARGET,
+            unit_targets={"2": self._REEVAL_GOOD_TARGET},
+        )
+        summary = self.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager"
+        )
+        self.assertEqual(1, summary["data_missing"])
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        self.assertEqual("fidelity_blocked", item.generation_status)
+
+    def test_fidelity_reeval_keeps_item_blocked_when_codes_persist(self) -> None:
+        # A genuine numeric drift still fails the current checker: the item
+        # stays blocked with its historical codes and a rejected audit
+        # records the fresh codes.
+        drifted = self._REEVAL_GOOD_TARGET.replace("14", "21")
+        batch = self._seed_fidelity_blocked_item(
+            "rejected",
+            codes=["unit_1:numbered_criterion_cardinality_changed"],
+            translated_text=drifted,
+            unit_targets={"1": drifted},
+        )
+        summary = self.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager"
+        )
+        self.assertEqual(0, summary["admitted"])
+        self.assertEqual(1, summary["rejected"])
+        self.assertEqual(0, summary["data_missing"])
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        self.assertEqual("fidelity_blocked", item.generation_status)
+        self.assertEqual(
+            ["unit_1:numbered_criterion_cardinality_changed"],
+            list(item.fidelity_failure_codes),
+        )
+        self.assertIn(
+            "translation_batch_item_fidelity_reeval_rejected",
+            self._reeval_audit_events(item.item_id),
+        )
+
+    def test_fidelity_reeval_rejects_running_batch_without_writes(self) -> None:
+        batch = self._seed_fidelity_blocked_item(
+            "running",
+            codes=["unit_1:numeric_tokens_changed"],
+            translated_text=self._REEVAL_GOOD_TARGET,
+            unit_targets={"1": self._REEVAL_GOOD_TARGET},
+        )
+        with self.repo._connect() as connection:
+            connection.execute(
+                """
+                UPDATE writing_reference_translation_batches
+                SET status='running' WHERE tenant_id=? AND project_id=? AND batch_id=?
+                """,
+                (TENANT_ID, PROJECT_ID, batch.batch_id),
+            )
+            connection.commit()
+        with self.assertRaises(WritingReferenceConflictError):
+            self.service.reevaluate_fidelity_blocked(
+                PROJECT_ID, batch.batch_id, "medical_manager"
+            )
+        # Zero writes: the item stays blocked and no audit was appended.
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        self.assertEqual("fidelity_blocked", item.generation_status)
+        self.assertEqual([], self._reeval_audit_events(item.item_id))
+
+    def test_fidelity_reeval_never_rechecks_hy_blocked_fragment(self) -> None:
+        # Guard regression: a Hy-blocked fragment with a chunk list must
+        # stay data_missing — the fragment is not the chapter candidate.
+        batch = self._seed_fidelity_blocked_item(
+            "hy_fragment",
+            codes=["unit_1:numeric_tokens_changed"],
+            translated_text=self._REEVAL_GOOD_TARGET,
+            unit_targets={"1": self._REEVAL_GOOD_TARGET},
+            blocked_raw="片段残留（仅为诊断，不作为完整候选）",
+        )
+        summary = self.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager"
+        )
+        self.assertEqual(1, summary["data_missing"])
+        item = self.service.get(PROJECT_ID, batch.batch_id).items[0]
+        self.assertEqual("fidelity_blocked", item.generation_status)
 
     def test_composite_batch_idempotent_rerun_does_not_duplicate_revision(self) -> None:
         """An idempotent batch rerun must not create a second translation

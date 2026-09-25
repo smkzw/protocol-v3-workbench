@@ -565,6 +565,14 @@ class WritingReferenceUpperLayerExecutionService:
     ) -> None:
         if request.retry_generation == 0:
             return
+        if request.retry_parent_stage_run_id.startswith("synthetic_recovery_"):
+            # 0925 fix: structural recovery allocates a synthetic parent id
+            # that has no stage-run row (0924V2 §5 prepare fallback and the
+            # allocator parentless branch share this shape).  The frozen
+            # lineage checks below can only apply to a real parent run;
+            # synthetic lineage stays document-planning-only via
+            # _validate_request and the stage-run model validators.
+            return
         try:
             parent = self.repository.upper_layer_stage_run(
                 request.project_id,

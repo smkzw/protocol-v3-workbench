@@ -47,6 +47,13 @@ from packages.contracts.workbench_contracts.models import (
 SCHEMA_VERSION = 8
 TENANT_ID = "kangzhe_local"
 RELEVANCE_STATUSES = {"direct_competitor", "indirect_reference", "excluded"}
+# The only upper-layer run statuses that count as idempotent results
+# (86fe7ea).  Must stay literally in sync with the executor's replay
+# fall-through and fingerprint checks in
+# writing_reference_upper_layer_execution.py execute().
+UPPER_LAYER_SUCCESSFUL_RUN_STATUSES = frozenset(
+    {"succeeded", "completed_degraded"}
+)
 
 
 class WritingReferenceRepositoryError(ValueError):
@@ -5515,11 +5522,60 @@ class WritingReferenceRepository:
                 request_hash,
             )
             if replay is not None:
-                connection.rollback()
-                if replay != result_id:
+                if replay == result_id:
+                    connection.rollback()
+                    return
+                row = connection.execute(
+                    """
+                    SELECT status FROM writing_reference_upper_layer_stage_runs
+                    WHERE tenant_id=? AND project_id=? AND stage_run_id=?
+                    """,
+                    (TENANT_ID, project_id, replay),
+                ).fetchone()
+                replayed_status = str(row["status"]) if row is not None else ""
+                if replayed_status in UPPER_LAYER_SUCCESSFUL_RUN_STATUSES:
+                    # Divergent successful results remain a hard conflict.
+                    connection.rollback()
                     raise WritingReferenceConflictError(
                         "upper-layer idempotency result changed"
                     )
+                # 0926 fix: the pointer references a FAILED run, which
+                # 86fe7ea defines as not-a-result — the executor's replay
+                # fall-through re-dispatches a fresh run each round, so the
+                # strict conflict here discarded every fresh result
+                # (including real completed_degraded ones) and re-burned a
+                # model call per retry.  Advance the pointer in-transaction;
+                # the audit chain keeps the advance traceable.
+                connection.execute(
+                    """
+                    UPDATE writing_reference_idempotency
+                    SET result_id=?
+                    WHERE tenant_id=? AND project_id=? AND operation=?
+                      AND idempotency_key=?
+                    """,
+                    (
+                        result_id,
+                        TENANT_ID,
+                        project_id,
+                        "execute_upper_layer_stage",
+                        idempotency_key,
+                    ),
+                )
+                self._append_audit(
+                    connection,
+                    project_id,
+                    "upper_layer_idempotency_pointer_advanced",
+                    result_id,
+                    "upper_layer_executor",
+                    {
+                        "operation": "execute_upper_layer_stage",
+                        "idempotency_key": idempotency_key,
+                        "previous_result_id": replay,
+                        "previous_status": replayed_status,
+                        "new_result_id": result_id,
+                    },
+                )
+                connection.commit()
                 return
             self._record_idempotency(
                 connection,

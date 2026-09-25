@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -174,6 +175,15 @@ def planner_structural_failure(code: str) -> UpperLayerAdapterResult:
     )
 
 
+def terminal_failure() -> UpperLayerAdapterResult:
+    """A non-retryable, non-escalatable failure: persists as one failed run."""
+    return UpperLayerAdapterResult(
+        response_model=DEFAULT_UPPER_LAYER_MODEL,
+        status="failed_terminal",
+        failure_code="product_ai_provider_transient",
+    )
+
+
 def test_capabilities_are_server_owned_and_corpus_support_is_honest() -> None:
     capabilities = WritingReferenceUpperLayerExecutionService.capabilities()
 
@@ -222,6 +232,109 @@ def test_flash_success_is_idempotent_hash_verified_and_survives_restart(
     assert execution["output_payload"] == first.selected_output
     assert len(execution["execution_fingerprint"]) == 64
     assert restarted.health_report()["schema_version"] == 8
+
+
+def test_record_advances_stale_failed_pointer_to_fresh_result(
+    repository: WritingReferenceRepository,
+) -> None:
+    """A pointer left at a FAILED run is not a result (86fe7ea): recording a
+    fresh run must advance the pointer instead of raising, so a retry round's
+    real result (even completed_degraded) is kept and the next replay
+    converges without another model call."""
+    factory = ScriptedAdapterFactory(
+        **{
+            DEFAULT_UPPER_LAYER_MODEL: [
+                terminal_failure(),
+                success(DEFAULT_UPPER_LAYER_MODEL),
+            ]
+        }
+    )
+    service = WritingReferenceUpperLayerExecutionService(repository, factory)
+    request = planning_request()
+    scoped_key = service._route_scoped_idempotency_key(request.idempotency_key)
+
+    failed = service.execute(request)
+    assert failed.selected_output is None
+
+    recovered = service.execute(request)
+
+    assert recovered.selected_run.status == "succeeded"
+    with repository._connect() as connection:
+        pointer = connection.execute(
+            """
+            SELECT result_id FROM writing_reference_idempotency
+            WHERE tenant_id='kangzhe_local' AND project_id=?
+              AND operation='execute_upper_layer_stage' AND idempotency_key=?
+            """,
+            (request.project_id, scoped_key),
+        ).fetchone()
+        audit = connection.execute(
+            """
+            SELECT detail_json FROM writing_reference_audit_chain
+            WHERE tenant_id='kangzhe_local' AND project_id=?
+              AND event_type='upper_layer_idempotency_pointer_advanced'
+            """,
+            (request.project_id,),
+        ).fetchall()
+    assert pointer["result_id"] == recovered.latest_run.stage_run_id
+    assert len(audit) == 1
+    assert json.loads(audit[0]["detail_json"])["previous_result_id"] == (
+        failed.latest_run.stage_run_id
+    )
+
+    # The advanced pointer makes the next execution a true replay.
+    replayed = service.execute(request)
+    assert replayed.selected_run.stage_run_id == recovered.latest_run.stage_run_id
+    assert factory.models_called() == [
+        DEFAULT_UPPER_LAYER_MODEL,
+        DEFAULT_UPPER_LAYER_MODEL,
+    ]
+
+
+def test_record_still_rejects_changed_result_for_succeeded_run(
+    repository: WritingReferenceRepository,
+) -> None:
+    """A pointer at a SUCCEEDED run stays a strict result: recording a
+    different result_id must keep raising the conflict and must not mutate
+    the pointer (concurrent double-success guard)."""
+    factory = ScriptedAdapterFactory(
+        **{DEFAULT_UPPER_LAYER_MODEL: [success(DEFAULT_UPPER_LAYER_MODEL)]}
+    )
+    service = WritingReferenceUpperLayerExecutionService(repository, factory)
+    request = planning_request()
+    scoped_key = service._route_scoped_idempotency_key(request.idempotency_key)
+    first = service.execute(request)
+    assert first.selected_run.status == "succeeded"
+
+    with repository._connect() as connection:
+        row = connection.execute(
+            """
+            SELECT result_id, request_hash FROM writing_reference_idempotency
+            WHERE tenant_id='kangzhe_local' AND project_id=?
+              AND operation='execute_upper_layer_stage' AND idempotency_key=?
+            """,
+            (request.project_id, scoped_key),
+        ).fetchone()
+    assert row["result_id"] == first.latest_run.stage_run_id
+
+    with pytest.raises(WritingReferenceConflictError):
+        repository.record_upper_layer_execution_idempotency(
+            request.project_id,
+            idempotency_key=scoped_key,
+            request_hash=str(row["request_hash"]),
+            result_id="wref_ulrun_" + "0" * 24,
+        )
+
+    with repository._connect() as connection:
+        after = connection.execute(
+            """
+            SELECT result_id FROM writing_reference_idempotency
+            WHERE tenant_id='kangzhe_local' AND project_id=?
+              AND operation='execute_upper_layer_stage' AND idempotency_key=?
+            """,
+            (request.project_id, scoped_key),
+        ).fetchone()
+    assert after["result_id"] == first.latest_run.stage_run_id
 
 
 def test_flash_transient_errors_retry_flash_only(
