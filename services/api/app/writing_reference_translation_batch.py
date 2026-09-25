@@ -2503,7 +2503,10 @@ class WritingReferenceTranslationBatchService:
                 )
                 ordinary = {
                     item.item_id: {
-                        "document_plan_retry_generation": 0,
+                        # Each recovery round gets a unique generation derived
+                        # from the current retry_generation parameter, so the
+                        # stage_run_id is distinct across recovery rounds.
+                        "document_plan_retry_generation": retry_generation,
                         "document_plan_retry_parent_stage_run_id": "",
                         "document_plan_retry_source_item_id": "",
                     }
