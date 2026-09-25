@@ -2501,23 +2501,30 @@ class WritingReferenceTranslationBatchService:
                     len(ordinary_candidates),
                     known_parents,
                 )
-                ordinary = {
-                    item.item_id: {
-                        # Each recovery round gets a unique generation derived
-                        # from the current retry_generation parameter, so the
-                        # stage_run_id is distinct across recovery rounds.
+                ordinary = {}
+                # 0924V2 §5: all three retry fields must be set together to
+                # satisfy the item model's coexistence validation. Use a
+                # SINGLE synthetic parent per artifact group so the
+                # by_parent grouping keeps items together for recovery.
+                synthetic_parent = f"synthetic_recovery_{retry_generation}"
+                for item in ordinary_candidates:
+                    ordinary[item.item_id] = {
                         "document_plan_retry_generation": retry_generation,
-                        "document_plan_retry_parent_stage_run_id": "",
-                        "document_plan_retry_source_item_id": "",
+                        "document_plan_retry_parent_stage_run_id": synthetic_parent,
+                        "document_plan_retry_source_item_id": item.item_id,
                     }
-                    for item in ordinary_candidates
-                }
             by_parent: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
             for item_id, lineage in ordinary.items():
                 by_parent[
                     lineage["document_plan_retry_parent_stage_run_id"]
                 ][item_id] = lineage
             for parent_id, item_lineages in sorted(by_parent.items()):
+                # Synthetic recovery parents (created by prepare's fallback)
+                # don't exist as stage runs — allocate them directly without
+                # a DB lookup, just like the empty-parent path.
+                if parent_id.startswith("synthetic_recovery_"):
+                    allocated.update(item_lineages)
+                    continue
                 # Some early production attempts persisted a structural
                 # planner failure on the batch item before the durable
                 # upper-layer stage row was written.  The retry must not
