@@ -1,0 +1,18 @@
+{
+  "test": "T16/T17 桌面 Office 编辑往返（真实 GUI computer use，非 AppleScript）",
+  "date": "2026-09-25",
+  "project": "proj_user_97189da36a75 (MW-II-00990781 合成药M8 RRMS II期)",
+  "document": "研究方案 草稿预览导出件 (42页, 25076字)",
+  "chain": [
+    {"step": "UI预览Word下载", "result": "PASS", "evidence": "suggested=MW-II-00990781-DRAFT_草案_草稿预览.docx; sha256=d6cf304dd01b7f9883f532ce055f964204d70d57f4e90e5f9e47f60319995c14; 与导出产物存储字节一致"},
+    {"step": "桌面Word打开", "result": "PASS", "evidence": "Word 16.x 打开正常, 42页渲染完整, 自动保存=关(本地模式)"},
+    {"step": "正文编辑(第10页 方案概要-关键次要终点)", "result": "PASS", "evidence": "查找定位'治疗24周期间无临床复发的受试者比例'并原位替换为'治疗24周期间无临床复发的受试者比例（T17桌面编辑0925）', 截图确认"},
+    {"step": "保存(Cmd+S)", "result": "PASS", "evidence": "无保存对话框; 编辑后 sha256=399a5dc7140c44d12695980c7a943d32ed44843246e3dae981585e8d9b490a30; 字数25076→25084"},
+    {"step": "关闭→重开", "result": "PASS", "evidence": "Cmd+W无未保存提示; 重开后字数25084; 查找'T17桌面编辑0925'命中第10页正文, 截图确认"},
+    {"step": "结构完整性", "result": "PASS", "evidence": "zip testzip=None(25 entries); document.xml minidom解析合法; 编辑句以合并run文本完整存在"},
+    {"step": "身份字段保留", "result": "PASS", "evidence": "word/settings.xml w15:docId 保留; customXml/item1.xml(书目Sources)保留; MW-II-00990781 方案编号保留"}
+  ],
+  "sha256": {"before": "d6cf304dd01b7f9883f532ce055f964204d70d57f4e90e5f9e47f60319995c14", "after_edit": "399a5dc7140c44d12695980c7a943d32ed44843246e3dae981585e8d9b490a30"},
+  "files": {"ui_download": "t16_ui_download.docx", "edited": "t16_export_v1.docx"},
+  "notes": "方案文档无re-ingest特性(设计如此): references/documents/upload+ingest属参考文献链(竞品文献), 方案闭环=Office往返身份保留。正文编辑腿此前R15因用户占用桌面中止, 本次经用户明确授权由computer use完成。"
+}
