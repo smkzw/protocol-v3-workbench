@@ -138,3 +138,13 @@
 - 后端 96946 / 前端 96947（指纹 api-f74375aa2c3f52c7 一致）
 - MTPLX 8002 = 用户已退出（分诊/全文类操作前须重开）；oMLX 8001 = 翻译模型驻留
 - NEXT_GATE：①实现"关联原 job 的新恢复尝试"语义后派发 26 项 ②重开 MTPLX ③T16/T17 ④R16 集中验收含 T18
+
+---
+
+## 0924V2 第二批执行+基础设施修复（0925 深夜追加）
+
+1. **oMLX 恢复完整链路**：用户授权重启 oMLX（改听 8001）→ 三 profile 对齐 rev2 → 翻译模型加载成功（200 OK/0.5s）。用户退出 MTPLX 释放 30GB 内存解决两模型互斥。
+2. **26 项收敛突破**：红rive（1a013b4 版本 repository 层 redrive 块）恢复后，"仅重试失败项" 实际重新派发规划器+翻译，stage run 16 行新记录落库，25→26 项中 1 项成功转 candidate_ready。
+3. **剩余待收敛**：26 项中大部分依赖 MTPLX 重启后的稳定输出（当前 MTPLX 已退出）。重开 MTPLX 后再做一轮 retry 即可。
+4. **教训（关键）**：写 repository 层 UPDATE 前，先查该表是否有 immutability trigger（writing_reference_upper_layer_stage_runs 有 BEFORE UPDATE 触发器直接抛 immutable 错误）。0924V2 审阅强调"stage runs are immutable"是数据库级合同。
+5. **四状态**：process=完成本轮；test_run=T15 PASSED + 翻译收敛推进中；business_flow=入口B链路完整可用（初稿已产出）；artifact_validation=DOCX 27k字预览件归档。
