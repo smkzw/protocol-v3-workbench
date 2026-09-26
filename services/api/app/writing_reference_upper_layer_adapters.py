@@ -168,8 +168,9 @@ class UpperLayerRuntimeRoute:
     provider: str
     transport: str
     model: str
-    expected_response_model: str
-    deployment_profile: str
+    # Empty means "not pinned": the adapter then expects the requested model.
+    expected_response_model: str = ""
+    deployment_profile: str = ""
 
 
 def upper_layer_runtime_route_from_env(
@@ -200,9 +201,13 @@ def build_production_product_ai_provider_factory(
     provider_builder: Callable[[dict[str, str]], Any] = configured_ai_provider_from_env,
 ) -> Callable[[str], Any]:
     frozen_env = dict(runtime_ai_env() if env is None else env)
-    route = upper_layer_runtime_route_from_env(frozen_env)
 
     def _factory(model: str) -> Any:
+        # Route resolution is deferred to invocation time like the profile and
+        # api-key checks below: an unconfigured product-AI route must surface
+        # as a retryable run failure through the service's transient handler,
+        # never as a factory-construction crash.
+        route = upper_layer_runtime_route_from_env(frozen_env)
         if model != route.model:
             raise ValueError("upper-layer model differs from active product AI route")
         if route.deployment_profile not in {
@@ -808,6 +813,12 @@ class DeepSeekUpperLayerAdapter:
         ):
             diagnostics = dict(getattr(exc, "diagnostics", {}) or {})
             status = int(diagnostics.get("http_status") or 0)
+            if not status:
+                # Structured diagnostics are absent for some raise sites;
+                # the gateway message still carries "HTTP <status>".
+                status_match = re.search(r"http (\d{3})", message, re.IGNORECASE)
+                if status_match:
+                    status = int(status_match.group(1))
             return self._terminal(
                 {
                     400: "product_ai_http_400_invalid_request",

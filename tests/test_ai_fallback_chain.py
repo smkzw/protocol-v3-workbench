@@ -18,6 +18,9 @@ from packages.contracts.workbench_contracts import (  # noqa: E402
     AiTaskSourceRef,
 )
 from services.api.app.ai_execution_policy import AiExecutionPolicyResolver  # noqa: E402
+from services.api.app.ai_role_runtime_settings import (  # noqa: E402
+    INDEPENDENT_AI_MTPLX_MODEL,
+)
 from services.api.app.ai_gateway import AiProviderRuntimeError  # noqa: E402
 from services.api.app.ai_runtime_settings import (  # noqa: E402
     AiFallbackRoute,
@@ -34,7 +37,9 @@ from services.api.app.demo_repository import DemoRepository  # noqa: E402
 
 
 PROJECT_ID = "proj_fallback_contract"
-MTPLX_MODEL = "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed"
+# The served MTPLX API id per the approved direct route
+# (_MTPLX_QWEN38_SPEED_POLICY); the HF-style directory name is not accepted.
+MTPLX_MODEL = INDEPENDENT_AI_MTPLX_MODEL
 
 
 def _profile(profile_id: str, provider: str, base_url: str, model: str, effort: str):
@@ -153,7 +158,7 @@ class AiFallbackChainTests(unittest.TestCase):
         role_path = root / "ai_role_bindings.json"
         store = AiRuntimeSettingsStore(settings_path)
         primary = _profile(
-            "independent_ai__mtplx", "mtplx", "http://127.0.0.1:11234/v1", MTPLX_MODEL, "medium"
+            "independent_ai__mtplx", "mtplx", "http://127.0.0.1:8002/v1", MTPLX_MODEL, "medium"
         )
         backup = _profile(
             "independent_ai__opencode", "opencode-go", "https://opencode.ai/zen/go/v1", "deepseek-v4.1-flash", "max"

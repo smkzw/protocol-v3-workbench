@@ -85,6 +85,14 @@ class _PreparationService:
         assert request.snapshot_id == SNAPSHOT_ID
         return self.accepted
 
+    def admit_next_stage(self, project_id: str, batch_id: str, request):
+        """Match the real service interface (bounded stage admission).
+
+        These scenarios carry no deferred items, so the pipeline must never
+        reach stage admission here.
+        """
+        raise AssertionError("stage admission is not expected in this scenario")
+
     def run_pending(
         self,
         project_id: str,

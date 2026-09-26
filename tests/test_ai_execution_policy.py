@@ -17,8 +17,10 @@ from packages.contracts.workbench_contracts import (
 from services.api.app.ai_execution_policy import (
     AiExecutionPolicyDenied,
     AiExecutionPolicyResolver,
+    MTPLX_LOCAL_BASE_URL,
     TASK_AI_ROUTE_POLICIES,
 )
+from services.api.app.ai_role_runtime_settings import INDEPENDENT_AI_MTPLX_MODEL
 from services.api.app.ai_gateway import AiPromptEnvelope, AiTaskType
 from services.api.app.ai_task_runner import AiTaskRunner, AiTaskStore, public_ai_run
 from services.api.app.demo_repository import DemoRepository
@@ -199,9 +201,11 @@ class AiExecutionPolicyTests(unittest.TestCase):
             policy = TASK_AI_ROUTE_POLICIES[task_type][0]
             self.assertEqual("mtplx", policy.provider_name)
             self.assertEqual("openai_compatible", policy.transport_name)
-            self.assertEqual("http://127.0.0.1:11234/v1", policy.base_url)
+            self.assertEqual(MTPLX_LOCAL_BASE_URL, policy.base_url)
             self.assertEqual(
-                "Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+                # The served API id (INDEPENDENT_AI_MTPLX_MODEL), not the
+                # HF-style directory name.
+                INDEPENDENT_AI_MTPLX_MODEL,
                 next(iter(policy.allowed_models)),
             )
 

@@ -1,0 +1,53 @@
+{
+  "round": "0926V1",
+  "source_commit": "53feb06fc1402df820a6dba5d8b6e3fa15d50437",
+  "repository_modified": false,
+  "remote_head_rechecked_unchanged": true,
+  "local_harness": {
+    "python": "3.13.5",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "observations_total": 23,
+    "numeric_cases": 12,
+    "numeric_counterexamples": 7,
+    "preparation_cases": 3,
+    "reeval_structural_cases": 3,
+    "ui_message_cases": 5
+  },
+  "executed": [
+    {
+      "command": "python probes/run_numeric_probes.py",
+      "scope": "source-derived numeric subcheck with explicit fixture tokens, not entire fidelity function",
+      "results": "evidence/numeric_probe_results.json"
+    },
+    {
+      "command": "python probes/run_preparation_probe.py",
+      "scope": "source-derived create prefix with mocked IO; includes one counterfactual single-fix branch",
+      "results": "evidence/preparation_probe_results.json"
+    },
+    {
+      "command": "python probes/run_reeval_probes.py",
+      "scope": "in-memory SQLite selection and dataflow; models/checker stubbed; not production contract acceptance",
+      "results": "evidence/reeval_probe_results.json"
+    },
+    {
+      "command": "node probes/ui_message_excerpt.mjs",
+      "scope": "pure message function, not browser",
+      "results": "evidence/ui_message_probe_results.json"
+    }
+  ],
+  "not_run": [
+    "full repository pytest",
+    "real production service or live SQLite",
+    "real model/API calls",
+    "browser runtime/visual screenshot inspection",
+    "user Mac/Word",
+    "DOCX binary validation",
+    "proposed_repo_numeric_regressions.py against repository"
+  ],
+  "limitations": [
+    "GitHub read-only targeted source audit, not whole-repository execution",
+    "Direct full repository retrieval failed DNS; connector reads used",
+    "Probe exit 0 only means observation script completed, not that product or requirement passed",
+    "Reported live-state counts and Office results are attributed to source authors, not independently observed here"
+  ]
+}

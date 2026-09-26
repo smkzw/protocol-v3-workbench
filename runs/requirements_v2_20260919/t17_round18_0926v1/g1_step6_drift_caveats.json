@@ -1,0 +1,623 @@
+{
+ "format": "g1_step6_drift_caveats/1",
+ "sampled_at": "2026-09-26T10:24:24Z",
+ "live_head": "623ff21e487574177b310290c2c2aff6b00d33ac",
+ "export_ref": "53feb06fc1402df820a6dba5d8b6e3fa15d50437 (git archive, /tmp/headcheck_0926v1)",
+ "method": "one representative per family run in BOTH live repo and export tree (g1_step6_run_drift_samples.py); class from live/export verdicts + fingerprint match",
+ "class_legend": {
+  "A_env_content_drift": "fails in both envs; failure output content differs (repo content/runtime data paths) -> fingerprint drift; NOT a G1 face (nodeid already in 53feb06 baseline)",
+  "B_order_pollution_standalone_green": "passes standalone in live AND export; fails only in full-suite ordering (pollution/shared state); NOT a G1 face",
+  "C_cross_run_drift_fp_stable": "fails both envs with identical fingerprint now, differing from capture-time fingerprint -> time-sensitive output; NOT a G1 face",
+  "D_mixed": "mixed/other"
+ },
+ "families": {
+  "tests/protocol_v3/test_chapter_batch* (cli subprocess family)": {
+   "class": "A_env_content_drift",
+   "size": 6,
+   "representative": "tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "a5be2683fd80"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "f5479329e95e"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_ai_execution_policy.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 3,
+   "representative": "tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "3e67ac85d3dc"
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_ai_fallback_chain.py": {
+   "class": "A_env_content_drift",
+   "size": 5,
+   "representative": "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "7d9421c3e6b0"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "a27a7ae55786"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_medical_writing_author_freeze_backend.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 1,
+   "representative": "tests/test_medical_writing_author_freeze_backend.py::test_freeze_api_replaces_legacy_approval_route",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_authoring_journey.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 1,
+   "representative": "tests/test_medical_writing_authoring_journey.py::MedicalWritingAuthoringJourneyApiTests::test_api_exposes_locked_product_decisions_and_resumable_journey",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_candidate_generation_progress.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 1,
+   "representative": "tests/test_medical_writing_candidate_generation_progress.py::CandidateGenerationProgressTests::test_retry_reuses_the_same_progress_field_contract",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_content_quality_api.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 1,
+   "representative": "tests/test_medical_writing_content_quality_api.py::TestMedicalWritingContentQualityApi::test_short_reason_is_rejected_without_changing_state",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_document_export_api.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 9,
+   "representative": "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_generation_context_v2.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 10,
+   "representative": "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_greenfield_runtime.py": {
+   "class": "A_env_content_drift",
+   "size": 4,
+   "representative": "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "c7c6838d6969"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "7106ee5c38da"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_medical_writing_legacy_authoring_migration.py": {
+   "class": "A_env_content_drift",
+   "size": 1,
+   "representative": "tests/test_medical_writing_legacy_authoring_migration.py::test_legacy_bootstrap_requires_warning_acknowledgement_and_override",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "7cfaa048a5c2"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "edc4fffae553"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_medical_writing_revision_durable.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 10,
+   "representative": "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_synopsis_import.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 3,
+   "representative": "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_medical_writing_table_ai_revision.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 2,
+   "representative": "tests/test_medical_writing_table_ai_revision.py::MedicalWritingTableAiRevisionTests::test_revision_service_submits_server_normalized_cell_context_to_independent_ai",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_monitoring_batch_api.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 2,
+   "representative": "tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_api_intake_state_chain_and_batch_list",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_monitoring_real_loop_evidence_semantics.py": {
+   "class": "A_env_content_drift",
+   "size": 2,
+   "representative": "tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "58101f83f981"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "4bd94e048d73"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_monitoring_real_loop_manifest_replay.py": {
+   "class": "A_env_content_drift",
+   "size": 7,
+   "representative": "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "13fbb28bd64f"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "08a2141fe978"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_monitoring_real_loop_semantics_binding.py": {
+   "class": "A_env_content_drift",
+   "size": 8,
+   "representative": "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "4fad215de496"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "e2a451cf769b"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_monitoring_real_project_intake_gate.py": {
+   "class": "B_order_pollution_standalone_green",
+   "size": 2,
+   "representative": "tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_file_intake_still_registers_validates_and_executes_generic_service",
+   "live": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "export": {
+    "verdict": "PASSED",
+    "fingerprint": null
+   },
+   "fingerprint_match": null
+  },
+  "tests/test_monitoring_structure_profile_contract.py": {
+   "class": "A_env_content_drift",
+   "size": 7,
+   "representative": "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "83e669994834"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "e15d1b28b4df"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_monitoring_structure_shape_matrix.py": {
+   "class": "A_env_content_drift",
+   "size": 6,
+   "representative": "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "40af1e1e9bdf"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "3313379a1110"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_mw_r5_a1_preparation_progress.py": {
+   "class": "A_env_content_drift",
+   "size": 1,
+   "representative": "tests/test_mw_r5_a1_preparation_progress.py::test_sync_preparation_persists_and_heartbeats_real_scope_and_progress",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "035df85ef093"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "83588a19c081"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_phase1_corpus_source_boundaries.py": {
+   "class": "A_env_content_drift",
+   "size": 8,
+   "representative": "tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "0d6897125b17"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "fde596484991"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_source_registry.py": {
+   "class": "A_env_content_drift",
+   "size": 4,
+   "representative": "tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "837f8b968594"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "73ef3e91d995"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_sqlite_runtime_integration.py": {
+   "class": "A_env_content_drift",
+   "size": 5,
+   "representative": "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "b4fb679ce85b"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "37937c58b1df"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_sqlite_runtime_real_rux.py": {
+   "class": "A_env_content_drift",
+   "size": 1,
+   "representative": "tests/test_sqlite_runtime_real_rux.py::SqliteRuntimeRealRuxTests::test_real_listing_and_protocol_risk_survives_full_transaction_and_restart",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "63918ee34a79"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "41c1f7953b3b"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_synopsis_async_real_chunks.py": {
+   "class": "C_cross_run_drift_fp_stable",
+   "size": 7,
+   "representative": "tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "853c79dbac2d"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "853c79dbac2d"
+   },
+   "fingerprint_match": true
+  },
+  "tests/test_vlm_gateway.py": {
+   "class": "A_env_content_drift",
+   "size": 1,
+   "representative": "tests/test_vlm_gateway.py::VlmGatewayTests::test_default_transport_ignores_proxy_and_blocks_redirects",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "e8c06cd0f2cd"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "349b0566edc8"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_writing_reference_preparation_batch.py": {
+   "class": "A_env_content_drift",
+   "size": 17,
+   "representative": "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "475ab62314a1"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "0fefaae74a0d"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_writing_reference_upper_layer_execution.py": {
+   "class": "A_env_content_drift",
+   "size": 3,
+   "representative": "tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "ce6c626e1a30"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "ca44b534b48b"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_writing_reference_upper_layer_production_wiring.py": {
+   "class": "A_env_content_drift",
+   "size": 1,
+   "representative": "tests/test_writing_reference_upper_layer_production_wiring.py::test_startup_recovery_resumes_expired_running_but_not_failed_retryable",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "fb4f5bd554f0"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "05f05241a5c5"
+   },
+   "fingerprint_match": false
+  },
+  "tests/test_omlx_workload_gate_contract.py": {
+   "class": "A_env_content_drift",
+   "size": 18,
+   "representative": "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model",
+   "live": {
+    "verdict": "FAILED",
+    "fingerprint": "cb65fef68cdd"
+   },
+   "export": {
+    "verdict": "FAILED",
+    "fingerprint": "ad1f355de102"
+   },
+   "fingerprint_match": false
+  }
+ },
+ "nodeid_caveats": {
+  "tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/protocol_v3/test_chapter_batch4.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/protocol_v3/test_chapter_batch5.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/protocol_v3/test_chapter_batch6.py::test_assembly_cli_is_stdout_only": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/protocol_v3/test_chapter_batch7.py::test_assembly_and_partial_lint_cli_roundtrip": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/protocol_v3/test_chapter_batch8.py::test_assembly_and_partial_lint_cli_roundtrip": "A_env_content_drift; family=tests/protocol_v3/test_chapter_batch* (cli subprocess family); representative=tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access": "B_order_pollution_standalone_green; family=tests/test_ai_execution_policy.py; representative=tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_medical_writing_defaults_prefer_local_mtplx_qwen": "B_order_pollution_standalone_green; family=tests/test_ai_execution_policy.py; representative=tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_registered_source_execution_api_fails_closed_before_runner": "B_order_pollution_standalone_green; family=tests/test_ai_execution_policy.py; representative=tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs": "A_env_content_drift; family=tests/test_ai_fallback_chain.py; representative=tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_content_validation_failure_does_not_change_model": "A_env_content_drift; family=tests/test_ai_fallback_chain.py; representative=tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_disabled_first_fallback_is_skipped": "A_env_content_drift; family=tests/test_ai_fallback_chain.py; representative=tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_ineligible_first_fallback_is_skipped_and_second_profile_runs": "A_env_content_drift; family=tests/test_ai_fallback_chain.py; representative=tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_registered_request_uses_same_fallback_chain": "A_env_content_drift; family=tests/test_ai_fallback_chain.py; representative=tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_author_freeze_backend.py::test_freeze_api_replaces_legacy_approval_route": "B_order_pollution_standalone_green; family=tests/test_medical_writing_author_freeze_backend.py; representative=tests/test_medical_writing_author_freeze_backend.py::test_freeze_api_replaces_legacy_approval_route; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_authoring_journey.py::MedicalWritingAuthoringJourneyApiTests::test_api_exposes_locked_product_decisions_and_resumable_journey": "B_order_pollution_standalone_green; family=tests/test_medical_writing_authoring_journey.py; representative=tests/test_medical_writing_authoring_journey.py::MedicalWritingAuthoringJourneyApiTests::test_api_exposes_locked_product_decisions_and_resumable_journey; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_candidate_generation_progress.py::CandidateGenerationProgressTests::test_retry_reuses_the_same_progress_field_contract": "B_order_pollution_standalone_green; family=tests/test_medical_writing_candidate_generation_progress.py; representative=tests/test_medical_writing_candidate_generation_progress.py::CandidateGenerationProgressTests::test_retry_reuses_the_same_progress_field_contract; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_content_quality_api.py::TestMedicalWritingContentQualityApi::test_short_reason_is_rejected_without_changing_state": "B_order_pollution_standalone_green; family=tests/test_medical_writing_content_quality_api.py; representative=tests/test_medical_writing_content_quality_api.py::TestMedicalWritingContentQualityApi::test_short_reason_is_rejected_without_changing_state; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_async_document_export_download_preserves_docx_metadata_headers": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_async_document_export_runs_through_shared_status_and_download_routes": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_greenfield_export_passes_authoritative_cover_facts_to_exporter": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_document_index_route_returns_server_resolved_targets": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_final_export_rejects_any_applicable_section_without_current_freeze": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_final_export_uses_freeze_snapshots_and_rejects_payload_tampering": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_template_catalog_and_instantiate_status_boundaries": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_new_promoted_templates_instantiate_through_http_and_persist": "B_order_pollution_standalone_green; family=tests/test_medical_writing_document_export_api.py; representative=tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_post_ai_pre_commit_drift_creates_no_thread": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_route_identity_mismatch_fails_closed_without_thread_or_audit": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_route_switch_after_creation_fails_non_retryable_before_ai": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_service_atomic_replay_skips_pre_apply_context_and_returns_snapshot": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_success_persists_exact_suggestion_lineage": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExactSourceBindingDurableTests::test_exact_span_or_validation_change_fails_adoption": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExactSourceBindingDurableTests::test_first_use_durable_submit_and_execute_no_self_drift": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExactSourceBindingDurableTests::test_rewrite_binding_stays_on_parent_exact_source": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_generation_context_v2.py::ExactSourceBindingDurableTests::test_unrelated_paragraph_registration_does_not_change_digest_or_adoption": "B_order_pollution_standalone_green; family=tests/test_medical_writing_generation_context_v2.py; representative=tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading": "A_env_content_drift; family=tests/test_medical_writing_greenfield_runtime.py; representative=tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_draft_cannot_overwrite_later_manual_text": "A_env_content_drift; family=tests/test_medical_writing_greenfield_runtime.py; representative=tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_greenfield_ai_revision_uses_versioned_internal_source_and_stales_on_decision_change": "A_env_content_drift; family=tests/test_medical_writing_greenfield_runtime.py; representative=tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_greenfield_reuses_working_copy_approval_and_docx_export": "A_env_content_drift; family=tests/test_medical_writing_greenfield_runtime.py; representative=tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_legacy_authoring_migration.py::test_legacy_bootstrap_requires_warning_acknowledgement_and_override": "A_env_content_drift; family=tests/test_medical_writing_legacy_authoring_migration.py; representative=tests/test_medical_writing_legacy_authoring_migration.py::test_legacy_bootstrap_requires_warning_acknowledgement_and_override; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_true_after_ai_no_business_write": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_clean_success_then_retry_once_after_cancel_path": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_takeover_then_old_owner_late_commit_blocked": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierRewriteTests::test_rewrite_cancel_after_ai_does_not_mutate_seed": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierRewriteTests::test_rewrite_success_appends_new_turn_once": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::SyncRewriteSnapshotTests::test_sync_rewrite_rejects_save_after_ai_before_diff_projection": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::RealConcurrencyAndRoutingTests::test_successful_execute_routes_and_isolates_repos": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::ThreadLocalRepoSafetyTests::test_prepare_does_not_swap_self_repo": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_revision_durable.py::ThreadLocalRepoSafetyTests::test_rewrite_prepare_does_not_mutate_repo_before_commit": "B_order_pollution_standalone_green; family=tests/test_medical_writing_revision_durable.py; representative=tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict": "B_order_pollution_standalone_green; family=tests/test_medical_writing_synopsis_import.py; representative=tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_identical_replay_returns_same_job": "B_order_pollution_standalone_green; family=tests/test_medical_writing_synopsis_import.py; representative=tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_result_unavailable_before_readiness": "B_order_pollution_standalone_green; family=tests/test_medical_writing_synopsis_import.py; representative=tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_table_ai_revision.py::MedicalWritingTableAiRevisionTests::test_revision_service_submits_server_normalized_cell_context_to_independent_ai": "B_order_pollution_standalone_green; family=tests/test_medical_writing_table_ai_revision.py; representative=tests/test_medical_writing_table_ai_revision.py::MedicalWritingTableAiRevisionTests::test_revision_service_submits_server_normalized_cell_context_to_independent_ai; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_table_ai_revision.py::RealMedicalWritingTableAiRevisionTests::test_rux_and_d001_table_cells_reach_independent_ai_with_registered_original_evidence": "B_order_pollution_standalone_green; family=tests/test_medical_writing_table_ai_revision.py; representative=tests/test_medical_writing_table_ai_revision.py::MedicalWritingTableAiRevisionTests::test_revision_service_submits_server_normalized_cell_context_to_independent_ai; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_api_intake_state_chain_and_batch_list": "B_order_pollution_standalone_green; family=tests/test_monitoring_batch_api.py; representative=tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_api_intake_state_chain_and_batch_list; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_verify_derived_snapshot_api_is_auditable_and_path_free": "B_order_pollution_standalone_green; family=tests/test_monitoring_batch_api.py; representative=tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_api_intake_state_chain_and_batch_list; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted": "A_env_content_drift; family=tests/test_monitoring_real_loop_evidence_semantics.py; representative=tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_mapping_result_hash_is_bound_to_current_manifest": "A_env_content_drift; family=tests/test_monitoring_real_loop_evidence_semantics.py; representative=tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_missing_runtime_row_is_allowed_only_when_explicit": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_payload_mutation_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_persisted_report_hash_mutation_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_persisted_row_hash_mutation_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_required_source_bytes_missing_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_source_bytes_mutation_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_manifest_replay.py; representative=tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_current_semantic_snapshot_matches_current_manifest": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_derived_status_mutation_blocks_binding": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_manifest_report_hash_mutation_blocks_binding": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_mapping_result_hash_mutation_blocks_binding": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_missing_gate_or_invalid_shape_fails_closed": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_snapshot_mutation_does_not_change_original_pair": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_snapshot_source_hash_mutation_blocks_binding": "A_env_content_drift; family=tests/test_monitoring_real_loop_semantics_binding.py; representative=tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_file_intake_still_registers_validates_and_executes_generic_service": "B_order_pollution_standalone_green; family=tests/test_monitoring_real_project_intake_gate.py; representative=tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_file_intake_still_registers_validates_and_executes_generic_service; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_json_intake_still_executes_generic_service": "B_order_pollution_standalone_green; family=tests/test_monitoring_real_project_intake_gate.py; representative=tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_file_intake_still_registers_validates_and_executes_generic_service; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-processing_flag_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-sheet_row_count_sum_mismatch]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-source_filename_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-domain_group_sheet_unknown]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-classification_overlap]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-project_id_duplicate]": "A_env_content_drift; family=tests/test_monitoring_structure_profile_contract.py; representative=tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-project_set_incomplete]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-domain_unknown]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-identity_status_mismatch]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-source_filename_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-reference_invalid]": "A_env_content_drift; family=tests/test_monitoring_structure_shape_matrix.py; representative=tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_mw_r5_a1_preparation_progress.py::test_sync_preparation_persists_and_heartbeats_real_scope_and_progress": "A_env_content_drift; family=tests/test_mw_r5_a1_preparation_progress.py; representative=tests/test_mw_r5_a1_preparation_progress.py::test_sync_preparation_persists_and_heartbeats_real_scope_and_progress; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_validator_rejects_locator_page_without_source_overlap": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_executor_candidate_packet_is_complete_current_and_hash_bound": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_production_runner_requires_explicit_boundary_opt_in": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_finalization_instruction_carries_both_untrusted_candidates": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_flash_translation_contract_is_distinct_from_pro_contract": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_biologic_selection_reuses_current_translation_contract": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_phase1_corpus_source_boundaries.py::test_flash_correction_instruction_is_source_authority_and_quality_specific": "A_env_content_drift; family=tests/test_phase1_corpus_source_boundaries.py; representative=tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths": "A_env_content_drift; family=tests/test_source_registry.py; representative=tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_source_registry.py::SourceRegistryTests::test_source_api_exposes_sanitized_validation_history_for_override_audit": "A_env_content_drift; family=tests/test_source_registry.py; representative=tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_source_registry.py::SourceRegistryTests::test_source_api_marks_only_latest_stable_role_as_current": "A_env_content_drift; family=tests/test_source_registry.py; representative=tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_source_registry.py::SourceRegistryTests::test_source_api_replaces_numeric_document_title_with_safe_filename": "A_env_content_drift; family=tests/test_source_registry.py; representative=tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay": "A_env_content_drift; family=tests/test_sqlite_runtime_integration.py; representative=tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_duplicate_submission_replays_before_state_transition_validation": "A_env_content_drift; family=tests/test_sqlite_runtime_integration.py; representative=tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_rux_submission_and_approval_action_use_one_sqlite_store": "A_env_content_drift; family=tests/test_sqlite_runtime_integration.py; representative=tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_stale_source_and_invalid_transition_rejections_are_audited": "A_env_content_drift; family=tests/test_sqlite_runtime_integration.py; representative=tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_submission_fault_does_not_leave_orphan_gate": "A_env_content_drift; family=tests/test_sqlite_runtime_integration.py; representative=tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_sqlite_runtime_real_rux.py::SqliteRuntimeRealRuxTests::test_real_listing_and_protocol_risk_survives_full_transaction_and_restart": "A_env_content_drift; family=tests/test_sqlite_runtime_real_rux.py; representative=tests/test_sqlite_runtime_real_rux.py::SqliteRuntimeRealRuxTests::test_real_listing_and_protocol_risk_survives_full_transaction_and_restart; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count": "C_cross_run_drift_fp_stable; family=tests/test_synopsis_async_real_chunks.py; representative=tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_synopsis_async_real_chunks.py::ClaimOwnershipTest::test_claim_returns_opaque_token": "C_cross_run_drift_fp_stable; family=tests/test_synopsis_async_real_chunks.py; representative=tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_synopsis_async_real_chunks.py::ClaimOwnershipTest::test_expired_chunk_lease_is_reclaimable": "C_cross_run_drift_fp_stable; family=tests/test_synopsis_async_real_chunks.py; representative=tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_synopsis_async_real_chunks.py::ClaimOwnershipTest::test_second_worker_cannot_claim_same_chunk": "C_cross_run_drift_fp_stable; family=tests/test_synopsis_async_real_chunks.py; representative=tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_synopsis_async_real_chunks.py::ClaimOwnershipTest::test_stale_owner_cannot_overwrite_reclaimed_chunk": "C_cross_run_drift_fp_stable; family=tests/test_synopsis_async_real_chunks.py; representative=tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_vlm_gateway.py::VlmGatewayTests::test_default_transport_ignores_proxy_and_blocks_redirects": "A_env_content_drift; family=tests/test_vlm_gateway.py; representative=tests/test_vlm_gateway.py::VlmGatewayTests::test_default_transport_ignores_proxy_and_blocks_redirects; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_confirmed_validation_is_prepared_without_override": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_glm_restart_after_extraction_commit_replays_without_second_ocr_call": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_invalidated_existing_artifact_fails_before_extraction": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_latest_batch_is_strictly_scoped_by_project_and_snapshot": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_pnh_reuses_protocol_and_retries_only_failed_sap": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_progress_callback_failure_cannot_strand_terminal_batch": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_progress_is_persisted_at_real_boundaries_and_survives_refresh": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_ra_without_public_protocol_has_manual_upload_study_item": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_recovers_accepted_items_as_failed_retryable": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_retry_reuses_durable_document_ocr_model_pin": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_retry_claim_resets_stale_progress_from_failed_attempt": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_retry_does_not_resubmit_paddle_outcome_unknown_item": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_run_pending_reports_persisted_locked_scope_and_document_progress": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_submit_outcome_unknown_is_classified_and_not_retried": "A_env_content_drift; family=tests/test_writing_reference_preparation_batch.py; representative=tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]": "A_env_content_drift; family=tests/test_writing_reference_upper_layer_execution.py; representative=tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[completed_degraded]": "A_env_content_drift; family=tests/test_writing_reference_upper_layer_execution.py; representative=tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_upper_layer_execution.py::test_process_interruption_during_pro_is_recovered_after_lease_expiry": "A_env_content_drift; family=tests/test_writing_reference_upper_layer_execution.py; representative=tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_writing_reference_upper_layer_production_wiring.py::test_startup_recovery_resumes_expired_running_but_not_failed_retryable": "A_env_content_drift; family=tests/test_writing_reference_upper_layer_production_wiring.py; representative=tests/test_writing_reference_upper_layer_production_wiring.py::test_startup_recovery_resumes_expired_running_but_not_failed_retryable; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_translation_model": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_cli_acquire_no_model_flag": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_cli_acquire_rejects_model_flag": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_cli_config_command": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_combined_8_8_peak": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_config_returns_exact_models_and_limits": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_finally_release_leaves_zero_leases": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_granted_lease_uses_authoritative_model": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_granted_translation_lease_uses_authoritative_model": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_no_lease_row_after_rejection": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_none_model_grants_authoritative_default": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_ocr_limit_8": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_release_after_exception": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_run_rejects_nonmatching_model": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_selection_alias_matches_config": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_total_limit_16": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_translation_limit_8": "A_env_content_drift; family=tests/test_omlx_workload_gate_contract.py; representative=tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model; sampled 2026-09-26T10:24:24Z at live HEAD 623ff21 vs export 53feb06; evidence g1_step6_drift_samples.json",
+  "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_start_returns_202_before_ai_completes": "B_order_pollution_standalone_green; family=tests/test_medical_writing_synopsis_import.py; representative=tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict; nodeid itself passed standalone at HEAD 623ff21 (1 passed in 3.19s, 2026-09-26) but failed in gate final full run (g1_step6_gate_final.json failed_ids) -> order pollution, same family class; added at closure review"
+ },
+ "sampled_at_note": "reclassified D_mixed->B for live-standalone-green families; final",
+ "closure_note": "gate final run (g1_step6_gate_final.json): verdict=FAIL failed_ids=129, ALL 129 within the classified families of this map (128 pre-covered + this 1 added); G1 numeric/fidelity face 0 failures"
+}

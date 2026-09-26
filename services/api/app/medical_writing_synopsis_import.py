@@ -946,9 +946,9 @@ class MedicalWritingSynopsisImportService:
         # parse → chunk persistence → AI worker spawn.  cancel_job works
         # from the first second because the job id exists up front.
         def _finish_import_start():
-            if self._import_cancelled(project_id, idempotency_key):
-                return
             try:
+                if self._import_cancelled(project_id, idempotency_key):
+                    return
                 self._finish_import_start_locked(
                     project_id=project_id,
                     idempotency_key=idempotency_key,
@@ -967,8 +967,18 @@ class MedicalWritingSynopsisImportService:
                 # The job row stays in phase='parsing'; the status route
                 # reports the failure instead of hanging forever.
                 self._mark_import_failed(project_id, idempotency_key)
+            finally:
+                current = threading.current_thread()
+                with self._threads_lock:
+                    if current in self._worker_threads:
+                        self._worker_threads.remove(current)
 
-        threading.Thread(target=_finish_import_start, daemon=True).start()
+        parse_thread = threading.Thread(
+            target=_finish_import_start, daemon=True
+        )
+        with self._threads_lock:
+            self._worker_threads.append(parse_thread)
+        parse_thread.start()
 
         return SynopsisImportJobStartResponse(
             job_id=job_id,

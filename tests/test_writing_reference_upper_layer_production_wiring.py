@@ -762,8 +762,12 @@ def test_unconfigured_provider_fails_closed_as_retryable(tmp_path: Path) -> None
     )
     outcome = service.execute(_planning_request())
 
+    # The protected contract: an unconfigured product-AI route fails closed as
+    # a RETRYABLE run failure (never a construction crash, never escalated).
+    # The route-freeze feature reports its own code for the missing-route case;
+    # the api-key gap keeps the legacy deepseek_provider_not_configured code.
     assert outcome.flash_run.status == "failed_retryable"
-    assert outcome.flash_run.failure_code == "deepseek_provider_not_configured"
+    assert outcome.flash_run.failure_code == "product_ai_route_not_configured"
     assert outcome.flash_run.provider_call_count == 1
     assert outcome.escalation is None
 
@@ -812,7 +816,9 @@ def test_terminal_provider_request_error_does_not_escalate(
     outcome = service.execute(_planning_request())
 
     assert outcome.flash_run.status == "failed_terminal"
-    assert outcome.flash_run.failure_code == "deepseek_request_rejected"
+    # Terminal rejections are provider-neutral product_ai_* codes now; an
+    # HTTP 400 is reported by its specific status code.
+    assert outcome.flash_run.failure_code == "product_ai_http_400_invalid_request"
     assert outcome.escalation is None
     assert [model for model, _ in calls] == [DEFAULT_UPPER_LAYER_MODEL]
 

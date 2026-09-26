@@ -34,6 +34,11 @@ from services.api.app.medical_writing import (
     MedicalWritingRevisionService,
     SectionAiCandidateExecutor,
 )
+from services.api.app.medical_writing import MedicalWritingRevisionService as _MWRService
+# The shipped descriptor version (digest v4: working-copy blocks excluded from
+# the lineage payload). Tests bind to the authoritative constant, not a stale
+# literal, so legitimate version bumps cannot silently break version checks.
+GENERATION_CONTEXT_VERSION = _MWRService.GENERATION_CONTEXT_VERSION
 from services.api.app.medical_writing_document import MedicalWritingDocumentService
 from services.api.app.medical_writing_durable_jobs import DurableJobStore
 from services.api.app.medical_writing_greenfield import (
@@ -120,11 +125,11 @@ class GenerationContextDescriptorTests(unittest.TestCase):
             operation="initial",
             request=self.req,
         )
-        self.assertEqual("mw_gen_ctx_v2", ctx["version"])
+        self.assertEqual(GENERATION_CONTEXT_VERSION, ctx["version"])
         self.assertEqual(64, len(ctx["digest"]))
         self.assertTrue(all(c in "0123456789abcdef" for c in ctx["digest"]))
         desc = ctx["descriptor"]
-        self.assertEqual("mw_gen_ctx_v2", desc["version"])
+        self.assertEqual(GENERATION_CONTEXT_VERSION, desc["version"])
         self.assertIn("working_copy", desc)
         self.assertIn("study_definition", desc)
         self.assertIn("assembly_plan", desc)
@@ -289,7 +294,11 @@ class GenerationContextDescriptorTests(unittest.TestCase):
         )
         digests = {"baseline": baseline["digest"]}
 
-        # 1) WC identity via authoritative method override
+        # 1) WC identity via authoritative method override. Digest v4
+        #    deliberately EXCLUDES the working_copy dimension from the lineage
+        #    payload (execution-era metadata; adoption separately verifies
+        #    anchor identity), so a WC identity mutation must NOT change the
+        #    generation digest — the opposite of the v2-era contract.
         original_wc = self.repo.authoritative_revision_source_identity
 
         def wc_changed(pid, sid):
@@ -297,10 +306,15 @@ class GenerationContextDescriptorTests(unittest.TestCase):
             return wid, rev + 1, "f" * 64
 
         self.repo.authoritative_revision_source_identity = wc_changed
-        digests["wc"] = self.service.build_generation_context_descriptor(
+        wc_mutation_digest = self.service.build_generation_context_descriptor(
             PROJECT, section_id=self.req.section_id, operation="initial", request=self.req
         )["digest"]
         self.repo.authoritative_revision_source_identity = original_wc
+        self.assertEqual(
+            digests["baseline"],
+            wc_mutation_digest,
+            "working-copy identity is excluded from the v4 lineage digest",
+        )
 
         # 2) StudyDefinition binding
         original_sd = self.repo.authoritative_study_definition_binding
@@ -793,7 +807,7 @@ class ExecutorDriftAndExactReplayTests(unittest.TestCase):
         self.assertTrue(locator["thread_id"])
         self.assertEqual(3, len(locator["suggestion_ids"]))
         self.assertEqual(64, len(locator["post_thread_hash"]))
-        self.assertEqual("mw_gen_ctx_v2", locator["generation_context_version"])
+        self.assertEqual(GENERATION_CONTEXT_VERSION, locator["generation_context_version"])
         self.assertEqual(64, len(locator["generation_context_digest"]))
         thread = self.repo.revision_thread(PROJECT, locator["thread_id"])
         self.assertEqual(locator["generation_context_digest"], thread.generation_context_digest)

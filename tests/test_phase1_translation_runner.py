@@ -12,6 +12,14 @@ SCRIPT = (
     / "medical_writing_phase1_autoimmune_mnc_corpus_20260716"
     / "run_production_translations.py"
 )
+if not SCRIPT.is_file():
+    # Same user-local records slice policy as the other phase1 contract tests.
+    import pytest
+
+    pytest.skip(
+        "local phase1 corpus slice absent from this checkout",
+        allow_module_level=True,
+    )
 SPEC = importlib.util.spec_from_file_location("phase1_translation_runner", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None

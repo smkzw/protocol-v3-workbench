@@ -13,9 +13,16 @@ from services.api.app.monitoring_structure_shape_matrix import (
 )
 
 
-MATRIX_PATH = Path(
-    "records/active_slices/medical_monitoring_structure_shape_matrix_20260804/"
+MATRIX_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "records/active_slices/medical_monitoring_structure_shape_matrix_20260804/"
     "FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json"
+)
+
+# Same user-local records slice policy as the profile contract tests.
+pytestmark = pytest.mark.skipif(
+    not MATRIX_PATH.is_file(),
+    reason="local five-project structure shape matrix slice absent from this checkout",
 )
 
 

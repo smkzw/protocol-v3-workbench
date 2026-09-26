@@ -13,9 +13,17 @@ from services.api.app.monitoring_structure_profile_contract import (
 )
 
 
-PROFILE_PATH = Path(
-    "records/active_slices/medical_monitoring_my008_structural_discovery_20260804/"
+PROFILE_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "records/active_slices/medical_monitoring_my008_structural_discovery_20260804/"
     "MY008_STRUCTURAL_DISCOVERY_PROFILE.json"
+)
+
+# The MY008 slice is user-local medical monitoring data (never version-
+# controlled); the contract checks run wherever the slice exists.
+pytestmark = pytest.mark.skipif(
+    not PROFILE_PATH.is_file(),
+    reason="local MY008 structural discovery slice absent from this checkout",
 )
 
 

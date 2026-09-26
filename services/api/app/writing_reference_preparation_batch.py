@@ -228,7 +228,9 @@ class WritingReferencePreparationBatchService:
         if replay:
             return self.get(project_id, replay)
 
-        retained_ids, scope_entries = self._frozen_scope(project_id, request.snapshot_id)
+        retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+            project_id, request.snapshot_id
+        )
         scope_sha256 = _payload_hash(
             {
                 "project_id": project_id,
@@ -238,8 +240,10 @@ class WritingReferencePreparationBatchService:
                 # 0924V2 §4 shortlist freeze: the frozen scope binds the
                 # study-facts identity, so a changed research design creates
                 # a new scope version instead of silently reusing batch or
-                # cache identities keyed on snapshot_id alone.
-                "study_facts_sha256": _study_facts_hash(journey),
+                # cache identities keyed on snapshot_id alone. The hash is
+                # derived from the same frozen journey revision the retained
+                # scope above was computed from (F02: no second unbound read).
+                "study_facts_sha256": study_facts_sha256,
             }
         )
         admission_plan_id = "wref_prep_plan_" + _payload_hash(
@@ -584,9 +588,14 @@ class WritingReferencePreparationBatchService:
 
         return _material_facts_hash(journey)
 
-    def _frozen_scope(self, project_id: str, snapshot_id: str) -> tuple[list[str], list[dict[str, Any]]]:
+    def _frozen_scope(
+        self, project_id: str, snapshot_id: str
+    ) -> tuple[list[str], list[dict[str, Any]], str]:
         journey = self.journey_service.get(project_id)
         triage = journey.corpus_triage
+        # F02: bind the study-facts identity to the exact journey revision the
+        # retained scope below is computed from.
+        study_facts_sha256 = self._study_facts_hash(journey)
 
         # Authority path A (legacy, post-PICOS): finalized corpus triage
         corpus_finalized = triage.status == "finalized" and triage.snapshot_id == snapshot_id
@@ -678,7 +687,7 @@ class WritingReferencePreparationBatchService:
                         "download_url": document.download_url,
                     }
                 )
-        return retained_ids, entries
+        return retained_ids, entries, study_facts_sha256
 
     def _new_item(
         self,

@@ -9341,6 +9341,10 @@ class WritingReferenceUpperLayerEscalationLineage(WorkbenchModel):
     project_id: str
     stage: UpperLayerStage
     source_stage_run_id: str
+    # Stable flash request identity (0924V2 recovery rounds make
+    # source_stage_run_id epoch-unique per retry round; this field stays
+    # constant so semantic replays find the one authoritative escalation).
+    stable_source_stage_run_id: str = ""
     target_stage_run_id: str = ""
     source_model: str = "deepseek-v4-flash"
     target_model: str = "deepseek-v4-pro"

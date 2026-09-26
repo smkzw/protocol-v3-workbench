@@ -1,0 +1,479 @@
+[
+ {
+  "family": "tests/protocol_v3/test_chapter_batch* (cli subprocess family)",
+  "representative": "tests/protocol_v3/test_chapter_batch1.py::test_assembly_cli_stdout_only_readonly_and_lint_cli_roundtrip",
+  "family_size": 6,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "a5be2683fd80",
+   "message": "AssertionError: Traceback (most recent call last):\n    File \"<ROOT>/scripts/qc/protocol_v3/assemble_chapter_registry.py\", line 36, in <module>\n      from packages.contracts.workbench_contracts.protocol_v3 import (  # noqa: E402\n          ChapterContractV2,\n      )\n    File \"<ROOT>/packages/contracts"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "f5479329e95e",
+   "message": "AssertionError: Traceback (most recent call last):\n    File \"<ROOT>/scripts/qc/protocol_v3/assemble_chapter_registry.py\", line 36, in <module>\n      from packages.contracts.workbench_contracts.protocol_v3 import (  # noqa: E402\n          ChapterContractV2,\n      )\n    File \"<ROOT>/packages/contracts"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_ai_execution_policy.py",
+  "representative": "tests/test_ai_execution_policy.py::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access",
+  "family_size": 3,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "3e67ac85d3dc",
+   "message": "PermissionError: [Errno 13] Permission denied: '/private/runtime'"
+  }
+ },
+ {
+  "family": "tests/test_ai_fallback_chain.py",
+  "representative": "tests/test_ai_fallback_chain.py::AiFallbackChainTests::test_429_uses_next_profile_and_links_both_runs",
+  "family_size": 5,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "7d9421c3e6b0",
+   "message": "services.api.app.ai_execution_policy.AiExecutionPolicyDenied: AI task protocol_full_draft requires a product-owned approved direct route: base URL must be one of http://127.0.0.1:8002/v1; model must be one of mtplx-flash-next-optimized-speed; allowed routes: mtplx via openai_compatible at http://127"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "a27a7ae55786",
+   "message": "PermissionError: [Errno 13] Permission denied: '/private/runtime'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_medical_writing_author_freeze_backend.py",
+  "representative": "tests/test_medical_writing_author_freeze_backend.py::test_freeze_api_replaces_legacy_approval_route",
+  "family_size": 1,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_authoring_journey.py",
+  "representative": "tests/test_medical_writing_authoring_journey.py::MedicalWritingAuthoringJourneyApiTests::test_api_exposes_locked_product_decisions_and_resumable_journey",
+  "family_size": 1,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_candidate_generation_progress.py",
+  "representative": "tests/test_medical_writing_candidate_generation_progress.py::CandidateGenerationProgressTests::test_retry_reuses_the_same_progress_field_contract",
+  "family_size": 1,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_content_quality_api.py",
+  "representative": "tests/test_medical_writing_content_quality_api.py::TestMedicalWritingContentQualityApi::test_short_reason_is_rejected_without_changing_state",
+  "family_size": 1,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_document_export_api.py",
+  "representative": "tests/test_medical_writing_document_export_api.py::TestMedicalWritingDocumentExportApi::test_draft_preview_mixes_saved_working_copy_and_source_sections_in_real_docx",
+  "family_size": 9,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_generation_context_v2.py",
+  "representative": "tests/test_medical_writing_generation_context_v2.py::ExecutorDriftAndExactReplayTests::test_exact_replay_stable_after_unrelated_suggestions_appended",
+  "family_size": 10,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_greenfield_runtime.py",
+  "representative": "tests/test_medical_writing_greenfield_runtime.py::GreenfieldMedicalWritingRuntimeFlowTests::test_blank_greenfield_body_can_be_drafted_and_applied_without_touching_heading",
+  "family_size": 4,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "c7c6838d6969",
+   "message": "services.api.app.ai_execution_policy.AiExecutionPolicyDenied: resolved provider configuration mismatch: expected opencode-go, got buddy"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "7106ee5c38da",
+   "message": "services.api.app.ai_execution_policy.AiExecutionPolicyDenied: resolved provider configuration mismatch: expected opencode-go, got buddy"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_medical_writing_legacy_authoring_migration.py",
+  "representative": "tests/test_medical_writing_legacy_authoring_migration.py::test_legacy_bootstrap_requires_warning_acknowledgement_and_override",
+  "family_size": 1,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "7cfaa048a5c2",
+   "message": "Failed: DID NOT RAISE ValueError"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "edc4fffae553",
+   "message": "Failed: DID NOT RAISE ValueError"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_medical_writing_revision_durable.py",
+  "representative": "tests/test_medical_writing_revision_durable.py::RealOwnershipBarrierInitialTests::test_cancel_exception_after_ai_fail_closed_no_write",
+  "family_size": 10,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_synopsis_import.py",
+  "representative": "tests/test_medical_writing_synopsis_import.py::SynopsisAsyncJobTest::test_changed_request_same_key_is_conflict",
+  "family_size": 3,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_medical_writing_table_ai_revision.py",
+  "representative": "tests/test_medical_writing_table_ai_revision.py::MedicalWritingTableAiRevisionTests::test_revision_service_submits_server_normalized_cell_context_to_independent_ai",
+  "family_size": 2,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_monitoring_batch_api.py",
+  "representative": "tests/test_monitoring_batch_api.py::MonitoringBatchApiTests::test_api_intake_state_chain_and_batch_list",
+  "family_size": 2,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_monitoring_real_loop_evidence_semantics.py",
+  "representative": "tests/test_monitoring_real_loop_evidence_semantics.py::RealLoopEvidenceSemanticsTests::test_generic_signature_flag_is_not_accepted",
+  "family_size": 2,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "58101f83f981",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_source_token_evidence_revalidation_20260803/SOURCE_TOKEN_EVIDENCE_REVALIDATION.json'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "4bd94e048d73",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_source_token_evidence_revalidation_20260803/SOURCE_TOKEN_EVIDENCE_REVALIDATION.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_monitoring_real_loop_manifest_replay.py",
+  "representative": "tests/test_monitoring_real_loop_manifest_replay.py::RealLoopManifestReplayTests::test_current_manifest_replays_exactly_without_authority",
+  "family_size": 7,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "13fbb28bd64f",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "08a2141fe978",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_monitoring_real_loop_semantics_binding.py",
+  "representative": "tests/test_monitoring_real_loop_semantics_binding.py::RealLoopSemanticsBindingTests::test_authority_or_generic_signature_mutation_blocks_binding",
+  "family_size": 8,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "4fad215de496",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "e2a451cf769b",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_monitoring_real_loop_current_manifest_20260804/CURRENT_REAL_LOOP_GATE_MANIFEST.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_monitoring_real_project_intake_gate.py",
+  "representative": "tests/test_monitoring_real_project_intake_gate.py::MonitoringRealProjectIntakeGateTests::test_demo_file_intake_still_registers_validates_and_executes_generic_service",
+  "family_size": 2,
+  "live": {
+   "verdict": "PASSED",
+   "total": 1
+  },
+  "export53feb06": {
+   "verdict": "PASSED",
+   "total": 1
+  }
+ },
+ {
+  "family": "tests/test_monitoring_structure_profile_contract.py",
+  "representative": "tests/test_monitoring_structure_profile_contract.py::test_malformed_profile_is_blocked_without_granting_authority[<lambda>-authority_flag_invalid]",
+  "family_size": 7,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "83e669994834",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "e15d1b28b4df",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_my008_structural_discovery_20260804/MY008_STRUCTURAL_DISCOVERY_PROFILE.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_monitoring_structure_shape_matrix.py",
+  "representative": "tests/test_monitoring_structure_shape_matrix.py::test_matrix_mutations_fail_closed[<lambda>-retention_flag_invalid]",
+  "family_size": 6,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "40af1e1e9bdf",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "3313379a1110",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: 'records/active_slices/medical_monitoring_structure_shape_matrix_20260804/FIVE_PROJECT_STRUCTURE_SHAPE_MATRIX.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_mw_r5_a1_preparation_progress.py",
+  "representative": "tests/test_mw_r5_a1_preparation_progress.py::test_sync_preparation_persists_and_heartbeats_real_scope_and_progress",
+  "family_size": 1,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "035df85ef093",
+   "message": "services.api.app.medical_writing_research_pipeline.ResearchPipelineError: 既有原文准备批次仍有延后项，但当前服务不支持阶段准入"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "83588a19c081",
+   "message": "services.api.app.medical_writing_research_pipeline.ResearchPipelineError: 既有原文准备批次仍有延后项，但当前服务不支持阶段准入"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_phase1_corpus_source_boundaries.py",
+  "representative": "tests/test_phase1_corpus_source_boundaries.py::test_primary_protocol_selection_excludes_amendment_summary",
+  "family_size": 8,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "0d6897125b17",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/build_translation_selection.py'"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "fde596484991",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/records/active_slices/medical_writing_phase1_autoimmune_mnc_corpus_20260716/build_translation_selection.py'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_source_registry.py",
+  "representative": "tests/test_source_registry.py::SourceRegistryTests::test_frontend_source_registry_candidates_do_not_embed_local_paths",
+  "family_size": 4,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "837f8b968594",
+   "message": "AssertionError: '/Users/' unexpectedly found in 'import { Component, useCallback, useEffect, useMemo, useRef, useState } from \"react\";\\nimport { EditorContent, useEditor } from \"@tiptap/react\";\\nimport { Extension, Mark, Node, mergeAttributes } from \"@tiptap/core\";\\nimport StarterKit from \"@tiptap/s"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "73ef3e91d995",
+   "message": "PermissionError: [Errno 13] Permission denied: '/private/runtime'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_sqlite_runtime_integration.py",
+  "representative": "tests/test_sqlite_runtime_integration.py::SqliteRuntimeIntegrationTests::test_approval_action_fault_does_not_mutate_runtime_overlay",
+  "family_size": 5,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "b4fb679ce85b",
+   "message": "StopIteration"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "37937c58b1df",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '/private/demo_data/workbench_demo_v0_1.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_sqlite_runtime_real_rux.py",
+  "representative": "tests/test_sqlite_runtime_real_rux.py::SqliteRuntimeRealRuxTests::test_real_listing_and_protocol_risk_survives_full_transaction_and_restart",
+  "family_size": 1,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "63918ee34a79",
+   "message": "StopIteration"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "41c1f7953b3b",
+   "message": "FileNotFoundError: [Errno 2] No such file or directory: '/private/demo_data/workbench_demo_v0_1.json'"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_synopsis_async_real_chunks.py",
+  "representative": "tests/test_synopsis_async_real_chunks.py::RealChunkExecutionTest::test_resume_increments_failed_chunk_attempt_count",
+  "family_size": 7,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "853c79dbac2d",
+   "message": "TypeError: 'NoneType' object is not subscriptable"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "853c79dbac2d",
+   "message": "TypeError: 'NoneType' object is not subscriptable"
+  },
+  "fingerprint_match": true
+ },
+ {
+  "family": "tests/test_vlm_gateway.py",
+  "representative": "tests/test_vlm_gateway.py::VlmGatewayTests::test_default_transport_ignores_proxy_and_blocks_redirects",
+  "family_size": 1,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "e8c06cd0f2cd",
+   "message": "services.api.app.vlm_gateway.VlmGatewayConfigurationError: RFC 8785 dependency is unavailable"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "349b0566edc8",
+   "message": "services.api.app.vlm_gateway.VlmGatewayConfigurationError: RFC 8785 dependency is unavailable"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_writing_reference_preparation_batch.py",
+  "representative": "tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe",
+  "family_size": 17,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "475ab62314a1",
+   "message": "NameError: name '_study_facts_hash' is not defined"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "0fefaae74a0d",
+   "message": "NameError: name '_study_facts_hash' is not defined"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_writing_reference_upper_layer_execution.py",
+  "representative": "tests/test_writing_reference_upper_layer_execution.py::test_post_hy_status_trigger_auto_creates_exactly_one_pro_child[failed_escalatable]",
+  "family_size": 3,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "ce6c626e1a30",
+   "message": "AssertionError: assert 'wref_ulrun_b...64d826c84216b' == 'wref_ulrun_1...02eb102f9fc10'\n  \n  - wref_ulrun_139b9221eb402eb102f9fc10\n  + wref_ulrun_bdb4b8696eb64d826c84216b"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "ca44b534b48b",
+   "message": "AssertionError: assert 'wref_ulrun_0...169fe980490ec' == 'wref_ulrun_f...65e7c94165d6a'\n  \n  - wref_ulrun_fd75450b0a365e7c94165d6a\n  + wref_ulrun_054bfd07235169fe980490ec"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_writing_reference_upper_layer_production_wiring.py",
+  "representative": "tests/test_writing_reference_upper_layer_production_wiring.py::test_startup_recovery_resumes_expired_running_but_not_failed_retryable",
+  "family_size": 1,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "fb4f5bd554f0",
+   "message": "ValueError: persisted upper-layer execution fingerprint mismatch"
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "05f05241a5c5",
+   "message": "ValueError: persisted upper-layer execution fingerprint mismatch"
+  },
+  "fingerprint_match": false
+ },
+ {
+  "family": "tests/test_omlx_workload_gate_contract.py",
+  "representative": "tests/test_omlx_workload_gate_contract.py::GateContractTests::test_acquire_rejects_nonmatching_ocr_model",
+  "family_size": 18,
+  "live": {
+   "verdict": "FAILED",
+   "fingerprint": "cb65fef68cdd",
+   "message": "failed on setup with \"FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'\""
+  },
+  "export53feb06": {
+   "verdict": "FAILED",
+   "fingerprint": "ad1f355de102",
+   "message": "failed on setup with \"FileNotFoundError: [Errno 2] No such file or directory: '<ROOT>/artifacts/mw_omlx_runtime_owned_gate_20260726/omlx_workload_gate.proposed.py'\""
+  },
+  "fingerprint_match": false
+ }
+]

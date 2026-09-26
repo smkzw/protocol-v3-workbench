@@ -762,6 +762,14 @@ class MedicalWritingAuthoringJourneyService:
                     raise ValueError(
                         "all current synopsis validation warnings must be acknowledged"
                     )
+                # Restored from the 05b7d5b baseline (silently dropped during
+                # round-11): overriding validation warnings on a medical
+                # document requires a substantive reason, not a bare click.
+                if len(request.validation_override_reason) < 10:
+                    connection.rollback()
+                    raise ValueError(
+                        "a substantive medical-manager reason is required to continue after synopsis validation warnings"
+                    )
             now = datetime.now(timezone.utc)
             framing_draft = MedicalWritingAuthoringStageDraft(
                 stage="framing",
@@ -917,6 +925,11 @@ class MedicalWritingAuthoringJourneyService:
             if sorted(request.acknowledged_validation_warnings) != sorted(warnings):
                 raise ValueError(
                     "all current synopsis validation warnings must be acknowledged"
+                )
+            # Same restored baseline guard as the transactional confirm path.
+            if len(request.validation_override_reason) < 10:
+                raise ValueError(
+                    "a substantive medical-manager reason is required to continue after synopsis validation warnings"
                 )
         imported = _capture_extracted_value_hashes(imported)
         semantic_payload = {

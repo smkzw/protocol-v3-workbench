@@ -231,6 +231,31 @@ class SynopsisChunkExecutionBase(unittest.TestCase):
         self.service.shutdown(timeout=10.0)
         self.tmpdir.cleanup()
 
+    def _wait_for_chunks(self, project_id: str, idempotency_key: str,
+                         expected: int = 1, timeout: float = 15.0) -> None:
+        """start_job persists chunk rows on a detached parse thread; poll
+        until they exist before manipulating them."""
+        import time as _time
+
+        deadline = _time.monotonic() + timeout
+        while _time.monotonic() < deadline:
+            with self.service._connect() as connection:
+                row = connection.execute(
+                    """
+                    SELECT COUNT(*) AS n
+                    FROM medical_writing_synopsis_import_chunks
+                    WHERE project_id = ? AND idempotency_key = ?
+                    """,
+                    (project_id, idempotency_key),
+                ).fetchone()
+            if row and int(row["n"]) >= expected:
+                return
+            _time.sleep(0.05)
+        self.fail(
+            f"chunk rows were not persisted within {timeout}s "
+            f"for {project_id}/{idempotency_key}"
+        )
+
 
 class RealChunkExecutionTest(SynopsisChunkExecutionBase):
     """Tests that verify real per-chunk execution behavior."""
@@ -248,6 +273,7 @@ class RealChunkExecutionTest(SynopsisChunkExecutionBase):
             actor="medical_manager",
             idempotency_key="resume-attempt",
         )
+        self._wait_for_chunks("proj_resume_attempt", "resume-attempt")
         with self.service._connect() as connection:
             connection.execute(
                 """
@@ -415,6 +441,12 @@ class RealChunkExecutionTest(SynopsisChunkExecutionBase):
 class ClaimOwnershipTest(SynopsisChunkExecutionBase):
     """Tests for CAS claim ownership."""
 
+    def setUp(self):
+        super().setUp()
+        # These tests drive _claim_chunk manually: keep the automatic worker
+        # from claiming/executing chunks first.
+        self.service._shutdown_requested = True
+
     def test_claim_returns_opaque_token(self):
         """_claim_chunk must return an opaque token string, not bool."""
         docx = _docx_bytes("方案摘要：测试。")
@@ -424,6 +456,7 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
             payload=docx, expected_indication="测试",
             actor="medical_manager", idempotency_key="claim-test",
         )
+        self._wait_for_chunks("proj_claim", "claim-test")
         token = self.service._claim_chunk("proj_claim", "claim-test", 0)
         self.assertIsNotNone(token)
         self.assertIsInstance(token, str)
@@ -438,6 +471,7 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
             payload=docx, expected_indication="测试",
             actor="medical_manager", idempotency_key="concurrent-test",
         )
+        self._wait_for_chunks("proj_concurrent", "concurrent-test")
         token1 = self.service._claim_chunk("proj_concurrent", "concurrent-test", 0)
         token2 = self.service._claim_chunk("proj_concurrent", "concurrent-test", 0)
         self.assertIsNotNone(token1)
@@ -453,6 +487,7 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
             payload=docx, expected_indication="测试",
             actor="medical_manager", idempotency_key="stale-test",
         )
+        self._wait_for_chunks("proj_stale", "stale-test")
         # First worker claims.
         old_token = self.service._claim_chunk("proj_stale", "stale-test", 0)
         self.assertIsNotNone(old_token)
@@ -500,6 +535,8 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
             claim_timeout_seconds=0.1, chunk_lease_seconds=0.1,
             heartbeat_interval_seconds=0.05,
         )
+        # Manual claim/lease driving: keep the automatic worker out.
+        service._shutdown_requested = True
         try:
             docx = _docx_bytes("方案摘要：测试。")
             service.start_job(
@@ -508,6 +545,16 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
                 payload=docx, expected_indication="测试",
                 actor="medical_manager", idempotency_key="expire-test",
             )
+            _deadline = time.monotonic() + 15.0
+            while time.monotonic() < _deadline:
+                with service._connect() as connection:
+                    _n = connection.execute(
+                        "SELECT COUNT(*) AS n FROM medical_writing_synopsis_import_chunks "
+                        "WHERE project_id='proj_expire' AND idempotency_key='expire-test'"
+                    ).fetchone()["n"]
+                if int(_n) >= 1:
+                    break
+                time.sleep(0.05)
             token1 = service._claim_chunk("proj_expire", "expire-test", 0)
             self.assertIsNotNone(token1)
             time.sleep(0.3)
@@ -518,6 +565,9 @@ class ClaimOwnershipTest(SynopsisChunkExecutionBase):
 
     def test_late_job_failure_cannot_overwrite_completed_result(self):
         """A stale worker exception after final commit must not regress the job."""
+        # This one exercises the full automatic pipeline: re-enable the worker
+        # that the ClaimOwnershipTest setUp disabled for manual claiming.
+        self.service._shutdown_requested = False
         docx = _docx_bytes("方案摘要：测试适应症。")
         self.service.start_job(
             "proj_completed_guard", filename="s.docx",

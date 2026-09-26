@@ -26,17 +26,22 @@ import unittest
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parent.parent
-PROPOSED_GATE = (
-    WORKSPACE
-    / "artifacts"
-    / "mw_omlx_runtime_owned_gate_20260726"
-    / "omlx_workload_gate.proposed.py"
-)
+# The contract under test is the gate module the shipped client actually loads
+# (services.api.app.omlx_workload_gate_client -> WORKBENCH_OMLX_WORKLOAD_GATE_TOOL
+# override, else the shared runtime tool). The historical artifacts/ copy was a
+# local-only proposal snapshot that never entered version control, so pointing
+# the tests at it broke every clean checkout.
+GATE_TOOL = Path(
+    os.environ.get(
+        "WORKBENCH_OMLX_WORKLOAD_GATE_TOOL",
+        str(Path.home() / ".codex" / "tools" / "omlx_workload_gate.py"),
+    )
+).expanduser()
 
 
 def _load_gate_module():
-    """Load the proposed gate as an isolated module so the live global gate is untouched."""
-    spec = importlib.util.spec_from_file_location("omlx_workload_gate_proposed", str(PROPOSED_GATE))
+    """Load the runtime gate as an isolated module so the live global gate is untouched."""
+    spec = importlib.util.spec_from_file_location("omlx_workload_gate_proposed", str(GATE_TOOL))
     mod = importlib.util.module_from_spec(spec)
     sys.modules["omlx_workload_gate_proposed"] = mod
     spec.loader.exec_module(mod)
@@ -46,6 +51,10 @@ def _load_gate_module():
 class GateContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if not GATE_TOOL.is_file():
+            raise unittest.SkipTest(
+                f"runtime oMLX workload gate tool not installed: {GATE_TOOL}"
+            )
         cls.gate_mod = _load_gate_module()
 
     def setUp(self):
@@ -235,7 +244,7 @@ class GateContractTests(unittest.TestCase):
         proc = subprocess.run(
             [
                 sys.executable,
-                str(PROPOSED_GATE),
+                str(GATE_TOOL),
                 "--db",
                 self.db_path,
                 "config",
@@ -257,7 +266,7 @@ class GateContractTests(unittest.TestCase):
         proc = subprocess.run(
             [
                 sys.executable,
-                str(PROPOSED_GATE),
+                str(GATE_TOOL),
                 "--db",
                 self.db_path,
                 "acquire",
@@ -285,7 +294,7 @@ class GateContractTests(unittest.TestCase):
         proc = subprocess.run(
             [
                 sys.executable,
-                str(PROPOSED_GATE),
+                str(GATE_TOOL),
                 "--db",
                 self.db_path,
                 "acquire",

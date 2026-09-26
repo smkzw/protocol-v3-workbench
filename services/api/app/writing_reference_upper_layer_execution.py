@@ -375,6 +375,53 @@ class WritingReferenceUpperLayerExecutionService:
             "succeeded",
             "completed_degraded",
         ):
+            # One authoritative result per stable request identity: when an
+            # escalation already exists for this request (any recovery round),
+            # resume/return it instead of burning another flash round.
+            stable_escalation = (
+                self.repository.upper_layer_escalation_for_stable_source(
+                    request.project_id, flash_run_id
+                )
+            )
+            if stable_escalation is not None:
+                # The stable-id flash row usually never exists (failed first
+                # rounds go straight to epoch-unique recovery ids); the
+                # escalation's own source run is the flash reference the
+                # resume paths fall back to.
+                if flash_run is None:
+                    flash_run = self.repository.upper_layer_stage_run(
+                        request.project_id,
+                        stable_escalation.source_stage_run_id,
+                    )
+                flash_output = None
+                latest_run, latest_output, escalation = (
+                    self._run_or_resume_escalation(
+                        request, flash_run, stable_escalation
+                    )
+                )
+                selected_run, selected_output = self._select_effective_result(
+                    flash_run=flash_run,
+                    flash_output=flash_output,
+                    latest_run=latest_run,
+                    latest_output=latest_output,
+                )
+                if escalation is None or escalation.status not in {
+                    "queued",
+                    "running",
+                }:
+                    self.repository.record_upper_layer_execution_idempotency(
+                        request.project_id,
+                        idempotency_key=scoped_idempotency_key,
+                        request_hash=request_hash,
+                        result_id=latest_run.stage_run_id,
+                    )
+                return UpperLayerExecutionOutcome(
+                    flash_run=flash_run,
+                    latest_run=latest_run,
+                    selected_run=selected_run,
+                    selected_output=selected_output,
+                    escalation=escalation,
+                )
             # 0924V2 root-cause fix: a run that previously FAILED (e.g.
             # transient provider outage) has no usable output to replay.
             # Stage runs are IMMUTABLE (DB trigger), so re-invocation derives
@@ -1040,17 +1087,29 @@ class WritingReferenceUpperLayerExecutionService:
         request: UpperLayerExecutionRequest,
         flash_run: WritingReferenceUpperLayerStageRun,
     ) -> WritingReferenceUpperLayerEscalation:
+        # Semantic replays of the same request may arrive through a fresh
+        # recovery round whose flash run id is epoch-unique (0924V2). Escalation
+        # identity is therefore derived from the STABLE flash request identity
+        # plus the trigger, so one request yields exactly one Pro child.
+        stable_flash_stage_run_id = self._stage_run_id(
+            self._execution_fingerprint(request, model=self.default_model)
+        )
+        escalation_id = "wref_ulesc_" + sha256(
+            f"{stable_flash_stage_run_id}|{flash_run.status}|{flash_run.failure_code}".encode(
+                "utf-8"
+            )
+        ).hexdigest()[:24]
         existing = self.repository.upper_layer_escalation_for_source(
             request.project_id,
             flash_run.stage_run_id,
         )
+        if existing is None:
+            existing = self.repository.upper_layer_escalation_by_id(
+                request.project_id,
+                escalation_id,
+            )
         if existing is not None:
             return existing
-        escalation_id = "wref_ulesc_" + sha256(
-            f"{flash_run.stage_run_id}|{flash_run.status}|{flash_run.failure_code}".encode(
-                "utf-8"
-            )
-        ).hexdigest()[:24]
         pro_fingerprint = self._execution_fingerprint(
             request,
             model=self.escalation_model,
@@ -1075,6 +1134,7 @@ class WritingReferenceUpperLayerExecutionService:
             project_id=request.project_id,
             stage=request.stage,
             source_stage_run_id=flash_run.stage_run_id,
+            stable_source_stage_run_id=stable_flash_stage_run_id,
             target_stage_run_id=target_run_id,
             trigger_status=flash_run.status,
             trigger_code=flash_run.failure_code
@@ -1142,6 +1202,18 @@ class WritingReferenceUpperLayerExecutionService:
                 finalized,
             )
         if escalation.status in {"completed", "failed_terminal"}:
+            # Semantic replay through a new recovery round must surface the
+            # authoritative escalation result, not the fresh flash round
+            # (mirrors the claim-None branch below).
+            target = self.repository.optional_upper_layer_stage_run(
+                request.project_id,
+                escalation.target_stage_run_id,
+            )
+            if target is not None:
+                return target, self.repository.upper_layer_stage_run_output(
+                    request.project_id,
+                    target.stage_run_id,
+                ), escalation
             return flash_run, self.repository.upper_layer_stage_run_output(
                 request.project_id,
                 flash_run.stage_run_id,
@@ -1303,9 +1375,20 @@ class WritingReferenceUpperLayerExecutionService:
             model=flash_run.requested_model,
         )
         if persisted["execution_fingerprint"] != expected_fingerprint:
-            raise ValueError(
-                "persisted upper-layer execution fingerprint mismatch"
+            # 0924V2 recovery rounds persist an epoch-salted fingerprint
+            # (the column is UNIQUE per retry round), so a retried flash run
+            # can never match the stable request fingerprint. Binding is then
+            # verified directly against the persisted semantic inputs.
+            recovery_bound = (
+                _sha256_json(request.input_payload)
+                == _sha256_json(persisted.get("input_payload"))
+                and sha256(request.prompt.encode("utf-8")).hexdigest()
+                == sha256(str(persisted.get("prompt_text") or "").encode("utf-8")).hexdigest()
             )
+            if not recovery_bound:
+                raise ValueError(
+                    "persisted upper-layer execution fingerprint mismatch"
+                )
         return request
 
     @staticmethod

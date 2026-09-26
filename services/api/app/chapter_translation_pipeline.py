@@ -712,7 +712,12 @@ class PersistedUpperLayerStageExecutorAdapter:
             requested_model=selected_run.requested_model,
             response_model=selected_run.response_model,
             expected_response_model=str(
-                getattr(self.service, "expected_response_model", "")
+                # The service persists the per-run expectation (flash default
+                # for flash runs, the requested model for escalations); trust
+                # the persisted run instead of the service-wide default, which
+                # would falsely reject escalated Pro responses.
+                getattr(selected_run, "expected_response_model", "")
+                or getattr(self.service, "expected_response_model", "")
                 or selected_run.requested_model
             ),
             prompt_version=selected_run.prompt_version,

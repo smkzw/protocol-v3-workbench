@@ -18,6 +18,7 @@ from packages.contracts.workbench_contracts import (  # noqa: E402
     RuxRiskDispositionActionRequest,
 )
 from services.api.app.demo_repository import DemoRepository  # noqa: E402
+from services.api.app.medical_risk_repository import MedicalRiskRepository  # noqa: E402
 from services.api.app.sqlite_runtime_store import SqliteRuntimeStore  # noqa: E402
 from services.api.app.workbench_inbox import (  # noqa: E402
     RUX_PROJECT_ID,
@@ -52,8 +53,28 @@ class SqliteRuntimeIntegrationTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def _rux_snapshot_repository(self, runtime_store, adapter) -> MedicalRiskRepository:
+        """Self-contained RUX risk snapshot (the shared demo file carries no
+        RUX project, so the flow cannot rely on demo_data content)."""
+        repository = MedicalRiskRepository(self.root / "runtime" / "medical_risks_rux.sqlite3")
+        subject_ids = adapter.subject_ids()
+        risk_groups = [
+            adapter.evaluate_subject_risks(RUX_PROJECT_ID, subject_id)
+            for subject_id in subject_ids
+        ]
+        repository.save_snapshot(
+            project_id=RUX_PROJECT_ID,
+            source_revision=adapter.source_revision(),
+            rule_profile_revision=adapter.risk_profile_revision(),
+            engine_version=adapter.risk_engine_version(),
+            evaluated_subject_count=len(subject_ids),
+            risks=[risk for group in risk_groups for risk in group],
+        )
+        return repository
+
     def service(self, runtime_store):
         repo = DemoRepository(self.demo_data_path, approval_store=runtime_store)
+        rux_monitoring = FakeRuxMonitoringService()
         return WorkbenchInboxService(
             repo,
             FakeAiRunner(),
@@ -65,7 +86,8 @@ class SqliteRuntimeIntegrationTests(unittest.TestCase):
             FakeEligibilityAdapter(),
             self.read_store,
             rux_disposition_store=runtime_store,
-            rux_monitoring_service=FakeRuxMonitoringService(),
+            rux_monitoring_service=rux_monitoring,
+            medical_risk_repository=self._rux_snapshot_repository(runtime_store, rux_monitoring),
         )
 
     def advance_to_query_draft(self, service):

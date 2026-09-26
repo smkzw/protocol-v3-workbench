@@ -53,9 +53,9 @@ const adversarial = [
   "MY009",
   "康哲",
   "朗来",
-  "/Users/example/source.xlsx",
+  "/srv/example/source.xlsx",
   "/private/var/tmp/source.xlsx",
-  "file:///Users/example/source.xlsx",
+  "file:///srv/example/source.xlsx",
 ];
 for (const literal of adversarial) {
   assert.ok(

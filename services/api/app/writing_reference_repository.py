@@ -5145,6 +5145,49 @@ class WritingReferenceRepository:
             row["payload_json"]
         )
 
+    def upper_layer_escalation_for_stable_source(
+        self,
+        project_id: str,
+        stable_source_stage_run_id: str,
+    ) -> Optional[WritingReferenceUpperLayerEscalation]:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT payload_json
+                FROM writing_reference_upper_layer_escalations
+                WHERE tenant_id=? AND project_id=?
+                  AND json_extract(payload_json, '$.stable_source_stage_run_id')=?
+                ORDER BY created_at DESC
+                LIMIT 1
+                """,
+                (TENANT_ID, project_id, stable_source_stage_run_id),
+            ).fetchone()
+        if row is None:
+            return None
+        return WritingReferenceUpperLayerEscalation.model_validate_json(
+            row["payload_json"]
+        )
+
+    def upper_layer_escalation_by_id(
+        self,
+        project_id: str,
+        escalation_id: str,
+    ) -> Optional[WritingReferenceUpperLayerEscalation]:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT payload_json
+                FROM writing_reference_upper_layer_escalations
+                WHERE tenant_id=? AND project_id=? AND escalation_id=?
+                """,
+                (TENANT_ID, project_id, escalation_id),
+            ).fetchone()
+        if row is None:
+            return None
+        return WritingReferenceUpperLayerEscalation.model_validate_json(
+            row["payload_json"]
+        )
+
     def upper_layer_escalation_for_source(
         self,
         project_id: str,

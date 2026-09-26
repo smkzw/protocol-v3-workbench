@@ -1,0 +1,143 @@
+{
+  "round": "0926V1",
+  "source_commit": "53feb06fc1402df820a6dba5d8b6e3fa15d50437",
+  "findings": [
+    {
+      "id": "F01",
+      "priority": "P0",
+      "title": "Numeric check forgives actual decimal/zero/magnitude drift",
+      "evidence_level": "CURRENT_SOURCE_AND_ISOLATED_COUNTEREXAMPLES",
+      "sources": [
+        "S08"
+      ],
+      "local_evidence": [
+        "evidence/numeric_probe_results.json"
+      ],
+      "required_change": "Replace digit-shape forgiveness with value/unit/cardinality-safe comparison; re-evaluate impacted candidates with versioned assessments."
+    },
+    {
+      "id": "F02",
+      "priority": "P0",
+      "title": "Fresh preparation create references unbound helper and journey",
+      "evidence_level": "CURRENT_SOURCE_AND_PREFIX_REPRODUCTION",
+      "sources": [
+        "S09",
+        "S10"
+      ],
+      "local_evidence": [
+        "evidence/preparation_probe_results.json"
+      ],
+      "required_change": "Capture one frozen context; fix method scope; test fresh create, replay and changed command identity."
+    },
+    {
+      "id": "F03",
+      "priority": "P0_FOR_PROMOTION",
+      "title": "Fidelity reevaluation selects imprecise lineage and checks intermediate text",
+      "evidence_level": "CURRENT_SOURCE_AND_STRUCTURAL_PROBES_WITH_STUBS",
+      "sources": [
+        "S11",
+        "S12",
+        "S13"
+      ],
+      "local_evidence": [
+        "evidence/reeval_probe_results.json"
+      ],
+      "required_change": "Pin exact item/span/batch/integration and full final-candidate coverage before promotion."
+    },
+    {
+      "id": "F04",
+      "priority": "P1",
+      "title": "Write invariant remains unenforced and synthetic parent prefix skips lineage proof",
+      "evidence_level": "CURRENT_SOURCE_NOT_EXPLOIT_TESTED",
+      "sources": [
+        "S03",
+        "S14",
+        "S15",
+        "E01"
+      ],
+      "local_evidence": [],
+      "required_change": "Validate payload at write; use auditable parentless-recovery authority rather than prefix alone."
+    },
+    {
+      "id": "F05",
+      "priority": "P1",
+      "title": "Shared failure fan-out and unlimited logical retries",
+      "evidence_level": "SOURCE_REPORTED_COUNTS_AND_DESIGN_ANALYSIS",
+      "sources": [
+        "S16",
+        "U01"
+      ],
+      "local_evidence": [
+        "evidence/ledger_reconciliation.json"
+      ],
+      "required_change": "Preflight shared prerequisites; bounded linked recovery commands; stop on no progress."
+    },
+    {
+      "id": "F06",
+      "priority": "P1",
+      "title": "Optional search_plan is conflated with authority; latest prep can drift",
+      "evidence_level": "CURRENT_SOURCE_AND_DESIGN_REVIEW",
+      "sources": [
+        "S17",
+        "S18",
+        "S10"
+      ],
+      "local_evidence": [],
+      "required_change": "Unify authority checks and exact frozen prep identity; separate historical resume and new command."
+    },
+    {
+      "id": "F07",
+      "priority": "P1",
+      "title": "Shortlist not enforced by inspected production scope path",
+      "evidence_level": "CURRENT_SOURCE_AND_DIFF",
+      "sources": [
+        "S09",
+        "S10",
+        "S02"
+      ],
+      "local_evidence": [],
+      "required_change": "Implement metadata-first selection before expensive processing; count distinct studies and select protocol versions."
+    },
+    {
+      "id": "F08",
+      "priority": "P1",
+      "title": "False-green gate and stale/overstated acceptance",
+      "evidence_level": "SOURCE_REPORTED_WITH_RECONCILIATION",
+      "sources": [
+        "U01",
+        "S02",
+        "E02"
+      ],
+      "local_evidence": [
+        "evidence/ledger_reconciliation.json"
+      ],
+      "required_change": "Use subprocess status, structured reports, exact known-failure identities and timestamped snapshots."
+    },
+    {
+      "id": "F09",
+      "priority": "P2",
+      "title": "Blacklist user messages leak engineering text and assert unverified running state",
+      "evidence_level": "CURRENT_JS_AND_PURE_FUNCTION_PROBES",
+      "sources": [
+        "S06",
+        "S19"
+      ],
+      "local_evidence": [
+        "evidence/ui_message_probe_results.json"
+      ],
+      "required_change": "Use controlled display codes and actual job status; verify full reading layout with real browser."
+    },
+    {
+      "id": "F10",
+      "priority": "P1_ACCEPTANCE_SCOPE",
+      "title": "External Word roundtrip is not embedded current-document closure",
+      "evidence_level": "REPORTED_ARTIFACT_METADATA_AND_REQUIREMENTS_COMPARISON",
+      "sources": [
+        "S07",
+        "S02"
+      ],
+      "local_evidence": [],
+      "required_change": "Credit external Word test separately; verify server-acknowledged current document save/reopen/download."
+    }
+  ]
+}

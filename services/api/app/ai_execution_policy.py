@@ -157,10 +157,13 @@ _CMS_ROUTER_DEEPSEEK_LATEST_POLICY = TaskAiRoutePolicy(
 # 2026-09-23 (LOCAL_ENDPOINT_DISCOVERY_0923V1.json): the server runs on
 # 127.0.0.1:8002 and advertises the API id "mtplx-flash-next-optimized-
 # speed"; the HF-style directory name is not the served id.
+# Single source of truth for the approved local MTPLX endpoint (owner
+# deployment discovered 2026-09-23); tests bind to this constant.
+MTPLX_LOCAL_BASE_URL = "http://127.0.0.1:8002/v1"
 _MTPLX_QWEN38_SPEED_POLICY = TaskAiRoutePolicy(
     provider_name="mtplx",
     transport_name="openai_compatible",
-    base_url="http://127.0.0.1:8002/v1",
+    base_url=MTPLX_LOCAL_BASE_URL,
     allowed_models=frozenset({
         "mtplx-flash-next-optimized-speed",
     }),
@@ -452,7 +455,10 @@ class AiExecutionPolicyResolver:
         """
         if refresh:
             self._refresh_dynamic_route()
-        if task_type:
+        if task_type and not self.test_only_provider_injection:
+            # Test-only provider injection freezes the route at the harness
+            # boundary: resolution must not consult live runtime settings
+            # (owner revision→cloud decision applies to production paths).
             try:
                 if self._task_type(task_type) == AiTaskType.MEDICAL_WRITING_REVISION:
                     self._capture_revision_cloud_route()
@@ -630,7 +636,11 @@ class AiExecutionPolicyResolver:
     ) -> AiExecutionResolution:
         self._refresh_dynamic_route()
         task_type = self._task_type(request.task_type)
-        if task_type == AiTaskType.MEDICAL_WRITING_REVISION:
+        if (
+            task_type == AiTaskType.MEDICAL_WRITING_REVISION
+            and not self.test_only_provider_injection
+        ):
+            # Same test-injection boundary as route_identity_snapshot above.
             self._capture_revision_cloud_route()
         prompt_version = self._validate_common(
             request.module,

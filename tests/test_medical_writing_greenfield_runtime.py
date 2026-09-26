@@ -727,10 +727,13 @@ class GreenfieldMedicalWritingRuntimeFlowTests(unittest.TestCase):
         initial = self.repository.working_copy(project_id, section_id)
         self.assertEqual(0, initial.revision)
 
+        # Drafting-process narration ("已确认的研究事实" etc.) is an
+        # approval-blocking content-quality rule; body text must read as
+        # submission-facing prose.
         author_text = (
-            "本研究采用随机、双盲、安慰剂对照设计（作者已确认当前章节措辞）。"
-            "研究对象、给药安排、主要评价路径及安全性观察均须以已确认的研究事实为依据，"
-            "本段正文用于验证完整导出闸门不会把短句或标题骨架误认为可递交内容。"
+            "本研究采用随机、双盲、安慰剂对照设计。"
+            "研究对象、给药安排、主要评价路径及安全性观察均以研究方案既定的事实依据为准，"
+            "章节内容完整可读，不会把短句或标题骨架误认为可递交内容。"
         )
         candidate_blocks = [dict(block) for block in initial.content_blocks]
         candidate_blocks[1] = dict(candidate_blocks[1])

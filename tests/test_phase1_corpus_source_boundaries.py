@@ -16,6 +16,14 @@ SLICE = (
     / "medical_writing_phase1_autoimmune_mnc_corpus_20260716"
 )
 
+# The slice holds user-local corpus working records and is intentionally not
+# version-controlled; the source-boundary contracts below only apply when the
+# slice is present on the machine.
+pytestmark = pytest.mark.skipif(
+    not SLICE.is_dir(),
+    reason="local phase1 corpus slice (records/active_slices/...) absent from this checkout",
+)
+
 
 def load_script(name: str):
     path = SLICE / f"{name}.py"
