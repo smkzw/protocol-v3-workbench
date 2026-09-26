@@ -1857,3 +1857,10 @@ npm exec vite -- --port 5186 --strictPort --host 127.0.0.1
 - 用户追加宽屏密度、AI文案分点、编辑器格式退步审阅：纳入本次核心范围。ego TaskSpace=199/p1，后续复用；编辑链会商 mw_r11_editor_review_20260921（只读）。摘要StrictMode行为反例已复现，修复后5/5定向通过；首轮命令工作目录错误未写测试，未将旧4通过冒充新验证。
 
 2026-09-21 09:24：宽屏/编辑链源码会商返回，修复与限制持续记录于 runs/requirements_v2_20260919/t17_round11/TAKEOVER_REVIEW.md。真实Office作为默认主画布，侧边研究设计；当前下载追随Office保存；暂未最终验收。ego199/p1继续复用；后端execution会话41554仍在跑，禁止重复派发。
+
+## 无损暂停检查点（2026-09-26 凌晨，0926收敛冲刺收官）
+**位置**：动态工作流 dwfrun-2461fa8d（26项收敛+164复检+K3点火）已完整收官+独立复核+提交；T16/T17桌面Office全链PASS。**权威handoff=runs/requirements_v2_20260919/t17_round17_uat/HANDOFF_0926_CONVERGENCE.md（接手者先读它）**。
+**已落库**：7215ca5（26项根因修复族+忠度离线复检特性，六文件耦合集）+ 6936214（T16证据）+ 本checkpoint与App.jsx const补漏（handoff提交）。
+**现场终态**：目标批 da229e6a = ready 57/忠度拦截165/失败5+1在跑/排除2（原26失败→19转ready+1转拦截+残余provider瞬断族）；230项0 lineage不变量违规；K3批574项被快照权限门拦（2 durable job 3/3耗尽）；后端5301运行7215ca5代码、前端5186、MTPLX@8002、oMLX@8001翻译模型驻留。
+**下一步恢复动作（按序）**：①K3门修复按 k3_gate_fix_design.md 方案A（search_plan=None合法态+确认投影即权威；search_plan存在行为不变；无投影仍拒绝+回归测试）→全量测试门（结构化解析，修exit=2假绿盲区）→重启5301→重放574项（新恢复尝试语义=新幂等键，不扩max_attempts）→收敛监控数小时。②164复检数据恢复：127项集成行chunk_ids为空+38项不完整，0项到达确定性检查器——查chunk缺失成因（集成行早于chunk存储？可否从stage runs重建对齐单元），产出§5真实量化。③目标批最后1项消化监控（新幂等键补轮即可）。④T18操作负担口径（鼠标计数+12px/14px断言）→R16集中验收（S01-S07需K3数据）。
+**本批教训（详见handoff §五）**：怀疑方向≠根因（adapter怀疑被栈证伪，真凶=a0cc222读侧共存不变式）；独立复核抓到终态快照过期+pytest门假绿两处必错；cleanup长尾跨天放大三层；提交耦合集须核对HEAD树完整性（contracts extra=forbid）。

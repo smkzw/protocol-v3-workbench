@@ -587,7 +587,7 @@ function apiErrorText(error) {
 // job IDs, schema paths, internal stage tokens, or Pydantic/traceback text.
 // The raw message stays available for the explicit 展开-诊断 details view and
 // in backend logs.
-_MEDICAL_WRITING_DIAGNOSTIC_RE = /(Traceback|Exception|RuntimeError|ValueError|KeyError|Pydantic|schema|schema_version|stage_run_id|mwjob_|mwprefill|wref_|docplan_|ct_run_|ct_chunk_|mwsec_|mwdoc_|HTTP \d{3}|at line \d+|expected_revision|payload_json)/i;
+const _MEDICAL_WRITING_DIAGNOSTIC_RE = /(Traceback|Exception|RuntimeError|ValueError|KeyError|Pydantic|schema|schema_version|stage_run_id|mwjob_|mwprefill|wref_|docplan_|ct_run_|ct_chunk_|mwsec_|mwdoc_|HTTP \d{3}|at line \d+|expected_revision|payload_json)/i;
 
 function medicalWritingSafeErrorText(error) {
   const raw = String(apiErrorText(error) || "");
