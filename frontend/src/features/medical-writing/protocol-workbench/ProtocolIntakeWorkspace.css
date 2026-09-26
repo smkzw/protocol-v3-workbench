@@ -198,11 +198,19 @@
   }
 }
 
-/* Desktop writing: confirmed design beside the actual document, not above it. */
-.pvi-writing-desk { display:grid; grid-template-columns:clamp(300px, 20vw, 380px) minmax(720px, 1fr); gap:10px; align-items:start; margin-top:10px; }
-.pvi-writing-desk--bridge { grid-template-columns:clamp(220px, 15vw, 280px) minmax(780px, 1fr); }
+/* Desktop writing (0926V1 G7 A703/A704): the document canvas is the main area
+   and comes first; the right rail holds tasks/summary and is user-resizable
+   (resize:horizontal). 宽审阅 turns the rail into a wide review surface via a
+   class on the desk only — no remount, so the Office iframe (dirty/选区/IME/
+   撤销) is untouched. */
+.pvi-writing-desk { display:flex; gap:10px; align-items:flex-start; margin-top:10px; }
 .pvi-writing-desk > * { min-width:0; }
-.pvi-design-pane { position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; border:1px solid var(--kz-border); border-top:3px solid var(--kz-orange); border-radius:8px; background:white; padding:10px; box-shadow:var(--kz-shadow); }
+.pvi-document-pane { flex:1 1 auto; min-width:min(720px, 100%); }
+.pvi-design-pane { flex:0 0 auto; width:clamp(280px, 21vw, 400px); min-width:264px; max-width:min(44vw, 880px); resize:horizontal; overflow:auto; position:sticky; top:8px; max-height:calc(100vh - 16px); border:1px solid var(--kz-border); border-top:3px solid var(--kz-orange); border-radius:8px; background:white; padding:10px; box-shadow:var(--kz-shadow); }
+.pvi-design-pane-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 8px; }
+.pvi-design-pane-head h2 { font-size:18px; margin:0; white-space:nowrap; }
+.pvi-design-pane-head button { flex:0 0 auto; font:inherit; font-size:14px; cursor:pointer; border:1px solid var(--kz-border); border-radius:6px; padding:5px 10px; background:var(--kz-surface, #fff); }
+.pvi-design-pane-head button[aria-pressed="true"] { border-color:var(--kz-orange); background:var(--kz-soft, #fdf3ec); font-weight:700; }
 .pvi-design-pane > h2 { font-size:18px; margin:0 0 8px; }
 .pvi-design-pane > details { border-top:1px solid var(--kz-border); padding:6px 0; }
 .pvi-design-pane > details > summary { cursor:pointer; font-size:14px; font-weight:700; padding:2px 0; }
@@ -211,9 +219,17 @@
 .pvi-handoff-summary { margin:0; padding-left:18px; }
 .pvi-handoff-summary li { margin:4px 0; }
 .pvi-design-pane .pvi-research-information dl { grid-template-columns:1fr; gap:8px; }
-.pvi-document-pane { min-width:0; }
 .pvi-document-pane .kz-manuscript { margin:0; padding:10px; min-height:calc(100vh - 150px); }
-@media(max-width:1180px) { .pvi-writing-desk { grid-template-columns:1fr; } .pvi-design-pane { position:static; max-height:none; } }
+
+/* 宽审阅面：右栏内容铺满视口（研究比较/设计确认获得完整宽阅读空间）。
+   仅切换此类，不重挂载任何节点。内容限宽保持长文可读。 */
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane { position:fixed; inset:24px; z-index:1200; width:auto; min-width:0; max-width:none; max-height:none; resize:none; padding:18px 22px; border-radius:12px; box-shadow:0 24px 70px rgba(20,35,31,.25); }
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane > details { max-width:1160px; }
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane-head button { min-height:34px; }
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane .pvi-research-information dl,
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane .pvi-decisions,
+.pvi-writing-desk.pvi-wide-review .pvi-design-pane .rec-grid { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+@media(max-width:1180px) { .pvi-writing-desk { flex-direction:column; } .pvi-document-pane { min-width:0; width:100%; } .pvi-design-pane { position:static; width:100%; max-width:none; resize:none; max-height:none; } }
 
 .pvi-intake-summary { margin:4px 0; font-size:14px; }
 .pvi-heading > p { margin:4px 0; font-size:14px; }

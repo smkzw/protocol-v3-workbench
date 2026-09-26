@@ -138,8 +138,9 @@ it('focuses on study confirmation after source preparation while retaining the e
       facts:{'framing.investigational_product':'示例药物'}},revision_sha256:'a'.repeat(64)}))});
   render(<ProtocolIntakeWorkspace projectId='project-one' studyDefinitionId='study:one' actorId='actor:one' api={client}/>);
   // The persistent desktop now covers design and document editing, not only intake confirmation.
+  // 0926V1 G7: the rail is 任务与摘要 (document canvas first, wide review from the rail).
   await screen.findByRole('heading',{name:'研究方案工作台',level:2});
-  expect(screen.getByRole('complementary',{name:'研究设计与建议'})).toBeTruthy();
+  expect(screen.getByRole('complementary',{name:'任务与摘要'})).toBeTruthy();
   expect(screen.getByRole('region',{name:'研究方案文档'})).toBeTruthy();
   const disclosure=screen.getByText('已保存的研究资料与写作说明').closest('details');
   expect(disclosure.open).toBe(false);

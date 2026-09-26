@@ -76,6 +76,29 @@ function runtimeBuildManifestPlugin() {
   };
 }
 
+// 0927V1 G7 harness (tests/protocol-writing-desk-functional.*): dev-only
+// middleware that serves the synthetic fixture DOCX for the fixture snapshot
+// URL, so the embedded Office editor loads real content in the component
+// acceptance harness without touching any backend. Registered before the
+// proxy so it wins for this one fixture path; production builds unaffected.
+function g7FixtureDocxPlugin() {
+  return {
+    name: "g7-fixture-docx",
+    configureServer(server) {
+      server.middlewares.use((request, response, next) => {
+        if (!(request.url || "").includes("/office-draft/snapshots/g7-fixture-snapshot/content")) {
+          next();
+          return;
+        }
+        response.statusCode = 200;
+        response.setHeader("Content-Type",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        response.end(readFileSync(join(frontendDir, "public", "genoffice-fixture", "g7-sample.docx")));
+      });
+    },
+  };
+}
+
 export default defineConfig({
   define: {
     __WORKBENCH_RUNTIME_EXPECTATION__: JSON.stringify(runtimeExpectation),
@@ -96,5 +119,5 @@ export default defineConfig({
       "/api": apiProxyTarget,
     },
   },
-  plugins: [runtimeBuildManifestPlugin(), react()],
+  plugins: [runtimeBuildManifestPlugin(), g7FixtureDocxPlugin(), react()],
 });
