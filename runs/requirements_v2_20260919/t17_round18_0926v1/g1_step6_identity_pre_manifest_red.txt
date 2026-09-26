@@ -1,0 +1,153 @@
+F.F.                                                                [100%]
+=================================== FAILURES ===================================
+____________ ToolchainManifestTests.test_manifest_hashes_match_disk ____________
+
+self = <test_toolchain_manifest.ToolchainManifestTests testMethod=test_manifest_hashes_match_disk>
+
+    def test_manifest_hashes_match_disk(self) -> None:
+>       result = validate_manifest_hashes(_ROOT)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_toolchain_manifest.py:317: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/qc/protocol_v3/verify_toolchain_rebuild.py:564: in validate_manifest_hashes
+    _check("frontend.package", fe["package"])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+label = 'frontend.package'
+section = {'path': 'frontend/package.json', 'sha256': '94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd', 'package_manager_field': 'npm@10.9.8'}
+file_key = 'path', hash_key = 'sha256'
+
+    def _check(label: str, section: dict[str, Any], file_key: str = "path", hash_key: str = "sha256") -> None:
+        if file_key not in section or hash_key not in section:
+            raise ManifestError(f"manifest {label!r} entry must declare {file_key!r} and {hash_key!r}")
+        path = _resolve_manifest_path(repo_root, section[file_key])
+        expected = section[hash_key]
+        if not isinstance(expected, str) or not SHA256_RE.match(expected):
+            raise ManifestError(f"manifest {label!r} sha256 is not a 64-char hex digest: {expected!r}")
+        frozen = CANONICAL_SOURCE_SHA256.get(label)
+        if frozen is None or expected != frozen:
+            raise ManifestError(
+                f"manifest {label} sha256 does not match the frozen source authority: "
+                f"expected={frozen} actual={expected}"
+            )
+        if not path.is_file():
+            raise ManifestError(f"manifest {label!r} referenced file is missing: {path}")
+        actual = _manifest_file_sha256(path)
+        checks.append({"label": label, "path": str(path), "expected": expected, "actual": actual, "ok": actual == expected})
+        if actual != expected:
+>           raise ManifestError(
+                f"{label} hash mismatch for {path}: manifest={expected} actual={actual}"
+            )
+E           verify_toolchain_rebuild.ManifestError: frontend.package hash mismatch for /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e
+
+scripts/qc/protocol_v3/verify_toolchain_rebuild.py:551: ManifestError
+_ ToolchainManifestTests.test_dependency_source_and_manifest_hash_cannot_be_coforged (label='frontend lock') _
+verify_toolchain_rebuild.ManifestError: frontend.package hash mismatch for /private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/tmpa6fh6759/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e
+
+During handling of the above exception, another exception occurred:
+
+self = <test_toolchain_manifest.ToolchainManifestTests testMethod=test_dependency_source_and_manifest_hash_cannot_be_coforged>
+
+    def test_dependency_source_and_manifest_hash_cannot_be_coforged(self) -> None:
+        mutations = (
+            ("frontend package", "frontend", "package", "frontend/package.json"),
+            ("frontend lock", "frontend", "lock", "frontend/package-lock.json"),
+            ("Python input", "python", "requirements_input", "services/api/requirements-protocol-v3.in"),
+            ("Python lock", "python", "lock", "services/api/requirements-protocol-v3.lock"),
+            ("test inventory", "frontend", "test_inventory", "frontend/tests/protocol_v3_test_inventory.mjs"),
+        )
+        for label, top, section, relative in mutations:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as tmp:
+                repo = Path(tmp)
+                target = _copy_manifest(repo, _ROOT)
+                _stage_manifest_files(repo, _ROOT)
+                source = repo / relative
+                source.write_bytes(source.read_bytes() + b"\n")
+                data = json.loads(target.read_text(encoding="utf-8"))
+                data[top][section]["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
+                target.write_text(json.dumps(data), encoding="utf-8")
+>               with self.assertRaisesRegex(ManifestError, "frozen source authority"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: "frozen source authority" does not match "frontend.package hash mismatch for /private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/tmpa6fh6759/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e"
+
+tests/protocol_v3/test_toolchain_manifest.py:274: AssertionError
+_ ToolchainManifestTests.test_dependency_source_and_manifest_hash_cannot_be_coforged (label='test inventory') _
+verify_toolchain_rebuild.ManifestError: frontend.package hash mismatch for /private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/tmp69xqn53f/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e
+
+During handling of the above exception, another exception occurred:
+
+self = <test_toolchain_manifest.ToolchainManifestTests testMethod=test_dependency_source_and_manifest_hash_cannot_be_coforged>
+
+    def test_dependency_source_and_manifest_hash_cannot_be_coforged(self) -> None:
+        mutations = (
+            ("frontend package", "frontend", "package", "frontend/package.json"),
+            ("frontend lock", "frontend", "lock", "frontend/package-lock.json"),
+            ("Python input", "python", "requirements_input", "services/api/requirements-protocol-v3.in"),
+            ("Python lock", "python", "lock", "services/api/requirements-protocol-v3.lock"),
+            ("test inventory", "frontend", "test_inventory", "frontend/tests/protocol_v3_test_inventory.mjs"),
+        )
+        for label, top, section, relative in mutations:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as tmp:
+                repo = Path(tmp)
+                target = _copy_manifest(repo, _ROOT)
+                _stage_manifest_files(repo, _ROOT)
+                source = repo / relative
+                source.write_bytes(source.read_bytes() + b"\n")
+                data = json.loads(target.read_text(encoding="utf-8"))
+                data[top][section]["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
+                target.write_text(json.dumps(data), encoding="utf-8")
+>               with self.assertRaisesRegex(ManifestError, "frozen source authority"):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AssertionError: "frozen source authority" does not match "frontend.package hash mismatch for /private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/tmp69xqn53f/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e"
+
+tests/protocol_v3/test_toolchain_manifest.py:274: AssertionError
+______ FrontendCheckWrapperTests.test_wrapper_hash_precheck_matches_disk _______
+
+self = <test_frontend_check_wrapper.FrontendCheckWrapperTests testMethod=test_wrapper_hash_precheck_matches_disk>
+
+    def test_wrapper_hash_precheck_matches_disk(self) -> None:
+        manifest = load_manifest(_ROOT)
+>       result = validate_manifest_hashes(_ROOT, manifest=manifest)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/protocol_v3/test_frontend_check_wrapper.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/qc/protocol_v3/verify_toolchain_rebuild.py:564: in validate_manifest_hashes
+    _check("frontend.package", fe["package"])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+label = 'frontend.package'
+section = {'path': 'frontend/package.json', 'sha256': '94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd', 'package_manager_field': 'npm@10.9.8'}
+file_key = 'path', hash_key = 'sha256'
+
+    def _check(label: str, section: dict[str, Any], file_key: str = "path", hash_key: str = "sha256") -> None:
+        if file_key not in section or hash_key not in section:
+            raise ManifestError(f"manifest {label!r} entry must declare {file_key!r} and {hash_key!r}")
+        path = _resolve_manifest_path(repo_root, section[file_key])
+        expected = section[hash_key]
+        if not isinstance(expected, str) or not SHA256_RE.match(expected):
+            raise ManifestError(f"manifest {label!r} sha256 is not a 64-char hex digest: {expected!r}")
+        frozen = CANONICAL_SOURCE_SHA256.get(label)
+        if frozen is None or expected != frozen:
+            raise ManifestError(
+                f"manifest {label} sha256 does not match the frozen source authority: "
+                f"expected={frozen} actual={expected}"
+            )
+        if not path.is_file():
+            raise ManifestError(f"manifest {label!r} referenced file is missing: {path}")
+        actual = _manifest_file_sha256(path)
+        checks.append({"label": label, "path": str(path), "expected": expected, "actual": actual, "ok": actual == expected})
+        if actual != expected:
+>           raise ManifestError(
+                f"{label} hash mismatch for {path}: manifest={expected} actual={actual}"
+            )
+E           verify_toolchain_rebuild.ManifestError: frontend.package hash mismatch for /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/package.json: manifest=94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd actual=2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e
+
+scripts/qc/protocol_v3/verify_toolchain_rebuild.py:551: ManifestError
+=========================== short test summary info ============================
+FAILED tests/protocol_v3/test_toolchain_manifest.py::ToolchainManifestTests::test_manifest_hashes_match_disk
+SUBFAILED(label='frontend lock') tests/protocol_v3/test_toolchain_manifest.py::ToolchainManifestTests::test_dependency_source_and_manifest_hash_cannot_be_coforged
+SUBFAILED(label='test inventory') tests/protocol_v3/test_toolchain_manifest.py::ToolchainManifestTests::test_dependency_source_and_manifest_hash_cannot_be_coforged
+FAILED tests/protocol_v3/test_frontend_check_wrapper.py::FrontendCheckWrapperTests::test_wrapper_hash_precheck_matches_disk
+4 failed, 2 passed, 3 subtests passed in 26.32s

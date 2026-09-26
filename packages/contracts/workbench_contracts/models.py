@@ -8823,6 +8823,12 @@ class WritingReferenceTranslationRevision(WorkbenchModel):
     rationale: str
     fidelity_status: str
     fidelity_failure_codes: List[str] = Field(default_factory=list)
+    # G1 (0926V1 A109): identity of the deterministic fidelity checker that
+    # produced this revision's fidelity fields. Empty for rows written
+    # before the checker identity existed (legacy pre-tightening checks);
+    # persisted rows stay immutable.
+    fidelity_checker_version: str = ""
+    fidelity_checker_hash: str = ""
     ai_run_id: str
     task_type: str = ""
     prompt_version: str = ""
@@ -9015,6 +9021,11 @@ class ChapterIntegrationResult(WorkbenchModel):
     flash_output_hash: str
     fidelity_status: str
     fidelity_failure_codes: List[str] = Field(default_factory=list)
+    # G1 (0926V1 A109): identity of the deterministic fidelity checker that
+    # produced fidelity_status/fidelity_failure_codes. Empty for rows
+    # written before the checker identity existed; rows stay immutable.
+    fidelity_checker_version: str = ""
+    fidelity_checker_hash: str = ""
     # Non-authoring model QC findings require medical review but cannot
     # hard-block a deterministic-valid Hy-MT2 body on their own.
     fidelity_advisory_codes: List[str] = Field(default_factory=list)

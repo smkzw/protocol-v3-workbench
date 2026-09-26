@@ -1,0 +1,207 @@
+FFFFFFF.....                                                             [100%]
+=================================== FAILURES ===================================
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 5 mg.-\u5242\u91cf50 mg\u3002-True] _
+
+source = 'Dose 5 mg.', target = '剂量50 mg。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ('unit_sequence_changed',)) is True
+E        +  where ('unit_sequence_changed',) = TranslationFidelityResult(passed=False, failure_codes=('unit_sequence_changed',), source_numeric_tokens=('5',), translated_numeric_tokens=('50',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 1.5 mg.-\u5242\u91cf15 mg\u3002-True] _
+
+source = 'Dose 1.5 mg.', target = '剂量15 mg。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ('unit_sequence_changed',)) is True
+E        +  where ('unit_sequence_changed',) = TranslationFidelityResult(passed=False, failure_codes=('unit_sequence_changed',), source_numeric_tokens=('1.5',), translated_numeric_tokens=('15',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 15 mg.-\u5242\u91cf1.5 mg\u3002-True] _
+
+source = 'Dose 15 mg.', target = '剂量1.5 mg。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ('unit_sequence_changed',)) is True
+E        +  where ('unit_sequence_changed',) = TranslationFidelityResult(passed=False, failure_codes=('unit_sequence_changed',), source_numeric_tokens=('15',), translated_numeric_tokens=('1.5',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Enroll 120 participants.-\u5165\u7ec41200\u4f8b\u53d7\u8bd5\u8005\u3002-True] _
+
+source = 'Enroll 120 participants.', target = '入组1200例受试者。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ()) is True
+E        +  where () = TranslationFidelityResult(passed=True, failure_codes=(), source_numeric_tokens=('120',), translated_numeric_tokens=('1200',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Evaluate at week 12.-\u5728\u7b2c120\u5468\u8bc4\u4f30\u3002-True] _
+
+source = 'Evaluate at week 12.', target = '在第120周评估。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ('unit_sequence_changed',)) is True
+E        +  where ('unit_sequence_changed',) = TranslationFidelityResult(passed=False, failure_codes=('unit_sequence_changed',), source_numeric_tokens=('12',), translated_numeric_tokens=('120',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[116 million people.-1.16\u4e07\u4eba\u3002-True] _
+
+source = '116 million people.', target = '1.16万人。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ()) is True
+E        +  where () = TranslationFidelityResult(passed=True, failure_codes=(), source_numeric_tokens=('116',), translated_numeric_tokens=('1.16',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+_ test_numeric_fidelity_does_not_forgive_unlicensed_scaling[2 visits and 2 calls.-2\u6b21\u8bbf\u89c6\u548c\u7535\u8bdd\u968f\u8bbf\u3002-True] _
+
+source = '2 visits and 2 calls.', target = '2次访视和电话随访。', should_flag = True
+
+    @pytest.mark.parametrize(
+        "source, target, should_flag",
+        [
+            ("Dose 5 mg.", "剂量50 mg。", True),
+            ("Dose 1.5 mg.", "剂量15 mg。", True),
+            ("Dose 15 mg.", "剂量1.5 mg。", True),
+            ("Enroll 120 participants.", "入组1200例受试者。", True),
+            ("Evaluate at week 12.", "在第120周评估。", True),
+            ("116 million people.", "1.16万人。", True),
+            ("2 visits and 2 calls.", "2次访视和电话随访。", True),
+            ("116 million people.", "1.16亿人。", False),
+            ("$635 billion.", "6350亿美元。", False),
+            ("116 million people.", "2.50亿人。", True),
+            ("Dose 5 mg.", "剂量7 mg。", True),
+            ("Dose 5 mg.", "剂量5 mg。", False),
+        ],
+    )
+    def test_numeric_fidelity_does_not_forgive_unlicensed_scaling(source, target, should_flag):
+        result = evaluate_translation_fidelity(source, target)
+>       assert ("numeric_tokens_changed" in result.failure_codes) is should_flag
+E       AssertionError: assert ('numeric_tokens_changed' in ()) is True
+E        +  where () = TranslationFidelityResult(passed=True, failure_codes=(), source_numeric_tokens=('2', '2'), translated_numeric_tokens=('2',), source_abbreviations=()).failure_codes
+
+tests/test_writing_reference_numeric_fidelity.py:31: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 5 mg.-\u5242\u91cf50 mg\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 1.5 mg.-\u5242\u91cf15 mg\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 15 mg.-\u5242\u91cf1.5 mg\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Enroll 120 participants.-\u5165\u7ec41200\u4f8b\u53d7\u8bd5\u8005\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Evaluate at week 12.-\u5728\u7b2c120\u5468\u8bc4\u4f30\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[116 million people.-1.16\u4e07\u4eba\u3002-True]
+FAILED tests/test_writing_reference_numeric_fidelity.py::test_numeric_fidelity_does_not_forgive_unlicensed_scaling[2 visits and 2 calls.-2\u6b21\u8bbf\u89c6\u548c\u7535\u8bdd\u968f\u8bbf\u3002-True]
+7 failed, 5 passed in 0.35s

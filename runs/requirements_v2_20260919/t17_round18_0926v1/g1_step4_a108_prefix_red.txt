@@ -1,0 +1,124 @@
+........................................................................ [ 56%]
+.........................F..............................                 [100%]
+=================================== FAILURES ===================================
+_ FinalCandidateFidelityTests.test_final_candidate_is_evaluated_before_admission _
+
+self = <tests.test_writing_reference_final_candidate_fidelity.FinalCandidateFidelityTests testMethod=test_final_candidate_is_evaluated_before_admission>
+
+    def test_final_candidate_is_evaluated_before_admission(self) -> None:
+        """§5.2: the deterministic checker must read the ACTUAL final
+        candidate, not only the per-chunk Hy drafts, before an item is
+        admitted."""
+        calls: list[tuple[str, str]] = []
+        real = tb.evaluate_translation_fidelity
+    
+        def spy(source_text: str, translated_text: str):
+            calls.append((source_text, translated_text))
+            return real(source_text, translated_text)
+    
+        with patch.object(tb, "evaluate_translation_fidelity", spy):
+            batch, _artifact = self._run_single_span_batch(
+                "translation-batch-a108-evaluated",
+            )
+        item = batch.items[0]
+        self.assertEqual("candidate_ready", item.generation_status)
+        persisted = self.repo.translation(
+            PROJECT_ID, item.translation_id, item.translation_revision
+        )
+        # The admitted candidate itself must have been among the evaluated
+        # texts (pre-fix this count was 0 — the candidate was never read).
+>       self.assertTrue(calls)
+E       AssertionError: [] is not true
+
+tests/test_writing_reference_final_candidate_fidelity.py:95: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  services.api.app.writing_reference_translation_batch:writing_reference_translation_batch.py:4706 [MW-ENTRY-DIAG] enter item=wref_translation_item_7e22f56140e9e0c3c3a14cab batch=wref_translation_batch_83d55cacd758ed90c9f8f72d attempt=1 stage= active_upper=
+=============================== warnings summary ===============================
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+services/api/app/main.py:1377
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1377: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+services/api/app/main.py:1387
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1387: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1409
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1409: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1437
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1437: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:1446
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1446: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:2545
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:2545: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_writing_reference_final_candidate_fidelity.py::FinalCandidateFidelityTests::test_final_candidate_is_evaluated_before_admission
+1 failed, 127 passed, 18 warnings in 16.07s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

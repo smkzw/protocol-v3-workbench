@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import io
 import json
 import os
@@ -13,6 +14,7 @@ import uuid
 import zipfile
 from collections import Counter
 from dataclasses import dataclass, replace
+from decimal import Decimal
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any, Callable, Sequence
@@ -398,6 +400,8 @@ class TranslationFidelityResult:
     source_numeric_tokens: tuple[str, ...]
     translated_numeric_tokens: tuple[str, ...]
     source_abbreviations: tuple[str, ...]
+    checker_version: str = ""
+    checker_hash: str = ""
 
 
 @dataclass(frozen=True)
@@ -2652,6 +2656,20 @@ def validate_manual_document_payload(
     )
 
 
+# G1 (0926V1): checker identity written into every fidelity evaluation
+# (A109) so assessments produced by the pre-tightening checker are
+# distinguishable from assessments produced by this one.
+CHECKER_VERSION = "fidelity-numeric-strict-2026-0926v1"
+_MAGNITUDE_POWERS = {
+    "万": 4,
+    "亿": 8,
+    "thousand": 3,
+    "million": 6,
+    "billion": 9,
+    "trillion": 12,
+}
+
+
 def evaluate_translation_fidelity(
     source_text: str,
     translated_text: str,
@@ -3110,51 +3128,57 @@ def evaluate_translation_fidelity(
         "nineteenth": "19",
         "twentieth": "20",
     }
-    source_word_numbers = Counter(
-        number_words[match.group(0).casefold()]
+    source_word_number_values = Counter(
+        Decimal(number_words[match.group(0).casefold()])
         for match in re.finditer(
             rf"\b(?:{'|'.join(number_words)})\b",
             source_text,
             re.IGNORECASE,
         )
     )
-    source_number_counts = Counter(source_numbers)
-    translated_number_counts = Counter(translated_numbers)
+    def _numeric_value_multiset(text: str) -> Counter:
+        """Exact Decimal values for every numeric occurrence in ONE text.
 
-    def _chinese_scaled_number_tokens(text: str) -> Counter:
-        """Decode Chinese magnitude-scaled numerals to their bare tokens.
-
-        0924V2 §5 fidelity diagnosis: a faithful translation renders
-        "116 million" as "1.16亿" and "$635 billion" as "6350亿" — the
-        magnitude moves into the unit suffix, so the bare numeric-token
-        comparison mislabels these as numeric drift (checker false
-        positive). A scaled token contributes BOTH its mantissa and its
-        digit-collapsed form (1.16亿 → "1.16" and "116") so the pair
-        (source "116", translated "1.16") compares equal; "6350亿" also
-        re-credits the source-side bare token 6350.
+        G1 (0926V1 §3/F01) replaces the 0924V2 shape forgiveness: each side
+        is extracted from its own text only — the symmetric re-crediting that
+        fed translated scaled forms back into the source counts is gone. A
+        number carrying a provable magnitude word decodes to its exact value
+        (万=10^4, 亿=10^8, thousand=10^3, million=10^6, billion=10^9,
+        trillion=10^12); bare numbers keep sign, decimal point and value
+        exactly. Occurrence counts are consumed by multiset subtraction, so a
+        dropped repetition (two "2"s -> one "2") can no longer be forgiven by
+        an any()-style shape match.
+        # ponytail: cross-unit conversions (mg<->g) are NOT proven by this
+        checker and stay blocked via the unit checks; upgrade path = an
+        explicit provable-conversion table reviewed against A107.
         """
-        scaled: Counter = Counter()
-        for match in re.finditer(r"(\d+(?:\.\d+)?)([万亿])", text):
-            mantissa, unit = match.group(1), match.group(2)
-            try:
-                float(mantissa)
-            except ValueError:
-                continue
-            digits = mantissa.replace(".", "")
-            if digits:
-                scaled[digits] += 1
-            if mantissa != digits:
-                scaled[mantissa] += 1
-        return scaled
+        values: Counter = Counter()
+        scaled_spans: list[tuple[int, int]] = []
+        for match in re.finditer(
+            r"(?<![A-Za-z0-9.])([-−]?\d+(?:\.\d+)?)\s*"
+            r"(万|亿|(?:thousand|million|billion|trillion)\b)",
+            text,
+            re.IGNORECASE,
+        ):
+            mantissa = Decimal(match.group(1).replace("−", "-"))
+            power = _MAGNITUDE_POWERS[match.group(2).lower()]
+            values[mantissa.scaleb(power)] += 1
+            scaled_spans.append(match.span())
+        if scaled_spans:
+            # Mask scaled occurrences so the bare pass does not double count
+            # the mantissa (1.16万 is one number, not "1.16" plus "1.16万").
+            chars = list(text)
+            for start, end in scaled_spans:
+                for index in range(start, end):
+                    if chars[index] not in " \t":
+                        chars[index] = "\x00"
+            text = "".join(chars)
+        for token in NUMBER_PATTERN.findall(normalize_phase_numbers(text)):
+            values[Decimal(canonical_number(token))] += 1
+        return values
 
-    scaled_source_tokens = _chinese_scaled_number_tokens(source_text)
-    scaled_translated_tokens = _chinese_scaled_number_tokens(translated_text)
-    # Symmetric credit: each side additionally recognizes the other side's
-    # scaled forms, so a faithful magnitude conversion never produces a
-    # difference while a genuinely changed count still does (the true count
-    # digit string appears on only one side).
-    source_number_counts += scaled_translated_tokens
-    translated_number_counts += scaled_source_tokens + scaled_translated_tokens
+    source_number_values = _numeric_value_multiset(numeric_source_text)
+    translated_number_values = _numeric_value_multiset(numeric_translated_text)
 
     def unexpanded_frequency_numbers(text: str) -> list[str]:
         values: list[str] = []
@@ -3175,70 +3199,17 @@ def evaluate_translation_fidelity(
             values.append(number)
         return values
 
-    source_number_counts.update(unexpanded_frequency_numbers(source_text))
-    translated_number_counts.update(unexpanded_frequency_numbers(translated_text))
-    missing_source_numbers = source_number_counts - translated_number_counts
-    extra_translated_numbers = translated_number_counts - source_number_counts
-    unlicensed_extra_numbers = extra_translated_numbers - source_word_numbers
-    # 0924V2 §5: leftover "missing" tokens that differ from a translated
-    # token ONLY by decimal-point scaling are magnitude-scaled renderings
-    # (116 ↔ 1.16亿). A faithful "635 billion" → "6350亿" additionally
-    # appends the unit's zero (billion = 10^9 vs 亿 = 10^8), producing
-    # 635 ↔ 6350 — the translated token starting with the source token's
-    # digit string and extending it ONLY with unit-conversion zeros is the
-    # same number, not drift. Genuinely changed counts alter the significant
-    # digits and never satisfy either shape.
-    def _digit_key(token: str) -> str:
-        return token.replace(".", "")
-
-    def _is_magnitude_rewire(source_token: str, translated_token: str) -> bool:
-        source_digits = _digit_key(source_token)
-        translated_digits = _digit_key(translated_token)
-        if not source_digits or not translated_digits:
-            return False
-        if translated_digits.startswith(source_digits):
-            return set(translated_digits[len(source_digits):]) <= {"0"}
-        return translated_digits == source_digits
-
-    translated_digit_keys = Counter(
-        _digit_key(token)
-        for token in translated_number_counts
-        for _ in range(translated_number_counts[token])
+    source_number_values.update(
+        Decimal(canonical_number(value))
+        for value in unexpanded_frequency_numbers(source_text)
     )
-    forgiven_missing = set()
-    for token, count in missing_source_numbers.items():
-        if translated_digit_keys.get(_digit_key(token), 0) >= count:
-            forgiven_missing.add(token)
-            continue
-        if any(
-            _is_magnitude_rewire(token, other)
-            for other in translated_number_counts
-        ):
-            forgiven_missing.add(token)
-    # 0924V2 §5: the mirrored direction — a scaled translated token
-    # (1.16 from 1.16亿, 6350 from 6350亿) is licensed when a source token
-    # rewires to it, so it must not count as an unlicensed extra either.
-    source_digit_keys = Counter(
-        _digit_key(token)
-        for token in source_number_counts
-        for _ in range(source_number_counts[token])
+    translated_number_values.update(
+        Decimal(canonical_number(value))
+        for value in unexpanded_frequency_numbers(translated_text)
     )
-    forgiven_extra = set()
-    for token, count in unlicensed_extra_numbers.items():
-        if source_digit_keys.get(_digit_key(token), 0) >= count:
-            forgiven_extra.add(token)
-            continue
-        if any(
-            _is_magnitude_rewire(source_token, token)
-            for source_token in source_number_counts
-        ):
-            forgiven_extra.add(token)
-    missing_source_numbers = Counter(
-        {token: count for token, count in missing_source_numbers.items() if token not in forgiven_missing}
-    )
-    unlicensed_extra_numbers = Counter(
-        {token: count for token, count in unlicensed_extra_numbers.items() if token not in forgiven_extra}
-    )
+    missing_source_numbers = source_number_values - translated_number_values
+    extra_translated_numbers = translated_number_values - source_number_values
+    unlicensed_extra_numbers = extra_translated_numbers - source_word_number_values
     if missing_source_numbers or unlicensed_extra_numbers:
         failures.append("numeric_tokens_changed")
     source_comparators = tuple(
@@ -3704,7 +3675,14 @@ def evaluate_translation_fidelity(
         source_numeric_tokens=source_numbers,
         translated_numeric_tokens=translated_numbers,
         source_abbreviations=source_abbreviations,
+        checker_version=CHECKER_VERSION,
+        checker_hash=CHECKER_HASH,
     )
+
+
+CHECKER_HASH = hashlib.sha256(
+    inspect.getsource(evaluate_translation_fidelity).encode("utf-8")
+).hexdigest()[:16]
 
 
 def evaluate_document_content(

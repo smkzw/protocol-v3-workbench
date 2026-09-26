@@ -15,7 +15,8 @@
     "test:inventory": "node tests/protocol_v3_test_inventory.mjs --check",
     "test:unit:vitest": "node tests/protocol_v3_test_inventory.mjs --run vitest",
     "test:unit:node": "node tests/protocol_v3_test_inventory.mjs --run node",
-    "test:unit": "node tests/protocol_v3_test_inventory.mjs --run all"
+    "test:unit": "node tests/protocol_v3_test_inventory.mjs --run all",
+    "lint:noundef": "eslint src --config eslint.config.mjs --format json"
   },
   "dependencies": {
     "@tiptap/core": "3.27.2",
@@ -40,6 +41,8 @@
   "devDependencies": {
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
     "jsdom": "30.0.1",
     "vitest": "4.1.10"
   }

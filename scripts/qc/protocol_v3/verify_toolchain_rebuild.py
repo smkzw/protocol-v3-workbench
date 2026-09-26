@@ -86,7 +86,7 @@ FRONTEND_RUNTIME_SHA256 = {
 }
 FRONTEND_PACKAGE_MANAGER_FIELD = "npm@10.9.8"
 FRONTEND_LOCKFILE_VERSION = 3
-FRONTEND_PACKAGE_COUNT = 255
+FRONTEND_PACKAGE_COUNT = 329
 FRONTEND_INVENTORY_SCHEMA = "protocol-v3-test-inventory.v1"
 FRONTEND_INVENTORY_COUNTS = {"total": 63, "vitest": 15, "node": 48}
 FRONTEND_TEST_PATHS_SHA256 = "bbc6a3920a4cfe572a998fe41f9c377564c3d10392e4c5cfc3d671d20d71bf88"
@@ -170,8 +170,8 @@ FRONTEND_QUARANTINE_PATHS = {
 CANONICAL_SOURCE_SHA256 = {
     "python.requirements_input": "9fd153ebb36125d68d575383ce15334f15ca294eff4ed6d50af72cdc58495045",
     "python.lock": "1e771c8f4f3a90410714f94107cecd42662574fa560eb72ce9ee89e6e5921698",
-    "frontend.package": "94309d8be12133712b2a6d4a9ac3be34dbbb2d730533d34deb9f7adc20d2abdd",
-    "frontend.lock": "83378e52cc1fdf764ea5d34c418aa0e7da2c4bdf1b099ec85e8feaadca1b2134",
+    "frontend.package": "2238c1e0000483f2c599b2c9ad6793ad8b4bb10855fd6f8bb8802cdfbbeceb5e",
+    "frontend.lock": "d2b30162757bf5b0028372e43ef631fd9d282eec30cbc976bfd330fc753c237a",
     "frontend.test_inventory": "0a037e0d24de4674fadc52fa8a1cb46aeb95afb9378e3790074cd1297766d75d",
     "frontend.quarantined_inactive_pnpm.pnpm_lock": "3f101b4e9c833a5154af12f250644cfe60ada682d351c9f028484159d038fba8",
     "frontend.quarantined_inactive_pnpm.pnpm_workspace": "d6d0c24446d91ef762d37c6ba801bb516e65d7055aa9f8027fcd457409a97ce1",

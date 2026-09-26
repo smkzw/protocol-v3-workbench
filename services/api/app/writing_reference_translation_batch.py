@@ -37,6 +37,8 @@ from packages.contracts.workbench_contracts.models import (
 )
 
 from .writing_reference import (
+    CHECKER_HASH,
+    CHECKER_VERSION,
     COMPOSITE_TRANSLATION_BODY_MODEL,
     COMPOSITE_TRANSLATION_CONTRACT_HASH,
     COMPOSITE_TRANSLATION_PROMPT_VERSION,
@@ -46,6 +48,7 @@ from .writing_reference import (
     REGULATORY_TRANSLATION_CONTRACT_HASH,
     REGULATORY_TRANSLATION_PROMPT_VERSION,
     REGULATORY_TRANSLATION_SCHEMA_VERSION,
+    evaluate_translation_fidelity,
     render_regulatory_translation_glossary_contract,
 )
 from .chapter_translation_pipeline import (
@@ -5640,6 +5643,22 @@ class WritingReferenceTranslationBatchService:
                         target_map,
                     )
                 )
+            # A108 (0926V1 §5.2): the unit-level gate above re-reads each
+            # chunk's Hy draft but never the assembled chapter candidate, so
+            # a tampered or mis-assembled integrated text shipped while every
+            # chunk looked faithful. Re-check the ACTUAL final candidate as
+            # one whole text against the chapter source before admission.
+            chapter_source_text = "\n\n".join(
+                chunk_spec.source_text for chunk_spec, _u, _m in chunk_aligned
+            )
+            candidate_check = evaluate_translation_fidelity(
+                chapter_source_text,
+                final_text,
+            )
+            deterministic_failure_codes.extend(candidate_check.failure_codes)
+            deterministic_failure_codes = list(
+                dict.fromkeys(deterministic_failure_codes)
+            )
             fidelity_passed = flash_passed and not deterministic_failure_codes
 
         merged_failure_codes: list[str] = []
@@ -5708,6 +5727,8 @@ class WritingReferenceTranslationBatchService:
             flash_output_hash=flash_output_hash,
             fidelity_status="passed" if fidelity_passed else "blocked",
             fidelity_failure_codes=list(merged_failure_codes),
+            fidelity_checker_version=CHECKER_VERSION,
+            fidelity_checker_hash=CHECKER_HASH,
             fidelity_advisory_codes=list(dict.fromkeys(qc_advisory_codes)),
             blocked_raw_provider_output=hy_block_raw_text,
             blocked_raw_provider_output_sha256=(
@@ -5862,6 +5883,8 @@ class WritingReferenceTranslationBatchService:
             ),
             fidelity_status="passed" if fidelity_passed else "blocked",
             fidelity_failure_codes=list(merged_failure_codes),
+            fidelity_checker_version=CHECKER_VERSION,
+            fidelity_checker_hash=CHECKER_HASH,
             ai_run_id=run_id,
             task_type=COMPOSITE_TRANSLATION_TASK_TYPE,
             prompt_version=COMPOSITE_TRANSLATION_PROMPT_VERSION,
@@ -6577,6 +6600,37 @@ class WritingReferenceTranslationBatchService:
                     f"{run_chapter_id}:{integration.integration_id}"
                 ),
             )
+        # A108 (0926V1 §5.2): the reuse/recreate path trusts the persisted
+        # integration row wholesale. Re-verify the ACTUAL final candidate
+        # against the chapter source before projecting it onto the item: a
+        # drifted or mis-assembled row must block the item, not ship.
+        chapter_chunks_by_id = {
+            chunk.chunk_id: chunk
+            for chunk in self.repository.translation_chunks_for_plan(
+                item.project_id,
+                plan.plan_id,
+            )
+        }
+        chapter_source_text = "\n\n".join(
+            chapter_chunks_by_id[chunk_id].source_text
+            for chunk_id in integration.chunk_ids
+            if chunk_id in chapter_chunks_by_id
+        )
+        candidate_check = evaluate_translation_fidelity(
+            chapter_source_text,
+            integration.integrated_chinese_text,
+        )
+        reuse_fidelity_status = (
+            integration.fidelity_status
+            if not candidate_check.failure_codes
+            else "blocked"
+        )
+        reuse_failure_codes = list(
+            dict.fromkeys(
+                list(integration.fidelity_failure_codes)
+                + list(candidate_check.failure_codes)
+            )
+        )
         revision_payload = WritingReferenceTranslationRevision(
             translation_id=translation_id,
             project_id=item.project_id,
@@ -6590,8 +6644,10 @@ class WritingReferenceTranslationBatchService:
                 f"document-plan/chunk reuse: chapter {chapter_id} "
                 f"integration {integration.integration_id}"
             ),
-            fidelity_status=integration.fidelity_status,
-            fidelity_failure_codes=list(integration.fidelity_failure_codes),
+            fidelity_status=reuse_fidelity_status,
+            fidelity_failure_codes=reuse_failure_codes,
+            fidelity_checker_version=CHECKER_VERSION,
+            fidelity_checker_hash=CHECKER_HASH,
             ai_run_id=run_id,
             task_type=COMPOSITE_TRANSLATION_TASK_TYPE,
             prompt_version=COMPOSITE_TRANSLATION_PROMPT_VERSION,
