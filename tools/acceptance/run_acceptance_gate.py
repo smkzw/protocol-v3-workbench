@@ -25,6 +25,7 @@ import json
 import os
 import platform
 import re
+import socket
 import subprocess
 import sys
 import tempfile
@@ -35,7 +36,39 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-GATE_VERSION = "g0-0926v1/2"
+GATE_VERSION = "g0-0927v1/1"
+GATE_RESULT_SCHEMA = "g0_result/2"
+
+# Safety-boundary failures (numbers/source/authority/data-loss) are never
+# waivable via the known-failures baseline (red line 9). Built-in floor plus
+# optional tools/acceptance/security_sentinels.json extensions.
+DEFAULT_SENTINEL_PREFIXES = (
+    "tests/test_writing_reference_numeric_fidelity",
+    "tests/test_writing_reference_final_candidate_fidelity",
+    "tests/test_writing_reference_translation_service",
+    "tests/test_medical_writing_source_preserving_export",
+    "tests/test_medical_writing_registered_sources",
+    "tests/test_phase1_corpus_source_boundaries",
+    "tests/protocol_v3/test_source_identity_product",
+    "tests/protocol_v3/test_pinned_chapter_sources",
+    "tests/protocol_v3/test_agent5_authority_boundary",
+    "tests/protocol_v3/test_frozen_authority_manifest",
+    "tests/test_medical_risk_authority",
+    "tests/test_monitoring_identity_authorization",
+    "tests/test_monitoring_approval_source_gate",
+    "tests/test_medical_writing_authoring_journey",
+)
+
+
+def load_sentinel_prefixes() -> list[str]:
+    prefixes = set(DEFAULT_SENTINEL_PREFIXES)
+    sentinel_path = Path(__file__).resolve().parent / "security_sentinels.json"
+    try:
+        doc = json.loads(sentinel_path.read_text(encoding="utf-8"))
+        prefixes |= {str(p) for p in doc.get("module_prefixes") or []}
+    except (OSError, ValueError):
+        pass
+    return sorted(prefixes)
 
 # set by main(): --json asks for bare single-line JSON (no GATE_JSON= prefix),
 # because the consuming harness parses stdout as raw JSON.
@@ -44,6 +77,15 @@ _ROOT_DISCOVERY_NOTE: str | None = None
 
 _SKIP_DIRS = {"node_modules", ".venv", "venv", "__pycache__", ".git", "dist",
               ".pytest_cache", "runs"}
+
+
+class RootAmbiguityError(Exception):
+    """A08/F06: multiple candidate repo roots under --root; the caller must
+    pass the exact root instead of letting the gate silently pick one."""
+
+    def __init__(self, candidates: list[str]):
+        super().__init__("multiple candidate repo roots")
+        self.candidates = candidates
 
 
 def discover_repo_root(root: Path) -> Path:
@@ -78,9 +120,9 @@ def discover_repo_root(root: Path) -> Path:
         _ROOT_DISCOVERY_NOTE = f"discovered repo root below --root: {candidates[0].name}"
         return candidates[0]
     _ROOT_DISCOVERY_NOTE = (
-        f"multiple candidate repo roots, chose lexicographically first: "
+        "multiple candidate repo roots, refusing to choose: "
         f"{[str(c) for c in candidates]}")
-    return sorted(candidates)[0]
+    raise RootAmbiguityError([str(c) for c in sorted(candidates)])
 
 # pytest exit codes that are never eligible for PASS/PASS_WITH_KNOWN_FAILURES
 HARD_FAIL_EXIT_CODES = {2: "interrupted_or_collection", 3: "internal_error",
@@ -116,35 +158,89 @@ def error_fingerprint(exc_class: str, rel_path: str, message: str, root: Path) -
 
 # ---------------------------------------------------------------- pytest run
 
+# A10/F02: the pytest child runs in an offline sandbox — live WORKBENCH_*,
+# provider credentials and proxies must never leak into test runs (failure
+# fingerprints under the old {**os.environ} inheritance were env-brittle).
+_GATE_ENV_ALLOWLIST = {
+    "PATH", "HOME", "SHELL", "USER", "LOGNAME", "TMPDIR", "TEMP", "TMP",
+    "LANG", "LC_ALL", "LC_CTYPE", "SYSTEMROOT", "COMSPEC",
+    "PYTHONDONTWRITEBYTECODE", "PYTHONHASHSEED",
+}
 
-def run_pytest(root: Path, junit_path: Path, timeout: int, pytest_args: list[str]) -> dict:
+
+def _gate_test_env(root: Path, plugin_dir: Path) -> dict:
+    env = {key: value for key, value in os.environ.items()
+           if key in _GATE_ENV_ALLOWLIST or key.startswith("PYTHON")}
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    # Team-documented backend test convention (HANDOFF R11/R15):
+    # PYTHONPATH=services/api:. relative to the tree under test; the gate
+    # plugin dir is appended last so repo packages keep priority.
+    env["PYTHONPATH"] = os.pathsep.join(
+        [f"services/api", ".", str(plugin_dir)])
+    return env
+
+
+def _kill_own_process_group(proc: subprocess.Popen) -> None:
+    """Red line 6-2: on timeout kill exactly the process group this gate
+    started (start_new_session makes pgid == pid), TERM first, then KILL."""
+    import signal
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        proc.wait(timeout=10)
+        return
+    except subprocess.TimeoutExpired:
+        pass
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        pass
+
+
+def run_pytest(root: Path, junit_path: Path, timeout: int, pytest_args: list[str],
+               nodeid_report: Path | None = None) -> dict:
     cmd = [
         sys.executable, "-m", "pytest", *pytest_args, "-q",
         "-p", "no:cacheprovider", "--continue-on-collection-errors",
         f"--junitxml={junit_path}",
     ]
-    # Team-documented backend test convention (HANDOFF R11/R15):
-    # PYTHONPATH=services/api:. relative to the tree under test.
-    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1",
-           "PYTHONPATH": f"services/api{os.pathsep}."}
+    plugin_dir = Path(__file__).resolve().parent
+    if nodeid_report is not None and (plugin_dir / "gate_nodeid_recorder.py").is_file():
+        cmd += ["-p", "gate_nodeid_recorder", f"--nodeid-report={nodeid_report}"]
+    env = _gate_test_env(root, plugin_dir)
     started = time.time()
+    # start_new_session: the child gets its own process group so a timeout
+    # can only ever kill THIS gate's group, never user processes.
+    proc = subprocess.Popen(
+        cmd, cwd=str(root), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, env=env, start_new_session=True,
+    )
+    child = {"pid": proc.pid, "pgid": proc.pid, "argv": cmd, "cwd": str(root),
+             "started_at": now_iso()}
+    timed_out = False
     try:
-        proc = subprocess.run(
-            cmd, cwd=str(root), capture_output=True, text=True,
-            timeout=timeout, env=env,
-        )
-        return {
-            "returncode": proc.returncode,
-            "stdout": proc.stdout,
-            "stderr": proc.stderr,
-            "elapsed": round(time.time() - started, 1),
-            "timeout": False,
-        }
+        stdout, stderr = proc.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
-        return {
-            "returncode": None, "stdout": "", "stderr": "",
-            "elapsed": round(time.time() - started, 1), "timeout": True,
-        }
+        timed_out = True
+        _kill_own_process_group(proc)
+        # reaping after the kill returns whatever output was produced so far;
+        # partial logs are kept as evidence, never discarded (red line 6-2).
+        stdout, stderr = proc.communicate()
+    child.update({"ended_at": now_iso(), "timed_out": timed_out})
+    return {
+        "returncode": None if timed_out else proc.returncode,
+        "stdout": stdout or "",
+        "stderr": stderr or "",
+        "elapsed": round(time.time() - started, 1),
+        "timeout": timed_out,
+        "child": child,
+    }
 
 
 def parse_junit(junit_path: Path, root: Path) -> dict:
@@ -230,11 +326,18 @@ def run_pyflakes(root: Path) -> dict:
         )
     except FileNotFoundError:
         return {"ok": False, "reason": "pyflakes_not_installed"}
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "reason": "pyflakes_timeout"}
+    # A07: rc=1 with parseable stdout findings means the tool ran; rc=1 with
+    # no parseable output (broken install/import error) or any other rc means
+    # the tool itself failed — never an empty-but-ok pass.
     findings, ignored = [], {}
+    any_line_parsed = False
     for line in (proc.stdout or "").splitlines():
         m = re.match(r"^(.+?):(\d+):(\d+):\s*(.+)$", line)
         if not m:
             continue
+        any_line_parsed = True
         path, lineno, col, message = m.group(1), m.group(2), m.group(3), m.group(4)
         if message.startswith("undefined name"):
             name = message.split("'", 1)[1].rstrip("'") if "'" in message else message
@@ -243,6 +346,11 @@ def run_pyflakes(root: Path) -> dict:
         else:
             key = _pyflakes_category(message)
             ignored[key] = ignored.get(key, 0) + 1
+    tool_ran = proc.returncode == 0 or (proc.returncode == 1 and any_line_parsed)
+    if not tool_ran:
+        return {"ok": False, "reason": "pyflakes_failed",
+                "returncode": proc.returncode,
+                "stderr_tail": (proc.stderr or "")[-400:]}
     return {"ok": True, "undefined_name": findings,
             "ignored_counted_by_category": ignored}
 
@@ -317,25 +425,38 @@ def run_eslint(root: Path) -> dict:
     bin_path = frontend / "node_modules" / ".bin" / "eslint"
     if not bin_path.exists():
         return {"ok": False, "reason": "eslint_not_installed"}
-    proc = subprocess.run(
-        [str(bin_path), "src", "--config", "eslint.config.mjs", "--format", "json"],
-        cwd=str(frontend), capture_output=True, text=True, timeout=600,
-    )
-    findings = []
+    try:
+        proc = subprocess.run(
+            [str(bin_path), "src", "--config", "eslint.config.mjs", "--format", "json"],
+            cwd=str(frontend), capture_output=True, text=True, timeout=600,
+        )
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "reason": "eslint_timeout"}
+    # A07: an execution failure (config error, crash: rc not in {0,1}) or a
+    # corrupt report is tool failure, not an empty-noundef green.
+    if proc.returncode not in (0, 1):
+        return {"ok": False, "reason": "eslint_failed",
+                "returncode": proc.returncode,
+                "stderr_tail": (proc.stderr or "")[-400:]}
     try:
         reports = json.loads(proc.stdout or "[]")
     except json.JSONDecodeError:
-        return {"ok": True, "returncode": proc.returncode, "noundef": [],
+        return {"ok": False, "reason": "eslint_report_unparseable",
+                "returncode": proc.returncode,
                 "parse_error": (proc.stdout or proc.stderr or "")[:400]}
+    findings, fatal_count = [], 0
     for file_report in reports:
         for message in file_report.get("messages", []):
+            if message.get("fatal"):
+                fatal_count += 1
             if message.get("ruleId") == "no-undef":
                 rel = os.path.relpath(file_report.get("filePath", ""), frontend)
                 findings.append(
                     f"{rel}: line {message.get('line')}, col {message.get('column')}, "
                     f"{message.get('message')}"
                 )
-    return {"ok": True, "returncode": proc.returncode, "noundef": findings}
+    return {"ok": True, "returncode": proc.returncode, "noundef": findings,
+            "fatal_count": fatal_count}
 
 
 # ---------------------------------------------------------------- baseline
@@ -359,6 +480,35 @@ def git_head(root: Path) -> str | None:
     except FileNotFoundError:
         return None
     return proc.stdout.strip() or None if proc.returncode == 0 else None
+
+
+def git_is_ancestor(root: Path, ancestor_sha: str, descendant_sha: str) -> bool | None:
+    """True/False per merge-base --is-ancestor; None when git cannot answer."""
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "merge-base", "--is-ancestor",
+             ancestor_sha, descendant_sha],
+            capture_output=True, text=True, timeout=15,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    if proc.returncode == 0:
+        return True
+    if proc.returncode == 1:
+        return False
+    return None
+
+
+def git_changed_files(root: Path, base_sha: str, head_sha: str) -> list[str]:
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "diff", "--name-only", f"{base_sha}..{head_sha}"],
+            capture_output=True, text=True, timeout=30,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return []
+    return [line for line in proc.stdout.splitlines() if line.strip()] \
+        if proc.returncode == 0 else []
 
 
 def is_gate_repo(root: Path) -> bool:
@@ -406,12 +556,53 @@ def _escalate(gate: dict, verdict: str) -> None:
         gate["verdict"] = verdict
 
 
+def required_node_status(executed_records: list[dict] | None, nodeid: str,
+                         executed_cases: set[str] | None = None,
+                         skipped_cases: set[str] | None = None) -> tuple[bool, str]:
+    """Exact-native-nodeid required-test judgement (A04/A05).
+
+    With recorder records: satisfied only when setup passed AND call passed
+    without an xfail marker. A skipped/xfailed/failed run of the exact nodeid
+    is 'required_node_skipped'; absence is 'required_node_missing'. Same-leaf
+    tests on other classes or other parametrize brackets never match.
+
+    Legacy fallback (no records, e.g. selftest fixtures): exact nodeid among
+    junit-rebuilt cases; junit cannot see the setup/call split.
+    """
+    if executed_records is not None:
+        recs = [r for r in executed_records
+                if isinstance(r, dict) and r.get("nodeid") == nodeid]
+        setup_ok = any(r.get("when") == "setup" and r.get("outcome") == "passed"
+                       for r in recs)
+        call_ok = any(r.get("when") == "call" and r.get("outcome") == "passed"
+                      and not r.get("wasxfail") for r in recs)
+        if call_ok and setup_ok:
+            return True, "ran_passed"
+        if recs:
+            return False, "required_node_skipped"
+        return False, "required_node_missing"
+    executed = executed_cases if executed_cases is not None else set()
+    skipped = skipped_cases if skipped_cases is not None else set()
+    if nodeid in skipped:
+        return False, "required_node_skipped"
+    if nodeid in executed:
+        return True, "ran_passed"
+    return False, "required_node_missing"
+
+
 def evaluate_report_against_baseline(report: dict, baseline: dict | None,
                                      head_sha: str | None,
                                      required_nodes: list[str],
                                      allow_missing_required: bool,
-                                     reasons: list[str]) -> dict:
-    """Shared FAIL/KNOWN/PASS decision for a parsed pytest report."""
+                                     reasons: list[str],
+                                     *,
+                                     baseline_usable: bool | None = None,
+                                     executed_records: list[dict] | None = None,
+                                     sentinel_prefixes: list[str] | None = None) -> dict:
+    """Shared FAIL/KNOWN/PASS decision for a parsed pytest report.
+
+    Every return path carries the complete schema keys, so downstream
+    projection can never KeyError (A06/F05)."""
     result = {
         "ran": report.get("total", 0) if report.get("ok") else 0,
         "failed_ids": [],
@@ -420,6 +611,9 @@ def evaluate_report_against_baseline(report: dict, baseline: dict | None,
         "suspected_data_class": [],
         "suspected_fingerprint_drift": [],
         "missing_required_nodes": [],
+        "skipped_required_nodes": [],
+        "security_sentinel_blocked": [],
+        "baseline_not_run_count": 0,
     }
     if not report.get("ok"):
         result["verdict"] = "FAIL"
@@ -433,24 +627,42 @@ def evaluate_report_against_baseline(report: dict, baseline: dict | None,
         result["verdict"] = "FAIL"
         return result
 
+    # A06/P07: an empty parsed report with a green returncode is
+    # contradictory — the suite never ran; never treat it as PASS.
+    if not report.get("total"):
+        reasons.append("no_tests_in_report")
+        result["verdict"] = "FAIL"
+        return result
+
     all_bad = report["failures"] + report["errors"]
     baseline_failures = (baseline or {}).get("pytest_failures") or []
-    baseline_usable = bool(
-        baseline
-        and baseline.get("format") != "UNREADABLE"
-        and baseline.get("baseline_sha") == head_sha
-    )
+    if baseline_usable is None:
+        baseline_usable = bool(
+            baseline
+            and baseline.get("format") != "UNREADABLE"
+            and baseline.get("baseline_sha") == head_sha
+        )
     if baseline and not baseline_usable:
         reasons.append("baseline_not_bound_to_current_head")
     baseline_map = {entry["nodeid"]: entry for entry in baseline_failures}
     messages = {rec["nodeid"]: rec["message"] for rec in all_bad}
+    sentinel_prefixes = sentinel_prefixes if sentinel_prefixes is not None else []
     for rec in all_bad:
         entry = baseline_map.get(rec["nodeid"])
-        if baseline_usable and entry and entry.get("fingerprint") == rec["fingerprint"]:
+        fingerprint_match = bool(
+            baseline_usable and entry
+            and entry.get("fingerprint") == rec["fingerprint"])
+        sentinel_hit = any(rec["nodeid"].startswith(prefix)
+                           for prefix in sentinel_prefixes)
+        if fingerprint_match and not sentinel_hit:
             result["known_matched"].append(rec["nodeid"])
         else:
             result["failed_ids"].append(rec["nodeid"])
-            if "isolated_runtime" in messages.get(rec["nodeid"], ""):
+            if fingerprint_match and sentinel_hit:
+                # red line 9: matching the baseline never waives a
+                # safety-boundary failure; it stays a current failure.
+                result["security_sentinel_blocked"].append(rec["nodeid"])
+            elif "isolated_runtime" in messages.get(rec["nodeid"], ""):
                 result["suspected_data_class"].append(rec["nodeid"])
             elif rec["nodeid"] in baseline_map:
                 # same test failing on both sides with different fingerprints:
@@ -465,26 +677,28 @@ def evaluate_report_against_baseline(report: dict, baseline: dict | None,
     result["baseline_not_run_count"] = len([
         n for n in baseline_map if n not in executed])
 
-    # Match on (module path, test leaf); unittest class segments on either
-    # side are ignored and parametrize brackets tolerated.
-    def _case_key(nodeid: str) -> tuple[str, str]:
-        parts = nodeid.split("::")
-        module = parts[0]
-        if module.endswith(".py"):
-            module = module[:-3]
-        return module.replace("/", "."), parts[-1].split("[")[0]
-
-    reported = {_case_key(c) for c in report["cases"]}
+    statuses = {
+        node: required_node_status(executed_records, node, executed,
+                                   set(report["skipped"]))
+        for node in required_nodes
+    }
     result["missing_required_nodes"] = [
-        n for n in required_nodes if _case_key(n) not in reported
-    ]
+        node for node, (ok, status) in statuses.items()
+        if not ok and status == "required_node_missing"]
+    result["skipped_required_nodes"] = [
+        node for node, (ok, status) in statuses.items()
+        if not ok and status == "required_node_skipped"]
     required_missing_enforced = bool(result["missing_required_nodes"]) \
         and not allow_missing_required
     if required_missing_enforced:
         reasons.append("required_node_missing")
+    # A04: a skipped/xfailed required test is rejected even when missing
+    # required nodes would be tolerated — skip is never coverage.
+    if result["skipped_required_nodes"]:
+        reasons.append("required_node_skipped")
 
     if returncode not in (0, 1) or result["failed_ids"] \
-            or required_missing_enforced:
+            or required_missing_enforced or result["skipped_required_nodes"]:
         result["verdict"] = "FAIL"
     elif returncode == 1 and result["known_matched"]:
         result["verdict"] = "PASS_WITH_KNOWN_FAILURES"
@@ -498,10 +712,165 @@ def emit(gate: dict) -> int:
     gate.setdefault("reasons", ["no_gate_checks_ran"])
     gate.setdefault("failed", 0)
     gate.setdefault("root_discovery", _ROOT_DISCOVERY_NOTE)
-    gate["snapshot_at"] = now_iso()
+    gate.setdefault("snapshot_at", now_iso())
     line = json.dumps(gate, ensure_ascii=False)
     print(line if _BARE_JSON else "GATE_JSON=" + line)
     return {"PASS": 0, "PASS_WITH_KNOWN_FAILURES": 0, "FAIL": 1, "BLOCKED": 2}[gate["verdict"]]
+
+
+# ---------------------------------------------------------------- result doc
+
+
+_RUN_RESULT_INT_KEYS = ("ran", "failed", "baseline_not_run_count",
+                        "collection_errors", "skipped_count")
+_RUN_RESULT_LIST_KEYS = ("failed_ids", "known_matched", "dissolved",
+                         "suspected_data_class", "suspected_fingerprint_drift",
+                         "missing_required_nodes", "reasons")
+_RUN_RESULT_OPTIONAL_LIST_KEYS = ("skipped_required_nodes",
+                                  "security_sentinel_blocked",
+                                  "changed_files_vs_baseline")
+
+
+def validate_gate_result(doc) -> list[str]:
+    """A09: strict schema check for the authoritative run result doc.
+    Returns a list of problems; empty means the doc conforms."""
+    if not isinstance(doc, dict):
+        return ["result_not_a_json_object"]
+    problems: list[str] = []
+    if doc.get("schema_version") != GATE_RESULT_SCHEMA:
+        problems.append("schema_version_invalid")
+    if doc.get("verdict") not in ("PASS", "PASS_WITH_KNOWN_FAILURES",
+                                  "BLOCKED", "FAIL"):
+        problems.append("verdict_invalid")
+    if doc.get("mode") not in ("run", "from_result"):
+        problems.append("mode_invalid")
+    for key in ("gate_version", "mode", "root", "snapshot_at"):
+        value = doc.get(key)
+        if not isinstance(value, str) or not value:
+            problems.append(f"{key}_must_be_nonempty_string")
+    reasons = doc.get("reasons")
+    if not isinstance(reasons, list) or not all(
+            isinstance(item, str) for item in reasons):
+        problems.append("reasons_must_be_string_list")
+    if doc.get("mode") != "run":
+        return problems
+    for key in _RUN_RESULT_INT_KEYS:
+        value = doc.get(key)
+        if not isinstance(value, int) or isinstance(value, bool):
+            problems.append(f"{key}_must_be_int")
+    for key in _RUN_RESULT_LIST_KEYS:
+        value = doc.get(key)
+        if not isinstance(value, list) or not all(
+                isinstance(item, str) for item in value):
+            problems.append(f"{key}_must_be_string_list")
+    for key in _RUN_RESULT_OPTIONAL_LIST_KEYS:
+        if key not in doc:
+            continue
+        value = doc.get(key)
+        if not isinstance(value, list) or not all(
+                isinstance(item, str) for item in value):
+            problems.append(f"{key}_must_be_string_list")
+    for key in ("tested_commit", "baseline_commit"):
+        if key not in doc:
+            problems.append(f"{key}_required")
+            continue
+        value = doc[key]
+        if value is not None and not isinstance(value, str):
+            problems.append(f"{key}_must_be_string_or_null")
+    if doc.get("scope") not in ("backend", "frontend", "all"):
+        problems.append("scope_invalid")
+    failed_ids = doc.get("failed_ids")
+    failed = doc.get("failed")
+    if isinstance(failed_ids, list) and isinstance(failed, int) \
+            and not isinstance(failed, bool) and failed != len(failed_ids):
+        problems.append("failed_count_mismatch")
+    return problems
+
+
+def _atomic_write_json(path: Path, doc: dict) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n",
+                   encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def _prepare_run_evidence(root: Path, requested_evidence_dir: str | None) -> dict:
+    base = Path(requested_evidence_dir) if requested_evidence_dir \
+        else root / "runs" / "acceptance_gate"
+    run_dir = base / f"run_{now_iso().replace(':', '')}_{os.getpid()}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return {
+        "dir": run_dir,
+        "result": run_dir / "result.json",
+        "junit": run_dir / "junit.xml",
+        "nodeid_report": run_dir / "nodeid_report.json",
+        "pytest_stdout": run_dir / "pytest_stdout.log",
+        "pytest_stderr": run_dir / "pytest_stderr.log",
+    }
+
+
+def _finish_run(gate: dict, reasons: list[str], evidence: dict | None) -> int:
+    """Validate, persist the authoritative result atomically, then emit.
+    All cmd_run exits route through here so every path keeps full evidence."""
+    gate["reasons"] = reasons
+    gate.setdefault("verdict", "FAIL")
+    gate.setdefault("failed", 0)
+    gate.setdefault("ran", 0)
+    for key in ("failed_ids", "known_matched", "dissolved",
+                "suspected_data_class", "suspected_fingerprint_drift",
+                "missing_required_nodes"):
+        gate.setdefault(key, [])
+    gate.setdefault("baseline_not_run_count", 0)
+    gate.setdefault("collection_errors", 0)
+    gate.setdefault("skipped_count", 0)
+    gate["schema_version"] = GATE_RESULT_SCHEMA
+    gate["snapshot_at"] = now_iso()
+    gate.setdefault("root_discovery", _ROOT_DISCOVERY_NOTE)
+    problems = validate_gate_result(gate)
+    if problems:
+        # never silently emit a non-conforming authority doc: surface the
+        # violation, mark FAIL, and still persist the doc as evidence.
+        gate["verdict"] = "FAIL"
+        gate["reasons"] = reasons + [f"result_schema_violation:{p}" for p in problems]
+    if evidence is not None:
+        gate["evidence_dir"] = str(evidence["dir"])
+        gate["result_path"] = str(evidence["result"])
+        _atomic_write_json(evidence["result"], gate)
+    return emit(gate)
+
+
+def run_required_selftests(script: Path, names: list[str], timeout: int) -> list[dict]:
+    """A002-A004/layout/fingerprint listed in required_nodes.json are actually
+    executed here (previously their names were loaded and never run)."""
+    results = []
+    for name in names:
+        entry: dict = {"case": name}
+        try:
+            proc = subprocess.run(
+                [sys.executable, str(script), "--selftest", name, "--json"],
+                capture_output=True, text=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            entry.update(passed=False, error="timeout")
+            results.append(entry)
+            continue
+        except FileNotFoundError:
+            entry.update(passed=False, error="interpreter_missing")
+            results.append(entry)
+            continue
+        doc = None
+        try:
+            doc = json.loads((proc.stdout or "").strip() or "null")
+        except json.JSONDecodeError:
+            pass
+        entry.update(
+            passed=bool(proc.returncode == 0 and isinstance(doc, dict)
+                        and doc.get("verdict") == "PASS" and doc.get("failed") == 0),
+            returncode=proc.returncode,
+            verdict=(doc or {}).get("verdict") if isinstance(doc, dict) else None,
+        )
+        results.append(entry)
+    return results
 
 
 # ---------------------------------------------------------------- commands
@@ -515,59 +884,120 @@ def cmd_run(args) -> int:
                   "requested_root": str(requested), "root": str(root),
                   "head_sha": git_head(root), "reasons": reasons,
                   "python": sys.version.split()[0]}
+    evidence = _prepare_run_evidence(root, getattr(args, "evidence_dir", None))
 
     baseline_path = Path(args.baseline) if args.baseline else \
         root / "tools/acceptance/known_failures_0926v1.json"
     baseline = load_baseline(baseline_path)
+    baseline_sha = (baseline or {}).get("baseline_sha") \
+        if baseline and baseline.get("format") != "UNREADABLE" else None
+    head_sha = gate["head_sha"]
     gate["baseline"] = {
         "path": str(baseline_path),
         "present": baseline is not None,
-        "sha": (baseline or {}).get("baseline_sha"),
-        "matches_head": bool(baseline
-                             and baseline.get("format") != "UNREADABLE"
-                             and baseline.get("baseline_sha") == gate["head_sha"]),
+        "sha": baseline_sha,
+        "matches_head": bool(baseline_sha and head_sha
+                             and baseline_sha == head_sha),
     }
+    gate["tested_commit"] = head_sha
+    gate["baseline_commit"] = baseline_sha
     required_path = Path(args.required_nodes) if args.required_nodes else \
         root / "tools/acceptance/required_nodes.json"
     junit_nodes, selftest_nodes, required_present = load_required_nodes(required_path)
     if not required_present and not args.allow_missing_required_nodes:
         gate["verdict"] = "FAIL"
         reasons.append("required_nodes_file_missing")
-        return emit(gate)
+        return _finish_run(gate, reasons, evidence)
 
-    if baseline and gate["head_sha"] and baseline.get("format") != "UNREADABLE" \
-            and baseline.get("baseline_sha") != gate["head_sha"]:
-        # risk 7: a baseline from another HEAD must never become a waiver umbrella
-        gate["verdict"] = "BLOCKED"
-        reasons.append("baseline_sha_mismatch_requires_increment_review")
-        return emit(gate)
+    # A02/F01: tested_commit and baseline_commit are separate. A baseline
+    # from an ancestor commit is an explicit increment base: verify ancestry,
+    # record the change scope, and proceed. A baseline from an unrelated or
+    # descendant commit is BLOCKED — never silently recaptured (A03).
+    ancestor_verified = False
+    if baseline_sha and head_sha and baseline_sha != head_sha:
+        is_ancestor = git_is_ancestor(root, baseline_sha, head_sha)
+        if is_ancestor is True:
+            ancestor_verified = True
+            reasons.append("baseline_is_ancestor_of_head_increment_mode")
+            gate["changed_files_vs_baseline"] = git_changed_files(
+                root, baseline_sha, head_sha)
+        elif is_ancestor is False:
+            gate["verdict"] = "BLOCKED"
+            reasons.append("baseline_sha_mismatch_requires_increment_review")
+            return _finish_run(gate, reasons, evidence)
+        else:
+            gate["verdict"] = "BLOCKED"
+            reasons.append("baseline_ancestor_check_unavailable")
+            return _finish_run(gate, reasons, evidence)
+    baseline_usable = bool(baseline_sha and head_sha
+                           and (baseline_sha == head_sha or ancestor_verified))
+
+    sentinel_prefixes = load_sentinel_prefixes()
+    gate["security_sentinel_count"] = len(sentinel_prefixes)
 
     scope = args.scope
     if scope in ("backend", "all"):
-        with tempfile.TemporaryDirectory(prefix="g0_junit_") as tmp:
-            junit_path = Path(tmp) / "report.xml"
-            run = run_pytest(root, junit_path, args.timeout, args.pytest_args.split())
-            gate["pytest"] = {"returncode": run["returncode"], "elapsed_s": run["elapsed"],
-                              "timeout": run["timeout"]}
-            report = parse_junit(junit_path, root)
+        junit_path = evidence["junit"]
+        nodeid_report = evidence["nodeid_report"]
+        run = run_pytest(root, junit_path, args.timeout, args.pytest_args.split(),
+                         nodeid_report=nodeid_report)
+        gate["pytest"] = {"returncode": run["returncode"], "elapsed_s": run["elapsed"],
+                          "timeout": run["timeout"], "child_identity": run.get("child"),
+                          "logs": {"junit_xml": str(junit_path),
+                                   "pytest_stdout": str(evidence["pytest_stdout"]),
+                                   "pytest_stderr": str(evidence["pytest_stderr"]),
+                                   "nodeid_report": str(nodeid_report)}}
+        # A06/F05: logs persist in the evidence dir; the tmp dir no longer
+        # swallows the junit report, and partial timeout output is kept.
+        evidence["pytest_stdout"].write_text(run["stdout"], encoding="utf-8")
+        evidence["pytest_stderr"].write_text(run["stderr"], encoding="utf-8")
+        report = parse_junit(junit_path, root)
         report["returncode"] = run["returncode"]
+        executed_records = None
+        if nodeid_report.is_file():
+            try:
+                executed_records = json.loads(
+                    nodeid_report.read_text(encoding="utf-8")).get("records")
+                if not isinstance(executed_records, list):
+                    executed_records = None
+                    reasons.append("nodeid_report_unparseable")
+            except (OSError, ValueError):
+                executed_records = None
+                reasons.append("nodeid_report_unparseable")
+        else:
+            reasons.append("nodeid_report_missing")
+        enforce_required = not args.allow_missing_required_nodes
+        if enforce_required and junit_nodes and executed_records is None:
+            # A04/A05 need per-phase records; without them required coverage
+            # cannot be proven -> FAIL rather than fuzzy-match.
+            reasons.append("required_evidence_missing")
+
         verdict_part = evaluate_report_against_baseline(
-            report, baseline, gate["head_sha"], junit_nodes,
-            args.allow_missing_required_nodes, reasons)
-        gate.update({k: verdict_part[k] for k in
-                     ("ran", "failed_ids", "known_matched", "dissolved",
-                      "suspected_data_class", "suspected_fingerprint_drift",
-                      "missing_required_nodes", "baseline_not_run_count")})
+            report, baseline, head_sha, junit_nodes,
+            args.allow_missing_required_nodes, reasons,
+            baseline_usable=baseline_usable,
+            executed_records=executed_records,
+            sentinel_prefixes=sentinel_prefixes)
+        gate.update({k: v for k, v in verdict_part.items() if k != "verdict"})
         gate["failed"] = len(gate["failed_ids"])
         _escalate(gate, verdict_part["verdict"])
         gate["collection_errors"] = len(report.get("errors", []))
         gate["skipped_count"] = len(report.get("skipped", []))
 
+        if selftest_nodes:
+            selftest_results = run_required_selftests(
+                Path(__file__).resolve(), selftest_nodes,
+                min(args.timeout, 900))
+            gate["selftest_results"] = selftest_results
+            if any(not r.get("passed") for r in selftest_results):
+                _escalate(gate, "FAIL")
+                reasons.append("required_selftest_failed")
+
         pyf = {"ok": True, "undefined_name": [], "ignored_counted_by_category": {}}
         if not args.skip_static:
             pyf = run_pyflakes(root)
         if not pyf.get("ok"):
-            gate["verdict"] = "FAIL"
+            _escalate(gate, "FAIL")
             reasons.append(f"pyflakes_{pyf.get('reason')}")
         else:
             baseline_undef = {
@@ -583,7 +1013,7 @@ def cmd_run(args) -> int:
                 "ignored_counted_by_category": pyf["ignored_counted_by_category"],
             }
             if new_undef:
-                gate["verdict"] = "FAIL"
+                _escalate(gate, "FAIL")
                 reasons.append("new_pyflakes_undefined_name")
 
     if scope in ("frontend", "all"):
@@ -592,12 +1022,16 @@ def cmd_run(args) -> int:
             _escalate(gate, "BLOCKED")
             reasons.append(f"eslint_{lint.get('reason')}")
         else:
+            if lint.get("fatal_count"):
+                _escalate(gate, "FAIL")
+                reasons.append("eslint_fatal_error")
             baseline_lint = set(((baseline or {}).get("static_findings") or {})
                                 .get("eslint_noundef") or [])
             new_lint = sorted(set(lint["noundef"]) - baseline_lint)
             gate["eslint"] = {"noundef_count": len(lint["noundef"]),
                               "new_vs_baseline": new_lint,
-                              "returncode": lint["returncode"]}
+                              "returncode": lint["returncode"],
+                              "fatal_count": lint.get("fatal_count", 0)}
             if new_lint:
                 _escalate(gate, "FAIL")
                 reasons.append("new_eslint_noundef")
@@ -605,7 +1039,544 @@ def cmd_run(args) -> int:
                 # findings exist but all match the baseline: acceptable
                 _escalate(gate, "PASS")
 
+    return _finish_run(gate, reasons, evidence)
+
+
+def cmd_from_result(args) -> int:
+    """A09: re-emit a saved authoritative result without re-running anything.
+    A parse or schema failure is a stable structured FAIL, never a rerun."""
+    result_path = Path(args.from_result)
+    gate: dict = {"gate_version": GATE_VERSION, "mode": "from_result",
+                  "root": str(Path(args.root).resolve()),
+                  "result_path": str(result_path), "reasons": []}
+    try:
+        doc = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        gate["verdict"] = "FAIL"
+        gate["reasons"].append(f"result_unreadable:{type(exc).__name__}")
+        return emit(gate)
+    problems = validate_gate_result(doc)
+    if problems:
+        gate["verdict"] = "FAIL"
+        gate["reasons"].append("result_schema_violation")
+        gate["schema_problems"] = problems
+        return emit(gate)
+    gate.update(doc)
+    gate["mode"] = "from_result"
+    gate.setdefault("verdict", "FAIL")
     return emit(gate)
+
+
+# ---------------------------------------------------------------- lanes 0927V1
+#
+# FAST  — offline selection for a local change: explicit mapping + module
+#         convention expansion, security sentinels always in, whitelisted
+#         child env, phase timing, zero install (A10/A12/A13/A16).
+# REPLAY — identity-gated real service: reuse only a service whose
+#         /api/runtime-readiness build id matches the tree (A14); a mismatched
+#         same-port impostor is refused and the lane starts its OWN instance
+#         on a private port/runtime, never killing existing listeners (A15).
+# LIVE  — explicit opt-in only; read-only /models probe, no chat, no server
+#         management; evidence-reuse key recorded, execution deferred until an
+#         authorized LIVE window (8002 MTPLX absent -> honest BLOCKED).
+
+
+def load_lane_triggers(root: Path | None) -> dict:
+    """Per-root overrides win (fixtures), else the gate-adjacent lane file."""
+    candidates = []
+    if root is not None:
+        candidates.append(root / "tools" / "acceptance" / "lane_triggers.json")
+    candidates.append(Path(__file__).resolve().parent / "lane_triggers.json")
+    for path in candidates:
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(doc, dict):
+                return doc
+        except (OSError, ValueError):
+            continue
+    return {"format": "lane_triggers/1", "fast": {"path_prefixes": {}}}
+
+
+def select_lane_tests(root: Path, changed_files: list[str], plan: str = "fast",
+                      triggers: dict | None = None) -> dict:
+    """A12: explicit selection engine — trigger mapping first, then the
+    module convention (app module foo.py -> tests/test_foo*.py), untestable
+    files REPORTED (never silently dropped), security sentinels always in,
+    and never a last-failed (--lf) rerun."""
+    if triggers is None:
+        triggers = load_lane_triggers(root)
+    lane = (triggers or {}).get(plan) or {}
+    prefixes = lane.get("path_prefixes") or {}
+    always = lane.get("always_selected")
+    if always is None:
+        always = [prefix + ".py" for prefix in load_sentinel_prefixes()]
+
+    selected: list[str] = []
+    selected_reasons: list[dict] = []
+    unmapped_no_tests: list[dict] = []
+    tests_dir = root / "tests"
+
+    def add(tests: list[str], reason: str, path: str) -> None:
+        for test in tests:
+            if test not in selected:
+                selected.append(test)
+            selected_reasons.append(
+                {"path": path, "test": test, "reason": reason})
+
+    for changed in changed_files:
+        normalized = changed.replace(os.sep, "/")
+        matched = False
+        best = ""
+        for prefix in sorted(prefixes, key=len, reverse=True):
+            if normalized.startswith(prefix):
+                best = prefix
+                break
+        if best:
+            add(list(prefixes[best].get("tests") or []),
+                f"mapping:{best}", normalized)
+            matched = True
+        if not matched:
+            name = Path(normalized).stem
+            if normalized.startswith("services/api/app/") and name not in ("__init__",):
+                convention = sorted(
+                    p.relative_to(root).as_posix()
+                    for p in tests_dir.rglob(f"test_{name}*.py")
+                ) if tests_dir.is_dir() else []
+                if convention:
+                    add(convention, f"module_convention:{name}", normalized)
+                    matched = True
+        if not matched:
+            unmapped_no_tests.append({
+                "path": normalized,
+                "reason": "no_lane_mapping_and_no_module_test_file_found",
+            })
+    for entry in always:
+        if entry not in selected:
+            selected.append(entry)
+            selected_reasons.append({
+                "path": "", "test": entry,
+                "reason": "always_selected_security_sentinel"})
+    return {
+        "selected": selected,
+        "selected_reasons": selected_reasons,
+        "unmapped_no_tests": unmapped_no_tests,
+        "selection_mode": "explicit_selection_not_last_failed",
+        "last_failed_only": False,
+        "not_run_scope": ("lane selection is partial by design; the full "
+                          "suite remains its own lane and is never implied"),
+    }
+
+
+def compute_toolchain_identity(root: Path) -> dict:
+    """A13: what 'environment unchanged' means here. Python has no lock file
+    (only frontend/package-lock.json exists) — recorded honestly as such."""
+    lock = root / "frontend" / "package-lock.json"
+    lock_digest = None
+    if lock.is_file():
+        lock_digest = hashlib.sha256(lock.read_bytes()).hexdigest()
+    return {
+        "python": sys.version.split()[0],
+        "platform": platform.platform(),
+        "venv_prefix": str(Path(sys.prefix).resolve()),
+        "package_lock_sha256": lock_digest,
+        "python_lockfile": "none_in_repo",
+    }
+
+
+def _lane_deps_unchanged(evidence_base: Path, identity: dict) -> bool | None:
+    """Compare with the previous cycle's recorded identity; None on first run."""
+    state_path = evidence_base / "lane_state.json"
+    previous = None
+    try:
+        previous = json.loads(
+            state_path.read_text(encoding="utf-8")).get("toolchain_identity")
+    except (OSError, ValueError):
+        previous = None
+    try:
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        _atomic_write_json(state_path, {"toolchain_identity": identity,
+                                        "updated_at": now_iso()})
+    except OSError:
+        pass
+    if previous is None:
+        return None
+    return previous == identity
+
+
+_LANE_ENV_MODEL_PREFIXES = ("WORKBENCH_AI_", "WORKBENCH_MONITORING_AI_")
+_LANE_ENV_STRIPPED_EXACT = ("WORKBENCH_RUNTIME_DIR", "WORKBENCH_INBOX",
+                            "WORKBENCH_ELIGIBILITY_ARTIFACT_DIR",
+                            "WORKBENCH_INCLUDE_REFERENCE_PROJECTS",
+                            "WORKBENCH_PADDLE_OCR_MAX_CONCURRENCY")
+
+
+def offline_lane_audit(child_env: dict, parent_env_keys: set[str]) -> dict:
+    """A16: certify that no model credential/endpoint/proxy/live-path variable
+    survives into the lane's child process environment."""
+
+    def sensitive(key: str) -> bool:
+        return (key.startswith(_LANE_ENV_MODEL_PREFIXES)
+                or key in _LANE_ENV_STRIPPED_EXACT
+                or "proxy" in key.lower())
+
+    stripped = sorted(key for key in parent_env_keys
+                      if sensitive(key) and key not in child_env)
+    leaked = sorted(key for key in child_env if sensitive(key))
+    return {"stripped_keys": stripped, "leaked_keys": leaked,
+            "clean": not leaked,
+            "network": "offline_selection_only_no_external_endpoints"}
+
+
+def probe_service_identity(base_url: str, expected_build_id: str | None,
+                           timeout: int = 5) -> dict:
+    """A14/A15: identity probe against /api/runtime-readiness (read-only)."""
+    live = _get_json(f"{base_url.rstrip('/')}/api/runtime-readiness",
+                     timeout=timeout)
+    reachable = isinstance(live, dict) and "_error" not in live
+    identity_ok = bool(reachable and expected_build_id
+                       and live.get("backend_build_id") == expected_build_id)
+    reasons = []
+    if not reachable:
+        reasons.append("runtime_readiness_unreachable")
+    elif not identity_ok:
+        reasons.append("backend_build_id_mismatch")
+    return {"base_url": base_url, "reachable": reachable,
+            "identity_ok": identity_ok, "live": live, "reasons": reasons}
+
+
+def service_process_owner(port: int) -> dict:
+    """Best-effort listener ownership via system tools; NEVER signals."""
+    try:
+        proc = subprocess.run(["lsof", "-ti", f"tcp:{port}"],
+                              capture_output=True, text=True, timeout=10)
+        pids = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return {"pid": None, "owned": None, "note": "lsof_unavailable"}
+    if not pids:
+        return {"pid": None, "owned": None, "note": "no_listener"}
+    command = ""
+    try:
+        ps = subprocess.run(["ps", "-p", pids[0], "-o", "command="],
+                            capture_output=True, text=True, timeout=10)
+        command = ps.stdout.strip()
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+    # ownership identity is primary via build id; the command line is context
+    return {"pid": pids[0], "command": command[:300], "owned": None,
+            "note": "identity_is_primary_check"}
+
+
+def _default_replay_spawn(root: Path, expected_build_id: str | None,
+                          runtime_dir: Path):
+    """Launch the REAL backend on a free port with the given private runtime."""
+    free = socket.socket()
+    free.bind(("127.0.0.1", 0))
+    port = free.getsockname()[1]
+    free.close()
+    env = _gate_test_env(root, Path(__file__).resolve().parent)
+    env["WORKBENCH_RUNTIME_DIR"] = str(runtime_dir)
+    env["PYTHONPATH"] = os.pathsep.join(
+        [str(root / "services" / "api"), str(root)])
+    log_path = runtime_dir / "replay_backend.log"
+    log_handle = open(log_path, "ab")
+    try:
+        process = subprocess.Popen(
+            [sys.executable, "-m", "uvicorn", "app.main:app", "--host",
+             "127.0.0.1", "--port", str(port)],
+            cwd=str(root), stdout=log_handle, stderr=log_handle,
+            env=env, start_new_session=True)
+    finally:
+        log_handle.close()
+
+    def stop() -> None:
+        import signal
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except (ProcessLookupError, PermissionError):
+            return
+        try:
+            process.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
+
+    deadline = time.monotonic() + 120
+    probe = {"reachable": False}
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            break
+        probe = probe_service_identity(f"http://127.0.0.1:{port}",
+                                       expected_build_id, timeout=3)
+        if probe["reachable"]:
+            break
+        time.sleep(1.0)
+    return port, stop, {"pid": process.pid, "runtime_dir": str(runtime_dir),
+                        "log": str(log_path), "ready_probe": probe}
+
+
+def ensure_replay_service(root: Path | None,
+                          expected_build_id: str | None = None,
+                          preferred_port: int | None = None,
+                          spawn=None, probe_timeout: int = 5) -> dict:
+    """A14/A15: reuse ONLY an identity-matching service; on refusal start the
+    lane's own instance (private port+runtime). Never kills any listener."""
+    if expected_build_id is None and root is not None:
+        expected_build_id = backend_fingerprint(root)
+    refusal: list[str] = []
+    if preferred_port:
+        probe = probe_service_identity(f"http://127.0.0.1:{preferred_port}",
+                                       expected_build_id, timeout=probe_timeout)
+        if probe["reachable"]:
+            owner = service_process_owner(preferred_port)
+            if not probe["identity_ok"]:
+                refusal.append("backend_build_id_mismatch")
+            if not refusal:
+                return {"reused": True, "port": preferred_port,
+                        "base_url": probe["base_url"], "own_port": None,
+                        "refusal_reasons": [], "identity_ok": True,
+                        "runtime_dir": None, "ownership": owner}
+        else:
+            refusal.extend(probe["reasons"])
+    else:
+        refusal.append("no_existing_service_provided")
+    runtime_dir = Path(tempfile.mkdtemp(prefix="wb_replay_runtime_"))
+    if spawn is None:
+        def spawn(runtime_dir_arg: Path):
+            return _default_replay_spawn(root, expected_build_id, runtime_dir_arg)
+    own_port, stop, meta = spawn(runtime_dir)
+    own_probe = probe_service_identity(f"http://127.0.0.1:{own_port}",
+                                       expected_build_id, timeout=10)
+    return {"reused": False, "port": own_port, "own_port": own_port,
+            "base_url": f"http://127.0.0.1:{own_port}",
+            "refusal_reasons": refusal,
+            "identity_ok": own_probe["identity_ok"],
+            "runtime_dir": meta.get("runtime_dir", str(runtime_dir)),
+            "stop": stop, "process": meta}
+
+
+def cmd_plan_fast(args) -> int:
+    started = time.monotonic()
+    requested = Path(args.root).resolve()
+    root, fallback = resolve_root(requested)
+    reasons: list[str] = [fallback] if fallback else []
+    head_sha = git_head(root)
+    baseline_path = Path(args.baseline) if args.baseline else \
+        root / "tools/acceptance/known_failures_0926v1.json"
+    baseline = load_baseline(baseline_path)
+    baseline_sha = (baseline or {}).get("baseline_sha") \
+        if baseline and baseline.get("format") != "UNREADABLE" else None
+    gate: dict = {"gate_version": GATE_VERSION, "mode": "run", "plan": "fast",
+                  "scope": "backend", "requested_root": str(requested),
+                  "root": str(root), "head_sha": head_sha,
+                  "tested_commit": head_sha, "baseline_commit": baseline_sha,
+                  "reasons": reasons, "python": sys.version.split()[0],
+                  "known_failures_waivers": "none_in_fast_lane"}
+    evidence = _prepare_run_evidence(root, getattr(args, "evidence_dir", None))
+
+    env_check_started = time.monotonic()
+    identity = compute_toolchain_identity(root)
+    deps_unchanged = _lane_deps_unchanged(evidence["dir"].parent, identity)
+    parent_keys = set(os.environ.keys())
+    child_env = _gate_test_env(root, Path(__file__).resolve().parent)
+    audit = offline_lane_audit(child_env, parent_keys)
+    gate["toolchain_identity"] = identity
+    gate["deps_unchanged"] = deps_unchanged
+    gate["install_actions"] = []
+    gate["offline_audit"] = audit
+    gate["phases"] = {"env_check_s": round(time.monotonic() - env_check_started, 3)}
+    if not audit["clean"]:
+        reasons.append("offline_env_audit_leaked")
+        gate["verdict"] = "FAIL"
+        return _finish_run(gate, reasons, evidence)
+
+    selection_started = time.monotonic()
+    triggers = load_lane_triggers(root)
+    changed: list[str] = []
+    if head_sha:
+        worktree = subprocess.run(
+            ["git", "-C", str(root), "diff", "--name-only", "HEAD"],
+            capture_output=True, text=True, timeout=30)
+        if worktree.returncode == 0:
+            changed.extend(line for line in worktree.stdout.splitlines()
+                           if line.strip())
+    if baseline_sha and head_sha and baseline_sha != head_sha \
+            and git_is_ancestor(root, baseline_sha, head_sha):
+        changed.extend(git_changed_files(root, baseline_sha, head_sha))
+        gate["changed_files_vs_baseline"] = git_changed_files(
+            root, baseline_sha, head_sha)
+    seen: set[str] = set()
+    changed = [c for c in changed if not (c in seen or seen.add(c))]
+    gate["changed_files"] = changed
+    selection = select_lane_tests(root, changed, plan="fast", triggers=triggers)
+    gate.update({key: selection[key] for key in
+                 ("selected", "selected_reasons", "unmapped_no_tests",
+                  "selection_mode", "last_failed_only", "not_run_scope")})
+    gate["phases"]["selection_s"] = round(
+        time.monotonic() - selection_started, 3)
+    if not selection["selected"]:
+        gate["verdict"] = "BLOCKED"
+        reasons.append("fast_lane_no_tests_selected")
+        return _finish_run(gate, reasons, evidence)
+
+    pytest_started = time.monotonic()
+    nodeid_report = evidence["nodeid_report"]
+    run = run_pytest(root, evidence["junit"], args.timeout, selection["selected"],
+                     nodeid_report=nodeid_report)
+    gate["pytest"] = {"returncode": run["returncode"], "elapsed_s": run["elapsed"],
+                      "timeout": run["timeout"], "child_identity": run.get("child"),
+                      "logs": {"junit_xml": str(evidence["junit"]),
+                               "pytest_stdout": str(evidence["pytest_stdout"]),
+                               "pytest_stderr": str(evidence["pytest_stderr"]),
+                               "nodeid_report": str(nodeid_report)}}
+    evidence["pytest_stdout"].write_text(run["stdout"], encoding="utf-8")
+    evidence["pytest_stderr"].write_text(run["stderr"], encoding="utf-8")
+    gate["phases"]["pytest_s"] = round(time.monotonic() - pytest_started, 3)
+
+    report = parse_junit(evidence["junit"], root)
+    report["returncode"] = run["returncode"]
+    executed_records = None
+    if nodeid_report.is_file():
+        try:
+            executed_records = json.loads(
+                nodeid_report.read_text(encoding="utf-8")).get("records")
+            if not isinstance(executed_records, list):
+                executed_records = None
+        except (OSError, ValueError):
+            executed_records = None
+    verdict_part = evaluate_report_against_baseline(
+        report, None, head_sha, [], True, reasons,
+        baseline_usable=False, executed_records=executed_records,
+        sentinel_prefixes=load_sentinel_prefixes())
+    gate.update({k: v for k, v in verdict_part.items() if k != "verdict"})
+    gate["failed"] = len(gate["failed_ids"])
+    _escalate(gate, verdict_part["verdict"])
+    gate["collection_errors"] = len(report.get("errors", []))
+    gate["skipped_count"] = len(report.get("skipped", []))
+    gate["phases"]["total_s"] = round(time.monotonic() - started, 3)
+    return _finish_run(gate, reasons, evidence)
+
+
+def cmd_plan_replay(args) -> int:
+    requested = Path(args.root).resolve()
+    root, fallback = resolve_root(requested)
+    reasons: list[str] = [fallback] if fallback else []
+    head_sha = git_head(root)
+    gate: dict = {"gate_version": GATE_VERSION, "mode": "run", "plan": "replay",
+                  "scope": "backend", "requested_root": str(requested),
+                  "root": str(root), "head_sha": head_sha,
+                  "tested_commit": head_sha, "baseline_commit": None,
+                  "reasons": reasons, "python": sys.version.split()[0]}
+    evidence = _prepare_run_evidence(root, getattr(args, "evidence_dir", None))
+    triggers = load_lane_triggers(root)
+    replay_tests = ((triggers.get("replay") or {}).get("tests")) or []
+    gate["selected"] = replay_tests
+    if not replay_tests:
+        gate["verdict"] = "BLOCKED"
+        reasons.append("replay_lane_no_tests_configured")
+        return _finish_run(gate, reasons, evidence)
+
+    decision = ensure_replay_service(
+        root, preferred_port=getattr(args, "replay_port", None))
+    gate["replay_service"] = {
+        "reused": decision["reused"], "port": decision["port"],
+        "base_url": decision["base_url"],
+        "refusal_reasons": decision["refusal_reasons"],
+        "identity_ok": decision["identity_ok"],
+        "runtime_dir": decision["runtime_dir"],
+        "ownership": decision.get("ownership")}
+    if not decision["identity_ok"]:
+        stop = decision.get("stop")
+        if callable(stop):
+            stop()
+        gate["verdict"] = "BLOCKED"
+        reasons.append("replay_instance_identity_failed")
+        return _finish_run(gate, reasons, evidence)
+
+    run = run_pytest(root, evidence["junit"], args.timeout, replay_tests,
+                     nodeid_report=evidence["nodeid_report"])
+    gate["pytest"] = {"returncode": run["returncode"], "elapsed_s": run["elapsed"],
+                      "timeout": run["timeout"], "child_identity": run.get("child"),
+                      "logs": {"junit_xml": str(evidence["junit"]),
+                               "pytest_stdout": str(evidence["pytest_stdout"]),
+                               "pytest_stderr": str(evidence["pytest_stderr"]),
+                               "nodeid_report": str(evidence["nodeid_report"])}}
+    evidence["pytest_stdout"].write_text(run["stdout"], encoding="utf-8")
+    evidence["pytest_stderr"].write_text(run["stderr"], encoding="utf-8")
+    report = parse_junit(evidence["junit"], root)
+    report["returncode"] = run["returncode"]
+    executed_records = None
+    if evidence["nodeid_report"].is_file():
+        try:
+            executed_records = json.loads(
+                evidence["nodeid_report"].read_text(encoding="utf-8")).get("records")
+            if not isinstance(executed_records, list):
+                executed_records = None
+        except (OSError, ValueError):
+            executed_records = None
+    verdict_part = evaluate_report_against_baseline(
+        report, None, gate["head_sha"], [], True, reasons,
+        baseline_usable=False, executed_records=executed_records,
+        sentinel_prefixes=load_sentinel_prefixes())
+    gate.update({k: v for k, v in verdict_part.items() if k != "verdict"})
+    gate["failed"] = len(gate["failed_ids"])
+    _escalate(gate, verdict_part["verdict"])
+    gate["collection_errors"] = len(report.get("errors", []))
+    gate["skipped_count"] = len(report.get("skipped", []))
+    gate["smoke"] = ("skipped_by_default_desktop_safety"
+                     if not getattr(args, "with_smoke", False)
+                     else "see separate check_smoke run")
+    stop = decision.get("stop")
+    if callable(stop):
+        stop()  # the lane's own instance is cleaned up; reused ones untouched
+    return _finish_run(gate, reasons, evidence)
+
+
+def cmd_plan_live(args) -> int:
+    requested = Path(args.root).resolve()
+    root, fallback = resolve_root(requested)
+    reasons: list[str] = [fallback] if fallback else []
+    head_sha = git_head(root)
+    gate: dict = {"gate_version": GATE_VERSION, "mode": "run", "plan": "live",
+                  "scope": "backend", "requested_root": str(requested),
+                  "root": str(root), "head_sha": head_sha,
+                  "tested_commit": head_sha, "baseline_commit": None,
+                  "reasons": reasons, "python": sys.version.split()[0]}
+    evidence = _prepare_run_evidence(root, getattr(args, "evidence_dir", None))
+    if not getattr(args, "live", False):
+        gate["verdict"] = "BLOCKED"
+        reasons.append("live_requires_explicit_opt_in")
+        return _finish_run(gate, reasons, evidence)
+    triggers = load_lane_triggers(root)
+    required_models = (triggers.get("live") or {}).get("required_models") or []
+    probe_results = []
+    for entry in required_models:
+        # read-only /models probe; never a chat request, never a restart
+        live = _get_json(f"{str(entry.get('base_url')).rstrip('/')}/models",
+                         timeout=5)
+        ids = [m.get("id") for m in (live.get("data") or [])] \
+            if isinstance(live, dict) and "_error" not in live else []
+        ok = entry.get("model") in ids
+        probe_results.append({"role": entry.get("role"), "base_url": entry.get("base_url"),
+                              "model": entry.get("model"), "listed": ok})
+        if not ok:
+            reasons.append(f"model_unreachable:{entry.get('role')}")
+    gate["model_probe"] = probe_results
+    gate["model_probe_mode"] = "read_only_models_listing_no_chat"
+    if any(not p["listed"] for p in probe_results):
+        gate["verdict"] = "BLOCKED"
+        return _finish_run(gate, reasons, evidence)
+    reuse_key = hashlib.sha256(json.dumps({
+        "backend_build_id": backend_fingerprint(root),
+        "frontend_fingerprint": frontend_fingerprint(root),
+        "toolchain_identity": compute_toolchain_identity(root),
+        "required_models": required_models,
+    }, sort_keys=True).encode("utf-8")).hexdigest()
+    gate["evidence_reuse_key"] = reuse_key
+    gate["verdict"] = "BLOCKED"
+    reasons.append("live_execution_deferred_evidence_key_recorded")
+    return _finish_run(gate, reasons, evidence)
 
 
 def cmd_baseline_capture(args) -> int:
@@ -1027,10 +1998,22 @@ def main(argv=None) -> int:
                         help="selftest fixtures only; real gate runs must not use this")
     parser.add_argument("--skip-static", action="store_true",
                         help="selftest fixtures only: skip the pyflakes pass (no services tree)")
+    parser.add_argument("--evidence-dir", default=None,
+                        help="directory for authoritative run results (default <root>/runs/acceptance_gate)")
+    parser.add_argument("--plan", choices=["fast", "replay", "live"], default=None,
+                        help="lane plan (0927V1): fast offline selection, replay identity-gated real service, live opt-in")
+    parser.add_argument("--live", action="store_true",
+                        help="explicit opt-in required for --plan live")
+    parser.add_argument("--replay-port", type=int, default=None,
+                        help="existing backend port to identity-check for --plan replay")
+    parser.add_argument("--with-smoke", action="store_true",
+                        help="run browser smoke during replay (default off: desktop safety)")
     sub = parser.add_mutually_exclusive_group()
     sub.add_argument("--baseline-capture", action="store_true")
     sub.add_argument("--check-runtime", action="store_true")
     sub.add_argument("--check-smoke", action="store_true")
+    sub.add_argument("--from-result", default=None, metavar="PATH",
+                     help="re-read a saved result.json (A09); never re-runs the suite")
     sub.add_argument("--selftest", choices=list(SELFTEST_CASES) + ["all"])
     parser.add_argument("--baseline-sha", default=None)
     parser.add_argument("--baseline-out", default=None)
@@ -1044,7 +2027,16 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     global _BARE_JSON
     _BARE_JSON = bool(args.json)
-    args.root = str(discover_repo_root(Path(args.root).resolve()))
+    try:
+        args.root = str(discover_repo_root(Path(args.root).resolve()))
+    except RootAmbiguityError as exc:
+        gate = {"gate_version": GATE_VERSION, "mode": "run",
+                "root_discovery": _ROOT_DISCOVERY_NOTE,
+                "root_candidates": exc.candidates,
+                "verdict": "BLOCKED",
+                "reasons": ["root_ambiguous_multi_candidate",
+                            "pass an explicit --root naming the exact repo"]}
+        return emit(gate)
     if args.positional == "run":
         args.positional = None
     if args.scope is None and args.positional in ("backend", "frontend", "all"):
@@ -1061,6 +2053,14 @@ def main(argv=None) -> int:
         return cmd_check_runtime(args)
     if args.check_smoke:
         return cmd_check_smoke(args)
+    if args.from_result:
+        return cmd_from_result(args)
+    if args.plan == "fast":
+        return cmd_plan_fast(args)
+    if args.plan == "replay":
+        return cmd_plan_replay(args)
+    if args.plan == "live":
+        return cmd_plan_live(args)
     if args.selftest:
         return cmd_selftest(args)
     return cmd_run(args)

@@ -1,0 +1,402 @@
+FEEFEE.................................FFFFF.........                    [100%]
+==================================== ERRORS ====================================
+_______________ ERROR at setup of test_a19_f1_manifest_complete ________________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109357820>, _basetemp=None, _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def f1(tmp_path_factory):
+>       wrs = _builder()
+              ^^^^^^^^^^
+
+tests/acceptance/test_fixture_starts_contract.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _builder():
+>       from tests.fixtures import writing_reference_sources as wrs
+E       ImportError: cannot import name 'writing_reference_sources' from 'tests.fixtures' (unknown location)
+
+tests/acceptance/test_fixture_starts_contract.py:28: ImportError
+__________ ERROR at setup of test_a20_f1_start_reloads_via_file_copy ___________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109357820>, _basetemp=None, _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def f1(tmp_path_factory):
+>       wrs = _builder()
+              ^^^^^^^^^^
+
+tests/acceptance/test_fixture_starts_contract.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _builder():
+>       from tests.fixtures import writing_reference_sources as wrs
+E       ImportError: cannot import name 'writing_reference_sources' from 'tests.fixtures' (unknown location)
+
+tests/acceptance/test_fixture_starts_contract.py:28: ImportError
+__________ ERROR at setup of test_a19_direct_sql_forgery_is_detected ___________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109357820>, _basetemp=None, _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def f1(tmp_path_factory):
+>       wrs = _builder()
+              ^^^^^^^^^^
+
+tests/acceptance/test_fixture_starts_contract.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _builder():
+>       from tests.fixtures import writing_reference_sources as wrs
+E       ImportError: cannot import name 'writing_reference_sources' from 'tests.fixtures' (unknown location)
+
+tests/acceptance/test_fixture_starts_contract.py:28: ImportError
+_____ ERROR at setup of test_a19_manifest_schema_drift_rebuild_not_silent ______
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109357820>, _basetemp=None, _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def f1(tmp_path_factory):
+>       wrs = _builder()
+              ^^^^^^^^^^
+
+tests/acceptance/test_fixture_starts_contract.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _builder():
+>       from tests.fixtures import writing_reference_sources as wrs
+E       ImportError: cannot import name 'writing_reference_sources' from 'tests.fixtures' (unknown location)
+
+tests/acceptance/test_fixture_starts_contract.py:28: ImportError
+=================================== FAILURES ===================================
+_____________ test_app_runtime_binds_private_under_pytest_session ______________
+
+    def test_app_runtime_binds_private_under_pytest_session():
+>       from services.api.app import main as app_main
+
+tests/acceptance/test_a10_import_binding.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    from __future__ import annotations
+    
+    from collections import Counter
+    import base64
+    import binascii
+    from dataclasses import asdict, is_dataclass
+    from datetime import datetime, timezone
+    from hashlib import sha256
+    import json
+    import logging
+    from io import BytesIO
+    import os
+    from pathlib import Path
+    import re
+    from threading import Lock
+    from typing import Any, Mapping, Optional
+    from urllib.parse import quote
+    
+    from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+    from fastapi.responses import FileResponse, JSONResponse, Response
+    from starlette.concurrency import run_in_threadpool
+    
+    from packages.contracts.workbench_contracts import (
+        ApprovalAction,
+        ApprovalActionRequest,
+        ApprovalState,
+        DashboardSummary,
+        DataBatch,
+        AiTaskFromRegistryRequest,
+        EvidencePicosActionRequest,
+        EvidencePicosHandoffRequest,
+        EvidencePicosSubmitApprovalRequest,
+        EvidenceAiRevisionActionRequest,
+        EvidenceAiRevisionRequest,
+        EvidenceReviewActionRequest,
+        MedicalWritingRevisionApplyRequest,
+        MedicalWritingContentDispositionRequest,
+        MedicalWritingTableBatchUpdateRequest,
+        MedicalWritingTableBatchUpdateResult,
+        MedicalWritingGreenfieldCreateRequest,
+        MedicalWritingGreenfieldDecision,
+        MedicalWritingGreenfieldDecisionResolveRequest,
+        MedicalWritingProtocolModuleResolution,
+        MedicalWritingProtocolModuleResolutionApplyRequest,
+        MedicalWritingProtocolAssemblyPlanConfirmRequest,
+        MedicalWritingProtocolAssemblyPlanRefreshRequest,
+        MedicalWritingTemplateUpgradeApplyRequest,
+        MedicalWritingTemplateUpgradeRollbackRequest,
+        MedicalWritingAuthoringJourneyCommitRequest,
+        MedicalWritingAuthoringJourneyCreateRequest,
+        MedicalWritingAuthoringJourneyDraftSaveRequest,
+        MedicalWritingFactIntakeApplyRequest,
+        MedicalWritingFactIntakeConflictError,
+        MedicalWritingFactIntakeConversationCreateRequest,
+        MedicalWritingFactIntakeScope,
+        MedicalWritingFactIntakeTurnRequest,
+        MedicalWritingStudyFraming,
+        MedicalWritingStudyRebindRequest,
+        MedicalWritingStudyReconciliationConfirmRequest,
+        MedicalWritingStudySchemaCommitRequest,
+        MedicalWritingStudySchemaImpactPreviewRequest,
+        MedicalWritingStudySchemaLayoutUpdateRequest,
+        MedicalWritingStudySchemaFigureProjectRequest,
+        MedicalWritingInterventionRulesProjectRequest,
+        MedicalWritingCompetitorSearchExecuteRequest,
+        AuthoringPrefillGenerateRequest,
+        AuthoringPrefillAdoptRequest,
+        AuthoringPrefillCompositeAdoptRequest,
+        MedicalWritingCorpusGateOverrideRequest,
+        MedicalWritingCorpusTriageFinalizeRequest,
+        MedicalWritingJourneyImpactPreviewRequest,
+        MedicalWritingPicosCorpusAlignmentRequest,
+        CompetitorTriageCreateRequest,
+        CompetitorTriageRetryRequest,
+        CompetitorTriageBasketConfirmationRequest,
+        CompetitorTriageBasketReconfirmationRequest,
+        CompetitorTriageProjectionRetryRequest,
+        MedicalWritingSynopsisImportConfirmRequest,
+        MedicalWritingLegacyAuthoringBootstrapPrepareRequest,
+        MedicalWritingLegacyAuthoringBootstrapConfirmRequest,
+        MedicalWritingSynopsisProjectCreateRequest,
+        MedicalWritingWorkingCopySaveRequest,
+        MedicalWritingWordVerificationSubmitRequest,
+        MedicalWritingWorkingCopyBindingRecoveryRequest,
+        MedicalWritingRevisionRequest,
+        MedicalWritingSharedCorpusAdmissionRequest,
+        MedicalWritingSharedCorpusReviewRequest,
+        MedicalWritingCitationStyleUpdateRequest,
+        MedicalWritingReferenceImportRequest,
+        WritingReferenceDocumentIngestRequest,
+        WritingReferenceManualDocumentUploadRequest,
+        WritingReferenceDocumentValidationOverrideRequest,
+        WritingReferenceExtractionRequest,
+        WritingReferenceExtractionReviewRequest,
+        WritingReferenceOcrConsistencyRecheckRequest,
+        WritingReferenceOcrConsistencyBatchDispositionRequest,
+        WritingReferenceAdmissionRequest,
+        WritingReferenceMedicalReviewRequest,
+        WritingReferenceInvalidationRequest,
+        WritingReferenceRelevanceDecisionRequest,
+        WritingReferenceSearchCreateRequest,
+        WritingReferenceTranslationRequest,
+        WritingReferenceTranslationRevisionRequest,
+        ModuleStatus,
+        Project,
+        UserProjectCreateRequest,
+        MonitoringIntakeRequest,
+        RevisionActionRequest,
+        RevisionAction,
+        RevisionAcceptAndApplyRequest,
+        RiskStatus,
+        RuxRiskDispositionActionRequest,
+        SafetyReviewActionRequest,
+        SourceAdmissionSource,
+        SourceAdmissionState,
+        SourceContentValidationConfirmationRequest,
+        TflReviewActionRequest,
+        WorkbenchItemActionRequest,
+        WorkbenchInboxResult,
+    )
+    from packages.contracts.workbench_contracts.models import (
+        MedicalWritingSectionFreezeRequest,
+        MedicalWritingProtocolAssemblyPlanPreviewRequest,
+        MonitoringBatchConfirmFullSnapshotRequest,
+        MonitoringBatchTransitionRequest,
+        MonitoringBatchValidationEvidenceRequest,
+        MonitoringBatchVerifyDerivedSnapshotRequest,
+    )
+    from packages.contracts.workbench_contracts.models import (
+        WritingReferencePreparationBatchCreateRequest,
+        WritingReferencePreparationBatchStageAdvanceRequest,
+        WritingReferencePreparationBatchRetryRequest,
+        WritingReferenceTranslationBatchCreateRequest,
+        WritingReferenceTranslationBatchFidelityReevalRequest,
+        WritingReferenceTranslationBatchMedicalReviewRequest,
+        WritingReferenceTranslationBatchMedicalReviewResult,
+        WritingReferenceTranslationBatchPreviewRequest,
+        WritingReferenceTranslationBatchReviewItemOutcome,
+        WritingReferenceTranslationBatchRetryRequest,
+        WritingReferenceTranslationDownstreamTransitionRequest,
+        WritingReferenceTranslationDownstreamTransitionResult,
+    )
+    
+    from .ai_gateway import (
+        AiPromptEnvelope,
+        AiTaskType,
+        DIRECT_DEEPSEEK_MODEL,
+        DIRECT_DEEPSEEK_TRANSLATION_SUPPORT_MODEL,
+        OpenAICompatibleAiProvider,
+        ai_gateway_status_from_env,
+        configured_ai_provider_from_env,
+        direct_deepseek_env,
+    )
+    from .ai_runtime_fallback_provider import RuntimeFallbackAiProvider
+    from .ai_runtime_settings import (
+        AiFallbackChainUpdateRequest,
+        AiFallbackRoute,
+        AiProviderActivateRequest,
+        AiProviderProbeRequest,
+        AiProviderProfile,
+        AiProviderProfileUpsertRequest,
+        discover_models,
+        runtime_ai_settings_store,
+    )
+    from .ai_role_runtime_settings import (
+        DEFAULT_OCR_MODEL,
+        INDEPENDENT_AI_ROLE,
+        LOCAL_OMLX_PROFILE_ID,
+        OCR_OMLX_PROFILE_ID,
+        OCR_PADDLE_PROFILE_ID,
+        OCR_SPECIALIZED_MODEL_ALLOWLIST,
+        OCR_ROLE,
+        TRANSLATION_BODY_ROLE,
+        TRANSLATION_SUPPORT_ROLE,
+        AiRoleBinding,
+        AiRoleBindingUpsertRequest,
+        ROLE_DEFINITION_BY_ID,
+        runtime_ai_role_settings_store,
+    )
+    from .ai_execution_policy import AiExecutionPolicyDenied, AiExecutionPolicyResolver
+    from .runtime_readiness import (
+        API_CONTRACT_VERSION,
+        CLIENT_CONTRACT_HEADER,
+        client_contract_enforcement_enabled,
+        is_medical_writing_contract_path,
+        runtime_readiness_report,
+    )
+    from .ai_task_runner import AiTaskRunner, AiTaskStore, public_ai_artifacts, public_ai_run
+    from .demo_repository import DemoRepository
+    from .evidence_design_manifest import EvidenceDesignManifestService, EvidencePackageAdapterError
+    from .evidence_ai_revision import EvidenceAiRevisionService
+    from .evidence_picos_workflow import (
+        EvidencePicosApprovalService,
+        EvidencePicosWorkflowService,
+        SqliteEvidencePicosDecisionStore,
+    )
+    from .evidence_review_workflow import EvidenceReviewWorkflowService
+    from .eligibility import adapter as eligibility_adapter
+    from .eligibility import configure_eligibility_ai_workflow
+    from .eligibility import configure_protocol_rule_service
+    from .eligibility import configure_eligibility_review_workflow
+    from .eligibility import configure_eligibility_source_admission_guard
+    from .eligibility import RAW_INTAKE_PROJECTS
+    from .eligibility import router as eligibility_router
+>   from app.protocol_workflow.api.composition import (
+        mount_protocol_workflow_router as mount_protocol_v3_workflow_router,
+    )
+E   ModuleNotFoundError: No module named 'app'
+
+services/api/app/main.py:205: ModuleNotFoundError
+_______________________ test_a19_builder_uses_no_raw_sql _______________________
+
+    def test_a19_builder_uses_no_raw_sql():
+>       wrs = _builder()
+              ^^^^^^^^^^
+
+tests/acceptance/test_fixture_starts_contract.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _builder():
+>       from tests.fixtures import writing_reference_sources as wrs
+E       ImportError: cannot import name 'writing_reference_sources' from 'tests.fixtures' (unknown location)
+
+tests/acceptance/test_fixture_starts_contract.py:28: ImportError
+________ test_a12_unmapped_change_expands_to_module_and_reports_not_run ________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2376/test_a12_unmapped_change_expan0')
+
+    def test_a12_unmapped_change_expands_to_module_and_reports_not_run(tmp_path):
+        gate = kit.load_gate_module()
+        (tmp_path / "services" / "api" / "app").mkdir(parents=True)
+        (tmp_path / "services" / "api" / "app" / "orchid_metric.py").write_text(
+            "VALUE = 1\n", encoding="utf-8")
+        (tmp_path / "services" / "api" / "app" / "ghost_module.py").write_text(
+            "VALUE = 2\n", encoding="utf-8")
+        (tmp_path / "tests").mkdir()
+        (tmp_path / "tests" / "test_orchid_metric.py").write_text(
+            "def test_orchid():\n    assert True\n", encoding="utf-8")
+        triggers = {"format": "lane_triggers/1", "fast": {"path_prefixes": {}}}
+    
+>       result = gate.select_lane_tests(
+                 ^^^^^^^^^^^^^^^^^^^^^^
+            tmp_path,
+            ["services/api/app/orchid_metric.py", "services/api/app/ghost_module.py"],
+            plan="fast", triggers=triggers)
+E       AttributeError: module '_gate_under_test' has no attribute 'select_lane_tests'
+
+tests/acceptance/test_lane_fast_counterexamples.py:102: AttributeError
+__________________ test_a13_second_cycle_records_zero_install __________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2376/test_a13_second_cycle_records_0')
+
+    def test_a13_second_cycle_records_zero_install(tmp_path):
+        _make_fast_fixture(tmp_path)
+        proc, first = kit.run_gate_cli(_fast_argv(tmp_path))
+>       assert first is not None, (proc.stdout, proc.stderr[-1500:])
+E       AssertionError: ('', "usage: run_acceptance_gate.py [-h] [--root ROOT]
+E                                       [--scope {backend,frontend,all}]...tance_gate.py: error: argument positional: invalid choice: 'fast' (choose from 'run', 'backend', 'frontend', 'all')
+E         ")
+E       assert None is not None
+
+tests/acceptance/test_lane_fast_counterexamples.py:128: AssertionError
+_____________________ test_a16_fast_lane_certifies_offline _____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2376/test_a16_fast_lane_certifies_o0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11217b350>
+
+    def test_a16_fast_lane_certifies_offline(tmp_path, monkeypatch):
+        _make_fast_fixture(tmp_path)
+        monkeypatch.setenv("WORKBENCH_AI_API_KEY", "live-key")
+        monkeypatch.setenv("WORKBENCH_AI_BASE_URL", "http://live.example.invalid")
+        monkeypatch.setenv("https_proxy", "http://127.0.0.1:9")
+        proc, doc = kit.run_gate_cli(_fast_argv(tmp_path))
+>       assert doc is not None, (proc.stdout, proc.stderr[-1500:])
+E       AssertionError: ('', "usage: run_acceptance_gate.py [-h] [--root ROOT]
+E                                       [--scope {backend,frontend,all}]...tance_gate.py: error: argument positional: invalid choice: 'fast' (choose from 'run', 'backend', 'frontend', 'all')
+E         ")
+E       assert None is not None
+
+tests/acceptance/test_lane_fast_counterexamples.py:147: AssertionError
+__________ test_a14_healthy_same_source_service_reused_and_not_killed __________
+
+    def test_a14_healthy_same_source_service_reused_and_not_killed():
+        gate = kit.load_gate_module()
+        good = _IdentityServer("api-goodbuild").start()
+        bystander = _IdentityServer("api-whatever").start()
+        try:
+>           probe = gate.probe_service_identity(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                f"http://127.0.0.1:{good.port}", expected_build_id="api-goodbuild")
+E               AttributeError: module '_gate_under_test' has no attribute 'probe_service_identity'
+
+tests/acceptance/test_lane_replay_identity.py:77: AttributeError
+_______ test_a15_same_port_different_source_refused_own_instance_started _______
+
+    def test_a15_same_port_different_source_refused_own_instance_started():
+        gate = kit.load_gate_module()
+        impostor = _IdentityServer("api-OTHER-SOURCE").start()
+        try:
+            def own_spawn(runtime_dir):
+                own = _IdentityServer("api-goodbuild").start()
+                return own.port, own.stop, {"kind": "injected"}
+    
+>           decision = gate.ensure_replay_service(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                root=None, expected_build_id="api-goodbuild",
+                preferred_port=impostor.port, spawn=own_spawn)
+E               AttributeError: module '_gate_under_test' has no attribute 'ensure_replay_service'
+
+tests/acceptance/test_lane_replay_identity.py:101: AttributeError
+=========================== short test summary info ============================
+FAILED tests/acceptance/test_a10_import_binding.py::test_app_runtime_binds_private_under_pytest_session
+FAILED tests/acceptance/test_fixture_starts_contract.py::test_a19_builder_uses_no_raw_sql
+FAILED tests/acceptance/test_lane_fast_counterexamples.py::test_a12_unmapped_change_expands_to_module_and_reports_not_run
+FAILED tests/acceptance/test_lane_fast_counterexamples.py::test_a13_second_cycle_records_zero_install
+FAILED tests/acceptance/test_lane_fast_counterexamples.py::test_a16_fast_lane_certifies_offline
+FAILED tests/acceptance/test_lane_replay_identity.py::test_a14_healthy_same_source_service_reused_and_not_killed
+FAILED tests/acceptance/test_lane_replay_identity.py::test_a15_same_port_different_source_refused_own_instance_started
+ERROR tests/acceptance/test_fixture_starts_contract.py::test_a19_f1_manifest_complete
+ERROR tests/acceptance/test_fixture_starts_contract.py::test_a20_f1_start_reloads_via_file_copy
+ERROR tests/acceptance/test_fixture_starts_contract.py::test_a19_direct_sql_forgery_is_detected
+ERROR tests/acceptance/test_fixture_starts_contract.py::test_a19_manifest_schema_drift_rebuild_not_silent
+7 failed, 42 passed, 4 errors in 15.14s

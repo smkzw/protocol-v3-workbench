@@ -26,9 +26,28 @@ OMLX_TRANSLATION_MODEL = "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
 _PROBE_MAX_TOKENS = 1
 _PROBE_TIMEOUT = 120
 
+# A17: phases map to exactly the models they need; an unmapped phase maps to
+# nothing and must never auto-wake any server. Read-only readiness checks
+# (warm=False) use /models listings and never send a chat request.
+PHASE_MODEL_REQUIREMENTS: dict[str, tuple[str, ...]] = {
+    "translation": ("translation",),
+    "triage": ("triage",),
+}
+
+_ROLE_BASE = {"translation": OMLX_BASE, "triage": MTPLX_BASE}
+_ROLE_MODEL = {
+    "translation": OMLX_TRANSLATION_MODEL,
+    "triage": MTPLX_MODEL,
+}
+
 
 def _chat_probe(base_url: str, model: str) -> tuple[bool, str]:
-    """Send a minimal chat request to trigger on-demand model load."""
+    """Send a minimal chat request to trigger on-demand model load.
+
+    A bare HTTP 200 is NOT success (A18): the response body must name the
+    requested model and carry a non-empty choice, otherwise the target
+    model's capability is unproven.
+    """
     body = json.dumps(
         {
             "model": model,
@@ -44,7 +63,21 @@ def _chat_probe(base_url: str, model: str) -> tuple[bool, str]:
     )
     try:
         with urllib.request.urlopen(req, timeout=_PROBE_TIMEOUT) as resp:
-            return resp.status == 200, ""
+            if resp.status != 200:
+                return False, f"HTTP {resp.status}"
+            try:
+                data = json.loads(resp.read().decode("utf-8"))
+            except Exception as exc:
+                return False, f"probe_body_unparseable: {exc}"
+            returned_model = data.get("model")
+            if returned_model != model:
+                return False, (
+                    f"probe_model_mismatch: requested={model} "
+                    f"responded={returned_model!r}"
+                )
+            if not data.get("choices"):
+                return False, "probe_empty_choices"
+            return True, ""
     except urllib.error.HTTPError as exc:
         body_text = ""
         try:
@@ -77,14 +110,29 @@ def list_resident_models(base_url: str) -> list[str]:
         return []
 
 
-def phase_model_readiness(phase: str) -> dict[str, Any]:
-    """Report which phase-required models are currently responsive."""
-    omlx_ok, omlx_err = warm_translation_model()
-    mtplx_ok, mtplx_err = warm_triage_model()
-    return {
+def phase_model_readiness(phase: str, warm: bool = False) -> dict[str, Any]:
+    """Report readiness for exactly the models the phase requires.
+
+    warm=False (default, read-only): check the /models listing only — no chat
+    request is sent (A17: 只读检查不chat).
+    warm=True: probe ONLY the phase-required model to trigger its on-demand
+    load; other servers are left alone. An unmapped phase warms nothing.
+    """
+    required_roles = PHASE_MODEL_REQUIREMENTS.get(phase)
+    result: dict[str, Any] = {
         "phase": phase,
-        "translation_model_ready": omlx_ok,
-        "translation_model_error": omlx_err,
-        "triage_model_ready": mtplx_ok,
-        "triage_model_error": mtplx_err,
+        "warm": bool(warm),
+        "roles": {},
+        "unknown_phase": required_roles is None,
     }
+    if not required_roles:
+        return result
+    for role in required_roles:
+        base_url, model = _ROLE_BASE[role], _ROLE_MODEL[role]
+        if warm:
+            ok, err = _chat_probe(base_url, model)
+        else:
+            ok = model in list_resident_models(base_url)
+            err = "" if ok else "model_not_listed_as_resident"
+        result["roles"][role] = {"ready": ok, "error": err}
+    return result

@@ -1,0 +1,88 @@
+{
+  "format": "lane_triggers/1",
+  "note": "FAST: longest-prefix path mapping to offline test files; unmapped app modules expand to tests/test_<module>*.py by convention; files with no tests are reported (A12), never dropped. The always_selected default (when a root does not override it) is the security_sentinels.json module list plus the gate's own acceptance suite. REPLAY: real business save/conflict suites run against an identity-verified private instance with a private runtime dir. LIVE triggers list the change paths that REQUIRE a live window (model/prompt/chunking/conversion), plus the read-only model probe targets.",
+  "fast": {
+    "path_prefixes": {
+      "services/api/app/writing_reference": {
+        "module": "writing_reference",
+        "tests": [
+          "tests/test_writing_reference_preparation_batch.py",
+          "tests/test_writing_reference_translation_batch.py",
+          "tests/test_writing_reference_translation_service.py",
+          "tests/test_writing_reference_numeric_fidelity.py",
+          "tests/test_writing_reference_final_candidate_fidelity.py"
+        ]
+      },
+      "services/api/app/medical_writing": {
+        "module": "medical_writing",
+        "tests": [
+          "tests/test_medical_writing_authoring_journey.py",
+          "tests/test_medical_writing_registered_sources.py"
+        ]
+      },
+      "services/api/app/monitoring": {
+        "module": "monitoring",
+        "tests": [
+          "tests/test_monitoring_source_readiness.py",
+          "tests/test_monitoring_approval_source_gate.py"
+        ]
+      },
+      "services/api/app/chapter_translation_pipeline": {
+        "module": "chapter_translation_pipeline",
+        "tests": ["tests/test_chapter_translation_pipeline.py"]
+      },
+      "frontend/src": {
+        "module": "frontend",
+        "tests": []
+      }
+    },
+    "always_selected": [
+      "tests/acceptance/test_gate_counterexamples_0927v1.py",
+      "tests/acceptance/test_gate_result_protocol.py",
+      "tests/test_writing_reference_numeric_fidelity.py",
+      "tests/test_writing_reference_final_candidate_fidelity.py",
+      "tests/test_writing_reference_translation_service.py",
+      "tests/test_medical_writing_source_preserving_export.py",
+      "tests/test_medical_writing_registered_sources.py",
+      "tests/test_phase1_corpus_source_boundaries.py",
+      "tests/protocol_v3/test_source_identity_product.py",
+      "tests/protocol_v3/test_pinned_chapter_sources.py",
+      "tests/protocol_v3/test_agent5_authority_boundary.py",
+      "tests/protocol_v3/test_frozen_authority_manifest.py",
+      "tests/test_medical_risk_authority.py",
+      "tests/test_monitoring_identity_authorization.py",
+      "tests/test_monitoring_approval_source_gate.py",
+      "tests/test_medical_writing_authoring_journey.py"
+    ]
+  },
+  "replay": {
+    "tests": [
+      "tests/test_writing_reference_preparation_batch.py",
+      "tests/test_writing_reference_translation_batch.py",
+      "tests/acceptance/test_fixture_starts_contract.py"
+    ],
+    "note": "runs against an identity-verified instance (A14/A15) with a private runtime dir; real product writes, real business paths (A19)"
+  },
+  "live": {
+    "required_models": [
+      {
+        "role": "translation",
+        "base_url": "http://127.0.0.1:8001/v1",
+        "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
+      },
+      {
+        "role": "triage",
+        "base_url": "http://127.0.0.1:8002/v1",
+        "model": "mtplx-flash-next-optimized-speed"
+      }
+    ],
+    "trigger_path_prefixes": [
+      "services/api/app/model_phase_scheduler",
+      "services/api/app/chapter_translation_pipeline",
+      "services/api/app/ai_gateway",
+      "services/api/app/ai_runtime_settings",
+      "packages/contracts"
+    ],
+    "note": "read-only /models probe only (A17); 8002 MTPLX is currently absent on this machine, so live items stay honestly BLOCKED; never starts/stops user model servers"
+  }
+}

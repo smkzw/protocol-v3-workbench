@@ -1,0 +1,79 @@
+{
+ "steps": [
+  {
+   "step": "S0_fixture起点_正文节工作稿",
+   "ok": true,
+   "detail": {
+    "revision": 1,
+    "authority": "active_authoritative",
+    "blocks": 2,
+    "paragraph_blocks": 1,
+    "target_text_head": "本研究为合成药M8用于治疗复发缓解型多发性硬化的II期临床研究，采用随机、双盲、安慰剂对照、多中心、",
+    "updated_at": "2026-09-24T02:34:49.365655Z"
+   }
+  },
+  {
+   "step": "S1_负例_过期revision被拒409",
+   "ok": true,
+   "detail": {
+    "status": 409,
+    "body": "{'detail': 'stale medical writing working copy revision: expected=0, actual=1'}"
+   }
+  },
+  {
+   "step": "S2_本地编辑",
+   "ok": false,
+   "detail": {
+    "old_head": "本研究为合成药M8用于治疗复发缓解型多发性硬化的II期临床研究，采用随机、双盲、",
+    "new_tail": "性分析集进行描述性统计。【切片闭环0927V1】",
+    "payload_sha256": "0f6dd5a43cb55cc6742d8cd72ece404017d91bb917b6bbb85339e1c7ed5102d7"
+   }
+  },
+  {
+   "step": "S3_保存_服务端回执",
+   "ok": true,
+   "detail": {
+    "status": 200,
+    "revision": 2,
+    "updated_at": "2026-09-26T23:05:41.619261Z",
+    "updated_by": "medical_manager",
+    "elapsed_s": 0.198
+   }
+  },
+  {
+   "step": "S4_重开_服务端确认与版本hash一致",
+   "ok": true,
+   "detail": {
+    "revision": 2,
+    "text_tail": "性分析集进行描述性统计。【切片闭环0927V1】",
+    "server_content_sha256": "0f6dd5a43cb55cc6742d8cd72ece404017d91bb917b6bbb85339e1c7ed5102d7",
+    "matches_submitted": true
+   }
+  },
+  {
+   "step": "S5_下载_版本hash与编辑保留",
+   "ok": true,
+   "detail": {
+    "status": 200,
+    "bytes": 71696,
+    "elapsed_s": 11.321,
+    "docx_sha256_header": "be4c526a0a2a8e41a98a88458a494caebc0b0b7a351543bbb7c665352880389c",
+    "docx_sha256_actual": "be4c526a0a2a8e41a98a88458a494caebc0b0b7a351543bbb7c665352880389c",
+    "hash_match": true,
+    "marker_in_docx": true,
+    "source_snapshot_sha256": "1e74e63a36c2fd86…",
+    "disposition_utf8": "W-II-00990781-DRAFT_%E8%8D%89%E6%A1%88_%E8%8D%89%E7%A8%BF%E9%A2%84%E8%A7%88.docx"
+   }
+  },
+  {
+   "step": "S6_重开再下载_保留稳定",
+   "ok": true,
+   "detail": {
+    "status": 200,
+    "bytes2": 71696,
+    "sha256_2": "be4c526a0a2a8e41a98a88458a494caebc0b0b7a351543bbb7c665352880389c",
+    "stable": true
+   }
+  }
+ ]
+}

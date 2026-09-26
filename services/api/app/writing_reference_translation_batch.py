@@ -109,6 +109,11 @@ from .writing_reference_protocol_scope import protocol_corpus_span_scope
 
 
 REFERENCE_TRANSLATION_JOB_TYPE = "reference_translation"
+
+# G4: a synthetic_recovery_* retry parent is a string prefix, not a permission
+# proof. Minting one must write this auditable recovery record, and the
+# allocation path refuses an unrecorded parent.
+SYNTHETIC_RECOVERY_AUDIT_EVENT = "document_plan_synthetic_recovery_parent"
 DOWNSTREAM_CONTRACT_TRANSITION_VERSION = (
     "downstream_translation_contract_transition_v1"
 )
@@ -2296,6 +2301,8 @@ class WritingReferenceTranslationBatchService:
         if not failed_items:
             return _PlannerContractPreparation(item_lineage={})
 
+        project_id = failed_items[0].project_id
+
         groups: dict[str, list[WritingReferenceTranslationBatchItem]] = (
             defaultdict(list)
         )
@@ -2545,6 +2552,14 @@ class WritingReferenceTranslationBatchService:
                         "document_plan_retry_parent_stage_run_id": synthetic_parent,
                         "document_plan_retry_source_item_id": item.item_id,
                     }
+                if ordinary and persist_migrations:
+                    # G4: the mint must be auditable — the allocation path
+                    # refuses synthetic parents without this record.
+                    first = next(iter(ordinary_candidates))
+                    self._record_synthetic_recovery_parent(
+                        connection, first.project_id, first.batch_id,
+                        synthetic_parent, list(ordinary.keys()),
+                    )
             by_parent: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
             for item_id, lineage in ordinary.items():
                 by_parent[
@@ -2553,8 +2568,16 @@ class WritingReferenceTranslationBatchService:
             for parent_id, item_lineages in sorted(by_parent.items()):
                 # Synthetic recovery parents (created by prepare's fallback)
                 # don't exist as stage runs — allocate them directly without
-                # a DB lookup, just like the empty-parent path.
+                # a DB lookup, just like the empty-parent path.  G4: the
+                # enforcing pass requires the auditable recovery record minted
+                # above; a bare prefix without one is refused, never a
+                # permission proof.
                 if parent_id.startswith("synthetic_recovery_"):
+                    if persist_migrations:
+                        self._allocate_synthetic_recovery_parent_if_recorded(
+                            connection, project_id, parent_id,
+                            item_lineages=item_lineages,
+                        )
                     allocated.update(item_lineages)
                     continue
                 # Some early production attempts persisted a structural
@@ -3020,6 +3043,54 @@ class WritingReferenceTranslationBatchService:
             contract_target_payload_sha256=target_payload_sha256,
         )
 
+    def _record_synthetic_recovery_parent(
+        self,
+        connection: Any,
+        project_id: str,
+        batch_id: str,
+        parent_id: str,
+        item_ids: list[str],
+    ) -> None:
+        """G4: write the auditable recovery record a synthetic_recovery_*
+        parent requires (the prefix alone is not a permission proof)."""
+        self.repository._append_audit(
+            connection,
+            project_id,
+            SYNTHETIC_RECOVERY_AUDIT_EVENT,
+            parent_id,
+            "system",
+            {"batch_id": batch_id, "item_ids": sorted(item_ids)},
+        )
+
+    def _synthetic_recovery_parent_is_recorded(
+        self, connection: Any, project_id: str, parent_id: str
+    ) -> bool:
+        row = connection.execute(
+            """
+            SELECT 1 FROM writing_reference_audit_chain
+            WHERE tenant_id=? AND project_id=? AND event_type=? AND target_id=?
+            LIMIT 1
+            """,
+            (TENANT_ID, project_id, SYNTHETIC_RECOVERY_AUDIT_EVENT, parent_id),
+        ).fetchone()
+        return row is not None
+
+    def _allocate_synthetic_recovery_parent_if_recorded(
+        self,
+        connection: Any,
+        project_id: str,
+        parent_id: str,
+        *,
+        item_lineages: dict[str, dict[str, Any]],
+    ) -> dict[str, dict[str, Any]]:
+        """G4: refuse a synthetic_recovery_* parent with no recovery record —
+        an unrecorded prefix must never silently allocate lineage."""
+        if not self._synthetic_recovery_parent_is_recorded(
+            connection, project_id, parent_id
+        ):
+            raise ValueError("synthetic_recovery_parent_record_missing")
+        return dict(item_lineages)
+
     def _allocate_document_plan_retry_lineage(
         self,
         connection: Any,
@@ -3156,6 +3227,13 @@ class WritingReferenceTranslationBatchService:
                             ),
                             "document_plan_retry_source_item_id": item.item_id,
                         }
+                    self._record_synthetic_recovery_parent(
+                        connection,
+                        items[0].project_id,
+                        items[0].batch_id,
+                        f"synthetic_recovery_{retry_generation}",
+                        [item.item_id for item in items],
+                    )
                     continue
             elif len(source_items) == len(items):
                 # Legacy payloads omit both source-lineage fields, so every
@@ -8100,6 +8178,13 @@ class WritingReferenceTranslationBatchService:
     def _insert_item_with(
         connection: Any, item: WritingReferenceTranslationBatchItem
     ) -> None:
+        # G4 write boundary: model_copy(update=...) does NOT re-validate, so
+        # every persisted payload is re-validated in full first — an illegal
+        # field combination fails loudly here instead of silently landing in
+        # the database.
+        validated = WritingReferenceTranslationBatchItem.model_validate(
+            item.model_dump(mode="json")
+        )
         connection.execute(
             """
             INSERT INTO writing_reference_translation_batch_items(
@@ -8109,15 +8194,15 @@ class WritingReferenceTranslationBatchService:
             """,
             (
                 TENANT_ID,
-                item.project_id,
-                item.batch_id,
-                item.item_id,
-                item.span_id,
-                item.generation_status,
-                item.attempt,
-                _canonical_json(item.model_dump(mode="json")),
-                item.created_at.isoformat(),
-                item.updated_at.isoformat(),
+                validated.project_id,
+                validated.batch_id,
+                validated.item_id,
+                validated.span_id,
+                validated.generation_status,
+                validated.attempt,
+                _canonical_json(validated.model_dump(mode="json")),
+                validated.created_at.isoformat(),
+                validated.updated_at.isoformat(),
             ),
         )
 
@@ -8129,6 +8214,11 @@ class WritingReferenceTranslationBatchService:
         expected_status: str,
         expected_attempt: int,
     ) -> Any:
+        # G4 write boundary: full re-validation before the CAS update (see
+        # _insert_item_with).
+        validated = WritingReferenceTranslationBatchItem.model_validate(
+            item.model_dump(mode="json")
+        )
         return connection.execute(
             """
             UPDATE writing_reference_translation_batch_items
@@ -8137,14 +8227,14 @@ class WritingReferenceTranslationBatchService:
               AND generation_status=? AND attempt=?
             """,
             (
-                item.generation_status,
-                item.attempt,
-                _canonical_json(item.model_dump(mode="json")),
-                item.updated_at.isoformat(),
+                validated.generation_status,
+                validated.attempt,
+                _canonical_json(validated.model_dump(mode="json")),
+                validated.updated_at.isoformat(),
                 TENANT_ID,
-                item.project_id,
-                item.batch_id,
-                item.item_id,
+                validated.project_id,
+                validated.batch_id,
+                validated.item_id,
                 expected_status,
                 expected_attempt,
             ),
@@ -8756,21 +8846,72 @@ class WritingReferenceTranslationBatchService:
         # Phase 1 (read-only): resolve one integration row per group and
         # evaluate it once — sibling items of the same chapter amortize the
         # deterministic re-check.
-        evaluations: dict[tuple[str, str], tuple[str, list[str], str, list[str]]] = {}
+        #
+        # G3 binding order: the item's PERSISTED TRANSLATION CHAIN is the
+        # authority (translation_id/translation_revision ->
+        # WritingReferenceTranslationRevision.chapter_integration_result_id —
+        # the same field the downstream contract boundary enforces at
+        # :1855-1865). Only when no item in the group carries a chain do we
+        # fall back to the documented plan/chapter + prefix heuristic, and
+        # any chain AMBIGUITY (distinct integration ids inside one group)
+        # fails closed as data_missing — never a guess.
+        evaluations: dict[tuple[str, str], dict[str, Any]] = {}
         for key in groups:
-            integration = self._find_integration_for_reeval(project_id, *key)
+            group_items = groups[key]
+            chain_ids = {
+                integration_id
+                for integration_id in (
+                    self._translation_chain_integration_id_for_reeval(
+                        project_id, group_item)
+                    for group_item in group_items
+                )
+                if integration_id
+            }
+            binding = ""
+            integration: ChapterIntegrationResult | None = None
+            if len(chain_ids) > 1:
+                evaluations[key] = {
+                    "outcome": "data_missing", "new_codes": [],
+                    "integration_id": "", "chunk_ids": [],
+                    "binding": "ambiguous_translation_chain",
+                    "candidate_hash": "", "checker_version": CHECKER_VERSION,
+                }
+                continue
+            if len(chain_ids) == 1:
+                binding = "translation_chain"
+                integration = self._integration_by_id(
+                    project_id, next(iter(chain_ids)))
+                if integration is None:
+                    evaluations[key] = {
+                        "outcome": "data_missing", "new_codes": [],
+                        "integration_id": next(iter(chain_ids)),
+                        "chunk_ids": [], "binding": binding,
+                        "candidate_hash": "",
+                        "checker_version": CHECKER_VERSION,
+                    }
+                    continue
             if integration is None:
-                evaluations[key] = ("data_missing", [], "", [])
+                binding = "plan_chapter_or_prefix_fallback"
+                integration = self._find_integration_for_reeval(project_id, *key)
+            if integration is None:
+                evaluations[key] = {
+                    "outcome": "data_missing", "new_codes": [],
+                    "integration_id": "", "chunk_ids": [], "binding": binding,
+                    "candidate_hash": "", "checker_version": CHECKER_VERSION,
+                }
                 continue
             outcome, new_codes = self._evaluate_integration_for_reeval(
                 project_id, integration
             )
-            evaluations[key] = (
-                outcome,
-                new_codes,
-                integration.integration_id,
-                list(integration.chunk_ids),
-            )
+            evaluations[key] = {
+                "outcome": outcome,
+                "new_codes": new_codes,
+                "integration_id": integration.integration_id,
+                "chunk_ids": list(integration.chunk_ids),
+                "binding": binding,
+                "candidate_hash": integration.integrated_text_sha256,
+                "checker_version": CHECKER_VERSION,
+            }
 
         # Phase 2 (single transaction): apply flips + audits + batch refresh.
         with self.repository._connect() as connection:
@@ -8779,14 +8920,22 @@ class WritingReferenceTranslationBatchService:
             now = self.clock()
             for item in items:
                 key = (item.document_structure_plan_id, item.chapter_id)
-                outcome, new_codes, integration_id, chunk_ids = evaluations[key]
+                evaluation = evaluations[key]
+                outcome = evaluation["outcome"]
+                new_codes = evaluation["new_codes"]
                 old_codes = list(item.fidelity_failure_codes)
                 detail = {
                     "batch_id": batch_id,
                     "actor": actor,
-                    "integration_id": integration_id,
-                    "chunk_ids": chunk_ids,
+                    "integration_id": evaluation["integration_id"],
+                    "chunk_ids": evaluation["chunk_ids"],
                     "previous_failure_codes": old_codes,
+                    # G3/A19 evidence-with-identity: which binding authority
+                    # resolved the row, the final candidate hash and the
+                    # checker version that produced the verdict.
+                    "binding": evaluation["binding"],
+                    "candidate_hash": evaluation["candidate_hash"],
+                    "checker_version": evaluation["checker_version"],
                 }
                 if outcome == "admitted":
                     # Mirror the eight ready-state fields exactly as the
@@ -8858,6 +9007,37 @@ class WritingReferenceTranslationBatchService:
             self._refresh_batch_status_with(connection, project_id, batch_id)
             connection.commit()
         return summary
+
+    def _translation_chain_integration_id_for_reeval(
+        self, project_id: str, item: WritingReferenceTranslationBatchItem
+    ) -> str:
+        """G3: integration id bound to the item's persisted translation
+        revision, or "" when the item carries no resolvable chain."""
+        if not item.translation_id or not item.translation_revision:
+            return ""
+        try:
+            revision = self.repository.translation(
+                project_id, item.translation_id, item.translation_revision
+            )
+        except KeyError:
+            return ""
+        return str(getattr(revision, "chapter_integration_result_id", "") or "")
+
+    def _integration_by_id(
+        self, project_id: str, integration_id: str
+    ) -> ChapterIntegrationResult | None:
+        with self.repository._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT payload_json
+                FROM writing_reference_chapter_integration_results
+                WHERE tenant_id=? AND project_id=? AND integration_id=?
+                """,
+                (TENANT_ID, project_id, integration_id),
+            ).fetchone()
+        if row is None:
+            return None
+        return ChapterIntegrationResult.model_validate_json(row["payload_json"])
 
     def _find_integration_for_reeval(
         self,

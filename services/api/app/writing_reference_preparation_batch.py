@@ -216,18 +216,10 @@ class WritingReferencePreparationBatchService:
             MAX_PREPARATION_STAGE_SIZE,
             max(1, int(request.stage_size or DEFAULT_PREPARATION_STAGE_SIZE)),
         )
-        request_hash = _payload_hash(
-            {"snapshot_id": request.snapshot_id, "stage_size": stage_size}
-        )
-        replay = self._idempotent_batch(
-            project_id,
-            "create_preparation_batch",
-            request.idempotency_key,
-            request_hash,
-        )
-        if replay:
-            return self.get(project_id, replay)
-
+        # G2/A203: the frozen scope must be computed BEFORE the replay check.
+        # Otherwise a same-key retry after the study facts changed would hash
+        # only {snapshot_id, stage_size}, silently replay the stale batch and
+        # never reach the repository's request-hash conflict.
         retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
             project_id, request.snapshot_id
         )
@@ -246,6 +238,21 @@ class WritingReferencePreparationBatchService:
                 "study_facts_sha256": study_facts_sha256,
             }
         )
+        request_hash = _payload_hash(
+            {
+                "snapshot_id": request.snapshot_id,
+                "stage_size": stage_size,
+                "scope_sha256": scope_sha256,
+            }
+        )
+        replay = self._idempotent_batch(
+            project_id,
+            "create_preparation_batch",
+            request.idempotency_key,
+            request_hash,
+        )
+        if replay:
+            return self.get(project_id, replay)
         admission_plan_id = "wref_prep_plan_" + _payload_hash(
             {
                 "project_id": project_id,
@@ -1709,6 +1716,12 @@ class WritingReferencePreparationBatchService:
 
     @staticmethod
     def _write_item_with(connection: Any, item: WritingReferencePreparationBatchItem) -> None:
+        # G4 write boundary: model_copy(update=...) does NOT re-validate, so
+        # the full payload is re-validated before any row is written.
+        validated = WritingReferencePreparationBatchItem.model_validate(
+            item.model_dump(mode="json")
+        )
+        item = validated
         connection.execute(
             """
             UPDATE writing_reference_preparation_items
@@ -1729,6 +1742,12 @@ class WritingReferencePreparationBatchService:
 
     @staticmethod
     def _insert_item_with(connection: Any, item: WritingReferencePreparationBatchItem) -> None:
+        # G4 write boundary: full re-validation before insert (see
+        # _write_item_with).
+        validated = WritingReferencePreparationBatchItem.model_validate(
+            item.model_dump(mode="json")
+        )
+        item = validated
         connection.execute(
             """
             INSERT INTO writing_reference_preparation_items(

@@ -36,6 +36,7 @@ from typing import Any, Callable, List, Optional, Protocol, Sequence
 WRITING_REFERENCE_OCR_MODEL = "GLM-OCR-bf16"
 WRITING_REFERENCE_OCR_PROFILE = "ocr-glm-v1"
 WRITING_REFERENCE_OCR_MIN_DPI = 200
+WRITING_REFERENCE_OCR_MIN_CONCURRENCY = 1
 WRITING_REFERENCE_OCR_MAX_CONCURRENCY = 8
 
 HY_MT2_MODEL_ID = "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
@@ -250,8 +251,10 @@ def build_ocr_render_spec(
 
 def enforce_ocr_concurrency(max_workers: int) -> int:
     """Clamp OCR concurrency to the 1..8 range."""
-    if max_workers < 1:
-        raise ValueError("OCR concurrency must be at least 1")
+    if max_workers < WRITING_REFERENCE_OCR_MIN_CONCURRENCY:
+        raise ValueError(
+            f"OCR concurrency must be at least "
+            f"{WRITING_REFERENCE_OCR_MIN_CONCURRENCY}, got {max_workers}")
     return min(max_workers, WRITING_REFERENCE_OCR_MAX_CONCURRENCY)
 
 

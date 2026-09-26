@@ -1,0 +1,60 @@
+{
+ "schema_version": "g6_k3_batch_mapping_v1",
+ "project_id": "proj_user_fad9f64f3151",
+ "batch_id": "wref_translation_batch_79e7f4e51e7270b75688e8e9",
+ "snapshot_id": "wref_search_4d2c5d3b8476515fc38b",
+ "batch_item_status_counts": {
+  "failed_retryable": 574,
+  "excluded": 256
+ },
+ "total_batch_items": 830,
+ "distinct_studies_touched": 7,
+ "failed_retryable_items_in_selected_scope": 53,
+ "failed_retryable_items_in_replacement_pool": 521,
+ "failed_retryable_items_out_of_scope": 0,
+ "recovery_note": "574 failed_retryable entries are fragment-level items; this maps them to real studies. Only entries whose study is inside the adopted shortlist scope are recovery candidates; out-of-scope history is preserved and binds no new expensive tasks (A610). Actual recovery stays paused per the standing red line.",
+ "studies": [
+  {
+   "nct_id": "NCT02176291",
+   "shortlist_scope": "selected",
+   "failed_retryable_items": 1,
+   "excluded_items": 0
+  },
+  {
+   "nct_id": "NCT02376257",
+   "shortlist_scope": "replacement_pool",
+   "failed_retryable_items": 1,
+   "excluded_items": 5
+  },
+  {
+   "nct_id": "NCT03113968",
+   "shortlist_scope": "selected",
+   "failed_retryable_items": 45,
+   "excluded_items": 16
+  },
+  {
+   "nct_id": "NCT03185819",
+   "shortlist_scope": "replacement_pool",
+   "failed_retryable_items": 384,
+   "excluded_items": 47
+  },
+  {
+   "nct_id": "NCT03283670",
+   "shortlist_scope": "selected",
+   "failed_retryable_items": 7,
+   "excluded_items": 32
+  },
+  {
+   "nct_id": "NCT03352453",
+   "shortlist_scope": "replacement_pool",
+   "failed_retryable_items": 63,
+   "excluded_items": 33
+  },
+  {
+   "nct_id": "NCT03446846",
+   "shortlist_scope": "replacement_pool",
+   "failed_retryable_items": 73,
+   "excluded_items": 123
+  }
+ ]
+}

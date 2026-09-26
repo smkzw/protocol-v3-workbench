@@ -1,0 +1,1565 @@
+FFFFFF..FFFFFFFFFFFF.................................................... [ 72%]
+............................                                             [100%]
+=================================== FAILURES ===================================
+_ WritingReferencePreparationBatchTests.test_api_create_get_and_retry_use_202_contract _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_api_create_get_and_retry_use_202_contract>
+
+    def test_api_create_get_and_retry_use_202_contract(self) -> None:
+        unrelated = public_document(
+            RA_NCT_ID,
+            "ctgov_NCT05306353_other",
+            "other",
+            "NCT05306353_Other.pdf",
+            len(self.payload),
+        )
+        self._seed(project_snapshot(RA_PROJECT_ID, RA_SNAPSHOT_ID, RA_NCT_ID, [unrelated]))
+        client = TestClient(app)
+        with (
+            patch(
+                "services.api.app.main.writing_reference_preparation_batch_service",
+                self.service,
+            ),
+            patch(
+                "services.api.app.main._canonical_module_project_id",
+                side_effect=lambda project_id, module: project_id,
+            ),
+        ):
+>           created = client.post(
+                f"/api/projects/{RA_PROJECT_ID}/medical-writing/references/preparation-batches",
+                json={
+                    "snapshot_id": RA_SNAPSHOT_ID,
+                    "actor": "medical_manager",
+                    "idempotency_key": "ra-api-preparation-create-001",
+                },
+            )
+
+tests/test_writing_reference_preparation_batch.py:1298: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:560: in post
+    return super().post(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:459: in request
+    return super().request(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:362: in handle_request
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:359: in handle_request
+    portal.call(self.app, scope, receive, send)
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:454: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:396: in __get_result
+    raise self._exception
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:162: in __exit__
+    self.gen.throw(value)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_utils.py:87: in collapse_excgroups
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/main.py:608: in enforce_medical_writing_client_contract
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:680: in app
+    await route.handle(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:276: in handle
+    await self.app(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:674: in app
+    raw_response = await run_endpoint_function(
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:330: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/_backends/_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/_backends/_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/main.py:5618: in create_writing_reference_preparation_batch
+    batch = writing_reference_preparation_batch_service.create(
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_ra_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_ra_locked', retained_candidate_ids=['NCT05306353']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_bounded_stage_admission_is_idempotent_and_restart_safe _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_bounded_stage_admission_is_idempotent_and_restart_safe>
+
+    def test_bounded_stage_admission_is_idempotent_and_restart_safe(self) -> None:
+        documents = [
+            public_document(
+                PNH_NCT_ID,
+                f"ctgov_{PNH_NCT_ID}_protocol_{index}",
+                "protocol",
+                f"{PNH_NCT_ID}_Protocol_{index}.pdf",
+                len(self.payload),
+            )
+            for index in range(7)
+        ]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                documents,
+            )
+        )
+        processed_item_ids: list[str] = []
+    
+        def process_item(item, actor, *, progress_callback=None):
+            processed_item_ids.append(item.item_id)
+            self.service._complete_item(item, "prepared", actor)
+    
+        self.service._process_claimed_item = process_item
+    
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-bounded-stage-create-001",
+                stage_size=3,
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_confirmed_validation_is_prepared_without_override _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_confirmed_validation_is_prepared_without_override>
+
+    def test_confirmed_validation_is_prepared_without_override(self) -> None:
+        confirmed_payload = confirmed_protocol_pdf(PNH_NCT_ID)
+        self.client.payload = confirmed_payload
+        document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_confirmed_protocol",
+            "protocol",
+            "NCT03896152_Confirmed_Protocol.pdf",
+            len(confirmed_payload),
+            document_date="2026-01-01",
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-confirmed-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:610: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_glm_restart_after_extraction_commit_replays_without_second_ocr_call _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_glm_restart_after_extraction_commit_replays_without_second_ocr_call>
+
+    def test_glm_restart_after_extraction_commit_replays_without_second_ocr_call(
+        self,
+    ) -> None:
+        document = pymupdf.open()
+        document.new_page()
+        scanned_payload = document.tobytes()
+        document.close()
+        self.client.payload = scanned_payload
+        source_document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_glm_commit_crash",
+            "protocol",
+            "NCT03896152_GLM_Commit_Crash.pdf",
+            len(scanned_payload),
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [source_document],
+            )
+        )
+        ocr_calls: list[tuple[int, int, str]] = []
+        durable_extraction = WritingReferenceExtractionService(
+            self.repo,
+            artifact_root=Path(self.tmp.name) / "artifacts",
+            ocr_runner=lambda page, dpi, model, image: (
+                ocr_calls.append((page, dpi, model))
+                or "STUDY PROTOCOL NCT03896152 Study Objectives and Endpoints"
+            ),
+        )
+    
+        class CrashAfterExtractionCommit:
+            def __init__(self) -> None:
+                self.crash = True
+    
+            def resolve_ocr_model(self) -> str:
+                return "GLM-OCR-bf16"
+    
+            def extract(self, *args, **kwargs):
+                result = durable_extraction.extract(*args, **kwargs)
+                if self.crash:
+                    self.crash = False
+                    raise KeyboardInterrupt(
+                        "simulated crash after extraction persistence"
+                    )
+                return result
+    
+        extraction = CrashAfterExtractionCommit()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            extraction,
+            clock=lambda: NOW,
+        )
+>       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-glm-commit-crash-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:987: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_invalidated_existing_artifact_fails_before_extraction _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_invalidated_existing_artifact_fails_before_extraction>
+
+    def test_invalidated_existing_artifact_fails_before_extraction(self) -> None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+        artifact = self.document_service.ingest(
+            PNH_PROJECT_ID,
+            WritingReferenceDocumentIngestRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                nct_id=PNH_NCT_ID,
+                document_id=document.document_id,
+                actor="medical_manager",
+                idempotency_key="pnh-invalidated-ingest",
+            ),
+        )
+        self.repo.invalidate_artifact(
+            project_id=PNH_PROJECT_ID,
+            artifact_id=artifact.artifact_id,
+            reason="公开来源版本已失效，必须重新确认来源后再处理。",
+            actor="medical_manager",
+            expected_revision=1,
+            idempotency_key="pnh-invalidated-source",
+        )
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-invalidated-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:569: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_latest_batch_is_strictly_scoped_by_project_and_snapshot _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_latest_batch_is_strictly_scoped_by_project_and_snapshot>
+
+    def test_latest_batch_is_strictly_scoped_by_project_and_snapshot(self) -> None:
+        pnh_document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [pnh_document],
+            )
+        )
+>       pnh_first = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-latest-first",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1354: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted>
+
+    def test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted(self) -> None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+        real_extraction = self.extraction_service
+    
+        class CrashAfterPaddlePin:
+            def __init__(self) -> None:
+                self.calls = 0
+    
+            def resolve_ocr_model(self) -> str:
+                return "PaddleOCR-VL-1.6"
+    
+            def extract(self, *args, **kwargs):
+                self.calls += 1
+                raise KeyboardInterrupt("simulated crash after Paddle submit")
+    
+        crash = CrashAfterPaddlePin()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            crash,
+            clock=lambda: NOW,
+        )
+>       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-crash-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1066: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_pnh_reuses_protocol_and_retries_only_failed_sap _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_pnh_reuses_protocol_and_retries_only_failed_sap>
+
+    def test_pnh_reuses_protocol_and_retries_only_failed_sap(self) -> None:
+        documents = self._pnh_documents()
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        self._seed(source_snapshot)
+    
+        protocol = self.document_service.ingest(
+            PNH_PROJECT_ID,
+            WritingReferenceDocumentIngestRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                nct_id=PNH_NCT_ID,
+                document_id=documents[0].document_id,
+                actor="medical_manager",
+                idempotency_key="pnh-existing-protocol-ingest",
+            ),
+        )
+        self.extraction_service.extract(
+            PNH_PROJECT_ID,
+            protocol.artifact_id,
+            actor="medical_manager",
+            extraction_idempotency_key="pnh-existing-protocol-extract",
+        )
+        protocol_validation = self.repo.document_validation(
+            PNH_PROJECT_ID,
+            protocol.artifact_id,
+        )
+        warning_codes = sorted(
+            check.check_code
+            for check in protocol_validation.checks
+            if check.outcome in {"warning", "mismatch"}
+        )
+        overridden = self.repo.override_document_validation(
+            project_id=PNH_PROJECT_ID,
+            artifact_id=protocol.artifact_id,
+            reason="医学经理已核对公开原文，明确确认该Protocol可用于当前竞品准备。",
+            acknowledged_warning_codes=warning_codes,
+            actor="medical_manager",
+            expected_revision=protocol_validation.revision,
+            idempotency_key="pnh-existing-protocol-override",
+        )
+        self.client.calls.clear()
+        self.client.failures_remaining[documents[1].download_url] = 1
+    
+        request = WritingReferencePreparationBatchCreateRequest(
+            snapshot_id=PNH_SNAPSHOT_ID,
+            actor="medical_manager",
+            idempotency_key="pnh-preparation-create-001",
+        )
+>       accepted = self.service.create(PNH_PROJECT_ID, request)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_writing_reference_preparation_batch.py:263: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_progress_callback_failure_cannot_strand_terminal_batch _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_progress_callback_failure_cannot_strand_terminal_batch>
+
+    def test_progress_callback_failure_cannot_strand_terminal_batch(self) -> None:
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            self._pnh_documents(),
+        )
+        self._seed(source_snapshot)
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-callback-failure-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:725: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_progress_is_persisted_at_real_boundaries_and_survives_refresh _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_progress_is_persisted_at_real_boundaries_and_survives_refresh>
+
+    def test_progress_is_persisted_at_real_boundaries_and_survives_refresh(self) -> None:
+        documents = self._pnh_documents()[:1]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        self._seed(source_snapshot)
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-fine-progress-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1422: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_ra_without_public_protocol_has_manual_upload_study_item _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_ra_without_public_protocol_has_manual_upload_study_item>
+
+    def test_ra_without_public_protocol_has_manual_upload_study_item(self) -> None:
+        unrelated = public_document(
+            RA_NCT_ID,
+            "ctgov_NCT05306353_other",
+            "other",
+            "NCT05306353_Other.pdf",
+            len(self.payload),
+        )
+        source_snapshot = project_snapshot(
+            RA_PROJECT_ID,
+            RA_SNAPSHOT_ID,
+            RA_NCT_ID,
+            [unrelated],
+        )
+        self._seed(source_snapshot)
+>       batch = self.service.create(
+            RA_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=RA_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="ra-preparation-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:777: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_ra_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_ra_locked', retained_candidate_ids=['NCT05306353']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing>
+
+    def test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing(
+        self,
+    ) -> None:
+        document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_legacy_sap",
+            "protocol",
+            "NCT03896152_Legacy_SAP.pdf",
+            len(self.payload),
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="legacy-sap-restart-create",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:493: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_restart_recovers_accepted_items_as_failed_retryable _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_recovers_accepted_items_as_failed_retryable>
+
+    def test_restart_recovers_accepted_items_as_failed_retryable(self) -> None:
+        document = self._pnh_documents()[0]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            [document],
+        )
+        self._seed(source_snapshot)
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-restart-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:809: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_restart_retry_reuses_durable_document_ocr_model_pin _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_retry_reuses_durable_document_ocr_model_pin>
+
+    def test_restart_retry_reuses_durable_document_ocr_model_pin(self) -> None:
+        document = self._pnh_documents()[0]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            [document],
+        )
+        self._seed(source_snapshot)
+        real_extraction = self.extraction_service
+    
+        class CrashOnceExtraction:
+            def __init__(self) -> None:
+                self.current_model = "GLM-OCR-bf16"
+                self.calls: list[str] = []
+                self.crash = True
+    
+            def resolve_ocr_model(self) -> str:
+                return self.current_model
+    
+            def extract(self, *args, ocr_model_override="", **kwargs):
+                self.calls.append(ocr_model_override)
+                if self.crash:
+                    self.crash = False
+                    raise KeyboardInterrupt("simulated process crash")
+                return real_extraction.extract(
+                    *args,
+                    ocr_model_override=ocr_model_override,
+                    **kwargs,
+                )
+    
+        crash_once = CrashOnceExtraction()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            crash_once,
+            clock=lambda: NOW,
+        )
+>       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-ocr-pin-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:879: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_retry_claim_resets_stale_progress_from_failed_attempt _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_retry_claim_resets_stale_progress_from_failed_attempt>
+
+    def test_retry_claim_resets_stale_progress_from_failed_attempt(self) -> None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-stale-progress-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_retry_does_not_resubmit_paddle_outcome_unknown_item _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_retry_does_not_resubmit_paddle_outcome_unknown_item>
+
+    def test_retry_does_not_resubmit_paddle_outcome_unknown_item(self) -> None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-unknown-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_run_pending_reports_persisted_locked_scope_and_document_progress _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_run_pending_reports_persisted_locked_scope_and_document_progress>
+
+    def test_run_pending_reports_persisted_locked_scope_and_document_progress(self) -> None:
+        documents = self._pnh_documents()
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        excluded_nct_id = "NCT99999999"
+        excluded_candidate = source_snapshot.candidates[0].model_copy(
+            update={
+                "nct_id": excluded_nct_id,
+                "study_record_url": f"https://clinicaltrials.gov/study/{excluded_nct_id}",
+                "public_documents": [
+                    public_document(
+                        excluded_nct_id,
+                        "ctgov_NCT99999999_protocol",
+                        "protocol",
+                        "NCT99999999_Protocol.pdf",
+                        len(self.payload),
+                    )
+                ],
+            },
+            deep=True,
+        )
+        source_snapshot = source_snapshot.model_copy(
+            update={"candidates": [source_snapshot.candidates[0], excluded_candidate]},
+            deep=True,
+        )
+        self._seed(source_snapshot)
+    
+>       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-progress-callback-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:662: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+_ WritingReferencePreparationBatchTests.test_submit_outcome_unknown_is_classified_and_not_retried _
+
+self = <tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_submit_outcome_unknown_is_classified_and_not_retried>
+
+    def test_submit_outcome_unknown_is_classified_and_not_retried(self) -> None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+    
+        class SubmitOutcomeUnknown:
+            def __init__(self) -> None:
+                self.calls = 0
+    
+            def resolve_ocr_model(self) -> str:
+                return "PaddleOCR-VL-1.6"
+    
+            def extract(self, *args, **kwargs):
+                self.calls += 1
+                raise PaddleOcrOutcomeUnknownError(
+                    "Paddle OCR submit request failed: HTTP 503"
+                )
+    
+        extraction = SubmitOutcomeUnknown()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            extraction,
+            clock=lambda: NOW,
+        )
+>       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-submit-unknown-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -> tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+>           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+services/api/app/main.py:1377
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1377: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+services/api/app/main.py:1387
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1387: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1409
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1409: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1437
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1437: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:1446
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1446: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:2545
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:2545: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_api_create_get_and_retry_use_202_contract
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_bounded_stage_admission_is_idempotent_and_restart_safe
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_confirmed_validation_is_prepared_without_override
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_glm_restart_after_extraction_commit_replays_without_second_ocr_call
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_invalidated_existing_artifact_fails_before_extraction
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_latest_batch_is_strictly_scoped_by_project_and_snapshot
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_pnh_reuses_protocol_and_retries_only_failed_sap
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_progress_callback_failure_cannot_strand_terminal_batch
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_progress_is_persisted_at_real_boundaries_and_survives_refresh
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_ra_without_public_protocol_has_manual_upload_study_item
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_recovers_accepted_items_as_failed_retryable
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_restart_retry_reuses_durable_document_ocr_model_pin
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_retry_claim_resets_stale_progress_from_failed_attempt
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_retry_does_not_resubmit_paddle_outcome_unknown_item
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_run_pending_reports_persisted_locked_scope_and_document_progress
+FAILED tests/test_writing_reference_preparation_batch.py::WritingReferencePreparationBatchTests::test_submit_outcome_unknown_is_classified_and_not_retried
+18 failed, 82 passed, 18 warnings in 35.92s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

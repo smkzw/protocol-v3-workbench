@@ -1,0 +1,257 @@
+.FFF                                                                     [100%]
+=================================== FAILURES ===================================
+_________________ test_a11_step2_polluter_before_victim_passes _________________
+
+    def test_a11_step2_polluter_before_victim_passes():
+        # pre-fix this was RED in every order: collecting the polluter seeds the
+        # live settings that override the victim's pinned routes.
+        proc = _run_nodes(POLLUTER, VICTIM)
+>       assert proc.returncode == 0, proc.stdout + proc.stderr[-1500:]
+E       AssertionError: .F                                                                       [100%]
+E         =================================== FAILURES ===================================
+E         ______ GenerationContextDescriptorTests.test_policy_change_changes_digest ______
+E         
+E         self = <tests.test_medical_writing_generation_context_v2.GenerationContextDescriptorTests testMethod=test_policy_change_changes_digest>
+E         
+E             def test_policy_change_changes_digest(self):
+E                 a = self.service.build_generation_context_descriptor(
+E                     PROJECT, section_id=self.req.section_id, operation="initial", request=self.req
+E                 )
+E                 self.service.ai_task_runner = _policy_runner("openai_compatible", "other-model")
+E                 b = self.service.build_generation_context_descriptor(
+E                     PROJECT, section_id=self.req.section_id, operation="initial", request=self.req
+E                 )
+E         >       self.assertNotEqual(a["digest"], b["digest"])
+E         E       AssertionError: 'b165adc16bd335b856ce4ff3c9a69f0ba6aa8219119662173eae1a6dcf352ab0' == 'b165adc16bd335b856ce4ff3c9a69f0ba6aa8219119662173eae1a6dcf352ab0'
+E         
+E         tests/test_medical_writing_generation_context_v2.py:239: AssertionError
+E         =============================== warnings summary ===============================
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1
+E           /opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+E             from starlette.testclient import TestClient as TestClient  # noqa
+E         
+E         <frozen importlib._bootstrap>:491
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+E         
+E         <frozen importlib._bootstrap>:491
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+E         
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+E         
+E         services/api/app/main.py:1377
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1377: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E           /opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             return self.router.on_event(event_type)  # ty: ignore[deprecated]
+E         
+E         services/api/app/main.py:1387
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1387: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         services/api/app/main.py:1409
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1409: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         services/api/app/main.py:1437
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1437: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("shutdown")
+E         
+E         services/api/app/main.py:1446
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1446: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("shutdown")
+E         
+E         services/api/app/main.py:2545
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:2545: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+E         =========================== short test summary info ============================
+E         FAILED tests/test_medical_writing_generation_context_v2.py::GenerationContextDescriptorTests::test_policy_change_changes_digest
+E         1 failed, 1 passed, 18 warnings in 3.98s
+E         <sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/opt/homebrew/opt/python@3.14/bin/python3.14', '-m', 'pytest', 'tests/test_ai_execution_policy... 18 warnings in 3.98s\n', stderr='<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n').returncode
+
+tests/acceptance/test_order_pollution_a11.py:68: AssertionError
+_________________ test_a11_step3_victim_before_polluter_passes _________________
+
+    def test_a11_step3_victim_before_polluter_passes():
+        proc = _run_nodes(VICTIM, POLLUTER)
+>       assert proc.returncode == 0, proc.stdout + proc.stderr[-1500:]
+E       AssertionError: F.                                                                       [100%]
+E         =================================== FAILURES ===================================
+E         ______ GenerationContextDescriptorTests.test_policy_change_changes_digest ______
+E         
+E         self = <tests.test_medical_writing_generation_context_v2.GenerationContextDescriptorTests testMethod=test_policy_change_changes_digest>
+E         
+E             def test_policy_change_changes_digest(self):
+E                 a = self.service.build_generation_context_descriptor(
+E                     PROJECT, section_id=self.req.section_id, operation="initial", request=self.req
+E                 )
+E                 self.service.ai_task_runner = _policy_runner("openai_compatible", "other-model")
+E                 b = self.service.build_generation_context_descriptor(
+E                     PROJECT, section_id=self.req.section_id, operation="initial", request=self.req
+E                 )
+E         >       self.assertNotEqual(a["digest"], b["digest"])
+E         E       AssertionError: 'b165adc16bd335b856ce4ff3c9a69f0ba6aa8219119662173eae1a6dcf352ab0' == 'b165adc16bd335b856ce4ff3c9a69f0ba6aa8219119662173eae1a6dcf352ab0'
+E         
+E         tests/test_medical_writing_generation_context_v2.py:239: AssertionError
+E         =============================== warnings summary ===============================
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1
+E           /opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+E             from starlette.testclient import TestClient as TestClient  # noqa
+E         
+E         <frozen importlib._bootstrap>:491
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+E         
+E         <frozen importlib._bootstrap>:491
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+E         
+E         <frozen importlib._bootstrap>:491
+E           <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+E         
+E         services/api/app/main.py:1377
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1377: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E         ../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+E           /opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             return self.router.on_event(event_type)  # ty: ignore[deprecated]
+E         
+E         services/api/app/main.py:1387
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1387: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         services/api/app/main.py:1409
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1409: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         services/api/app/main.py:1437
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1437: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("shutdown")
+E         
+E         services/api/app/main.py:1446
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1446: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("shutdown")
+E         
+E         services/api/app/main.py:2545
+E           /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:2545: DeprecationWarning: 
+E                   on_event is deprecated, use lifespan event handlers instead.
+E           
+E                   Read more about it in the
+E                   [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+E                   
+E             @app.on_event("startup")
+E         
+E         -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+E         =========================== short test summary info ============================
+E         FAILED tests/test_medical_writing_generation_context_v2.py::GenerationContextDescriptorTests::test_policy_change_changes_digest
+E         1 failed, 1 passed, 18 warnings in 4.23s
+E         <sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/opt/homebrew/opt/python@3.14/bin/python3.14', '-m', 'pytest', 'tests/test_medical_writing_gen... 18 warnings in 4.23s\n', stderr='<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n').returncode
+
+tests/acceptance/test_order_pollution_a11.py:73: AssertionError
+___________________ test_a11_step4_seeded_random_orders_pass ___________________
+
+    def test_a11_step4_seeded_random_orders_pass():
+        for seed in (20260927, 1, 42):
+            proc = _run_nodes(POLLUTER, VICTIM, extra=[*ORDER_PLUGIN, f"--order-seed={seed}"])
+>           assert proc.returncode == 0, (seed, proc.stdout + proc.stderr[-1500:])
+E           AssertionError: (20260927, 'F.                                                                       [100%]
+E             =========================..., 1 passed, 18 warnings in 4.02s
+E             <sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+E             ')
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['/opt/homebrew/opt/python@3.14/bin/python3.14', '-m', 'pytest', 'tests/test_ai_execution_policy... 18 warnings in 4.02s\n', stderr='<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n').returncode
+
+tests/acceptance/test_order_pollution_a11.py:79: AssertionError
+=========================== short test summary info ============================
+FAILED tests/acceptance/test_order_pollution_a11.py::test_a11_step2_polluter_before_victim_passes
+FAILED tests/acceptance/test_order_pollution_a11.py::test_a11_step3_victim_before_polluter_passes
+FAILED tests/acceptance/test_order_pollution_a11.py::test_a11_step4_seeded_random_orders_pass
+3 failed, 1 passed in 18.24s

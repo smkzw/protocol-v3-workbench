@@ -1,0 +1,849 @@
+....FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF..                                [100%]
+=================================== FAILURES ===================================
+_________________ test_p04_required_node_skipped_must_not_pass _________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p04_required_node_skipped0')
+
+    def test_p04_required_node_skipped_must_not_pass(tmp_path):
+        """A04: a required testcase skipped via pytest.mark.skip must FAIL the
+        gate, not count as covered (review P04: expected FAIL, observed PASS)."""
+        kit.write_suite(tmp_path, {
+            "test_keep.py": kit.PASS_BODY,
+            "test_optional.py": (
+                "import pytest\n\n\n"
+                "@pytest.mark.skip(reason='gate probe: required test skipped')\n"
+                "def test_must_not_be_skipped():\n    assert True\n"
+            ),
+        })
+        required = tmp_path / "required_nodes.json"
+        required.write_text(json.dumps(["test_optional.py::test_must_not_be_skipped"]),
+                            encoding="utf-8")
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path, [
+            "--required-nodes", str(required),
+            "--allow-missing-required-nodes",  # tolerate ABSENT, never SKIP (A04)
+        ]))
+        assert doc is not None
+>       assert doc["verdict"] == "FAIL", doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p04_required_node_skipped0', ...}
+E       assert 'PASS' == 'FAIL'
+E         
+E         - FAIL
+E         + PASS
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:106: AssertionError
+_______________ test_p05_wrong_class_same_leaf_must_not_satisfy ________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p05_wrong_class_same_leaf0')
+
+    def test_p05_wrong_class_same_leaf_must_not_satisfy(tmp_path):
+        """A05: another class with the same test leaf must not complete the
+        required coverage (review P05: expected FAIL, observed PASS)."""
+        kit.write_suite(tmp_path, {
+            "test_cls.py": (
+                "class TestOther:\n"
+                "    def test_checked(self):\n"
+                "        assert True\n"
+            ),
+        })
+        required = tmp_path / "required_nodes.json"
+        required.write_text(json.dumps(["test_cls.py::TestTarget::test_checked"]),
+                            encoding="utf-8")
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path, ["--required-nodes", str(required)]))
+        assert doc is not None
+>       assert doc["verdict"] == "FAIL", doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p05_wrong_class_same_leaf0', ...}
+E       assert 'PASS' == 'FAIL'
+E         
+E         - FAIL
+E         + PASS
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:125: AssertionError
+_____________ test_p06_missing_required_parameter_must_not_satisfy _____________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p06_missing_required_para0')
+
+    def test_p06_missing_required_parameter_must_not_satisfy(tmp_path):
+        """A05: only a different parametrize bracket ran -> the specific required
+        parameter never ran (review P06: expected FAIL, observed PASS)."""
+        kit.write_suite(tmp_path, {
+            "test_param.py": (
+                "import pytest\n\n\n"
+                '@pytest.mark.parametrize("value", ["beta"])\n'
+                "def test_case(value):\n"
+                "    assert value == 'beta'\n"
+            ),
+        })
+        required = tmp_path / "required_nodes.json"
+        required.write_text(json.dumps(["test_param.py::test_case[alpha]"]),
+                            encoding="utf-8")
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path, ["--required-nodes", str(required)]))
+        assert doc is not None
+>       assert doc["verdict"] == "FAIL", doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p06_missing_required_para0', ...}
+E       assert 'PASS' == 'FAIL'
+E         
+E         - FAIL
+E         + PASS
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:145: AssertionError
+____________________ test_p07_zero_tests_with_rc0_must_fail ____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p07_zero_tests_with_rc0_m0')
+
+    def test_p07_zero_tests_with_rc0_must_fail(tmp_path):
+        """A06: a parsed-but-empty report with returncode 0 is contradictory and
+        must FAIL (review P07: expected FAIL, observed PASS)."""
+        gate = kit.load_gate_module()
+        report = {"ok": True, "total": 0, "cases": [], "failures": [],
+                  "errors": [], "skipped": [], "returncode": 0}
+        reasons: list[str] = []
+        result = gate.evaluate_report_against_baseline(report, None, None, [], True, reasons)
+>       assert result["verdict"] == "FAIL", result
+E       AssertionError: {'ran': 0, 'failed_ids': [], 'known_matched': [], 'dissolved': [], ...}
+E       assert 'PASS' == 'FAIL'
+E         
+E         - FAIL
+E         + PASS
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:157: AssertionError
+____________ test_p08_missing_report_through_cmd_run_is_structured _____________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p08_missing_report_throug0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109914e90>
+capsys = <_pytest.capture.CaptureFixture object at 0x1098d4440>
+
+    def test_p08_missing_report_through_cmd_run_is_structured(tmp_path, monkeypatch, capsys):
+        """A06/F05: report_missing early-exit path must return the complete stable
+        structure (no KeyError, no lost verdict); review P08 observed
+        KeyError:baseline_not_run_count."""
+        gate = kit.load_gate_module()
+        kit.write_suite(tmp_path, {"test_passes.py": kit.PASS_BODY})
+    
+        def fake_run_pytest(root, junit_path, timeout, pytest_args, nodeid_report=None):
+            return {"returncode": 0, "stdout": "", "stderr": "", "elapsed": 0.1,
+                    "timeout": False, "child": {}}
+    
+        monkeypatch.setattr(gate, "run_pytest", fake_run_pytest)
+        args = argparse.Namespace(
+            root=str(tmp_path), scope="backend", pytest_args=".", timeout=120,
+            baseline=None, required_nodes=None, allow_missing_required_nodes=True,
+            skip_static=True, evidence_dir=str(tmp_path / "evidence"),
+            from_result=None,
+        )
+>       rc = gate.cmd_run(args)  # must not raise
+             ^^^^^^^^^^^^^^^^^^
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:179: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(root='/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p08_missing_...r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p08_missing_report_throug0/evidence', from_result=None)
+
+    def cmd_run(args) -> int:
+        requested = Path(args.root).resolve()
+        root, fallback = resolve_root(requested)
+        reasons: list[str] = [fallback] if fallback else []
+        gate: dict = {"gate_version": GATE_VERSION, "mode": "run", "scope": args.scope,
+                      "requested_root": str(requested), "root": str(root),
+                      "head_sha": git_head(root), "reasons": reasons,
+                      "python": sys.version.split()[0]}
+    
+        baseline_path = Path(args.baseline) if args.baseline else \
+            root / "tools/acceptance/known_failures_0926v1.json"
+        baseline = load_baseline(baseline_path)
+        gate["baseline"] = {
+            "path": str(baseline_path),
+            "present": baseline is not None,
+            "sha": (baseline or {}).get("baseline_sha"),
+            "matches_head": bool(baseline
+                                 and baseline.get("format") != "UNREADABLE"
+                                 and baseline.get("baseline_sha") == gate["head_sha"]),
+        }
+        required_path = Path(args.required_nodes) if args.required_nodes else \
+            root / "tools/acceptance/required_nodes.json"
+        junit_nodes, selftest_nodes, required_present = load_required_nodes(required_path)
+        if not required_present and not args.allow_missing_required_nodes:
+            gate["verdict"] = "FAIL"
+            reasons.append("required_nodes_file_missing")
+            return emit(gate)
+    
+        if baseline and gate["head_sha"] and baseline.get("format") != "UNREADABLE" \
+                and baseline.get("baseline_sha") != gate["head_sha"]:
+            # risk 7: a baseline from another HEAD must never become a waiver umbrella
+            gate["verdict"] = "BLOCKED"
+            reasons.append("baseline_sha_mismatch_requires_increment_review")
+            return emit(gate)
+    
+        scope = args.scope
+        if scope in ("backend", "all"):
+            with tempfile.TemporaryDirectory(prefix="g0_junit_") as tmp:
+                junit_path = Path(tmp) / "report.xml"
+                run = run_pytest(root, junit_path, args.timeout, args.pytest_args.split())
+                gate["pytest"] = {"returncode": run["returncode"], "elapsed_s": run["elapsed"],
+                                  "timeout": run["timeout"]}
+                report = parse_junit(junit_path, root)
+            report["returncode"] = run["returncode"]
+            verdict_part = evaluate_report_against_baseline(
+                report, baseline, gate["head_sha"], junit_nodes,
+                args.allow_missing_required_nodes, reasons)
+>           gate.update({k: verdict_part[k] for k in
+                            ^^^^^^^^^^^^^^^
+                         ("ran", "failed_ids", "known_matched", "dissolved",
+                          "suspected_data_class", "suspected_fingerprint_drift",
+                          "missing_required_nodes", "baseline_not_run_count")})
+E           KeyError: 'baseline_not_run_count'
+
+tools/acceptance/run_acceptance_gate.py:557: KeyError
+__________ test_p09_collection_error_through_real_cli_keeps_structure __________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p09_collection_error_thro0')
+
+    def test_p09_collection_error_through_real_cli_keeps_structure(tmp_path):
+        """A06/F05: a collection error through the real CLI must still emit the
+        full GATE_JSON + a validating result.json (review P09 observed
+        KeyError:baseline_not_run_count with all evidence lost)."""
+        kit.write_suite(tmp_path, {"test_broken.py": "def test_broken(:\n    pass\n"})
+        proc, doc = kit.run_gate_cli(_gate_argv(tmp_path))
+        assert "GATE_JSON=" in proc.stdout, (proc.stdout, proc.stderr[-2000:])
+        assert "KeyError" not in proc.stderr, proc.stderr[-2000:]
+        assert doc is not None and doc["verdict"] == "FAIL", doc
+        gate = kit.load_gate_module()
+        result_path = doc.get("result_path")
+>       assert result_path and os.path.isfile(result_path), doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p09_collection_error_thro0', ...}
+E       assert (None)
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:204: AssertionError
+____________________ test_p11_ancestor_baseline_not_blocked ____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p11_ancestor_baseline_not0')
+
+    def test_p11_ancestor_baseline_not_blocked(tmp_path):
+        """A02/F01: HEAD moved past the baseline commit -> verify ancestry and
+        proceed; never auto-recapture (review P11: expected explicit ancestor-base
+        comparison, observed BLOCKED before pytest)."""
+        kit.write_suite(tmp_path, {"test_passes.py": kit.PASS_BODY})
+        base_sha = kit.git_repo_commit_all(tmp_path, "baseline commit")
+        (tmp_path / "test_extra_pass.py").write_text(kit.PASS_BODY, encoding="utf-8")
+        head_sha = kit.git_repo_commit_all(tmp_path, "increment commit")
+        assert base_sha != head_sha
+        baseline_path = tmp_path / "baseline.json"
+        baseline_path.write_text(json.dumps({
+            "format": "known_failures_0926v1/1",
+            "baseline_sha": base_sha,
+            "pytest_failures": [],
+            "static_findings": {},
+        }), encoding="utf-8")
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path, ["--baseline", str(baseline_path)]))
+        assert doc is not None
+>       assert doc["verdict"] == "PASS", doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p11_ancestor_baseline_not0', ...}
+E       assert 'BLOCKED' == 'PASS'
+E         
+E         - PASS
+E         + BLOCKED
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:227: AssertionError
+___________________ test_p12_broken_pyflakes_not_false_green ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p12_broken_pyflakes_not_f0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1096e28b0>
+
+    def test_p12_broken_pyflakes_not_false_green(tmp_path, monkeypatch):
+        """A07: rc=1 with empty stdout + import-error stderr means the tool never
+        ran -> ok=False, not an empty-but-ok result (review P12 observed ok=True)."""
+        gate = kit.load_gate_module()
+        (tmp_path / "services" / "api" / "app").mkdir(parents=True)
+        real_run = subprocess.run
+    
+        class FakeCompleted:
+            returncode = 1
+            stdout = ""
+            stderr = "/usr/bin/python: No module named 'pyflakes'"
+    
+        def fake_run(cmd, **kwargs):
+            if "pyflakes" in cmd:
+                return FakeCompleted()
+            return real_run(cmd, **kwargs)
+    
+        monkeypatch.setattr(gate.subprocess, "run", fake_run)
+        result = gate.run_pyflakes(tmp_path)
+>       assert result.get("ok") is False, result
+E       AssertionError: {'ok': True, 'undefined_name': [], 'ignored_counted_by_category': {}}
+E       assert True is False
+E        +  where True = <built-in method get of dict object at 0x1098fc440>('ok')
+E        +    where <built-in method get of dict object at 0x1098fc440> = {'ok': True, 'undefined_name': [], 'ignored_counted_by_category': {}}.get
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:253: AssertionError
+___________________ test_p13_eslint_execution_failure_not_ok ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p13_eslint_execution_fail0')
+
+    def test_p13_eslint_execution_failure_not_ok(tmp_path):
+        """A07: eslint exiting 2 (config/crash) must be ok=False, not an empty
+        noundef pass (review P13 observed ok=True, returncode 2)."""
+        gate = kit.load_gate_module()
+        frontend = tmp_path / "frontend"
+        frontend.mkdir()
+        _make_fake_eslint(frontend, "echo 'eslint crashed' >&2\nexit 2\n")
+        result = gate.run_eslint(tmp_path)
+>       assert result.get("ok") is False, result
+E       AssertionError: {'ok': True, 'returncode': 2, 'noundef': []}
+E       assert True is False
+E        +  where True = <built-in method get of dict object at 0x1099a28c0>('ok')
+E        +    where <built-in method get of dict object at 0x1099a28c0> = {'ok': True, 'returncode': 2, 'noundef': []}.get
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:273: AssertionError
+_____________________ test_p14_eslint_corrupt_json_not_ok ______________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p14_eslint_corrupt_json_n0')
+
+    def test_p14_eslint_corrupt_json_not_ok(tmp_path):
+        """A07: unparseable eslint JSON must be ok=False (review P14 observed
+        ok=True with parse_error)."""
+        gate = kit.load_gate_module()
+        frontend = tmp_path / "frontend"
+        frontend.mkdir()
+        _make_fake_eslint(frontend, "printf 'not JSON'\nexit 0\n")
+        result = gate.run_eslint(tmp_path)
+>       assert result.get("ok") is False, result
+E       AssertionError: {'ok': True, 'returncode': 0, 'noundef': [], 'parse_error': 'not JSON'}
+E       assert True is False
+E        +  where True = <built-in method get of dict object at 0x1098fc880>('ok')
+E        +    where <built-in method get of dict object at 0x1098fc880> = {'ok': True, 'returncode': 0, 'noundef': [], 'parse_error': 'not JSON'}.get
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:285: AssertionError
+___________________ test_p14b_eslint_fatal_counts_as_finding ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p14b_eslint_fatal_counts_0')
+
+    def test_p14b_eslint_fatal_counts_as_finding(tmp_path):
+        """A07: fatal:true messages are findings even with rc 0."""
+        gate = kit.load_gate_module()
+        frontend = tmp_path / "frontend"
+        frontend.mkdir()
+        _make_fake_eslint(frontend, (
+            "echo '[{\"filePath\":\"/x/y.js\",\"messages\":[{\"ruleId\":null,"
+            "\"fatal\":true,\"severity\":2,\"message\":\"Parsing error: Unexpected token\","
+            "\"line\":1,\"column\":1}]}]'\nexit 0\n"
+        ))
+        result = gate.run_eslint(tmp_path)
+        assert result.get("ok") is True, result
+>       assert result.get("fatal_count", 0) == 1, result
+E       AssertionError: {'ok': True, 'returncode': 0, 'noundef': []}
+E       assert 0 == 1
+E        +  where 0 = <built-in method get of dict object at 0x1098fab00>('fatal_count', 0)
+E        +    where <built-in method get of dict object at 0x1098fab00> = {'ok': True, 'returncode': 0, 'noundef': []}.get
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:301: AssertionError
+____________________ test_p15_offline_pytest_env_whitelist _____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p15_offline_pytest_env_wh0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109929b50>
+
+    def test_p15_offline_pytest_env_whitelist(tmp_path, monkeypatch):
+        """A10/F02: the pytest child must not inherit live WORKBENCH_*/proxy env
+        (review P15 observed live_runtime_inherited=True, proxy_inherited=True)."""
+        monkeypatch.setenv("WORKBENCH_GATE_PROBE_SENTINEL", "live-leak")
+        monkeypatch.setenv("https_proxy", "http://127.0.0.1:9")
+        monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:9")
+        kit.write_suite(tmp_path, {"test_env.py": (
+            "import os\n\n\n"
+            "def test_offline_env_is_whitelisted():\n"
+            "    assert 'WORKBENCH_GATE_PROBE_SENTINEL' not in os.environ\n"
+            "    assert 'https_proxy' not in os.environ\n"
+            "    assert 'HTTPS_PROXY' not in os.environ\n"
+        )})
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path))
+        assert doc is not None
+>       assert doc["verdict"] == "PASS", doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p15_offline_pytest_env_wh0', ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:319: AssertionError
+____________________ test_p16_multi_root_ambiguity_blocked _____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_p16_multi_root_ambiguity_0')
+
+    def test_p16_multi_root_ambiguity_blocked(tmp_path):
+        """A08/F06: two candidate repos under --root must BLOCK with an explicit
+        ambiguity reason, never silently pick one (review P16 observed
+        'aaa-wrong' picked)."""
+        for name in ("aaa-wrong", "bbb-right"):
+            marker = tmp_path / name / "tools" / "acceptance"
+            marker.mkdir(parents=True)
+            (marker / "required_nodes.json").write_text("[]", encoding="utf-8")
+        _, doc = kit.run_gate_cli(_gate_argv(tmp_path))
+>       assert doc is not None
+E       assert None is not None
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:332: AssertionError
+__________ test_run_pytest_timeout_keeps_evidence_and_kills_own_group __________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_run_pytest_timeout_keeps_0')
+
+    def test_run_pytest_timeout_keeps_evidence_and_kills_own_group(tmp_path):
+        """Red line 6-2: on timeout the gate must keep partial logs, record child
+        identity, kill ONLY its own process group, and return a stable verdict —
+        never an empty-stdout guess. Fixture: many fast tests print dots first so
+        partial stdout is guaranteed non-empty, then a sleeper trips the limit."""
+        fast = "".join(
+            f"def test_fast_{i}():\n    assert {i} >= 0\n\n" for i in range(220)
+        )
+        kit.write_suite(tmp_path, {
+            "test_many.py": fast,
+            "test_sleep.py": "import time\n\n\ndef test_slow():\n    time.sleep(120)\n",
+        })
+        gate = kit.load_gate_module()
+        started = time.monotonic()
+        run = gate.run_pytest(tmp_path, tmp_path / "junit.xml", 6, ["test_many.py", "test_sleep.py"])
+        elapsed = time.monotonic() - started
+        assert run["timeout"] is True, run
+        assert run["returncode"] is None, run
+        assert elapsed < 60, elapsed
+        child = run.get("child") or {}
+>       assert child.get("pid") and child.get("pgid"), child
+E       AssertionError: {}
+E       assert (None)
+E        +  where None = <built-in method get of dict object at 0x1098ef240>('pid')
+E        +    where <built-in method get of dict object at 0x1098ef240> = {}.get
+
+tests/acceptance/test_gate_counterexamples_0927v1.py:357: AssertionError
+__________________ test_recorder_writes_exact_native_nodeids ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_recorder_writes_exact_nat0')
+
+    def test_recorder_writes_exact_native_nodeids(tmp_path):
+>       records = _records_for(tmp_path, MIX_BODY)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/acceptance/test_gate_nodeid_recorder.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_recorder_writes_exact_nat0')
+body = 'import pytest\n\n\ndef test_ok():\n    assert True\n\n\n@pytest.mark.skip(reason="probe skip")\ndef test_skipme():\n ...\n    assert False\n\n\n@pytest.mark.parametrize("value", ["a", "b"])\ndef test_par(value):\n    assert value == "a"\n'
+filename = 'test_mix.py'
+
+    def _records_for(tmp_path, body: str, filename: str = "test_mix.py") -> list[dict]:
+        kit.write_suite(tmp_path, {filename: body})
+        report_path = tmp_path / "nodeid_report.json"
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(kit.GATE_DIR) + (
+            os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+        proc = subprocess.run(
+            [sys.executable, "-m", "pytest", ".", "-q", "-p", "no:cacheprovider",
+             "-p", "gate_nodeid_recorder", f"--nodeid-report={report_path}"],
+            cwd=str(tmp_path), capture_output=True, text=True, env=env, timeout=180,
+        )
+>       assert report_path.is_file(), (proc.stdout, proc.stderr[-2000:])
+E       AssertionError: ('', 's/smkzw/Library/Python/3.14/lib/python/site-packages/pluggy/_callers.py", line 121, in _multicall
+E             res = hoo...load_unlocked
+E         ImportError: Error importing plugin "gate_nodeid_recorder": No module named \'gate_nodeid_recorder\'
+E         ')
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_recorder_writes_exact_nat0/nodeid_report.json').is_file
+
+tests/acceptance/test_gate_nodeid_recorder.py:51: AssertionError
+________________ test_required_status_passes_only_on_exact_pass ________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_passes_on0')
+
+    def test_required_status_passes_only_on_exact_pass(tmp_path):
+        gate = _gate()
+>       records = _records_for(tmp_path, MIX_BODY)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/acceptance/test_gate_nodeid_recorder.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_passes_on0')
+body = 'import pytest\n\n\ndef test_ok():\n    assert True\n\n\n@pytest.mark.skip(reason="probe skip")\ndef test_skipme():\n ...\n    assert False\n\n\n@pytest.mark.parametrize("value", ["a", "b"])\ndef test_par(value):\n    assert value == "a"\n'
+filename = 'test_mix.py'
+
+    def _records_for(tmp_path, body: str, filename: str = "test_mix.py") -> list[dict]:
+        kit.write_suite(tmp_path, {filename: body})
+        report_path = tmp_path / "nodeid_report.json"
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(kit.GATE_DIR) + (
+            os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+        proc = subprocess.run(
+            [sys.executable, "-m", "pytest", ".", "-q", "-p", "no:cacheprovider",
+             "-p", "gate_nodeid_recorder", f"--nodeid-report={report_path}"],
+            cwd=str(tmp_path), capture_output=True, text=True, env=env, timeout=180,
+        )
+>       assert report_path.is_file(), (proc.stdout, proc.stderr[-2000:])
+E       AssertionError: ('', 's/smkzw/Library/Python/3.14/lib/python/site-packages/pluggy/_callers.py", line 121, in _multicall
+E             res = hoo...load_unlocked
+E         ImportError: Error importing plugin "gate_nodeid_recorder": No module named \'gate_nodeid_recorder\'
+E         ')
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_passes_on0/nodeid_report.json').is_file
+
+tests/acceptance/test_gate_nodeid_recorder.py:51: AssertionError
+______________________ test_required_status_rejects_skip _______________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_s0')
+
+    def test_required_status_rejects_skip(tmp_path):
+        gate = _gate()
+>       records = _records_for(tmp_path, MIX_BODY)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/acceptance/test_gate_nodeid_recorder.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_s0')
+body = 'import pytest\n\n\ndef test_ok():\n    assert True\n\n\n@pytest.mark.skip(reason="probe skip")\ndef test_skipme():\n ...\n    assert False\n\n\n@pytest.mark.parametrize("value", ["a", "b"])\ndef test_par(value):\n    assert value == "a"\n'
+filename = 'test_mix.py'
+
+    def _records_for(tmp_path, body: str, filename: str = "test_mix.py") -> list[dict]:
+        kit.write_suite(tmp_path, {filename: body})
+        report_path = tmp_path / "nodeid_report.json"
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(kit.GATE_DIR) + (
+            os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+        proc = subprocess.run(
+            [sys.executable, "-m", "pytest", ".", "-q", "-p", "no:cacheprovider",
+             "-p", "gate_nodeid_recorder", f"--nodeid-report={report_path}"],
+            cwd=str(tmp_path), capture_output=True, text=True, env=env, timeout=180,
+        )
+>       assert report_path.is_file(), (proc.stdout, proc.stderr[-2000:])
+E       AssertionError: ('', 's/smkzw/Library/Python/3.14/lib/python/site-packages/pluggy/_callers.py", line 121, in _multicall
+E             res = hoo...load_unlocked
+E         ImportError: Error importing plugin "gate_nodeid_recorder": No module named \'gate_nodeid_recorder\'
+E         ')
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_s0/nodeid_report.json').is_file
+
+tests/acceptance/test_gate_nodeid_recorder.py:51: AssertionError
+______________________ test_required_status_rejects_xfail ______________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_x0')
+
+    def test_required_status_rejects_xfail(tmp_path):
+        gate = _gate()
+>       records = _records_for(tmp_path, MIX_BODY)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/acceptance/test_gate_nodeid_recorder.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_x0')
+body = 'import pytest\n\n\ndef test_ok():\n    assert True\n\n\n@pytest.mark.skip(reason="probe skip")\ndef test_skipme():\n ...\n    assert False\n\n\n@pytest.mark.parametrize("value", ["a", "b"])\ndef test_par(value):\n    assert value == "a"\n'
+filename = 'test_mix.py'
+
+    def _records_for(tmp_path, body: str, filename: str = "test_mix.py") -> list[dict]:
+        kit.write_suite(tmp_path, {filename: body})
+        report_path = tmp_path / "nodeid_report.json"
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(kit.GATE_DIR) + (
+            os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+        proc = subprocess.run(
+            [sys.executable, "-m", "pytest", ".", "-q", "-p", "no:cacheprovider",
+             "-p", "gate_nodeid_recorder", f"--nodeid-report={report_path}"],
+            cwd=str(tmp_path), capture_output=True, text=True, env=env, timeout=180,
+        )
+>       assert report_path.is_file(), (proc.stdout, proc.stderr[-2000:])
+E       AssertionError: ('', 's/smkzw/Library/Python/3.14/lib/python/site-packages/pluggy/_callers.py", line 121, in _multicall
+E             res = hoo...load_unlocked
+E         ImportError: Error importing plugin "gate_nodeid_recorder": No module named \'gate_nodeid_recorder\'
+E         ')
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_required_status_rejects_x0/nodeid_report.json').is_file
+
+tests/acceptance/test_gate_nodeid_recorder.py:51: AssertionError
+__________________ test_required_status_exact_parameter_only ___________________
+
+    def test_required_status_exact_parameter_only():
+        gate = _gate()
+        records = [
+            {"nodeid": "t.py::test_par[a]", "when": "setup", "outcome": "passed", "wasxfail": False},
+            {"nodeid": "t.py::test_par[a]", "when": "call", "outcome": "passed", "wasxfail": False},
+        ]
+>       ok, status = gate.required_node_status(records, "t.py::test_par[a]")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module '_gate_under_test' has no attribute 'required_node_status'
+
+tests/acceptance/test_gate_nodeid_recorder.py:108: AttributeError
+____________________ test_required_status_class_exact_only _____________________
+
+    def test_required_status_class_exact_only():
+        gate = _gate()
+        records = [
+            {"nodeid": "t.py::TestOther::test_checked", "when": "setup", "outcome": "passed", "wasxfail": False},
+            {"nodeid": "t.py::TestOther::test_checked", "when": "call", "outcome": "passed", "wasxfail": False},
+        ]
+>       ok, status = gate.required_node_status(records, "t.py::TestTarget::test_checked")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module '_gate_under_test' has no attribute 'required_node_status'
+
+tests/acceptance/test_gate_nodeid_recorder.py:120: AttributeError
+_________________ test_result_json_roundtrip_and_stdout_parity _________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_result_json_roundtrip_and0')
+
+    def test_result_json_roundtrip_and_stdout_parity(tmp_path):
+        doc = _run_clean(tmp_path)
+        gate = kit.load_gate_module()
+        result_path = doc.get("result_path")
+>       assert result_path and os.path.isfile(result_path), doc
+E       AssertionError: {'gate_version': 'g0-0926v1/2', 'mode': 'run', 'scope': 'backend', 'requested_root': '/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_result_json_roundtrip_and0', ...}
+E       assert (None)
+
+tests/acceptance/test_gate_result_protocol.py:35: AssertionError
+____________________ test_from_result_rereads_without_rerun ____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_from_result_rereads_witho0')
+
+    def test_from_result_rereads_without_rerun(tmp_path):
+        doc = _run_clean(tmp_path)
+>       result_path = doc["result_path"]
+                      ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'result_path'
+
+tests/acceptance/test_gate_result_protocol.py:48: KeyError
+__________________ test_from_result_missing_file_stable_fail ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_from_result_missing_file_0')
+
+    def test_from_result_missing_file_stable_fail(tmp_path):
+        proc, doc = kit.run_gate_cli([
+            "--root", str(tmp_path), "--from-result", str(tmp_path / "nope.json"),
+        ])
+>       assert doc is not None, (proc.stdout, proc.stderr[-2000:])
+E       AssertionError: ('', "usage: run_acceptance_gate.py [-h] [--root ROOT]
+E                                       [--scope {backend,frontend,all}]...t-of-smkzw/pytest-2351/test_from_result_missing_file_0/nope.json' (choose from 'run', 'backend', 'frontend', 'all')
+E         ")
+E       assert None is not None
+
+tests/acceptance/test_gate_result_protocol.py:69: AssertionError
+__________________ test_from_result_tampered_schema_rejected ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_from_result_tampered_sche0')
+
+    def test_from_result_tampered_schema_rejected(tmp_path):
+        doc = _run_clean(tmp_path)
+>       result_path = doc["result_path"]
+                      ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'result_path'
+
+tests/acceptance/test_gate_result_protocol.py:77: KeyError
+____________________ test_truncated_result_file_stable_fail ____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_truncated_result_file_sta0')
+
+    def test_truncated_result_file_stable_fail(tmp_path):
+        doc = _run_clean(tmp_path)
+>       result_path = doc["result_path"]
+                      ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'result_path'
+
+tests/acceptance/test_gate_result_protocol.py:91: KeyError
+____________ test_single_char_mutations_of_required_fields_rejected ____________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_single_char_mutations_of_0')
+
+    def test_single_char_mutations_of_required_fields_rejected(tmp_path):
+        doc = _run_clean(tmp_path)
+        gate = kit.load_gate_module()
+>       assert gate.validate_gate_result(doc) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module '_gate_under_test' has no attribute 'validate_gate_result'
+
+tests/acceptance/test_gate_result_protocol.py:134: AttributeError
+__________________ test_deleting_any_required_field_rejected ___________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_deleting_any_required_fie0')
+
+    def test_deleting_any_required_field_rejected(tmp_path):
+        doc = _run_clean(tmp_path)
+        gate = kit.load_gate_module()
+        required_keys = [
+            "schema_version", "gate_version", "mode", "scope", "verdict", "root",
+            "snapshot_at", "ran", "failed", "failed_ids", "known_matched",
+            "dissolved", "suspected_data_class", "suspected_fingerprint_drift",
+            "missing_required_nodes", "baseline_not_run_count", "collection_errors",
+            "skipped_count", "reasons", "tested_commit", "baseline_commit",
+        ]
+        for key in required_keys:
+            mutated = json.loads(json.dumps(doc))
+            mutated.pop(key, None)
+>           problems = gate.validate_gate_result(mutated)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module '_gate_under_test' has no attribute 'validate_gate_result'
+
+tests/acceptance/test_gate_result_protocol.py:156: AttributeError
+_____________________ test_failed_count_matches_failed_ids _____________________
+
+tmp_path = PosixPath('/private/var/folders/yb/31r9763x6_54mdxswxk36c4w0000gn/T/pytest-of-smkzw/pytest-2351/test_failed_count_matches_fail0')
+
+    def test_failed_count_matches_failed_ids(tmp_path):
+        doc = _run_clean(tmp_path)
+        gate = kit.load_gate_module()
+        mutated = json.loads(json.dumps(doc))
+        mutated["failed"] = len(mutated["failed_ids"]) + 1
+>       problems = gate.validate_gate_result(mutated)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module '_gate_under_test' has no attribute 'validate_gate_result'
+
+tests/acceptance/test_gate_result_protocol.py:165: AttributeError
+______________ test_p17_translation_phase_warms_only_translation _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1097a09e0>
+
+    def test_p17_translation_phase_warms_only_translation(monkeypatch):
+        mod = _mod()
+        probed: list[str] = []
+    
+        def fake_probe(base_url, model):
+            probed.append(model)
+            return True, ""
+    
+        monkeypatch.setattr(mod, "_chat_probe", fake_probe)
+>       doc = mod.phase_model_readiness("translation", warm=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: phase_model_readiness() got an unexpected keyword argument 'warm'
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:73: TypeError
+___________________ test_p17_triage_phase_warms_only_triage ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1097a0490>
+
+    def test_p17_triage_phase_warms_only_triage(monkeypatch):
+        mod = _mod()
+        probed: list[str] = []
+    
+        def fake_probe(base_url, model):
+            probed.append(model)
+            return True, ""
+    
+        monkeypatch.setattr(mod, "_chat_probe", fake_probe)
+>       doc = mod.phase_model_readiness("triage", warm=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: phase_model_readiness() got an unexpected keyword argument 'warm'
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:88: TypeError
+__________________ test_p17_readonly_default_never_sends_chat __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109852050>
+
+    def test_p17_readonly_default_never_sends_chat(monkeypatch):
+        mod = _mod()
+        probed: list[str] = []
+    
+        def fake_probe(base_url, model):
+            probed.append(model)
+            return True, ""
+    
+        monkeypatch.setattr(mod, "_chat_probe", fake_probe)
+        monkeypatch.setattr(mod, "list_resident_models",
+                            lambda base_url: [mod.OMLX_TRANSLATION_MODEL, "other-model"])
+        doc = mod.phase_model_readiness("translation")
+>       assert probed == [], probed
+E       AssertionError: ['dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX', 'mtplx-flash-next-optimized-speed']
+E       assert ['dawncr0w--H...imized-speed'] == []
+E         
+E         Left contains 2 more items, first extra item: 'dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX'
+E         Use -v to get more diff
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:105: AssertionError
+_____________________ test_p17_unknown_phase_warms_nothing _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1097c0f50>
+
+    def test_p17_unknown_phase_warms_nothing(monkeypatch):
+        mod = _mod()
+        probed: list[str] = []
+    
+        def fake_probe(base_url, model):
+            probed.append(model)
+            return True, ""
+    
+        monkeypatch.setattr(mod, "_chat_probe", fake_probe)
+>       doc = mod.phase_model_readiness("mystery-phase", warm=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: phase_model_readiness() got an unexpected keyword argument 'warm'
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:123: TypeError
+_________________ test_p18_probe_rejects_wrong_model_identity __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10991a6c0>
+
+    def test_p18_probe_rejects_wrong_model_identity(monkeypatch):
+        mod = _mod()
+        _patch_chat_body(monkeypatch, mod, _chat_body("SOME-OTHER-MODEL"))
+        ok, err = mod._chat_probe(mod.OMLX_BASE, mod.OMLX_TRANSLATION_MODEL)
+>       assert ok is False, (ok, err)
+E       AssertionError: (True, '')
+E       assert True is False
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:136: AssertionError
+_____________________ test_p18_probe_rejects_empty_choices _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1097aa210>
+
+    def test_p18_probe_rejects_empty_choices(monkeypatch):
+        mod = _mod()
+        _patch_chat_body(monkeypatch, mod, _chat_body(mod.OMLX_TRANSLATION_MODEL, choices=0))
+        ok, err = mod._chat_probe(mod.OMLX_BASE, mod.OMLX_TRANSLATION_MODEL)
+>       assert ok is False, (ok, err)
+E       AssertionError: (True, '')
+E       assert True is False
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:144: AssertionError
+___________________ test_p18_probe_rejects_unparseable_body ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10973e7b0>
+
+    def test_p18_probe_rejects_unparseable_body(monkeypatch):
+        mod = _mod()
+        _patch_chat_body(monkeypatch, mod, b"this is not json")
+        ok, err = mod._chat_probe(mod.OMLX_BASE, mod.OMLX_TRANSLATION_MODEL)
+>       assert ok is False, (ok, err)
+E       AssertionError: (True, '')
+E       assert True is False
+
+tests/acceptance/test_model_phase_scheduler_phase_contract.py:152: AssertionError
+=========================== short test summary info ============================
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p04_required_node_skipped_must_not_pass
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p05_wrong_class_same_leaf_must_not_satisfy
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p06_missing_required_parameter_must_not_satisfy
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p07_zero_tests_with_rc0_must_fail
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p08_missing_report_through_cmd_run_is_structured
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p09_collection_error_through_real_cli_keeps_structure
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p11_ancestor_baseline_not_blocked
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p12_broken_pyflakes_not_false_green
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p13_eslint_execution_failure_not_ok
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p14_eslint_corrupt_json_not_ok
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p14b_eslint_fatal_counts_as_finding
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p15_offline_pytest_env_whitelist
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_p16_multi_root_ambiguity_blocked
+FAILED tests/acceptance/test_gate_counterexamples_0927v1.py::test_run_pytest_timeout_keeps_evidence_and_kills_own_group
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_recorder_writes_exact_native_nodeids
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_required_status_passes_only_on_exact_pass
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_required_status_rejects_skip
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_required_status_rejects_xfail
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_required_status_exact_parameter_only
+FAILED tests/acceptance/test_gate_nodeid_recorder.py::test_required_status_class_exact_only
+FAILED tests/acceptance/test_gate_result_protocol.py::test_result_json_roundtrip_and_stdout_parity
+FAILED tests/acceptance/test_gate_result_protocol.py::test_from_result_rereads_without_rerun
+FAILED tests/acceptance/test_gate_result_protocol.py::test_from_result_missing_file_stable_fail
+FAILED tests/acceptance/test_gate_result_protocol.py::test_from_result_tampered_schema_rejected
+FAILED tests/acceptance/test_gate_result_protocol.py::test_truncated_result_file_stable_fail
+FAILED tests/acceptance/test_gate_result_protocol.py::test_single_char_mutations_of_required_fields_rejected
+FAILED tests/acceptance/test_gate_result_protocol.py::test_deleting_any_required_field_rejected
+FAILED tests/acceptance/test_gate_result_protocol.py::test_failed_count_matches_failed_ids
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p17_translation_phase_warms_only_translation
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p17_triage_phase_warms_only_triage
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p17_readonly_default_never_sends_chat
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p17_unknown_phase_warms_nothing
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p18_probe_rejects_wrong_model_identity
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p18_probe_rejects_empty_choices
+FAILED tests/acceptance/test_model_phase_scheduler_phase_contract.py::test_p18_probe_rejects_unparseable_body
+35 failed, 6 passed in 12.07s

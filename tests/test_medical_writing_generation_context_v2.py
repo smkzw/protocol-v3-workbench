@@ -58,10 +58,16 @@ PROJECT = "proj_rux_03_002"
 
 
 def _policy_runner(provider="deepseek", model="deepseek-chat"):
+    # Harness boundary (A11): the digest tests pin routes explicitly and must
+    # not depend on whether some other test's import seeded live runtime
+    # settings — test_only_provider_injection is the product's documented
+    # freeze for harness-injected routes (ai_execution_policy.py:446-452),
+    # and the durable harnesses in this file already use it (:672/:1299).
     return SimpleNamespace(
         policy_resolver=AiExecutionPolicyResolver(
             provider_name=provider,
             model_name=model,
+            test_only_provider_injection=True,
         )
     )
 

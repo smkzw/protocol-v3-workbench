@@ -1,0 +1,1854 @@
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313_g7worktree/frontend
+
+ ❯ src/features/medical-writing/errorContract.test.jsx (9 tests | 8 failed) 13ms
+     × 错误码 "product_ai_provider_transient: APIConnectionError(max retries exceeded)" 输出受控安全中文，不漏英文原文 4ms
+     × 错误码 "failed_retryable: chunk 3 download failed" 输出受控安全中文，不漏英文原文 1ms
+     × 错误码 "network: URLError connection reset by peer" 输出受控安全中文，不漏英文原文 0ms
+     × 未知非中文错误回落受控默认文案，不原样透传 1ms
+     ✓ 自家中文业务消息仍原样保留（正向：来自后端合同的文案） 1ms
+     × 超时且job状态未知：不声称仍在后台 1ms
+     × 超时且job确认仍在运行：才可告知后台进行 1ms
+     × 诊断ref保留技术信息供显式展开（任何非空错误都可诊断） 1ms
+     × redactDiagnosticText抹去URL主机/凭证/邮箱 3ms
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx (4 tests | 4 failed) 2228ms
+   × A704: 开/关右栏宽审阅不重建Office iframe、src不变 1116ms
+   × A704: 宽审阅开关叠加savedDocument刷新，iframe仍不重建 1048ms
+   × 布局: 文档画布在前、右栏为任务与摘要并带宽审阅入口 15ms
+   × 宽审阅态: 开启后desk带pvi-wide-review类，可退出 48ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A701 受控状态/错误码合同 > 错误码 "product_ai_provider_transient: APIConnectionError(max retries exceeded)" 输出受控安全中文，不漏英文原文
+AssertionError: expected 'product_ai_provider_transient: APICon…' to match /[\u3400-\u9fff]/
+
+- Expected:
+/[\u3400-\u9fff]/
+
++ Received:
+"product_ai_provider_transient: APIConnectionError(max retries exceeded)"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:18:19
+     16|   ])('错误码 %j 输出受控安全中文，不漏英文原文', (raw) => {
+     17|     const shown = medicalWritingSafeErrorText({ message: raw });
+     18|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+       |                   ^
+     19|     expect(shown).not.toContain('product_ai_provider_transient');
+     20|     expect(shown).not.toContain('failed_retryable');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A701 受控状态/错误码合同 > 错误码 "failed_retryable: chunk 3 download failed" 输出受控安全中文，不漏英文原文
+AssertionError: expected 'failed_retryable: chunk 3 download fa…' to match /[\u3400-\u9fff]/
+
+- Expected:
+/[\u3400-\u9fff]/
+
++ Received:
+"failed_retryable: chunk 3 download failed"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:18:19
+     16|   ])('错误码 %j 输出受控安全中文，不漏英文原文', (raw) => {
+     17|     const shown = medicalWritingSafeErrorText({ message: raw });
+     18|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+       |                   ^
+     19|     expect(shown).not.toContain('product_ai_provider_transient');
+     20|     expect(shown).not.toContain('failed_retryable');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A701 受控状态/错误码合同 > 错误码 "network: URLError connection reset by peer" 输出受控安全中文，不漏英文原文
+AssertionError: expected 'network: URLError connection reset by…' to match /[\u3400-\u9fff]/
+
+- Expected:
+/[\u3400-\u9fff]/
+
++ Received:
+"network: URLError connection reset by peer"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:18:19
+     16|   ])('错误码 %j 输出受控安全中文，不漏英文原文', (raw) => {
+     17|     const shown = medicalWritingSafeErrorText({ message: raw });
+     18|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+       |                   ^
+     19|     expect(shown).not.toContain('product_ai_provider_transient');
+     20|     expect(shown).not.toContain('failed_retryable');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A701 受控状态/错误码合同 > 未知非中文错误回落受控默认文案，不原样透传
+AssertionError: expected 'X-Internal segfault stage=mwq_7 batch…' to match /[\u3400-\u9fff]/
+
+- Expected:
+/[\u3400-\u9fff]/
+
++ Received:
+"X-Internal segfault stage=mwq_7 batch=deadbeef"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:27:19
+     25|     const raw = 'X-Internal segfault stage=mwq_7 batch=deadbeef';
+     26|     const shown = medicalWritingSafeErrorText({ message: raw });
+     27|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+       |                   ^
+     28|     expect(shown).not.toBe(raw);
+     29|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A702 超时与后台声明 > 超时且job状态未知：不声称仍在后台
+AssertionError: expected 'Request timed out after 30000 ms' to match /[\u3400-\u9fff]/
+
+- Expected:
+/[\u3400-\u9fff]/
+
++ Received:
+"Request timed out after 30000 ms"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:41:19
+     39|   test('超时且job状态未知：不声称仍在后台', () => {
+     40|     const shown = medicalWritingSafeErrorText({ message: 'Request time…
+     41|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+       |                   ^
+     42|     expect(shown).not.toMatch(/仍在后台|后台执行|后台运行/);
+     43|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > A702 超时与后台声明 > 超时且job确认仍在运行：才可告知后台进行
+AssertionError: expected 'Request timed out after 30000 ms' to match /后台/
+
+- Expected:
+/后台/
+
++ Received:
+"Request timed out after 30000 ms"
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:50:19
+     48|       { jobState: 'confirmed_running' },
+     49|     );
+     50|     expect(shown).toMatch(/后台/);
+       |                   ^
+     51|     expect(shown).toMatch(/[\u3400-\u9fff]/);
+     52|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > 诊断脱敏展开 > 诊断ref保留技术信息供显式展开（任何非空错误都可诊断）
+AssertionError: expected '' to be 'plain failure' // Object.is equality
+
+- Expected
++ Received
+
+- plain failure
+
+ ❯ src/features/medical-writing/errorContract.test.jsx:60:71
+     58|     const raw = 'product_ai_provider_transient: Traceback KeyError: st…
+     59|     expect(medicalWritingDiagnosticRef({ message: raw })).toBe(raw);
+     60|     expect(medicalWritingDiagnosticRef({ message: 'plain failure' })).…
+       |                                                                       ^
+     61|     expect(medicalWritingDiagnosticRef({ message: '' })).toBe('');
+     62|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/features/medical-writing/errorContract.test.jsx > 诊断脱敏展开 > redactDiagnosticText抹去URL主机/凭证/邮箱
+Error: redactDiagnosticText not implemented
+ ❯ redactDiagnosticText src/features/medical-writing/errorContract.mjs:45:9
+     43| // redacted first. Not implemented yet — counterexample test proves th…
+     44| export function redactDiagnosticText() {
+     45|   throw new Error('redactDiagnosticText not implemented');
+       |         ^
+     46| }
+     47|
+ ❯ src/features/medical-writing/errorContract.test.jsx:67:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx > A704: 开/关右栏宽审阅不重建Office iframe、src不变
+TestingLibraryElementError: Unable to find role="button" and name `/宽审阅：研究比较/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"pvi-writing-desk pvi-writing-desk--bridge"[39m
+    [36m>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"研究设计与建议"[39m
+        [33mclass[39m=[32m"pvi-design-pane"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m研究设计与建议[0m
+        [36m</h2>[39m
+        [36m<ul[39m
+          [33mclass[39m=[32m"pvi-handoff-summary"[39m
+        [36m>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m已沿用：[0m
+            [36m</strong>[39m
+            [0m项目设计与来源。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m需确认：[0m
+            [36m</strong>[39m
+            [0m关键剂量、安全和统计决定。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m写入规则：[0m
+            [36m</strong>[39m
+            [0m候选经采用后进入当前稿。[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</aside>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"研究方案文档"[39m
+        [33mclass[39m=[32m"pvi-document-pane"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"完整方案初稿"[39m
+          [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m研究方案工作稿[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<ul[39m
+            [33mclass[39m=[32m"kz-manuscript-summary"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m研究设计：[0m
+              [36m</strong>[39m
+              [0m已沿用本项目此前确认的内容。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m当前文档：[0m
+              [36m</strong>[39m
+              [0m已保存第 3 版[0m
+              [0m。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m候选规则：[0m
+              [36m</strong>[39m
+              [0m有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。[0m
+            [36m</li>[39m
+          [36m</ul>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m准备完整候选初稿[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"文档编辑与下载"[39m
+            [33mclass[39m=[32m"gz-office-frame"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<strong>[39m
+                [0m研究方案工作稿[0m
+              [36m</strong>[39m
+              [36m<div>[39m
+                [36m<button[39m
+                  [33maria-expanded[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mWord 版本记录[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m专注编辑[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mdownload[39m=[32m"研究方案工作稿_初稿3.docx"[39m
+                  [33mhref[39m=[32m"/api/projects/p/protocol-workflow/study-definitions/s/manuscript-draft/candidate/docx"[39m
+                [36m>[39m
+                  [0m下载当前 Word 工作稿[0m
+                [36m</a>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m关闭编辑器[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"选区AI修改"[39m
+              [33mclass[39m=[32m"gz-office-ai-edit"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gz-office-ai-edit__bar"[39m
+              [36m>[39m
+                [36m<strong>[39m
+                  [0m只改选中内容[0m
+                [36m</strong>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m读取当前选区[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</section>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"gz-office-literature"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [0m项目文献库 · 插入当前 Word 光标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"项目文献库"[39m
+                [33mclass[39m=[32m"medical-literature-panel"[39m
+              [36m>[39m
+                [36m<header>[39m
+                  [36m<div>[39m
+                    [36m<span>[39m
+                      [0m项目文献库[0m
+                    [36m</span>[39m
+                    [36m<strong>[39m
+                      [0m0[0m
+                      [0m 条可追溯文献[0m
+                    [36m</strong>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"icon-button"[39m
+                    [33mtitle[39m=[32m"刷新项目文献库"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 3v5h-5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M8 16H3v5"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</header>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-import"[39m
+                [36m>[39m
+                  [36m<label>[39m
+                    [0mDOI、PMID 或文献官网链接[0m
+                    [36m<div>[39m
+                      [36m<input[39m
+                        [33mplaceholder[39m=[32m"例如 10.1016/... 或 PMID: 33957195"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"primary-button"[39m
+                        [33mdisabled[39m=[32m""[39m
+                      [36m>[39m
+                        [36m<svg[39m
+                          [33maria-hidden[39m=[32m"true"[39m
+                          [33mclass[39m=[32m"lucide lucide-book-plus"[39m
+                          [33mfill[39m=[32m"none"[39m
+                          [33mheight[39m=[32m"15"[39m
+                          [33mstroke[39m=[32m"currentColor"[39m
+                          [33mstroke-linecap[39m=[32m"round"[39m
+                          [33mstroke-linejoin[39m=[32m"round"[39m
+                          [33mstroke-width[39m=[32m"2"[39m
+                          [33mviewBox[39m=[32m"0 0 24 24"[39m
+                          [33mwidth[39m=[32m"15"[39m
+                          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                        [36m>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M12 7v6"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M9 10h6"[39m
+                          [36m/>[39m
+                        [36m</svg>[39m
+                        [0m [0m
+                        [0m导入[0m
+                      [36m</button>[39m
+                    [36m</div>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0m当前项目引文格式[0m
+                    [36m<select[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"当前生产导出固定使用 GB/T 7714-2015 顺序编码制"[39m
+                    [36m>[39m
+                      [36m<option[39m
+                        [33mvalue[39m=[32m"gbt_7714_2015_numeric"[39m
+                      [36m>[39m
+                        [0mGB/T 7714-2015 顺序编码制[0m
+                      [36m</option>[39m
+                    [36m</select>[39m
+                  [36m</label>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m官网链接无法自动识别时，手动确认基本信息[0m
+                    [36m</summary>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"medical-literature-manual-hint"[39m
+                    [36m>[39m
+                      [0m手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"medical-literature-manual-grid"[39m
+                    [36m>[39m
+                      [36m<label>[39m
+                        [0m题名[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m作者[0m
+                        [36m<input[39m
+                          [33mplaceholder[39m=[32m"多位作者用逗号分隔"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m期刊[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m年份[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m文献官网链接[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m补充说明（可选）[0m
+                        [36m<textarea[39m
+                          [33mplaceholder[39m=[32m"可说明已核对的原始页面或确认依据"[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"请先填写题名"[39m
+                    [36m>[39m
+                      [0m确认信息并导入[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"medical-literature-message danger"[39m
+                [36m>[39m
+                  [0m文献库读取失败：response.json is not a function[0m
+                [36m</p>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"medical-literature-search"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<input[39m
+                    [33mplaceholder[39m=[32m"按题名、作者、期刊、DOI 或 PMID 搜索"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-list"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"empty-state"[39m
+                  [36m>[39m
+                    [0m当前项目尚无匹配文献。[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<iframe[39m
+              [33msrc[39m=[32m"/genoffice/index.html?docUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Fcandidate%2Fdocx&docName=%E7%A0%94%E7%A9%B6%E6%96%B9%E6%A1%88%E5%B7%A5%E4%BD%9C%E7%A8%BF_%E5%88%9D%E7%A8%BF3.docx&saveUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Foffice-draft%2Fsnapshots&rev=3&sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&actor=a&openedStudySha=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&baseArtifactRevision=0"[39m
+              [33mtitle[39m=[32m"GenOffice文档编辑器"[39m
+            [36m/>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"pvi-writing-desk pvi-writing-desk--bridge"[39m
+    [36m>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"研究设计与建议"[39m
+        [33mclass[39m=[32m"pvi-design-pane"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m研究设计与建议[0m
+        [36m</h2>[39m
+        [36m<ul[39m
+          [33mclass[39m=[32m"pvi-handoff-summary"[39m
+        [36m>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m已沿用：[0m
+            [36m</strong>[39m
+            [0m项目设计与来源。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m需确认：[0m
+            [36m</strong>[39m
+            [0m关键剂量、安全和统计决定。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m写入规则：[0m
+            [36m</strong>[39m
+            [0m候选经采用后进入当前稿。[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</aside>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"研究方案文档"[39m
+        [33mclass[39m=[32m"pvi-document-pane"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"完整方案初稿"[39m
+          [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m研究方案工作稿[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<ul[39m
+            [33mclass[39m=[32m"kz-manuscript-summary"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m研究设计：[0m
+              [36m</strong>[39m
+              [0m已沿用本项目此前确认的内容。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m当前文档：[0m
+              [36m</strong>[39m
+              [0m已保存第 3 版[0m
+              [0m。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m候选规则：[0m
+              [36m</strong>[39m
+              [0m有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。[0m
+            [36m</li>[39m
+          [36m</ul>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m准备完整候选初稿[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"文档编辑与下载"[39m
+            [33mclass[39m=[32m"gz-office-frame"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<strong>[39m
+                [0m研究方案工作稿[0m
+              [36m</strong>[39m
+              [36m<div>[39m
+                [36m<button[39m
+                  [33maria-expanded[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mWord 版本记录[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m专注编辑[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mdownload[39m=[32m"研究方案工作稿_初稿3.docx"[39m
+                  [33mhref[39m=[32m"/api/projects/p/protocol-workflow/study-definitions/s/manuscript-draft/candidate/docx"[39m
+                [36m>[39m
+                  [0m下载当前 Word 工作稿[0m
+                [36m</a>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m关闭编辑器[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"选区AI修改"[39m
+              [33mclass[39m=[32m"gz-office-ai-edit"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gz-office-ai-edit__bar"[39m
+              [36m>[39m
+                [36m<strong>[39m
+                  [0m只改选中内容[0m
+                [36m</strong>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m读取当前选区[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</section>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"gz-office-literature"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [0m项目文献库 · 插入当前 Word 光标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"项目文献库"[39m
+                [33mclass[39m=[32m"medical-literature-panel"[39m
+              [36m>[39m
+                [36m<header>[39m
+                  [36m<div>[39m
+                    [36m<span>[39m
+                      [0m项目文献库[0m
+                    [36m</span>[39m
+                    [36m<strong>[39m
+                      [0m0[0m
+                      [0m 条可追溯文献[0m
+                    [36m</strong>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"icon-button"[39m
+                    [33mtitle[39m=[32m"刷新项目文献库"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 3v5h-5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M8 16H3v5"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</header>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-import"[39m
+                [36m>[39m
+                  [36m<label>[39m
+                    [0mDOI、PMID 或文献官网链接[0m
+                    [36m<div>[39m
+                      [36m<input[39m
+                        [33mplaceholder[39m=[32m"例如 10.1016/... 或 PMID: 33957195"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"primary-button"[39m
+                        [33mdisabled[39m=[32m""[39m
+                      [36m>[39m
+                        [36m<svg[39m
+                          [33maria-hidden[39m=[32m"true"[39m
+                          [33mclass[39m=[32m"lucide lucide-book-plus"[39m
+                          [33mfill[39m=[32m"none"[39m
+                          [33mheight[39m=[32m"15"[39m
+                          [33mstroke[39m=[32m"currentColor"[39m
+                          [33mstroke-linecap[39m=[32m"round"[39m
+                          [33mstroke-linejoin[39m=[32m"round"[39m
+                          [33mstroke-width[39m=[32m"2"[39m
+                          [33mviewBox[39m=[32m"0 0 24 24"[39m
+                          [33mwidth[39m=[32m"15"[39m
+                          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                        [36m>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M12 7v6"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M9 10h6"[39m
+                          [36m/>[39m
+                        [36m</svg>[39m
+                        [0m [0m
+                        [0m导入[0m
+                      [36m</button>[39m
+                    [36m</div>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0m当前项目引文格式[0m
+                    [36m<select[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"当前生产导出固定使用 GB/T 7714-2015 顺序编码制"[39m
+                    [36m>[39m
+                      [36m<option[39m
+                        [33mvalue[39m=[32m"gbt_7714_2015_numeric"[39m
+                      [36m>[39m
+                        [0mGB/T 7714-2015 顺序编码制[0m
+                      [36m</option>[39m
+                    [36m</select>[39m
+                  [36m</label>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m官网链接无法自动识别时，手动确认基本信息[0m
+                    [36m</summary>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"medical-literature-manual-hint"[39m
+                    [36m>[39m
+                      [0m手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"medical-literature-manual-grid"[39m
+                    [36m>[39m
+                      [36m<label>[39m
+                        [0m题名[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m作者[0m
+                        [36m<input[39m
+                          [33mplaceholder[39m=[32m"多位作者用逗号分隔"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m期刊[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m年份[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m文献官网链接[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m补充说明（可选）[0m
+                        [36m<textarea[39m
+                          [33mplaceholder[39m=[32m"可说明已核对的原始页面或确认依据"[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"请先填写题名"[39m
+                    [36m>[39m
+                      [0m确认信息并导入[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"medical-literature-message danger"[39m
+                [36m>[39m
+                  [0m文献库读取失败：response.json is not a function[0m
+                [36m</p>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"medical-literature-search"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<input[39m
+                    [33mplaceholder[39m=[32m"按题名、作者、期刊、DOI 或 PMID 搜索"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-list"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"empty-state"[39m
+                  [36m>[39m
+                    [0m当前项目尚无匹配文献。[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<iframe[39m
+              [33msrc[39m=[32m"/genoffice/index.html?docUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Fcandidate%2Fdocx&docName=%E7%A0%94%E7%A9%B6%E6%96%B9%E6%A1%88%E5%B7%A5%E4%BD%9C%E7%A8%BF_%E5%88%9D%E7%A8%BF3.docx&saveUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Foffice-draft%2Fsnapshots&rev=3&sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&actor=a&openedStudySha=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&baseArtifactRevision=0"[39m
+              [33mtitle[39m=[32m"GenOffice文档编辑器"[39m
+            [36m/>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx:39:32
+     37|   const { iframe } = await openDeskWithOffice();
+     38|   const src = iframe.getAttribute('src');
+     39|   fireEvent.click(await screen.findByRole('button', { name: /宽审阅：研究比较/…
+       |                                ^
+     40|   expect(screen.getByTitle('GenOffice文档编辑器')).toBe(iframe);
+     41|   fireEvent.click(await screen.findByRole('button', { name: /退出宽审阅/ })…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx > A704: 宽审阅开关叠加savedDocument刷新，iframe仍不重建
+TestingLibraryElementError: Unable to find role="button" and name `/宽审阅：研究比较/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"pvi-writing-desk pvi-writing-desk--bridge"[39m
+    [36m>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"研究设计与建议"[39m
+        [33mclass[39m=[32m"pvi-design-pane"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m研究设计与建议[0m
+        [36m</h2>[39m
+        [36m<ul[39m
+          [33mclass[39m=[32m"pvi-handoff-summary"[39m
+        [36m>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m已沿用：[0m
+            [36m</strong>[39m
+            [0m项目设计与来源。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m需确认：[0m
+            [36m</strong>[39m
+            [0m关键剂量、安全和统计决定。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m写入规则：[0m
+            [36m</strong>[39m
+            [0m候选经采用后进入当前稿。[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</aside>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"研究方案文档"[39m
+        [33mclass[39m=[32m"pvi-document-pane"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"完整方案初稿"[39m
+          [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m研究方案工作稿[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<ul[39m
+            [33mclass[39m=[32m"kz-manuscript-summary"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m研究设计：[0m
+              [36m</strong>[39m
+              [0m已沿用本项目此前确认的内容。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m当前文档：[0m
+              [36m</strong>[39m
+              [0m已保存第 3 版[0m
+              [0m。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m候选规则：[0m
+              [36m</strong>[39m
+              [0m有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。[0m
+            [36m</li>[39m
+          [36m</ul>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m准备完整候选初稿[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"文档编辑与下载"[39m
+            [33mclass[39m=[32m"gz-office-frame"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<strong>[39m
+                [0m研究方案工作稿[0m
+              [36m</strong>[39m
+              [36m<div>[39m
+                [36m<button[39m
+                  [33maria-expanded[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mWord 版本记录[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m专注编辑[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mdownload[39m=[32m"研究方案工作稿_初稿3.docx"[39m
+                  [33mhref[39m=[32m"/api/projects/p/protocol-workflow/study-definitions/s/manuscript-draft/candidate/docx"[39m
+                [36m>[39m
+                  [0m下载当前 Word 工作稿[0m
+                [36m</a>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m关闭编辑器[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"选区AI修改"[39m
+              [33mclass[39m=[32m"gz-office-ai-edit"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gz-office-ai-edit__bar"[39m
+              [36m>[39m
+                [36m<strong>[39m
+                  [0m只改选中内容[0m
+                [36m</strong>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m读取当前选区[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</section>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"gz-office-literature"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [0m项目文献库 · 插入当前 Word 光标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"项目文献库"[39m
+                [33mclass[39m=[32m"medical-literature-panel"[39m
+              [36m>[39m
+                [36m<header>[39m
+                  [36m<div>[39m
+                    [36m<span>[39m
+                      [0m项目文献库[0m
+                    [36m</span>[39m
+                    [36m<strong>[39m
+                      [0m0[0m
+                      [0m 条可追溯文献[0m
+                    [36m</strong>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"icon-button"[39m
+                    [33mtitle[39m=[32m"刷新项目文献库"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 3v5h-5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M8 16H3v5"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</header>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-import"[39m
+                [36m>[39m
+                  [36m<label>[39m
+                    [0mDOI、PMID 或文献官网链接[0m
+                    [36m<div>[39m
+                      [36m<input[39m
+                        [33mplaceholder[39m=[32m"例如 10.1016/... 或 PMID: 33957195"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"primary-button"[39m
+                        [33mdisabled[39m=[32m""[39m
+                      [36m>[39m
+                        [36m<svg[39m
+                          [33maria-hidden[39m=[32m"true"[39m
+                          [33mclass[39m=[32m"lucide lucide-book-plus"[39m
+                          [33mfill[39m=[32m"none"[39m
+                          [33mheight[39m=[32m"15"[39m
+                          [33mstroke[39m=[32m"currentColor"[39m
+                          [33mstroke-linecap[39m=[32m"round"[39m
+                          [33mstroke-linejoin[39m=[32m"round"[39m
+                          [33mstroke-width[39m=[32m"2"[39m
+                          [33mviewBox[39m=[32m"0 0 24 24"[39m
+                          [33mwidth[39m=[32m"15"[39m
+                          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                        [36m>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M12 7v6"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M9 10h6"[39m
+                          [36m/>[39m
+                        [36m</svg>[39m
+                        [0m [0m
+                        [0m导入[0m
+                      [36m</button>[39m
+                    [36m</div>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0m当前项目引文格式[0m
+                    [36m<select[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"当前生产导出固定使用 GB/T 7714-2015 顺序编码制"[39m
+                    [36m>[39m
+                      [36m<option[39m
+                        [33mvalue[39m=[32m"gbt_7714_2015_numeric"[39m
+                      [36m>[39m
+                        [0mGB/T 7714-2015 顺序编码制[0m
+                      [36m</option>[39m
+                    [36m</select>[39m
+                  [36m</label>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m官网链接无法自动识别时，手动确认基本信息[0m
+                    [36m</summary>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"medical-literature-manual-hint"[39m
+                    [36m>[39m
+                      [0m手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"medical-literature-manual-grid"[39m
+                    [36m>[39m
+                      [36m<label>[39m
+                        [0m题名[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m作者[0m
+                        [36m<input[39m
+                          [33mplaceholder[39m=[32m"多位作者用逗号分隔"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m期刊[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m年份[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m文献官网链接[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m补充说明（可选）[0m
+                        [36m<textarea[39m
+                          [33mplaceholder[39m=[32m"可说明已核对的原始页面或确认依据"[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"请先填写题名"[39m
+                    [36m>[39m
+                      [0m确认信息并导入[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"medical-literature-message danger"[39m
+                [36m>[39m
+                  [0m文献库读取失败：response.json is not a function[0m
+                [36m</p>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"medical-literature-search"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<input[39m
+                    [33mplaceholder[39m=[32m"按题名、作者、期刊、DOI 或 PMID 搜索"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-list"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"empty-state"[39m
+                  [36m>[39m
+                    [0m当前项目尚无匹配文献。[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<iframe[39m
+              [33msrc[39m=[32m"/genoffice/index.html?docUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Fcandidate%2Fdocx&docName=%E7%A0%94%E7%A9%B6%E6%96%B9%E6%A1%88%E5%B7%A5%E4%BD%9C%E7%A8%BF_%E5%88%9D%E7%A8%BF3.docx&saveUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Foffice-draft%2Fsnapshots&rev=3&sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&actor=a&openedStudySha=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&baseArtifactRevision=0"[39m
+              [33mtitle[39m=[32m"GenOffice文档编辑器"[39m
+            [36m/>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"pvi-writing-desk pvi-writing-desk--bridge"[39m
+    [36m>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"研究设计与建议"[39m
+        [33mclass[39m=[32m"pvi-design-pane"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m研究设计与建议[0m
+        [36m</h2>[39m
+        [36m<ul[39m
+          [33mclass[39m=[32m"pvi-handoff-summary"[39m
+        [36m>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m已沿用：[0m
+            [36m</strong>[39m
+            [0m项目设计与来源。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m需确认：[0m
+            [36m</strong>[39m
+            [0m关键剂量、安全和统计决定。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m写入规则：[0m
+            [36m</strong>[39m
+            [0m候选经采用后进入当前稿。[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</aside>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"研究方案文档"[39m
+        [33mclass[39m=[32m"pvi-document-pane"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"完整方案初稿"[39m
+          [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m研究方案工作稿[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<ul[39m
+            [33mclass[39m=[32m"kz-manuscript-summary"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m研究设计：[0m
+              [36m</strong>[39m
+              [0m已沿用本项目此前确认的内容。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m当前文档：[0m
+              [36m</strong>[39m
+              [0m已保存第 3 版[0m
+              [0m。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m候选规则：[0m
+              [36m</strong>[39m
+              [0m有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。[0m
+            [36m</li>[39m
+          [36m</ul>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m准备完整候选初稿[0m
+          [36m</button>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"文档编辑与下载"[39m
+            [33mclass[39m=[32m"gz-office-frame"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<strong>[39m
+                [0m研究方案工作稿[0m
+              [36m</strong>[39m
+              [36m<div>[39m
+                [36m<button[39m
+                  [33maria-expanded[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mWord 版本记录[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-pressed[39m=[32m"false"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m专注编辑[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mdownload[39m=[32m"研究方案工作稿_初稿3.docx"[39m
+                  [33mhref[39m=[32m"/api/projects/p/protocol-workflow/study-definitions/s/manuscript-draft/candidate/docx"[39m
+                [36m>[39m
+                  [0m下载当前 Word 工作稿[0m
+                [36m</a>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m关闭编辑器[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"选区AI修改"[39m
+              [33mclass[39m=[32m"gz-office-ai-edit"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gz-office-ai-edit__bar"[39m
+              [36m>[39m
+                [36m<strong>[39m
+                  [0m只改选中内容[0m
+                [36m</strong>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m读取当前选区[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</section>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"gz-office-literature"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [0m项目文献库 · 插入当前 Word 光标[0m
+              [36m</summary>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"项目文献库"[39m
+                [33mclass[39m=[32m"medical-literature-panel"[39m
+              [36m>[39m
+                [36m<header>[39m
+                  [36m<div>[39m
+                    [36m<span>[39m
+                      [0m项目文献库[0m
+                    [36m</span>[39m
+                    [36m<strong>[39m
+                      [0m0[0m
+                      [0m 条可追溯文献[0m
+                    [36m</strong>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"icon-button"[39m
+                    [33mtitle[39m=[32m"刷新项目文献库"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 3v5h-5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M8 16H3v5"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</header>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-import"[39m
+                [36m>[39m
+                  [36m<label>[39m
+                    [0mDOI、PMID 或文献官网链接[0m
+                    [36m<div>[39m
+                      [36m<input[39m
+                        [33mplaceholder[39m=[32m"例如 10.1016/... 或 PMID: 33957195"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"primary-button"[39m
+                        [33mdisabled[39m=[32m""[39m
+                      [36m>[39m
+                        [36m<svg[39m
+                          [33maria-hidden[39m=[32m"true"[39m
+                          [33mclass[39m=[32m"lucide lucide-book-plus"[39m
+                          [33mfill[39m=[32m"none"[39m
+                          [33mheight[39m=[32m"15"[39m
+                          [33mstroke[39m=[32m"currentColor"[39m
+                          [33mstroke-linecap[39m=[32m"round"[39m
+                          [33mstroke-linejoin[39m=[32m"round"[39m
+                          [33mstroke-width[39m=[32m"2"[39m
+                          [33mviewBox[39m=[32m"0 0 24 24"[39m
+                          [33mwidth[39m=[32m"15"[39m
+                          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                        [36m>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M12 7v6"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"[39m
+                          [36m/>[39m
+                          [36m<path[39m
+                            [33md[39m=[32m"M9 10h6"[39m
+                          [36m/>[39m
+                        [36m</svg>[39m
+                        [0m [0m
+                        [0m导入[0m
+                      [36m</button>[39m
+                    [36m</div>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0m当前项目引文格式[0m
+                    [36m<select[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"当前生产导出固定使用 GB/T 7714-2015 顺序编码制"[39m
+                    [36m>[39m
+                      [36m<option[39m
+                        [33mvalue[39m=[32m"gbt_7714_2015_numeric"[39m
+                      [36m>[39m
+                        [0mGB/T 7714-2015 顺序编码制[0m
+                      [36m</option>[39m
+                    [36m</select>[39m
+                  [36m</label>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0m官网链接无法自动识别时，手动确认基本信息[0m
+                    [36m</summary>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"medical-literature-manual-hint"[39m
+                    [36m>[39m
+                      [0m手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"medical-literature-manual-grid"[39m
+                    [36m>[39m
+                      [36m<label>[39m
+                        [0m题名[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m作者[0m
+                        [36m<input[39m
+                          [33mplaceholder[39m=[32m"多位作者用逗号分隔"[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m期刊[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label>[39m
+                        [0m年份[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m文献官网链接[0m
+                        [36m<input[39m
+                          [33mvalue[39m=[32m""[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                      [36m<label[39m
+                        [33mclass[39m=[32m"span-2"[39m
+                      [36m>[39m
+                        [0m补充说明（可选）[0m
+                        [36m<textarea[39m
+                          [33mplaceholder[39m=[32m"可说明已核对的原始页面或确认依据"[39m
+                        [36m/>[39m
+                      [36m</label>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mtitle[39m=[32m"请先填写题名"[39m
+                    [36m>[39m
+                      [0m确认信息并导入[0m
+                    [36m</button>[39m
+                  [36m</details>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"medical-literature-message danger"[39m
+                [36m>[39m
+                  [0m文献库读取失败：response.json is not a function[0m
+                [36m</p>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"medical-literature-search"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<input[39m
+                    [33mplaceholder[39m=[32m"按题名、作者、期刊、DOI 或 PMID 搜索"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"medical-literature-list"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"empty-state"[39m
+                  [36m>[39m
+                    [0m当前项目尚无匹配文献。[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</section>[39m
+            [36m</details>[39m
+            [36m<iframe[39m
+              [33msrc[39m=[32m"/genoffice/index.html?docUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Fcandidate%2Fdocx&docName=%E7%A0%94%E7%A9%B6%E6%96%B9%E6%A1%88%E5%B7%A5%E4%BD%9C%E7%A8%BF_%E5%88%9D%E7%A8%BF3.docx&saveUrl=%2Fapi%2Fprojects%2Fp%2Fprotocol-workflow%2Fstudy-definitions%2Fs%2Fmanuscript-draft%2Foffice-draft%2Fsnapshots&rev=3&sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&actor=a&openedStudySha=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&baseArtifactRevision=0"[39m
+              [33mtitle[39m=[32m"GenOffice文档编辑器"[39m
+            [36m/>[39m
+          [36m</section>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx:51:32
+     49|   const { api } = await openDeskWithOffice();
+     50|   const iframe = screen.getByTitle('GenOffice文档编辑器');
+     51|   fireEvent.click(await screen.findByRole('button', { name: /宽审阅：研究比较/…
+       |                                ^
+     52|   api.getSavedManuscriptDocument.mockResolvedValueOnce(savedDocument);
+     53|   fireEvent.click(await screen.findByRole('button', { name: /退出宽审阅/ })…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx > 布局: 文档画布在前、右栏为任务与摘要并带宽审阅入口
+AssertionError: expected '研究设计与建议' to contain '任务与摘要'
+
+Expected: "任务与摘要"
+Received: "研究设计与建议"
+
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx:66:43
+     64|   const documentPane = desk.querySelector('.pvi-document-pane');
+     65|   const rail = desk.querySelector('.pvi-design-pane');
+     66|   expect(rail.getAttribute('aria-label')).toContain('任务与摘要');
+       |                                           ^
+     67|   // document pane must precede the rail in DOM (document canvas first…
+     68|   expect(documentPane.compareDocumentPosition(rail) & Node.DOCUMENT_PO…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx > 宽审阅态: 开启后desk带pvi-wide-review类，可退出
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name `/宽审阅：研究比较/`
+
+Here are the accessible roles:
+
+  complementary:
+
+  Name "研究设计与建议":
+  [36m<aside[39m
+    [33maria-label[39m=[32m"研究设计与建议"[39m
+    [33mclass[39m=[32m"pvi-design-pane"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "研究设计与建议":
+  [36m<h2 />[39m
+
+  Name "研究方案工作稿":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"pvi-handoff-summary"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"kz-manuscript-summary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "研究方案文档":
+  [36m<section[39m
+    [33maria-label[39m=[32m"研究方案文档"[39m
+    [33mclass[39m=[32m"pvi-document-pane"[39m
+  [36m/>[39m
+
+  Name "完整方案初稿":
+  [36m<section[39m
+    [33maria-label[39m=[32m"完整方案初稿"[39m
+    [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "准备完整候选初稿":
+  [36m<button[39m
+    [33mclass[39m=[32m"kz-manuscript-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "打开工作稿":
+  [36m<button[39m
+    [33mclass[39m=[32m"kz-manuscript-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"pvi-writing-desk pvi-writing-desk--bridge"[39m
+    [36m>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"研究设计与建议"[39m
+        [33mclass[39m=[32m"pvi-design-pane"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m研究设计与建议[0m
+        [36m</h2>[39m
+        [36m<ul[39m
+          [33mclass[39m=[32m"pvi-handoff-summary"[39m
+        [36m>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m已沿用：[0m
+            [36m</strong>[39m
+            [0m项目设计与来源。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m需确认：[0m
+            [36m</strong>[39m
+            [0m关键剂量、安全和统计决定。[0m
+          [36m</li>[39m
+          [36m<li>[39m
+            [36m<strong>[39m
+              [0m写入规则：[0m
+            [36m</strong>[39m
+            [0m候选经采用后进入当前稿。[0m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</aside>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"研究方案文档"[39m
+        [33mclass[39m=[32m"pvi-document-pane"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"完整方案初稿"[39m
+          [33mclass[39m=[32m"kz-protocol kz-manuscript kz-manuscript--bridge"[39m
+        [36m>[39m
+          [36m<header>[39m
+            [36m<h2>[39m
+              [0m研究方案工作稿[0m
+            [36m</h2>[39m
+          [36m</header>[39m
+          [36m<ul[39m
+            [33mclass[39m=[32m"kz-manuscript-summary"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m研究设计：[0m
+              [36m</strong>[39m
+              [0m已沿用本项目此前确认的内容。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m当前文档：[0m
+              [36m</strong>[39m
+              [0m已保存第 3 版[0m
+              [0m。[0m
+            [36m</li>[39m
+            [36m<li>[39m
+              [36m<strong>[39m
+                [0m候选规则：[0m
+              [36m</strong>[39m
+              [0m有依据的正文与待补事项可同时保留；关键决定不会自动写成既定要求。[0m
+            [36m</li>[39m
+          [36m</ul>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m准备完整候选初稿[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"kz-manuscript-primary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m打开工作稿[0m
+          [36m</button>[39m
+        [36m</section>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx:81:26
+     79|   const desk = screen.getByText('打开工作稿').closest('.pvi-writing-desk');
+     80|   expect(desk.className).not.toContain('pvi-wide-review');
+     81|   fireEvent.click(screen.getByRole('button', { name: /宽审阅：研究比较/ }));
+       |                          ^
+     82|   expect(desk.className).toContain('pvi-wide-review');
+     83|   fireEvent.click(screen.getByRole('button', { name: /退出宽审阅/ }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  12 failed | 1 passed (13)
+   Start at  05:40:13
+   Duration  3.58s (transform 266ms, setup 0ms, import 496ms, tests 2.24s, environment 1.47s)
+

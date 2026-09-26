@@ -1,0 +1,529 @@
+FF.FFFF.FF                                                               [100%]
+=================================== FAILURES ===================================
+_ FidelityReevalBindingTests.test_g3_r1_chain_beats_newest_heuristic_impostor __
+
+self = <tests.test_writing_reference_fidelity_reeval_binding.FidelityReevalBindingTests testMethod=test_g3_r1_chain_beats_newest_heuristic_impostor>
+
+    def test_g3_r1_chain_beats_newest_heuristic_impostor(self):
+        from packages.contracts.workbench_contracts.models import (
+            TranslationChunkRecord,
+            WritingReferenceTranslationRevision,
+        )
+        helper = _helper()
+        self.addCleanup(helper.tearDown)
+    
+        # Schema-true theft shape: chapter integrations persist one row per
+        # (plan, span-scoped chapter). The item carries the BASE chapter id
+        # ("..._g3r1") while its chain row lives under a span suffix and a
+        # NEWER complete impostor row under another suffix. The exact
+        # (plan, chapter) SQL misses; the LIKE prefix matches both; the
+        # pre-fix heuristic prefers the newest impostor.
+        plan_id = "plan_g3r1"
+        base_chapter = "chapter_g3r1"
+        source_text = helper._REEVAL_SOURCE
+        good_target = helper._REEVAL_GOOD_TARGET
+    
+        helper._seed_artifact(
+            "artifact_g3r1",
+            [("span_g3r1", "eligibility", source_text)],
+        )
+        chunk = TranslationChunkRecord(
+            chunk_id="chunk_g3r1_chain",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id="artifact_g3r1",
+            chapter_id=base_chapter + ":span_1",
+            chunk_order=1,
+            source_span_ids=["span_g3r1"],
+            source_text=source_text,
+            source_text_sha256=sha256(source_text.encode("utf-8")).hexdigest(),
+            chunk_fingerprint="fp_g3r1",
+            hy_mt2_model="fake-hy",
+            hy_mt2_prompt_version="fake-v1",
+            hy_mt2_input_hash="0" * 64,
+            translated_text=good_target,
+            translated_text_sha256=sha256(
+                good_target.encode("utf-8")).hexdigest(),
+            unit_targets={"1": good_target},
+            status="completed",
+            created_at=NOW,
+        )
+        helper.repo.save_translation_chunk(
+            chunk, idempotency_key="g3-r1-chain-chunk")
+        chain_integration = ChapterIntegrationResult(
+            integration_id="integration_g3r1_chain",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id="artifact_g3r1",
+            chapter_id=base_chapter + ":span_1",
+            chunk_ids=["chunk_g3r1_chain"],
+            chunk_hashes=[],
+            integrated_chinese_text=good_target,
+            integrated_text_sha256=sha256(
+                good_target.encode("utf-8")).hexdigest(),
+            flash_model="fake-flash",
+            flash_prompt_version="fake-v1",
+            flash_input_hash="",
+            flash_output_hash="",
+            fidelity_status="passed",
+            fidelity_failure_codes=[],
+            blocked_raw_provider_output="",
+            status="completed",
+            created_at=NOW,
+        )
+        helper.repo.save_chapter_integration_result(
+            chain_integration, idempotency_key="g3-r1-chain-integration")
+        impostor = ChapterIntegrationResult(
+            integration_id="integration_g3r1_impostor",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id="artifact_g3r1",
+            chapter_id=base_chapter + ":span_9",
+            chunk_ids=["chunk_g3r1_impostor_missing"],
+            chunk_hashes=[],
+            integrated_chinese_text="冒名顶替候选",
+            integrated_text_sha256=sha256("冒名顶替候选".encode("utf-8")).hexdigest(),
+            flash_model="fake-flash",
+            flash_prompt_version="fake-v1",
+            flash_input_hash="",
+            flash_output_hash="",
+            fidelity_status="completed",
+            fidelity_failure_codes=[],
+            blocked_raw_provider_output="",
+            status="completed",
+            created_at=NOW + timedelta(seconds=1),
+        )
+        helper.repo.save_chapter_integration_result(
+            impostor, idempotency_key="g3-r1-impostor")
+    
+        # The item's persisted translation chain binds the SPAN row — the
+        # exact evidence this item must be re-checked against.
+        revision = WritingReferenceTranslationRevision(
+            translation_id="trans_g3r1",
+            project_id=PROJECT_ID,
+            span_id="span_g3r1",
+            source_span_revision="span_g3r1_r1",
+            document_sha256=sha256("artifact_g3r1".encode("utf-8")).hexdigest(),
+            glossary_version="g3",
+            revision=1,
+            translated_text=good_target,
+            rationale="G3 fixture: chain-bound candidate.",
+            fidelity_status="blocked",
+            fidelity_failure_codes=["unit_1:numbered_criterion_cardinality_changed"],
+            fidelity_checker_version="g3-fixture",
+            ai_run_id="run_g3r1",
+            created_at=NOW,
+            document_structure_plan_id=plan_id,
+            chapter_id=base_chapter + ":span_1",
+            source_span_ids=["span_g3r1"],
+            translation_chunk_ids=["chunk_g3r1_chain"],
+            chapter_integration_result_id="integration_g3r1_chain",
+        )
+        helper.repo.save_translation(
+            revision, idempotency_key="g3-r1-translation-revision")
+    
+        batch = helper.service.create(
+            PROJECT_ID, helper._create_request("translation-batch-g3r1"))
+        item = helper.service.get(PROJECT_ID, batch.batch_id).items[0]
+        retargeted = item.model_copy(update={
+            "document_structure_plan_id": plan_id,
+            "chapter_id": base_chapter,
+            "translation_id": "trans_g3r1",
+            "translation_revision": 1,
+            "generation_status": "fidelity_blocked",
+            "fidelity_status": "blocked",
+            "fidelity_failure_codes": [
+                "unit_1:numbered_criterion_cardinality_changed"],
+        })
+        with helper.repo._connect() as connection:
+            cursor = helper.service._write_item_with(
+                connection, retargeted,
+                expected_status=item.generation_status,
+                expected_attempt=item.attempt)
+            connection.commit()
+        self.assertEqual(1, cursor.rowcount)
+    
+        summary = helper.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager")
+        event_type, detail = _latest_reeval_audit(item.item_id, helper)
+>       self.assertEqual(
+            "integration_g3r1_chain", detail.get("integration_id"),
+            f"re-evaluation must bind the translation-chain integration, "
+            f"not the newest heuristic impostor; summary={summary}, "
+            f"detail={detail}")
+E       AssertionError: 'integration_g3r1_chain' != 'integration_g3r1_impostor'
+E       - integration_g3r1_chain
+E       ?                  --- ^
+E       + integration_g3r1_impostor
+E       ?                   ^^^^^^^
+E        : re-evaluation must bind the translation-chain integration, not the newest heuristic impostor; summary={'admitted': 0, 'rejected': 0, 'data_missing': 1}, detail={'actor': 'medical_manager', 'batch_id': 'wref_translation_batch_aa15e12c9516d359b829a145', 'chunk_ids': ['chunk_g3r1_impostor_missing'], 'failure_codes': ['unit_1:numbered_criterion_cardinality_changed'], 'integration_id': 'integration_g3r1_impostor', 'previous_failure_codes': ['unit_1:numbered_criterion_cardinality_changed']}
+
+tests/test_writing_reference_fidelity_reeval_binding.py:236: AssertionError
+_ FidelityReevalBindingTests.test_g3_r2_span_scoped_chapter_reachable_via_chain _
+
+self = <tests.test_writing_reference_fidelity_reeval_binding.FidelityReevalBindingTests testMethod=test_g3_r2_span_scoped_chapter_reachable_via_chain>
+
+    def test_g3_r2_span_scoped_chapter_reachable_via_chain(self):
+        from packages.contracts.workbench_contracts.models import (
+            TranslationChunkRecord,
+            WritingReferenceTranslationRevision,
+        )
+        helper = _helper()
+        self.addCleanup(helper.tearDown)
+    
+        # Same shape as R1 minus the impostor: the item carries the BASE
+        # chapter id while its chain row lives under a span suffix — the
+        # exact and LIKE SQL both miss, and pre-fix this meant data_missing
+        # even though the full re-checkable candidate existed.
+        plan_id = "plan_g3r2"
+        base_chapter = "chapter_g3r2"
+        source_text = helper._REEVAL_SOURCE
+        drifted_target = "受试者必须在7天内接受SCS。"
+        helper._seed_artifact(
+            "artifact_g3r2",
+            [("span_g3r2", "eligibility", source_text)],
+        )
+        chunk = TranslationChunkRecord(
+            chunk_id="chunk_g3r2_chain",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id="artifact_g3r2",
+            chapter_id=base_chapter + ":span_1",
+            chunk_order=1,
+            source_span_ids=["span_g3r2"],
+            source_text=source_text,
+            source_text_sha256=sha256(source_text.encode("utf-8")).hexdigest(),
+            chunk_fingerprint="fp_g3r2",
+            hy_mt2_model="fake-hy",
+            hy_mt2_prompt_version="fake-v1",
+            hy_mt2_input_hash="0" * 64,
+            translated_text=drifted_target,
+            translated_text_sha256=sha256(
+                drifted_target.encode("utf-8")).hexdigest(),
+            unit_targets={"1": drifted_target},
+            status="completed",
+            created_at=NOW,
+        )
+        helper.repo.save_translation_chunk(
+            chunk, idempotency_key="g3-r2-chain-chunk")
+        chain_integration = ChapterIntegrationResult(
+            integration_id="integration_g3r2_chain",
+            plan_id=plan_id,
+            project_id=PROJECT_ID,
+            artifact_id="artifact_g3r2",
+            chapter_id=base_chapter + ":span_1",
+            chunk_ids=["chunk_g3r2_chain"],
+            chunk_hashes=[],
+            integrated_chinese_text=drifted_target,
+            integrated_text_sha256=sha256(
+                drifted_target.encode("utf-8")).hexdigest(),
+            flash_model="fake-flash",
+            flash_prompt_version="fake-v1",
+            flash_input_hash="",
+            flash_output_hash="",
+            fidelity_status="blocked",
+            fidelity_failure_codes=["unit_1:numeric_tokens_changed"],
+            blocked_raw_provider_output="",
+            status="completed",
+            created_at=NOW,
+        )
+        helper.repo.save_chapter_integration_result(
+            chain_integration, idempotency_key="g3-r2-chain-integration")
+        revision = WritingReferenceTranslationRevision(
+            translation_id="trans_g3r2",
+            project_id=PROJECT_ID,
+            span_id="span_g3r2",
+            source_span_revision="span_g3r2_r1",
+            document_sha256=sha256("artifact_g3r2".encode("utf-8")).hexdigest(),
+            glossary_version="g3",
+            revision=1,
+            translated_text=drifted_target,
+            rationale="G3 fixture: chain-bound drifted candidate.",
+            fidelity_status="blocked",
+            fidelity_failure_codes=["unit_1:numeric_tokens_changed"],
+            fidelity_checker_version="g3-fixture",
+            ai_run_id="run_g3r2",
+            created_at=NOW,
+            document_structure_plan_id=plan_id,
+            chapter_id=base_chapter + ":span_1",
+            source_span_ids=["span_g3r2"],
+            translation_chunk_ids=["chunk_g3r2_chain"],
+            chapter_integration_result_id="integration_g3r2_chain",
+        )
+        helper.repo.save_translation(
+            revision, idempotency_key="g3-r2-translation-revision")
+    
+        batch = helper.service.create(
+            PROJECT_ID, helper._create_request("translation-batch-g3r2"))
+        item = helper.service.get(PROJECT_ID, batch.batch_id).items[0]
+        retargeted = item.model_copy(update={
+            "document_structure_plan_id": plan_id,
+            "chapter_id": base_chapter,
+            "translation_id": "trans_g3r2",
+            "translation_revision": 1,
+            "generation_status": "fidelity_blocked",
+            "fidelity_status": "blocked",
+            "fidelity_failure_codes": ["unit_1:numeric_tokens_changed"],
+        })
+        with helper.repo._connect() as connection:
+            cursor = helper.service._write_item_with(
+                connection, retargeted,
+                expected_status=item.generation_status,
+                expected_attempt=item.attempt)
+            connection.commit()
+        self.assertEqual(1, cursor.rowcount)
+    
+        summary = helper.service.reevaluate_fidelity_blocked(
+            PROJECT_ID, batch.batch_id, "medical_manager")
+        event_type, detail = _latest_reeval_audit(item.item_id, helper)
+        self.assertEqual(
+            "integration_g3r2_chain", detail.get("integration_id"),
+            f"chain-reachable evidence must stay re-checkable when the "
+            f"plan/chapter SQL misses; summary={summary}, detail={detail}")
+>       self.assertEqual("translation_chain", detail.get("binding"), detail)
+E       AssertionError: 'translation_chain' != None : {'actor': 'medical_manager', 'batch_id': 'wref_translation_batch_317d744d4cb638f4c6262f02', 'chunk_ids': ['chunk_g3r2_chain'], 'failure_codes': ['unit_1:numeric_tokens_changed', 'unit_1:unit_sequence_changed', 'unit_1:negation_signal_missing'], 'integration_id': 'integration_g3r2_chain', 'previous_failure_codes': ['unit_1:numeric_tokens_changed']}
+
+tests/test_writing_reference_fidelity_reeval_binding.py:363: AssertionError
+_ TranslationItemPersistenceBoundaryTests.test_g4_r1_insert_rejects_illegal_model_copy_payload _
+
+self = <tests.test_translation_item_persistence_boundary.TranslationItemPersistenceBoundaryTests testMethod=test_g4_r1_insert_rejects_illegal_model_copy_payload>
+
+    def test_g4_r1_insert_rejects_illegal_model_copy_payload(self):
+        helper = _translation_helper()
+        self.addCleanup(helper.tearDown)
+        batch = self._blocked_batch(helper, "g4r1")
+        item = batch.items[0]
+        # a fresh item id/span: the UNIQUE constraint must not be the gate —
+        # payload validation is the boundary under test
+        forged = item.model_copy(update={
+            "generation_status": "bogus_status",
+            "item_id": item.item_id + "_forged",
+            "span_id": item.span_id + "_forged",
+        })
+        with self.assertRaises(ValidationError):
+            with helper.repo._connect() as connection:
+>               helper.service._insert_item_with(connection, forged)
+
+tests/test_translation_item_persistence_boundary.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    @staticmethod
+    def _insert_item_with(
+        connection: Any, item: WritingReferenceTranslationBatchItem
+    ) -> None:
+>       connection.execute(
+            """
+            INSERT INTO writing_reference_translation_batch_items(
+                tenant_id, project_id, batch_id, item_id, span_id,
+                generation_status, attempt, payload_json, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                TENANT_ID,
+                item.project_id,
+                item.batch_id,
+                item.item_id,
+                item.span_id,
+                item.generation_status,
+                item.attempt,
+                _canonical_json(item.model_dump(mode="json")),
+                item.created_at.isoformat(),
+                item.updated_at.isoformat(),
+            ),
+        )
+E       sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+services/api/app/writing_reference_translation_batch.py:8103: IntegrityError
+_ TranslationItemPersistenceBoundaryTests.test_g4_r1b_write_rejects_illegal_model_copy_payload _
+
+self = <tests.test_translation_item_persistence_boundary.TranslationItemPersistenceBoundaryTests testMethod=test_g4_r1b_write_rejects_illegal_model_copy_payload>
+
+    def test_g4_r1b_write_rejects_illegal_model_copy_payload(self):
+        helper = _translation_helper()
+        self.addCleanup(helper.tearDown)
+        batch = self._blocked_batch(helper, "g4r1b")
+        item = batch.items[0]
+        forged = item.model_copy(update={"generation_status": "bogus_status"})
+>       with self.assertRaises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ValidationError not raised
+
+tests/test_translation_item_persistence_boundary.py:99: AssertionError
+_ TranslationItemPersistenceBoundaryTests.test_g4_r2_synthetic_mint_writes_auditable_record _
+
+self = <tests.test_translation_item_persistence_boundary.TranslationItemPersistenceBoundaryTests testMethod=test_g4_r2_synthetic_mint_writes_auditable_record>
+
+    def test_g4_r2_synthetic_mint_writes_auditable_record(self):
+        helper = _translation_helper()
+        self.addCleanup(helper.tearDown)
+        helper._seed_artifact(
+            "artifact_g4r2",
+            [("span_g4r2", "eligibility", helper._REEVAL_SOURCE)],
+        )
+        batch = helper.service.create(
+            PROJECT_ID, helper._create_request("translation-batch-g4r2"))
+        item = helper.service.get(PROJECT_ID, batch.batch_id).items[0]
+        failed = item.model_copy(update={
+            "error_code": "document_plan_failed",
+            "document_plan_failure_codes": [
+                "document_plan_failed_earlier_in_same_run"],
+        })
+        with helper.repo._connect() as connection:
+            helper.service._prepare_document_plan_contract_lineage(
+                connection, [failed],
+                retry_generation=3, created_at=NOW, persist_migrations=True)
+        with helper.repo._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT target_id FROM writing_reference_audit_chain
+                WHERE tenant_id=? AND project_id=?
+                  AND event_type='document_plan_synthetic_recovery_parent'
+                """,
+                (TENANT_ID, PROJECT_ID),
+            ).fetchone()
+>       self.assertIsNotNone(
+            row, "minting a synthetic_recovery_ parent must write an auditable "
+                 "recovery record, not just a string prefix")
+E       AssertionError: unexpectedly None : minting a synthetic_recovery_ parent must write an auditable recovery record, not just a string prefix
+
+tests/test_translation_item_persistence_boundary.py:187: AssertionError
+_ TranslationItemPersistenceBoundaryTests.test_g4_r2b_unrecorded_parent_refused _
+
+self = <tests.test_translation_item_persistence_boundary.TranslationItemPersistenceBoundaryTests testMethod=test_g4_r2b_unrecorded_parent_refused>
+
+    def test_g4_r2b_unrecorded_parent_refused(self):
+        helper = _translation_helper()
+        self.addCleanup(helper.tearDown)
+        with helper.repo._connect() as connection:
+            with self.assertRaises(ValueError):
+>               helper.service._allocate_synthetic_recovery_parent_if_recorded(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    connection, PROJECT_ID, "synthetic_recovery_999",
+                    item_lineages={"item_x": {"k": "v"}})
+E               AttributeError: 'WritingReferenceTranslationBatchService' object has no attribute '_allocate_synthetic_recovery_parent_if_recorded'
+
+tests/test_translation_item_persistence_boundary.py:196: AttributeError
+_ PreparationItemPersistenceBoundaryTests.test_g4_r1c_prep_insert_rejects_illegal_model_copy_payload _
+
+self = <tests.test_translation_item_persistence_boundary.PreparationItemPersistenceBoundaryTests testMethod=test_g4_r1c_prep_insert_rejects_illegal_model_copy_payload>
+
+    def test_g4_r1c_prep_insert_rejects_illegal_model_copy_payload(self):
+        # different item_kind keeps the UNIQUE key and the document FK
+        # satisfied, so payload validation is the only gate under test
+        forged = self.item.model_copy(update={
+            "item_kind": "study_manual_upload_required",
+            "item_id": self.item.item_id + "_manual",
+            "status": "bogus_status",
+        })
+>       with self.assertRaises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ValidationError not raised
+
+tests/test_translation_item_persistence_boundary.py:293: AssertionError
+_ PreparationItemPersistenceBoundaryTests.test_g4_r1d_prep_write_rejects_illegal_model_copy_payload _
+
+self = <tests.test_translation_item_persistence_boundary.PreparationItemPersistenceBoundaryTests testMethod=test_g4_r1d_prep_write_rejects_illegal_model_copy_payload>
+
+    def test_g4_r1d_prep_write_rejects_illegal_model_copy_payload(self):
+        forged = self.item.model_copy(update={"status": "bogus_status"})
+>       with self.assertRaises(ValidationError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: ValidationError not raised
+
+tests/test_translation_item_persistence_boundary.py:299: AssertionError
+=============================== warnings summary ===============================
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+services/api/app/main.py:1377
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1377: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+../../../../../../../../opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598
+  /opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:4598: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+services/api/app/main.py:1387
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1387: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1409
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1409: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+services/api/app/main.py:1437
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1437: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:1446
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:1446: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+services/api/app/main.py:2545
+  /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py:2545: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_writing_reference_fidelity_reeval_binding.py::FidelityReevalBindingTests::test_g3_r1_chain_beats_newest_heuristic_impostor
+FAILED tests/test_writing_reference_fidelity_reeval_binding.py::FidelityReevalBindingTests::test_g3_r2_span_scoped_chapter_reachable_via_chain
+FAILED tests/test_translation_item_persistence_boundary.py::TranslationItemPersistenceBoundaryTests::test_g4_r1_insert_rejects_illegal_model_copy_payload
+FAILED tests/test_translation_item_persistence_boundary.py::TranslationItemPersistenceBoundaryTests::test_g4_r1b_write_rejects_illegal_model_copy_payload
+FAILED tests/test_translation_item_persistence_boundary.py::TranslationItemPersistenceBoundaryTests::test_g4_r2_synthetic_mint_writes_auditable_record
+FAILED tests/test_translation_item_persistence_boundary.py::TranslationItemPersistenceBoundaryTests::test_g4_r2b_unrecorded_parent_refused
+FAILED tests/test_translation_item_persistence_boundary.py::PreparationItemPersistenceBoundaryTests::test_g4_r1c_prep_insert_rejects_illegal_model_copy_payload
+FAILED tests/test_translation_item_persistence_boundary.py::PreparationItemPersistenceBoundaryTests::test_g4_r1d_prep_write_rejects_illegal_model_copy_payload
+8 failed, 2 passed, 18 warnings in 3.89s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

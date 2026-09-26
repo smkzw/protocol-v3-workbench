@@ -1,0 +1,68 @@
+{
+ "steps": [
+  {
+   "step": "S0_fixture起点_读工作稿",
+   "ok": true,
+   "detail": {
+    "revision": 1,
+    "authority": "active_authoritative",
+    "freeze": "editable",
+    "updated_at": "2026-09-24T18:07:48.794326Z",
+    "blocks": 2
+   }
+  },
+  {
+   "step": "S1_负例_过期revision被拒",
+   "ok": true,
+   "detail": {
+    "status": 409,
+    "body": "{'detail': 'stale medical writing working copy revision: expected=0, actual=1'}"
+   }
+  },
+  {
+   "step": "S3_保存",
+   "ok": true,
+   "detail": {
+    "status": 200,
+    "revision": 2,
+    "updated_at": "2026-09-26T23:01:23.435613Z",
+    "updated_by": "medical_manager",
+    "payload_content_sha256": "220ede3ac4999e8f685e58b63afde22f9e1738d40c33465d2e6018846a829ca6"
+   }
+  },
+  {
+   "step": "S4_重开_服务端确认",
+   "ok": true,
+   "detail": {
+    "revision": 2,
+    "text_head": "【切片闭环0927V1】【核验标记0924V1】方案首页与版本信息",
+    "content_sha256_equal": true,
+    "updated_at": "2026-09-26T23:01:23.435613Z"
+   }
+  },
+  {
+   "step": "S5_下载_版本hash与编辑保留",
+   "ok": false,
+   "detail": {
+    "status": 200,
+    "bytes": 71671,
+    "sha256_header": "",
+    "sha256_actual": "d6cf304dd01b7f9883f532ce055f964204d70d57f4e90e5f9e47f60319995c14",
+    "hash_match": false,
+    "marker_in_docx": false,
+    "disposition": "",
+    "source_snapshot_sha256": "…"
+   }
+  },
+  {
+   "step": "S6_重开再下载_保留稳定",
+   "ok": false,
+   "detail": {
+    "status": 200,
+    "bytes2": 71671,
+    "sha256_2": "d6cf304dd01b7f9883f532ce055f964204d70d57f4e90e5f9e47f60319995c14",
+    "stable": true
+   }
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+  "format": "security_sentinels/1",
+  "note": "Module-path prefixes of safety-boundary tests (numeric fidelity, source identity/binding, authority/permission, data-loss/persistence). A current failure under any prefix is NEVER waived as a known failure, even with a matching baseline fingerprint (red line 9 / review F08): the gate records it in security_sentinel_blocked and FAILs. Matching is startswith on the failure nodeid, so 'tests/x.py' also covers its classes and parametrize ids.",
+  "module_prefixes": [
+    "tests/test_writing_reference_numeric_fidelity",
+    "tests/test_writing_reference_final_candidate_fidelity",
+    "tests/test_writing_reference_translation_service",
+    "tests/test_medical_writing_source_preserving_export",
+    "tests/test_medical_writing_registered_sources",
+    "tests/test_phase1_corpus_source_boundaries",
+    "tests/protocol_v3/test_source_identity_product",
+    "tests/protocol_v3/test_pinned_chapter_sources",
+    "tests/protocol_v3/test_agent5_authority_boundary",
+    "tests/protocol_v3/test_frozen_authority_manifest",
+    "tests/test_medical_risk_authority",
+    "tests/test_monitoring_identity_authorization",
+    "tests/test_monitoring_approval_source_gate",
+    "tests/test_medical_writing_authoring_journey"
+  ]
+}
