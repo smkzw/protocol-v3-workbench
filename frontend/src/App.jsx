@@ -85,6 +85,15 @@ import MedicalMonitoringScopeSummary from "./features/medical-monitoring/Medical
 import MedicalMonitoringRiskHistoryTrend from "./features/medical-monitoring/MedicalMonitoringRiskHistoryTrend.jsx";
 import MedicalMonitoringRiskEvidenceContext from "./features/medical-monitoring/MedicalMonitoringRiskEvidenceContext.jsx";
 import { createMedicalMonitoringApi } from "./features/medical-monitoring/medicalMonitoringApi.mjs";
+// 0927V1 G7: error copy lives in features/medical-writing/errorContract.mjs so
+// the controlled state/error-code contract (0926V1 A701/A702) is testable
+// without importing the whole app.
+import {
+  apiErrorText,
+  medicalWritingSafeErrorText,
+  medicalWritingDiagnosticRef,
+  redactDiagnosticText,
+} from "./features/medical-writing/errorContract.mjs";
 import {
   DEFAULT_RISK_CHECKLIST_QUERY,
   normalizeRiskChecklistQuery,
@@ -577,43 +586,6 @@ const pageToModule = {
   sourceRegistry: "source_registry",
   approvals: "approvals",
 };
-
-function apiErrorText(error) {
-  return error?.message || error?.status || "network";
-}
-
-// 0924V2 §7: user-facing progress vs engineering diagnostics are separate.
-// The default UI shows a controlled Chinese summary and never raw exceptions,
-// job IDs, schema paths, internal stage tokens, or Pydantic/traceback text.
-// The raw message stays available for the explicit 展开-诊断 details view and
-// in backend logs.
-const _MEDICAL_WRITING_DIAGNOSTIC_RE = /(Traceback|Exception|RuntimeError|ValueError|KeyError|Pydantic|schema|schema_version|stage_run_id|mwjob_|mwprefill|wref_|docplan_|ct_run_|ct_chunk_|mwsec_|mwdoc_|HTTP \d{3}|at line \d+|expected_revision|payload_json)/i;
-
-function medicalWritingSafeErrorText(error) {
-  const raw = String(apiErrorText(error) || "");
-  if (!_MEDICAL_WRITING_DIAGNOSTIC_RE.test(raw)) {
-    // Chinese business text from our own contracts passes through verbatim.
-    return raw;
-  }
-  if (/409|conflict|stale|revision/i.test(raw)) {
-    return "内容版本已发生变化，请刷新页面后按当前版本重新提交。";
-  }
-  if (/timeout|timed?\s?out|连接|网络/i.test(raw)) {
-    return "请求等待超时：任务仍在后台执行，请稍后在任务列表查看结果，或重试一次。";
-  }
-  if (/429|rate|quota|507/i.test(raw)) {
-    return "模型服务繁忙或资源不足，请稍等片刻后重试；任务进度不会丢失。";
-  }
-  if (/download|fetch|network|URLError/i.test(raw)) {
-    return "网络或下载暂时不可用，请检查连接后重试；已完成的内容会保留。";
-  }
-  return "操作未能完成：发生未知的服务端错误。请稍后重试；如反复出现，请展开诊断详情并联系管理员。";
-}
-
-function medicalWritingDiagnosticRef(error) {
-  const raw = String(apiErrorText(error) || "");
-  return raw && _MEDICAL_WRITING_DIAGNOSTIC_RE.test(raw) ? raw : "";
-}
 
 function medicalWritingExportErrorText(error) {
   const message = apiErrorText(error);
@@ -10633,7 +10605,7 @@ function WritingPage({
         await refreshContentQuality();
       })
       .catch((error) => {
-        const diagnostic = medicalWritingDiagnosticRef(error);
+        const diagnostic = redactDiagnosticText(medicalWritingDiagnosticRef(error));
         setFullDraftDiagnostic(diagnostic);
         setFullDraftMessage(
           `全文初稿采纳失败：${medicalWritingSafeErrorText(error)}`,
@@ -11673,7 +11645,7 @@ function WritingPage({
                     onToggle={(event) => setFullDraftDiagnosticOpen(event.target.open)}
                   >
                     <summary>展开诊断详情（技术信息）</summary>
-                    <pre className="writing-diagnostic-pre">{fullDraftDiagnostic}</pre>
+                    <pre className="writing-diagnostic-pre">{redactDiagnosticText(fullDraftDiagnostic)}</pre>
                   </details>
                 )}
                 {fullDraftDecisionMessage && <p className="revision-message">{fullDraftDecisionMessage}</p>}
