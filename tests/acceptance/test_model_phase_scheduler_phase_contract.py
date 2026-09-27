@@ -12,10 +12,13 @@ Contract fixed here (zero real models, everything monkeypatched; A16):
 - a chat probe only passes on HTTP 200 AND matching model identity AND
   non-empty choices (A18: HTTP200但错误模型/空输出不能算通过).
 
-Call-site audit (2026-09-27, rg over services/ tests/): the only production
-caller is services/api/app/main.py:5849 warm_translation_model() inside
-try/except (signature unchanged); phase_model_readiness itself has zero
-production callers.
+Call-site audit (2026-09-27, rg over services/ tests/): since round21 the
+main.py retry call site invokes the lifecycle orchestrator's ensure_phase
+("translation") (best-effort try/except unchanged) and the competitor-triage
+create/retry entries invoke ensure_phase("triage") the same way;
+warm_translation_model / warm_triage_model keep their signatures for
+compatibility but have no production caller left; phase_model_readiness
+itself has zero production callers.
 """
 from __future__ import annotations
 

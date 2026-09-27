@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import http.client
@@ -1120,6 +1121,42 @@ class DisabledAiProvider:
         )
 
 
+@contextlib.contextmanager
+def _managed_dispatch(base_url: str):
+    """Bracket one upstream urlopen with the local-model lifecycle sentinel.
+
+    Only the two managed medical-writing servers (oMLX 8001 / MTPLX 8002)
+    are affected: the lifecycle orchestrator counts the request as in-flight
+    so it never drains a server under live traffic, and refuses new
+    dispatches while that server is draining.  The refusal surfaces as a
+    provider runtime error so the existing explicit fallback chain applies —
+    no cloud routing is introduced or changed here (round21 red line 3).
+    """
+    try:
+        from .model_lifecycle_orchestrator import (
+            LifecycleRefusal,
+            gateway_dispatch_begin,
+            gateway_dispatch_end,
+        )
+    except Exception:
+        yield
+        return
+    try:
+        gateway_dispatch_begin(base_url)
+    except LifecycleRefusal as exc:
+        raise AiProviderRuntimeError(
+            f"Managed local model server is draining: {exc.detail}",
+            diagnostics={"failure_code": exc.reason},
+        ) from exc
+    try:
+        yield
+    finally:
+        try:
+            gateway_dispatch_end(base_url)
+        except Exception:
+            pass
+
+
 class OpenAICompatibleAiProvider:
     def __init__(
         self,
@@ -1227,10 +1264,12 @@ class OpenAICompatibleAiProvider:
         response_content_type = ""
         for attempt in range(self.max_attempts):
             try:
-                with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
-                    response_status = _response_status(response)
-                    response_content_type = _response_content_type(response)
-                    response_body = response.read().decode("utf-8")
+                with _managed_dispatch(self.base_url):
+                    with urllib.request.urlopen(
+                            request, timeout=self.timeout_seconds) as response:
+                        response_status = _response_status(response)
+                        response_content_type = _response_content_type(response)
+                        response_body = response.read().decode("utf-8")
                 # Some providers intermittently answer HTTP 200 with an empty
                 # completion body (throttling).  Retry with the same backoff
                 # before surfacing provider_response_empty to the job.

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "_comment": "医学写作本地模型服务器生命周期编排（round21）。仅 oMLX@8001 与 MTPLX@8002 两台受管；8910/医学监查进程绝不在管理范围。所有阈值/命令/路径都在本文件，缺失即 fail-closed；探针 max_tokens 硬上限 8（红线4）。runtime_store_dir 默认指向 phase_c（live 8910 的 WORKBENCH_RUNTIME_DIR 实测所指），切换部署时同步更新。",
+  "probe_max_tokens": 8,
+  "probe_timeout_seconds": 180,
+  "start_timeout_seconds": 120,
+  "release_confirm_timeout_seconds": 120,
+  "poll_interval_seconds": 2,
+  "phase_roles": {
+    "translation": ["translation_body"],
+    "triage": ["triage"],
+    "design": ["design"]
+  },
+  "protected_roles": ["translation_body", "triage", "design"],
+  "runtime_store_dir": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/workbench/runs/phase_c_mgk10_authority_v2_20260905/runtime",
+  "audit_log_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/actions.log",
+  "state_file_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/orchestrator_state.json",
+  "servers": {
+    "omlx": {
+      "endpoint": "http://127.0.0.1:8001",
+      "port": 8001,
+      "phases": ["translation"],
+      "managed_model_id": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
+      "process_managed": false,
+      "admin_models_path": "/admin/api/models",
+      "activity_path": "/admin/api/activity",
+      "unload_path": "/admin/api/models/{model}/unload",
+      "start_command": ["/Applications/oMLX.app/Contents/MacOS/omlx-cli", "start"],
+      "load_memory_precheck": {
+        "estimated_model_bytes": 31250000000,
+        "factor": 1.1,
+        "_basis": "mem_probe.md: 冷载 est 31.25GB / actual 29.83GB；守卫上限是漂移压力计（25.28/78.98/41.29/42.19GB 四读四值），只做 load 前现读预检，不写死判断"
+      }
+    },
+    "mtplx": {
+      "endpoint": "http://127.0.0.1:8002",
+      "port": 8002,
+      "phases": ["triage", "design"],
+      "managed_model_id": "mtplx-flash-next-optimized-speed",
+      "process_managed": true,
+      "pidfile_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.pid",
+      "server_log_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.log",
+      "pid_identity_markers": ["runtime-venv", "mtplx.server.openai", "--port 8002"],
+      "start_command": [
+        "/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/mtplx",
+        "quickstart",
+        "--model",
+        "/Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
+        "--port", "8002",
+        "--yes"
+      ],
+      "stop_command": [
+        "/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/mtplx",
+        "stop", "--port", "8002", "--grace-seconds", "30"
+      ],
+      "idle_recycle_seconds": 1800,
+      "start_timeout_seconds": 120,
+      "_notes": "grace 30s 为保守初值（无一手实测停机时长），LIVE 校准后才允许收紧；quickstart 默认验证模型未缓存，必须显式 --model；明文禁 PATH 上 2.11.0 wrapper 与 open -a MTPLX"
+    }
+  }
+}

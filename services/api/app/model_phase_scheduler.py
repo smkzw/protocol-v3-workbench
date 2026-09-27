@@ -6,6 +6,12 @@ coexist on this 128GB machine alongside the workbench. Rather than a fixed
 the target server's model to trigger on-demand load, and optionally sends
 an unload signal to the other server — all through standard OpenAI-compatible
 APIs. No server restart, no admin endpoint, no process kill.
+
+Round21: server/model process lifecycle (start, load, mutual-exclusion
+unload, stop) moved to model_lifecycle_orchestrator.py, which drives the
+same endpoints from services/api/config/model_lifecycle.json.  This module
+keeps the phase->model contract and the A18 chat probe; its frozen
+constants are contract-tested (test_p_scheduler_frozen_constants_unchanged).
 """
 
 from __future__ import annotations
@@ -41,18 +47,24 @@ _ROLE_MODEL = {
 }
 
 
-def _chat_probe(base_url: str, model: str) -> tuple[bool, str]:
+def _chat_probe(base_url: str, model: str,
+                max_tokens: int = _PROBE_MAX_TOKENS) -> tuple[bool, str]:
     """Send a minimal chat request to trigger on-demand model load.
 
     A bare HTTP 200 is NOT success (A18): the response body must name the
     requested model and carry a non-empty choice, otherwise the target
     model's capability is unproven.
+
+    ``max_tokens`` lets the round21 lifecycle orchestrator pass its configured
+    probe budget (hard-capped at 8 there); the default keeps the historical
+    1-token probe for all existing callers.  Frozen constants above (bases,
+    models, PHASE_MODEL_REQUIREMENTS) are contract-tested and must not move.
     """
     body = json.dumps(
         {
             "model": model,
             "messages": [{"role": "user", "content": "ping"}],
-            "max_tokens": _PROBE_MAX_TOKENS,
+            "max_tokens": max_tokens,
         }
     ).encode("utf-8")
     req = urllib.request.Request(

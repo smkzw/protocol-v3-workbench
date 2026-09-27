@@ -5843,12 +5843,14 @@ def retry_writing_reference_translation_batch(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
-        # 0924V2 §5: warm the translation model before dispatching so the
-        # first chunk doesn't burn its provider-call budget on a cold load.
+        # 0924V2 §5 / round21: warm the translation model before dispatching
+        # so the first chunk doesn't burn its provider-call budget on a cold
+        # load.  ensure() additionally handles server-up, mutual exclusion
+        # and A18 verification; refusal/failure must never block the retry.
         try:
-            from .model_phase_scheduler import warm_translation_model
+            from .model_lifecycle_orchestrator import ensure_phase
 
-            warm_translation_model()
+            ensure_phase("translation")
         except Exception:
             pass  # warm-up is best-effort; the fallback chain handles failures
         batch = writing_reference_translation_batch_service.retry(
@@ -8940,6 +8942,14 @@ def create_competitor_triage_run(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        # round21: warm the MTPLX triage model before dispatching (best-effort,
+        # same contract as the translation retry warm-up).
+        try:
+            from .model_lifecycle_orchestrator import ensure_phase
+
+            ensure_phase("triage")
+        except Exception:
+            pass  # warm-up is best-effort; the fallback chain handles failures
         result = competitor_triage_service.create_run(
             canonical_id, request, _resolve_triage_provider()
         )
@@ -9034,6 +9044,14 @@ def retry_competitor_triage_run(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        # round21: warm the MTPLX triage model before dispatching (best-effort,
+        # same contract as the translation retry warm-up).
+        try:
+            from .model_lifecycle_orchestrator import ensure_phase
+
+            ensure_phase("triage")
+        except Exception:
+            pass  # warm-up is best-effort; the fallback chain handles failures
         result = competitor_triage_service.retry_run(
             canonical_id, run_id, request, _resolve_triage_provider()
         )

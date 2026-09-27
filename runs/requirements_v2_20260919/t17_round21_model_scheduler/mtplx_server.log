@@ -1,0 +1,265 @@
+  ███╗   ███╗ ████████╗ ██████╗  ██╗      ██╗  ██╗
+  ████╗ ████║ ╚══██╔══╝ ██╔══██╗ ██║      ╚██╗██╔╝
+  ██╔████╔██║    ██║    ██████╔╝ ██║       ╚███╔╝ 
+  ██║╚██╔╝██║    ██║    ██╔═══╝  ██║       ██╔██╗ 
+  ██║ ╚═╝ ██║    ██║    ██║      ███████╗ ██╔╝ ██╗
+  ╚═╝     ╚═╝    ╚═╝    ╚═╝      ╚══════╝ ╚═╝  ╚═╝
+
+  Native MTP speculative decoding · Apple Silicon
+
+╭─ MTPLX 2.12.0 ───────────────────────────────────────────────────────────────╮
+│                                                                              │
+│      Model  mtplx-flash-next-optimized-speed                                 │
+│    Profile  turbo                                                            │
+│        API  http://127.0.0.1:8002/v1                                         │
+│       Mode  turbo MTP                                                        │
+│    Browser  http://127.0.0.1:8002/                                           │
+│  Listening  127.0.0.1:8002                                                   │
+│    Loading  /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX…  │
+│     Warmup  16 tokens                                                        │
+│       Auth  API key: leave blank for localhost                               │
+│       Stop  Ctrl-C                                                           │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+[1/6] Server config ready: http://127.0.0.1:8002/v1
+[2/6] Model resolved: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+[3/6] Runtime contract verified — profile: turbo
+      Loading the model can take about a minute on first start.
+
+[4/6] Preparing turbo MTP runtime
+[4/6] Checking local acceleration runtime
+      This may take a few seconds.
+[mtplx] dense-decode ceiling auto: 314572 tokens (15% RAM over 65536 B/token — MODEL DEFAULT, set MTPLX_DENSE_KV_BYTES_PER_TOKEN for non-Qwen3.8 geometry)
+[4/6] Runtime checks complete
+[5/6] Loading model weights: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+      This is the long step; MTPLX is mapping the model into MLX.
+      Model load in progress (this may take a minute).
+[transformers] You are using a model of type `qwen4_exp` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+[tokenizer] restored the pre-tokenizer regex from tokenizer.json: the loaded tokenizer split combining marks off their letters (Devanagari, Thai, vowelled Arabic tokenized 25-90% longer than the model was trained on)
+[qwen4_exp] sanitize fused gate+up: 96 modules
+[qwen4_exp] sanitize fused GDN in_proj: 36 layers
+[mtplx] n-gram table pre-read plan: mode=auto source=env table=29.8 GiB free=16.6 GiB reserved=18.7 GiB margin=6.0 GiB budget=0.0 GiB order=none
+[mtplx] n-gram table pre-read skipped: no_headroom
+[qwen4_exp] ngram table: streamed from SSD (file-backed pages, hot cache 1023M, prefetch on)
+[5/6] Model loaded in 10.0s
+[5/6] Installing native-MTP draft head
+[frspec] install report: {'installed': True, 'n': 65536, 'vocab_rows': 248320, 'bits': 8, 'group_size': 64, 'mode': 'affine', 'bytes_ratio': 0.2639, 'source': 'native_mtp_head', 'output_mode': 'full', 'legacy_swap': False, 'elapsed_s': 0.025}
+[5/6] Chat template profile: tokenizer
+[5/6] Context window: 262144 tokens
+[mtplx] dense-decode ceiling auto: 262144 tokens (15% RAM over 24576 B/token, from the model config)
+[5/6] Memory plan: 128G Mac: engine budget 96.0G, weights 77.3G, context 262144, session bank up to 15.7G (yields to 9.7G under long-context load), n-gram table 29.8G streamed from SSD (not wired)
+[5/6] GPU residency keepalive: every 1s for 600s after each request
+[mtplx] session-bank budget: 15.7G total (auto: machine memory plan, yields to live KV), 7.8G per-session cap, 48 entries max, model weights 77.3G. Override: MTPLX_SESSION_BANK_MAX_BYTES / MTPLX_SESSION_BANK_PER_SESSION_BYTES (sizes like 12G or 12GiB).
+[6/6] Warming model with 16 tokens
+[mtplx] verify SDPA head-chunked: q_len=5 heads_per_chunk=6 chunks=4
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[MTPLX_QWEN4_DRAFT_K20_PRESCATTER] declined (relaxed_draft_ties): MTPLX_QWEN4_RELAXED_DRAFT_TIES installs a different builder -- this request runs the shipped path; set MTPLX_STRICT_CLAIMS=1 to fail closed instead
+[6/6] Extended warmup continues silently in the background
+[6/6] Warmup complete in 3.7s (11.72 tok/s)
+
+MTPLX is ready.
+Chat UI: http://127.0.0.1:8002/
+OpenAI API Base URL: http://127.0.0.1:8002/v1
+Model: mtplx-flash-next-optimized-speed
+Reasoning history: preserve (policy auto)
+API key: leave blank for localhost
+Health check: http://127.0.0.1:8002/health
+Keep this terminal open. Press Ctrl-C to stop MTPLX.
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[mtplx] background warmup {"state": "done", "elapsed_s": 3.645, "resubmits": 0, "steps": [{"kind": "gqa_packed_pipelines", "state": "ok", "elapsed_s": 0.006}, {"kind": "ladder", "context": 512, "state": "ok", "elapsed_s": 0.566, "tok_s": 81.62}, {"kind": "ladder", "context": 2560, "state": "ok", "elapsed_s": 2.462, "tok_s": 80.82}]}
+{"event": "mtplx_ssd_session_cache_reconcile", "dir": "/Users/smkzw/.mtplx/session-bank", "files_deleted": 0, "dirs_deleted": 0, "disk_bytes_deleted": 0, "elapsed_s": 21.43, "entries": 103, "disk_bytes": 102806618112, "max_bytes": 107374182400, "interrupted": false}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.465585, "tok_s": 51.945677, "end_to_end_tok_s": 17.182695, "seed": 561031196, "attempts": 1, "blank_retries": 0, "text_preview": "We need respond to user \"ping\"."}
+[mtplx] idle async session postcommit {"best_prefix_len": 0, "cache_hit": false, "cache_miss_reason": "ssd_prefix_miss", "cache_source": "none", "cached_tokens": 0, "elapsed_s": 0.18617904197890311, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-e476fc4dfb233938", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 48, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176594384, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176528848, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176528848, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176561616, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176578000, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176610768, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 53601191854, "phys_footprint_bytes": 86176627152, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176659920, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 53601191854, "phys_footprint_bytes": 86176610768, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176643536, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176676304, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176692688, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 53601191854, "phys_footprint_bytes": 86176725456, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176741840, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176774608, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 53601191854, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 52226802319, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176790992, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176807376, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176823760, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176823760, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+[mtplx] memory pressure guard {"action": "pressure_trim", "level": 2, "level_source": "macos", "allocator_fraction": 0.826, "system_available_bytes": 50852412784, "phys_footprint_bytes": 86176856528, "bank_entries_evicted": 0, "bank_bytes_after": 351331632, "deferred_s": 0.0}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 9.895795, "tok_s": 94.858895, "end_to_end_tok_s": 0.808424, "seed": 888749666, "attempts": 1, "blank_retries": 0, "text_preview": "The user sent \"ping\". This is"}
+[mtplx] idle async session postcommit {"best_prefix_len": 0, "cache_hit": false, "cache_miss_reason": "ssd_prefix_miss", "cache_source": "none", "cached_tokens": 0, "elapsed_s": 0.1960930839413777, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-e1ff894d6992fbac", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 48, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.207206, "tok_s": 62.456817, "end_to_end_tok_s": 38.608921, "seed": 1867598887, "attempts": 1, "blank_retries": 0, "text_preview": "We need respond to user \"ping\"."}
+[mtplx] idle async session postcommit {"best_prefix_len": 48, "cache_hit": true, "cache_miss_reason": null, "cache_source": "ram", "cached_tokens": 48, "elapsed_s": 0.0009700419614091516, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-8581ce69c4c4d239", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 0, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.190246, "tok_s": 67.014233, "end_to_end_tok_s": 42.050828, "seed": 1318967323, "attempts": 1, "blank_retries": 0, "text_preview": "We need respond to user \"ping\"."}
+[mtplx] idle async session postcommit {"best_prefix_len": 48, "cache_hit": true, "cache_miss_reason": null, "cache_source": "ram", "cached_tokens": 48, "elapsed_s": 0.0007647500606253743, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-032bd01a449fc68f", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 0, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+  ███╗   ███╗ ████████╗ ██████╗  ██╗      ██╗  ██╗
+  ████╗ ████║ ╚══██╔══╝ ██╔══██╗ ██║      ╚██╗██╔╝
+  ██╔████╔██║    ██║    ██████╔╝ ██║       ╚███╔╝ 
+  ██║╚██╔╝██║    ██║    ██╔═══╝  ██║       ██╔██╗ 
+  ██║ ╚═╝ ██║    ██║    ██║      ███████╗ ██╔╝ ██╗
+  ╚═╝     ╚═╝    ╚═╝    ╚═╝      ╚══════╝ ╚═╝  ╚═╝
+
+  Native MTP speculative decoding · Apple Silicon
+
+╭─ MTPLX 2.12.0 ───────────────────────────────────────────────────────────────╮
+│                                                                              │
+│      Model  mtplx-flash-next-optimized-speed                                 │
+│    Profile  turbo                                                            │
+│        API  http://127.0.0.1:8002/v1                                         │
+│       Mode  turbo MTP                                                        │
+│    Browser  http://127.0.0.1:8002/                                           │
+│  Listening  127.0.0.1:8002                                                   │
+│    Loading  /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX…  │
+│     Warmup  16 tokens                                                        │
+│       Auth  API key: leave blank for localhost                               │
+│       Stop  Ctrl-C                                                           │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+[1/6] Server config ready: http://127.0.0.1:8002/v1
+[2/6] Model resolved: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+[3/6] Runtime contract verified — profile: turbo
+      Loading the model can take about a minute on first start.
+
+[4/6] Preparing turbo MTP runtime
+[4/6] Checking local acceleration runtime
+      This may take a few seconds.
+[mtplx] dense-decode ceiling auto: 314572 tokens (15% RAM over 65536 B/token — MODEL DEFAULT, set MTPLX_DENSE_KV_BYTES_PER_TOKEN for non-Qwen3.8 geometry)
+[4/6] Runtime checks complete
+[5/6] Loading model weights: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+      This is the long step; MTPLX is mapping the model into MLX.
+      Model load in progress (this may take a minute).
+[transformers] You are using a model of type `qwen4_exp` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+[tokenizer] restored the pre-tokenizer regex from tokenizer.json: the loaded tokenizer split combining marks off their letters (Devanagari, Thai, vowelled Arabic tokenized 25-90% longer than the model was trained on)
+[qwen4_exp] sanitize fused gate+up: 96 modules
+[qwen4_exp] sanitize fused GDN in_proj: 36 layers
+[mtplx] n-gram table pre-read plan: mode=auto source=env table=29.8 GiB free=19.8 GiB reserved=18.7 GiB margin=6.0 GiB budget=0.0 GiB order=none
+[mtplx] n-gram table pre-read skipped: no_headroom
+[qwen4_exp] ngram table: streamed from SSD (file-backed pages, hot cache 1023M, prefetch on)
+[5/6] Model loaded in 8.1s
+[5/6] Installing native-MTP draft head
+[frspec] install report: {'installed': True, 'n': 65536, 'vocab_rows': 248320, 'bits': 8, 'group_size': 64, 'mode': 'affine', 'bytes_ratio': 0.2639, 'source': 'native_mtp_head', 'output_mode': 'full', 'legacy_swap': False, 'elapsed_s': 0.019}
+[5/6] Chat template profile: tokenizer
+[5/6] Context window: 262144 tokens
+[mtplx] dense-decode ceiling auto: 262144 tokens (15% RAM over 24576 B/token, from the model config)
+[5/6] Memory plan: 128G Mac: engine budget 96.0G, weights 77.3G, context 262144, session bank up to 15.7G (yields to 9.7G under long-context load), n-gram table 29.8G streamed from SSD (not wired)
+[5/6] GPU residency keepalive: every 1s for 600s after each request
+[mtplx] session-bank budget: 15.7G total (auto: machine memory plan, yields to live KV), 7.8G per-session cap, 48 entries max, model weights 77.3G. Override: MTPLX_SESSION_BANK_MAX_BYTES / MTPLX_SESSION_BANK_PER_SESSION_BYTES (sizes like 12G or 12GiB).
+[6/6] Warming model with 16 tokens
+[mtplx] verify SDPA head-chunked: q_len=5 heads_per_chunk=6 chunks=4
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[MTPLX_QWEN4_DRAFT_K20_PRESCATTER] declined (relaxed_draft_ties): MTPLX_QWEN4_RELAXED_DRAFT_TIES installs a different builder -- this request runs the shipped path; set MTPLX_STRICT_CLAIMS=1 to fail closed instead
+[6/6] Extended warmup continues silently in the background
+[6/6] Warmup complete in 3.4s (11.28 tok/s)
+
+MTPLX is ready.
+Chat UI: http://127.0.0.1:8002/
+OpenAI API Base URL: http://127.0.0.1:8002/v1
+Model: mtplx-flash-next-optimized-speed
+Reasoning history: preserve (policy auto)
+API key: leave blank for localhost
+Health check: http://127.0.0.1:8002/health
+Keep this terminal open. Press Ctrl-C to stop MTPLX.
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.466886, "tok_s": 80.564658, "end_to_end_tok_s": 17.134805, "seed": 448532755, "attempts": 1, "blank_retries": 0, "text_preview": "We need to respond to user: \""}
+[mtplx] idle async session postcommit {"best_prefix_len": 0, "cache_hit": false, "cache_miss_reason": "ssd_prefix_miss", "cache_source": "none", "cached_tokens": 0, "elapsed_s": 0.20418770797550678, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-e874c80210a6e3d2", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 48, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+{"event": "mtplx_ssd_session_cache_reconcile", "dir": "/Users/smkzw/.mtplx/session-bank", "files_deleted": 0, "dirs_deleted": 0, "disk_bytes_deleted": 0, "elapsed_s": 21.266, "entries": 103, "disk_bytes": 102806618112, "max_bytes": 107374182400, "interrupted": false}
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[mtplx] background warmup {"state": "done", "elapsed_s": 94.89, "resubmits": 1, "steps": [{"kind": "gqa_packed_pipelines", "state": "ok", "elapsed_s": 0.004}, {"kind": "ladder", "context": 512, "state": "ok", "elapsed_s": 1.083, "tok_s": 76.73}, {"kind": "ladder", "context": 2560, "state": "ok", "elapsed_s": 2.556, "tok_s": 76.29}]}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.2093, "tok_s": 57.287713, "end_to_end_tok_s": 38.222594, "seed": 547711170, "attempts": 1, "blank_retries": 0, "text_preview": "We need respond to user \"ping\"."}
+[mtplx] idle async session postcommit {"best_prefix_len": 48, "cache_hit": true, "cache_miss_reason": null, "cache_source": "ram", "cached_tokens": 48, "elapsed_s": 0.0008844580734148622, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-a409cda0cbe898a5", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 0, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+  ███╗   ███╗ ████████╗ ██████╗  ██╗      ██╗  ██╗
+  ████╗ ████║ ╚══██╔══╝ ██╔══██╗ ██║      ╚██╗██╔╝
+  ██╔████╔██║    ██║    ██████╔╝ ██║       ╚███╔╝ 
+  ██║╚██╔╝██║    ██║    ██╔═══╝  ██║       ██╔██╗ 
+  ██║ ╚═╝ ██║    ██║    ██║      ███████╗ ██╔╝ ██╗
+  ╚═╝     ╚═╝    ╚═╝    ╚═╝      ╚══════╝ ╚═╝  ╚═╝
+
+  Native MTP speculative decoding · Apple Silicon
+
+╭─ MTPLX 2.12.0 ───────────────────────────────────────────────────────────────╮
+│                                                                              │
+│      Model  mtplx-flash-next-optimized-speed                                 │
+│    Profile  turbo                                                            │
+│        API  http://127.0.0.1:8002/v1                                         │
+│       Mode  turbo MTP                                                        │
+│    Browser  http://127.0.0.1:8002/                                           │
+│  Listening  127.0.0.1:8002                                                   │
+│    Loading  /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX…  │
+│     Warmup  16 tokens                                                        │
+│       Auth  API key: leave blank for localhost                               │
+│       Stop  Ctrl-C                                                           │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+[1/6] Server config ready: http://127.0.0.1:8002/v1
+[2/6] Model resolved: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+[3/6] Runtime contract verified — profile: turbo
+      Loading the model can take about a minute on first start.
+
+[4/6] Preparing turbo MTP runtime
+[4/6] Checking local acceleration runtime
+      This may take a few seconds.
+[mtplx] dense-decode ceiling auto: 314572 tokens (15% RAM over 65536 B/token — MODEL DEFAULT, set MTPLX_DENSE_KV_BYTES_PER_TOKEN for non-Qwen3.8 geometry)
+[4/6] Runtime checks complete
+[5/6] Loading model weights: /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed
+      This is the long step; MTPLX is mapping the model into MLX.
+      Model load in progress (this may take a minute).
+[transformers] You are using a model of type `qwen4_exp` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+[tokenizer] restored the pre-tokenizer regex from tokenizer.json: the loaded tokenizer split combining marks off their letters (Devanagari, Thai, vowelled Arabic tokenized 25-90% longer than the model was trained on)
+[qwen4_exp] sanitize fused gate+up: 96 modules
+[qwen4_exp] sanitize fused GDN in_proj: 36 layers
+[mtplx] n-gram table pre-read plan: mode=auto source=env table=29.8 GiB free=18.6 GiB reserved=18.7 GiB margin=6.0 GiB budget=0.0 GiB order=none
+[mtplx] n-gram table pre-read skipped: no_headroom
+[qwen4_exp] ngram table: streamed from SSD (file-backed pages, hot cache 1023M, prefetch on)
+[5/6] Model loaded in 8.3s
+[5/6] Installing native-MTP draft head
+[frspec] install report: {'installed': True, 'n': 65536, 'vocab_rows': 248320, 'bits': 8, 'group_size': 64, 'mode': 'affine', 'bytes_ratio': 0.2639, 'source': 'native_mtp_head', 'output_mode': 'full', 'legacy_swap': False, 'elapsed_s': 0.023}
+[5/6] Chat template profile: tokenizer
+[5/6] Context window: 262144 tokens
+[mtplx] dense-decode ceiling auto: 262144 tokens (15% RAM over 24576 B/token, from the model config)
+[5/6] Memory plan: 128G Mac: engine budget 96.0G, weights 77.3G, context 262144, session bank up to 15.7G (yields to 9.7G under long-context load), n-gram table 29.8G streamed from SSD (not wired)
+[5/6] GPU residency keepalive: every 1s for 600s after each request
+[mtplx] session-bank budget: 15.7G total (auto: machine memory plan, yields to live KV), 7.8G per-session cap, 48 entries max, model weights 77.3G. Override: MTPLX_SESSION_BANK_MAX_BYTES / MTPLX_SESSION_BANK_PER_SESSION_BYTES (sizes like 12G or 12GiB).
+[6/6] Warming model with 16 tokens
+[mtplx] verify SDPA head-chunked: q_len=5 heads_per_chunk=6 chunks=4
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[MTPLX_QWEN4_DRAFT_K20_PRESCATTER] declined (relaxed_draft_ties): MTPLX_QWEN4_RELAXED_DRAFT_TIES installs a different builder -- this request runs the shipped path; set MTPLX_STRICT_CLAIMS=1 to fail closed instead
+[6/6] Extended warmup continues silently in the background
+[6/6] Warmup complete in 3.6s (11.75 tok/s)
+
+MTPLX is ready.
+Chat UI: http://127.0.0.1:8002/
+OpenAI API Base URL: http://127.0.0.1:8002/v1
+Model: mtplx-flash-next-optimized-speed
+Reasoning history: preserve (policy auto)
+API key: leave blank for localhost
+Health check: http://127.0.0.1:8002/health
+Keep this terminal open. Press Ctrl-C to stop MTPLX.
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.498561, "tok_s": 69.54977, "end_to_end_tok_s": 16.046192, "seed": 1062804710, "attempts": 1, "blank_retries": 0, "text_preview": "The user said \"ping\". This is"}
+[mtplx] idle async session postcommit {"best_prefix_len": 0, "cache_hit": false, "cache_miss_reason": "ssd_prefix_miss", "cache_source": "none", "cached_tokens": 0, "elapsed_s": 0.19613749999552965, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-2d7b0ca9c266363c", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 48, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
+{"event": "mtplx_ssd_session_cache_reconcile", "dir": "/Users/smkzw/.mtplx/session-bank", "files_deleted": 0, "dirs_deleted": 0, "disk_bytes_deleted": 0, "elapsed_s": 14.54, "entries": 103, "disk_bytes": 102806618112, "max_bytes": 107374182400, "interrupted": false}
+[qwen4-fixed-M4-verify] replay installed: aux=staged_sidecar inputs=host_ledger boundary=both donate=True kv_gather=stock positions=text
+[mtplx] background warmup {"state": "done", "elapsed_s": 94.297, "resubmits": 0, "steps": [{"kind": "gqa_packed_pipelines", "state": "ok", "elapsed_s": 0.007}, {"kind": "ladder", "context": 512, "state": "ok", "elapsed_s": 0.606, "tok_s": 78.44}, {"kind": "ladder", "context": 2560, "state": "ok", "elapsed_s": 2.53, "tok_s": 80.17}]}
+{"event": "mtplx_openai_generation", "prompt_tokens": 53, "completion_tokens": 8, "max_tokens": 8, "effective_max_tokens": 8, "finish_reason": "length", "elapsed_s": 0.273247, "tok_s": 47.232077, "end_to_end_tok_s": 29.277589, "seed": 1791817561, "attempts": 1, "blank_retries": 0, "text_preview": "The user has sent \"ping\" -"}
+[mtplx] idle async session postcommit {"best_prefix_len": 48, "cache_hit": true, "cache_miss_reason": null, "cache_source": "ram", "cached_tokens": 48, "elapsed_s": 0.0009277920471504331, "history_tokens": 48, "mode": "retokenized_history", "nbytes": 233297440, "prefix_len": 48, "session_commit": {"committed": false, "prefix_len": 61, "reason": "retokenized_prefix_older_than_session"}, "session_id": "anon-6454060e9fb97fde", "ssd_cache_hit": false, "ssd_cached_tokens": 0, "ssd_restore_s": 0.0, "ssd_suffix_tokens": 0, "stored": true, "suffix_tokens": 0, "token_hash": "f18f27761944f250ffb050954ea41da03f29545a306bcece42ad9a9cb104eb0f", "unsafe_reason": "retokenized_history_mismatch"}
