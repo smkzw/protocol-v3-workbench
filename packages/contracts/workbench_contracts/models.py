@@ -9489,13 +9489,21 @@ class WritingReferenceTranslationBatchCreateRequest(
 class WritingReferenceTranslationBatchRetryRequest(WorkbenchModel):
     actor: str = Field(default="medical_manager", min_length=2, max_length=80)
     idempotency_key: str = Field(min_length=8, max_length=160)
+    # G5 bounded recovery scope: retry only failed items bound to these
+    # registry studies. Empty = all failed_retryable items (legacy shape —
+    # the request hash is computed without this field so legacy replay
+    # identities are unchanged).
+    nct_ids: list[str] = Field(default_factory=list, max_length=256)
 
     @model_validator(mode="after")
     def normalize_translation_batch_retry(self):
         self.actor = self.actor.strip()
         self.idempotency_key = self.idempotency_key.strip()
+        self.nct_ids = [n.strip() for n in self.nct_ids if n.strip()]
         if not self.actor or not self.idempotency_key:
             raise ValueError("translation batch retry fields must not be blank")
+        if any(not (3 <= len(n) <= 40) for n in self.nct_ids):
+            raise ValueError("nct_ids entries must be 3-40 characters")
         return self
 
 

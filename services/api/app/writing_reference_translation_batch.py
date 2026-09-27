@@ -128,6 +128,14 @@ DOWNSTREAM_MODEL_CALL_STAGES = frozenset(
 )
 
 
+def _filter_items_by_nct_scope(items, nct_ids):
+    """G5 bounded recovery: keep only items bound to the requested studies."""
+    wanted = {n for n in (n.strip() for n in nct_ids) if n}
+    if not wanted:
+        return list(items)
+    return [i for i in items if str(getattr(i, "nct_id", "") or "") in wanted]
+
+
 TERMINAL_PREPARATION_STATUSES = {
     "completed",
     "completed_with_review_required",
@@ -1044,9 +1052,12 @@ class WritingReferenceTranslationBatchService:
         # preflight below parse every payload and would 422 otherwise.
         # No-op once all payloads validate.
         self._repair_invalid_retry_lineage_payloads(project_id, batch_id)
-        request_hash = _payload_hash(
-            {"batch_id": batch_id, "idempotency_key": request.idempotency_key}
-        )
+        hash_payload = {"batch_id": batch_id, "idempotency_key": request.idempotency_key}
+        if request.nct_ids:
+            # G5 bounded recovery scope: a scoped command is a distinct command;
+            # empty scope keeps the legacy hash so old replay keys still match.
+            hash_payload["nct_ids"] = sorted(request.nct_ids)
+        request_hash = _payload_hash(hash_payload)
         # Idempotency replay first — a duplicate request must return the
         # original result regardless of current batch status.
         replay = self._idempotent_result(
@@ -1100,6 +1111,10 @@ class WritingReferenceTranslationBatchService:
                 )
                 for row in failed_rows
             ]
+            if request.nct_ids:
+                preflight_items = _filter_items_by_nct_scope(
+                    preflight_items, request.nct_ids
+                )
             preflight = self._prepare_document_plan_contract_lineage(
                 connection,
                 preflight_items,
