@@ -4213,12 +4213,20 @@ class WritingReferenceTranslationBatchService:
         # validation or corpus admission; it only supplies the retained
         # candidate scope for document preparation/translation.
         discovery = getattr(journey, "discovery_basket_projection", None)
+        # G5/F06: ``search_plan=None`` is a legal early-journey state (bootstrap
+        # from_zero creation leaves it unset until framing is search-ready). A
+        # confirmed discovery-basket projection matching the locked snapshot is
+        # then the scope authority on its own; when a search plan exists it
+        # remains the single source of the journey's "current snapshot" and a
+        # projection pointing at an older snapshot is stale (rejected below).
         discovery_confirmed = (
             discovery is not None
             and getattr(discovery, "confirmation_id", "")
             and getattr(discovery, "snapshot_id", "") == snapshot_id
-            and journey.search_plan is not None
-            and journey.search_plan.latest_snapshot_id == snapshot_id
+            and (
+                journey.search_plan is None
+                or journey.search_plan.latest_snapshot_id == snapshot_id
+            )
         )
 
         if not corpus_finalized and not discovery_confirmed:
@@ -4229,8 +4237,8 @@ class WritingReferenceTranslationBatchService:
             )
 
         if (
-            journey.search_plan is None
-            or journey.search_plan.latest_snapshot_id != snapshot_id
+            journey.search_plan is not None
+            and journey.search_plan.latest_snapshot_id != snapshot_id
         ):
             raise ValueError(
                 "batch translation must use the authoring journey's locked current snapshot"
