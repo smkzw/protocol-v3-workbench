@@ -1,3 +1,4 @@
+/* global __WORKBENCH_RUNTIME_EXPECTATION__ -- build-time injected define */
 export const runtimeExpectation = Object.freeze(__WORKBENCH_RUNTIME_EXPECTATION__);
 
 export function assessRuntimeReadiness(payload, { httpOk = true, httpStatus = 200 } = {}) {

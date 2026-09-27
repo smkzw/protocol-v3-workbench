@@ -34,7 +34,10 @@ import threading
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from hashlib import sha256
-from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple
+from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .medical_writing_durable_jobs import DurableJobResult
 
 from packages.contracts.workbench_contracts import (
     CompetitorTriageBasketConfirmationRequest,

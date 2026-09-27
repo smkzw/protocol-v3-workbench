@@ -4199,7 +4199,7 @@ class ServerEvidenceVerifier:
     def _resolve_catalog(
         self,
         package: AuthoringPrefillPackage,
-    ) -> AuthoringPrefillEvidenceCatalog | None:
+    ) -> Any:
         """Resolve the authoritative server catalog.
 
         If a catalog_resolver was provided, call it once (lazy) to get the
