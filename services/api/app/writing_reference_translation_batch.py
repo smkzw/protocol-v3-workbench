@@ -1215,6 +1215,17 @@ class WritingReferenceTranslationBatchService:
                 )
                 for row in failed_payload_rows
             ]
+            if request.nct_ids:
+                # G5 bounded recovery: the in-transaction revalidation must
+                # re-read the SAME scope the preflight validated (and the
+                # durable job payload captured at queue time). Without this
+                # filter, any out-of-scope failed item that allocates
+                # planning lineage changes bounded_identity() and turns an
+                # authorized scoped command into a spurious 409 AFTER the
+                # durable job was already queued.
+                failed_items = _filter_items_by_nct_scope(
+                    failed_items, request.nct_ids
+                )
             if not failed_items:
                 connection.commit()
                 return self.get(project_id, batch_id)

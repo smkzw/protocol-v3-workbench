@@ -10,7 +10,7 @@ import time
 import unittest
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -1465,6 +1465,24 @@ class MedicalWritingSynopsisImportApiTests(unittest.TestCase):
         self.assertEqual("confirmed", confirmed.synopsis_import.status)
 
 
+class _AdjustableClock:
+    """可拨动的假时钟（R22 冻结时钟缝的测试侧）。
+
+    实例自有状态、无常量语义之外的模块级可变全局：每个测试一个实例，
+    ``advance`` 只向前拨（租约/时间戳单调），``start_job`` 起一切时间读数
+    经由服务的 ``clock`` 注入而非真实墙钟。
+    """
+
+    def __init__(self):
+        self._now = datetime.now(timezone.utc)
+
+    def __call__(self) -> datetime:
+        return self._now
+
+    def advance(self, seconds: float) -> None:
+        self._now = self._now + timedelta(seconds=seconds)
+
+
 class SynopsisAsyncJobTest(unittest.TestCase):
     """Tests for the async synopsis-import job lifecycle: 202 before AI,
     idempotent replay, cancel, and progress monotonicity."""
@@ -1473,8 +1491,9 @@ class SynopsisAsyncJobTest(unittest.TestCase):
         self.tmpdir = tempfile.TemporaryDirectory()
         self.artifact_root = Path(self.tmpdir.name) / "artifacts"
         self.ai_runner = FakeBlockingAiRunner()
+        self.clock = _AdjustableClock()
         self.service = MedicalWritingSynopsisImportService(
-            self.artifact_root, self.ai_runner
+            self.artifact_root, self.ai_runner, clock=self.clock
         )
 
     def tearDown(self):
@@ -1740,6 +1759,47 @@ class SynopsisAsyncJobTest(unittest.TestCase):
                 actor="medical_manager",
                 idempotency_key=key,
             )
+        # R22 冻结时钟 + 顺序隔离双层修复（实锤 flaky：12 连跑 5 败，失败
+        # 断言为 ['failed','failed'] != ['pending','pending']）。两层各管
+        # 一个维度，缺一不可：
+        # （一）拨钟：start_job 只同步插 job 行，租约判定（claim timeout、
+        # chunk 租约重置）依赖墙钟；恢复前把注入时钟拨过
+        # claim_timeout_seconds（medical_writing_synopsis_import.py:101 默认
+        # 360 秒），使 recover_stale_jobs 的租约过期判定与真实计时解耦、
+        # 任何交错下都确定过期。
+        # （二）轮询：真实机制与租约无关——parse→chunk 落库在分离线程，
+        # recover_stale_jobs 用 INNER JOIN chunks 选 stale job，chunk 行未
+        # 落库的 job 对恢复完全不可见（返回 0、job 停留 pending；pending 项
+        # 入选无需租约过期）。因此拨钟后仍须有界轮询等两个 job 的 chunk 行
+        # 落库——即恢复查询真正依赖的条件。_shutdown_requested 只挡 AI
+        # worker 生成（_spawn_chunked_worker 直接 return），不影响 chunk
+        # 落库，因此等待完成后全部分支确定：route 缺失/变更 → 双双走非
+        # 重试失败路径。
+        self.clock.advance(self.service.claim_timeout_seconds + 60.0)
+        chunk_wait_deadline = time.monotonic() + 10.0
+        while True:
+            with sqlite3.connect(self.service.db_path) as connection:
+                landed = connection.execute(
+                    "SELECT COUNT(DISTINCT project_id || ':' || idempotency_key) "
+                    "FROM medical_writing_synopsis_import_chunks "
+                    "WHERE (project_id = ? AND idempotency_key = ?) "
+                    "   OR (project_id = ? AND idempotency_key = ?)",
+                    (
+                        "proj_async_missing_route",
+                        "async-missing-route",
+                        "proj_async_changed_route",
+                        "async-changed-route",
+                    ),
+                ).fetchone()[0]
+            if landed == 2:
+                break
+            if time.monotonic() >= chunk_wait_deadline:
+                self.fail(
+                    "cold-recovery precondition not reached within 10s: the "
+                    "detached parse thread did not persist chunk rows for "
+                    "both jobs; recover_stale_jobs cannot see them yet"
+                )
+            time.sleep(0.05)
         with sqlite3.connect(self.service.db_path) as connection:
             connection.execute(
                 "UPDATE medical_writing_synopsis_imports SET route_snapshot_json = '', route_identity_hash = '' "
@@ -1749,7 +1809,10 @@ class SynopsisAsyncJobTest(unittest.TestCase):
 
         changed_runner = _ChangedRouteRunner()
         recovered = MedicalWritingSynopsisImportService(
-            self.artifact_root / "cold_recovery", changed_runner, self.service.db_path
+            self.artifact_root / "cold_recovery",
+            changed_runner,
+            self.service.db_path,
+            clock=self.clock,
         )
         try:
             self.assertEqual(0, recovered.recover_stale_jobs())

@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import parse_qsl, urlsplit
 
 from pydantic import ValidationError
@@ -102,6 +102,10 @@ class MedicalWritingSynopsisImportService:
         poll_interval_seconds: float = 0.05,
         chunk_lease_seconds: float = 900.0,
         heartbeat_interval_seconds: float = 60.0,
+        # 0927V1/R22 frozen-clock seam: injectable clock so lease-expiry
+        # judgements (claim timeout, chunk lease requeue) are test-
+        # controllable. Default is byte-for-byte the previous behavior.
+        clock: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
     ):
         if claim_timeout_seconds <= 0:
             raise ValueError("synopsis import claim timeout must be positive")
@@ -117,6 +121,7 @@ class MedicalWritingSynopsisImportService:
         self.poll_interval_seconds = float(poll_interval_seconds)
         self.chunk_lease_seconds = float(chunk_lease_seconds)
         self.heartbeat_interval_seconds = float(heartbeat_interval_seconds)
+        self._clock = clock
         self.artifact_root.mkdir(parents=True, exist_ok=True)
         self.db_path = Path(db_path or self.artifact_root.parent / "medical_writing_synopsis_import.sqlite3")
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -437,7 +442,7 @@ class MedicalWritingSynopsisImportService:
                 if hashlib.sha256(storage_path.read_bytes()).hexdigest() != content_sha256:
                     raise RuntimeError("concurrent synopsis artifact hash does not match")
 
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         artifact = WritingReferenceDocumentArtifact(
             artifact_id=source_id,
             project_id=project_id,
@@ -570,7 +575,7 @@ class MedicalWritingSynopsisImportService:
         claim_token: str,
         observed_attempt: int | None,
     ) -> dict[str, Any]:
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         lease_expires_at = now + timedelta(seconds=self.claim_timeout_seconds)
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -717,7 +722,7 @@ class MedicalWritingSynopsisImportService:
     def _renew_claim(
         self, project_id: str, idempotency_key: str, claim_token: str
     ) -> None:
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         lease_expires_at = now + timedelta(seconds=self.claim_timeout_seconds)
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -747,7 +752,7 @@ class MedicalWritingSynopsisImportService:
         claim_token: str,
         result: MedicalWritingSynopsisImport,
     ) -> MedicalWritingSynopsisImport:
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
@@ -797,7 +802,7 @@ class MedicalWritingSynopsisImportService:
         claim_token: str,
         error_message: str,
     ) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             connection.execute(
@@ -874,7 +879,7 @@ class MedicalWritingSynopsisImportService:
         job_id = "mwjob_" + hashlib.sha256(
             f"{project_id}|{content_sha256}".encode("utf-8")
         ).hexdigest()[:24]
-        now = datetime.now(timezone.utc)
+        now = self._clock()
 
         # --- idempotent job row creation / reuse ---
         with self._connect() as connection:
@@ -1006,7 +1011,7 @@ class MedicalWritingSynopsisImportService:
             connection.execute(
                 "UPDATE medical_writing_synopsis_imports SET status = 'failed', "
                 "error_message = ?, updated_at = ? WHERE project_id = ? AND idempotency_key = ?",
-                (traceback.format_exc(limit=3)[:1800], datetime.now(timezone.utc).isoformat(),
+                (traceback.format_exc(limit=3)[:1800], self._clock().isoformat(),
                  project_id, idempotency_key),
             )
             connection.commit()
@@ -1030,7 +1035,7 @@ class MedicalWritingSynopsisImportService:
             return
 
         # Persist chunk rows + update job with real chunk metadata.
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         chunks = parse_result["chunks"]
         chunk_total = max(1, len(chunks))
         if not chunks:
@@ -1168,7 +1173,7 @@ class MedicalWritingSynopsisImportService:
                 if hashlib.sha256(storage_path.read_bytes()).hexdigest() != content_sha256:
                     raise RuntimeError("concurrent synopsis artifact hash does not match")
 
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         artifact = WritingReferenceDocumentArtifact(
             artifact_id=source_id,
             project_id=project_id,
@@ -1264,7 +1269,7 @@ class MedicalWritingSynopsisImportService:
         source_id = "mwsynopsis_" + hashlib.sha256(
             f"{project_id}|{content_sha256}".encode("utf-8")
         ).hexdigest()[:24]
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         return MedicalWritingSynopsisSource(
             source_id=source_id,
             original_filename=(row2["source_filename"] if row2 else "") or "study-synopsis",
@@ -1346,7 +1351,7 @@ class MedicalWritingSynopsisImportService:
         """Atomically claim a pending/failed chunk. Returns opaque claim token
         if claimed, None if already owned or done."""
         claim_token = uuid.uuid4().hex
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         lease_expires_at = now + timedelta(seconds=self.chunk_lease_seconds)
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -1400,7 +1405,7 @@ class MedicalWritingSynopsisImportService:
         claim_token: str,
     ) -> bool:
         """Renew the lease on a claimed chunk. Returns True if renewed."""
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         lease_expires_at = now + timedelta(seconds=self.chunk_lease_seconds)
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -1459,7 +1464,7 @@ class MedicalWritingSynopsisImportService:
         error_message: str, claim_token: str,
     ) -> bool:
         """CAS fail: only succeeds if claim_token still owns the running chunk."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             cursor = connection.execute(
@@ -1482,7 +1487,7 @@ class MedicalWritingSynopsisImportService:
         actual_response_model: str, route_identity_hash: str, claim_token: str,
     ) -> bool:
         """CAS complete: only succeeds if claim_token still owns the running chunk."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             cursor = connection.execute(
@@ -1794,7 +1799,7 @@ class MedicalWritingSynopsisImportService:
         # Only write if the new done_count is >= current (monotonic).
         current_chunk_index = int(current_idx["chunk_index"]) if current_idx else 0
         effective_index = max(done_count, current_chunk_index)
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         progress = SynopsisImportJobProgress(
             phase=phase,
             chunk_index=effective_index,
@@ -2057,7 +2062,7 @@ class MedicalWritingSynopsisImportService:
         """Cold-recovery: detect incomplete jobs with expired leases, reset
         their stale chunks, and re-spawn workers. Done chunks are never
         replayed. Source is reconstructed from persisted source_json."""
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         requeued = 0
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -2143,7 +2148,7 @@ class MedicalWritingSynopsisImportService:
     ) -> None:
         """Set status='completed', phase='review_ready', and persist the final
         merged result."""
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         progress = SynopsisImportJobProgress(
             phase="review_ready",
             chunk_total=chunk_total,
@@ -2197,7 +2202,7 @@ class MedicalWritingSynopsisImportService:
         idempotency_key: str,
         error_message: str,
     ) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         progress = SynopsisImportJobProgress(
             phase="failed",
             provider_status="failed",
@@ -2234,7 +2239,7 @@ class MedicalWritingSynopsisImportService:
         chunk_total: int = 0,
         progress: Any = None,
     ) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         progress_json = (
             json.dumps(progress, ensure_ascii=False)
             if isinstance(progress, dict)
@@ -2325,7 +2330,7 @@ class MedicalWritingSynopsisImportService:
         result_ref = None
         if (row["result_json"] or row["payload_json"]) and public_status == "review_ready":
             result_ref = idempotency_key
-        now = datetime.now(timezone.utc)
+        now = self._clock()
         started_at = _parse_datetime(row["created_at"])
         heartbeat_at = _parse_datetime(row["updated_at"])
         return SynopsisImportJobStatusResponse(
@@ -2406,7 +2411,7 @@ class MedicalWritingSynopsisImportService:
         upgraded = self._upgrade_completed_result(result)
         upgraded_text = upgraded.model_dump_json()
         if upgraded_text != result.model_dump_json():
-            now = datetime.now(timezone.utc).isoformat()
+            now = self._clock().isoformat()
             with self._connect() as connection:
                 connection.execute("BEGIN IMMEDIATE")
                 connection.execute(
@@ -2490,7 +2495,7 @@ class MedicalWritingSynopsisImportService:
     def cancel_job(
         self, project_id: str, idempotency_key: str
     ) -> SynopsisImportJobCancelResponse:
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._clock().isoformat()
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
@@ -2617,7 +2622,7 @@ class MedicalWritingSynopsisImportService:
                 WHERE project_id = ? AND idempotency_key = ?
                 """,
                 (
-                    datetime.now(timezone.utc).isoformat(),
+                    self._clock().isoformat(),
                     project_id,
                     idempotency_key,
                 ),
