@@ -139,6 +139,15 @@ class G5SnapshotScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "finalized corpus triage"):
             self._scope(journey, [_preparation(SNAP)])
 
+    def test_a509_search_plan_empty_latest_with_confirmed_projection_passes(self):
+        """真实K3形态：payload无search_plan键时模型物化为空对象（latest=''）。"""
+        journey = _journey(
+            search_plan=SimpleNamespace(latest_snapshot_id=""),
+            projection=_projection(SNAP),
+        )
+        journey_r, prep = self._scope(journey, [_preparation(SNAP)])
+        self.assertEqual(prep.snapshot_id, SNAP)
+
     def test_a507_path_a_finalized_with_none_search_plan_passes(self):
         triage = SimpleNamespace(
             status="finalized",

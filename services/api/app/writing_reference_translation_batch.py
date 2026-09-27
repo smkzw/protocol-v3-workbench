@@ -3391,8 +3391,14 @@ class WritingReferenceTranslationBatchService:
         actor: str,
         cancel_check: Callable[[], bool] | None = None,
         heartbeat: Callable[..., bool] | None = None,
+        item_scope: set[str] | None = None,
     ) -> None:
-        """Run failed-retryable items under durable job claim/heartbeat/cancel."""
+        """Run failed-retryable items under durable job claim/heartbeat/cancel.
+
+        *item_scope* (G5 bounded recovery) restricts processing to the given
+        item ids — the durable retry job's payload names exactly the items its
+        recovery command selected; ``None`` keeps the legacy whole-batch shape.
+        """
         self._run_items(
             project_id,
             batch_id,
@@ -3400,6 +3406,7 @@ class WritingReferenceTranslationBatchService:
             {"failed_retryable"},
             cancel_check=cancel_check,
             heartbeat=heartbeat,
+            item_scope=item_scope,
         )
 
     def run_downstream_contract_transition_with_callbacks(
@@ -4229,19 +4236,25 @@ class WritingReferenceTranslationBatchService:
         # candidate scope for document preparation/translation.
         discovery = getattr(journey, "discovery_basket_projection", None)
         # G5/F06: ``search_plan=None`` is a legal early-journey state (bootstrap
-        # from_zero creation leaves it unset until framing is search-ready). A
-        # confirmed discovery-basket projection matching the locked snapshot is
-        # then the scope authority on its own; when a search plan exists it
-        # remains the single source of the journey's "current snapshot" and a
-        # projection pointing at an older snapshot is stale (rejected below).
+        # from_zero creation leaves it unset until framing is search-ready); the
+        # journey model may also materialize an empty plan whose
+        # latest_snapshot_id is "" — both mean "no locked journey snapshot yet".
+        # A confirmed discovery-basket projection matching the locked snapshot
+        # is then the scope authority on its own; when a search plan carries a
+        # real snapshot id it remains the single source of the journey's
+        # "current snapshot" and a projection pointing at an older snapshot is
+        # stale (rejected below).
+        plan_latest = ""
+        if journey.search_plan is not None:
+            plan_latest = str(
+                getattr(journey.search_plan, "latest_snapshot_id", "") or ""
+            )
+        plan_locked = bool(plan_latest)
         discovery_confirmed = (
             discovery is not None
             and getattr(discovery, "confirmation_id", "")
             and getattr(discovery, "snapshot_id", "") == snapshot_id
-            and (
-                journey.search_plan is None
-                or journey.search_plan.latest_snapshot_id == snapshot_id
-            )
+            and (not plan_locked or plan_latest == snapshot_id)
         )
 
         if not corpus_finalized and not discovery_confirmed:
@@ -4251,10 +4264,7 @@ class WritingReferenceTranslationBatchService:
                 "snapshot"
             )
 
-        if (
-            journey.search_plan is not None
-            and journey.search_plan.latest_snapshot_id != snapshot_id
-        ):
+        if plan_locked and plan_latest != snapshot_id:
             raise ValueError(
                 "batch translation must use the authoring journey's locked current snapshot"
             )
@@ -4564,9 +4574,16 @@ class WritingReferenceTranslationBatchService:
         *,
         cancel_check: Callable[[], bool] | None = None,
         heartbeat: Callable[..., bool] | None = None,
+        item_scope: set[str] | None = None,
     ) -> None:
         batch = self.get(project_id, batch_id)
         item_ids = self._item_ids(project_id, batch_id, allowed_statuses)
+        if item_scope is not None:
+            # G5 bounded recovery: the durable retry job only covers the items
+            # its recovery command selected; claims outside the scope would
+            # burn attempts on items the command did not authorize.
+            wanted = set(item_scope)
+            item_ids = [i for i in item_ids if i in wanted]
         if item_ids:
             # Fail-closed ownership check before the first business write.
             # If the claim was lost after executor entry but before
@@ -9309,12 +9326,14 @@ class TranslationBatchDurableExecutor:
 
         try:
             if is_retry or self._mode == "failed":
+                scoped_ids = payload.get("failed_item_ids") or []
                 self._batch_service.run_failed_with_callbacks(
                     job.project_id,
                     batch_id,
                     actor,
                     cancel_check=cancel_check,
                     heartbeat=heartbeat,
+                    item_scope=(set(scoped_ids) if scoped_ids else None),
                 )
             else:
                 self._batch_service.run_pending_with_callbacks(

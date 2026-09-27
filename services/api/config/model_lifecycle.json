@@ -7,25 +7,40 @@
   "release_confirm_timeout_seconds": 120,
   "poll_interval_seconds": 2,
   "phase_roles": {
-    "translation": ["translation_body"],
-    "triage": ["triage"],
-    "design": ["design"]
+    "translation": [
+      "translation_body"
+    ],
+    "triage": [
+      "triage"
+    ],
+    "design": [
+      "design"
+    ]
   },
-  "protected_roles": ["translation_body", "triage", "design"],
-  "runtime_store_dir": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/workbench/runs/phase_c_mgk10_authority_v2_20260905/runtime",
+  "protected_roles": [
+    "translation_body",
+    "triage",
+    "design"
+  ],
+  "runtime_store_dir": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime",
   "audit_log_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/actions.log",
   "state_file_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/orchestrator_state.json",
   "servers": {
     "omlx": {
       "endpoint": "http://127.0.0.1:8001",
       "port": 8001,
-      "phases": ["translation"],
+      "phases": [
+        "translation"
+      ],
       "managed_model_id": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
       "process_managed": false,
       "admin_models_path": "/admin/api/models",
       "activity_path": "/admin/api/activity",
       "unload_path": "/admin/api/models/{model}/unload",
-      "start_command": ["/Applications/oMLX.app/Contents/MacOS/omlx-cli", "start"],
+      "start_command": [
+        "/Applications/oMLX.app/Contents/MacOS/omlx-cli",
+        "start"
+      ],
       "load_memory_precheck": {
         "estimated_model_bytes": 31250000000,
         "factor": 1.1,
@@ -35,27 +50,40 @@
     "mtplx": {
       "endpoint": "http://127.0.0.1:8002",
       "port": 8002,
-      "phases": ["triage", "design"],
+      "phases": [
+        "triage",
+        "design"
+      ],
       "managed_model_id": "mtplx-flash-next-optimized-speed",
       "process_managed": true,
       "pidfile_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.pid",
       "server_log_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.log",
-      "pid_identity_markers": ["runtime-venv", "mtplx.server.openai", "--port 8002"],
+      "pid_identity_markers": [
+        "runtime-venv",
+        "mtplx.server.openai",
+        "--port 8002"
+      ],
       "start_command": [
         "/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/mtplx",
         "quickstart",
         "--model",
         "/Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed",
-        "--port", "8002",
+        "--port",
+        "8002",
         "--yes"
       ],
       "stop_command": [
         "/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/mtplx",
-        "stop", "--port", "8002", "--grace-seconds", "30"
+        "stop",
+        "--port",
+        "8002",
+        "--grace-seconds",
+        "30"
       ],
       "idle_recycle_seconds": 1800,
       "start_timeout_seconds": 120,
       "_notes": "grace 30s 为保守初值（无一手实测停机时长），LIVE 校准后才允许收紧；quickstart 默认验证模型未缓存，必须显式 --model；明文禁 PATH 上 2.11.0 wrapper 与 open -a MTPLX"
     }
-  }
+  },
+  "runtime_store_note": "0927修正：此前误指医学监查phase_c runtime（0926V1审查在案：不得读共享/监查runtime）；医学写作绑定的权威源=本子系统isolated_runtime（translation_body_local_omlx→8001/v1，三profile已对齐rev2）"
 }
