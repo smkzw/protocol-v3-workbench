@@ -589,6 +589,16 @@ def _snapshot_hash(snapshot: WritingReferenceSearchSnapshot) -> str:
     return _hash_value(material)
 
 
+def _product_profile_field(framing: Any, field: str) -> Any:
+    """Read a product-profile field from either a model object or a mapping."""
+    profile = getattr(framing, "product_profile", None)
+    if profile is None:
+        return ""
+    if isinstance(profile, dict):
+        return profile.get(field, "")
+    return getattr(profile, field, "")
+
+
 def _material_facts_hash(journey: MedicalWritingAuthoringJourney) -> str:
     """Hash of the project material facts that drive relevance."""
     framing, picos = effective_authoring_values(journey)
@@ -596,20 +606,20 @@ def _material_facts_hash(journey: MedicalWritingAuthoringJourney) -> str:
         _effective_clinicaltrials_condition_term(journey)
     )
     material = {
-        "investigational_product": framing.investigational_product,
-        "indication": framing.indication,
-        "study_phase": framing.study_phase,
-        "intrinsic_objectives": framing.intrinsic_objectives,
-        "design_pattern": framing.design_pattern,
-        "target_mechanism": framing.target_mechanism,
-        "competitor_target_scope": framing.competitor_target_scope,
+        "investigational_product": getattr(framing, "investigational_product", ""),
+        "indication": getattr(framing, "indication", ""),
+        "study_phase": getattr(framing, "study_phase", ""),
+        "intrinsic_objectives": getattr(framing, "intrinsic_objectives", ""),
+        "design_pattern": getattr(framing, "design_pattern", ""),
+        "target_mechanism": getattr(framing, "target_mechanism", ""),
+        "competitor_target_scope": getattr(framing, "competitor_target_scope", ""),
         "product_profile": {
-            "technology_type": framing.product_profile.technology_type,
-            "administration_routes": framing.product_profile.administration_routes,
-            "dosage_forms": framing.product_profile.dosage_forms,
-            "exposure_scope": framing.product_profile.exposure_scope,
+            "technology_type": _product_profile_field(framing, "technology_type"),
+            "administration_routes": _product_profile_field(framing, "administration_routes"),
+            "dosage_forms": _product_profile_field(framing, "dosage_forms"),
+            "exposure_scope": _product_profile_field(framing, "exposure_scope"),
         },
-        "population_intent": framing.population_intent,
+        "population_intent": getattr(framing, "population_intent", ""),
         "picos": {
             "population_summary": picos.population_summary if picos else "",
             "intervention_summary": picos.intervention_summary if picos else "",
@@ -647,7 +657,7 @@ def _effective_clinicaltrials_condition_term(
     inferred translation or disease alias.
     """
     framing, _ = effective_authoring_values(journey)
-    framing_term = str(framing.clinicaltrials_condition_term or "").strip()
+    framing_term = str(getattr(framing, "clinicaltrials_condition_term", "") or "").strip()
     search_condition_term = ""
     search_plan = getattr(journey, "search_plan", None)
     registry_filter = getattr(search_plan, "registry_filter", None)
@@ -972,23 +982,23 @@ def _build_chunk_input(
         _effective_clinicaltrials_condition_term(journey)
     )
     project_facts = {
-        "investigational_product": framing.investigational_product,
-        "indication": framing.indication,
+        "investigational_product": getattr(framing, "investigational_product", ""),
+        "indication": getattr(framing, "indication", ""),
         "clinicaltrials_condition_term": condition_term,
         "clinicaltrials_condition_term_source": condition_term_source,
         "clinicaltrials_search_condition_term": search_condition_term,
-        "study_phase": framing.study_phase,
-        "intrinsic_objectives": framing.intrinsic_objectives,
-        "design_pattern": framing.design_pattern,
-        "target_mechanism": framing.target_mechanism,
-        "competitor_target_scope": framing.competitor_target_scope,
+        "study_phase": getattr(framing, "study_phase", ""),
+        "intrinsic_objectives": getattr(framing, "intrinsic_objectives", ""),
+        "design_pattern": getattr(framing, "design_pattern", ""),
+        "target_mechanism": getattr(framing, "target_mechanism", ""),
+        "competitor_target_scope": getattr(framing, "competitor_target_scope", ""),
         "product_profile": {
-            "technology_type": framing.product_profile.technology_type,
-            "administration_routes": framing.product_profile.administration_routes,
-            "dosage_forms": framing.product_profile.dosage_forms,
-            "exposure_scope": framing.product_profile.exposure_scope,
+            "technology_type": _product_profile_field(framing, "technology_type"),
+            "administration_routes": _product_profile_field(framing, "administration_routes"),
+            "dosage_forms": _product_profile_field(framing, "dosage_forms"),
+            "exposure_scope": _product_profile_field(framing, "exposure_scope"),
         },
-        "population_intent": framing.population_intent,
+        "population_intent": getattr(framing, "population_intent", ""),
         "picos": {
             "population_summary": picos.population_summary if picos else "",
             "intervention_summary": picos.intervention_summary if picos else "",

@@ -9563,7 +9563,6 @@ function WritingPage({
     return () => {
       cancelled = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, selectedSection]);
   useEffect(() => {
     setSelectedEditorText("");
@@ -14082,7 +14081,6 @@ function EvidenceDesignManifestPanel({ projectId, manifest, loading, message, on
 
   useEffect(() => {
     loadPicosWorkflow();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, selectedPackage?.package_id]);
 
   const submitPicosAction = async (questionId, action, extra = {}) => {

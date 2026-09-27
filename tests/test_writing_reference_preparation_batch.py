@@ -76,6 +76,33 @@ class FakeJourneyService:
                 snapshot_id=snapshot_id,
                 retained_candidate_ids=retained_ids,
             ),
+            # Real journeys always carry a framing object (built at project
+            # creation) and a picos container; _material_facts_hash reads both.
+            framing=SimpleNamespace(
+                investigational_product="",
+                indication="",
+                study_phase="",
+                intrinsic_objectives="",
+                design_pattern="",
+                target_mechanism="",
+                competitor_target_scope="",
+                population_intent="",
+                clinicaltrials_condition_term="",
+                product_profile={
+                    "technology_type": "",
+                    "administration_routes": "",
+                    "dosage_forms": "",
+                    "exposure_scope": "",
+                },
+            ),
+            picos=SimpleNamespace(
+                population_summary="",
+                intervention_summary="",
+                comparator_summary="",
+                primary_endpoint="",
+            ),
+            revision=1,
+            entry_mode="from_zero",
         )
 
     def get(self, project_id: str) -> SimpleNamespace:

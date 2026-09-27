@@ -237,12 +237,12 @@ def effective_authoring_values(
     framing = (
         draft_framing
         if draft_framing is not None
-        else state.framing
+        else getattr(state, "framing", None)
     )
     picos = (
         draft_picos
         if draft_picos is not None
-        else state.picos
+        else getattr(state, "picos", None)
     )
     return framing, picos
 
