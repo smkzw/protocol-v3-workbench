@@ -1,0 +1,345 @@
+INFO:     Started server process [49961]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5301 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58541 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59943 - "POST /api/projects/proj_user_fad9f64f3151/medical-writing/references/translation-batches/wref_translation_batch_79e7f4e51e7270b75688e8e9/fidelity-reeval HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63008 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+document plan contract lineage missing for artifact wref_doc_20fca69769a995358069 (error codes: ['translation_generation_failed']); retrying as ordinary planner candidates
+document plan contract lineage missing for artifact wref_doc_d364d5fa6232ca03876a (error codes: ['translation_generation_failed']); retrying as ordinary planner candidates
+document plan retry ancestry unresolved for 52 items; known parents=['']; allocating parentless structural recovery (audit required before formal export)
+document plan contract lineage missing for artifact wref_doc_20fca69769a995358069 (error codes: ['translation_generation_failed']); retrying as ordinary planner candidates
+document plan contract lineage missing for artifact wref_doc_d364d5fa6232ca03876a (error codes: ['translation_generation_failed']); retrying as ordinary planner candidates
+document plan retry ancestry unresolved for 52 items; known parents=['']; allocating parentless structural recovery (audit required before formal export)
+INFO:     127.0.0.1:63613 - "POST /api/projects/proj_user_fad9f64f3151/medical-writing/references/translation-batches/wref_translation_batch_79e7f4e51e7270b75688e8e9/retry HTTP/1.1" 202 Accepted
+[MW-ENTRY-DIAG] enter item=wref_translation_item_3420297c38cd1a4d3a0b1633 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_50308d12dcd57e912857f6bc batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_845968968a2fdd9e6cd419ed batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_85aa6240bc9641a60ffa7d86 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_b5414a8194730c3771643d89 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+INFO:     127.0.0.1:64724 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64817 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64818 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64912 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64913 - "GET / HTTP/1.1" 404 Not Found
+[MW-ENTRY-DIAG] item=wref_translation_item_b5414a8194730c3771643d89 阶段=failed_retryable attempt=14 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+translation item wref_translation_item_b5414a8194730c3771643d89 failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_c3cea8a3ef83a3ecd5875142 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_faf7321b4aec22ca52117c2b batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+INFO:     127.0.0.1:65031 - "GET / HTTP/1.1" 404 Not Found
+[MW-ENTRY-DIAG] enter item=wref_translation_item_226bcc7a3c791e48fecd5635 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_29f84d896edfecf23bac61dc batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_2be552b9d609b397ea8c39c3 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_2f5b694554d88a03af65dce7 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_4258568f37e1940de88ac888 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_42da010c2234232f91dc21d2 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_47a2466e95eec309e30f02b4 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_48fa2675c10215c05278dc86 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_48fa2675c10215c05278dc86 阶段=failed_retryable attempt=14 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_provider_transient__ai_provider_request_failed_after_bounded_retries__http_502
+translation item wref_translation_item_48fa2675c10215c05278dc86 failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_provider_transient__ai_provider_request_failed_after_bounded_retries__http_502
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_4f21503725b870c50c2e0cff batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_5044584a946327c24ddfc956 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_50aac699437a6b181e5e58e7 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_537a9cf7cef0a8111cb23f43 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_5849cdb454543c948af456cd batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_5b657521ecaf9bb47a6c76cf batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_606d25c99551f0aaba87f8c1 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_69ca80663e2363e8ae5201ca batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_6e526fdbfe1857620e64328e batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_73400611e42f4cc3a0a3dbac batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_73777509b5300e48b4caf1e3 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_7484409324cbce0d43843115 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_752fc1d1b0ffe2a17765a362 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_790bbe176a0650bf9ed77815 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_822eb2840d4b6879bf0f0b14 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9612661aa248fb5fbd42de7e batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9b88c70c6fa07e65f55206ed batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9c242d8070189c1360587f6f batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9f476a3ec78364df00b73786 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+INFO:     127.0.0.1:51265 - "GET /api/medical-writing/version HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51266 - "GET /healthz HTTP/1.1" 404 Not Found
+[MW-ENTRY-DIAG] enter item=wref_translation_item_a38e118aa47a4850c89a61db batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_a70f8f96a36e0563a15b0fe5 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_a7c2cc77b94c1c9cc1f2c43c batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_aa8a6038bfe85a78b9c8a229 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_ab09b73e8f441f5772e57f35 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_b1267e6e2bb9ae4420f412f2 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_b180eca6f85c9f5b726f669f batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_bb7c28acf28b195efba2a1b5 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_be26b658d1ac5230f0a40bfc batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_be92fed6bdb0a93b19299916 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_c43a8e05246e563ee52f6291 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_c7f5512327f381558c6b3c7a batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_ce02a0c71242d7ad470a059c batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_d0a445f664e0bb917a2b0905 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_db9c6271d72c4ec2e610469d batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_dc9d87440e81aee19036cf19 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_de09b6d9e9d9546a4f66b6e3 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+INFO:     127.0.0.1:52213 - "GET / HTTP/1.1" 404 Not Found
+[MW-ENTRY-DIAG] enter item=wref_translation_item_ebe2139cc13b752b219a0df7 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=14 stage=failed_retryable active_upper=
+INFO:     127.0.0.1:52245 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52246 - "GET /api/health HTTP/1.1" 200 OK
+[MW-ENTRY-DIAG] enter item=wref_translation_item_b5414a8194730c3771643d89 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=15 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_b5414a8194730c3771643d89 阶段=failed_retryable attempt=15 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+translation item wref_translation_item_b5414a8194730c3771643d89 failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_48fa2675c10215c05278dc86 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=15 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_b5414a8194730c3771643d89 batch=wref_translation_batch_79e7f4e51e7270b75688e8e9 attempt=16 stage=failed_retryable active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_b5414a8194730c3771643d89 阶段=failed_retryable attempt=16 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+translation item wref_translation_item_b5414a8194730c3771643d89 failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5678, in _process_with_composite_pipeline
+    self.chapter_pipeline.execute_integration_qc_stage(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        units=chapter_units,
+        ^^^^^^^^^^^^^^^^^^^^
+        target_map=chapter_target_map,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        owner=integration_owner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 1211, in execute_integration_qc_stage
+    execution = self.upper_layer_executor.execute(
+        stage=UPPER_LAYER_POST_HY_INTEGRATION_QC,
+    ...<6 lines>...
+        immutable_body_hash=immutable_body_hash,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_upper_layer_adapters.py", line 322, in execute
+    return super().execute(**normalized)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 701, in execute
+    raise ChapterTranslationPipelineError(failure_code)
+app.chapter_translation_pipeline.ChapterTranslationPipelineError: product_ai_deterministic_response_invalid
+
+INFO:     127.0.0.1:53247 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54079 - "POST /api/projects/proj_user_fad9f64f3151/medical-writing/references/translation-batches/wref_translation_batch_79e7f4e51e7270b75688e8e9/retry HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:54489 - "POST /api/projects/proj_user_fad9f64f3151/medical-writing/references/translation-batches/wref_translation_batch_79e7f4e51e7270b75688e8e9/retry HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:54584 - "POST /api/projects/proj_user_fad9f64f3151/medical-writing/references/translation-batches/wref_translation_batch_79e7f4e51e7270b75688e8e9/retry HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55981 - "GET / HTTP/1.1" 404 Not Found

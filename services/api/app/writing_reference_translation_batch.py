@@ -91,6 +91,8 @@ from .chapter_translation_pipeline import (
     contains_unit_markers,
     evaluate_translation_fidelity_aligned_units,
     integrate_units_with_flash,
+    normalize_post_hy_unit_output,
+    parse_unit_delimited_output,
     reassemble_aligned_translation,
     reconstruct_unit_map,
     split_source_into_units,
@@ -529,6 +531,56 @@ def _document_plan_semantic_alignment_codes(
         if mismatch:
             issues.append(f"chapter_{chapter_id}_semantic_anchor_mismatch")
     return tuple(sorted(dict.fromkeys(issues)))
+
+
+def _blocked_lineage_unit_targets(units, last_output, failure_codes) -> dict:
+    """Derive auditable aligned-unit targets from a Hy-blocked output.
+
+    The blocked exception may carry (a) a fully aligned marked output or
+    (b) only the failed-unit isolation fragment (the bounded-correction
+    path raises from the isolation frame, so the persisted aligned text
+    covers exactly the failing units).  Strategy: parse against the full
+    chunk unit set first; when that fails because the output is a partial
+    fragment, retry against exactly the failed ordinals named by the
+    deterministic ``unit_N:`` fidelity codes.  Anything else parses to an
+    empty map — a partial fragment is never padded by guessing.  Shared by
+    the write-side lineage landing below and the offline rebuild tool
+    (scripts/qc/rebuild_blocked_chunk_lineage.py) so both writers derive
+    byte-identical unit targets for the same blocked event.
+    """
+    unit_by_ordinal = {unit.ordinal: unit for unit in units}
+
+    def _normalize_parsed(parsed: dict) -> dict:
+        return {
+            ordinal: normalize_post_hy_unit_output(
+                unit_by_ordinal[ordinal].text, target
+            )
+            for ordinal, target in parsed.items()
+            if ordinal in unit_by_ordinal
+        }
+
+    parsed_map, parse_errors = parse_unit_delimited_output(
+        last_output,
+        expected_ordinals=sorted(unit_by_ordinal),
+    )
+    if not parse_errors and parsed_map:
+        return _normalize_parsed(parsed_map)
+    failed_ordinals = sorted({
+        int(match.group(1))
+        for match in (
+            re.match(r"^unit_(\d+):", str(code)) for code in failure_codes
+        )
+        if match is not None
+    })
+    if not failed_ordinals:
+        return {}
+    parsed_map, parse_errors = parse_unit_delimited_output(
+        last_output,
+        expected_ordinals=failed_ordinals,
+    )
+    if not parse_errors and parsed_map:
+        return _normalize_parsed(parsed_map)
+    return {}
 
 
 class WritingReferenceTranslationBatchStaleLineageError(RuntimeError):
@@ -5370,6 +5422,93 @@ class WritingReferenceTranslationBatchService:
                         output_hash=_pipeline_sha256(hy_block_text),
                     )
                 )
+                # A110: persist the blocked alignment-unit lineage row so a
+                # fidelity block always carries its unit-level evidence.
+                # Append-only diagnostics via the standard immutable chunk
+                # path (state row + idempotency + audit included); it never
+                # joins the integration candidate list and is never
+                # admitted.  The derived ':blocked' chunk_id/fingerprint
+                # keep the fingerprint-keyed reuse index above unshadowed.
+                # A persistence failure is audited and NEVER changes the
+                # blocked flow below.
+                try:
+                    blocked_unit_targets = _blocked_lineage_unit_targets(
+                        chunk_units, exc.last_output, hy_block_codes
+                    )
+                    blocked_chunk_id = f"{chunk_spec.chunk_id}:blocked"
+                    blocked_fingerprint = (
+                        f"{chunk_spec.chunk_fingerprint}:blocked"
+                    )
+                    self.repository.save_translation_chunk(
+                        TranslationChunkRecord(
+                            chunk_id=blocked_chunk_id,
+                            plan_id=plan.plan_id,
+                            project_id=item.project_id,
+                            artifact_id=artifact.artifact_id,
+                            chapter_id=chapter_id,
+                            chunk_order=chunk_spec.chunk_order,
+                            source_span_ids=list(chunk_spec.source_span_ids),
+                            source_text=chunk_spec.source_text,
+                            source_text_sha256=chunk_spec.source_text_sha256,
+                            adjacent_context_sha256=(
+                                chunk_spec.adjacent_context_sha256
+                            ),
+                            table_header_prefix=chunk_spec.table_header_prefix,
+                            chunk_fingerprint=blocked_fingerprint,
+                            hy_mt2_model=HY_MT2_MODEL_ID,
+                            hy_mt2_prompt_version=HY_MT2_PROMPT_VERSION,
+                            hy_mt2_input_hash=_pipeline_sha256(
+                                chunk_spec.source_text
+                            ),
+                            translated_text=exc.last_output,
+                            translated_text_sha256=_pipeline_sha256(
+                                exc.last_output
+                            ),
+                            unit_targets={
+                                str(k): v
+                                for k, v in blocked_unit_targets.items()
+                            },
+                            translation_strategy="hy_mt2_blocked_diagnostic",
+                            status="blocked",
+                            created_at=self.clock(),
+                        ),
+                        idempotency_key=(
+                            f"chunk:{plan.plan_id}:{blocked_chunk_id}:"
+                            f"{blocked_fingerprint[:16]}:"
+                            f"{TRANSLATION_CONTRACT_FINGERPRINT[:12]}"
+                        ),
+                    )
+                except Exception as lineage_error:  # noqa: BLE001
+                    logger.warning(
+                        "blocked translation-chunk lineage persistence failed"
+                        " for chunk %s: %s",
+                        chunk_spec.chunk_id,
+                        lineage_error,
+                    )
+                    try:
+                        with self.repository._connect() as connection:
+                            self.repository._append_audit(
+                                connection,
+                                item.project_id,
+                                "blocked_translation_chunk_save_failed",
+                                chunk_spec.chunk_id,
+                                "system_pipeline",
+                                {
+                                    "plan_id": plan.plan_id,
+                                    "chapter_id": chapter_id,
+                                    "blocked_chunk_id": (
+                                        f"{chunk_spec.chunk_id}:blocked"
+                                    ),
+                                    "error": str(lineage_error)[:300],
+                                },
+                            )
+                            connection.commit()
+                    except Exception:  # noqa: BLE001
+                        logger.warning(
+                            "blocked lineage failure audit also failed for"
+                            " chunk %s",
+                            chunk_spec.chunk_id,
+                        )
                 break
             # Reassemble aligned translation for downstream integration.
             aligned_chunk_text = reassemble_aligned_translation(

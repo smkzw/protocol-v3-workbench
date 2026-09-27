@@ -1,0 +1,145 @@
+[poll 01 t+00:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 45
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 4
+    NCT03283670|fidelity_blocked = 2
+    NCT03283670|running = 1
+[poll 02 t+02:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 45
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 2
+    NCT03283670|fidelity_blocked = 3
+    NCT03283670|running = 1
+    delta vs prev poll: {'NCT03283670|candidate_ready': 1, 'NCT03283670|fidelity_blocked': 1, 'NCT03283670|failed_retryable': -2}
+[poll 03 t+04:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 45
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 2
+    NCT03283670|fidelity_blocked = 3
+    NCT03283670|running = 1
+    delta vs prev poll: NONE
+[poll 04 t+06:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 45
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 2
+    NCT03283670|fidelity_blocked = 3
+    NCT03283670|running = 1
+    delta vs prev poll: NONE
+[stopped] two consecutive polls with zero delta (no-progress rule)
+[observer end]
+[poll 01 t+00:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 2
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 37
+    NCT03113968|fidelity_blocked = 5
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+[poll 02 t+02:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 2
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 37
+    NCT03113968|fidelity_blocked = 5
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: NONE
+[poll 03 t+04:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 2
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 37
+    NCT03113968|fidelity_blocked = 5
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: NONE
+[poll 04 t+06:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 5
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 31
+    NCT03113968|fidelity_blocked = 8
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: {'NCT03113968|failed_retryable': -6, 'NCT03113968|fidelity_blocked': 3, 'NCT03113968|candidate_ready': 3}
+[poll 05 t+08:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 7
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 19
+    NCT03113968|fidelity_blocked = 18
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: {'NCT03113968|failed_retryable': -12, 'NCT03113968|fidelity_blocked': 10, 'NCT03113968|candidate_ready': 2}
+[poll 06 t+10:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 9
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 12
+    NCT03113968|fidelity_blocked = 23
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: {'NCT03113968|failed_retryable': -7, 'NCT03113968|fidelity_blocked': 5, 'NCT03113968|candidate_ready': 2}
+[poll 07 t+12:00] job=running attempt=1 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 11
+    NCT03113968|excluded = 16
+    NCT03113968|failed_retryable = 2
+    NCT03113968|fidelity_blocked = 31
+    NCT03113968|running = 1
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: {'NCT03113968|failed_retryable': -10, 'NCT03113968|fidelity_blocked': 8, 'NCT03113968|candidate_ready': 2}
+[poll 08 t+14:00] job=retry_wait attempt=2 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=batch has failed_retryable items
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 13
+    NCT03113968|excluded = 16
+    NCT03113968|fidelity_blocked = 32
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: {'NCT03113968|fidelity_blocked': 1, 'NCT03113968|failed_retryable': -2, 'NCT03113968|running': -1, 'NCT03113968|candidate_ready': 2}
+[poll 09 t+16:00] job=failed attempt=3 progress={"phase": "translating", "percent": 1.0, "step": 830, "step_total": 830, "message": "830/830 items processed"} err=batch has failed_retryable items
+    NCT02176291|fidelity_blocked = 1
+    NCT03113968|candidate_ready = 13
+    NCT03113968|excluded = 16
+    NCT03113968|fidelity_blocked = 32
+    NCT03283670|candidate_ready = 1
+    NCT03283670|excluded = 32
+    NCT03283670|failed_retryable = 1
+    NCT03283670|fidelity_blocked = 5
+    delta vs prev poll: NONE
+[converged] job terminal (failed) and transient items = 0
+[observer end]

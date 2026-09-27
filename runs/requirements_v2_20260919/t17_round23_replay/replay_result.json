@@ -1,0 +1,310 @@
+{
+ "command": "replay-truncation-fix",
+ "span_id": "wref_span_9669b181c91ae7a58c824426",
+ "plan_id": "docplan_555b14f4c8150232565e1cb0",
+ "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
+ "base_url": "http://127.0.0.1:8001/v1",
+ "ensure_translation": {
+  "status": "ok",
+  "phase": "translation",
+  "server": "omlx",
+  "action_taken": false,
+  "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"
+ },
+ "lifecycle_status": {
+  "status": "ok",
+  "servers": {
+   "omlx": {
+    "healthy": true,
+    "resident": true,
+    "release_unconfirmed": false,
+    "sentinel": {
+     "inflight": 0,
+     "draining": false,
+     "last_request_ts": 0.0
+    }
+   },
+   "mtplx": {
+    "healthy": false,
+    "resident": false,
+    "release_unconfirmed": false,
+    "sentinel": {
+     "inflight": 0,
+     "draining": false,
+     "last_request_ts": 0.0
+    },
+    "identity": {
+     "owned": false,
+     "pid": 91095,
+     "reason": "process_not_running"
+    }
+   }
+  },
+  "binding_flags": {
+   "translation_body": "ok",
+   "triage": "binding_disabled",
+   "design": "binding_disabled"
+  }
+ },
+ "source_chars": 4865,
+ "chunk_count": 2,
+ "chunk_sizes": [
+  2904,
+  1960
+ ],
+ "old_blocked_fragment_chars": 146,
+ "new_translation_chars": 1791,
+ "model_calls": [
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d",
+   "correction": false,
+   "source_chars": 3119,
+   "output_chars": 1140,
+   "finish_reason": "stop",
+   "prompt_tokens": 1588,
+   "completion_tokens": 607,
+   "output_sha256": "681e133184cd01c5201c22d0b68285c43bdf86679280d08a66c29f155fd2fa07"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d",
+   "correction": true,
+   "source_chars": 3119,
+   "output_chars": 1301,
+   "finish_reason": "stop",
+   "prompt_tokens": 2095,
+   "completion_tokens": 703,
+   "output_sha256": "18a2822eae90dc337768cdf308e4f39efb36325b06a8b400e73a53a007b45952"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:failed_unit_1",
+   "correction": false,
+   "source_chars": 344,
+   "output_chars": 162,
+   "finish_reason": "stop",
+   "prompt_tokens": 935,
+   "completion_tokens": 92,
+   "output_sha256": "f408ba51727cd57b3e33e23fbc0463e20b8c50e47535fe70fb391bd181e93ab8"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:failed_unit_1",
+   "correction": true,
+   "source_chars": 344,
+   "output_chars": 164,
+   "finish_reason": "stop",
+   "prompt_tokens": 1222,
+   "completion_tokens": 97,
+   "output_sha256": "e28ffbde37d48d141c236f8170a8b75744f5b3c1b5b52c731b7c46e3ebde3c6b"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_2",
+   "correction": false,
+   "source_chars": 113,
+   "output_chars": 60,
+   "finish_reason": "stop",
+   "prompt_tokens": 868,
+   "completion_tokens": 31,
+   "output_sha256": "9938a98f74503628f907ec14c5e83a960a4a99d0efae657d4bfd5e50bbf91154"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_3",
+   "correction": false,
+   "source_chars": 885,
+   "output_chars": 311,
+   "finish_reason": "stop",
+   "prompt_tokens": 1014,
+   "completion_tokens": 158,
+   "output_sha256": "a01bc7aed7b79a2c2b0750a9921d06fa9df2c5127d1e6a2eab9adbc8341935b7"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_4",
+   "correction": false,
+   "source_chars": 1073,
+   "output_chars": 413,
+   "finish_reason": "stop",
+   "prompt_tokens": 1120,
+   "completion_tokens": 235,
+   "output_sha256": "e87054b0af6ab25d890ab3b003127b5a8372e5d0061e2cc1b265fc5b2fe7e388"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_4",
+   "correction": true,
+   "source_chars": 1073,
+   "output_chars": 417,
+   "finish_reason": "stop",
+   "prompt_tokens": 1358,
+   "completion_tokens": 236,
+   "output_sha256": "05de81a8b66b20bec2300af9ee0a0062515ca6f7d286f2641e74a6a65fb87374"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_5",
+   "correction": false,
+   "source_chars": 452,
+   "output_chars": 175,
+   "finish_reason": "stop",
+   "prompt_tokens": 935,
+   "completion_tokens": 89,
+   "output_sha256": "c2be50f5a89baa6a8d8e25223270287ac7d83ace499f46c2f9f66482315fdb1e"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_5",
+   "correction": true,
+   "source_chars": 452,
+   "output_chars": 165,
+   "finish_reason": "stop",
+   "prompt_tokens": 1173,
+   "completion_tokens": 84,
+   "output_sha256": "89ed627bd5e86cf89cc578673fc3b37f0f3693084f928b4a83577b8613272917"
+  },
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d:diag_unit_6",
+   "correction": false,
+   "source_chars": 242,
+   "output_chars": 104,
+   "finish_reason": "stop",
+   "prompt_tokens": 893,
+   "completion_tokens": 53,
+   "output_sha256": "75e200fdf9274ad7f22cdacfc6b0f3ba023b91aeb31c911b90be354d135c7391"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734",
+   "correction": false,
+   "source_chars": 2067,
+   "output_chars": 825,
+   "finish_reason": "stop",
+   "prompt_tokens": 1369,
+   "completion_tokens": 460,
+   "output_sha256": "59a236fe3b1770dcca3f9dc5116710e23eea51f5b35a99fabf0d3449846293ba"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734",
+   "correction": true,
+   "source_chars": 2067,
+   "output_chars": 759,
+   "finish_reason": "stop",
+   "prompt_tokens": 1827,
+   "completion_tokens": 426,
+   "output_sha256": "13e229c85222638a423bb3b8fc0b74341251479b08b503a8060291fa6c098745"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:failed_unit_1",
+   "correction": false,
+   "source_chars": 1079,
+   "output_chars": 465,
+   "finish_reason": "stop",
+   "prompt_tokens": 1144,
+   "completion_tokens": 276,
+   "output_sha256": "6b556a08070464cd596b85b710ff1aea6ba4762f70e3ae72378c98ea0f3e63f8"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:failed_unit_1",
+   "correction": true,
+   "source_chars": 1079,
+   "output_chars": 464,
+   "finish_reason": "stop",
+   "prompt_tokens": 1531,
+   "completion_tokens": 274,
+   "output_sha256": "2519eba42ab9ea1ea8b105cffd50c33c59d7aa803fda9da3ed77fae5b6e098a9"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:diag_unit_1",
+   "correction": false,
+   "source_chars": 1079,
+   "output_chars": 465,
+   "finish_reason": "stop",
+   "prompt_tokens": 1144,
+   "completion_tokens": 276,
+   "output_sha256": "6b556a08070464cd596b85b710ff1aea6ba4762f70e3ae72378c98ea0f3e63f8"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:diag_unit_1",
+   "correction": true,
+   "source_chars": 1079,
+   "output_chars": 464,
+   "finish_reason": "stop",
+   "prompt_tokens": 1531,
+   "completion_tokens": 274,
+   "output_sha256": "2519eba42ab9ea1ea8b105cffd50c33c59d7aa803fda9da3ed77fae5b6e098a9"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:diag_unit_2",
+   "correction": false,
+   "source_chars": 393,
+   "output_chars": 140,
+   "finish_reason": "stop",
+   "prompt_tokens": 944,
+   "completion_tokens": 71,
+   "output_sha256": "6913535d8cbdf3230071d9f5d451a5d3a0ac6f10e5706522c31134c23292a73a"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:diag_unit_3",
+   "correction": false,
+   "source_chars": 591,
+   "output_chars": 226,
+   "finish_reason": "stop",
+   "prompt_tokens": 993,
+   "completion_tokens": 117,
+   "output_sha256": "4db1a0fecaf4eeed7dcc5ef4c198877a867a62febc53cc858c780a03d280b768"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734:diag_unit_3",
+   "correction": true,
+   "source_chars": 591,
+   "output_chars": 229,
+   "finish_reason": "stop",
+   "prompt_tokens": 1280,
+   "completion_tokens": 120,
+   "output_sha256": "0d2b02dc59d19e6ed0053867af8a20ee57b4a2af7ce22b5e11e63504720a5e28"
+  }
+ ],
+ "chunks": [
+  {
+   "chunk_id": "chunk_75e3c3650a297dc761ec0f3d",
+   "chunk_order": 1,
+   "source_chars": 2904,
+   "translation_chars": 1039,
+   "unit_count": 6,
+   "fidelity_codes": [
+    "unit_1:numeric_tokens_changed",
+    "unit_1:source_abbreviation_missing",
+    "unit_4:comparison_direction_changed",
+    "unit_4:unit_sequence_changed",
+    "unit_4:unsupported_medical_concept_added",
+    "unit_5:numeric_tokens_changed"
+   ],
+   "blocked_during_production_path": [
+    "unit_1:numeric_tokens_changed",
+    "unit_1:source_abbreviation_missing"
+   ],
+   "unit_salvage_modes": {
+    "4": "marked_fragment",
+    "5": "markerless_raw"
+   },
+   "aligned_translation": "2期随机对照试验概述：在为期8周的试验中，30名受试者将通过置换区组随机法以2:1的比例被随机分组：一组接受文拉法辛XR（剂量为其在开放标签导入期所能耐受的最高剂量），同时联合使用BPN；另一组则仅接受文拉法辛XR与安慰剂。采用2:1随机分配比例的原因如下：\n\n1) 收集更多关于BPN及其代谢物血浆浓度的数据，\n\n2) 积累对该分子的更多临床经验。上述两个原因均符合 R34资助机制（即支持本项目的 NIH资助模式）的发展定位。在Ⅱ期试验末期，我们将安排对治疗分组情况不知情的独立评估员进行最后两次疗效评定，以确认受试者是否达到预期应答标准。之所以在这一关键节点选用独立评估员，是因为临床医生在同时负责副作用监测时可能会出现信息泄露的情况。Ⅱ期试验启动之初，所有即将进入该阶段的受试者均需审阅并签署《Ⅱ期临床试验协议》（详见 OSIRIS系统中的其他附件）。该协议中详细规定了用药安全注意事项以及药物的服用与储存方法。所有即将进入Ⅱ期试验阶段的受试者均须签署该协议。\n\n2. BPN的起始剂量为0.2毫克/天，随后根据耐受情况（通过FIBSER进行评估）以及抑郁严重程度（通过MADRS进行评估），每周增加0.2毫克。基于前期试验结果，最低目标剂量为0.6毫克/天，最高允许剂量则为1.2毫克/天。主要疗效终点为治疗8周后的缓解状态，其判定标准为连续两周MADRS评分均不高于10分——该标准与IRL GREY研究中的定义一致。首次服用丁丙诺啡时，受试者须在PI、共同研究者及研究人员的现场监督下完成服药。服用首剂药物后，受试者需在诊室内停留60分钟接受观察。由于BPN的镇痛作用可能掩盖其抗抑郁效果，因此我们将排除存在重度疼痛的受试者；此类情况定义为在0至10分的数字疼痛评分量表上得分超过7分。上述疼痛评估所针对的时间范围为过去一个月（需说明：本研究并非旨在诊断慢性疼痛综合征，仅排除近期出现具有临床意义的明显疼痛症状的受试者）。\n\n评估临床应答的持久性：虽然预防复发的研究需要采用不同的设计方案，但我们仍计划收集有关临床疗效持续时间的相关数据。我们将安排不知晓分组情况的独立评估人员对治疗应答情况进行确认，相关依据已在上文予以说明。BPN的剂量滴定方案：剂量的递增将以抗抑郁治疗应答情况为依据（例如，连续两次MADRS评分均低于\n\n10) 以及我们依据《副作用频率、强度与负担评分量表》（FIBSER）所制定的标准化使用方案。这种个体化给药方案兼顾了抗抑郁疗效与耐受性。"
+  },
+  {
+   "chunk_id": "chunk_748dabe36dc1a646ce768734",
+   "chunk_order": 2,
+   "source_chars": 1960,
+   "translation_chars": 750,
+   "unit_count": 3,
+   "fidelity_codes": [
+    "unit_1:numeric_tokens_changed",
+    "unit_1:unit_sequence_changed",
+    "unit_3:numeric_tokens_changed",
+    "unit_3:source_abbreviation_missing"
+   ],
+   "blocked_during_production_path": [
+    "unit_1:numeric_tokens_changed",
+    "unit_1:unit_sequence_changed"
+   ],
+   "unit_salvage_modes": {
+    "1": "markerless_raw",
+    "3": "marked_fragment"
+   },
+   "aligned_translation": "我们在BPN的初步试验中成功应用了该制剂，该研究目前仍在进行，旨在探讨复杂哀伤状态的药物治疗方案；此外它也曾被用于STAR项目（Steffens等人，2010年）。我们将依据MADRS与FIBSER评分情况，以每周增加0.2毫克的幅度逐步提升剂量，直至达到每日1.2毫克的水平。我们选定该给药方案的依据是既往开展的多项小型开放标签试验：这些研究均使用BPN治疗年轻患者的难治性抑郁症，初始给药剂量介于每日0.15毫克（鼻用制剂）至每日0.4毫克（舌下含服制剂），后续又逐步提升至每日1.8毫克（鼻用制剂）至每日2毫克（舌下含服制剂）。既往相关研究的试验周期从1周到4周不等，给药剂量每1至2天增加0.4毫克/日，也可依据受试者的耐受程度及临床获益情况灵活调整。在我们近期完成的试验中，受试者接受BPN治疗的周期达8周，最高给药剂量为每日1.6毫克。鉴于本研究的开发目的正是进一步明确BPN的适宜给药范围及血浆药物浓度水平，我们将把II期试验的周期延长至8周，最高给药剂量仍设定为每日1.2毫克。\n\n通过此方法，我们期望能够明确BPN的有效且耐受性良好的剂量范围，进而制定出更为精简的剂量调整方案。这一点至关重要，因为目前尚未确定其合适的剂量区间。为预防受试者出现戒断反应，我们将在研究阶段末期逐步减少给药量。\n\n3. 研究药物的剂量将每3天递减20%，直至完全停药。我们将采用临床阿片类药物戒断量表（COWS）来评估受试者是否出现任何戒断症状，并根据评估结果调整停药方案，以确保所有受试者能够舒适地完成停药过程。在前期预试验中，我们在停用BPN的过程中并未观察到任何戒断症状；这可能与受试者的用药时长相对较短以及本项目中使用的剂量极低有关。破盲说明：在第二阶段结束时，所有受试者的双盲状态均将被解除。"
+  }
+ ],
+ "chapter_candidate": "2期随机对照试验概述：在为期8周的试验中，30名受试者将通过置换区组随机法以2:1的比例被随机分组：一组接受文拉法辛XR（剂量为其在开放标签导入期所能耐受的最高剂量），同时联合使用BPN；另一组则仅接受文拉法辛XR与安慰剂。采用2:1随机分配比例的原因如下：\n\n1) 收集更多关于BPN及其代谢物血浆浓度的数据，\n\n2) 积累对该分子的更多临床经验。上述两个原因均符合 R34资助机制（即支持本项目的 NIH资助模式）的发展定位。在Ⅱ期试验末期，我们将安排对治疗分组情况不知情的独立评估员进行最后两次疗效评定，以确认受试者是否达到预期应答标准。之所以在这一关键节点选用独立评估员，是因为临床医生在同时负责副作用监测时可能会出现信息泄露的情况。Ⅱ期试验启动之初，所有即将进入该阶段的受试者均需审阅并签署《Ⅱ期临床试验协议》（详见 OSIRIS系统中的其他附件）。该协议中详细规定了用药安全注意事项以及药物的服用与储存方法。所有即将进入Ⅱ期试验阶段的受试者均须签署该协议。\n\n2. BPN的起始剂量为0.2毫克/天，随后根据耐受情况（通过FIBSER进行评估）以及抑郁严重程度（通过MADRS进行评估），每周增加0.2毫克。基于前期试验结果，最低目标剂量为0.6毫克/天，最高允许剂量则为1.2毫克/天。主要疗效终点为治疗8周后的缓解状态，其判定标准为连续两周MADRS评分均不高于10分——该标准与IRL GREY研究中的定义一致。首次服用丁丙诺啡时，受试者须在PI、共同研究者及研究人员的现场监督下完成服药。服用首剂药物后，受试者需在诊室内停留60分钟接受观察。由于BPN的镇痛作用可能掩盖其抗抑郁效果，因此我们将排除存在重度疼痛的受试者；此类情况定义为在0至10分的数字疼痛评分量表上得分超过7分。上述疼痛评估所针对的时间范围为过去一个月（需说明：本研究并非旨在诊断慢性疼痛综合征，仅排除近期出现具有临床意义的明显疼痛症状的受试者）。\n\n评估临床应答的持久性：虽然预防复发的研究需要采用不同的设计方案，但我们仍计划收集有关临床疗效持续时间的相关数据。我们将安排不知晓分组情况的独立评估人员对治疗应答情况进行确认，相关依据已在上文予以说明。BPN的剂量滴定方案：剂量的递增将以抗抑郁治疗应答情况为依据（例如，连续两次MADRS评分均低于\n\n10) 以及我们依据《副作用频率、强度与负担评分量表》（FIBSER）所制定的标准化使用方案。这种个体化给药方案兼顾了抗抑郁疗效与耐受性。\n\n我们在BPN的初步试验中成功应用了该制剂，该研究目前仍在进行，旨在探讨复杂哀伤状态的药物治疗方案；此外它也曾被用于STAR项目（Steffens等人，2010年）。我们将依据MADRS与FIBSER评分情况，以每周增加0.2毫克的幅度逐步提升剂量，直至达到每日1.2毫克的水平。我们选定该给药方案的依据是既往开展的多项小型开放标签试验：这些研究均使用BPN治疗年轻患者的难治性抑郁症，初始给药剂量介于每日0.15毫克（鼻用制剂）至每日0.4毫克（舌下含服制剂），后续又逐步提升至每日1.8毫克（鼻用制剂）至每日2毫克（舌下含服制剂）。既往相关研究的试验周期从1周到4周不等，给药剂量每1至2天增加0.4毫克/日，也可依据受试者的耐受程度及临床获益情况灵活调整。在我们近期完成的试验中，受试者接受BPN治疗的周期达8周，最高给药剂量为每日1.6毫克。鉴于本研究的开发目的正是进一步明确BPN的适宜给药范围及血浆药物浓度水平，我们将把II期试验的周期延长至8周，最高给药剂量仍设定为每日1.2毫克。\n\n通过此方法，我们期望能够明确BPN的有效且耐受性良好的剂量范围，进而制定出更为精简的剂量调整方案。这一点至关重要，因为目前尚未确定其合适的剂量区间。为预防受试者出现戒断反应，我们将在研究阶段末期逐步减少给药量。\n\n3. 研究药物的剂量将每3天递减20%，直至完全停药。我们将采用临床阿片类药物戒断量表（COWS）来评估受试者是否出现任何戒断症状，并根据评估结果调整停药方案，以确保所有受试者能够舒适地完成停药过程。在前期预试验中，我们在停用BPN的过程中并未观察到任何戒断症状；这可能与受试者的用药时长相对较短以及本项目中使用的剂量极低有关。破盲说明：在第二阶段结束时，所有受试者的双盲状态均将被解除。",
+ "zero_db_writes": true,
+ "evidence_only": true
+}

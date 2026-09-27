@@ -4975,7 +4975,13 @@ def _split_oversized_text(text: str, target_chars: int) -> list[str]:
     1. Split on double-newlines (paragraph boundaries).
     2. A single paragraph that still exceeds the target is further split on
        single newlines (list/table-row boundaries).
-    3. Accumulate items up to ``target_chars``; a single indivisible line
+    3. A paragraph with NO line structure that still exceeds the target is
+       split at safe sentence boundaries and the segments are packed like
+       paragraph items (round23 truncation fix: keeping a 4865-char
+       single-paragraph span intact produced one 8-unit model request whose
+       output hit the provider completion cap and collapsed to a 146-char
+       fragment).
+    4. Accumulate items up to ``target_chars``; a single indivisible line
        over the limit is kept intact (the caller marks it as oversize).
     """
     if len(text) <= target_chars:
@@ -4993,6 +4999,18 @@ def _split_oversized_text(text: str, target_chars: int) -> list[str]:
                 items.append(line)
                 if line_index > 0:
                     seps.append("\n")
+                else:
+                    seps.append("\n\n" if para_index > 0 else "")
+        elif len(paragraph) > target_chars:
+            # No line structure to split on: fall back to safe sentence
+            # boundaries (decimals, abbreviations and comparator expressions
+            # are never broken) so every resulting model request stays
+            # bounded.
+            segments = _split_long_line(paragraph, target_chars)
+            for seg_index, segment in enumerate(segments):
+                items.append(segment)
+                if seg_index > 0:
+                    seps.append("\n\n")
                 else:
                     seps.append("\n\n" if para_index > 0 else "")
         else:

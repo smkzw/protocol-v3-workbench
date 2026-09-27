@@ -1,0 +1,33 @@
+[lifecycle] ensure(translation): {"status": "ok", "phase": "translation", "server": "omlx", "action_taken": false, "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX"}
+[lifecycle] status: {"status": "ok", "servers": {"omlx": {"healthy": true, "resident": true, "release_unconfirmed": false, "sentinel": {"inflight": 0, "draining": false, "last_request_ts": 0.0}}, "mtplx": {"healthy": false, "resident": false, "release_unconfirmed": false, "sentinel": {"inflight": 0, "draining": false, "last_request_ts": 0.0}, "identity": {"owned": false, "pid": 91095, "reason": "process_not_running"}
+[binding] model=dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX base=http://127.0.0.1:8001/v1 omlx_gate=True
+[chunking] source=4865 chars -> 2 chunks: [2904, 1960]
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d correction=False out=1140ch finish=stop tokens=607
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d correction=True out=1301ch finish=stop tokens=703
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:failed_unit_1 correction=False out=162ch finish=stop tokens=92
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:failed_unit_1 correction=True out=164ch finish=stop tokens=97
+[blocked] chunk=1 codes=['unit_1:numeric_tokens_changed', 'unit_1:source_abbreviation_missing']
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_2 correction=False out=60ch finish=stop tokens=31
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_3 correction=False out=311ch finish=stop tokens=158
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_4 correction=False out=413ch finish=stop tokens=235
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_4 correction=True out=417ch finish=stop tokens=236
+[blocked-unit] chunk=1 unit=4 salvage=marked_fragment codes=['unit_4:comparison_direction_changed', 'unit_4:unit_sequence_changed', 'unit_4:unsupported_medical_concept_added']
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_5 correction=False out=175ch finish=stop tokens=89
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_5 correction=True out=165ch finish=stop tokens=84
+[blocked-unit] chunk=1 unit=5 salvage=markerless_raw codes=['unit_5:numeric_tokens_changed']
+[hy-mt2] chunk=chunk_75e3c3650a297dc761ec0f3d:diag_unit_6 correction=False out=104ch finish=stop tokens=53
+[gate] chunk=1 codes=['unit_1:numeric_tokens_changed', 'unit_1:source_abbreviation_missing', 'unit_4:comparison_direction_changed', 'unit_4:unit_sequence_changed', 'unit_4:unsupported_medical_concept_added', 'unit_5:numeric_tokens_changed']
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734 correction=False out=825ch finish=stop tokens=460
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734 correction=True out=759ch finish=stop tokens=426
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:failed_unit_1 correction=False out=465ch finish=stop tokens=276
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:failed_unit_1 correction=True out=464ch finish=stop tokens=274
+[blocked] chunk=2 codes=['unit_1:numeric_tokens_changed', 'unit_1:unit_sequence_changed']
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:diag_unit_1 correction=False out=465ch finish=stop tokens=276
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:diag_unit_1 correction=True out=464ch finish=stop tokens=274
+[blocked-unit] chunk=2 unit=1 salvage=markerless_raw codes=['unit_1:numeric_tokens_changed', 'unit_1:unit_sequence_changed']
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:diag_unit_2 correction=False out=140ch finish=stop tokens=71
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:diag_unit_3 correction=False out=226ch finish=stop tokens=117
+[hy-mt2] chunk=chunk_748dabe36dc1a646ce768734:diag_unit_3 correction=True out=229ch finish=stop tokens=120
+[blocked-unit] chunk=2 unit=3 salvage=marked_fragment codes=['unit_3:numeric_tokens_changed', 'unit_3:source_abbreviation_missing']
+[gate] chunk=2 codes=['unit_1:numeric_tokens_changed', 'unit_1:unit_sequence_changed', 'unit_3:numeric_tokens_changed', 'unit_3:source_abbreviation_missing']
+[done] new translation chars: 1791 | fidelity codes: {1: ['unit_1:numeric_tokens_changed', 'unit_1:source_abbreviation_missing', 'unit_4:comparison_direction_changed', 'unit_4:unit_sequence_changed', 'unit_4:unsupported_medical_concept_added', 'unit_5:numeric_tokens_changed'], 2: ['unit_1:numeric_tokens_changed', 'unit_1:unit_sequence_changed', 'unit_3:numeric_tokens_changed', 'unit_3:source_abbreviation_missing']}
