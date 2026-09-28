@@ -426,3 +426,9 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **R16预验（r16_precheck.md）**：22项只读可跑/阻塞盘点：S01/E03/T18三阻塞（K3替补池522项待决策、Office集成面未验、鼠标计数脚本未入库），其余可跑并注明条件；未执行任何验收项。
 **递交**：只add本轮路径（2改源文件+1新脚本+2新测试+t17_round23_replay/全目录+本checkpoint）；其余runs漂移（t17_round23_blocked_lineage_0927/t17_round23_e2e_multi/t17_round24_e2e_fleet/runs/acceptance_gate等）与wp6 runtime dirty按惯例保留不提交；commit=feat(protocol-v3): chunk lineage rebuild + bounded replay waves，push origin。
 **未竟/移交**：①新研究放量需用户新批决策（波2-4报告已给出通道与范围核对方法）；②医学门203项待用户处置；③NCT03283670剩1失败项与存量165项离线谱系重建（工具已具备）待后续指令；④flaky并发测试（artifact_lifecycle register）建议纳入测试卫生包。
+
+## 无损暂停检查点（2026-09-28，用户指示）
+**位置**：并发仲裁+五人真实用户循环 dwfrun-07b55989 仍在运行（机制已实现+压测通过+五人测试并行中）；**权威handoff=runs/requirements_v2_20260919/t17_round25_loop/HANDOFF_0928_PAUSE.md（接手先读）**。
+**已落库（d9d70a3及之前全部push）**：长文截断修复（句边界切分+5反例）；blocked谱系持久化+离线重建工具；样本重判=confirmed（§5正确性证明达成）；nct_ids范围重试+worker守范围；第1波52项放量（ready+14/blocked+37）；医学门队列203项；环境事故处置（vite5186曾错指8910——已重接，8910测试残留待用户授权清理）。
+**现场**：HEAD=d9d70a3（与远程一致）；K3批=14/38/522/256；目标批=60/165/3/2；MTPLX由编排器venv CLI拉起实战成功；30文件在途WIP=07b55989缓存（并发仲裁+脚枪修复在途）。
+**恢复顺序**：①五人测试结果聚合→循环（无上限轮，收敛=五场景全导出+无开放P0/P1+并发干净）②vite默认代理脚枪修复（§四.1）③waves映射缺口④fidelity_blocked重译机制⑤医学处置后放量⑥R16。
