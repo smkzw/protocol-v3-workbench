@@ -432,3 +432,14 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **已落库（d9d70a3及之前全部push）**：长文截断修复（句边界切分+5反例）；blocked谱系持久化+离线重建工具；样本重判=confirmed（§5正确性证明达成）；nct_ids范围重试+worker守范围；第1波52项放量（ready+14/blocked+37）；医学门队列203项；环境事故处置（vite5186曾错指8910——已重接，8910测试残留待用户授权清理）。
 **现场**：HEAD=d9d70a3（与远程一致）；K3批=14/38/522/256；目标批=60/165/3/2；MTPLX由编排器venv CLI拉起实战成功；30文件在途WIP=07b55989缓存（并发仲裁+脚枪修复在途）。
 **恢复顺序**：①五人测试结果聚合→循环（无上限轮，收敛=五场景全导出+无开放P0/P1+并发干净）②vite默认代理脚枪修复（§四.1）③waves映射缺口④fidelity_blocked重译机制⑤医学处置后放量⑥R16。
+
+## R26 用户视角LOOP第1轮检查点（2026-09-29，台账员）
+**三视角测试（2026-09-28晚，证据=runs/requirements_v2_20260919/t17_round26_loop/）**：
+- R26-MW（医学撰写·HFrEF II期·口服sGC激动剂·入口A，MW-II-064699A9）：建项→823项竞品26批分诊→锁定→框架→PICOS(v15)全过；语料翻译候选报英文错→例外放行遇stale revision+勾选清空（AGG-P0-03，重勾后放行v17）；建立工作稿失败（intervention.* 8项科学阻塞）且旅程表单体塌缩不可补，初稿/导出未达。报告仅00-test-log.md+24截图（TesterReport正文未落盘）。
+- R26-MD（医学总监·MDD II期·NMDA鼻喷·入口B）：解析约32分钟不成＋虚假"系统会自动排队并在模型可用时拉起"文案（ENV-02 P0），项目未建成，写作入口灰掉不可达。8截图。
+- R26-QA（注册QA·慢性ITP III期·TPO-RA·入口A，MW-III-730D1531）：事实两轮38项/框架/分诊129项全过；Paddle OCR key缺失冻结语料链（P0-1环境）；"研究臂/队列"无编辑路径与例外放行互为前置死锁（P0-2）；事实卡UI-后端不同步（P1-3）；首屏假空态"暂无项目"（P1-4=AGG-P1-05）；另7条P2（改名不贯通/状态码外露/下载无反馈/横幅自相矛盾/分诊维度矛盾/首轮中文检索词/占位文案错位）。27截图。
+**易用性汇总**：亮点=事实逐卡确认+置信度+冲突识别、必填*、规则自动编号、确定性分诊透明、变更下游失效清单、GB/T 7714默认引文；失分=「N项必填待确认」不指名哪几项、高级微调面板自动折叠与入口对应混乱、等待无进度/排队提示、内部状态码直出、等待无界无取消出路（入口B）。
+**缺陷修复（修订批09-28 23:13–23:45，27个源文件，仍在工作区未随本commit提交）**：ENV-02入口B解析链（等待面板接/api/model-lifecycle/status8秒轮询+protocol_synopsis_structuring单窗1200s/梯子1800s预算+timeout≠offline诚实文案+真实attempt计数+取消后抢救）；AGG-P0-03例外放行竞态+勾选/理由跨revision保留；AGG-P1-05首屏真实项目数；AGG25-P1-4事实采集503 provider_unavailable文案；AGG25-P1-5+R26-QA P0-2手动字段缺口打开；AGG25-P0-1版本门drift→advisory；AGG25-P1-6监查项目选择会话记忆。
+**再测试（retest_r26.md，09-29 00:33–01:58，复测协调员Camoufox黑盒；台账员抽验：后端-k override 5 passed、前端overrideAck/prefill/runtimeReadiness 9/9、5301指纹api-a8a3f1a2bf2430a1=vite5186期望、压测summary=翻译1080/1080）**：新建MW-II-61F34329（溃疡性结肠炎II期·从零）/MW-II-6878CDAE（入口B全链打通：排队提示真实占用数→约5分钟落库completed→提取确认页字段与源一致→建项成功）；5项修复浏览器通过+2回归抽查重过；AGG-P0-03浏览器未达（受语料前置阻断，反例后端5过+前端套件全绿，不计浏览器通过）；R26-QA P0-2端到端未闭合；语料→翻译→生成→Word导出链因OCR key环境缺口未复测；新立案3条（P2同内容哈希复导入永久继承"已取消"终态、OCR key缺失复现、必填计数不指名）。
+**下一轮判定**：allPass=false→LOOP继续第2轮（换视角组合，如数据管理与统计/PV/工程师入池）；必修清单=AGG-P0-03浏览器端闭合、R26-QA P0-2端到端、语料→翻译→生成→导出全链复测（前置=集成人补Paddle等云端key，不得伪造）、3条新P2；收敛标准不变=五场景全导出+无开放P0/P1+并发干净。
+**递交**：只add本轮路径（runs/requirements_v2_20260919/t17_round26_loop/全目录+本checkpoint）；源码修订批与t17_round25/27等他轮路径不add；commit=test(protocol-v3): R26 user-perspective LOOP round1，push origin。
