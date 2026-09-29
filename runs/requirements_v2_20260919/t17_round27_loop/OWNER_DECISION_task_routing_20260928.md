@@ -2,7 +2,7 @@
 
 ## 决策内容（用户原话归纳）
 
-> 竞品分诊、研究设计综合、PICOS 辅导、翻译辅助这些章节应该走 deepseek-v4.1-flash（ollama-cloud）！方案初稿、医学修订、摘要结构化走 MTPLX。
+> 竞品分诊、研究设计综合、PICOS 辅导、翻译辅助这些章节应该走 deepseek-v4.1-flash（ollama-cloud）！方案初稿、摘要结构化走 MTPLX。（2026-09-28 用户更正：医学修订也走云端 deepseek-v4.1-flash，本地 MTPLX 只负责方案初稿和摘要结构化）
 
 ## 任务类型 → 模型路由表（AiTaskType 精确映射）
 
@@ -12,7 +12,7 @@
 | PROTOCOL_DESIGN_SYNTHESIS（研究设计综合） | ollama-cloud deepseek-v4.1-flash | 任务级路由 |
 | PICOS_DESIGN_COACH（PICOS 辅导） | ollama-cloud deepseek-v4.1-flash | 任务级路由 |
 | PROTOCOL_FULL_DRAFT（方案初稿） | MTPLX（本地 8002, mtplx-flash-next-optimized-speed） | 保持绑定主路 |
-| MEDICAL_WRITING_REVISION（医学修订） | MTPLX（本地 8002） | **推翻 owner decision 2026-09-23（原：修订走云）** |
+| MEDICAL_WRITING_REVISION（医学修订） | ollama-cloud deepseek-v4.1-flash | **维持 owner decision 2026-09-23（修订走云）——用户 2026-09-28 纠正确认** |
 | PROTOCOL_SYNOPSIS_STRUCTURING（摘要结构化） | MTPLX（本地 8002） | 保持绑定主路 |
 | translation_support 角色（翻译辅助，整体） | ollama-cloud deepseek-v4.1-flash | **配置层已生效（2026-09-28 主会话）** |
 
@@ -37,14 +37,14 @@ TASK_TYPE_ROUTE_POLICY = {
     AiTaskType.PROTOCOL_DESIGN_SYNTHESIS: "ollama_cloud_dsv41",
     AiTaskType.PICOS_DESIGN_COACH: "ollama_cloud_dsv41",
     AiTaskType.PROTOCOL_FULL_DRAFT: "mtplx_local",
-    AiTaskType.MEDICAL_WRITING_REVISION: "mtplx_local",
+    AiTaskType.MEDICAL_WRITING_REVISION: "ollama_cloud_dsv41",
     AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING: "mtplx_local",
 }
 ```
 
 实现要点：
 1. 在 `resolve_internal` / `resolve_registered` 的路由应用点（现 _capture_revision_cloud_route 的 3 处调用位置）改为按 `TASK_TYPE_ROUTE_POLICY.get(task_type)` 应用：命中 ollama_cloud_dsv41 → `_apply_route_profile(ollama_profile, ...)`；命中 mtplx_local → 保持绑定主路（不追加任何覆盖，即撤销 revision→cloud 的强制走云）。
-2. `_capture_revision_cloud_route` 保留函数但改为不再对 MEDICAL_WRITING_REVISION 生效（或删除并更新其 2 处调用与 docstring）——**注释必须保留 2026-09-23 旧决策与 2026-09-28 新决策的沿革**（旧决策理由：MTPLX speed 档在 2-4 互异候选上不可靠，R11 发现；新决策：owner 2026-09-28 指定初稿/修订/摘要走 MTPLX，质量由五人测试舰队实测裁决）。
+2. `_capture_revision_cloud_route` 保留并对 MEDICAL_WRITING_REVISION 继续生效（修订→云，2026-09-23 决策经用户 2026-09-28 纠正后维持；R11 的 MTPLX 修订质量发现依然成立）——但走云通道应优先 ollama_cloud_dsv41 profile（新策略的通道解析），不再泛取 fallback 链第一个云 profile。
 3. `route_identity_snapshot(task_type=...)` 已支持任务级路由体现——确认新策略经该快照进入 durable 身份。
 4. `medical_writing_competitor_triage.py` 的 direct route 常量（TRIAGE_MODEL_NAME="deepseek-v4-pro"@api.deepseek.com）不改动——分诊经 gateway（角色绑定+任务级路由）解析，direct 仅历史兼容；但需实测确认 COMPETITIVE_INTELLIGENCE 经新策略确实打到 ollama.com（durable payload ai_route.base_url 验证）。
 5. 编排器 `config/model_lifecycle.json`：MTPLX@8002 的 phases 从 ['triage','design'] 改为写作任务语义（如 ['writing']——具体 phase 名以编排器现有枚举为准，ensure("triage") 在分诊走云后不应再拉 MTPLX；如编排器需要新增 phase 枚举，最小改动）。
