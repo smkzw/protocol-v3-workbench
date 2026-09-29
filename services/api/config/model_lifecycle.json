@@ -6,6 +6,11 @@
   "start_timeout_seconds": 120,
   "release_confirm_timeout_seconds": 120,
   "poll_interval_seconds": 2,
+  "arbitration_min_dwell_seconds": 600,
+  "arbitration_queue_timeout_seconds": 1800,
+  "arbitration_switch_retry_attempts": 3,
+  "drain_busy_retry_attempts": 3,
+  "_arbitration_note": "0928并发仲裁：跨阶段请求在互斥对象被占用/驻留窗未满时进FIFO排队（不报错不丢弃）；切换后600s内不反向切换（排队攒批，防两阶段来回翻转）；排队超过queue_timeout给明确错误phase_queue_timeout；每次排队/切换/等待/超时写actions.log审计；round25修正：切换失败即回滚本ensure启动的服务器并复位驻留窗；activity可读时以其为忙碌权威（空闲旁路连接不再一票否决），无activity信号的服务器保留连接否决+drain_busy_retry_attempts有界重试（间隔=poll_interval_seconds）",
   "phase_roles": {
     "translation": [
       "translation_body"
@@ -56,6 +61,8 @@
       ],
       "managed_model_id": "mtplx-flash-next-optimized-speed",
       "process_managed": true,
+      "activity_path": "/v1/mtplx/flight",
+      "_activity_note": "AGG25-P1-8：MTPLX /v1/mtplx/flight 返回在途请求列表（active[]），忙碌判定以其为权威（列表非空=真实生成中）；空闲 keep-alive 连接不再一票否决切换",
       "pidfile_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.pid",
       "server_log_path": "runs/requirements_v2_20260919/t17_round21_model_scheduler/mtplx_server.log",
       "pid_identity_markers": [
@@ -81,8 +88,9 @@
         "30"
       ],
       "idle_recycle_seconds": 1800,
-      "start_timeout_seconds": 120,
-      "_notes": "grace 30s 为保守初值（无一手实测停机时长），LIVE 校准后才允许收紧；quickstart 默认验证模型未缓存，必须显式 --model；明文禁 PATH 上 2.11.0 wrapper 与 open -a MTPLX"
+      "start_timeout_seconds": 900,
+      "_notes": "grace 30s 为保守初值（无一手实测停机时长），LIVE 校准后才允许收紧；quickstart 默认验证模型未缓存，必须显式 --model；明文禁 PATH 上 2.11.0 wrapper 与 open -a MTPLX",
+      "notes_add": "0928事故：start_timeout=120s远低于MTPLX冷启动实际耗时，编排器超时后反复launch_detached叠出4个实例→swap 37.8GB爆掉。已改900s；另需代码层补'重发前先stop上一尝试'（见HANDOFF）。"
     }
   },
   "runtime_store_note": "0927修正：此前误指医学监查phase_c runtime（0926V1审查在案：不得读共享/监查runtime）；医学写作绑定的权威源=本子系统isolated_runtime（translation_body_local_omlx→8001/v1，三profile已对齐rev2）"
