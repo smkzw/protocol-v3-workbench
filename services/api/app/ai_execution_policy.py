@@ -86,6 +86,35 @@ SERVER_PROMPT_VERSIONS[AiTaskType.PROTOCOL_FULL_DRAFT] = (
     "protocol_full_draft_v0_11"
 )
 
+# AGG-ENV-02 (round26 deep-dive): long structured generation tasks need a
+# longer single-request window than interactive tasks.  R26 evidence: an
+# entire-synopsis structuring request needed more than the generic 300s
+# window under server load, so the ladder burned 3×300s per route (30 minutes
+# per attempt round) and reported the model "offline" while a second attempt
+# finished in 2.4 minutes once load eased.  Each entry is per-task-type
+# configuration; the env knobs WORKBENCH_AI_TASK_TIMEOUT_<TASK_TYPE> /
+# WORKBENCH_AI_TASK_LADDER_BUDGET_<TASK_TYPE> override the built-ins without
+# touching code.
+TASK_TYPE_ROUTE_TIMEOUT_SECONDS: Dict[str, float] = {
+    "protocol_synopsis_structuring": 1200.0,
+}
+TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS: Dict[str, float] = {
+    # Total wall-clock cap for the whole bounded-retry ladder on one route:
+    # attempt 1 may use the full 1200s window; later attempts get whatever
+    # remains, so the primary route can never black-hole for an hour.
+    "protocol_synopsis_structuring": 1800.0,
+}
+# NEW-22（R27 第2轮修订）：任务级路由表——owner 决策（2026-09-28 修正）指定
+# MEDICAL_WRITING_REVISION 走 ollama-cloud deepseek-v4.1-flash
+# （independent_ai__ollama_cloud_dsv41）。此前实现泛取 fallback 链第一个
+# enabled 云 profile：ollama_cloud_dsv41 已定义且 enabled 但不在链中时，
+# 修订任务被送到链首网关（实测 mwjob_3dc3f0fa → opencode-go）。表内任务
+# 优先按表解析；表项 profile 缺失/禁用/非云时回退原链序，永不因配置缺口
+# 拒绝服务。其他任务类型按需追加表项。
+TASK_TYPE_ROUTE_PROFILE_OVERRIDES: Dict[str, str] = {
+    "medical_writing_revision": "independent_ai__ollama_cloud_dsv41",
+}
+
 GLOBAL_FORBIDDEN_SOURCE_IDS = {
     "generated_html_reference",
     "legacy_deep_dive_report",
@@ -153,6 +182,20 @@ _CMS_ROUTER_DEEPSEEK_LATEST_POLICY = TaskAiRoutePolicy(
     base_url="http://127.0.0.1:20128/v1",
     allowed_models=frozenset({"deepseek-latest-cloud"}),
 )
+# NEW-40（R27 第3轮修订）：owner 决策（2026-09-28）指定的 ollama-cloud
+# deepseek-v4.1-flash（independent_ai__ollama_cloud_dsv41，与
+# TASK_TYPE_ROUTE_PROFILE_OVERRIDES 的提交层路由同一承载）。NEW-22 只修了
+# 提交层，执行层白名单缺该项导致 mwjob_859f4055 三连拒、修订功能整体不可用。
+_OLLAMA_CLOUD_DEEPSEEK_V41_FLASH_POLICY = TaskAiRoutePolicy(
+    provider_name="ollama-cloud",
+    transport_name="openai_compatible",
+    # 0930 fix: include /v1 — the adapter appends /chat/completions directly
+    # to base_url; without /v1 requests hit https://ollama.com/chat/completions
+    # which the cloud returns 404 (the profile settings JSON was fixed in
+    # tandem; this policy must match its normalized base_url).
+    base_url="https://ollama.com/v1",
+    allowed_models=frozenset({"deepseek-v4.1-flash"}),
+)
 # Route mirrors the owner's actual MTPLX deployment as discovered on
 # 2026-09-23 (LOCAL_ENDPOINT_DISCOVERY_0923V1.json): the server runs on
 # 127.0.0.1:8002 and advertises the API id "mtplx-flash-next-optimized-
@@ -175,6 +218,7 @@ _MTPLX_QWEN38_SPEED_POLICY = TaskAiRoutePolicy(
 TASK_AI_ROUTE_POLICIES = {
     AiTaskType.MEDICAL_WRITING_REVISION: (
         _MTPLX_QWEN38_SPEED_POLICY,
+        _OLLAMA_CLOUD_DEEPSEEK_V41_FLASH_POLICY,
         _OPENCODE_GO_DEEPSEEK_V41_FLASH_POLICY,
         _CMS_ROUTER_DEEPSEEK_LATEST_POLICY,
         _ALIBABA_QWEN38_POLICY,
@@ -244,6 +288,10 @@ class AiExecutionResolution:
     route_api_key_env: str
     route_thinking: str = "enabled"
     route_reasoning_effort: str = "max"
+    # AGG-ENV-02: total wall-clock cap for the bounded retry ladder on one
+    # route.  0.0 means "no explicit cap" — the ladder keeps its legacy
+    # timeout × max_attempts shape.
+    route_ladder_budget_seconds: float = 0.0
 
 
 class AiExecutionPolicyResolver:
@@ -357,16 +405,38 @@ class AiExecutionPolicyResolver:
         self.route_reasoning_effort = reasoning_effort or profile.reasoning_effort
 
     def _capture_revision_cloud_route(self) -> bool:
-        """Owner decision 2026-09-23: revision tasks route to cloud.
+        """Owner decision 2026-09-23/09-28: revision tasks route to cloud.
 
         The local MTPLX speed model cannot reliably satisfy the medical-
         writing revision contract (2-4 textually distinct candidates), so
-        MEDICAL_WRITING_REVISION resolves its primary route from the first
-        enabled cloud profile in the approved fallback chain.  Other tasks
-        keep the bound primary (local-first).  Returns True when a cloud
-        route was applied; False leaves the bound primary in place.
+        MEDICAL_WRITING_REVISION resolves its primary cloud route here.
+        NEW-22: the owner-designated profile
+        (independent_ai__ollama_cloud_dsv41) is resolved FIRST from
+        TASK_TYPE_ROUTE_PROFILE_OVERRIDES; the first enabled cloud profile
+        in the approved fallback chain is only the fallback when the
+        designated profile is missing/disabled/non-cloud.  Other tasks keep
+        the bound primary (local-first).  Returns True when a cloud route
+        was applied; False leaves the bound primary in place.
         """
         store = runtime_ai_settings_store()
+        preferred_id = TASK_TYPE_ROUTE_PROFILE_OVERRIDES.get(
+            AiTaskType.MEDICAL_WRITING_REVISION.value, ""
+        )
+        if preferred_id:
+            try:
+                profile = store.profile(preferred_id)
+            except KeyError:
+                profile = None
+            if (
+                profile is not None
+                and profile.enabled
+                and profile.deployment_scope == "cloud"
+            ):
+                self._apply_route_profile(
+                    profile,
+                    store.profile_env(profile, dict(os.environ)),
+                )
+                return True
         for route in store.fallback_chain():
             try:
                 profile = store.profile(route.profile_id)
@@ -579,6 +649,9 @@ class AiExecutionPolicyResolver:
         self._enforce_task_ai_route_policy(task_type)
         forbidden = self._forbidden_sources(task_type, request.forbidden_source_ids)
         self._deny_selected_forbidden(source_ids, forbidden)
+        route_timeout_seconds, route_ladder_budget_seconds = (
+            self._route_budgets_for_task(task_type)
+        )
         return AiExecutionResolution(
             project_id=project_id,
             module=request.module,
@@ -623,7 +696,8 @@ class AiExecutionPolicyResolver:
             route_profile_id=self.route_profile_id,
             route_profile_revision=self.route_profile_revision,
             route_identity_hash=self._route_identity_hash(),
-            route_timeout_seconds=self.route_timeout_seconds,
+            route_timeout_seconds=route_timeout_seconds,
+            route_ladder_budget_seconds=route_ladder_budget_seconds,
             route_api_key_env=self.route_api_key_env,
             route_thinking=self.route_thinking,
             route_reasoning_effort=self.route_reasoning_effort,
@@ -682,6 +756,9 @@ class AiExecutionPolicyResolver:
         self._enforce_task_ai_route_policy(task_type)
         forbidden = self._forbidden_sources(task_type, request.forbidden_source_ids)
         self._deny_selected_forbidden(source_ids, forbidden)
+        route_timeout_seconds, route_ladder_budget_seconds = (
+            self._route_budgets_for_task(task_type)
+        )
         return AiExecutionResolution(
             project_id=project_id,
             module=request.module,
@@ -714,11 +791,55 @@ class AiExecutionPolicyResolver:
             route_profile_id=self.route_profile_id,
             route_profile_revision=self.route_profile_revision,
             route_identity_hash=self._route_identity_hash(),
-            route_timeout_seconds=self.route_timeout_seconds,
+            route_timeout_seconds=route_timeout_seconds,
+            route_ladder_budget_seconds=route_ladder_budget_seconds,
             route_api_key_env=self.route_api_key_env,
             route_thinking=self.route_thinking,
             route_reasoning_effort=self.route_reasoning_effort,
         )
+
+    @staticmethod
+    def _profile_identity_payload(profile: AiProviderProfile) -> dict[str, Any]:
+        """Credential-free route identity fields for one configured route."""
+        return {
+            "schema_version": "independent_ai_route_snapshot_v1",
+            "role_id": "independent_ai",
+            "profile_id": profile.profile_id,
+            "profile_revision": profile.revision,
+            "provider": profile.provider,
+            "model": profile.model,
+            "base_url": profile.base_url.rstrip("/"),
+            "transport": profile.transport,
+            "expected_response_model": profile.expected_response_model or profile.model,
+            "deployment_profile": profile.deployment_profile,
+        }
+
+    def fallback_chain_identities(self) -> list[dict[str, Any]]:
+        """AGG25-P0-2①: identity payloads for the enabled fallback routes.
+
+        Byte-for-byte the same shape (and hash input) that
+        ``resolve_internal_for_profile`` stamps on a fallback run, so a
+        durable caller can freeze and later accept the whole chain.
+        """
+        store = runtime_ai_settings_store()
+        identities: list[dict[str, Any]] = []
+        seen = {self.route_profile_id}
+        for route in store.fallback_chain():
+            if route.profile_id in seen:
+                continue
+            seen.add(route.profile_id)
+            try:
+                profile = store.profile(route.profile_id)
+            except KeyError:
+                continue
+            if not profile.enabled:
+                continue
+            payload = self._profile_identity_payload(profile)
+            payload["identity_sha256"] = sha256(
+                json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+            ).hexdigest()
+            identities.append(payload)
+        return identities
 
     def resolve_internal_for_profile(
         self,
@@ -740,28 +861,33 @@ class AiExecutionPolicyResolver:
             base_url=profile.base_url,
         )
         resolution = resolver.resolve_internal(project_id, request)
-        identity = {
-            "schema_version": "independent_ai_route_snapshot_v1",
-            "role_id": "independent_ai",
-            "profile_id": profile.profile_id,
-            "profile_revision": profile.revision,
-            "provider": profile.provider,
-            "model": profile.model,
-            "base_url": profile.base_url.rstrip("/"),
-            "transport": profile.transport,
-            "expected_response_model": profile.expected_response_model or profile.model,
-            "deployment_profile": profile.deployment_profile,
-        }
+        identity = self._profile_identity_payload(profile)
         identity_sha256 = sha256(
             json.dumps(identity, ensure_ascii=False, sort_keys=True).encode("utf-8")
         ).hexdigest()
+        # AGG-ENV-02: the profile's own timeout must never SHORTEN a
+        # long-task tier window computed by resolve_internal above — R26's
+        # production path ran exactly through here, and a plain
+        # `float(profile.timeout_seconds)` would have reverted the 1200s
+        # window back to 300s and resurrected the fake-failure loop.
+        tiered_timeout = max(
+            float(profile.timeout_seconds),
+            float(resolution.route_timeout_seconds),
+        )
         return replace(
             resolution,
             required_response_model=profile.expected_response_model or profile.model,
             route_profile_id=profile.profile_id,
             route_profile_revision=profile.revision,
             route_identity_hash=identity_sha256,
-            route_timeout_seconds=float(profile.timeout_seconds),
+            route_timeout_seconds=tiered_timeout,
+            route_ladder_budget_seconds=max(
+                float(getattr(resolution, "route_ladder_budget_seconds", 0.0) or 0.0),
+                float(TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS.get(
+                    str(getattr(resolution.task_type, "value", resolution.task_type)),
+                    0.0,
+                )),
+            ),
             route_api_key_env=profile.api_key_env,
             route_thinking=profile.thinking,
             route_reasoning_effort=profile.reasoning_effort,
@@ -783,28 +909,29 @@ class AiExecutionPolicyResolver:
             base_url=profile.base_url,
         )
         resolution = resolver.resolve_registered(project_id, request, source_registry)
-        identity = {
-            "schema_version": "independent_ai_route_snapshot_v1",
-            "role_id": "independent_ai",
-            "profile_id": profile.profile_id,
-            "profile_revision": profile.revision,
-            "provider": profile.provider,
-            "model": profile.model,
-            "base_url": profile.base_url.rstrip("/"),
-            "transport": profile.transport,
-            "expected_response_model": profile.expected_response_model or profile.model,
-            "deployment_profile": profile.deployment_profile,
-        }
+        identity = self._profile_identity_payload(profile)
         identity_sha256 = sha256(
             json.dumps(identity, ensure_ascii=False, sort_keys=True).encode("utf-8")
         ).hexdigest()
+        # AGG-ENV-02: same tier preservation as resolve_internal_for_profile —
+        # a fallback rebuild must not shorten a long-task window either.
         return replace(
             resolution,
             required_response_model=profile.expected_response_model or profile.model,
             route_profile_id=profile.profile_id,
             route_profile_revision=profile.revision,
             route_identity_hash=identity_sha256,
-            route_timeout_seconds=float(profile.timeout_seconds),
+            route_timeout_seconds=max(
+                float(profile.timeout_seconds),
+                float(resolution.route_timeout_seconds),
+            ),
+            route_ladder_budget_seconds=max(
+                float(getattr(resolution, "route_ladder_budget_seconds", 0.0) or 0.0),
+                float(TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS.get(
+                    str(getattr(resolution.task_type, "value", resolution.task_type)),
+                    0.0,
+                )),
+            ),
             route_api_key_env=profile.api_key_env,
             route_thinking=profile.thinking,
             route_reasoning_effort=profile.reasoning_effort,
@@ -1106,6 +1233,36 @@ class AiExecutionPolicyResolver:
             return AiTaskType(value)
         except ValueError as exc:
             raise AiExecutionPolicyDenied(f"unsupported AI task_type: {value}") from exc
+
+    def _route_budgets_for_task(self, task_type: AiTaskType) -> tuple[float, float]:
+        """AGG-ENV-02: per-task-type (single-request window, ladder budget).
+
+        Returns ``(route_timeout_seconds, route_ladder_budget_seconds)``.
+        A tier never shortens an already-longer configured route timeout;
+        a ladder budget of 0.0 keeps the legacy uncapped ladder shape."""
+        key = str(getattr(task_type, "value", task_type))
+        tier_timeout = TASK_TYPE_ROUTE_TIMEOUT_SECONDS.get(key, 0.0)
+        try:
+            tier_timeout = float(
+                os.environ.get(f"WORKBENCH_AI_TASK_TIMEOUT_{key.upper()}", "")
+                or tier_timeout
+            )
+        except (TypeError, ValueError):
+            pass
+        timeout = (
+            max(float(self.route_timeout_seconds), float(tier_timeout))
+            if tier_timeout
+            else float(self.route_timeout_seconds)
+        )
+        tier_budget = TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS.get(key, 0.0)
+        try:
+            tier_budget = float(
+                os.environ.get(f"WORKBENCH_AI_TASK_LADDER_BUDGET_{key.upper()}", "")
+                or tier_budget
+            )
+        except (TypeError, ValueError):
+            pass
+        return timeout, max(0.0, tier_budget)
 
     def _validate_common(
         self,
