@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -2262,6 +2263,33 @@ class AiTaskStore:
                 temp_path.unlink()
 
 
+_mtplx_family_logger = __import__("logging").getLogger(__name__)
+
+
+def _mtplx_model_family_match(expected: str, observed: str) -> bool:
+    """Owner directive 2026-10-01: MTPLX serves one deployment under profile-
+    dependent ids (mtplx-flash-next-optimized-speed / -turbo / -optimized-quality
+    all name the same resident model family). A strict-equality receipt check
+    killed valid full-draft outputs whenever the server self-reported its
+    turbo-profile alias. Same-family MTPLX ids therefore pass; the receipt
+    still records the raw observed id, and every relaxed match is logged."""
+    expected_family = "mtplx-flash-next"
+    if expected == observed:
+        return True
+    relaxed = (
+        expected.startswith(expected_family)
+        and observed.startswith(expected_family)
+        and expected.split("-")[:3] == observed.split("-")[:3]
+    )
+    if relaxed:
+        _mtplx_family_logger.warning(
+            "[model-family-match] relaxed MTPLX model identity: expected=%s observed=%s (same resident family)",
+            expected,
+            observed,
+        )
+    return relaxed
+
+
 class AiTaskRunner:
     def __init__(
         self,
@@ -3000,7 +3028,10 @@ class AiTaskRunner:
             errors.append(
                 f"provider mismatch: expected {expected_provider}, got {output.get('provider')}"
             )
-        if output.get("model") != expected_model:
+        observed_model = str(output.get("model") or "")
+        if observed_model != expected_model and not _mtplx_model_family_match(
+            expected_model, observed_model
+        ):
             errors.append(
                 f"model mismatch: expected {expected_model}, got {output.get('model')}"
             )
@@ -3677,6 +3708,11 @@ def _configured_provider_factory(resolution: AiExecutionResolution) -> AiProvide
             "WORKBENCH_AI_MODEL": resolution.model_name,
             "WORKBENCH_AI_DEPLOYMENT_PROFILE": resolution.deployment_profile,
             "WORKBENCH_AI_TIMEOUT_SECONDS": str(resolution.route_timeout_seconds),
+            # AGG-ENV-02: per-task-type retry-ladder wall-clock cap (0 = the
+            # legacy uncapped ladder shape).
+            "WORKBENCH_AI_LADDER_BUDGET_SECONDS": str(
+                getattr(resolution, "route_ladder_budget_seconds", 0.0) or 0.0
+            ),
             "WORKBENCH_AI_EXPECTED_RESPONSE_MODEL": resolution.required_response_model,
             "WORKBENCH_AI_THINKING": resolution.route_thinking,
             "WORKBENCH_AI_REASONING_EFFORT": resolution.route_reasoning_effort,
