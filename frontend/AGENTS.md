@@ -2,6 +2,10 @@
 
 Run the local server yourself and open the preview in the in-app browser. Do not give the user server-start instructions when you can run it.
 
+Local run book (protocol v3 subsystem, 2026-09-30):
+- Start vite with an explicit proxy target, otherwise it silently proxies to the shared live runtime: `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 npx vite --host 127.0.0.1 --port 5186 --strictPort`.
+- After ANY backend code change, restart vite (or rely on the readiness banner's named guidance): the dev banner compares the running backend against a per-request fingerprint of the current source tree (`/runtime-build.json`), so a stale vite produces a "请重启vite" banner and a stale backend produces a "请重启后端" banner.
+
 Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.

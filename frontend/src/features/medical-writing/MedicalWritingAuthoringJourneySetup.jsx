@@ -4301,11 +4301,20 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
   })));
   const assemblyPlanBlockers = assemblyPlanQuestions.filter((item) => item.severity === "blocker");
   const assemblyPlanAdvisories = assemblyPlanQuestions.filter((item) => item.severity !== "blocker");
-  const assemblyPlanReady = Boolean(
+  // R26 全链路自检节点⑤修复（循环确认门）：装配计划"完整"（available+
+  // source_current+零 blocker）与"已确认"（confirmation_current）是两个状态。
+  // 计划唯一的作者确认入口是 createDocument 内的 /protocol-assembly-plan/
+  // confirm——进入写作平台即确认动作。若写作入口按钮把 confirmation_current
+  // 当作可点前提，就形成"按钮需已确认才可点、确认只能靠点按钮"的死锁
+  // （现场：title='方案结构尚未完成核对，暂不能建立工作稿。'）。因此：
+  // 完整未确认 → 按钮可点，点击时按 CAS 契约补确认；阻断项未清 → 仍禁用。
+  const assemblyPlanComplete = Boolean(
     assemblyPayload.available
       && assemblyPayload.source_current
-      && assemblyPayload.confirmation_current
       && assemblyPlanBlockers.length === 0,
+  );
+  const assemblyPlanReady = Boolean(
+    assemblyPlanComplete && assemblyPayload.confirmation_current,
   );
   const studyDefinitionBound = Boolean(
     journey?.study_definition?.definition_id
@@ -4314,11 +4323,13 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
   );
   const gateStatusText = ready && assemblyPlanReady
     ? "语料与方案结构均已核对"
-    : ready
-      ? "语料已就绪 · 仍需核对方案结构"
-      : allowed
-        ? "例外放行 · 语料未就绪"
-        : "当前阻断写作";
+    : ready && assemblyPlanComplete
+      ? "语料已就绪 · 进入写作时确认结构"
+      : ready
+        ? "语料已就绪 · 仍需核对方案结构"
+        : allowed
+          ? "例外放行 · 语料未就绪"
+          : "当前阻断写作";
 
   useEffect(() => {
     const definition = journey?.study_definition;
@@ -4377,16 +4388,20 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
   // it must not be rendered as permanently disabled merely because the full
   // evidence gate is not ready.  The backend still requires a complete,
   // version-bound StudyDefinition, so keep that binding as the only local
-  // prerequisite for this exception path.  The normal ready path retains the
-  // stricter assembly-plan check.
+  // prerequisite for this exception path.  The normal ready path requires the
+  // assembly plan to be COMPLETE (available + source_current + zero blockers);
+  // confirmation itself is performed by createDocument on entry (confirm-on-
+  // entry), so an unconfirmed-but-complete plan never deadlocks the button.
   const writeEntryReady = allowed
-    && (ready ? assemblyPlanReady : studyDefinitionBound);
+    && (ready ? assemblyPlanComplete : studyDefinitionBound);
   const assemblyPlanMessage = assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"
     ? "系统正在自动核对方案结构完整性，您无需填写技术表单。"
-    : assemblyPlanReady
-      ? assemblyPlanAdvisories.length
-        ? `方案结构已完成版本绑定，可先建立工作稿；${assemblyPlanAdvisories.length}项可选设计会保留为后续确认项。`
-        : "方案结构已完成版本绑定，可建立版本化方案工作稿。"
+    : assemblyPlanComplete
+      ? assemblyPayload.confirmation_current
+        ? assemblyPlanAdvisories.length
+          ? `方案结构已完成版本绑定，可先建立工作稿；${assemblyPlanAdvisories.length}项可选设计会保留为后续确认项。`
+          : "方案结构已完成版本绑定，可建立版本化方案工作稿。"
+        : "方案结构已核对完整且无阻断项；点击进入写作平台即确认当前方案结构并建立工作稿。"
       : assemblyPlanBlockers.length
         ? `还需确认：${assemblyPlanBlockers.slice(0, 3).map((item) => item.label).join("、")}${assemblyPlanBlockers.length > 3 ? `等${assemblyPlanBlockers.length}项` : ""}。`
         : assemblyPlanState.error || "方案结构尚未完成核对，暂不能建立工作稿。";
@@ -4457,7 +4472,7 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
       </div>
       {reusableSnapshotId && <WritingReferencePanel projectId={projectId} variant="authoring" snapshotId={reusableSnapshotId} lockedIndication={searchPlan.registry_filter?.condition_term || journey.framing?.clinicaltrials_condition_term || journey.framing?.indication || ""} lockedPhase={journey.framing?.study_phase || ""} journey={journey} onJourneyChange={setJourney} selectedBriefIds={selectedBriefIds} onSelectedBriefIdsChange={setSelectedBriefIds} />}
       <div className="authoring-gate-checklist"><strong>{missing.length ? "尚未满足的准入条件" : "准入条件已满足"}</strong>{(gate?.requirements?.length ? gate.requirements : missing.map((label) => ({ label, satisfied: false, detail: "" }))).map((item) => <label key={item.label} className={item.satisfied ? "satisfied" : ""}><input type="checkbox" checked={item.satisfied || acknowledged.includes(item.label)} onChange={() => { if (item.satisfied) return; setAcknowledged((current) => current.includes(item.label) ? current.filter((value) => value !== item.label) : [...current, item.label]); }} disabled={readOnly || allowed || item.satisfied} /><span><b>{item.label}</b>{item.detail && <small>{item.detail}</small>}</span></label>)}</div>
-      {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口；补充说明为可选项。</p><label className="synopsis-override-reason"><span>例外说明（可选）</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：说明当前为何先进入写作及后续资料计划" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged} title={!allAcknowledged ? "请先逐项确认全部缺口" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? "可以建立版本化方案工作稿。" : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanReady && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
+      {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口；补充说明为可选项。</p><label className="synopsis-override-reason"><span>例外说明（可选）</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：说明当前为何先进入写作及后续资料计划" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged} title={!allAcknowledged ? "请先逐项确认全部缺口" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? assemblyPlanMessage : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanComplete && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "确认当前方案结构并建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
     </section>
   );
 }

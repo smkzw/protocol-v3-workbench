@@ -1442,6 +1442,101 @@ function validateQualityScorecardFile(scorecardPath) {
   }
 }
 
+/**
+ * L1/NEW-2 (R27 round1 revision): laptop-viewport (1512x814) acceptance for
+ * the authoring journey shell.  jsdom/vitest cannot see the CSS cascade, so
+ * this gate measures REAL layout through CDP: the shell must keep a workable
+ * height, the form body must remain visible for scrolling, and every group
+ * tab of the active stage (framing 4 / PICOS 6) must be actually visible.
+ */
+const PICOS_GROUP_TAB_LABELS = Object.freeze([
+  "设计适用性",
+  "研究人群",
+  "干预措施",
+  "对照",
+  "结局指标",
+  "执行与统计",
+]);
+
+async function verifyJourneyLayoutAtLaptopViewport(cdp, report) {
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 1512,
+    height: 814,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await wait(500);
+  const measured = await evaluate(
+    cdp,
+    `(() => {
+      const shell = document.querySelector('.authoring-journey-shell');
+      if (!shell) return { present: false };
+      const body = shell.querySelector('.authoring-journey-body');
+      const tabs = Array.from(document.querySelectorAll('.authoring-group-tabs [role="tab"]')).map((tab) => ({
+        label: tab.textContent.trim(),
+        visible: Boolean(tab.offsetParent) && tab.getBoundingClientRect().height > 0,
+      }));
+      const refinement = shell.querySelector('.authoring-advanced-refinement');
+      return {
+        present: true,
+        shellClientHeight: shell.clientHeight,
+        bodyClientHeight: body ? body.clientHeight : null,
+        refinementOpen: refinement ? refinement.open : null,
+        tabs,
+        gridTemplateRows: getComputedStyle(shell.closest('.writing-layout') || shell).gridTemplateRows,
+        layoutChildren: Array.from((shell.closest('.writing-layout') || shell).children).map((child) => ({
+          className: String(child.className || "").slice(0, 120),
+          gridRow: getComputedStyle(child).gridRowStart + "/" + getComputedStyle(child).gridRowEnd,
+          gridColumn: getComputedStyle(child).gridColumnStart + "/" + getComputedStyle(child).gridColumnEnd,
+          minHeight: getComputedStyle(child).minHeight,
+          rectHeight: Math.round(child.getBoundingClientRect().height),
+        })),
+      };
+    })()`,
+  );
+  await screenshot(cdp, "journey_laptop_viewport.png", "1512x814");
+  if (!measured || !measured.present) {
+    report.failures.push("laptop-viewport:authoring-journey-shell-not-found");
+    return measured;
+  }
+  if (!(measured.shellClientHeight >= 420)) {
+    report.failures.push(
+      `laptop-viewport:shell-client-height-${measured.shellClientHeight}-below-420`,
+    );
+  }
+  if (!((measured.bodyClientHeight ?? 0) >= 300)) {
+    report.failures.push(
+      `laptop-viewport:journey-body-client-height-${measured.bodyClientHeight}-below-300`,
+    );
+  }
+  if (measured.refinementOpen === false) {
+    report.failures.push("laptop-viewport:advanced-refinement-details-collapsed");
+  }
+  const labels = (measured.tabs || []).map((tab) => tab.label);
+  const picosStage = labels.includes("设计适用性");
+  for (const expected of picosStage ? PICOS_GROUP_TAB_LABELS : []) {
+    if (!labels.includes(expected)) {
+      report.failures.push(`laptop-viewport:missing-picos-tab-${expected}`);
+    }
+  }
+  const invisibleTabs = (measured.tabs || []).filter((tab) => !tab.visible).map((tab) => tab.label);
+  if (!(measured.tabs || []).length) {
+    report.failures.push("laptop-viewport:group-tabs-absent");
+  } else if (invisibleTabs.length) {
+    report.failures.push(`laptop-viewport:invisible-tabs-${invisibleTabs.join("|")}`);
+  }
+  report.laptopViewportJourneyLayout = measured;
+  // Restore the primary evidence viewport.
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 1920,
+    height: 1080,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await wait(200);
+  return measured;
+}
+
 async function main() {
   await mkdir(outputDir, { recursive: true });
   const userDataDir = await mkdtemp(path.join(tmpdir(), "cross-indication-child-"));
@@ -1524,6 +1619,9 @@ async function main() {
     const projectId = await createProjectViaUi(cdp, report);
     report.projectId = projectId;
 
+    // --- Step 1b: L1/NEW-2 laptop-viewport layout acceptance (real layout via CDP) ---
+    await verifyJourneyLayoutAtLaptopViewport(cdp, report);
+
     // --- Step 2: Get journey revision for optimistic concurrency ---
     const journey = await getJourney(projectId);
     report.initialRevision = journey.revision;
@@ -1570,6 +1668,8 @@ async function main() {
         new_project_dialog_closed: !dialogOpen,
         page_errors: pageErrors,
         http_failures: httpFailures,
+        failures: report.failures,
+        laptop_viewport: report.laptopViewportJourneyLayout || null,
         passed: report.passed,
       };
       const dryRunArtifacts = {

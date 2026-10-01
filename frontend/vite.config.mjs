@@ -35,27 +35,36 @@ function sourceFingerprint(sourceRoot, extensions, prefix, digestPrefixLength, a
 }
 
 const fingerprint = runtimeContract.build_fingerprint;
-const runtimeExpectation = {
-  runtimeContractSchema: runtimeContract.schema_version,
-  apiContractVersion: runtimeContract.api_contract_version,
-  clientContractHeader: runtimeContract.client_contract_header,
-  expectedBackendBuildId: sourceFingerprint(
-    join(workbenchRoot, fingerprint.backend_source_root),
-    fingerprint.backend_extensions,
-    "api",
-    fingerprint.digest_prefix_length,
-  ),
-  frontendBuildId: sourceFingerprint(
-    join(workbenchRoot, fingerprint.frontend_source_root),
-    fingerprint.frontend_extensions,
-    "web",
-    fingerprint.digest_prefix_length,
-    fingerprint.frontend_additional_files.map((path) => join(workbenchRoot, path)),
-  ),
-};
+
+// NEW-4（R27 第1轮末修订）：期望指纹必须可在任意时刻对当前源码树重算。
+// define 注入（prod bundle + 请求头）仍用 vite 启动时的快照 runtimeExpectation，
+// 但 dev 中间件 /runtime-build.json 改为逐请求调用本函数现算——否则 vite 启动
+// 后的代码变更永远不反映到前端期望值上（R27 现场：横幅"期望 api-a8a3… vs
+// 运行后端 api-c743…"刷新无效，根因即此快照）。
+function buildRuntimeExpectation() {
+  return {
+    runtimeContractSchema: runtimeContract.schema_version,
+    apiContractVersion: runtimeContract.api_contract_version,
+    clientContractHeader: runtimeContract.client_contract_header,
+    expectedBackendBuildId: sourceFingerprint(
+      join(workbenchRoot, fingerprint.backend_source_root),
+      fingerprint.backend_extensions,
+      "api",
+      fingerprint.digest_prefix_length,
+    ),
+    frontendBuildId: sourceFingerprint(
+      join(workbenchRoot, fingerprint.frontend_source_root),
+      fingerprint.frontend_extensions,
+      "web",
+      fingerprint.digest_prefix_length,
+      fingerprint.frontend_additional_files.map((path) => join(workbenchRoot, path)),
+    ),
+  };
+}
+
+const runtimeExpectation = buildRuntimeExpectation();
 
 function runtimeBuildManifestPlugin() {
-  const source = `${JSON.stringify(runtimeExpectation, null, 2)}\n`;
   return {
     name: "workbench-runtime-build-manifest",
     configureServer(server) {
@@ -64,14 +73,29 @@ function runtimeBuildManifestPlugin() {
           next();
           return;
         }
+        // NEW-4：按当前源码树逐请求现算（见 buildRuntimeExpectation 注释）。
+        let payload;
+        try {
+          payload = buildRuntimeExpectation();
+        } catch (error) {
+          response.statusCode = 500;
+          response.setHeader("Content-Type", "application/json; charset=utf-8");
+          response.setHeader("Cache-Control", "no-store");
+          response.end(JSON.stringify({ detail: `runtime fingerprint failed: ${error.message}` }));
+          return;
+        }
         response.statusCode = 200;
         response.setHeader("Content-Type", "application/json; charset=utf-8");
         response.setHeader("Cache-Control", "no-store");
-        response.end(source);
+        response.end(`${JSON.stringify(payload, null, 2)}\n`);
       });
     },
     generateBundle() {
-      this.emitFile({ type: "asset", fileName: "runtime-build.json", source });
+      this.emitFile({
+        type: "asset",
+        fileName: "runtime-build.json",
+        source: `${JSON.stringify(runtimeExpectation, null, 2)}\n`,
+      });
     },
   };
 }
