@@ -91,7 +91,14 @@ OPENCODE_GO_BASE_URL = "https://opencode.ai/zen/go/v1"
 OPENCODE_GO_MODEL = "deepseek-v4.1-flash"
 OPENCODE_GO_API_KEY_ENV = "OPENCODE_API_KEY"
 AI_PROVIDER_MAX_ATTEMPTS = 3
-AI_PROVIDER_RETRYABLE_HTTP_CODES = frozenset({429, 500, 502, 503, 504})
+# SMOKE-r2-1 ⑦（R27 收敛修订）：401 纳入有界重试。证据：同一把存储密钥
+# （凭据文件 mtime 不变）在 09-30 20:48/23:21、10-01 00:49 三次拿到
+# HTTP 401，而本会话活体探针同键同端点 200 OK——ollama.com 的 401 是
+# 瞬时上游态，不是密钥失效；此前 401 一票否决整个主路，回退链把墙钟
+# 拖到几十分钟。有界重试（max_attempts 与梯预算照常封顶）让瞬时 401 在
+# 主路内自愈；真正的密钥失效仍会在有限次尝试+明确错误码后失败，不会
+# 静默。
+AI_PROVIDER_RETRYABLE_HTTP_CODES = frozenset({401, 429, 500, 502, 503, 504})
 REQUIRED_FINDING_KEYS = {"finding_id", "status", "title", "source_id", "evidence_span_ids"}
 REQUIRED_EVIDENCE_SPAN_KEYS = {"span_id", "source_id", "locator", "quote"}
 REQUIRED_UNCERTAINTY_KEYS = {"level", "description"}
@@ -1123,38 +1130,87 @@ class DisabledAiProvider:
 
 @contextlib.contextmanager
 def _managed_dispatch(base_url: str):
-    """Bracket one upstream urlopen with the local-model lifecycle sentinel.
+    """Bracket one upstream urlopen with phase arbitration + lifecycle sentinel.
 
     Only the two managed medical-writing servers (oMLX 8001 / MTPLX 8002)
-    are affected: the lifecycle orchestrator counts the request as in-flight
-    so it never drains a server under live traffic, and refuses new
-    dispatches while that server is draining.  The refusal surfaces as a
-    provider runtime error so the existing explicit fallback chain applies —
-    no cloud routing is introduced or changed here (round21 red line 3).
+    are affected.  0928: the dispatch first acquires the cross-phase
+    arbiter (FIFO queue + minimum dwell window + explicit queue timeout,
+    with the per-dispatch sentinel counting merged into the same bracket) so
+    concurrent users on different phases are queued and switched by the
+    mechanism instead of racing the lifecycle — never double-loaded.  Any
+    refusal (queue timeout, draining, ensure failure) surfaces as a provider
+    runtime error so the existing explicit fallback chain applies — no cloud
+    routing is introduced or changed here (round21 red line 3).
     """
     try:
         from .model_lifecycle_orchestrator import (
             LifecycleRefusal,
-            gateway_dispatch_begin,
-            gateway_dispatch_end,
+            _default_arbiter,
         )
-    except Exception:
+        arbiter = _default_arbiter()
+        arbitrated = bool(
+            arbiter is not None and arbiter.handles_endpoint(base_url))
+    except Exception as exc:  # AGG25-P0-2③: an unresolved arbitration state
+        # must never silently bypass the lifecycle for a managed endpoint.
+        arbitrated = False
+        arbiter_error = exc
+    else:
+        arbiter_error = None
+    if not arbitrated:
+        _audit_unarbitrated_dispatch(base_url, arbiter_error)
+        if arbiter_error is not None and _endpoint_is_managed(base_url):
+            raise AiProviderRuntimeError(
+                "Managed local model server could not be arbitrated; "
+                f"dispatch refused ({arbiter_error})",
+                diagnostics={"failure_code": "managed_arbiter_unavailable"},
+            )
         yield
         return
     try:
-        gateway_dispatch_begin(base_url)
+        with arbiter.managed_lease(base_url):
+            yield
     except LifecycleRefusal as exc:
+        # NEW-12(b)（R27 第2轮修订）：编排器拒绝携带的中文 zh_message 一并
+        # 进入诊断负载，前端优先取它展示；工程英文 detail 仍保留在 message
+        # 里供审计。zh_message 由 LifecycleRefusal 按 reason 兜底，绝不为空。
         raise AiProviderRuntimeError(
-            f"Managed local model server is draining: {exc.detail}",
-            diagnostics={"failure_code": exc.reason},
+            f"Managed local model server unavailable: {exc.detail}",
+            diagnostics={
+                "failure_code": exc.reason,
+                "zh_message": getattr(exc, "zh_message", "")
+                or "本地模型服务正忙或暂不可用，请稍后重试。",
+            },
         ) from exc
+
+
+def _endpoint_is_managed(base_url: str) -> bool:
+    """Best-effort managed-endpoint check via the sentinel cache/config."""
     try:
-        yield
-    finally:
-        try:
-            gateway_dispatch_end(base_url)
-        except Exception:
-            pass
+        from .model_lifecycle_orchestrator import _key, _managed_keys
+
+        return _key(base_url) in _managed_keys()
+    except Exception:
+        return False
+
+
+def _audit_unarbitrated_dispatch(base_url: str, error: Exception | None) -> None:
+    """AGG25-P0-2③: every undispatched/unarbitrated managed call is audited
+    so a silent bypass can be detected from the actions log alone."""
+    try:
+        from .model_lifecycle_orchestrator import _default
+
+        _default()._audit(
+            "refused/arbiter-unresolved",
+            action="unarbitrated_managed_dispatch",
+            target=base_url,
+            reason=f"{type(error).__name__}: {error}" if error else "-",
+            before="-",
+            outcome=("fail-closed: managed endpoint, dispatch refused"
+                     if error is not None and _endpoint_is_managed(base_url)
+                     else "allowed: endpoint not managed"),
+        )
+    except Exception:
+        pass
 
 
 class OpenAICompatibleAiProvider:
@@ -1169,6 +1225,7 @@ class OpenAICompatibleAiProvider:
         max_attempts: Optional[int] = None,
         default_thinking: Optional[str] = None,
         default_reasoning_effort: Optional[str] = None,
+        ladder_budget_seconds: float = 0.0,
     ):
         if not base_url.strip():
             raise AiGatewayConfigurationError("AI provider base_url is required")
@@ -1182,6 +1239,11 @@ class OpenAICompatibleAiProvider:
         self.provider_name = provider_name
         self.transport_name = "openai_compatible"
         self.timeout_seconds = timeout_seconds
+        # AGG-ENV-02: total wall-clock cap across the bounded retry ladder on
+        # this route (0.0 = uncapped, legacy timeout × max_attempts shape).
+        # A long-task route can get a 1200s single-request window while the
+        # ladder as a whole still hands control back within its budget.
+        self.ladder_budget_seconds = max(0.0, float(ladder_budget_seconds))
         self.expected_response_model = expected_response_model.strip()
         self.default_thinking = (
             default_thinking.strip().lower()
@@ -1262,11 +1324,31 @@ class OpenAICompatibleAiProvider:
         response_body = ""
         response_status: Optional[int] = None
         response_content_type = ""
+        ladder_started = time.monotonic()
         for attempt in range(self.max_attempts):
+            # AGG-ENV-02: the ladder budget bounds the total wall clock of the
+            # whole retry ladder.  When it is exhausted the route stops
+            # retrying and surfaces a typed runtime error so the explicit
+            # fallback chain (if any) can take over — no silent hour-long
+            # black hole in front of the user.
+            attempt_timeout = self.timeout_seconds
+            if self.ladder_budget_seconds > 0:
+                remaining = self.ladder_budget_seconds - (time.monotonic() - ladder_started)
+                if remaining <= 0:
+                    raise AiProviderRuntimeError(
+                        "AI provider retry ladder budget exhausted after "
+                        f"{attempt} attempt(s) within {self.ladder_budget_seconds:g}s "
+                        "(last TimeoutError)",
+                        diagnostics={
+                            "failure_code": "provider_ladder_budget_exhausted",
+                            "exception_type": "TimeoutError",
+                        },
+                    )
+                attempt_timeout = min(self.timeout_seconds, remaining)
             try:
                 with _managed_dispatch(self.base_url):
                     with urllib.request.urlopen(
-                            request, timeout=self.timeout_seconds) as response:
+                            request, timeout=attempt_timeout) as response:
                         response_status = _response_status(response)
                         response_content_type = _response_content_type(response)
                         response_body = response.read().decode("utf-8")
@@ -1769,6 +1851,7 @@ def configured_ai_provider_from_env(
         model_name=model,
         provider_name=provider,
         timeout_seconds=float(values.get("WORKBENCH_AI_TIMEOUT_SECONDS", "300")),
+        ladder_budget_seconds=float(values.get("WORKBENCH_AI_LADDER_BUDGET_SECONDS", "0") or 0),
         expected_response_model=(
             values.get("WORKBENCH_AI_EXPECTED_RESPONSE_MODEL", "").strip()
             or (model

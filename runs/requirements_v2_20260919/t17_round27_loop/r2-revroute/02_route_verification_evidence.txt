@@ -1,0 +1,36 @@
+=== R27 第2轮 医学修订路由验证证据 ===
+生成时间: 2026-09-30 20:20:38 +0800  (本地)
+验证人: 第2轮医学修订路由验证员（TesterReport见workflow）
+环境: 后端PID 46279 (启动于 2026-09-30 18:40:48 +0800, 含 a7ce3d8 的 NEW-40/0930 修复); 前端 http://127.0.0.1:5186; 后端 http://127.0.0.1:5301
+项目: R26MW-SGC2101（口服sGC激动剂）· 慢性心力衰竭（HFrEF）· II期 · MW-II-064699A9 (project_id=proj_user_1fb1fb310f86)
+触发方式: 纯浏览器操作（创建工作副本→版本2→表格设计器选中第3行/第2列'方案标题'值→AI修订面板(改写意图)→提交AI修订 2026-09-30T12:14:29Z）
+
+=== 步骤1: sqlite3 只读核对 durable 最新 job（命令与输出） ===
+$ sqlite3 "file:${DB}?mode=ro" "SELECT job_id, job_type, status, provider, model, artifact_locator FROM durable_mw_jobs ORDER BY created_at DESC LIMIT 1;"
+mwjob_26c11642a08ed6369d5a7a2e|section_ai_candidate|completed|ollama-cloud|deepseek-v4.1-flash|{"thread_id": "thread_a59a961a4b", "suggestion_ids": ["sug_airun_20260930121429_0f905a98_001", "sug_airun_20260930121429_0f905a98_002", "sug_airun_20260930121429_0f905a98_003", "sug_airun_20260930121429_0f905a98_004"], "post_thread_hash": "63347a070edab822763615416cf9c614b6582f5f90bf6113c71641ac5f6e2091", "generation_context_version": "mw_gen_ctx_v4", "generation_context_digest": "0e8105c148699e31c2731dd9db9e9895bf66d9b7616be7b00a48412ebc0770a4", "operation": "initial", "ai_run_id": "airun_20260930121429_0f905a98", "route_identity_hash": "84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909", "expected_response_model": "deepseek-v4.1-flash", "actual_response_model": "deepseek-v4.1-flash"}
+
+结论(步骤1): durable_mw_jobs 最新 job = mwjob_26c11642a08ed6369d5a7a2e (section_ai_candidate, 本次修订任务), status=completed, provider=ollama-cloud, model=deepseek-v4.1-flash, ai_run_id=airun_20260930121429_0f905a98, route_identity_hash=84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909
+
+=== 步骤2: ai_route.base_url 交叉核对（AI run 审计记录, 只读 grep ai_task_runs.jsonl） ===
+$ grep airun_20260930121429_0f905a98 ${RT}/ai_task_runs.jsonl
+run_id = airun_20260930121429_0f905a98
+task_type = medical_writing_revision
+status = completed
+provider = ollama-cloud
+model_name = deepseek-v4.1-flash
+route_profile_id = independent_ai__ollama_cloud_dsv41
+route_transport = openai_compatible
+route_base_url = https://ollama.com/v1
+expected_response_model = deepseek-v4.1-flash
+actual_response_model = deepseek-v4.1-flash
+route_identity_hash = 84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909
+fallback_chain_id = aifb_b94923b9519ccf71960af7e3
+fallback_depth = 0
+output_validation_status = passed
+created_at = 2026-09-30T12:14:29.819785Z
+
+=== 核对结论 ===
+1) route_profile_id = independent_ai__ollama_cloud_dsv41（owner 20260928 决策指定的 ollama-cloud deepseek-v4.1-flash profile）
+2) route_base_url = https://ollama.com/v1 —— 主机即 https://ollama.com（/v1 为 0930 修复加入的 openai 兼容后缀, 见 services/api/app/ai_execution_policy.py:190-197 注释），新路由已生效
+3) fallback_depth = 0 —— 走的是主路由而非fallback链；route_identity_hash 与 durable job 记录一致（84324d70...）；output_validation_status=passed
+4) actual_response_model = deepseek-v4.1-flash = expected_response_model（无降级）

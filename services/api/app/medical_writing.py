@@ -2495,7 +2495,9 @@ class MedicalWritingRevisionService:
     def _digest_canonical(self, value: Any) -> str:
         return sha256(self._canonical_json(value).encode("utf-8")).hexdigest()
 
-    def _policy_identity(self) -> dict[str, Any]:
+    def _policy_identity(
+        self, task_type: str = "medical_writing_revision"
+    ) -> dict[str, Any]:
         runner = self.ai_task_runner
         if runner is None:
             raise self.GenerationContextError(
@@ -2514,9 +2516,14 @@ class MedicalWritingRevisionService:
         # Owner decision 2026-09-23: revision tasks route to cloud — the
         # submit-time identity must reflect the same task-scoped route the
         # executor resolves.
-        snapshot = snapshot_builder(
-            refresh=True, task_type="medical_writing_revision"
-        )
+        # SMOKE-r1-2 ⑤（R27 收敛修订）：提交层身份必须按任务自身的 task_type
+        # 冻结。此前这里硬编码 medical_writing_revision——全文初稿任务的
+        # descriptor.ai_policy 与 durable provider 列因此被冻结成修订任务的
+        # 云端路由（mwjob_99f37544af2a80b357a4588e 实证 provider=
+        # ollama-cloud/deepseek、route_profile_id=independent_ai__ollama_
+        # cloud_dsv41），而执行层按 PROTOCOL_FULL_DRAFT 走本地 MTPLX，路由
+        # 档案与实际传输互相矛盾。调用方必须传入自己的任务类型。
+        snapshot = snapshot_builder(refresh=True, task_type=task_type)
         if not isinstance(snapshot, dict):
             raise self.GenerationContextError(
                 "AI execution policy route snapshot is invalid"

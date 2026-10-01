@@ -1,0 +1,40 @@
+== r4-revroute 医学修订路由核对（sqlite3 只读 + 静态代码核对） ==
+时间: 2026-09-30 10:58:30 +0800  后端: PID 63003（09-30 10:08:24 启动，含09:09路由修复+09:37仓储编辑）
+
+== A. 本轮UI实测（任务②被阻断的直接证据） ==
+A1. document-session 全项目 500（当前进程，含M8/SGC2101/OAB/526a22727cc7）：
+127.0.0.1:54078 - "GET /api/projects/proj_user_526a22727cc7/medical-writing/document-session?allow_missing=true HTTP/1.1" 500 Internal Server Error
+127.0.0.1:60093 - "GET /api/projects/proj_user_1fb1fb310f86/medical-writing/document-session?allow_missing=true HTTP/1.1" 500 Internal Server Error
+127.0.0.1:60585 - "GET /api/projects/proj_user_97189da36a75/medical-writing/document-session?allow_missing=true HTTP/1.1" 500 Internal Server Error
+127.0.0.1:60766 - "GET /api/projects/proj_user_97189da36a75/medical-writing/document-session?allow_missing=true HTTP/1.1" 500 Internal Server Error
+127.0.0.1:61645 - "GET /api/projects/proj_user_13a2759ba940/medical-writing/document-session?allow_missing=true HTTP/1.1" 500 Internal Server Error
+
+A2. 后端traceback根因（log:46639起）：
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/medical_writing_repository.py", line 115, in project
+    return self._with_effective_document_binding(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MedicalWritingRuntimeRepository' object has no attribute '_with_effective_document_binding'
+
+A3. AST核验（python3 ast 解析 medical_writing_repository.py）：
+  class MedicalWritingRuntimeRepository: 行68-227，6个方法，不含 _with_effective_document_binding
+  def _with_effective_document_binding: 行4139，模块级函数（不属于任何类）
+  ⇒ :115/:225 的 self._with_effective_document_binding(...) 必然 AttributeError
+
+A4. UI提交尝试（会话未就绪）：提交AI修订按钮 disabled，title=「当前历史工作版本已隔离，请先完成版本恢复。」；页面横幅=「真实方案文档会话读取失败：500」
+
+== B. durable DB 最新修订job（sqlite3 只读） ==
+mwjob_43a24e73ed60d30e532bc172|proj_user_87b350249cad|failed|ollama-cloud|deepseek-v4.1-flash|2026-09-30T00:26:05.438917+00:00
+mwjob_859f40557a06ba6735d29e91|proj_user_97189da36a75|failed|ollama-cloud|deepseek-v4.1-flash|2026-09-29T19:43:16.266448+00:00
+（最新为今晨08:26他人触发的 mwjob_43a24e73，早于09:09白名单修复 → 同款策略拒绝；10:08重启后无任何新修订job——平台500阻断创建）
+
+  43a24e73 提交层路由与错误：
+  base_url = https://ollama.com | profile = independent_ai__ollama_cloud_dsv41
+  AiExecutionPolicyDenied: AI task medical_writing_revision requires a product-owned approved direct route: provider must be one of alibaba_to
+
+== C. NEW-40 白名单修复（静态代码核对，非运行时验证） ==
+  services/api/app/ai_execution_policy.py:186-192 新增 _OLLAMA_CLOUD_DEEPSEEK_V41_FLASH_POLICY（provider=ollama-cloud, base_url=https://ollama.com, model=deepseek-v4.1-flash）
+  :217-219 TASK_AI_ROUTE_POLICIES[MEDICAL_WRITING_REVISION] 元组已含该策略（列于 _MTPLX 之后第二位）
+  :115 提交层 override（NEW-22）仍在 ⇒ 提交层+执行层配置齐备
+
+== D. 结论 ==
+  ③『核对最新job的ai_route.base_url是否=https://ollama.com』本轮无法按要求完成：UI无法创建新修订job（平台500全局阻断）；提交层路由身份在今晨job(43a24e73)已=https://ollama.com，NEW-40执行层白名单已静态就位，但端到端（真实调用ollama.com）待平台修复后下一轮验证

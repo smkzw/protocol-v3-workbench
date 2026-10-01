@@ -7,3 +7,144 @@ INFO:     127.0.0.1:58028 - "POST /api/projects/proj_user_fad9f64f3151/medical-w
 INFO:     127.0.0.1:63173 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
 INFO:     127.0.0.1:63700 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64323 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59749 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59750 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60025 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60026 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60174 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60643 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60819 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60992 - "GET /api/v3/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60994 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61122 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61177 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61178 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61180 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61181 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61186 - "GET /api/projects/proj_rux_03_002/dashboard HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:61187 - "GET /api/projects/proj_rux_03_002/source-manifest HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:61188 - "GET /api/projects/proj_rux_03_002/ai-runs HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:61189 - "GET /api/projects/proj_rux_03_002/workbench-inbox HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:61179 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61176 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61366 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61372 - "GET /api/projects/proj_user_3ad1082038ba/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61373 - "GET /api/projects/proj_user_3ad1082038ba/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61371 - "GET /api/projects/proj_user_3ad1082038ba/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61374 - "GET /api/projects/proj_user_3ad1082038ba/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61390 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61382 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61379 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61383 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61387 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61389 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61391 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61392 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/full-drafts/current HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:61394 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/document-session?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61393 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61396 - "GET /api/medical-writing/table-templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61400 - "GET /api/medical-writing/table-domain-profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61401 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61404 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/manifest?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61402 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61406 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/full-drafts/current HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:61410 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61412 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61416 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/literature HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61415 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/fact-intake/study_framing?allow_missing=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61409 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61419 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61420 - "POST /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey/prefill-package/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61428 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61424 - "POST /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey/competitor-search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61493 - "POST /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61498 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61499 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey/competitor-triage/latest?snapshot_id=wref_search_2803c38113d50f3f6bbc HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61501 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61503 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/authoring-journey/competitor-triage/latest?snapshot_id=wref_search_2803c38113d50f3f6bbc HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61505 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61497 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/references/workspace?snapshot_id=wref_search_2803c38113d50f3f6bbc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61507 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61513 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61511 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/references/workspace?snapshot_id=wref_search_2803c38113d50f3f6bbc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61522 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61544 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61553 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_4fb813f00f86cd4d4972 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61576 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61584 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_dc4b2f9ac02ca655c591 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61594 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61613 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_2a5c6bf72ad630a71872 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61627 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61636 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_ec403df4279e681e8940 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61653 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61666 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_791f79d1fe1e8e5ceab2 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61675 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61695 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_c6c835419ca1ba182293 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61704 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61716 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61730 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_7c01a4de8d393893d8bd provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61745 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61761 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_8881ed85141097ea4be3 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61771 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61777 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_3d0aab948bcdbd4b4129 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61785 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61800 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_8d9a3f658eee88028427 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61819 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61833 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_f832fa5cb5c84a876294 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61839 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61851 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_76011d9ab6c5442b6567 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61868 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61876 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_558e9250debb58a1a602 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61881 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61899 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61919 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_60f048f906faa7b2b432 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61936 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61945 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_267019cbeb1f5267149b provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61952 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61970 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_d4be2a6001a7ef0e583a provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:61978 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61993 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_e1c0b32a957b7a744e21 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62000 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62016 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_df202c7e263f25ce6995 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62025 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62033 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_e968935df933010685c5 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62050 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62058 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_c12d44c9fabda9126d42 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62065 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62083 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_623d102e40a3765b63a6 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62092 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62110 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62119 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_3067278d1d9f87a830ca provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62126 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62142 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+triage chunk ct_chunk_bb1d3e8837e9f52e5784 provider call failed: AI provider request failed after bounded retries: HTTP 429
+INFO:     127.0.0.1:62147 - "GET /api/projects/proj_user_3ad1082038ba/medical-writing/research-pipeline/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50822 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58446 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58447 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28484]

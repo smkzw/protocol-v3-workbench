@@ -178,6 +178,7 @@ import {
 } from "./features/medical-writing/CrossReferenceMark";
 import {
   assessRuntimeReadiness,
+  loadDevRuntimeExpectation,
   runtimeExpectation,
 } from "./runtimeReadiness.js";
 
@@ -535,6 +536,30 @@ const SourceTableHeader = TableHeader.extend({
 });
 
 const INITIAL_PROJECT_ID = import.meta.env.VITE_PROJECT_ID || "";
+// AGG25-P1-6: the last monitoring project selection survives reloads for
+// the browser session; with no history the UI shows an empty-state guide
+// instead of silently adopting the first (possibly someone else's) project.
+const MONITORING_PROJECT_STORAGE_KEY = "workbench.monitoring.projectId";
+
+function readPersistedMonitoringProjectId() {
+  try {
+    return String(globalThis.sessionStorage?.getItem(MONITORING_PROJECT_STORAGE_KEY) || "");
+  } catch {
+    return "";
+  }
+}
+
+function persistMonitoringProjectId(projectId) {
+  try {
+    if (projectId) {
+      globalThis.sessionStorage?.setItem(MONITORING_PROJECT_STORAGE_KEY, String(projectId));
+    } else {
+      globalThis.sessionStorage?.removeItem(MONITORING_PROJECT_STORAGE_KEY);
+    }
+  } catch {
+    // storage unavailable (private mode): selection just won't persist
+  }
+}
 const DEFAULT_SUBJECT_ID = import.meta.env.VITE_SUBJECT_ID || "";
 
 const navItems = [
@@ -548,6 +573,10 @@ const navItems = [
   { key: "sourceRegistry", label: "来源台账", icon: FolderSearch2 },
   { key: "approvals", label: "审批中心", icon: ClipboardCheck },
 ];
+
+// NEW-7：App 层视图锚点只接受真实存在的页名，防止 sessionStorage 里的陈旧
+// 值把应用钉在未知页上。
+const WORKBENCH_PAGE_IDS = navItems.map((item) => item.key);
 
 const moduleLabels = {
   dashboard: "项目总看板",
@@ -642,7 +671,7 @@ function monitoringReadErrorInfo(error, surface = "医学监查数据") {
   const messages = {
     monitoring_principal_unavailable: {
       title: `${surfaceLabel}暂不可用`,
-      message: "服务器尚未提供可验证的当前用户身份；为保护项目数据，本次读取已阻断。",
+      message: "服务器尚未提供可验证的当前用户身份；为保护项目数据，本次读取已阻断。该项目可能不属于当前登录身份，切换到可读的项目即可恢复使用。",
     },
     monitoring_read_action_unconfigured: {
       title: `${surfaceLabel}读取动作尚未启用`,
@@ -1174,6 +1203,7 @@ function EmptyProjectOverview({
   loading,
   error,
   routeError,
+  projectCount = 0,
   onRetryProjects,
   onClearRoute,
   onCreateProject,
@@ -1183,12 +1213,16 @@ function EmptyProjectOverview({
   const unavailable = Boolean(error || routeError);
   const effectiveError = routeError || error;
   const routeUnavailable = Boolean(routeError);
-  const emptyProjectMetricValue = loading || unavailable ? "—" : "0";
+  // AGG-P1-05: "no project selected" and "no project exists" are different
+  // states and must never share the misleading "项目数 0 / 新建项目后开始"
+  // copy — R26-QA read the fake zero as data loss.
+  const awaitingSelection = !loading && !unavailable && projectCount > 0;
+  const emptyProjectMetricValue = loading || unavailable ? "—" : awaitingSelection ? String(projectCount) : "0";
   return (
-    <main className="page empty-project-overview" data-project-state={loading ? "loading" : unavailable ? "unavailable" : "empty"}>
+    <main className="page empty-project-overview" data-project-state={loading ? "loading" : unavailable ? "unavailable" : awaitingSelection ? "awaiting-selection" : "empty"}>
       <SectionTitle
         eyebrow="项目总看板"
-        title={loading ? "正在加载项目" : routeUnavailable ? "链接项目不可用" : unavailable ? "项目服务暂不可用" : "暂无项目"}
+        title={loading ? "正在加载项目" : routeUnavailable ? "链接项目不可用" : unavailable ? "项目服务暂不可用" : awaitingSelection ? "请选择项目" : "暂无项目"}
         action={(
           <div className="empty-project-actions">
             <AiGatewayPanel
@@ -1218,9 +1252,9 @@ function EmptyProjectOverview({
         <div className="empty-project-metrics">
           {[
             ["项目数", emptyProjectMetricValue],
-            ["模块进度", emptyProjectMetricValue],
-            ["开放风险", emptyProjectMetricValue],
-            ["待审批", emptyProjectMetricValue],
+            ["模块进度", awaitingSelection ? "—" : emptyProjectMetricValue],
+            ["开放风险", awaitingSelection ? "—" : emptyProjectMetricValue],
+            ["待审批", awaitingSelection ? "—" : emptyProjectMetricValue],
           ].map(([label, value]) => (
             <div key={label}>
               <span>{label}</span>
@@ -1230,11 +1264,13 @@ function EmptyProjectOverview({
         </div>
         <div className="empty-project-message">
           <FolderSearch2 size={24} />
-          <strong>{loading ? "正在读取项目列表" : routeUnavailable ? "链接项目未加载" : unavailable ? "项目列表读取失败" : "暂无项目数据"}</strong>
+          <strong>{loading ? "正在读取项目列表" : routeUnavailable ? "链接项目未加载" : unavailable ? "项目列表读取失败" : awaitingSelection ? "尚未选择项目" : "暂无项目数据"}</strong>
           {routeUnavailable ? (
             <span>{effectiveError} 已阻止加载其他研究，避免跨项目串读。</span>
           ) : unavailable ? (
             <span>{effectiveError}</span>
+          ) : awaitingSelection ? (
+            <span>系统内共有 {projectCount} 个项目。请在页面上方的项目下拉列表中选择一个项目开始医学工作；您的选择在本会话内会被记住。</span>
           ) : !loading && (
             <span>新建项目后开始医学工作。</span>
           )}
@@ -1385,7 +1421,15 @@ function AppShell({
                 onChange={(event) => requestProjectChange(event.target.value)}
               >
                 {!hasActiveProject && (
-                  <option value="">{projectsLoadError ? "读取失败" : projectsLoaded ? "暂无项目" : "正在加载项目"}</option>
+                  <option value="">
+                    {projectsLoadError
+                      ? "读取失败"
+                      : !projectsLoaded
+                        ? "正在加载项目"
+                        : projects.length
+                          ? `请选择项目（共${projects.length}个）`
+                          : "暂无项目"}
+                  </option>
                 )}
                 {projects.map((item) => {
                   const product = String(item.product_name || "").trim();
@@ -1451,6 +1495,7 @@ function AppShell({
             loading={!projectsLoaded}
             error={projectsLoadError}
             routeError={projectRouteError}
+            projectCount={projects.length}
             onRetryProjects={onRetryProjects}
             onClearRoute={onClearProjectRoute}
             aiGatewayStatus={aiGatewayStatus}
@@ -9629,7 +9674,21 @@ function WritingPage({
       setRevisionMessage("当前章节暂无后端章节绑定，不能提交AI修订，避免错误写入其他章节。");
       return;
     }
-    if (!requestInstruction || editorFrozen || !workingCopyAuthoritative || (!selected_text && !blankSectionDraft)) return;
+    if (!requestInstruction || editorFrozen || !workingCopyAuthoritative || (!selected_text && !blankSectionDraft)) {
+      // NEW-36（R27 第3轮修订）：此前的静默 return 让「生成本章首稿候选」
+      // 点了没有任何反应（r3 现场：全文生成失败后按钮可点但两次点击无动作）。
+      // 现在把每个拒绝原因明示给用户。
+      setRevisionMessage(
+        editorFrozen
+          ? "当前文档已冻结；请先解除冻结或创建新版本后再生成候选。"
+          : !workingCopyAuthoritative
+            ? "当前章节尚未建立可用的版本化工作副本；请先创建工作副本并完成作者确认，再生成候选。"
+            : !selected_text && !blankSectionDraft
+              ? "请先选中一段正文，或在空章节中直接生成候选。"
+              : "请先填写AI修订指令。"
+      );
+      return;
+    }
     if (shouldBlockStartForOperation(revisionJobs, "initial")) {
       setRevisionMessage("AI修订正在进行中，请等待完成或取消后再试。");
       return;
@@ -10455,9 +10514,12 @@ function WritingPage({
       throw error;
     }
     const blob = await response.blob();
+    const draftIncomplete = Boolean(
+      unresolvedAiCandidateCount || contentQualityBlockingCount,
+    );
     const filename = mode === "approved_final"
       ? `${documentSession?.protocol_id || "研究方案"}_${documentSession?.version || "当前版本"}_方案终稿.docx`
-      : `${documentSession?.protocol_id || "研究方案"}_${documentSession?.version || "当前版本"}_草稿预览.docx`;
+      : `${documentSession?.protocol_id || "研究方案"}_${documentSession?.version || "当前版本"}_草稿预览${draftIncomplete ? "_正文未完成" : ""}.docx`;
     const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
@@ -10538,6 +10600,33 @@ function WritingPage({
       JSON.stringify({ project_id: projectId, job_id: jobId }),
     );
   };
+  const resumeFullDraft = () => {
+    const jobId = fullDraftJob?.job_id;
+    if (!jobId || fullDraftBusy) return;
+    const runToken = fullDraftRunRef.current + 1;
+    fullDraftRunRef.current = runToken;
+    setFullDraftBusy(true);
+    setFullDraftMessage("正在续跑全文初稿；已完成批次会直接复用，不会重头再来。");
+    fetch(`/api/projects/${projectId}/medical-writing/full-drafts/${encodeURIComponent(jobId)}/resume`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ actor: "medical_manager" }),
+    })
+      .then(readJsonOrThrow)
+      .then(() => {
+        if (fullDraftRunRef.current !== runToken) return null;
+        setFullDraftJob((current) => ({ ...(current || {}), job_id: jobId, status: "queued" }));
+        return monitorFullDraft(jobId, runToken);
+      })
+      .catch((error) => {
+        if (fullDraftRunRef.current !== runToken) return;
+        setFullDraftMessage(`全文初稿续跑失败：${apiErrorText(error)}`);
+      })
+      .finally(() => {
+        if (fullDraftRunRef.current === runToken) setFullDraftBusy(false);
+      });
+  };
+
   const startFullDraft = () => {
     if (
       isDemoWritingSession
@@ -10784,7 +10873,7 @@ function WritingPage({
       }
     };
   }, [projectId, isDemoWritingSession]);
-  const exportMedicalWritingDocument = (mode) => {
+  const exportMedicalWritingDocument = (mode, acknowledgePlaceholders = false) => {
     if (
       isDemoWritingSession
       || documentExportBusy
@@ -10814,6 +10903,7 @@ function WritingPage({
           mode,
           actor: "medical_manager",
           idempotency_key: `document-export-${projectId}-${mode}-${Date.now()}`,
+          payload: acknowledgePlaceholders ? { acknowledge_placeholders: true } : {},
         }),
       },
     )
@@ -10835,7 +10925,21 @@ function WritingPage({
         if (documentExportRunRef.current !== runToken) return;
         clearStoredDocumentExport();
         setDocumentExportProgress(null);
-        setWorkingCopyMessage(`Word 导出失败：${medicalWritingExportErrorText(error)}`);
+        const detail = medicalWritingExportErrorText(error);
+        // NEW-17 内容族①：占位符门失败——用户知悉后可带确认位重试一次
+        if (
+          mode === "draft_preview"
+          && !acknowledgePlaceholders
+          && /【待补齐】|acknowledge_placeholders/.test(detail)
+          && globalThis.window?.confirm
+          && globalThis.window.confirm(
+            `导出件含未完成占位（${detail.slice(0, 160)}）。\n\n确认知悉后仍要导出草稿预览吗？（文件名将带「正文未完成」标记）`,
+          )
+        ) {
+          exportMedicalWritingDocument(mode, true);
+          return;
+        }
+        setWorkingCopyMessage(`Word 导出失败：${detail}`);
       })
       .finally(() => {
         if (documentExportRunRef.current === runToken) {
@@ -11343,7 +11447,11 @@ function WritingPage({
                   type="button"
                   onClick={() => exportMedicalWritingDocument("draft_preview")}
                   disabled={Boolean(documentExportBusy) || workingCopyDirty}
-                  title={workingCopyDirty ? "存在未保存修订，请先保存后再生成草稿预览" : "生成含全部正文与真实表格的草稿预览 Word"}
+                  title={workingCopyDirty
+                    ? "存在未保存修订，请先保存后再生成草稿预览"
+                    : unresolvedAiCandidateCount || contentQualityBlockingCount
+                      ? `正文尚未完成（AI候选待处置 ${unresolvedAiCandidateCount} 项、源内容待处置 ${contentQualityBlockingCount} 项）；预览文件名将带「正文未完成」标记`
+                      : "生成含全部正文与真实表格的草稿预览 Word"}
                 >
                   <Download size={14} /> {documentExportBusy === "draft_preview" ? "生成中" : "预览 Word"}
                 </button>
@@ -11638,6 +11746,13 @@ function WritingPage({
                   </div>
                 )}
                 {fullDraftMessage && <p className="revision-message">{fullDraftMessage}</p>}
+                {fullDraftJob?.status === "failed" && (
+                  <div className="full-draft-summary-actions">
+                    <button type="button" className="primary-button" onClick={resumeFullDraft} disabled={fullDraftBusy}>
+                      续跑全文初稿（已完成批次会复用，不会重头再来）
+                    </button>
+                  </div>
+                )}
                 {fullDraftDiagnostic && (
                   <details
                     className="writing-diagnostic-details"
@@ -11984,14 +12099,18 @@ function WritingPage({
                   type="button"
                   className="primary-button"
                   onClick={submitRevisionRequest}
-                  disabled={aiRevisionDisabled || revisionLoading || !revisionInstruction.trim()}
+                  disabled={aiRevisionDisabled || revisionLoading || !revisionInstruction.trim() || editorFrozen || !workingCopyAuthoritative}
                   title={aiRevisionUnavailableReason
                     ? aiRevisionUnavailableReason
-                    : !revisionInstruction.trim()
-                      ? "请先填写AI修订指令"
-                      : revisionLoading
-                        ? "修订任务正在处理"
-                        : "生成3-5个本章首稿候选"}
+                    : editorFrozen
+                      ? "当前文档已冻结；请先解除冻结或创建新版本后再生成候选"
+                      : !workingCopyAuthoritative
+                        ? "当前章节尚未建立可用的版本化工作副本；请先创建工作副本并完成作者确认"
+                        : !revisionInstruction.trim()
+                          ? "请先填写AI修订指令"
+                          : revisionLoading
+                            ? "修订任务正在处理"
+                            : "生成3-5个本章首稿候选"}
                   aria-describedby={paragraphLoadPending ? "writing-ai-unavailable-reason" : undefined}
                 >
                   <Sparkles size={14} /> 生成本章首稿候选
@@ -12201,6 +12320,30 @@ function WritingPage({
             {[`AI候选待处置 ${unresolvedAiCandidateCount} 项`, `源内容待处置 ${contentQualityBlockingCount} 项`, `资料包阻断质量门 ${activePackage?.blocking_gate_count ?? 0} 项`, `当前章节修订线程 ${sectionThreads.length} 条`, `证据索引覆盖 ${Number.isFinite(section.coverage) ? `${section.coverage}%` : "待核验"}`].map((item, index) => (
               <p key={item} className={index < 3 ? "blocking" : "info"}>{item}</p>
             ))}
+            {(() => {
+              // NEW-37（R27 第3轮修订）：阻断项明细直接展开——用户要知道被
+              // 什么挡、去哪修，而不是一句纯文本计数。
+              const blockingGates = (activePackage?.quality_gates || [])
+                .filter((gate) => String(gate.status || "").toLowerCase() === "blocking");
+              const contentFindingsBlocking = (contentQuality?.findings || [])
+                .filter((finding) => finding.approval_blocking)
+                .slice(0, 10);
+              if (!blockingGates.length && !contentFindingsBlocking.length && !unresolvedAiCandidateCount) return null;
+              return (
+                <details className="writing-diagnostic-details" data-testid="export-gate-details">
+                  <summary>展开阻断项明细与修复指引</summary>
+                  <ul className="authoring-blocker-guidance">
+                    {unresolvedAiCandidateCount > 0 && <li><span>{`本章还有 ${unresolvedAiCandidateCount} 个AI候选待处置：请在上方候选卡片逐个「选用并写入」或驳回`}</span></li>}
+                    {contentQualityBlockingCount > 0 && contentFindingsBlocking.map((finding) => (
+                      <li key={finding.finding_id}><span>{`${finding.section_heading}：${finding.rule_label}——${finding.finding_reason}`}</span></li>
+                    ))}
+                    {blockingGates.map((gate) => (
+                      <li key={gate.gate_id}><span>{`${gate.gate_label}：${gate.detail || "需要完成后再导出"}`}</span></li>
+                    ))}
+                  </ul>
+                </details>
+              );
+            })()}
           </div>
           </>
           ) : activeWritingRailTab === "版本" ? (
@@ -15418,6 +15561,18 @@ function ModuleUnavailablePage({ moduleKey, message = "当前项目尚未配置�
   );
 }
 
+function RuntimeBuildWarningsBanner({ assessment }) {
+  const warnings = assessment?.warnings || [];
+  if (!warnings.length) return null;
+  return (
+    <div className="runtime-build-warnings" role="status" data-testid="runtime-build-warnings">
+      {warnings.map((warning) => (
+        <p key={warning}>⚠ {warning}</p>
+      ))}
+    </div>
+  );
+}
+
 function MedicalWritingRuntimeGate({ readiness, onRetry }) {
   const checking = readiness.status === "checking";
   const payload = readiness.assessment?.payload;
@@ -15472,11 +15627,23 @@ export function App() {
   const monitoringReturnSiteIdRef = useRef(
     initialMonitoringRouteRef.current.site_id || "",
   );
-  const [activePage, setActivePage] = useState(() => (
-    typeof window !== "undefined" && window.location.pathname === "/monitoring"
-      ? activePageFromMonitoringRoute(initialMonitoringRouteRef.current)
-      : "overview"
-  ));
+  // NEW-7：App 层视图选择同键存取——刷新后回到离开时的页面，不再落回总看板。
+  // /monitoring 直链路由优先；其余视图从 sessionStorage 恢复（仅接受已知页名）。
+  const [activePage, setActivePage] = useState(() => {
+    if (typeof window !== "undefined" && window.location.pathname === "/monitoring") {
+      return activePageFromMonitoringRoute(initialMonitoringRouteRef.current);
+    }
+    try {
+      const stored = globalThis.sessionStorage?.getItem("workbench.app.view");
+      if (stored && WORKBENCH_PAGE_IDS.includes(stored)) return stored;
+    } catch { /* sessionStorage unavailable */ }
+    return "overview";
+  });
+  useEffect(() => {
+    try {
+      globalThis.sessionStorage?.setItem("workbench.app.view", activePage);
+    } catch { /* sessionStorage unavailable */ }
+  }, [activePage]);
   const [monitoringRouteState, setMonitoringRouteState] = useState(initialMonitoringRouteRef.current);
   const [monitoringFocusRiskId, setMonitoringFocusRiskId] = useState(
     initialMonitoringRouteRef.current.risk_instance_id
@@ -15628,12 +15795,19 @@ export function App() {
   const refreshRuntimeReadiness = useCallback(async () => {
     setRuntimeReadiness({ status: "checking", assessment: null });
     try {
+      // NEW-4：dev 下期望指纹取自逐请求现算的 /runtime-build.json（当前源码
+      // 树），漂移横幅只在真漂移时出现并指名该重启的一侧；prod 仍用 define
+      // 注入值。取不到 live 期望时回退 define 值且不附加指引。
+      const dev = await loadDevRuntimeExpectation();
       const response = await fetch("/api/runtime-readiness", { cache: "no-store" });
       const payload = await response.json().catch(() => null);
       const assessment = assessRuntimeReadiness(payload, {
         httpOk: response.ok,
         httpStatus: response.status,
+        expectation: dev.expectation,
+        driftHint: dev.driftHint,
       });
+      if (dev.viteDriftWarning) assessment.warnings.push(dev.viteDriftWarning);
       setRuntimeReadiness({ status: assessment.ready ? "ready" : "blocked", assessment });
     } catch {
       setRuntimeReadiness({
@@ -15694,6 +15868,9 @@ export function App() {
     requestApplicationNavigation(`切换至项目“${projectLabel}”`, () => {
       resetMedicalMonitoringProjectState(nextPage);
       setActiveProjectId(nextProjectId);
+      // AGG-P1-05（第25轮retest §4 残留P2落地）：手动选择的项目也要落盘，
+      // 否则刷新后回落空态，用户会误以为项目丢了。
+      persistMonitoringProjectId(nextProjectId);
       setActivePage(nextPage);
     });
   }, [activePage, activeProjectId, projects, requestApplicationNavigation, resetMedicalMonitoringProjectState]);
@@ -15731,12 +15908,14 @@ export function App() {
         );
         setActiveProjectId((current) => {
           if (!canonicalProjects.length) return "";
-          return resolveMedicalMonitoringProjectRoute(
+          const resolved = resolveMedicalMonitoringProjectRoute(
             requestedMonitoringProjectId,
             canonicalProjects,
             current,
-            INITIAL_PROJECT_ID,
+            readPersistedMonitoringProjectId() || INITIAL_PROJECT_ID,
           ).projectId;
+          if (resolved) persistMonitoringProjectId(resolved);
+          return resolved;
         });
         setProjectsLoaded(true);
       })
@@ -16332,9 +16511,17 @@ export function App() {
           />
         );
       }
-      return activeManifest?.route_bindings?.medical_writing
-        ? <WritingPage key={activeProjectId} projectId={activeProjectId} projectHeader={activeManifest?.header_project} projectSourceMode={activeManifest?.source_mode || ""} aiGatewayStatus={aiGatewayStatus} refreshDashboard={refreshDashboard} onNavigationGuardChange={setWritingNavigationGuard} />
-        : <ModuleUnavailablePage moduleKey="medical_writing" />;
+      if (activeManifest?.route_bindings?.medical_writing) {
+        // AGG25-P0-1: build drift is a non-blocking advisory banner
+        const buildWarnings = runtimeReadiness.assessment?.warnings || [];
+        return (
+          <>
+            {buildWarnings.length > 0 && <RuntimeBuildWarningsBanner assessment={runtimeReadiness.assessment} />}
+            <WritingPage key={activeProjectId} projectId={activeProjectId} projectHeader={activeManifest?.header_project} projectSourceMode={activeManifest?.source_mode || ""} aiGatewayStatus={aiGatewayStatus} refreshDashboard={refreshDashboard} onNavigationGuardChange={setWritingNavigationGuard} />
+          </>
+        );
+      }
+      return <ModuleUnavailablePage moduleKey="medical_writing" />;
     }
     if (activePage === "safety") {
       return activeManifest?.route_bindings?.safety_pv

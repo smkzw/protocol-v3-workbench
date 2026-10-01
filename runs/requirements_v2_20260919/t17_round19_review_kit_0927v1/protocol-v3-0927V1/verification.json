@@ -1,0 +1,32 @@
+{
+  "round": "0927V1",
+  "repository_commit": "5b4c8c11692fc3118eb21bfe80877f5ce9d76c65",
+  "performed_at_date": "2026-09-27",
+  "probe_observations": 18,
+  "observations_agree": 4,
+  "observations_disagree": 14,
+  "meaning": "Disagreements include source predicates and mock counterexamples, not independent bug count or product pass rate.",
+  "new_diagnostic_helper_tests": {
+    "count": 12,
+    "result": "PASS",
+    "log": "evidence/helper_tests.txt"
+  },
+  "clone": {
+    "result": "FAILED_DNS",
+    "log": "evidence/clone_attempt.log"
+  },
+  "upstream_suite": "NOT_RUN",
+  "user_machine_access": "NOT_RUN",
+  "live_model_calls": "NOT_RUN",
+  "product_browser": "NOT_RUN",
+  "desktop_word": "NOT_RUN",
+  "repository_edits_or_push": "NOT_PERFORMED",
+  "model_source_blob_verified": true,
+  "gate_source": "selected functions + scaffold, not full imported application",
+  "artifacts_are": "review and implementation specification, not a completed production patch",
+  "head_recheck": {
+    "commit": "5b4c8c11692fc3118eb21bfe80877f5ce9d76c65",
+    "result": "UNCHANGED",
+    "source": "turn272file0 L2"
+  }
+}

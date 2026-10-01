@@ -103,6 +103,36 @@ def authoring_write_blocker_detail(stage: str) -> str:
         "可等待本阶段完成后再提交，或取消本次流水线后立即提交。"
     )
 
+
+# SMOKE-r1-1 根因2（R27 收敛修订）：此前把「建项两步表单」与后台管线强
+# 耦合——管线慢（分诊实测 38 分钟仍未完成）时用户整页只读，「完成第一
+# 步/保存草稿」全部 disabled。修订方针（测试者建议方向：快照冻结范围
+# 收窄到已提交字段）：阶段提交（commit）在管线推进期仍冻结；阶段草稿
+# 保存放行。安全边界不变：分诊确认层 _stale_reason 以 material facts
+# hash 失效保护（仅修订号推进已归一化容忍）——草稿若改动相关性字段，
+# 确认时仍按「project material facts have changed」拒绝并需重跑分诊，
+# 绝不静默错配。唯一保留草稿冻结的阶段是 searching：框架未完成时草稿
+# 保存会重建 search_plan（save_stage_draft 的 creation-minimum 逻辑），
+# 可能改写正在生成检索快照的写入目标；该阶段通常仅数分钟。
+def authoring_draft_save_blocked_by_pipeline(stage: str) -> bool:
+    """Return whether a stage DRAFT save would interfere with a live node."""
+
+    normalized = str(stage or "").strip()
+    if not normalized:
+        return False
+    if normalized in TERMINAL_STAGES:
+        return False
+    return normalized in SEARCH_PROGRESS_STAGES
+
+
+def authoring_draft_save_blocker_detail(stage: str) -> str:
+    normalized = str(stage or "").strip() or "unknown"
+    return (
+        "研究流水线正在执行公开检索；为避免改写正在生成的检索快照，"
+        "本阶段暂不能保存草稿。检索通常数分钟内完成，可稍后重试，"
+        "或取消本次流水线后立即保存。"
+    )
+
 # ICH M11 anchors the corpus gate treats as "critical" for design-relevant
 # corpus material (objectives/endpoints, eligibility, schedule, safety).
 # Mirrors packages/api/app/medical_writing_corpus_readiness.py::_CRITICAL_ANCHORS
@@ -2899,6 +2929,29 @@ class MedicalWritingResearchPipelineService:
             project_id, actor, state, retained_candidate_ids
         )
         if not retained_ids:
+            # NEW-9（R27 第1轮末修订）：零篮子确认在没有任何语料出路记录时
+            # 不得静默落空篮锁定——R1A 现场正常按流程操作（候选全为 I 期 PK
+            # 被合理排除 → 篮子必为 0）必然死锁。已有例外记录（语料门放行或
+            # 准入）时空篮子是合法医学决定，维持可行动兜底（见
+            # _persist_no_retainable_candidate_fallback 文档）。语料门状态
+            # 无法判定（无 gate 信息的调用方/既有行为）时同样保持兜底，
+            # 不把不可判定升级为拒绝。
+            gate = getattr(journey, "corpus_gate", None)
+            if gate is None:
+                exception_recorded = True
+            else:
+                exception_recorded = bool(
+                    getattr(gate, "access_permitted", False)
+                    or getattr(getattr(gate, "override", None), "active", False)
+                )
+            if not exception_recorded:
+                raise ResearchPipelineConflictError(
+                    "当前确认的分诊篮子为 0 项，继续会锁定空篮子。请任选其一后再继续："
+                    "①回到竞品分诊，把相关研究标记为保留后重新确认；"
+                    "②调整检索条件后重新检索；"
+                    "③在语料准入处使用已审核共享语料或手动上传方案，并由医学经理"
+                    "记录项目特异例外理由后放行。"
+                )
             return self._persist_no_retainable_candidate_fallback(
                 project_id,
                 state,

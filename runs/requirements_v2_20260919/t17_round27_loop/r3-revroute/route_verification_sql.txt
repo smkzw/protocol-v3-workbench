@@ -1,0 +1,27 @@
+== r3-revroute 医学修订路由核对（sqlite3 只读） ==
+DB: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_durable_jobs.sqlite3
+时间: 2026-09-30 03:46:22 +0800  后端: PID 54795（09-29 23:47 启动，已载 NEW-22 修复）
+
+-- 最新 section_ai_candidate durable job（本次UI触发：M8项目·盲法与揭盲节） --
+mwjob_859f40557a06ba6735d29e91|failed|ollama-cloud|deepseek-v4.1-flash|3|2026-09-29T19:43:16.266448+00:00|2026-09-29T19:44:06.146083+00:00
+
+-- payload ai_policy / route_identity_snapshot（提交时冻结身份） --
+ai_policy.base_url = https://ollama.com
+ai_policy.provider_name = ollama-cloud
+ai_policy.model_name = deepseek-v4.1-flash
+ai_policy.route_profile_id = independent_ai__ollama_cloud_dsv41
+route_identity_snapshot.base_url = https://ollama.com
+route_identity_snapshot.profile_id = independent_ai__ollama_cloud_dsv41
+route_identity_snapshot.model = deepseek-v4.1-flash
+
+-- 最终状态与拒绝原因（error_summary） --
+failed | AiExecutionPolicyDenied: AI task medical_writing_revision requires a product-owned approved direct route: provider must be one of alibaba_token_plan, cms-router, deepseek, mtplx, opencode-go; allowed routes: mtplx via openai_compatible at http://127.0.0.1:8002/v1 using mtplx-flash-next-optimized-speed; opencode-go via openai_compatible at https://opencode.ai/zen/go/v1 using deepseek-v4.1-flash; cms-router via openai_compatible at http://127.0.0.1:20128/v1 using deepseek-latest-cloud; alibaba_token_plan via openai_compatible at https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1 using qwen3.8-max-preview; deepseek via openai_compatible at https://api.deepseek.com/v1 using deepseek-v4-flash,deepseek-v4-pro; deepseek via openai_compatible at http://127.0.0.1:20128/v1 using deepseek-flash
+
+-- ai_task_runs.jsonl 本次修订窗口内 gateway 运行 --
+2026-09-29T19:40:51.973330Z protocol_full_draft completed https://opencode.ai/zen/go/v1
+window runs count = 1 （0条=修订从未到达任何网关，全部被执行层策略拒绝）
+
+== 结论 ==
+①提交层：NEW-22 override 生效——durable payload ai_route.base_url = https://ollama.com（independent_ai__ollama_cloud_dsv41，provider=ollama-cloud，model=deepseek-v4.1-flash）✓ 与 owner 决策一致
+②执行层：TASK_AI_ROUTE_POLICIES[MEDICAL_WRITING_REVISION]（services/api/app/ai_execution_policy.py:204-212）白名单无 ollama-cloud 路由 → _enforce_task_ai_route_policy(:1325) 每次尝试 AiExecutionPolicyDenied → attempt 3/3 耗尽 job failed；修订零产出、功能不可用
+③判定：路由『修一半』——身份对了、执行被拒 ⇒ P0（对比第2轮：走 opencode-go 可用但路由错；本轮：路由对但不可用）

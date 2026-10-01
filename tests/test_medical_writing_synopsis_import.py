@@ -1814,16 +1814,28 @@ class SynopsisAsyncJobTest(unittest.TestCase):
             self.service.db_path,
             clock=self.clock,
         )
+        # AGG25-P0-2① 契约（round25 补完三条延迟路径后生效）：持久化路由
+        # 缺失 → 仍非重试失败（没有可对照的冻结链）；路由变更 → 对齐同步
+        # 路径的 _reconcile_route 语义，按当前生效路由重新冻结并重新入队，
+        # 不再死锁在"cold recovery blocked"。抑制 worker 生成以保持确定性。
+        recovered._shutdown_requested = True
         try:
-            self.assertEqual(0, recovered.recover_stale_jobs())
+            self.assertEqual(1, recovered.recover_stale_jobs())
             with sqlite3.connect(self.service.db_path) as connection:
                 states = connection.execute(
                     "SELECT project_id, status, error_message FROM medical_writing_synopsis_imports "
                     "WHERE idempotency_key IN (?, ?) ORDER BY project_id",
                     ("async-missing-route", "async-changed-route"),
                 ).fetchall()
-            self.assertEqual(["failed", "failed"], [row[1] for row in states])
-            self.assertTrue(all("retry is not allowed" in row[2] for row in states))
+            by_key = {row[0]: (row[1], row[2]) for row in states}
+            self.assertEqual(
+                "failed", by_key["proj_async_missing_route"][0])
+            self.assertIn(
+                "retry is not allowed",
+                by_key["proj_async_missing_route"][1])
+            self.assertEqual(
+                "pending", by_key["proj_async_changed_route"][0])
+            self.assertEqual("", by_key["proj_async_changed_route"][1])
             self.assertEqual(0, changed_runner.call_count)
         finally:
             recovered.shutdown(timeout=5.0)
@@ -1862,6 +1874,328 @@ class FakeBlockingAiRunner(_FakeRouteMixin):
                 if self._completed:
                     return
             time.sleep(0.1)
+
+
+class Round26Env02BudgetAndSalvageTests(unittest.TestCase):
+    """R26 深度分析（ENV-02 + AGG-P1-02）反例批：资源预算层与孤儿结果。
+
+    现场事实（磁盘实证）：任务 mwintake_bf293aa7 第1次 chunk 尝试 3×300 秒
+    超时共 30 分钟后报「本地模型服务未就绪…自动排队…」（假承诺+假离线），
+    第2次尝试 2.4 分钟即完成并通过校验；用户在 19:17:58 点取消，已成功的
+    解析结果被孤儿化，用户永远没看到——「32分钟无项目可建」的完整真相。
+    """
+
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.artifact_root = Path(self.tmpdir.name) / "artifacts"
+        self.ai_runner = FakeBlockingAiRunner()
+        self.service = MedicalWritingSynopsisImportService(
+            self.artifact_root, self.ai_runner
+        )
+
+    def tearDown(self):
+        self.ai_runner.release()
+        self.service.shutdown(timeout=10.0)
+        self.tmpdir.cleanup()
+
+    def _start_blocked_job(self, project_id="proj_env02_salvage", key="env02-salvage"):
+        docx = _docx_bytes("方案摘要内容。适应症为哮喘。")
+        return self.service.start_job(
+            project_id,
+            filename="synopsis.docx",
+            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            payload=docx,
+            expected_indication="哮喘",
+            actor="medical_manager_test",
+            idempotency_key=key,
+        )
+
+    def test_job_status_names_model_wait_during_ai_phase(self):
+        """NEW-11 反例：AI 阶段（含网关排队）job 状态必须携带 waiting_on
+        标记，让等待面板能说出「模型处理中或排队等待空位」，而不是只有
+        「正在启动0%」黑等；review_ready 终态不得再携带该标记。
+        """
+        self._start_blocked_job()
+        # 等工作线程进入 AI 阶段（runner 被阻塞期间 phase 停在 ai_synthesis）。
+        blocked = None
+        deadline = time.monotonic() + 10.0
+        while time.monotonic() < deadline:
+            candidate = self.service.get_job("proj_env02_salvage", "env02-salvage")
+            if candidate.phase == "ai_synthesis":
+                blocked = candidate
+                break
+            time.sleep(0.05)
+        self.assertIsNotNone(blocked, "job never reached the ai_synthesis phase")
+        self.assertEqual("ai_synthesis", blocked.phase)
+        self.assertEqual("model_wait", blocked.waiting_on)
+
+        self.ai_runner.release()
+        deadline = time.monotonic() + 10.0
+        while time.monotonic() < deadline:
+            final = self.service.get_job("proj_env02_salvage", "env02-salvage")
+            if final.status == "review_ready":
+                break
+            time.sleep(0.05)
+        self.assertEqual("review_ready", final.status)
+        self.assertEqual("", final.waiting_on)
+
+    def test_classify_import_failure_splits_model_timeout_from_service_offline(self):
+        # 反例（AGG-P1-1 修订）：TimeoutError 是"模型忙/慢"，URLError/拒连才是
+        # "服务离线"。R26 把 30 分钟超时误报成"本地模型服务未就绪"。
+        from services.api.app.medical_writing_synopsis_import import (
+            _classify_import_failure,
+        )
+        import urllib.error
+
+        self.assertEqual(
+            "model_timeout",
+            _classify_import_failure(
+                TimeoutError("after bounded retries: TimeoutError")
+            ),
+        )
+        self.assertEqual(
+            "model_timeout",
+            _classify_import_failure(RuntimeError("request timed out after 300s")),
+        )
+        self.assertEqual(
+            "local_model_offline",
+            _classify_import_failure(
+                urllib.error.URLError(ConnectionRefusedError(61, "Connection refused"))
+            ),
+        )
+        self.assertEqual(
+            "local_model_offline",
+            _classify_import_failure(ConnectionError("connection refused by server")),
+        )
+        self.assertEqual(
+            "route_config_changed",
+            _classify_import_failure(
+                RuntimeError("route_identity_hash does not match the frozen synopsis route")
+            ),
+        )
+
+    def test_sync_progress_stamps_chunk_attempt_count_onto_job(self):
+        # 反例（如实进度）：chunk 已是第 N 次尝试时，job 状态必须如实暴露 N，
+        # 前端等待面板才有"第N次尝试"可显示（R26 界面永远显示 1/1 块）。
+        self._start_blocked_job()
+        row = None
+        deadline = time.monotonic() + 10.0
+        while time.monotonic() < deadline:
+            with sqlite3.connect(self.service.db_path) as connection:
+                row = connection.execute(
+                    "SELECT status FROM medical_writing_synopsis_import_chunks "
+                    "WHERE project_id = 'proj_env02_salvage' AND chunk_index = 0"
+                ).fetchone()
+            if row and row[0] == "running":
+                break
+            time.sleep(0.05)
+        self.assertEqual("running", row[0] if row else None, "chunk never claimed")
+        # 模拟一次失败后被重新认领：chunk 已是第 3 次尝试。
+        with sqlite3.connect(self.service.db_path) as connection:
+            connection.execute(
+                "UPDATE medical_writing_synopsis_import_chunks SET attempt_count = 3 "
+                "WHERE project_id = 'proj_env02_salvage' AND chunk_index = 0"
+            )
+            connection.commit()
+        self.service._sync_progress("proj_env02_salvage", "env02-salvage", 1)
+        status = self.service.get_job("proj_env02_salvage", "env02-salvage")
+        self.assertEqual(3, status.attempt_count)
+
+    def test_completed_job_is_reported_review_ready_even_with_cancel_flag(self):
+        # 反例（孤儿结果·状态优先级）：已完成的解析结果不得被 cancelled 标记
+        # 掩盖——R26 用户取消后界面永远显示"已取消"，看不到已生成的结果。
+        self._start_blocked_job()
+        self.service.cancel_job("proj_env02_salvage", "env02-salvage")
+        with sqlite3.connect(self.service.db_path) as connection:
+            connection.execute(
+                "UPDATE medical_writing_synopsis_imports "
+                "SET status = 'completed', phase = 'review_ready' "
+                "WHERE project_id = 'proj_env02_salvage' AND idempotency_key = 'env02-salvage'"
+            )
+            connection.commit()
+        status = self.service.get_job("proj_env02_salvage", "env02-salvage")
+        self.assertEqual("review_ready", status.status)
+
+    def test_orphaned_result_stays_readable_after_cancel_flag(self):
+        # 反例（get_job_result 放开孤儿结果读取）：行里已有完整解析结果但状态
+        # 被取消标记时，结果必须仍可读取（确认建项才有出路）。
+        orphan_project = "proj_env02_orphan"
+        imported = _seed_completed_result(self, orphan_project)
+        with sqlite3.connect(self.service.db_path) as connection:
+            connection.execute(
+                "UPDATE medical_writing_synopsis_imports "
+                "SET status = 'cancelled', phase = 'cancelled', cancelled_at = ? "
+                "WHERE project_id = ? AND idempotency_key = ?",
+                (
+                    datetime.now(timezone.utc).isoformat(),
+                    orphan_project,
+                    "env02-orphan-result",
+                ),
+            )
+            connection.commit()
+        reread = self.service.get_job_result(orphan_project, "env02-orphan-result")
+        self.assertEqual(imported.source.content_sha256, reread.source.content_sha256)
+
+    def test_cancel_with_validated_run_keeps_job_and_reports_result_ready(self):
+        # 反例（取消侧抢救）：run 已完成且校验通过时，取消不得把任务打入
+        # cancelled 丢弃，而应保住任务并告知"解析结果已生成"。
+        class _ValidatedRunBlockingRunner(FakeBlockingAiRunner):
+            def __init__(self):
+                super().__init__()
+                self.runs = []
+
+            def submit_internal(self, project_id, request):
+                run = _completed_ai_run(request)
+                run.project_id = project_id  # real AiTaskRun contract field
+                run.task_type = "protocol_synopsis_structuring"
+                run.output_validation_status = "passed"
+                self.runs.append(run)
+                self._event.wait(timeout=30.0)
+                return run
+
+            def list_runs(self, project_id):
+                return [run for run in self.runs if run.project_id == project_id]
+
+        runner = _ValidatedRunBlockingRunner()
+        service = MedicalWritingSynopsisImportService(self.artifact_root, runner)
+        try:
+            docx = _docx_bytes("方案摘要内容。适应症为哮喘。")
+            service.start_job(
+                "proj_env02_cancel_guard",
+                filename="synopsis.docx",
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                payload=docx,
+                expected_indication="哮喘",
+                actor="medical_manager_test",
+                idempotency_key="env02-cancel-guard",
+            )
+            runner.release()
+            deadline = time.monotonic() + 10.0
+            while time.monotonic() < deadline and not runner.runs:
+                time.sleep(0.05)
+            self.assertTrue(runner.runs, "validated run was never created")
+            response = service.cancel_job("proj_env02_cancel_guard", "env02-cancel-guard")
+            self.assertEqual("review_ready", response.status)
+            self.assertEqual("none", response.cancellation_state)
+            with sqlite3.connect(service.db_path) as connection:
+                state = connection.execute(
+                    "SELECT status, cancelled_at FROM medical_writing_synopsis_imports "
+                    "WHERE project_id = 'proj_env02_cancel_guard'"
+                ).fetchone()
+            self.assertNotEqual("cancelled", state[0])
+            self.assertEqual("", state[1])
+        finally:
+            service.shutdown(timeout=10.0)
+
+    def test_cancel_during_inflight_run_still_delivers_validated_result(self):
+        # 反例（worker 抢救）：run 返回时任务已被取消，只要结果已完成且校验
+        # 通过，worker 必须落地结果并让任务到达 review_ready（R26 孤儿化路径）。
+        class _ValidatedBlockingRunner(FakeBlockingAiRunner):
+            def submit_internal(self, project_id, request):
+                self._event.wait(timeout=30.0)
+                run = _completed_ai_run(request)
+                run.output_validation_status = "passed"
+                return run
+
+        runner = _ValidatedBlockingRunner()
+        service = MedicalWritingSynopsisImportService(self.artifact_root, runner)
+        try:
+            docx = _docx_bytes("方案摘要内容。适应症为哮喘。")
+            service.start_job(
+                "proj_env02_worker_salvage",
+                filename="synopsis.docx",
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                payload=docx,
+                expected_indication="哮喘",
+                actor="medical_manager_test",
+                idempotency_key="env02-worker-salvage",
+            )
+            row = None
+            deadline = time.monotonic() + 10.0
+            while time.monotonic() < deadline:
+                with sqlite3.connect(service.db_path) as connection:
+                    row = connection.execute(
+                        "SELECT status FROM medical_writing_synopsis_import_chunks "
+                        "WHERE project_id = 'proj_env02_worker_salvage' AND chunk_index = 0"
+                    ).fetchone()
+                if row and row[0] == "running":
+                    break
+                time.sleep(0.05)
+            self.assertEqual("running", row[0] if row else None)
+            service.cancel_job("proj_env02_worker_salvage", "env02-worker-salvage")
+            runner.release()
+            # 注意：这里不把 cancelled 当终态——本反例验证的正是"取消后抢救
+            # 晋级 review_ready"这一暂态迁移；只认 review_ready/failed 为终态。
+            deadline = time.monotonic() + 30.0
+            status = None
+            while time.monotonic() < deadline:
+                status = service.get_job("proj_env02_worker_salvage", "env02-worker-salvage")
+                if status.status in ("review_ready", "failed"):
+                    break
+                time.sleep(0.2)
+            self.assertEqual(
+                "review_ready",
+                status.status,
+                f"validated result must survive cancel; got {status.status}: {status.error_message}",
+            )
+            result = service.get_job_result("proj_env02_worker_salvage", "env02-worker-salvage")
+            self.assertIsNotNone(result)
+        finally:
+            service.shutdown(timeout=10.0)
+
+    def test_round26_md_docx_imports_end_to_end_with_fake_runner(self):
+        # 修复验证材料（复盘指定）：R26-MD 的真实 docx 必须能走完整导入链。
+        docx_path = (
+            Path(__file__).resolve().parents[1]
+            / "runs/requirements_v2_20260919/t17_round26_loop/R26-MD/"
+            / "R26MD_MDD_PhaseII_NMDA_Synopsis.docx"
+        )
+        self.assertTrue(docx_path.exists(), f"verification material missing: {docx_path}")
+        payload = docx_path.read_bytes()
+        instant_runner = _FakeAiRunner()
+        service = MedicalWritingSynopsisImportService(
+            self.artifact_root / "md_docx_e2e", instant_runner
+        )
+        try:
+            imported = service.import_and_structure(
+                "proj_env02_md_docx",
+                filename=docx_path.name,
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                payload=payload,
+                expected_indication="II期抗NMDA受体脑炎",
+                actor="medical_manager_test",
+                idempotency_key="env02-md-docx-e2e",
+            )
+            self.assertTrue(imported.source.source_id)
+            self.assertTrue(imported.proposed_framing.protocol_id)
+            self.assertTrue(imported.proposed_picos.population_summary)
+        finally:
+            service.shutdown(timeout=5.0)
+
+
+def _seed_completed_result(testcase, project_id="proj_env02_orphan"):
+    """Sync-import a real result (instant fake runner) into the SAME database
+    the testcase's service reads, then hand the row to the orphan-read test:
+    same shape as an R26 salvageable orphan row."""
+    instant_runner = _FakeAiRunner()
+    service = MedicalWritingSynopsisImportService(
+        testcase.artifact_root,
+        instant_runner,
+        db_path=testcase.service.db_path,
+    )
+    try:
+        docx = _docx_bytes("方案摘要内容。适应症为哮喘。")
+        return service.import_and_structure(
+            project_id,
+            filename="synopsis.docx",
+            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            payload=docx,
+            expected_indication="哮喘",
+            actor="medical_manager_test",
+            idempotency_key="env02-orphan-result",
+        )
+    finally:
+        service.shutdown(timeout=5.0)
 
 
 if __name__ == "__main__":

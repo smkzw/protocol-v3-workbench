@@ -2253,6 +2253,20 @@ button:disabled {
   background: var(--orange-dark);
 }
 
+/* NEW-19（R27 第1轮末修订）：禁用的主按钮不能停留在"半透明橙"——
+   R1A 截图26/33 场景里禁用态与可点态几乎无差别，用户反复点击无反馈。
+   禁用态统一灰底灰字灰边，橙色只属于可点状态；禁用原因仍由 title 提供，
+   hover 不变色（禁用按钮不响应 hover 深色）。 */
+.primary-button:disabled,
+.primary-button:disabled:hover,
+.research-pipeline-banner .primary-button:disabled,
+.research-pipeline-banner .primary-button:disabled:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 .tag {
   display: inline-flex;
   align-items: center;
@@ -11169,6 +11183,14 @@ textarea {
   min-height: 760px;
 }
 
+/* L1/NEW-2（R27 第1轮末修订）：≤1280px 宽度窗口无显式守卫的依据——
+   塌缩机制需要「容器固定高度 + ai-rail 落隐式行撑爆」两个条件同时成立；
+   本区间容器 height:auto 可自然长高，塌缩机制理论上不触发。已核不塌：
+   2026-09-30 实现师用真实 styles.css 的 iframe 视口探针（1280×800）实测
+   journey 壳 732px、网格行为自然行（height:auto），无挤压；1512×814 走
+   下方 (min-width:1281px)+(max-height:850px) 守卫块，实测壳 612px、行轨
+   minmax(420px,1fr)/0px。若未来把本区间改为固定高度布局，必须同步补
+   "editor/ai" 两命名区守卫，否则塌缩会在 ≤1280px 复发。 */
 .writing-layout.writing-pre-document-layout {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "editor";
@@ -11196,6 +11218,23 @@ textarea {
   }
 
   .writing-layout.writing-pre-document-layout > .writing-pre-document-core {
+    min-height: 0;
+  }
+
+  /* L1/NEW-2（R27 第1轮修订）：短视口下编辑行保底 420px，文献栏让位。
+     塌缩机制：.ai-rail 的 grid-area:'ai' 在 pre-document 模板中无此命名区，
+     曾被隐式行收留，且其 min-height:760px（源文件更后处的 .ai-rail 规则）
+     以同特异性源顺序压垮编辑行（实测行轨 28px/0px/760px、journey 壳仅 5px）。
+     本块显式给出两行命名区（editor/ai），第二行 0px——实测 minmax(0,auto) 仍被
+     最小内容撑到约 220px，0px 才是让位到位；文献栏在短视口收起，
+     ai-rail 的 min-height:0 用 (0,3,0) 特异性压过 .ai-rail 的 (0,1,0) 760px
+     地板，与源顺序无关。表单可达性优先于文献栏常显。 */
+  .writing-layout.writing-pre-document-layout {
+    grid-template-areas: "editor" "ai";
+    grid-template-rows: minmax(420px, 1fr) 0px;
+  }
+
+  .writing-layout.writing-pre-document-layout > .ai-rail {
     min-height: 0;
   }
 }
@@ -13780,6 +13819,18 @@ textarea {
 
   .writing-editor-core,
   .writing-ai-core {
+    min-height: 0;
+  }
+
+  /* L1/NEW-2（R27 第1轮修订）：与 ≤850px 块同款短视口保护——编辑行保底
+     420px、文献栏让位（见 11184 块内注释）。两个块覆盖不同高度区间，规则
+     一致，后块重复声明以覆盖仅命中本区间的视口。 */
+  .writing-layout.writing-pre-document-layout {
+    grid-template-areas: "editor" "ai";
+    grid-template-rows: minmax(420px, 1fr) 0px;
+  }
+
+  .writing-layout.writing-pre-document-layout > .ai-rail {
     min-height: 0;
   }
 

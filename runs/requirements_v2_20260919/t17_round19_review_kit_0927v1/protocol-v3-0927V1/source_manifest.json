@@ -1,0 +1,84 @@
+{
+  "repository": "smkzw/protocol-v3-workbench",
+  "commit": "5b4c8c11692fc3118eb21bfe80877f5ce9d76c65",
+  "comparison_base": "53feb06fc1402df820a6dba5d8b6e3fa15d50437",
+  "commit_time_utc": "2026-09-26T16:39:47Z",
+  "sources": [
+    {
+      "path": "branches/main",
+      "tool_citation": "turn255file0",
+      "coverage": "metadata",
+      "url": "https://api.github.com/repos/smkzw/protocol-v3-workbench/branches/main"
+    },
+    {
+      "path": "runs/requirements_v2_20260919/t17_round18_0926v1/HANDOFF_0927_PAUSE.md",
+      "tool_citation": "turn257file0",
+      "coverage": "full handoff",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/runs/requirements_v2_20260919/t17_round18_0926v1/HANDOFF_0927_PAUSE.md"
+    },
+    {
+      "path": "tools/acceptance/run_acceptance_gate.py",
+      "tool_citation": "turn258file0;turn260file0;turn261file0",
+      "coverage": "full response inspected plus relevant contiguous ranges; local file is excerpts only",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/tools/acceptance/run_acceptance_gate.py"
+    },
+    {
+      "path": "tools/acceptance/known_failures_0926v1.json",
+      "tool_citation": "turn262file0",
+      "coverage": "lines 1-105 inspected; not every entry independently verified",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/tools/acceptance/known_failures_0926v1.json"
+    },
+    {
+      "path": "runs/requirements_v2_20260919/t17_round18_0926v1/g1_step6_drift_classification.md",
+      "tool_citation": "turn264file0",
+      "coverage": "full",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/runs/requirements_v2_20260919/t17_round18_0926v1/g1_step6_drift_classification.md"
+    },
+    {
+      "path": "runs/requirements_v2_20260919/t17_round18_0926v1/g1_step6_gate_final.json",
+      "tool_citation": "turn269file0",
+      "coverage": "large single-line source; runtime summary inspected; not full independent recount",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/runs/requirements_v2_20260919/t17_round18_0926v1/g1_step6_gate_final.json"
+    },
+    {
+      "path": "pytest.ini",
+      "tool_citation": "turn265file0",
+      "coverage": "full",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/pytest.ini"
+    },
+    {
+      "path": "tools/acceptance/required_nodes.json",
+      "tool_citation": "turn266file0",
+      "coverage": "full",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/tools/acceptance/required_nodes.json"
+    },
+    {
+      "path": "services/api/app/model_phase_scheduler.py",
+      "tool_citation": "turn267file0",
+      "coverage": "full locally reproduced; blob verified",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/services/api/app/model_phase_scheduler.py"
+    },
+    {
+      "path": "services/api/app/writing_reference_preparation_batch.py",
+      "tool_citation": "turn270file0",
+      "coverage": "lines209-261",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/services/api/app/writing_reference_preparation_batch.py"
+    },
+    {
+      "path": "tests/test_writing_reference_numeric_fidelity.py",
+      "tool_citation": "turn271file0",
+      "coverage": "full",
+      "url": "https://github.com/smkzw/protocol-v3-workbench/blob/5b4c8c11692fc3118eb21bfe80877f5ce9d76c65/tests/test_writing_reference_numeric_fidelity.py"
+    }
+  ],
+  "local_source_verification": {
+    "model_phase_scheduler.py": {
+      "git_blob": "960ea817505d54751472d4969240d1442ba36e32",
+      "verified": true
+    },
+    "gate_methods.py": {
+      "kind": "source excerpts with test scaffolding",
+      "full_blob_verified": false
+    }
+  }
+}

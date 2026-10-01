@@ -1,8 +1,48 @@
 /* global __WORKBENCH_RUNTIME_EXPECTATION__ -- build-time injected define */
 export const runtimeExpectation = Object.freeze(__WORKBENCH_RUNTIME_EXPECTATION__);
 
-export function assessRuntimeReadiness(payload, { httpOk = true, httpStatus = 200 } = {}) {
+// NEW-4（R27 第1轮末修订）：dev 下 vite 启动时 define 固化的期望指纹会落后于
+// 代码变更（改后端代码不重启 vite 则永远不更新），造成"漂移横幅常驻且刷新
+// 无效"。dev 模式改为每次就绪检查时拉取同源 /runtime-build.json —— 该端点
+// 由 vite 中间件按当前源码树逐请求现算（见 vite.config.mjs）——作为比对基准；
+// prod 仍用 define 注入值（bundle 内固化为产物指纹与请求头注入）。
+export async function loadDevRuntimeExpectation({ dev = Boolean(import.meta.env?.DEV) } = {}) {
+  if (!dev) {
+    return { expectation: runtimeExpectation, driftHint: "", live: false };
+  }
+  try {
+    const response = await fetch("/runtime-build.json", { cache: "no-store" });
+    if (!response.ok) return { expectation: runtimeExpectation, driftHint: "", live: false };
+    const live = await response.json();
+    if (!live || typeof live !== "object" || !live.expectedBackendBuildId) {
+      return { expectation: runtimeExpectation, driftHint: "", live: false };
+    }
+    // 方向判定：live 期望 ≠ vite 启动时期望 ⇒ vite 比当前源码树旧（重启vite，
+    // 独立告警——即使运行中后端已是新码也要点名，替换旧版"刷新或同步"空话）；
+    // 运行中后端 ≠ live 期望 ⇒ 后端旧（重启后端）。两个方向各自指名重启对象。
+    const viteStale = live.expectedBackendBuildId !== runtimeExpectation.expectedBackendBuildId;
+    return {
+      expectation: Object.freeze({ ...runtimeExpectation, ...live }),
+      live: true,
+      driftHint: "请重启本子系统后端(5301)后刷新页面",
+      viteDriftWarning: viteStale
+        ? `前端开发服务早于当前后端代码（vite启动时 ${runtimeExpectation.expectedBackendBuildId}，`
+          + `当前源码树 ${live.expectedBackendBuildId}）——请重启vite后刷新页面`
+        : "",
+    };
+  } catch {
+    return { expectation: runtimeExpectation, driftHint: "", live: false };
+  }
+}
+
+export function assessRuntimeReadiness(payload, {
+  httpOk = true,
+  httpStatus = 200,
+  expectation = runtimeExpectation,
+  driftHint = "",
+} = {}) {
   const reasons = [];
+  const warnings = [];
   if (!httpOk) {
     reasons.push(
       httpStatus > 0
@@ -12,14 +52,22 @@ export function assessRuntimeReadiness(payload, { httpOk = true, httpStatus = 20
   } else if (!payload || typeof payload !== "object") {
     reasons.push("未收到可识别的运行时准备信息");
   } else {
-    if (payload.runtime_contract_schema !== runtimeExpectation.runtimeContractSchema) {
+    if (payload.runtime_contract_schema !== expectation.runtimeContractSchema) {
       reasons.push("运行时合同结构与当前前端不一致");
     }
-    if (payload.api_contract_version !== runtimeExpectation.apiContractVersion) {
+    if (payload.api_contract_version !== expectation.apiContractVersion) {
       reasons.push("前后端 API 合同版本不一致");
     }
-    if (payload.backend_build_id !== runtimeExpectation.expectedBackendBuildId) {
-      reasons.push("后端构建与当前前端构建不一致");
+    if (payload.backend_build_id !== expectation.expectedBackendBuildId) {
+      // AGG25-P0-1: a pure backend rebuild must never deadlock the whole
+      // workspace — build fingerprint drift is advisory; the hard gate keeps
+      // contract schema/version, readiness and capability checks.
+      // NEW-4: 文案给出可执行的处置指引（重启对象），不再让用户猜。
+      warnings.push(
+        `前后端构建不一致（当前源码树期望 ${expectation.expectedBackendBuildId}，`
+        + `运行中后端 ${payload.backend_build_id || "未知"}）`
+        + `${driftHint ? `——${driftHint}` : "，可能缺少最新修复，建议刷新页面或同步前后端"}`,
+      );
     }
     if (payload.ready !== true) {
       reasons.push("后端尚未满足医学写作必需能力");
@@ -31,6 +79,7 @@ export function assessRuntimeReadiness(payload, { httpOk = true, httpStatus = 20
   return {
     ready: reasons.length === 0,
     reasons: [...new Set(reasons)],
+    warnings: [...new Set(warnings)],
     payload: payload && typeof payload === "object" ? payload : null,
   };
 }

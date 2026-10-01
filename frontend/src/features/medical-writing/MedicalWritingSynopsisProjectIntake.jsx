@@ -10,12 +10,70 @@ import {
 } from "lucide-react";
 
 const PHASES = ["I期", "I/II期", "II期", "II/III期", "III期"];
+
+// NEW-8（R27 第1轮末修订）：AI 提取的分期写法千差万别（Ⅲ期/三期/２期/
+// ii/iii），而下拉只认 PHASES——旧行为里不匹配值让 select 显示「请选择」
+// 但 state 非空，canConfirm 放行，合同层拿到 'MW-PHASE' 原料。这里做与
+// 后端合同归一（workbench_contracts.models._normalize_study_phase_label）
+// 同口径的前端映射：能映射进选项的直接映射；映射不出的返回 ""，由调用方
+// 显式标「分期待确认」并阻断确认。
+const PHASE_WIDTH_MAP = { "Ⅰ": "I", "Ⅱ": "II", "Ⅲ": "III", "Ⅳ": "IV", "０": "0", "１": "1", "２": "2", "３": "3", "４": "4" };
+const PHASE_CN_NUMERALS = [["一期", "1"], ["二期", "2"], ["三期", "3"], ["四期", "4"]];
+const PHASE_DIGIT_ROMAN = { "1": "I", "2": "II", "3": "III", "4": "IV" };
+
+export function resolvePhaseOption(value) {
+  let normalized = String(value || "").trim();
+  if (!normalized) return "";
+  normalized = normalized.replace(/[ⅠⅡⅢⅣ０-４]/g, (char) => PHASE_WIDTH_MAP[char] ?? char).toUpperCase();
+  for (const [source, target] of PHASE_CN_NUMERALS) normalized = normalized.split(source).join(target);
+  normalized = normalized.split("期").join("").trim();
+  const tokens = normalized.match(/IV|III|II|I|[1-4]/g) || [];
+  if (!tokens.length) return "";
+  const canonical = tokens.map((token) => PHASE_DIGIT_ROMAN[token] || token).join("/") + "期";
+  return PHASES.includes(canonical) ? canonical : "";
+}
 const TERMINAL_JOB_STATES = new Set(["review_ready", "failed", "cancelled"]);
 const POLL_INTERVAL_MS = 4000;
 const POLL_REQUEST_TIMEOUT_MS = 15000;
 const COMMAND_REQUEST_TIMEOUT_MS = 30000;
 const UPLOAD_REQUEST_TIMEOUT_MS = 120000;
 const MAX_CONSECUTIVE_POLL_FAILURES = 3;
+
+// NEW-5（R27 第1轮修订）：刷新/重开弹窗前，把在途任务的寻址指纹存进
+// sessionStorage；挂载时回查并恢复进度面板。服务端任务本身是持久的
+// （progress_json 列 + 冷恢复钩子），丢的从来只是前端弹窗状态。
+export const ACTIVE_JOB_STORAGE_KEY = "workbench.synopsisIntake.activeJob";
+
+function readStoredActiveJob() {
+  try {
+    const raw = globalThis.sessionStorage?.getItem(ACTIVE_JOB_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.intake_id || !parsed?.idempotency_key) return null;
+    return { intake_id: String(parsed.intake_id), idempotency_key: String(parsed.idempotency_key) };
+  } catch {
+    return null;
+  }
+}
+
+function persistActiveJob(started) {
+  try {
+    globalThis.sessionStorage?.setItem(
+      ACTIVE_JOB_STORAGE_KEY,
+      JSON.stringify({ intake_id: started.intake_id, idempotency_key: started.idempotency_key }),
+    );
+  } catch {
+    // 存储不可用（隐私模式等）：刷新恢复退化为不可用，不影响任务本身。
+  }
+}
+
+function clearActiveJob() {
+  try {
+    globalThis.sessionStorage?.removeItem(ACTIVE_JOB_STORAGE_KEY);
+  } catch {
+    // 同上：忽略存储异常。
+  }
+}
 
 export class SynopsisRequestTimeoutError extends Error {
   constructor(message = "请求超时") {
@@ -83,9 +141,27 @@ export function synopsisJobState(job) {
 }
 
 export function synopsisJobErrorKind(job) {
+  // AGG25-P1-1: the backend now stores a structured failure_code; the regex
+  // fallback keeps legacy rows classifiable.  ENV-02 correction: a timeout
+  // means "model busy/slow", a refused connection means "service offline" —
+  // different user guidance, never merged again.
+  const code = String(job?.failure_code || "");
+  if (code === "model_timeout") return "model_timeout";
+  if (code === "local_model_offline") return "model_offline";
+  if (code === "route_config_changed") return "route_config";
+  if (code === "binding_mismatch") return "binding_mismatch";
   const raw = String(job?.error_message || "");
   if (/approved direct route|route configuration changed|route_identity/i.test(raw)) {
     return "route_config";
+  }
+  if (/binding.*mismatch|binding_base_url_mismatch/i.test(raw)) {
+    return "binding_mismatch";
+  }
+  if (/timed out|timeout/i.test(raw)) {
+    return "model_timeout";
+  }
+  if (/urlerror|connection refused|connection reset|connection error/i.test(raw)) {
+    return "model_offline";
   }
   return "";
 }
@@ -97,8 +173,22 @@ export function synopsisJobMessage(job) {
     // identity check blocks re-entry after any settings change, so the only
     // real path is re-importing the file. Say so plainly instead of showing
     // internal jargon next to a dead-end button.
-    if (synopsisJobErrorKind(job) === "route_config") {
-      return "解析未完成：本次使用的模型服务地址不在已批准列表中（常见于模型配置调整）。请在 AI 设置中确认模型配置，然后重新选择文件重新导入。";
+    const kind = synopsisJobErrorKind(job);
+    if (kind === "route_config") {
+      return "解析未完成：模型配置已变更，请重新选择文件重新导入。";
+    }
+    if (kind === "model_timeout") {
+      // ENV-02: honest busy-model guidance. The old copy promised "系统会自动
+      // 排队并在模型可用时拉起" — a promise nothing in the dispatch path
+      // keeps (the job never enters an arbiter queue). Say what is true:
+      // the model was busy, the request can be retried, and the user may cancel.
+      return "解析未完成：模型本次响应超时，通常是因为模型正被其他任务占用（繁忙，不是故障）。您可以点“继续处理”再试一次，也可以取消本次任务稍后再来。";
+    }
+    if (kind === "model_offline") {
+      return "解析未完成：本地模型服务未就绪或无法连接。请确认模型服务已启动后点“继续处理”再试，也可以取消本次任务。";
+    }
+    if (kind === "binding_mismatch") {
+      return "解析未完成：项目绑定的模型服务地址与受管服务不一致，请在 AI 设置中改绑后重试。";
     }
     if (job?.error_message) return job.error_message;
   }
@@ -106,6 +196,31 @@ export function synopsisJobMessage(job) {
   if (state === "recoverable") return "方案摘要解析已暂停，已完成的进度仍会保留。";
   if (state === "cancelled") return "本次解析已取消。您可以重新选择文件。";
   return "";
+}
+
+export function synopsisAttemptLabel(job) {
+  // ENV-02: honest attempt progress for the waiting panel. The backend now
+  // stamps the real per-chunk attempt count onto the job.
+  const attempts = Number(job?.attempt_count || 0);
+  if (!Number.isFinite(attempts) || attempts <= 1) return "";
+  return `第${attempts}次解析尝试`;
+}
+
+export function modelLifecycleSummary(payload) {
+  // ENV-02: a truthful one-line model residency summary for the waiting
+  // panel (replaces the retracted "auto queueing" promise). Empty string
+  // means "no trustworthy status — show nothing".
+  if (!payload || payload.status !== "ok") return "";
+  const arbiter = payload.arbiter || {};
+  const current = String(arbiter.current || "");
+  if (!current) return "模型服务空闲";
+  const users = Object.values(arbiter.users || {}).reduce(
+    (sum, value) => sum + Number(value || 0),
+    0,
+  );
+  const queue = Array.isArray(arbiter.queue) ? arbiter.queue.length : 0;
+  const busy = `模型正被${Math.max(users, 1)}个任务占用`;
+  return queue ? `${busy}，另有${queue}项在排队` : busy;
 }
 
 function waitForNextPoll(delayMs, signal) {
@@ -216,10 +331,86 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
   const [job, setJob] = useState(null);
   const [imported, setImported] = useState(null);
   const [framing, setFraming] = useState(null);
+  // NEW-8：AI 提取的分期无法映射进下拉选项时保留原文用于点名提示；
+  // 此时 framing.study_phase 置空 → canConfirm 阻断，直到医学经理手选。
+  const [unresolvedPhase, setUnresolvedPhase] = useState("");
   const [picos, setPicos] = useState(null);
   const [synopsisText, setSynopsisText] = useState("");
   const [acknowledged, setAcknowledged] = useState([]);
   const [overrideReason, setOverrideReason] = useState("");
+  const [modelStatus, setModelStatus] = useState(null);
+  const [restoredNotice, setRestoredNotice] = useState(false);
+  // NEW-30（R27 第3轮修订）：「重新选择」要真清空——React 文件 input 的
+  // value/files 不可受控清空，用 key 重挂换新节点。
+  const [fileInputNonce, setFileInputNonce] = useState(0);
+
+  // ENV-02: while a job is in flight, keep an honest picture of model
+  // residency in the waiting panel (best-effort; absent status shows nothing).
+  useEffect(() => {
+    if (!busy) {
+      setModelStatus(null);
+      return undefined;
+    }
+    let cancelled = false;
+    const controller = new AbortController();
+    const read = () => {
+      fetch("/api/model-lifecycle/status", { signal: controller.signal })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((payload) => {
+          if (!cancelled) setModelStatus(payload);
+        })
+        .catch(() => {
+          if (!cancelled) setModelStatus(null);
+        });
+    };
+    read();
+    const timer = globalThis.setInterval(read, 8000);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      globalThis.clearInterval(timer);
+    };
+  }, [busy]);
+
+  // NEW-5：挂载（含刷新后重开弹窗）时按 sessionStorage 指纹回查在途或
+  // 可恢复任务并直接恢复进度面板；任务已不存在则清指纹回默认态。
+  useEffect(() => {
+    const saved = readStoredActiveJob();
+    if (!saved) return undefined;
+    const controller = new AbortController();
+    commandControllerRef.current?.abort();
+    commandControllerRef.current = controller;
+    const generation = pollGenerationRef.current + 1;
+    pollGenerationRef.current = generation;
+    (async () => {
+      try {
+        const current = await requestJsonWithTimeout(
+          `/api/medical-writing/project-intake/synopsis/${saved.intake_id}/jobs/${encodeURIComponent(saved.idempotency_key)}`,
+          { signal: controller.signal },
+          { timeoutMs: POLL_REQUEST_TIMEOUT_MS, signal: controller.signal },
+        );
+        if (!mountedRef.current || pollGenerationRef.current !== generation) return;
+        const state = synopsisJobState(current);
+        if (state === "failed" || state === "cancelled") {
+          clearActiveJob();
+          setJob(current);
+          setMessage(synopsisJobMessage(current));
+          return;
+        }
+        setIntake(saved);
+        setJob(current);
+        setBusy("processing");
+        setRestoredNotice(true);
+        await pollJob(saved, generation);
+      } catch (error) {
+        if (isAbortError(error)) return;
+        // 任务不存在（404）或暂时查不到：清指纹回默认态，不打扰用户。
+        if (mountedRef.current) clearActiveJob();
+      }
+    })();
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -255,6 +446,9 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
     setSynopsisText("");
     setAcknowledged([]);
     setOverrideReason("");
+    setRestoredNotice(false);
+    setFileInputNonce((value) => value + 1);
+    clearActiveJob();
   };
 
   const request = (url, options = {}, timeoutMs = COMMAND_REQUEST_TIMEOUT_MS) => {
@@ -273,11 +467,17 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
       );
       if (!mountedRef.current || pollGenerationRef.current !== generation) return;
       setImported(result);
-      setFraming(result.proposed_framing);
+      const proposedFraming = result.proposed_framing;
+      const phaseOption = resolvePhaseOption(proposedFraming?.study_phase);
+      // 可映射时统一写入规范选项值（'iii期' 也归一为 'III期'）；映射失败时
+      // 置空并保留原文点名，杜绝「select 显示请选择而 state 非空」的假象。
+      setUnresolvedPhase(phaseOption ? "" : String(proposedFraming?.study_phase || "").trim());
+      setFraming({ ...proposedFraming, study_phase: phaseOption });
       setPicos(result.proposed_picos);
       setSynopsisText(result.proposed_synopsis_text || "");
       setMessage("");
     } else {
+      if (["failed", "cancelled"].includes(state)) clearActiveJob();
       setMessage(synopsisJobMessage(current));
     }
     setBusy("");
@@ -320,6 +520,7 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
       setIntake(started);
       setJob(started);
       setBusy("processing");
+      persistActiveJob(started);
       const generation = pollGenerationRef.current + 1;
       pollGenerationRef.current = generation;
       await pollJob(started, generation);
@@ -348,6 +549,18 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
         request: (url, options) => request(url, options, COMMAND_REQUEST_TIMEOUT_MS),
       });
       if (!mountedRef.current) return;
+      if (
+        String(cancelled?.status || "") === "review_ready"
+        || synopsisJobState(cancelled) === "review_ready"
+      ) {
+        // AGG-ENV-02: the extraction had already succeeded and passed
+        // validation when the cancel landed — the backend refused to discard
+        // it. Deliver the result instead of a dead end.
+        setBusy("processing");
+        setMessage("");
+        await pollJob(intake, generation);
+        return;
+      }
       setJob(cancelled);
       setMessage(synopsisJobMessage(cancelled));
     } catch (error) {
@@ -431,6 +644,7 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
           }),
         },
       );
+      clearActiveJob();
       onCreated?.(payload);
     } catch (error) {
       if (!mountedRef.current || isAbortError(error)) return;
@@ -457,6 +671,7 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
       <section className="file-first-synopsis-intake">
         <div className="file-first-dropzone">
           <input
+            key={fileInputNonce}
             type="file"
             accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             disabled={disabled || Boolean(busy)}
@@ -483,8 +698,14 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
               <strong>{phaseLabel(job)}</strong>
               <span>
                 {total ? `正在处理 ${Math.min(current + 1, total)} / ${total} 个内容块` : "正在准备文档内容"}
+                {job?.waiting_on === "model_wait" ? " · 模型处理中或排队等待空位" : ""}
                 {elapsedMinutes ? ` · 已运行 ${elapsedMinutes} 分钟` : ""}
+                {synopsisAttemptLabel(job) ? ` · ${synopsisAttemptLabel(job)}` : ""}
               </span>
+              {restoredNotice && <small>已恢复上次的提取任务，正在继续跟踪进度；无需重新选择文件。</small>}
+              {modelLifecycleSummary(modelStatus) && (
+                <small>{modelLifecycleSummary(modelStatus)}；如长时间无进展可取消后稍后再来。</small>
+              )}
             </div>
             {intake && (
               <button type="button" onClick={cancel} disabled={busy === "cancel"}>
@@ -537,10 +758,11 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
         </label>
         <label>
           <span>研究分期</span>
-          <select value={framing?.study_phase || ""} onChange={(event) => setFramingField("study_phase", event.target.value)}>
+          <select value={framing?.study_phase || ""} onChange={(event) => { setUnresolvedPhase(""); setFramingField("study_phase", event.target.value); }}>
             <option value="">请选择</option>
             {PHASES.map((phase) => <option key={phase}>{phase}</option>)}
           </select>
+          {unresolvedPhase && <small className="synopsis-phase-unresolved">分期待确认：AI提取的分期「{unresolvedPhase}」无法识别，请从上方选择 I-III 期；不选择无法确认建项。</small>}
         </label>
         <label>
           <span>方案号</span>

@@ -33,6 +33,7 @@ from .models import (
     MedicalWritingFactIntakeApplyRequest,
     MedicalWritingFactIntakeApplyResult,
     MedicalWritingFactIntakeConflictError,
+    MedicalWritingFactIntakeProviderUnavailableError,
     EligibilityActionItem,
     EligibilityCandidate,
     EligibilityCandidateStatus,

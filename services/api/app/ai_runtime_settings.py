@@ -480,11 +480,16 @@ class AiRuntimeSettingsStore:
         return next_payload
 
     def profiles(self) -> list[AiProviderProfile]:
+        # R27 环境前置反例：一个未知键（isolated_runtime 里手写的
+        # output_token_budget）让整个 profile 被静默丢弃，translation_support
+        # 角色在 main.py 导入期 role_env() 处 KeyError，5301 直接起不来。
+        # 未知键只忽略该键，不得丢弃整个 profile；已知字段的值错误仍丢弃。
+        known_fields = frozenset(AiProviderProfile.__dataclass_fields__)
         result = []
         for item in self.load().get("profiles", []):
             try:
-                result.append(AiProviderProfile(**item))
-            except (TypeError, ValueError):
+                result.append(AiProviderProfile(**{key: value for key, value in item.items() if key in known_fields}))
+            except (TypeError, ValueError, AttributeError):
                 continue
         return result
 

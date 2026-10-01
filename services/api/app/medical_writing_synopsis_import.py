@@ -82,7 +82,69 @@ def _normalize_route_snapshot(candidate: Any) -> tuple[dict[str, Any], str]:
     supplied_hash = str(candidate.get("identity_sha256") or "")
     if supplied_hash and supplied_hash != identity_hash:
         raise RuntimeError("synopsis import route snapshot identity hash is invalid")
-    return {**snapshot, "identity_sha256": identity_hash}, identity_hash
+    normalized = {**snapshot, "identity_sha256": identity_hash}
+    # AGG25-P0-2①: the frozen contract covers the whole fallback chain, not
+    # only the primary route.  Chain entries ride OUTSIDE the primary hash
+    # (same shape as the corpus analysis frozen route design): each entry is
+    # normalized and hashed on its own; invalid entries are dropped rather
+    # than poisoning the primary identity.
+    chain = candidate.get("fallback_chain")
+    if isinstance(chain, list):
+        normalized_chain = []
+        for entry in chain:
+            if not isinstance(entry, dict):
+                continue
+            try:
+                normalized_entry, entry_hash = _normalize_route_snapshot(entry)
+            except (RuntimeError, TypeError, ValueError):
+                continue
+            normalized_chain.append({**normalized_entry,
+                                     "identity_sha256": entry_hash})
+        if normalized_chain:
+            normalized["fallback_chain"] = normalized_chain
+    return normalized, identity_hash
+
+
+def _frozen_route_hashes(snapshot: dict[str, Any]) -> set[str]:
+    """Primary identity plus every frozen fallback identity (AGG25-P0-2①)."""
+    hashes = set()
+    if isinstance(snapshot, dict):
+        primary = str(snapshot.get("identity_sha256") or "")
+        if primary:
+            hashes.add(primary)
+        for entry in snapshot.get("fallback_chain") or []:
+            if isinstance(entry, dict):
+                entry_hash = str(entry.get("identity_sha256") or "")
+                if entry_hash:
+                    hashes.add(entry_hash)
+    return hashes
+
+
+def _route_hash_of(snapshot: dict[str, Any]) -> str:
+    return str(snapshot.get("identity_sha256") or "") if isinstance(snapshot, dict) else ""
+
+
+def _classify_import_failure(exc: BaseException) -> str:
+    """AGG25-P1-1: structured, user-facing failure classes so the UI can
+    show the real cause (offline model vs drifted route vs bad binding).
+
+    AGG-ENV-02 correction: a timeout means the model was busy or slow, not
+    offline. R26 spent 30 minutes in 3×300s timeouts and told the medical
+    manager "本地模型服务未就绪" — the model was up and answered in 2.4
+    minutes on the next attempt. Timeouts get their own class with
+    wait-oriented guidance; URLError/refused connections keep the offline
+    class with service-check guidance."""
+    text = f"{type(exc).__name__}: {exc}"
+    lowered = text.lower()
+    if isinstance(exc, TimeoutError) or "timed out" in lowered or "timeout" in lowered:
+        return "model_timeout"
+    if isinstance(exc, ConnectionError) or "urlerror" in lowered or        "connection" in lowered:
+        return "local_model_offline"
+    if "route configuration changed" in lowered or "route_identity" in lowered or        "does not match the frozen synopsis route" in lowered:
+        return "route_config_changed"
+    if "binding" in lowered and ("mismatch" in lowered or "base_url" in lowered):
+        return "binding_mismatch"
+    return "import_failed"
 
 
 def _route_snapshot_json(snapshot: dict[str, Any]) -> str:
@@ -181,6 +243,8 @@ class MedicalWritingSynopsisImportService:
                 # --- v4: frozen route identity for durable execution ---
                 "route_snapshot_json": "TEXT NOT NULL DEFAULT ''",
                 "route_identity_hash": "TEXT NOT NULL DEFAULT ''",
+                # --- v5 (AGG25-P0-2/P1-1): structured failure reason ---
+                "failure_code": "TEXT NOT NULL DEFAULT ''",
             }
             for column, definition in migrations.items():
                 if column not in columns:
@@ -262,24 +326,56 @@ class MedicalWritingSynopsisImportService:
         for owner in owners:
             snapshot_reader = getattr(owner, "route_identity_snapshot", None)
             if callable(snapshot_reader):
-                return _normalize_route_snapshot(snapshot_reader(refresh=True))
+                candidate = snapshot_reader(refresh=True)
+                chain_reader = getattr(owner, "fallback_chain_identities", None)
+                if callable(chain_reader):
+                    try:
+                        chain = chain_reader()
+                    except Exception:
+                        chain = []
+                    if isinstance(chain, list) and chain:
+                        candidate = {**candidate, "fallback_chain": chain}
+                return _normalize_route_snapshot(candidate)
         raise RuntimeError(
             "synopsis import requires an AI runner with a route identity snapshot"
         )
 
-    def _assert_current_route_matches(self, expected_hash: str) -> None:
-        _, current_hash = self._capture_route_snapshot()
-        if current_hash != expected_hash:
-            raise RuntimeError(
-                "synopsis import route configuration changed after task start"
-            )
+    def _reconcile_route(
+        self,
+        route_snapshot: dict[str, Any],
+        route_identity_hash: str,
+    ) -> tuple[dict[str, Any], str]:
+        """AGG25-P0-2①: a drifted route no longer aborts the import.
+
+        The frozen contract accepts any route inside the frozen fallback
+        chain.  When the effective route left the frozen set entirely, the
+        import re-freezes against the now-effective route (audited) and
+        continues instead of failing the job with no way forward.
+        """
+        frozen_hashes = _frozen_route_hashes(route_snapshot)
+        current_snapshot, current_hash = self._capture_route_snapshot()
+        if current_hash in frozen_hashes:
+            return route_snapshot, route_identity_hash
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "synopsis import route drifted out of the frozen chain; "
+            "re-freezing (frozen=%s current=%s)",
+            str(route_identity_hash)[:12],
+            str(current_hash)[:12],
+        )
+        return current_snapshot, current_hash
 
     @staticmethod
-    def _validate_ai_run_route(run: Any, expected_hash: str) -> tuple[str, str, str]:
+    def _validate_ai_run_route(
+        run: Any, frozen_snapshot: dict[str, Any]
+    ) -> tuple[str, str, str]:
         actual_hash = str(getattr(run, "route_identity_hash", "") or "")
         if not actual_hash:
             raise RuntimeError("AiTaskRun.route_identity_hash is missing")
-        if actual_hash != expected_hash:
+        # AGG25-P0-2①: a fallback run is a successful run — accept any
+        # route inside the frozen chain instead of the primary-only hash.
+        if actual_hash not in _frozen_route_hashes(frozen_snapshot):
             raise RuntimeError(
                 "AiTaskRun.route_identity_hash does not match the frozen synopsis route"
             )
@@ -310,6 +406,45 @@ class MedicalWritingSynopsisImportService:
         if computed_hash != row["route_identity_hash"]:
             raise RuntimeError("persisted synopsis route identity hash does not match snapshot")
         return normalized, computed_hash
+
+    def _refreeze_job_route(
+        self,
+        project_id: str,
+        idempotency_key: str,
+        route_snapshot: dict[str, Any],
+        route_identity_hash: str,
+    ) -> None:
+        """Persist a reconciled route contract onto the job (AGG25-P0-2①
+        follow-through for the deferred paths): the parent row plus every
+        not-yet-done chunk row adopt the re-frozen route, so worker and
+        chunk-level identity checks stay consistent.  Done chunks keep the
+        route hash that actually produced them."""
+        now = self._clock().isoformat()
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute(
+                """
+                UPDATE medical_writing_synopsis_imports
+                SET route_snapshot_json = ?, route_identity_hash = ?, updated_at = ?
+                WHERE project_id = ? AND idempotency_key = ?
+                """,
+                (
+                    _route_snapshot_json(route_snapshot),
+                    route_identity_hash,
+                    now,
+                    project_id,
+                    idempotency_key,
+                ),
+            )
+            connection.execute(
+                """
+                UPDATE medical_writing_synopsis_import_chunks
+                SET route_identity_hash = ?
+                WHERE project_id = ? AND idempotency_key = ? AND status != 'done'
+                """,
+                (route_identity_hash, project_id, idempotency_key),
+            )
+            connection.commit()
 
     def import_and_structure(
         self,
@@ -371,8 +506,6 @@ class MedicalWritingSynopsisImportService:
             observed_attempt = int(decision["attempt_count"])
             time.sleep(self.poll_interval_seconds)
 
-        route_identity_hash = decision["route_identity_hash"]
-
         heartbeat_stop, heartbeat_thread = self._start_claim_heartbeat(
             project_id, idempotency_key, claim_token
         )
@@ -386,7 +519,7 @@ class MedicalWritingSynopsisImportService:
                 content_sha256=content_sha256,
                 expected_indication=expected_indication,
                 actor=actor,
-                route_identity_hash=route_identity_hash,
+                route_snapshot=decision["route_snapshot"],
             )
             return self._complete_claim(
                 project_id=project_id,
@@ -403,6 +536,7 @@ class MedicalWritingSynopsisImportService:
                     request_sha256=request_sha256,
                     claim_token=claim_token,
                     error_message=f"{type(exc).__name__}: {exc}"[:2000],
+                    failure_code=_classify_import_failure(exc),
                 )
             except sqlite3.Error:
                 pass
@@ -422,7 +556,7 @@ class MedicalWritingSynopsisImportService:
         content_sha256: str,
         expected_indication: str,
         actor: str,
-        route_identity_hash: str,
+        route_snapshot: dict[str, Any],
     ) -> MedicalWritingSynopsisImport:
         source_id = "mwsynopsis_" + hashlib.sha256(
             f"{project_id}|{content_sha256}".encode("utf-8")
@@ -501,9 +635,11 @@ class MedicalWritingSynopsisImportService:
             ],
             user_instruction=_synopsis_structuring_instruction(expected_indication),
         )
-        self._assert_current_route_matches(route_identity_hash)
+        route_snapshot, route_identity_hash = self._reconcile_route(
+            route_snapshot, _route_hash_of(route_snapshot)
+        )
         run = self.ai_task_runner.submit_internal(project_id, ai_request)
-        self._validate_ai_run_route(run, route_identity_hash)
+        self._validate_ai_run_route(run, route_snapshot)
         status = getattr(run.status, "value", run.status)
         if status != "completed":
             detail = "; ".join(run.validation_errors) or run.error_message or status
@@ -801,6 +937,7 @@ class MedicalWritingSynopsisImportService:
         request_sha256: str,
         claim_token: str,
         error_message: str,
+        failure_code: str = "",
     ) -> None:
         now = self._clock().isoformat()
         with self._connect() as connection:
@@ -809,13 +946,15 @@ class MedicalWritingSynopsisImportService:
                 """
                 UPDATE medical_writing_synopsis_imports
                 SET status = 'failed', payload_json = '', claim_token = '',
-                    lease_expires_at = '', error_message = ?, updated_at = ?
+                    lease_expires_at = '', error_message = ?,
+                    failure_code = ?, updated_at = ?
                 WHERE project_id = ? AND idempotency_key = ?
                   AND request_sha256 = ? AND status = 'pending'
                   AND claim_token = ?
                 """,
                 (
                     error_message,
+                    failure_code,
                     now,
                     project_id,
                     idempotency_key,
@@ -1630,10 +1769,26 @@ class MedicalWritingSynopsisImportService:
                         user_instruction=_synopsis_structuring_instruction(expected_indication),
                     )
                     try:
-                        self._assert_current_route_matches(route_identity_hash)
+                        with self._connect() as route_conn:
+                            frozen_snapshot, frozen_hash = self._load_frozen_route(
+                                route_conn, project_id, idempotency_key
+                            )
+                        route_snapshot, effective_hash = self._reconcile_route(
+                            frozen_snapshot, frozen_hash
+                        )
+                        if effective_hash != route_identity_hash:
+                            # The effective route left the frozen chain
+                            # mid-job: adopt and persist the re-frozen
+                            # contract so the remaining chunk bookkeeping
+                            # stays consistent.
+                            route_identity_hash = effective_hash
+                            self._refreeze_job_route(
+                                project_id, idempotency_key,
+                                route_snapshot, effective_hash,
+                            )
                         run = self.ai_task_runner.submit_internal(project_id, ai_request)
                         run_id, actual_response_model, provider_name = (
-                            self._validate_ai_run_route(run, route_identity_hash)
+                            self._validate_ai_run_route(run, route_snapshot)
                         )
                     except Exception as exc:
                         failed_by_owner = self._fail_chunk(
@@ -1647,10 +1802,24 @@ class MedicalWritingSynopsisImportService:
                             )
                         return
 
-                    if self._is_cancelled(project_id, idempotency_key):
+                    status_val = getattr(run.status, "value", run.status)
+                    # AGG-ENV-02: a run that already finished with a passed
+                    # validation is real work. A cancel that lands while the
+                    # response is in flight must not orphan it (R26: the
+                    # medical manager cancelled after 30 minutes of faked
+                    # failures, seconds before attempt 2 finished — the
+                    # successful result was discarded and no project could
+                    # ever be created). Salvage: fall through, complete the
+                    # chunk and let the merge deliver review_ready; the cancel
+                    # still prevents any later chunks from starting.
+                    run_validated_pass = (
+                        status_val == "completed"
+                        and str(getattr(run, "output_validation_status", "") or "")
+                        == "passed"
+                    )
+                    if self._is_cancelled(project_id, idempotency_key) and not run_validated_pass:
                         return
 
-                    status_val = getattr(run.status, "value", run.status)
                     if status_val != "completed":
                         detail = "; ".join(run.validation_errors) or run.error_message or status_val
                         failed_by_owner = self._fail_chunk(
@@ -1710,8 +1879,9 @@ class MedicalWritingSynopsisImportService:
             if not self._all_chunks_done(project_id, idempotency_key, chunk_total):
                 return  # not all done — another worker may still be running
 
-            if self._is_cancelled(project_id, idempotency_key):
-                return
+            # AGG-ENV-02: no cancel check here — once every chunk is done the
+            # merge is pure deterministic computation over already-paid-for
+            # work; aborting would orphan the result (the R26 dead end).
 
             self._sync_progress(project_id, idempotency_key, chunk_total, phase="validating")
 
@@ -1723,8 +1893,6 @@ class MedicalWritingSynopsisImportService:
                 expected_indication=expected_indication,
                 chunk_total=chunk_total,
             )
-            if self._is_cancelled(project_id, idempotency_key):
-                return
 
             self._complete_job(
                 project_id=project_id,
@@ -1799,6 +1967,17 @@ class MedicalWritingSynopsisImportService:
         # Only write if the new done_count is >= current (monotonic).
         current_chunk_index = int(current_idx["chunk_index"]) if current_idx else 0
         effective_index = max(done_count, current_chunk_index)
+        # AGG-ENV-02: honest progress — surface the real attempt number
+        # (max across chunks) on the job so the waiting panel can tell the
+        # medical manager "第N次尝试" instead of a frozen "1/1个内容块".
+        attempt_count = connection.execute(
+            """
+            SELECT COALESCE(MAX(attempt_count), 1) AS max_attempt
+            FROM medical_writing_synopsis_import_chunks
+            WHERE project_id = ? AND idempotency_key = ?
+            """,
+            (project_id, idempotency_key),
+        ).fetchone()["max_attempt"]
         now = self._clock().isoformat()
         progress = SynopsisImportJobProgress(
             phase=phase,
@@ -1806,19 +1985,21 @@ class MedicalWritingSynopsisImportService:
             chunk_total=chunk_total,
             provider_status="streaming" if phase == "ai_synthesis" else "done",
         ).model_dump(mode="json")
+        progress["attempt_count"] = max(1, int(attempt_count or 1))
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             connection.execute(
                 """
                 UPDATE medical_writing_synopsis_imports
                 SET phase = ?, chunk_index = ?, chunk_total = ?,
-                    progress_json = ?, updated_at = ?
+                    progress_json = ?, attempt_count = ?, updated_at = ?
                 WHERE project_id = ? AND idempotency_key = ?
                   AND status NOT IN ('cancelled', 'completed')
                   AND chunk_index <= ?
                 """,
                 (phase, effective_index, chunk_total,
                  json.dumps(progress, ensure_ascii=False),
+                 max(1, int(attempt_count or 1)),
                  now, project_id, idempotency_key, effective_index),
             )
             connection.commit()
@@ -2103,15 +2284,24 @@ class MedicalWritingSynopsisImportService:
         for row in stale_jobs:
             try:
                 with self._connect() as conn:
-                    _, route_identity_hash = self._load_frozen_route(
+                    route_snapshot, frozen_hash = self._load_frozen_route(
                         conn, row["project_id"], row["idempotency_key"]
                     )
                     source = self._load_source_from_db(
                         conn, row["project_id"], row["idempotency_key"]
                     )
-                # Recovery verifies the current configuration but never uses it
-                # to construct a replacement route.
-                self._assert_current_route_matches(route_identity_hash)
+                # AGG25-P0-2①: recovery reconciles against the effective
+                # route — the frozen contract stands while the effective
+                # route stays inside the frozen chain; a route that left the
+                # chain re-freezes (persisted) instead of dead-ending the job.
+                route_snapshot, route_identity_hash = self._reconcile_route(
+                    route_snapshot, frozen_hash
+                )
+                if route_identity_hash != frozen_hash:
+                    self._refreeze_job_route(
+                        row["project_id"], row["idempotency_key"],
+                        route_snapshot, route_identity_hash,
+                    )
             except (
                 KeyError,
                 RuntimeError,
@@ -2172,6 +2362,10 @@ class MedicalWritingSynopsisImportService:
             ):
                 connection.rollback()
                 return False
+            # AGG-ENV-02: 'cancelled' is allowed to be superseded by the
+            # completed result (salvage) — a cancel that races a validated
+            # chunk must not discard 30 minutes of real extraction work.
+            # A 'failed' or already-completed job is still never resurrected.
             cursor = connection.execute(
                 """
                 UPDATE medical_writing_synopsis_imports
@@ -2180,7 +2374,7 @@ class MedicalWritingSynopsisImportService:
                     progress_json = ?, chunk_index = ?,
                     error_message = '', updated_at = ?
                 WHERE project_id = ? AND idempotency_key = ?
-                  AND status NOT IN ('cancelled', 'completed', 'failed')
+                  AND status NOT IN ('completed', 'failed')
                 """,
                 (
                     result_json,
@@ -2298,7 +2492,8 @@ class MedicalWritingSynopsisImportService:
                 """
                 SELECT status, phase, chunk_index, chunk_total, progress_json,
                        source_sha256, source_filename, error_message, cancelled_at,
-                       result_json, payload_json, job_id, created_at, updated_at
+                       result_json, payload_json, job_id, created_at, updated_at,
+                       attempt_count, failure_code
                 FROM medical_writing_synopsis_imports
                 WHERE project_id = ? AND idempotency_key = ?
                 """,
@@ -2315,18 +2510,24 @@ class MedicalWritingSynopsisImportService:
         cancellation_state = "cancelled" if row["cancelled_at"] else "none"
         raw_status = row["status"] or ""
         raw_phase = row["phase"] or raw_status
-        if cancellation_state == "cancelled":
-            public_status = "cancelled"
-            public_phase = "cancelled"
-        elif raw_status == "completed" or raw_phase == "review_ready":
+        # AGG-ENV-02: a finished (or salvage-finished) result outranks a cancel
+        # flag — after a validated run lands, the medical manager must see
+        # "解析结果已生成" (review_ready), never a bare "已取消" that hides it.
+        if raw_status == "completed" or raw_phase == "review_ready":
             public_status = "review_ready"
             public_phase = "review_ready"
+        elif cancellation_state == "cancelled":
+            public_status = "cancelled"
+            public_phase = "cancelled"
         elif raw_status == "failed":
             public_status = "failed"
             public_phase = "failed"
         else:
             public_status = raw_phase or "pending"
             public_phase = raw_phase or "pending"
+        # NEW-11（R27 第1轮修订）：AI 阶段（含网关排队等待）必须向等待面板
+        # 点名模型等待；本地解析/校验阶段与全部终态不携带该标记。
+        waiting_on = "model_wait" if public_phase == "ai_synthesis" else ""
         result_ref = None
         if (row["result_json"] or row["payload_json"]) and public_status == "review_ready":
             result_ref = idempotency_key
@@ -2345,6 +2546,9 @@ class MedicalWritingSynopsisImportService:
             warnings=[],
             cancellation_state=cancellation_state,
             error_message=row["error_message"] or "",
+            attempt_count=int(row["attempt_count"] or 1),
+            failure_code=str(row["failure_code"] or ""),
+            waiting_on=waiting_on,
             repair_count=progress.get("repair_count", 0),
             anchor_count=progress.get("anchor_count", 0),
             result_ref=result_ref,
@@ -2399,12 +2603,16 @@ class MedicalWritingSynopsisImportService:
             ).fetchone()
         if row is None:
             raise KeyError(f"synopsis import job not found: {idempotency_key}")
-        if row["status"] != "completed":
+        # The existing _complete_claim stores result in payload_json.
+        result_text = row["result_json"] or row["payload_json"]
+        # AGG-ENV-02: an orphaned result (a cancelled/failed flag on a row
+        # whose merged result was already persisted — e.g. a cancel racing
+        # the merge) stays readable. Throwing "not ready" here is what turned
+        # R26's finished 30-minute extraction into a permanent dead end.
+        if row["status"] != "completed" and not result_text:
             raise RuntimeError(
                 f"synopsis import job result not ready: status={row['status']}"
             )
-        # The existing _complete_claim stores result in payload_json.
-        result_text = row["result_json"] or row["payload_json"]
         if not result_text:
             raise RuntimeError("synopsis import job result payload is empty")
         result = MedicalWritingSynopsisImport.model_validate_json(result_text)
@@ -2492,10 +2700,71 @@ class MedicalWritingSynopsisImportService:
             }
         )
 
+    def _validated_run_for_job(self, project_id: str, created_after: datetime) -> Any | None:
+        """AGG-ENV-02: find a completed, validation-passed synopsis run for
+        this project created at/after the job start — evidence that real
+        extraction work already succeeded and must not be discarded."""
+        list_runs = getattr(self.ai_task_runner, "list_runs", None)
+        if not callable(list_runs):
+            return None
+        try:
+            runs = list_runs(project_id)
+        except Exception:
+            return None
+        for run in runs or []:
+            try:
+                # Tolerate fakes/minimal run records that omit scope fields:
+                # absence means "unknown", and the production store already
+                # scopes list_runs by project.
+                if str(getattr(run, "project_id", project_id)) != project_id:
+                    continue
+                run_task_type = getattr(run, "task_type", "protocol_synopsis_structuring")
+                if str(run_task_type) != "protocol_synopsis_structuring":
+                    continue
+                status_value = getattr(run.status, "value", run.status)
+                if str(status_value) != "completed":
+                    continue
+                if str(getattr(run, "output_validation_status", "") or "") != "passed":
+                    continue
+                run_created = getattr(run, "created_at", None)
+                if (
+                    run_created is not None
+                    and created_after is not None
+                    and run_created < created_after
+                ):
+                    continue
+                return run
+            except Exception:
+                continue
+        return None
+
     def cancel_job(
         self, project_id: str, idempotency_key: str
     ) -> SynopsisImportJobCancelResponse:
         now = self._clock().isoformat()
+        salvage_run = None
+        job_created_at: datetime | None = None
+        with self._connect() as connection:
+            probe = connection.execute(
+                "SELECT created_at FROM medical_writing_synopsis_imports "
+                "WHERE project_id = ? AND idempotency_key = ?",
+                (project_id, idempotency_key),
+            ).fetchone()
+        if probe is not None:
+            job_created_at = _parse_datetime(probe["created_at"])
+            salvage_run = self._validated_run_for_job(project_id, job_created_at)
+        if salvage_run is not None:
+            # AGG-ENV-02: the extraction already succeeded and passed
+            # validation. Refuse to mark the job cancelled — the in-flight
+            # worker will land the merged result and the user gets
+            # "解析结果已生成" instead of a discarded 30-minute wait.
+            return SynopsisImportJobCancelResponse(
+                job_id=idempotency_key,
+                status="review_ready",
+                cancellation_state="none",
+                last_completed_chunk=-1,
+                partial_evidence_span_ids=[],
+            )
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
@@ -2591,14 +2860,24 @@ class MedicalWritingSynopsisImportService:
                 connection.commit()
                 return self.get_job(project_id, idempotency_key)
             try:
-                _, route_identity_hash = self._load_frozen_route(
+                frozen_snapshot, frozen_hash = self._load_frozen_route(
                     connection, project_id, idempotency_key
                 )
             except RuntimeError:
                 connection.rollback()
                 raise
             connection.commit()
-        self._assert_current_route_matches(route_identity_hash)
+        # AGG25-P0-2①: same reconcile contract as the sync path — keep the
+        # frozen chain while the effective route is inside it, re-freeze
+        # (persisted) when it drifted out, never dead-end on drift.
+        route_snapshot, route_identity_hash = self._reconcile_route(
+            frozen_snapshot, frozen_hash
+        )
+        if route_identity_hash != frozen_hash:
+            self._refreeze_job_route(
+                project_id, idempotency_key,
+                route_snapshot, route_identity_hash,
+            )
 
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")

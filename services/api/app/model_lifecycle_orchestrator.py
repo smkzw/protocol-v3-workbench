@@ -64,6 +64,7 @@ from __future__ import annotations
 
 import json
 import os
+import signal
 import subprocess
 import threading
 import time
@@ -260,7 +261,8 @@ class ModelLifecycleOrchestrator:
     """One API process, two managed servers, everything audited."""
 
     def __init__(self, config: dict | None = None, config_path: str | None = None,
-                 http=None, commands=None, launch=None, clock=None, sleep=None):
+                 http=None, commands=None, launch=None, clock=None, sleep=None,
+                 kill=None):
         self.config = config
         self.config_path = config_path
         self.http = http or _http_json
@@ -268,6 +270,14 @@ class ModelLifecycleOrchestrator:
         self.launch = launch or _launch_detached
         self.clock = clock or time.time
         self.sleep = sleep or time.sleep
+        # SMOKE-r2-1 ③: direct managed stop (SIGTERM→grace→SIGKILL). The
+        # MTPLX CLI stop refuses auth-enforced servers: its stop_daemon call
+        # sends no api_key, /health answers 401, the daemon classifies as
+        # PORT_FOREIGN → "not_mtplx", so the CLI path can never release the
+        # server and every cross-phase switch time-fails into the
+        # release_unconfirmed latch. Signals go through this hook (tests
+        # inject a recorder).
+        self.kill = kill or os.kill
         # set by PhaseArbiter when one is attached (release notifications)
         self.arbiter = None
 
@@ -469,6 +479,79 @@ class ModelLifecycleOrchestrator:
                     "reason": "pidfile_identity_mismatch", "cmdline": cmdline}
         return {"owned": True, "pid": pid, "cmdline": cmdline}
 
+    def _reconcile_unowned_server(
+        self, server_key: str, server: dict, identity: dict,
+    ) -> dict | None:
+        """SMOKE-r1-2 ③a: reconcile a stale ownership ledger before refusing.
+
+        现场反例（actions.log 978-1706 行，贯穿 09-29 21:33 至 10-01
+        00:14）：台账 pidfile 持有已死 pid（18233，reason=
+        process_not_running），真实 MTPLX 以另一 pid 在 8002 服役；相位
+        切换要停 MTPLX，旧逻辑对一切 owned=False 一律拒绝——纯簿记问题
+        把 Hy-MT2 翻译全部锁死（16 项 failed_retryable）。修订后仅两种
+        陈账状态先行和解，真实的外来活进程仍然拒绝（fail-closed 保留）：
+
+        - 台账 pid 死/缺 且端口无监听：根本没有要停的服务，停机已天然
+          完成 → 返回 ``{"stop_complete": True}``。
+        - 台账 pid 死/缺 但端口有监听，且监听进程 cmdline 命中本部署的
+          身份标记（runtime-venv / mtplx.server.openai / --port）：只是
+          pidfile 过期，自纳管（重写 pidfile + adoption 台账 + 审计），
+          返回已 owned 身份，正常走停机。
+        - 其他（监听进程不属于本部署，或无法观测端口）：返回 None，维持
+          原拒绝。
+        """
+        reason = identity.get("reason")
+        if reason not in ("process_not_running", "no_pidfile"):
+            return None
+        listener_pid = self._listen_pid(int(server["port"]))
+        if listener_pid is None:
+            self._audit("state/ownership", action="stale_ledger_reconciled",
+                        target=f"{server_key}@{server['endpoint']}",
+                        reason=(f"ledger pid={identity.get('pid')} "
+                                f"({reason}), no live listener on port"),
+                        before="unowned (stale ledger)",
+                        outcome="stop already complete")
+            return {"owned": True, "pid": identity.get("pid"),
+                    "stop_complete": True}
+        if listener_pid < 0:
+            # cannot observe the port: keep the fail-closed refusal
+            return None
+        cmdline = self._proc_cmdline(listener_pid)
+        if cmdline and self._cmdline_ok(server, cmdline):
+            try:
+                _resolve(server["pidfile_path"]).write_text(
+                    f"launched_pid={listener_pid}\n", encoding="utf-8")
+            except (OSError, KeyError):
+                # the adoption record below still carries the pid
+                pass
+            state = self._read_state()
+            state.setdefault("adoption", {})[server_key] = {
+                "adopted": True,
+                "pid": listener_pid,
+                "operator": "self_adopt_stale_pidfile",
+                "evidence": (
+                    f"SMOKE-r1-2 ③a: ledger pid={identity.get('pid')} "
+                    f"({reason}) but the port listener matches this "
+                    f"deployment's identity markers; cmdline={cmdline[:200]!r}"
+                ),
+                "adopted_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "checks": {"listener_found": True,
+                           "cmdline_markers_ok": True,
+                           "ledger_reason": reason},
+            }
+            self._write_state(state)
+            self._audit("state/adoption",
+                        action="adopt_stale_pidfile_server",
+                        target=f"{server_key} pid={listener_pid}",
+                        reason=(f"ledger pid={identity.get('pid')} dead "
+                                f"({reason}); listener matches deployment "
+                                f"identity markers"),
+                        before="unowned (stale ledger)",
+                        outcome="adopted, pidfile rewritten, stop proceeds")
+            return {"owned": True, "pid": listener_pid, "cmdline": cmdline,
+                    "self_adopted": True}
+        return None
+
     def _listen_pid(self, port: int) -> int | None:
         """PID listening on the port; None = confirmed no listener;
         -1 = cannot observe (fail-closed for stop confirmation)."""
@@ -604,6 +687,156 @@ class ModelLifecycleOrchestrator:
             return "busy_connections"
         return None
 
+    def _recover_release_unconfirmed(self, server_key: str,
+                                     server: dict) -> bool:
+        """SMOKE-r1-3 共性主根因：release_unconfirmed 闩的观测式自恢复。
+
+        现场反例（orchestrator_state.json mtime 19:11Z，
+        release_unconfirmed={"mtplx": true}）：rollback 发出的 stop 实际
+        已生效但未在 120s 确认窗内观测到 → 闩被置位，ensure/release 双门
+        从此全拒——⑤初稿 4.7 分钟即死（mwjob_582d291f953a58b0798dd713，
+        未发生任何模型调用）、翻译 17 项停滞，只能人工改状态文件。修后：
+        撞到该闩先观测现实：确实已释放（进程型=端口无监听且 health 非
+        200；卸载型=受管模型未加载）→ 清闩+审计+放行；观测仍在服役
+        （stop 从未生效或已被重启）→ 同样清闩放行（驻留服务器被重新采
+        用：互斥排水与 A18 探针仍在主流程把关，后续真实 release 失败会
+        由 _drain 重新置闩）；无法观测（lsof 不可用）→ 维持 fail-closed
+        拒绝。成功确认的释放现在也会清闩（此前只置不清）。
+        """
+        resident = None
+        if server.get("process_managed"):
+            listener_pid = self._listen_pid(int(server["port"]))
+            if listener_pid == -1:
+                return False  # cannot observe: keep the fail-closed refusal
+            health_status, _ = self._get(f"{server['endpoint']}/health",
+                                         timeout=3.0)
+            resident = not (listener_pid is None and health_status != 200)
+        else:
+            resident = self._resident(server)
+        state = self._read_state()
+        flags = state.get("release_unconfirmed") or {}
+        if not flags.get(server_key):
+            return True
+        del flags[server_key]
+        state["release_unconfirmed"] = flags
+        self._write_state(state)
+        if not resident:
+            self._audit("state/ownership",
+                        action="release_unconfirmed_recovered",
+                        target=f"{server_key}@{server['endpoint']}",
+                        reason=("observation shows the server is actually "
+                                "released (no listener & health non-200 / "
+                                "managed model not loaded)"),
+                        before="release_unconfirmed latch set",
+                        outcome="latch cleared, lifecycle proceeds")
+        else:
+            # 陈账方向相反：服务器实际在服役（stop 从未生效或已被重启）。
+            # 继续使用是安全的——互斥排水与 A18 探针仍在 ensure 主流程把
+            # 关，后续任何真实 release 失败都会由 _drain 重新置闩。
+            self._audit("state/ownership",
+                        action="release_unconfirmed_recovered",
+                        target=f"{server_key}@{server['endpoint']}",
+                        reason=("observation shows the server resident and "
+                                "serving (the unconfirmed stop never took "
+                                "effect, or it was relaunched)"),
+                        before="release_unconfirmed latch set",
+                        outcome=("latch cleared, resident server re-adopted; "
+                                 "exclusion drain + A18 probe still guard"))
+        return True
+
+    def _health_reported_pid(self, server: dict) -> int | None:
+        """PID reported by the server's own health payload (startup.pid)."""
+        status, body = self._get(f"{server['endpoint']}/health", timeout=3.0)
+        if status != 200:
+            return None
+        startup = body.get("startup")
+        if not isinstance(startup, dict):
+            return None
+        pid = startup.get("pid")
+        if isinstance(pid, bool) or not isinstance(pid, int) or pid <= 0:
+            return None
+        return pid
+
+    def _stop_process_managed(self, server_key: str, server: dict,
+                              identity: dict, confirm_timeout: float
+                              ) -> bool | None:
+        """Direct managed stop. Returns True (release confirmed), False
+        (issued but unconfirmed — caller may fall back / latch), or None
+        (identity cross-check failed: NO signal was sent and the drain must
+        refuse without latching — the incumbent is serving and we refuse to
+        signal an unverified pid)."""
+        """SMOKE-r2-1 ③: release a process-managed server directly.
+
+        The CLI stop (config stop_command) is kept as fallback, but it can
+        no longer do the job: MTPLX 2.12 hard-enforces bearer auth on
+        /health and the CLI's stop path sends no key, so it classifies our
+        own server as foreign ("not_mtplx") and refuses — live-reproduced
+        (rc=1, reason=not_mtplx) while the health-reported pid matches the
+        ledger. Direct stop sends SIGTERM to the health-reported pid after
+        re-verifying deployment identity markers on that pid's cmdline,
+        waits the configured grace for the listener+health to disappear,
+        then escalates to SIGKILL, and keeps polling until confirm_timeout.
+        Every signal and escalation is audited. Returns True when the
+        release was confirmed.
+        """
+        ledger_pid = int(identity.get("pid") or 0)
+        if ledger_pid <= 0:
+            return False
+        health_pid = self._health_reported_pid(server)
+        if health_pid is not None and health_pid != ledger_pid:
+            self._audit("refused/stop-identity",
+                        action="direct_stop_identity_mismatch",
+                        target=f"{server_key}@{server['endpoint']}",
+                        reason=(f"health-reported pid={health_pid} != ledger "
+                                f"pid={ledger_pid}; refusing to signal"),
+                        before="identity cross-check",
+                        outcome="refused")
+            return None
+        target_pid = health_pid or ledger_pid
+        cmdline = self._proc_cmdline(target_pid)
+        if not cmdline or not self._cmdline_ok(server, cmdline):
+            self._audit("refused/stop-identity",
+                        action="direct_stop_identity_mismatch",
+                        target=f"{server_key}@{server['endpoint']}",
+                        reason=(f"cmdline for pid={target_pid} does not match "
+                                f"this deployment's identity markers"),
+                        before="identity re-check",
+                        outcome="refused")
+            return None
+
+        grace = float((self.config or {}).get("stop_grace_seconds", 30.0))
+        self._audit("action/stop", action="direct_stop_sigterm",
+                    target=f"{server_key}@{server['endpoint']}",
+                    reason="CLI stop refused an auth-enforced server; "
+                           "direct managed stop",
+                    precheck=(f"health_pid==ledger_pid=={target_pid}, "
+                              f"cmdline markers ok"),
+                    before=f"pid={target_pid} health=200",
+                    outcome="SIGTERM issued")
+        try:
+            self.kill(target_pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        # grace window: poll for release, then escalate
+        grace_deadline = self.clock() + max(1.0, grace)
+        while self.clock() < grace_deadline:
+            if self._confirm_released(server_key, server, 0.0):
+                return True
+            self.sleep(float((self.config or {}).get(
+                "poll_interval_seconds", 1.0)))
+        if self._confirm_released(server_key, server, 0.0):
+            return True
+        self._audit("action/stop", action="direct_stop_sigkill",
+                    target=f"{server_key}@{server['endpoint']}",
+                    reason=f"grace {grace:.0f}s elapsed; escalating",
+                    before="SIGTERM ignored",
+                    outcome="SIGKILL issued")
+        try:
+            self.kill(target_pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        return self._confirm_released(server_key, server, confirm_timeout)
+
     def _busy_reason_with_retry(self, server: dict) -> str | None:
         """_busy_reason within the bounded re-check window (AGG25 P1-8): a
         transient blip gets drain_busy_retry_attempts chances to clear
@@ -719,21 +952,60 @@ class ModelLifecycleOrchestrator:
 
             if server.get("process_managed"):
                 identity = self._mtplx_identity(server, self._read_state())
+                stop_already_complete = False
                 if not identity["owned"]:
-                    return self._refuse(
-                        identity.get("reason", "server_unowned"),
-                        f"refusing to stop a server we do not own: {identity}",
-                        phase=phase, target=server_key)
-                self._audit("action/stop", action="run_stop_command",
-                            target=f"{server_key}@{server['endpoint']}",
-                            reason=f"drain for {'release' if wait_for_zero else f'ensure({phase})'}",
-                            precheck="inflight=0, activity=0, no established",
-                            before=f"pid={identity['pid']} health=200",
-                            outcome="stop command issued")
-                self.commands(list(server["stop_command"]),
-                              timeout=confirm_timeout + 60)
-                confirmed = self._confirm_released(
-                    server_key, server, confirm_timeout)
+                    identity = self._reconcile_unowned_server(
+                        server_key, server, identity)
+                    if identity is None:
+                        return self._refuse(
+                            "server_unowned",
+                            "refusing to stop a server we do not own "
+                            "(live listener is not this deployment)",
+                            phase=phase, target=server_key)
+                    if identity.get("stop_complete"):
+                        stop_already_complete = True
+                if stop_already_complete:
+                    # SMOKE-r1-2 ③a: stale ledger only — the ledger pid is
+                    # dead/missing and nobody listens on the port. There is
+                    # nothing to stop; the release is already complete.
+                    self._audit("action/stop",
+                                action="stale_ledger_stop_complete",
+                                target=f"{server_key}@{server['endpoint']}",
+                                reason=f"drain for {'release' if wait_for_zero else f'ensure({phase})'}",
+                                precheck="ledger pid dead, no live listener",
+                                before="unowned (stale ledger)",
+                                outcome="stop already complete")
+                    confirmed = self._confirm_released(
+                        server_key, server, confirm_timeout)
+                else:
+                    # SMOKE-r2-1 ③：直接受管停机优先（CLI stop 对启用鉴权的
+                    # 服务器必然 not_mtplx 拒止，活体复现 rc=1）。None=身份
+                    # 交叉校验失败（未发任何信号）→ 本轮排水直接拒绝且不置
+                    # 闩（驻留服务器在服役，拒签未知pid；下一轮重估）。False
+                    # =已发出但未确认 → 回退配置的 stop_command（原路径保留）。
+                    stop_outcome = self._stop_process_managed(
+                        server_key, server, identity, confirm_timeout)
+                    if stop_outcome is None:
+                        return self._refuse(
+                            "direct_stop_identity_mismatch",
+                            "health-reported pid or cmdline does not match "
+                            "the deployment ledger; refusing to signal an "
+                            "unverified process",
+                            phase=phase, target=server_key)
+                    confirmed = stop_outcome
+                    if not confirmed:
+                        self._audit("action/stop", action="run_stop_command",
+                                    target=f"{server_key}@{server['endpoint']}",
+                                    reason=(f"drain for {'release' if wait_for_zero else f'ensure({phase})'}"
+                                            "; direct stop unconfirmed, "
+                                            "CLI fallback"),
+                                    precheck="direct stop did not confirm",
+                                    before=f"pid={identity['pid']}",
+                                    outcome="stop command issued")
+                        self.commands(list(server["stop_command"]),
+                                      timeout=confirm_timeout + 60)
+                        confirmed = self._confirm_released(
+                            server_key, server, confirm_timeout)
             else:
                 model_id = server["managed_model_id"]
                 self._audit("action/unload", action="admin_unload",
@@ -764,6 +1036,14 @@ class ModelLifecycleOrchestrator:
                             duration_s=duration)
                 return {"status": "failed", "reason": "release_confirm_timeout",
                         "phase": phase}
+            # SMOKE-r1-3：确认成功的释放必须清闩——此前闩只在置位侧
+            # 写、永不在成功侧清，导致任何一次确认超时都永久毒化。
+            state = self._read_state()
+            flags = state.get("release_unconfirmed") or {}
+            if flags.get(server_key):
+                del flags[server_key]
+                state["release_unconfirmed"] = flags
+                self._write_state(state)
             self._audit("action/release-done", action="drain_complete",
                         target=server_key, reason=f"phase={phase}",
                         before="resident", outcome="released and confirmed",
@@ -830,10 +1110,13 @@ class ModelLifecycleOrchestrator:
 
         state = self._read_state()
         if (state.get("release_unconfirmed") or {}).get(server_key):
-            return self._refuse(
-                "release_unconfirmed",
-                "a previous release never completed; manual recovery required",
-                phase=phase, target=server_key)
+            # SMOKE-r1-3：先做观测式自恢复；确实仍驻留才维持人工恢复要求
+            if not self._recover_release_unconfirmed(server_key, server):
+                return self._refuse(
+                    "release_unconfirmed",
+                    "a previous release never completed; manual recovery "
+                    "required",
+                    phase=phase, target=server_key)
 
         # binding-driven endpoint + drift refusal: read the same store the
         # workbench reads; never write it (red line 3)
@@ -1003,9 +1286,11 @@ class ModelLifecycleOrchestrator:
 
         state = self._read_state()
         if (state.get("release_unconfirmed") or {}).get(server_key):
-            return self._refuse("release_unconfirmed",
-                                "previous release unconfirmed", phase=phase,
-                                target=server_key)
+            # SMOKE-r1-3：同 ensure 门——观测已释放则清闩放行
+            if not self._recover_release_unconfirmed(server_key, server):
+                return self._refuse("release_unconfirmed",
+                                    "previous release unconfirmed",
+                                    phase=phase, target=server_key)
 
         # medical-monitoring (and any foreign role) refusal: an ENABLED
         # binding of a non-scheme role pointing at this managed server

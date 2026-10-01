@@ -11,7 +11,9 @@ const FORBIDDEN_LITERALS = Object.freeze([
   ["known MY008 project literal", /\bMY008\b/i],
   ["known MY009 project literal", /\bMY009\b/i],
   ["known company literal", /康哲|朗来/],
-  ["local absolute path", /(?:^|["'`\s])\/(?:Users|private|tmp)\//],
+  // 0928 round27: the adversarial self-check below requires /srv coverage —
+  // the guard regex lagged its own adversarial list (pre-existing red).
+  ["local absolute path", /(?:^|["'`\s])\/(?:Users|private|tmp|srv)\//],
   ["file URL", /file:\/\//i],
 ]);
 

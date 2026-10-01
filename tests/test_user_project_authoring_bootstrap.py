@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from packages.contracts.workbench_contracts import (
     MedicalWritingGreenfieldCreateRequest,
@@ -186,6 +187,62 @@ class UserProjectAuthoringBootstrapTests(unittest.TestCase):
         self.assertEqual("I期", created["project"]["study_phase"])
         self.assertEqual("I期", created["authoring_journey"]["framing"]["study_phase"])
         self.assertIn("I期临床研究", created["project"]["project_name"])
+
+
+class StudyPhaseContractNormalizationTests(unittest.TestCase):
+    """NEW-8（R27 第1轮末修订）：建项合同必须把分期归一到 I-IV 期。
+
+    反例（R1A/深度分析实跑复现）：''、'Ⅲ期'（U+2162）、'三期'、'不适用'
+    全部生成 MW-PHASE-XXXX 占位代号——phase_token 兜底字符串 'PHASE' 直接
+    出厂；空分期也无任何拦截。修复后：可归一的分期写入规范标签（'III期'）；
+    归一后仍无分期 token（含空串）一律 ValidationError（API 层 422），
+    MW-PHASE 字面量不再可能出厂。
+    """
+
+    @staticmethod
+    def _request(study_phase: str, key: str) -> UserProjectCreateRequest:
+        return UserProjectCreateRequest(
+            indication="慢性咳嗽",
+            product_name="R1A-CC168片",
+            study_phase=study_phase,
+            entry_mode="from_zero",
+            actor="medical_manager_test",
+            idempotency_key=key,
+        )
+
+    def test_unrecognizable_phase_is_rejected(self) -> None:
+        for phase in ("", "不适用", "待定"):
+            with self.assertRaises(ValidationError, msg=f"phase={phase!r} 必须被拒绝"):
+                self._request(phase, f"new8-reject-{abs(hash(phase))}")
+
+    def test_no_literal_phase_token_ever_ships(self) -> None:
+        for phase in ("I期", "II", "III期", "IV", "Ⅰ期", "Ⅲ期", "三期", "2期", "II/III", "I/II"):
+            request = self._request(phase, f"new8-ship-{abs(hash(phase))}")
+            self.assertNotIn(
+                "PHASE",
+                request.project_code,
+                msg=f"phase={phase!r} 不得生成占位代号：{request.project_code}",
+            )
+
+    def test_unicode_and_chinese_numerals_normalize_to_canonical_label(self) -> None:
+        cases = {
+            "Ⅲ期": "III期",
+            "三期": "III期",
+            "Ⅱ": "II期",
+            "２期": "II期",
+            "I/II": "I/II期",
+            "ii/iii": "II/III期",
+        }
+        for raw, canonical in cases.items():
+            request = self._request(raw, f"new8-norm-{abs(hash(raw))}")
+            self.assertEqual(canonical, request.study_phase, msg=f"{raw!r} 应归一为 {canonical!r}")
+            self.assertNotIn("PHASE", request.project_code)
+
+    def test_free_text_phase_keeps_text_but_derives_real_token(self) -> None:
+        request = self._request("II期（随机双盲扩展）", "new8-freetext-0001")
+        self.assertEqual("II期（随机双盲扩展）", request.study_phase)
+        self.assertNotIn("PHASE", request.project_code)
+        self.assertIn("MW-II-", request.project_code)
 
 
 if __name__ == "__main__":

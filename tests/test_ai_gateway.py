@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from services.api.app.ai_gateway import (  # noqa: E402
+    _managed_dispatch,
     ALIBABA_TOKEN_PLAN_API_KEY_ENV,
     ALIBABA_TOKEN_PLAN_BASE_URL,
     ALIBABA_TOKEN_PLAN_MODEL,
@@ -33,6 +34,15 @@ from services.api.app.ai_gateway import (  # noqa: E402
     direct_deepseek_env,
     validate_ai_output,
 )
+
+
+class _LifecyclePassThrough:
+    """Neutralses managed-endpoint lifecycle arbitration for transport-only
+    tests (0928: _managed_dispatch consults the phase arbiter for 8001/8002;
+    these tests mock urlopen and own no lifecycle)."""
+
+    def handles_endpoint(self, base_url: str) -> bool:
+        return False
 
 
 class AiGatewayTests(unittest.TestCase):
@@ -689,6 +699,84 @@ class AiGatewayTests(unittest.TestCase):
 
         self.assertEqual(expected, provider.run(envelope))
 
+    def test_openai_compatible_provider_ladder_budget_caps_total_retry_wall_clock(self):
+        """ENV-02 反例（重试预算总上限）：无总预算时 3 次×300 秒×(主路+云
+        fallback) 意味着用户面前是一小时的黑洞。梯子预算耗尽后必须停止重试
+        并把剩余预算clamp到下一次尝试的超时上。"""
+        import time as time_module
+
+        envelope = PromptRegistry().build(
+            AiTaskSpec(
+                task_id="task_ladder_budget_001",
+                task_type=AiTaskType.PROTOCOL_RULE_EXTRACTION,
+                prompt_version="protocol_rule_extraction_v0_1",
+                allowed_sources=[self.source()],
+            )
+        )
+        attempts: list[float] = []
+
+        def stalling_urlopen(request, timeout=None):
+            attempts.append(float(timeout))
+            time_module.sleep(0.05)
+            raise TimeoutError("simulated model stall")
+
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://ai.example.test/v1",
+            api_key="test-key",
+            model_name="deepseek-v4-pro",
+            provider_name="buddy",
+            timeout_seconds=5.0,
+            max_attempts=10,
+            ladder_budget_seconds=0.12,
+        )
+        with patch(
+            "services.api.app.ai_gateway.urllib.request.urlopen",
+            side_effect=stalling_urlopen,
+        ):
+            with self.assertRaises(AiProviderRuntimeError) as ctx:
+                provider.run(envelope)
+        # 预算 0.12s：第 1 次尝试（~0.05s）后的退避（≥0.5s）即耗尽预算，
+        # 远低于 max_attempts=10 就必须收手，且以"预算耗尽"而非重试穷尽收场。
+        self.assertEqual(1, len(attempts))
+        self.assertIn("TimeoutError", str(ctx.exception))
+        self.assertEqual(
+            "provider_ladder_budget_exhausted",
+            ctx.exception.diagnostics.get("failure_code"),
+        )
+        # 每次尝试的单请求超时不得越过梯子预算。
+        self.assertTrue(all(value <= 5.0 for value in attempts))
+
+    def test_openai_compatible_provider_without_ladder_budget_keeps_legacy_behavior(self):
+        envelope = PromptRegistry().build(
+            AiTaskSpec(
+                task_id="task_ladder_budget_002",
+                task_type=AiTaskType.PROTOCOL_RULE_EXTRACTION,
+                prompt_version="protocol_rule_extraction_v0_1",
+                allowed_sources=[self.source()],
+            )
+        )
+        attempts: list[int] = []
+
+        def stalling_urlopen(request, timeout=None):
+            attempts.append(1)
+            raise TimeoutError("simulated model stall")
+
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://ai.example.test/v1",
+            api_key="test-key",
+            model_name="deepseek-v4-pro",
+            provider_name="buddy",
+            timeout_seconds=5.0,
+            max_attempts=3,
+        )
+        with patch(
+            "services.api.app.ai_gateway.urllib.request.urlopen",
+            side_effect=stalling_urlopen,
+        ):
+            with self.assertRaises(AiProviderRuntimeError):
+                provider.run(envelope)
+        self.assertEqual(3, len(attempts))
+
     def test_openai_compatible_provider_sends_prompt_envelope_and_parses_json(self):
         spec = AiTaskSpec(
             task_id="task_protocol_rules_001",
@@ -881,11 +969,19 @@ class AiGatewayTests(unittest.TestCase):
             default_thinking="enabled",
             default_reasoning_effort="max",
         )
-        with patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen:
-            urlopen.return_value = _FakeResponse(
-                {"choices": [{"message": {"content": '{"ok":true}'}}]}
-            )
-            self.assertEqual({"ok": True}, provider.run(envelope))
+        from services.api.app import model_lifecycle_orchestrator as lifecycle
+
+        lifecycle.set_arbiter(_LifecyclePassThrough())
+        try:
+            with patch(
+                "services.api.app.ai_gateway.urllib.request.urlopen",
+            ) as urlopen:
+                urlopen.return_value = _FakeResponse(
+                    {"choices": [{"message": {"content": '{"ok":true}'}}]}
+                )
+                self.assertEqual({"ok": True}, provider.run(envelope))
+        finally:
+            lifecycle.set_arbiter(None)
 
         body = json.loads(urlopen.call_args.args[0].data.decode("utf-8"))
         self.assertEqual("xhigh", body["reasoning_effort"])
@@ -1026,6 +1122,49 @@ class AiGatewayTests(unittest.TestCase):
         ):
             urlopen.side_effect = [
                 retryable,
+                _FakeResponse(
+                    {"choices": [{"message": {"content": '{"passed":true}'}}]}
+                ),
+            ]
+            self.assertEqual({"passed": True}, provider.run(envelope))
+
+        self.assertEqual(2, urlopen.call_count)
+        sleep.assert_called_once_with(0.5)
+
+    def test_openai_compatible_provider_retries_transient_401(self):
+        """SMOKE-r2-1 ⑦（R27 收敛修订）反例：ollama.com 的 401 是瞬时上游
+        态——同一把存储密钥（凭据文件 mtime 不变）在 09-30 20:48/23:21、
+        10-01 00:49 三次 401，本会话活体探针同键同端点 200 OK。此前 401
+        一票否决主路，回退链把修订墙钟拖到几十分钟。修后契约：401 在
+        有界重试内自愈（下一次尝试成功即返回）。"""
+        provider = OpenAICompatibleAiProvider(
+            base_url="https://ollama.com/v1",
+            api_key="test-key",
+            model_name="deepseek-v4.1-flash",
+            timeout_seconds=1,
+        )
+        envelope = AiPromptEnvelope(
+            task_id="task_retry_http_401",
+            task_type=AiTaskType.MEDICAL_WRITING_REVISION,
+            prompt_version="medical_writing_revision_v1_4",
+            system_prompt="Return JSON.",
+            payload={"source_text": "Source", "translated_text": "译文"},
+            thinking="disabled",
+        )
+        transient_401 = urllib.error.HTTPError(
+            "https://ollama.com/v1/chat/completions",
+            401,
+            "unauthorized",
+            None,
+            None,
+        )
+        with (
+            patch("services.api.app.ai_gateway.urllib.request.urlopen") as urlopen,
+            patch("services.api.app.ai_gateway.time.sleep") as sleep,
+            patch("services.api.app.ai_gateway.random.uniform", return_value=0.0),
+        ):
+            urlopen.side_effect = [
+                transient_401,
                 _FakeResponse(
                     {"choices": [{"message": {"content": '{"passed":true}'}}]}
                 ),
@@ -1851,3 +1990,68 @@ class _FakeRawResponse(_FakeResponse):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ManagedDispatchChineseGuidanceTests(unittest.TestCase):
+    """NEW-12(b)（R27 第2轮修订）：编排器 ensure 失败拒绝必须携带中文
+    zh_message，网关把它放进 diagnostics，前端优先取——消灭
+    「Managed local model server unavailable: ensure(triage) failed...」
+    直出英文。"""
+
+    def test_refusal_with_zh_message_flows_into_runtime_diagnostics(self):
+        from services.api.app.model_lifecycle_orchestrator import LifecycleRefusal
+
+        refusal = LifecycleRefusal(
+            "ensure_failed",
+            "ensure(triage) failed on mtplx; queued dispatch aborted",
+            zh_message="本地模型服务忙或冷启动中，任务已排队，请稍候重试。",
+        )
+        arbiter = SimpleNamespace(
+            handles_endpoint=lambda _url: True,
+            managed_lease=self._refusing_lease(refusal),
+        )
+        with patch(
+            "services.api.app.model_lifecycle_orchestrator._default_arbiter",
+            return_value=arbiter,
+        ):
+            with self.assertRaises(AiProviderRuntimeError) as raised:
+                with _managed_dispatch("http://127.0.0.1:8002/v1"):
+                    pass
+        diagnostics = raised.exception.diagnostics or {}
+        self.assertEqual(
+            diagnostics.get("zh_message"),
+            "本地模型服务忙或冷启动中，任务已排队，请稍候重试。",
+        )
+
+    def test_refusal_without_zh_message_gets_default_chinese_guidance(self):
+        from services.api.app.model_lifecycle_orchestrator import LifecycleRefusal
+
+        refusal = LifecycleRefusal(
+            "phase_queue_timeout",
+            "phase=triage queue_timeout after 900s",
+        )
+        arbiter = SimpleNamespace(
+            handles_endpoint=lambda _url: True,
+            managed_lease=self._refusing_lease(refusal),
+        )
+        with patch(
+            "services.api.app.model_lifecycle_orchestrator._default_arbiter",
+            return_value=arbiter,
+        ):
+            with self.assertRaises(AiProviderRuntimeError) as raised:
+                with _managed_dispatch("http://127.0.0.1:8002/v1"):
+                    pass
+        diagnostics = raised.exception.diagnostics or {}
+        self.assertIn("模型", str(diagnostics.get("zh_message", "")))
+        self.assertTrue(str(diagnostics.get("zh_message", "")).strip())
+
+    @staticmethod
+    def _refusing_lease(refusal):
+        import contextlib
+
+        @contextlib.contextmanager
+        def _lease(_base_url):
+            raise refusal
+            yield  # pragma: no cover
+
+        return _lease

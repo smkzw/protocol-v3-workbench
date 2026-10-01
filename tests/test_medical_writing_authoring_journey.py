@@ -37,6 +37,7 @@ from packages.contracts.workbench_contracts import (
 )
 from services.api.app import main as app_main
 from services.api.app.medical_writing_authoring_journey import (
+    _canonical_study_definition_picos,
     MedicalWritingAuthoringJourneyConflictError,
     MedicalWritingAuthoringJourneyService,
 )
@@ -1893,8 +1894,12 @@ class MedicalWritingAuthoringJourneyServiceTests(unittest.TestCase):
         self.assertEqual("corpus", reconciled.current_stage)
         self.assertEqual("corpus_not_ready", reconciled.status)
         self.assertIsNone(reconciled.picos_draft)
+        # NEW-1(R1-a) A案契约：提交后干预规则权威=structured，旅程状态保留
+        # 用户原文（legacy 字段可编辑），StudyDefinition 持有确定性投影
+        # （intervention_dose_regimen 带产品名前缀等）。因此定义侧等于旅程
+        # 状态的 canonical 投影，而不是逐字相等。
         self.assertEqual(
-            reconciled.picos.model_dump(),
+            _canonical_study_definition_picos(reconciled.picos).model_dump(),
             reconciled.study_definition.picos.model_dump(),
         )
         self.assertEqual(
@@ -2102,6 +2107,393 @@ class MedicalWritingAuthoringJourneyServiceTests(unittest.TestCase):
             ),
         )
         self.assertEqual(overridden.revision, replayed.revision)
+
+    def test_override_corpus_gate_survives_benign_concurrent_revision_bump(self):
+        """AGG-P0-03 反例：语料门重算等良性并发写发生在用户读取（get）与提交
+        （override）之间时，例外放行不得被修订号硬门拒绝。
+
+        R26 现场报错：「例外放行未完成：stale authoring journey revision:
+        expected 15, current 16」——重算只推进修订号，framing/PICOS 完成态
+        与缺口集合均未变化。实质前提由事务内复核（framing/picos 完整性 +
+        确认集合==当前缺口集合）守住；修订号本身不再是拒绝理由。
+        """
+        project_id = "proj_synthetic_ra_override_benign_bump"
+        framed = self.service.create(
+            project_id,
+            MedicalWritingAuthoringJourneyCreateRequest(
+                framing=_complete_framing(),
+                actor="medical_manager_test",
+                idempotency_key="create-ra-override-benign-bump",
+            ),
+        )
+        designed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=framed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+                actor="medical_manager_test",
+                idempotency_key="commit-ra-override-benign-bump-picos",
+            ),
+        )
+        stale_revision = designed.revision
+        missing = list(designed.corpus_gate.missing_requirements)
+        # 良性并发写：PICOS 草稿保存——不动 framing/picos 完成态、不动缺口
+        # 集合，仅推进修订号（等价于 R26 现场的语料门重算带来的 +1）。
+        self.service.save_stage_draft(
+            project_id,
+            MedicalWritingAuthoringJourneyDraftSaveRequest(
+                expected_revision=designed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+                actor="medical_manager_test",
+                idempotency_key="save-ra-override-benign-bump-draft",
+            ),
+        )
+        self.assertEqual(stale_revision + 1, self.service.get(project_id).revision)
+        # 用户仍按界面上的旧修订号提交例外放行 → 必须成功，而不是 409。
+        overridden = self.service.override_corpus_gate(
+            project_id,
+            MedicalWritingCorpusGateOverrideRequest(
+                expected_revision=stale_revision,
+                reason="语料门在提交前被后台重算推进修订号，医学经理确认保留全部缺口并例外进入。",
+                acknowledged_missing_requirements=missing,
+                actor="medical_manager_test",
+                idempotency_key="override-ra-after-benign-bump",
+            ),
+        )
+        self.assertEqual("writing_allowed", overridden.status)
+        self.assertTrue(overridden.corpus_gate.override.active)
+        self.assertEqual(set(missing), set(overridden.corpus_gate.override.acknowledged_missing_requirements))
+        self.service.require_writing_access(project_id)
+
+    def test_override_refusal_names_missing_picos_fields_instead_of_circular_deadlock(self):
+        """L2 反例（R26-QA）：第二步被 design_archetype 阻断时，例外放行被拒
+        只报「study framing and PICOS must be complete before corpus override」，
+        与「PICOS 完成依赖语料AI候选」形成死循环，用户找不到出路。
+
+        预期：研究框架已完成时，拒绝信息必须点名第二步当前缺失的必填字段，
+        指明补齐后即可重试例外放行；不得再返回笼统英文断言。
+        """
+        project_id = "proj_synthetic_ra_override_picos_blocked"
+        self.service.create(
+            project_id,
+            MedicalWritingAuthoringJourneyCreateRequest(
+                framing=_complete_framing(),
+                actor="medical_manager_test",
+                idempotency_key="create-ra-override-picos-blocked",
+            ),
+        )
+        # 仅保存草稿、不提交第二步 → framing_complete=True, picos_complete=False。
+        self.service.save_stage_draft(
+            project_id,
+            MedicalWritingAuthoringJourneyDraftSaveRequest(
+                expected_revision=1,
+                stage="picos",
+                picos=_complete_picos(design_archetype=""),
+                actor="medical_manager_test",
+                idempotency_key="draft-ra-override-picos-blocked",
+            ),
+        )
+        with self.assertRaises(ValueError) as refused:
+            self.service.override_corpus_gate(
+                project_id,
+                MedicalWritingCorpusGateOverrideRequest(
+                    expected_revision=2,
+                    reason="语料OCR密钥不可用，医学经理确认例外进入写作。",
+                    acknowledged_missing_requirements=["缺口一：竞品语料尚未分类"],
+                    actor="medical_manager_test",
+                    idempotency_key="override-ra-picos-blocked",
+                ),
+            )
+        message = str(refused.exception)
+        self.assertIn("第二步", message)
+        self.assertIn("design_archetype", message)
+        self.assertNotIn(
+            "study framing and PICOS must be complete before corpus override", message
+        )
+
+    def test_picos_commit_derives_structured_intervention_from_legacy_fields(self):
+        """NEW-1(R1-a) A案反例（R27 第2轮修订，按策略推荐实施）：用户在第二步
+        填满旧版干预字段（概述/用法用量/背景/允许/禁止）并提交后，装配计划此前
+        仍因 intervention_rules.authority != STRUCTURED 把 8 个 intervention.*
+        模块一次性全记 blocker——界面最显眼的输入在装配层被有意忽略。
+        期望：PICOS 提交时自动派生结构化干预规则（IP方案=用法用量+试验药物，
+        背景/允许/禁止=三个旧列表，权威置 structured），8 个 intervention.*
+        模块全部不再 blocker；旧字段原文不丢失（回投影仍在）。
+        """
+        from services.api.app.medical_writing_protocol_assembly_plan import (
+            build_protocol_assembly_plan,
+        )
+
+        project_id = "proj_legacy_intervention_derive"
+        framing_payload = _complete_framing().model_dump(mode="json")
+        # 真实旅程在提交第二步前必须完成 13 项结构化设计确认（含对照类型）。
+        framing_payload["structured_design"] = {
+            "randomization_mode": "randomized",
+            "blinding_mode": "double_blind",
+            "comparator_type": "placebo",
+            "assignment_model": "平行组",
+            "treatment_switch": {"planned": False},
+            "crossover": {"planned": False},
+            "open_label_extension": {"planned": False},
+            "sample_size_reestimation": {"planned": False},
+            "adaptive_design": {"planned": False},
+            "src_planned": False,
+            "dmc_planned": False,
+            "interim_analysis": {"planned": False},
+        }
+        framing_with_design = MedicalWritingStudyFraming.model_validate(framing_payload)
+        created = self.service.create(
+            project_id,
+            MedicalWritingAuthoringJourneyCreateRequest(
+                framing=framing_with_design,
+                actor="medical_manager_test",
+                idempotency_key="create-legacy-intervention-derive",
+            ),
+        )
+        framing_preview = self.service.impact_preview(
+            project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=created.revision,
+                stage="framing",
+                framing=framing_with_design,
+            ),
+        )
+        framed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=created.revision,
+                stage="framing",
+                framing=framing_with_design,
+                impact_preview_id=framing_preview.preview_id,
+                actor="medical_manager_test",
+                idempotency_key="commit-legacy-intervention-derive-framing",
+            ),
+        )
+        picos_preview = self.service.impact_preview(
+            project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=framed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+            ),
+        )
+        designed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=framed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+                impact_preview_id=picos_preview.preview_id,
+                actor="medical_manager_test",
+                idempotency_key="commit-legacy-intervention-derive-picos",
+            ),
+        )
+        definition = designed.study_definition
+        assert definition is not None
+        rules = definition.picos.intervention_rules
+        self.assertEqual("structured", str(rules.authority.value))
+        ip_regimens = [
+            item
+            for item in rules.ip_regimens
+            if str(item.product_role.value) == "investigational_product"
+        ]
+        self.assertEqual(1, len(ip_regimens))
+        self.assertEqual("每4周给药一次，持续24周。", ip_regimens[0].dose_and_frequency)
+        rule_classes = {str(item.rule_class.value) for item in rules.non_ip_treatment_rules}
+        self.assertIn("background", rule_classes)
+        self.assertIn("allowed_cm", rule_classes)
+        self.assertIn("prohibited_cm", rule_classes)
+        # 用户原文留在旅程状态（definition 持有确定性投影，投影含产品名前缀）。
+        self.assertEqual(
+            "每4周给药一次，持续24周。",
+            designed.picos.intervention_dose_regimen,
+        )
+        self.assertIn(
+            "每4周给药一次，持续24周。",
+            definition.picos.intervention_dose_regimen,
+        )
+
+        plan = build_protocol_assembly_plan(
+            definition,
+            plan_id="assembly-legacy-derive",
+            revision=1,
+            actor="medical_manager_test",
+            now=datetime.now(timezone.utc),
+        )
+        intervention_blockers = [
+            module.module_id
+            for module in plan.modules
+            if module.module_id.startswith("intervention.")
+            and module.blocking_severity == "blocker"
+        ]
+        self.assertEqual(
+            [],
+            intervention_blockers,
+            "填满旧版字段并提交后，intervention.* 模块不得再阻断装配",
+        )
+
+    def test_legacy_picos_backfill_unblocks_existing_projects_lazily(self):
+        """NEW-1 存量回填（R27 第3轮修订，惰性重派生）反例：派生只挂在
+        PICOS 提交路径上——HFrEF 等存量项目 PICOS 早已提交完毕，永远不会
+        重触发，8 项 intervention.* 墙对旧项目永久存在。期望：回填方法对
+        「PICOS 已完成但规则仍为旧版权威」的项目派生并持久化（定义侧投影
+        同步），装配计划 intervention.* 清零；重复调用幂等不写。"""
+        from packages.contracts.workbench_contracts import (
+            InterventionRulesAuthority,
+            MedicalWritingInterventionRules,
+        )
+        from services.api.app.medical_writing_protocol_assembly_plan import (
+            build_protocol_assembly_plan,
+        )
+
+        project_id = "proj_legacy_backfill_hfref_like"
+        framing_payload = _complete_framing().model_dump(mode="json")
+        # 存量项目在提交第二步前已完成 13 项结构化设计确认（对照类型已定）。
+        framing_payload["structured_design"] = {
+            "randomization_mode": "randomized",
+            "blinding_mode": "double_blind",
+            "comparator_type": "placebo",
+            "assignment_model": "平行组",
+            "treatment_switch": {"planned": False},
+            "crossover": {"planned": False},
+            "open_label_extension": {"planned": False},
+            "sample_size_reestimation": {"planned": False},
+            "adaptive_design": {"planned": False},
+            "src_planned": False,
+            "dmc_planned": False,
+            "interim_analysis": {"planned": False},
+        }
+        framing_with_design = MedicalWritingStudyFraming.model_validate(framing_payload)
+        created = self.service.create(
+            project_id,
+            MedicalWritingAuthoringJourneyCreateRequest(
+                framing=framing_with_design,
+                actor="medical_manager_test",
+                idempotency_key="create-legacy-backfill",
+            ),
+        )
+        framing_preview = self.service.impact_preview(
+            project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=created.revision,
+                stage="framing",
+                framing=framing_with_design,
+            ),
+        )
+        framed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=created.revision,
+                stage="framing",
+                framing=framing_with_design,
+                impact_preview_id=framing_preview.preview_id,
+                actor="medical_manager_test",
+                idempotency_key="commit-legacy-backfill-framing",
+            ),
+        )
+        picos_preview = self.service.impact_preview(
+            project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=framed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+            ),
+        )
+        designed = self.service.commit_stage(
+            project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=framed.revision,
+                stage="picos",
+                picos=_complete_picos(),
+                impact_preview_id=picos_preview.preview_id,
+                actor="medical_manager_test",
+                idempotency_key="commit-legacy-backfill-picos",
+            ),
+        )
+        # 造存量：把已提交项目的干预规则降回旧版权威（模拟 A 案之前入库的项目）。
+        legacy_state = designed.model_copy(
+            update={
+                "picos": designed.picos.model_copy(
+                    update={
+                        "intervention_rules": MedicalWritingInterventionRules(
+                            authority=InterventionRulesAuthority.LEGACY
+                        )
+                    },
+                    deep=True,
+                ),
+                "study_definition": designed.study_definition.model_copy(
+                    update={
+                        "picos": designed.study_definition.picos.model_copy(
+                            update={
+                                "intervention_rules": MedicalWritingInterventionRules(
+                                    authority=InterventionRulesAuthority.LEGACY
+                                )
+                            },
+                            deep=True,
+                        )
+                    },
+                    deep=True,
+                ),
+            },
+            deep=True,
+        )
+        with self.service._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            self.service._persist_update(
+                connection,
+                legacy_state,
+                expected_revision=designed.revision,
+                event_type="authoring_journey_legacy_backfill_fixture",
+                actor="medical_manager_test",
+                idempotency_key="fixture-legacy-backfill-reset",
+                request_sha256="0" * 64,
+                detail={"simulated": "pre-A-plan project"},
+            )
+            connection.commit()
+
+        # 回填前：装配计划 intervention.* 全阻断（存量现场）
+        definition_before = self.service.get(project_id).study_definition
+        plan_before = build_protocol_assembly_plan(
+            definition_before,
+            plan_id="assembly-before-backfill",
+            revision=1,
+            actor="medical_manager_test",
+            now=datetime.now(timezone.utc),
+        )
+        blockers_before = [
+            module.module_id
+            for module in plan_before.modules
+            if module.module_id.startswith("intervention.")
+            and module.blocking_severity == "blocker"
+        ]
+        self.assertTrue(blockers_before, "存量现场应先复现阻断（红）")
+
+        # 惰性回填
+        self.assertTrue(self.service.backfill_structured_intervention_rules(project_id))
+        backfilled = self.service.get(project_id)
+        rules = backfilled.picos.intervention_rules
+        self.assertEqual("structured", str(rules.authority.value))
+
+        definition_after = backfilled.study_definition
+        plan_after = build_protocol_assembly_plan(
+            definition_after,
+            plan_id="assembly-after-backfill",
+            revision=1,
+            actor="medical_manager_test",
+            now=datetime.now(timezone.utc),
+        )
+        blockers_after = [
+            module.module_id
+            for module in plan_after.modules
+            if module.module_id.startswith("intervention.")
+            and module.blocking_severity == "blocker"
+        ]
+        self.assertEqual([], blockers_after)
+
+        # 幂等：已结构化时再次调用不写（返回 False）
+        self.assertFalse(self.service.backfill_structured_intervention_rules(project_id))
 
     def test_search_snapshot_is_attached_to_current_plan_and_survives_reload(self):
         project_id = "proj_synthetic_ra_search_link"
@@ -2474,6 +2866,12 @@ class MedicalWritingAuthoringJourneyApiTests(unittest.TestCase):
         self.assertIn("ct_conf_deferred", request.idempotency_key)
 
     def test_api_blocks_authoring_write_while_pipeline_owns_frozen_inputs(self):
+        """SMOKE-r1-1 根因2（R27 收敛修订）后契约：快照冻结范围收窄到已
+        提交字段——阶段提交（commit）在管线推进期（triaging 等）仍 409
+        冻结（本测试原断言草稿同样 409，即用户整页只读的 P0 本体；按测试
+        者建议方向修订为放行草稿）；草稿保存在 triaging 放行（200），仅在
+        searching（检索快照写入期）保持 409。分诊确认层的 material facts
+        hash 失效保护不因此减弱。"""
         project_id = "proj_mgk10_crswnp"
         created = self.client.post(
             f"/api/projects/{project_id}/medical-writing/authoring-journey",
@@ -2493,7 +2891,8 @@ class MedicalWritingAuthoringJourneyApiTests(unittest.TestCase):
             "get_state",
             return_value=SimpleNamespace(stage="triaging"),
         ):
-            blocked = self.client.post(
+            # 草稿保存：triaging 放行（修前 409 = 整页只读 P0 本体）
+            draft = self.client.post(
                 f"/api/projects/{project_id}/medical-writing/authoring-journey/stages/picos/draft",
                 json={
                     "expected_revision": created.json()["revision"],
@@ -2503,8 +2902,38 @@ class MedicalWritingAuthoringJourneyApiTests(unittest.TestCase):
                     "idempotency_key": "api-save-draft-during-triage",
                 },
             )
-        self.assertEqual(409, blocked.status_code, blocked.text)
-        self.assertIn("不能修改研究框架", blocked.text)
+            self.assertEqual(200, draft.status_code, draft.text)
+            # 阶段提交：triaging 仍冻结（已提交字段 = 快照冻结范围）
+            blocked = self.client.post(
+                f"/api/projects/{project_id}/medical-writing/authoring-journey/stages/picos/commit",
+                json={
+                    "expected_revision": draft.json()["revision"],
+                    "stage": "picos",
+                    "picos": _complete_picos().model_dump(mode="json"),
+                    "actor": "medical_manager_test",
+                    "idempotency_key": "api-commit-during-triage-blocked",
+                },
+            )
+            self.assertEqual(409, blocked.status_code, blocked.text)
+            self.assertIn("不能修改研究框架", blocked.text)
+        with patch.object(
+            app_main.medical_writing_research_pipeline_service,
+            "get_state",
+            return_value=SimpleNamespace(stage="searching"),
+        ):
+            # 草稿保存：searching（检索快照写入期）保持冻结
+            searching_blocked = self.client.post(
+                f"/api/projects/{project_id}/medical-writing/authoring-journey/stages/picos/draft",
+                json={
+                    "expected_revision": draft.json()["revision"],
+                    "stage": "picos",
+                    "picos": partial_picos.model_dump(mode="json"),
+                    "actor": "medical_manager_test",
+                    "idempotency_key": "api-save-draft-during-searching",
+                },
+            )
+        self.assertEqual(409, searching_blocked.status_code, searching_blocked.text)
+        self.assertIn("暂不能保存草稿", searching_blocked.text)
 
 
 if __name__ == "__main__":

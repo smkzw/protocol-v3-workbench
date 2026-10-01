@@ -2774,7 +2774,15 @@ class TestProjectionRetry(TriageTestBase):
         )
         self.assertEqual(snapshot.snapshot_id, changed.search_plan.latest_snapshot_id)
         self.assertEqual("triage_pending", changed.search_plan.status)
-        self.assertEqual("", changed.discovery_basket_projection.confirmation_id)
+        # SMOKE-r1-2 ③（R27 收敛修订）：criteria-only 变化（给药途径是
+        # triage_criteria 输入）不再清空已确认篮子——候选宇宙（registry
+        # filter）未变，人工确认继续有效；_rebuild_search_plan 已把计划
+        # 状态降级为 triage_pending 提示确认早于当前标准。真正的失效保护
+        # 在 retry_projection 的 material facts 门（下方断言不变）。
+        self.assertEqual(
+            confirmation.confirmation_id,
+            changed.discovery_basket_projection.confirmation_id,
+        )
 
         retried = self.service.retry_projection(
             self.project_id,
@@ -3142,8 +3150,91 @@ class TestStrictProviderFailClosed(unittest.TestCase):
         self.assertEqual(TRIAGE_MODEL_NAME, verified.response_model)
 
 
+class FlakyOnceTriageProvider(FakeTriageProvider):
+    """NEW-28 反例装置：每个指定 chunk 首次调用抛错（模拟模型抖动），
+    重试即成功——自动重试后 run 应达到 review_ready 而非 partial_failed。"""
+
+    def __init__(self, responses_by_chunk, fail_once_chunks):
+        super().__init__(responses_by_chunk, fail_chunks=set())
+        self._fail_once = set(fail_once_chunks)
+        self._calls: dict[int, int] = {}
+
+    def run(self, envelope: Any) -> Dict[str, Any]:
+        chunk_index = envelope.payload.get("chunk_index", 0)
+        self._calls[chunk_index] = self._calls.get(chunk_index, 0) + 1
+        if chunk_index in self._fail_once and self._calls[chunk_index] == 1:
+            raise RuntimeError(f"transient provider error for chunk {chunk_index}")
+        return super().run(envelope)
+
+
 class TestPartialRunRejection(TriageTestBase):
     """Reject 2: PARTIAL_FAILED run cannot be confirmed."""
+
+    def test_transient_chunk_failure_is_auto_retried_once(self):
+        """NEW-28（R27 第3轮修订）反例：分诊批次失败此前无自动重试——一次
+        模型抖动就把 6 批跑成 5/6 partial_failed，用户必须自己发现并手动点
+        重试。期望：瞬时失败的批次自动重试一次后成功，run 直达 review_ready。
+        """
+        candidates = [_make_candidate("NCT00000001"), _make_candidate("NCT00000002")]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+
+        provider = FlakyOnceTriageProvider(
+            responses_by_chunk={
+                0: {
+                    "results": [
+                        _make_candidate_result("NCT00000001"),
+                        _make_candidate_result("NCT00000002"),
+                    ]
+                },
+            },
+            fail_once_chunks={0},
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-auto-retry-1",
+            ),
+            provider,
+        )
+        self.assertEqual(
+            CompetitorTriageRunStatus.REVIEW_READY, response.run.status,
+            "瞬时批次失败应被自动重试救回，而不是 partial_failed",
+        )
+
+    def test_persistent_failure_still_lands_partial_with_details(self):
+        """NEW-28 配套：持续失败不该被无限重试——仍落 partial_failed，
+        且失败批次明细（chunk_id+错误）保留在 run.chunks 的 error_message 里。"""
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]},
+            },
+            fail_chunks={0},
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-auto-retry-persist-1",
+            ),
+            provider,
+        )
+        self.assertEqual(
+            CompetitorTriageRunStatus.FAILED, response.run.status
+        )
+        failed_chunks = [
+            chunk for chunk in response.run.chunks
+            if chunk.status == CompetitorTriageChunkStatus.FAILED
+        ]
+        self.assertEqual(1, len(failed_chunks))
+        self.assertIn("provider error", failed_chunks[0].error_message or "")
 
     def test_partial_failed_run_cannot_be_confirmed(self):
         candidates = [_make_candidate("NCT00000001"), _make_candidate("NCT00000002")]

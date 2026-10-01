@@ -637,10 +637,17 @@ def test_m2_sentinel_counts_only_managed_endpoints(world):
     assert orch_mod.sentinel_snapshot(f"{MTPLX}/v1")["inflight"] == 0
 
 
-def test_m3_gateway_sentinel_brackets_dispatch_and_refuses_draining(monkeypatch):
+def test_m3_gateway_sentinel_brackets_dispatch_and_refuses_draining(
+        world, monkeypatch):
+    """0928 update: the bracket now routes through the phase arbiter — the
+    dispatch is arbitrated (users counted) AND sentinel-counted; the draining
+    refusal still surfaces as an explicit provider runtime error."""
     gw = importlib.import_module("services.api.app.ai_gateway")
-    orch_mod = _orch()
-    orch_mod.reset_managed_cache({f"{MTPLX}/v1"})
+    orch_mod = world.orch_mod
+    arb = orch_mod.PhaseArbiter(world.o, clock=world.clock,
+                                sleep=world.clock.sleep)
+    orch_mod.set_arbiter(arb)
+    _mtplx_up(world.http)
     try:
 
         class _Resp:
@@ -659,8 +666,15 @@ def test_m3_gateway_sentinel_brackets_dispatch_and_refuses_draining(monkeypatch)
             def __exit__(self, *exc):
                 return False
 
-        monkeypatch.setattr(gw.urllib.request, "urlopen",
-                            lambda req, timeout=None: _Resp())
+        observed = {}
+
+        def fake_urlopen(req, timeout=None):
+            observed["users"] = arb.snapshot()["users"].get("mtplx", 0)
+            observed["inflight"] = orch_mod.sentinel_snapshot(
+                f"{MTPLX}/v1")["inflight"]
+            return _Resp()
+
+        monkeypatch.setattr(gw.urllib.request, "urlopen", fake_urlopen)
         provider = gw.OpenAICompatibleAiProvider(
             base_url=f"{MTPLX}/v1", api_key="k", model_name="m", max_attempts=1)
         envelope = gw.AiPromptEnvelope(
@@ -668,6 +682,8 @@ def test_m3_gateway_sentinel_brackets_dispatch_and_refuses_draining(monkeypatch)
             prompt_version="v1", system_prompt="s", payload={"x": 1})
         parsed = provider.run(envelope)
         assert parsed == {"ok": True}, parsed
+        assert observed == {"users": 1, "inflight": 1}, observed
+        assert arb.snapshot()["users"]["mtplx"] == 0, arb.snapshot()
         assert orch_mod.sentinel_snapshot(f"{MTPLX}/v1")["inflight"] == 0
 
         orch_mod.set_draining(f"{MTPLX}/v1", True)
@@ -680,7 +696,7 @@ def test_m3_gateway_sentinel_brackets_dispatch_and_refuses_draining(monkeypatch)
         finally:
             orch_mod.set_draining(f"{MTPLX}/v1", False)
     finally:
-        orch_mod.reset_managed_cache(None)
+        orch_mod.set_arbiter(None)
 
 
 # ------------------------------------------- n: release-confirm failure gate
@@ -695,10 +711,19 @@ def test_n_release_confirm_failure_fails_closed(world):
     assert result["status"] == "failed", result
     assert result["reason"] == "release_confirm_timeout", result
     assert any("release_confirm_timeout" in ln for ln in _audit_lines(world))
-    # fail-closed: further lifecycle work on that phase is refused
+    # SMOKE-r1-3 共性主根因（R27 收敛修订）：旧的永久闩（后续 ensure 一律
+    # release_unconfirmed 拒绝、只能人工改状态文件）把 r3 全链路锁死——
+    # ⑤ mwjob_582d291f… 4.7 分钟即死、翻译 17 项停滞，而 MTPLX 实际驻留
+    # 健康。新契约：release 自身仍 fail-closed（failed + 不谎报成功）；
+    # ensure 观测到驻留服务器时清闩重新采用（互斥排水/A18 探针仍把关），
+    # 后续任何真实 release 失败由 _drain 重新置闩（下方验证）。
     after = world.o.ensure("triage")
-    assert after["status"] == "refused", after
-    assert after["reason"] == "release_unconfirmed", after
+    assert after["status"] == "ok", after
+    again = world.o.release("triage", reason="drill-2")
+    assert again["status"] == "failed", again
+    assert again["reason"] == "release_confirm_timeout", again
+    assert any("release_unconfirmed_recovered" in ln
+               for ln in _audit_lines(world))
 
 
 # ---------------------------------------------- o: scheduler compatibility

@@ -174,6 +174,38 @@ class _FakeFullDraftRunner:
         )
 
 
+class _FlakyFirstChunkRunner(_FakeFullDraftRunner):
+    """SMOKE-r2-3 ⑤：第一次 submit_internal 返回 FAILED（模型输出格式抖动
+    ——task_id 回显畸变+残留草稿标记，mwjob_d8ab…第8批现场），重试即合格。"""
+
+    def submit_internal(self, project_id, request):
+        if self.calls == 0:
+            self.calls += 1
+            now = datetime.now(timezone.utc)
+            return AiTaskRun(
+                run_id="run_flaky_fail",
+                project_id=project_id,
+                module="medical_writing",
+                task_type=AiTaskType.PROTOCOL_FULL_DRAFT.value,
+                purpose="full draft",
+                status=AiTaskRunStatus.FAILED,
+                provider="buddy",
+                model_name="deepseek-v4-pro",
+                ai_gateway_status="configured",
+                request_origin="trusted_server_source",
+                deployment_profile="approved_private_documents",
+                prompt_version=FULL_DRAFT_PROMPT_VERSION,
+                validation_errors=[
+                    "task_id mismatch: expected airun_x, got airun_y",
+                    "full_draft.sections[3].proposal_text contains unresolved "
+                    "drafting markers: 需由医学经理确认",
+                ],
+                created_at=now,
+                updated_at=now,
+            )
+        return super().submit_internal(project_id, request)
+
+
 class FullDraftServiceTests(unittest.TestCase):
     def test_route_receipt_includes_effective_model_identity_and_effort(self):
         receipt = MedicalWritingFullDraftService._run_route_receipt(
@@ -220,7 +252,8 @@ class FullDraftServiceTests(unittest.TestCase):
         self.service = SimpleNamespace(
             repo=self.repo,
             ai_task_runner=self.runner,
-            _policy_identity=lambda: dict(self.policy),
+            # SMOKE-r1-2 ⑤：_policy_identity 契约增加 task_type 参数（按任务冻结路由身份），测试替身同步
+            _policy_identity=lambda task_type="medical_writing_revision": dict(self.policy),
             _current_project_study_definition_source=lambda protocol, section: source,
             _company_corpus_sources=lambda *args: [],
             _shared_corpus_sources=lambda *args: [],
@@ -288,6 +321,97 @@ class FullDraftServiceTests(unittest.TestCase):
         self.assertEqual(2, adopted["adopted_count"])
         self.assertEqual(2, replay["replayed_count"])
         self.assertEqual(2, len(self.repo.save_calls))
+
+    def test_validation_class_chunk_failure_rerequests_the_chunk(self):
+        """SMOKE-r2-3 ⑤（R27 收敛修订）反例：第8批因模型输出格式抖动
+        （task_id 回显畸变+残留草稿标记）失败时，整 job 弃掉此前全部合格
+        批次（mwjob_d8ab… 前7批合格即死）。修后契约：校验类失败
+        （『未通过校验』）整批重新请求（最多 FULL_DRAFT_CHUNK_ATTEMPTS
+        次），第二次合格则 job 完成；身份门照常对每次尝试生效。"""
+        project = self.repo.project_id
+        flaky = _FlakyFirstChunkRunner()
+        self.service.ai_task_runner = flaky
+        job_id, _ = self.full.submit_durable(project, self.store)
+        job = self.store.get(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            job,
+            "claim",
+            lambda: False,
+            lambda progress: True,
+        )
+        self.assertEqual("", result.error, result)
+        self.assertEqual(2, flaky.calls, "校验类失败必须整批重请求一次")
+
+    def test_non_validation_chunk_failure_still_fails_fast(self):
+        """确定性失败（未配置独立AI）不重试：保持 fail-fast 原语义。"""
+        project = self.repo.project_id
+
+        class _BlockedRunner(_FakeFullDraftRunner):
+            def submit_internal(self, project_id, request):
+                self.calls += 1
+                now = datetime.now(timezone.utc)
+                return AiTaskRun(
+                    run_id=f"run_blocked_{self.calls}",
+                    project_id=project_id,
+                    module="medical_writing",
+                    task_type=AiTaskType.PROTOCOL_FULL_DRAFT.value,
+                    purpose="full draft",
+                    status=AiTaskRunStatus.BLOCKED,
+                    provider="buddy",
+                    model_name="deepseek-v4-pro",
+                    ai_gateway_status="not_configured",
+                    request_origin="trusted_server_source",
+                    deployment_profile="approved_private_documents",
+                    prompt_version=FULL_DRAFT_PROMPT_VERSION,
+                    created_at=now,
+                    updated_at=now,
+                )
+
+        blocked = _BlockedRunner()
+        self.service.ai_task_runner = blocked
+        job_id, _ = self.full.submit_durable(project, self.store)
+        job = self.store.get(project, job_id)
+        result = ProtocolFullDraftExecutor(self.full).execute(
+            job,
+            "claim",
+            lambda: False,
+            lambda progress: True,
+        )
+        self.assertIn("独立AI未配置", result.error)
+        self.assertEqual(1, blocked.calls, "确定性失败不得重试")
+
+    def test_descriptor_freezes_full_draft_task_route_not_revision_route(self):
+        """SMOKE-r1-2 ⑤（R27 收敛修订）反例：_policy_identity 曾硬编码
+        task_type="medical_writing_revision"——全文初稿的 descriptor.
+        ai_policy 与 durable provider 列被冻结成修订任务的云端路由
+        （mwjob_99f37544af2a80b357a4588e 实证 provider=ollama-cloud/
+        deepseek、route_profile_id=independent_ai__ollama_cloud_dsv41），
+        而执行层按 PROTOCOL_FULL_DRAFT 走本地 MTPLX，路由档案与实际传输
+        互相矛盾。修后契约：build_descriptor 必须按任务自身的
+        protocol_full_draft 路由冻结身份，durable provider/model 列与
+        执行路由一致。
+        """
+        project = self.repo.project_id
+        captured = {}
+
+        def recorder(task_type="medical_writing_revision"):
+            captured["task_type"] = task_type
+            return dict(self.policy)
+
+        self.service._policy_identity = recorder
+        descriptor = self.full.build_descriptor(project)
+        self.assertEqual(
+            "protocol_full_draft",
+            captured.get("task_type"),
+            "全文初稿必须按 PROTOCOL_FULL_DRAFT 的任务级路由冻结身份",
+        )
+        self.assertEqual(
+            self.policy["provider_name"], descriptor["ai_policy"]["provider_name"]
+        )
+        job_id, _ = self.full.submit_durable(project, self.store)
+        job = self.store.get(project, job_id)
+        self.assertEqual(self.policy["provider_name"], job.provider)
+        self.assertEqual(self.policy["model_name"], job.model)
 
     def test_stale_manual_edit_blocks_adoption(self):
         project = self.repo.project_id

@@ -17,6 +17,11 @@ logger = logging.getLogger(__name__)
 
 from packages.contracts.workbench_contracts import (
     InterventionRulesAuthority,
+    InterventionRulesNonIpRuleClass,
+    InterventionRulesProductRole,
+    MedicalWritingInterventionIpRegimen,
+    MedicalWritingInterventionNonIpTreatmentRule,
+    MedicalWritingInterventionRules as MedicalWritingInterventionRulesBase,
     AuthoringPrefillAdoptRequest,
     AuthoringPrefillCandidate,
     AuthoringPrefillCompositeAdoptReceipt,
@@ -1318,6 +1323,17 @@ class MedicalWritingAuthoringJourneyService:
         state = self.get(project_id)
         if request.stage == "picos" and not state.framing_complete:
             raise ValueError("study framing must be complete before PICOS can be committed")
+        if request.stage == "picos":
+            # NEW-1(R1-a) A案：提交前把旧版干预字段派生为结构化权威（见
+            # _derive_structured_intervention_rules_from_legacy docstring）。
+            request = request.model_copy(
+                update={
+                    "picos": _derive_structured_intervention_rules_from_legacy(
+                        request.picos, state.framing
+                    )
+                },
+                deep=True,
+            )
         proposed = request.framing if request.stage == "framing" else request.picos
         assert proposed is not None
         missing_required_fields = proposed.missing_required_fields()
@@ -1505,16 +1521,9 @@ class MedicalWritingAuthoringJourneyService:
                     if search_ready
                     else None
                 )
-                search_contract_changed = bool(
-                    current.search_plan is not None
-                    and (
-                        next_search_plan is None
-                        or current.search_plan.registry_filter
-                        != next_search_plan.registry_filter
-                        or current.search_plan.triage_criteria
-                        != next_search_plan.triage_criteria
-                    )
-                )
+                # SMOKE-r1-2 ③：失效判定改为下方的 registry_universe_changed
+                # （仅候选宇宙变化才清空已确认篮子；criteria-only 变化保留
+                # 人工确认，计划状态由 _rebuild_search_plan 降级提示）。
                 updates: dict[str, Any] = {
                     "revision": revision,
                     "framing": request.framing,
@@ -1527,12 +1536,37 @@ class MedicalWritingAuthoringJourneyService:
                     "updated_at": now,
                     "updated_by": request.actor,
                 }
-                if search_contract_changed:
-                    # The immutable registry result can remain reusable when
-                    # its filter is unchanged, but the active retain/exclude
-                    # decision was made against an older medical triage
-                    # contract. Keep its repository history and require a new
-                    # explicit confirmation before corpus admission.
+                # SMOKE-r1-2 ③（R27 收敛修订）：失效条件从"任一检索契约变化"
+                # 收窄为"候选宇宙（registry filter）变化"。沿革：旧规则在
+                # triage_criteria 变化时也清空已确认的 discovery basket
+                # 投影——但 criteria 的输入正是第一步必填项（总体设计模式/
+                # 目标人群/内在研究目的等），from_zero 流程"先按最小事实检索
+                # 分诊、后补齐必填"必然触发：用户 15:02 确认锁定 823 项
+                # （ct_conf_3930d4e834f1ea809bb6），16:06/16:10 补齐必填完成
+                # 第一步后投影被静默清空（proj_user_9bed9903e9e5 revision 16
+                # 实证全空），翻译重试死路（"batch translation requires
+                # either finalized corpus triage or a confirmed discovery
+                # basket projection"）。仅 criteria 变化时：registry filter
+                # 不变 → _rebuild_search_plan 保留同一锁定快照（候选集完全
+                # 相同），人工保留/排除决策是对该候选宇宙的医学裁决
+                # （confirm_basket：确认即医学决策），继续有效；
+                # _rebuild_search_plan 已把这种情况的计划状态降级为
+                # triage_pending（提示确认早于当前标准）而不删身份。真正
+                # 的候选宇宙变化（filter 变/计划被清空）仍然全部失效重来。
+                registry_universe_changed = bool(
+                    current.search_plan is not None
+                    and (
+                        next_search_plan is None
+                        or current.search_plan.registry_filter
+                        != next_search_plan.registry_filter
+                    )
+                )
+                if registry_universe_changed:
+                    # The immutable registry result is no longer reusable: the
+                    # active retain/exclude decision was made against a
+                    # different candidate universe. Keep its repository
+                    # history and require a new search + confirmation before
+                    # corpus admission.
                     updates.update(
                         {
                             "discovery_basket_projection": DiscoveryBasketProjection(),
@@ -2938,6 +2972,94 @@ class MedicalWritingAuthoringJourneyService:
             connection.commit()
         return updated
 
+    @staticmethod
+    def _override_precondition_error(journey: MedicalWritingAuthoringJourney) -> ValueError:
+        # L2（R26-QA：例外放行与第二步完成互为前置的死循环观感）：拒绝时必须
+        # 告诉用户缺什么、补齐后即可重试；笼统英文断言只会把用户锁死。
+        if not journey.framing_complete:
+            return ValueError(
+                "例外放行前需先完成第一步研究框架；请回到「研究框架」补齐必填项并完成第一步后重试。"
+            )
+        picos_missing = (
+            list(journey.picos_draft.missing_required_fields)
+            if journey.picos_draft is not None
+            else []
+        )
+        detail = "、".join(picos_missing) if picos_missing else "第二步PICOS必填项"
+        return ValueError(
+            "例外放行前需先完成第二步PICOS；当前仍缺必填项："
+            f"{detail}。请在第二步补齐并完成后重试例外放行；"
+            "仍被阻断的设计类字段可在语料准入后由AI生成候选。"
+        )
+
+    def backfill_structured_intervention_rules(
+        self,
+        project_id: str,
+        *,
+        actor: str = "medical_manager_system_backfill",
+    ) -> bool:
+        """NEW-1 存量回填（R27 第3轮修订，惰性重派生）：对 PICOS 已提交但
+        干预规则仍为旧版权威的存量项目（HFrEF 等——派生此前只挂在提交路径，
+        旧项目永不重触发），按旧字段派生结构化权威并持久化；旅程修订号
+        +1（可审计），研究定义按同一派生结果重建。幂等：规则已结构化或
+        旧字段全空时不写，返回 False。"""
+        request_sha256 = _payload_sha256(
+            {"op": "backfill_structured_intervention_rules", "project_id": project_id}
+        )
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            current_row = self._current_row(connection, project_id)
+            current = _load_authoring_journey_payload(
+                current_row["payload_json"]
+            )
+            if not current.picos_complete or current.study_definition is None:
+                connection.commit()
+                return False
+            derived = _derive_structured_intervention_rules_from_legacy(
+                current.picos, current.framing
+            )
+            if derived is current.picos:
+                connection.commit()
+                return False
+            now = datetime.now(timezone.utc)
+            updated = current.model_copy(
+                update={
+                    "revision": current.revision + 1,
+                    "picos": derived,
+                    "study_definition": _build_study_definition(
+                        project_id=project_id,
+                        revision=current.study_definition.revision + 1,
+                        origin=current.entry_mode,
+                        framing=current.framing,
+                        picos=derived,
+                        synopsis_import=current.synopsis_import,
+                        confirmed_stages={"framing", "picos"},
+                        actor=actor,
+                        now=now,
+                        created_at=current.study_definition.created_at,
+                        current_study_schema=current.study_definition.study_schema,
+                    ),
+                    "updated_at": now,
+                    "updated_by": actor,
+                },
+                deep=True,
+            )
+            self._persist_update(
+                connection,
+                updated,
+                expected_revision=current.revision,
+                event_type="authoring_journey_structured_intervention_backfilled",
+                actor=actor,
+                idempotency_key=f"backfill-intervention:{project_id}:{current.study_definition.state_sha256}",
+                request_sha256=request_sha256,
+                detail={
+                    "authority": "structured",
+                    "legacy_fields_projected": True,
+                },
+            )
+            connection.commit()
+        return True
+
     def override_corpus_gate(
         self,
         project_id: str,
@@ -2952,12 +3074,18 @@ class MedicalWritingAuthoringJourneyService:
         if replay is not None:
             return replay
         state = self.get(project_id)
-        if request.expected_revision != state.revision:
-            raise MedicalWritingAuthoringJourneyConflictError(
-                f"stale authoring journey revision: expected {request.expected_revision}, current {state.revision}"
-            )
+        # AGG-P0-03: the outer revision-number gate is intentionally gone.
+        # A benign concurrent write (corpus gate recalculation, draft save,
+        # status refresh) bumps the revision between the user's page load and
+        # this call; rejecting on the number alone turned harmless concurrency
+        # into a user-visible 409 (R26: "stale expected 15, current 16") and
+        # the retry then silently wiped the user's acknowledgements. The
+        # substantive preconditions are re-checked against the committed state
+        # inside the transaction below — framing/PICOS completeness and an
+        # acknowledgement set equal to the *current* gap set. Those are the
+        # only remaining reasons an override may be refused.
         if not state.framing_complete or not state.picos_complete:
-            raise ValueError("study framing and PICOS must be complete before corpus override")
+            raise self._override_precondition_error(state)
         missing = set(state.corpus_gate.missing_requirements)
         acknowledged = set(request.acknowledged_missing_requirements)
         if acknowledged != missing:
@@ -2974,16 +3102,11 @@ class MedicalWritingAuthoringJourneyService:
             current = _load_authoring_journey_payload(
                 current_row["payload_json"]
             )
-            if current.revision != request.expected_revision:
-                connection.rollback()
-                raise MedicalWritingAuthoringJourneyConflictError(
-                    f"stale authoring journey revision: expected {request.expected_revision}, current {current.revision}"
-                )
+            # AGG-P0-03: no in-transaction revision gate either — the checks
+            # below against the committed state are the authoritative guard.
             if not current.framing_complete or not current.picos_complete:
                 connection.rollback()
-                raise ValueError(
-                    "study framing and PICOS must be complete before corpus override"
-                )
+                raise self._override_precondition_error(current)
             current_missing = set(current.corpus_gate.missing_requirements)
             if set(request.acknowledged_missing_requirements) != current_missing:
                 connection.rollback()
@@ -6212,6 +6335,102 @@ def _payload_sha256(payload: Any) -> str:
             default=str,
         ).encode("utf-8")
     ).hexdigest()
+
+
+def _derive_structured_intervention_rules_from_legacy(
+    picos: Any, framing: Any
+) -> Any:
+    """NEW-1(R1-a) A案（R27 第2轮修订；owner 推荐，裁决待复核）：
+
+    用户在第二步填满的旧版干预字段（干预概述/用法用量/背景/允许/禁止）此前
+    在装配层被有意忽略（authority != STRUCTURED → 8 个 intervention.* 一次
+    性全 blocker），界面-阻断互斥。现在 PICOS 提交时把这些已填字段确定性
+    派生为结构化干预规则并置权威 = structured——让用户已填的字段真正成为
+    权威。只搬运用户亲填内容，绝不伪造：active/placebo/rescue 无旧数据就不
+    造（由已确认的结构化设计事实决定 not_applicable）；剂量调整策略保持
+    unspecified（装配层仅 warning 不阻断）。规则已结构化或旧字段全空时原样
+    返回。
+    """
+    if picos is None:
+        return picos
+    rules = getattr(picos, "intervention_rules", None)
+    if (
+        rules is not None
+        and getattr(rules, "authority", None) == InterventionRulesAuthority.STRUCTURED
+    ):
+        return picos
+    dose_text = str(getattr(picos, "intervention_dose_regimen", "") or "").strip()
+    summary_text = str(getattr(picos, "intervention_summary", "") or "").strip()
+    background = [
+        str(item or "").strip()
+        for item in (getattr(picos, "required_background_rules", None) or [])
+        if str(item or "").strip()
+    ]
+    allowed = [
+        str(item or "").strip()
+        for item in (getattr(picos, "allowed_concomitant_rules", None) or [])
+        if str(item or "").strip()
+    ]
+    prohibited = [
+        str(item or "").strip()
+        for item in (getattr(picos, "prohibited_concomitant_rules", None) or [])
+        if str(item or "").strip()
+    ]
+    if not any([dose_text, summary_text, background, allowed, prohibited]):
+        return picos
+    product_name = str(getattr(framing, "investigational_product", "") or "").strip()
+    comparator_text = str(getattr(picos, "comparator_summary", "") or "").strip()
+    comparator_type = str(
+        getattr(getattr(framing, "structured_design", None), "comparator_type", "")
+        or ""
+    ).strip()
+    existing_rules = rules
+    regimens = list(getattr(existing_rules, "ip_regimens", None) or [])
+    if dose_text or summary_text:
+        regimens.append(
+            MedicalWritingInterventionIpRegimen(
+                regimen_id="legacy-derived-ip-1",
+                product_name=product_name,
+                product_role=InterventionRulesProductRole.INVESTIGATIONAL_PRODUCT,
+                dose_and_frequency=dose_text or summary_text,
+            )
+        )
+    # 对照组设计文本（如「匹配安慰剂，每日一次口服。」）是用户亲填事实：
+    # 已确认安慰剂对照设计时派生安慰剂方案，避免 placebo 模块继续要求
+    # 结构化方案而阻断；active 对照需剂量+途径两字段，旧文本无法忠实拆分，
+    # 不伪造（留给结构化编辑器补录，阻断清单已带中文跳转）。
+    if comparator_type == "placebo" and comparator_text:
+        regimens.append(
+            MedicalWritingInterventionIpRegimen(
+                regimen_id="legacy-derived-placebo-1",
+                product_name="安慰剂",
+                product_role=InterventionRulesProductRole.PLACEBO,
+                dose_and_frequency=comparator_text,
+            )
+        )
+    non_ip_rules = list(getattr(existing_rules, "non_ip_treatment_rules", None) or [])
+    for class_enum, items in (
+        (InterventionRulesNonIpRuleClass.BACKGROUND, background),
+        (InterventionRulesNonIpRuleClass.ALLOWED_CM, allowed),
+        (InterventionRulesNonIpRuleClass.PROHIBITED_CM, prohibited),
+    ):
+        for index, text in enumerate(items, start=1):
+            non_ip_rules.append(
+                MedicalWritingInterventionNonIpTreatmentRule(
+                    rule_id=f"legacy-derived-{class_enum.value}-{index}",
+                    rule_class=class_enum,
+                    cm_dose_rule=text,
+                )
+            )
+    derived = (existing_rules or MedicalWritingInterventionRulesBase()).model_copy(
+        update={
+            "authority": InterventionRulesAuthority.STRUCTURED,
+            "ip_regimens": regimens,
+            "non_ip_treatment_rules": non_ip_rules,
+        },
+        deep=True,
+    )
+    return picos.model_copy(update={"intervention_rules": derived}, deep=True)
 
 
 def _canonical_study_definition_picos(picos: Any) -> Any:

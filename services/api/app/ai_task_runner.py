@@ -87,7 +87,14 @@ AI_FALLBACK_TASKS = {
     AiTaskType.DOCUMENT_SECTION_EXTRACTION,
     AiTaskType.REGULATORY_TRANSLATION_ZH,
 }
-AI_FALLBACK_HTTP_STATUSES = {408, 429, 500, 502, 503, 504}
+# SMOKE-r2-2 ⑦（R27 收敛修订）：401 耗尽后允许回退链接管。证据：
+# airun_20261001023257（修订，ollama-cloud）在 401 已入有界重试集后仍
+# 三连 401 失败——主路重试只能熬过秒级抖动，熬不过分钟级上游鉴权窗口；
+# 同型修订在更早轮次由回退链路由 opencode-go deepseek-v4.1-flash 成功
+# 完成过（airun_20260923034058 等），同模型异载体是现成出路。401 加入
+# 回退触发状态后：主路有界重试→仍 401→整链切 opencode-go，不再一票
+# 否决。真正的密钥失效在两条路由上都会明确失败，不会静默。
+AI_FALLBACK_HTTP_STATUSES = {401, 408, 429, 500, 502, 503, 504}
 REGULATORY_AUTHORITY_TERMS = (
     "CDE",
     "NMPA",
@@ -362,16 +369,19 @@ def _project_reference_ids_from_store(
     }
 
 
+_ROMAN_LEVEL_RANGE_PATTERN = re.compile(
+    r"(?<![A-Za-z])([IVXLCDM]+)\s*(?:至|到|[-–—~～])\s*"
+    r"([IVXLCDM]+)\s*级",
+    flags=re.IGNORECASE,
+)
+
+
 def _roman_level_ranges(
     text: str,
     *,
     ignore_region_specific: bool = False,
 ) -> set[tuple[str, str]]:
-    pattern = re.compile(
-        r"(?<![A-Za-z])([IVXLCDM]+)\s*(?:至|到|[-–—~～])\s*"
-        r"([IVXLCDM]+)\s*级",
-        flags=re.IGNORECASE,
-    )
+    pattern = _ROMAN_LEVEL_RANGE_PATTERN
     ranges: set[tuple[str, str]] = set()
     for match in pattern.finditer(text):
         if ignore_region_specific:
@@ -420,6 +430,51 @@ def _numeric_bound_assertions(text: str) -> set[tuple[str, str, str]]:
             )
         )
     return assertions
+
+
+def _medical_writing_fidelity_preservation_hints(
+    allowed_sources: Iterable[Any],
+) -> List[Dict[str, str]]:
+    """Exact source phrases a revision proposal must preserve verbatim.
+
+    SMOKE-r1-4 ⑦（R27 收敛修订）：修复轮此前只把规范标签id
+    （如 'timing.last_dose'）放进 validation_errors——模型无法把id映射回
+    具体短语，r2 的修订在约55分钟后返回仍被拒
+    （『omits required source timing labels ['timing.last_dose']…
+    omits source Roman-numeral level ranges』）。本函数把必须逐字保留的
+    时间锚点短语与罗马数字分级区间（含原文匹配串）列成清单，供修复轮
+    的 must_preserve_verbatim 直接引用。校验器本身不放松。
+    """
+    sources = list(allowed_sources)
+    target_text = (
+        str(getattr(sources[0], "text_preview", "") or "") if sources else ""
+    )
+    fact_text = "\n".join(
+        str(getattr(source, "text_preview", "") or "")
+        for source in sources
+        if getattr(source, "source_type", "")
+        not in _MEDICAL_WRITING_REFERENCE_ONLY_SOURCE_TYPES
+    )
+    hints: List[Dict[str, str]] = []
+    for label in sorted(_MEDICAL_WRITING_REQUIRED_PRESERVATION_LABELS):
+        for pattern in _MEDICAL_WRITING_CONTROLLED_LABEL_PATTERNS.get(label, ()):
+            for match in re.finditer(pattern, target_text):
+                hints.append(
+                    {"kind": "timing_label", "label": label,
+                     "phrase": match.group(0)}
+                )
+    for match in _ROMAN_LEVEL_RANGE_PATTERN.finditer(fact_text):
+        hints.append(
+            {"kind": "roman_level_range", "phrase": match.group(0)}
+        )
+    seen: set[str] = set()
+    unique: List[Dict[str, str]] = []
+    for hint in hints:
+        if hint["phrase"] in seen:
+            continue
+        seen.add(hint["phrase"])
+        unique.append(hint)
+    return unique
 
 
 def validate_medical_writing_revision_semantics(
@@ -2711,6 +2766,38 @@ class AiTaskRunner:
                 "重新返回完整JSON对象；必须逐字复制payload.repair_context.required_top_level_identity"
                 "中的全部顶层身份字段，不得省略任何原任务字段，不得新增证据或改变原任务事实。"
             )
+            if task_type == AiTaskType.MEDICAL_WRITING_REVISION:
+                # SMOKE-r1-4 ⑦：保真缺漏类错误（时间锚点/罗马数字分级被
+                # 改写或丢失）修复时必须给出原文短语——规范标签id对模型
+                # 不可逆。校验器不放松，只把可执行的逐字保留清单交给修复轮。
+                fidelity_errors = [
+                    error
+                    for error in validation_errors
+                    if error.startswith("revision")
+                    and (
+                        "omits required source timing labels" in error
+                        or "omits source Roman-numeral level ranges" in error
+                        or "changes or invents Roman-numeral level ranges" in error
+                    )
+                ]
+                if fidelity_errors:
+                    preserve_hints = (
+                        _medical_writing_fidelity_preservation_hints(
+                            input_sources
+                        )
+                    )
+                    if preserve_hints:
+                        repair_context["must_preserve_verbatim"] = preserve_hints
+                        repair_context["instruction"] += (
+                            " payload.repair_context.must_preserve_verbatim "
+                            "lists the exact timing-anchor phrases and "
+                            "Roman-numeral level ranges from the allowed "
+                            "sources. Copy each listed phrase verbatim into "
+                            "EVERY candidate's proposal_text; do not "
+                            "paraphrase, translate, reorder digits, or drop "
+                            "any of them, and do not introduce Roman-numeral "
+                            "ranges that are not listed."
+                        )
             if task_type == AiTaskType.PROTOCOL_SYNOPSIS_STRUCTURING:
                 nested_contract_errors = [
                     error

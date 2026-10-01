@@ -35,6 +35,7 @@ from packages.contracts.workbench_contracts.models import (
 )
 from services.api.app.medical_writing_protocol_assembly_plan import (
     MedicalWritingProtocolAssemblyPlanBlockedError,
+    _phase_one_status,
     MedicalWritingProtocolAssemblyPlanConflictError,
     MedicalWritingProtocolAssemblyPlanService,
     MedicalWritingProtocolAssemblyPlanStaleError,
@@ -257,6 +258,46 @@ def test_phase1_parts_are_present_in_every_relevant_projection_and_omission_fail
     synopsis["applicable_module_ids"].remove("design.phase1.sad")
     with pytest.raises(ValidationError, match="manifest is incomplete"):
         MedicalWritingProtocolAssemblyPlan.model_validate(corrupted)
+
+
+def test_phase_one_status_normalizes_numeral_suffixes_and_tails():
+    """NEW-1(R1-c) 反例：_phase_one_status 此前只做 token 精确匹配，
+    'IIa'/'2期'/'Ⅱ期（带尾巴）'一律返回 None（未解析）；None 与 False 语义
+    分叉——False 走 not_applicable 放行，None 让 11 个 design.phase1.* 模块
+    全家 blocker（II期项目被塞 I 期模块阻断）。期望：
+    - 仅 I/I期/1期/Ⅰ期 → True；
+    - IIa/IIB/2期/Ⅱ期（含自由文本尾巴）→ False（明确非 I 期）；
+    - 空串/无法归一 → None。
+    """
+    # True：真正的 I 期
+    assert _phase_one_status("I期") is True
+    assert _phase_one_status("I") is True
+    assert _phase_one_status("1期") is True
+    assert _phase_one_status("Ⅰ期") is True
+    # False：带子分期/数字/尾巴的 II 期必须解析为非 I 期，而不是 None
+    assert _phase_one_status("IIa") is False
+    assert _phase_one_status("IIB期") is False
+    assert _phase_one_status("2期") is False
+    assert _phase_one_status("Ⅱ期（概念验证+剂量探索）。设计：多中心随机双盲") is False
+    assert _phase_one_status("II/III期") is False
+    # None：空与无法归一
+    assert _phase_one_status("") is None
+    assert _phase_one_status("   ") is None
+
+
+def test_phase_two_with_suffix_text_does_not_block_phase1_modules():
+    """NEW-1(R1-c) 计划级反例：IIa 期（带描述尾巴）项目不得出现任何
+    design.phase1.* 阻断模块。"""
+    plan = _build(
+        _definition(study_phase="IIa期（概念验证+剂量探索）。设计：多中心随机双盲")
+    )
+    blocked_phase1 = [
+        module.module_id
+        for module in plan.modules
+        if module.module_id.startswith("design.phase1.")
+        and module.blocking_severity == "blocker"
+    ]
+    assert blocked_phase1 == []
 
 
 def test_only_selected_unresolved_phase1_part_blocks_its_own_module():

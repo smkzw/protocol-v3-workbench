@@ -209,6 +209,111 @@ class AiExecutionPolicyTests(unittest.TestCase):
                 next(iter(policy.allowed_models)),
             )
 
+    def test_protocol_synopsis_structuring_gets_long_task_timeout_and_ladder_budget(self):
+        """ENV-02 反例（资源预算层）：整份方案结构化抽取是长生成任务，300 秒
+        单请求窗把它逼进 3×300 秒假失败循环（R26 现场第 1 次尝试耗尽 30 分钟
+        报"未就绪"，第 2 次尝试负载缓解后 2.4 分钟即完成）。该任务类需要独立
+        的长超时窗与重试梯子总预算；其他任务类保持现行预算不变。"""
+        resolver = AiExecutionPolicyResolver(
+            deployment_profile="local_private_clinical",
+            provider_name="openai_compatible",
+            model_name="loopback-test",
+            test_only_provider_injection=True,
+        )
+
+        def _request(task_type: str, prompt_version: str) -> AiTaskRequest:
+            return AiTaskRequest(
+                module="medical_writing",
+                task_type=task_type,
+                prompt_version=prompt_version,
+                allowed_sources=[
+                    AiTaskSourceRef(
+                        source_id="src_synopsis_docx",
+                        source_type="document",
+                        title="方案摘要",
+                        locator="/tmp/synopsis.docx",
+                        text_preview="方案摘要内容。适应症为哮喘。",
+                        project_id="proj_timeout_tier",
+                        module="medical_writing",
+                    )
+                ],
+                user_instruction="结构化提取研究框架与PICOS。",
+            )
+
+        long_resolution = resolver.resolve_internal(
+            "proj_timeout_tier",
+            _request(
+                "protocol_synopsis_structuring",
+                "protocol_synopsis_structuring_v0_9",
+            ),
+        )
+        self.assertEqual(1200.0, long_resolution.route_timeout_seconds)
+        self.assertEqual(1800.0, long_resolution.route_ladder_budget_seconds)
+
+        control = resolver.resolve_internal(
+            "proj_timeout_tier",
+            _request(
+                "document_section_extraction",
+                "document_section_extraction_v0_1",
+            ),
+        )
+        self.assertEqual(300.0, control.route_timeout_seconds)
+        self.assertEqual(0.0, control.route_ladder_budget_seconds)
+
+    def test_profile_rebuild_keeps_long_task_timeout_and_ladder_budget(self):
+        """ENV-02 反例（生产路径）：independent_ai 角色走 resolve_internal_for_profile，
+        其 replace() 不得把分级超时回退成 profile 自带的 300 秒——否则 R26 的
+        30 分钟假失败循环在生产路径原样复发。"""
+        from types import SimpleNamespace
+
+        from services.api.app.ai_execution_policy import (
+            AiExecutionPolicyResolver as _Resolver,
+        )
+
+        resolver = _Resolver(
+            deployment_profile="local_private_clinical",
+            provider_name="openai_compatible",
+            model_name="loopback-test",
+            test_only_provider_injection=True,
+        )
+        profile = SimpleNamespace(
+            profile_id="fake-mtplx",
+            revision=3,
+            provider="mtplx",
+            model="mtplx-flash-next-optimized-speed",
+            base_url="http://127.0.0.1:8002/v1",
+            transport="openai_compatible",
+            expected_response_model="mtplx-flash-next-optimized-speed",
+            deployment_profile="local_private_clinical",
+            timeout_seconds=300.0,
+            api_key_env="",
+            thinking="enabled",
+            reasoning_effort="xhigh",
+            enabled=True,
+        )
+        request = AiTaskRequest(
+            module="medical_writing",
+            task_type="protocol_synopsis_structuring",
+            prompt_version="protocol_synopsis_structuring_v0_9",
+            allowed_sources=[
+                AiTaskSourceRef(
+                    source_id="src_synopsis_docx",
+                    source_type="document",
+                    title="方案摘要",
+                    locator="/tmp/synopsis.docx",
+                    text_preview="方案摘要内容。适应症为哮喘。",
+                    project_id="proj_timeout_tier",
+                    module="medical_writing",
+                )
+            ],
+            user_instruction="结构化提取研究框架与PICOS。",
+        )
+        resolution = resolver.resolve_internal_for_profile(
+            "proj_timeout_tier", request, profile
+        )
+        self.assertEqual(1200.0, resolution.route_timeout_seconds)
+        self.assertEqual(1800.0, resolution.route_ladder_budget_seconds)
+
     def test_medical_writing_revision_policy_accepts_plan_pin_only_as_known_optional_key(self):
         resolver = AiExecutionPolicyResolver(
             deployment_profile="local_private_clinical",
@@ -313,6 +418,322 @@ class AiExecutionPolicyTests(unittest.TestCase):
             )
 
         self.assertEqual([], provider.calls)
+
+    def test_revision_task_owner_profile_passes_execution_route_whitelist(self):
+        """NEW-40（R27 第3轮修订）反例：NEW-22 把修订任务的提交层路由指向了
+        owner 决策的 ollama-cloud（independent_ai__ollama_cloud_dsv41，
+        base_url=https://ollama.com，模型 deepseek-v4.1-flash），但执行层
+        TASK_AI_ROUTE_POLICIES[MEDICAL_WRITING_REVISION] 白名单没有
+        ollama-cloud 策略项——_enforce_task_ai_route_policy 每次尝试
+        AiExecutionPolicyDenied，mwjob_859f4055 三连拒后 failed，
+        ollama.com 从未被实际调用。期望：owner 决策路由必须通过执行层白名单。
+        """
+        resolver = AiExecutionPolicyResolver(
+            deployment_profile="local_private_clinical",
+            provider_name="ollama-cloud",
+            model_name="deepseek-v4.1-flash",
+            transport_name="openai_compatible",
+            # 0930 fix 后策略钉住 https://ollama.com/v1（adapter 直接拼
+            # /chat/completions，缺 /v1 会 404）；本夹具此前用无 /v1 的
+            # 旧端点，与已提交的生产修复脱节，属陈旧夹具而非行为断言。
+            base_url="https://ollama.com/v1",
+        )
+        # 修前留痕：该路由曾触发 AiExecutionPolicyDenied（provider must be
+        # one of alibaba_token_plan, cms-router, deepseek, mtplx,
+        # opencode-go——不含 ollama-cloud），即 mwjob_859f4055 三连拒本体。
+        # 修后契约：owner 决策冻结路由必须通过执行层白名单。
+        self.assertIsNone(
+            resolver._enforce_task_ai_route_policy(
+                AiTaskType.MEDICAL_WRITING_REVISION
+            )
+        )
+
+    def test_revision_task_routes_to_owner_decided_profile_not_chain_order(self):
+        """NEW-22（R27 第2轮修订）反例：owner 决策（2026-09-28 修正）要求
+        MEDICAL_WRITING_REVISION 走 ollama-cloud deepseek-v4.1-flash
+        （independent_ai__ollama_cloud_dsv41），但 _capture_revision_cloud_route
+        泛取 fallback 链第一个 enabled 云 profile——链首是
+        independent_ai__opencode_go_deepseek_v41_flash 时修订任务被送到了
+        opencode 网关（实测 mwjob_3dc3f0fa 的 route_profile_id 即 opencode）。
+        期望：任务级路由表优先解析，ollama_cloud_dsv41 存在且 enabled 时
+        修订路由必须落它；该 profile 不存在/禁用时才回退链序。
+        """
+        import tempfile as _tempfile
+
+        from services.api.app.ai_runtime_settings import (
+            AiFallbackRoute,
+            AiProviderProfile,
+            AiRuntimeSettingsStore,
+        )
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            store = AiRuntimeSettingsStore(Path(tmp) / "settings.json")
+            opencode = AiProviderProfile(
+                profile_id="independent_ai__opencode_go_deepseek_v41_flash",
+                provider="opencode-go",
+                label="OpenCode Go",
+                base_url="https://opencode.ai/zen/go/v1",
+                model="deepseek-v4.1-flash",
+                api_key_env="OPENCODE_API_KEY",
+                deployment_scope="cloud",
+                discovery_mode="manual_plus_probe",
+            )
+            ollama = AiProviderProfile(
+                profile_id="independent_ai__ollama_cloud_dsv41",
+                provider="ollama-cloud",
+                label="Ollama Cloud DSV41",
+                base_url="https://ollama.com",
+                model="deepseek-v4.1-flash",
+                api_key_env="OLLAMA_CLOUD_API_KEY",
+                deployment_scope="cloud",
+                discovery_mode="manual_plus_probe",
+            )
+            local = AiProviderProfile(
+                profile_id="independent_ai__mtplx_local",
+                provider="mtplx",
+                label="本地 MTPLX",
+                base_url="http://127.0.0.1:8002/v1",
+                model="mtplx-flash",
+                deployment_scope="loopback",
+                discovery_mode="models_endpoint",
+            )
+            store.upsert(local, activate=True)
+            store.upsert(opencode)
+            store.upsert(ollama)
+            # 链里只有 opencode：ollama_cloud_dsv41 已定义且 enabled 但不在链中
+            # ——这正是 NEW-22 现场（active=本地 MTPLX，链首=opencode 云）。
+            store.set_fallback_chain(
+                [AiFallbackRoute(profile_id=opencode.profile_id)]
+            )
+
+            resolver = AiExecutionPolicyResolver()
+            with patch(
+                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
+                return_value=store,
+            ):
+                resolver._capture_revision_cloud_route()
+
+            self.assertEqual(
+                "independent_ai__ollama_cloud_dsv41",
+                resolver.route_profile_id,
+                "修订任务必须落在 owner 决策指定的 ollama-cloud profile，"
+                "而不是 fallback 链第一个云 profile",
+            )
+
+    def _owner_route_table_store(self, tmp: str):
+        """SMOKE-r1-1 根因1现场复刻：active=本地 MTPLX（xhigh）、链首=
+        opencode 云、owner 指定的 ollama_cloud_dsv41 已定义且 enabled 但
+        不在 fallback 链中。"""
+        from services.api.app.ai_runtime_settings import (
+            AiFallbackRoute,
+            AiProviderProfile,
+            AiRuntimeSettingsStore,
+        )
+
+        store = AiRuntimeSettingsStore(Path(tmp) / "settings.json")
+        store.upsert(
+            AiProviderProfile(
+                profile_id="independent_ai__mtplx_qwen38_local",
+                provider="mtplx",
+                label="本地 MTPLX",
+                base_url="http://127.0.0.1:8002/v1",
+                model="mtplx-flash-next-optimized-speed",
+                deployment_scope="loopback",
+                discovery_mode="models_endpoint",
+            ),
+            activate=True,
+        )
+        opencode = AiProviderProfile(
+            profile_id="independent_ai__opencode_go_deepseek_v41_flash",
+            provider="opencode-go",
+            label="OpenCode Go",
+            base_url="https://opencode.ai/zen/go/v1",
+            model="deepseek-v4.1-flash",
+            api_key_env="OPENCODE_API_KEY",
+            deployment_scope="cloud",
+            discovery_mode="manual_plus_probe",
+        )
+        store.upsert(opencode)
+        store.upsert(
+            AiProviderProfile(
+                profile_id="independent_ai__ollama_cloud_dsv41",
+                provider="ollama-cloud",
+                label="Ollama Cloud DSV41",
+                base_url="https://ollama.com/v1",
+                model="deepseek-v4.1-flash",
+                api_key_env="OLLAMA_CLOUD_API_KEY",
+                deployment_scope="cloud",
+                discovery_mode="manual_plus_probe",
+            )
+        )
+        store.set_fallback_chain([AiFallbackRoute(profile_id=opencode.profile_id)])
+        return store
+
+    def test_cloud_tier_tasks_route_to_owner_decided_profile(self):
+        """SMOKE-r1-1 根因1反例：owner 决策（2026-09-28）的完整路由表要求
+        竞品分诊/研究设计综合/PICOS 辅导走 ollama-cloud
+        deepseek-v4.1-flash，但 TASK_TYPE_ROUTE_PROFILE_OVERRIDES 此前只有
+        medical_writing_revision——分诊经角色绑定主路落本地 MTPLX xhigh
+        （durable 实证 mwjob_7b72ebc6a4eda816682ab3d1，
+        base_url=127.0.0.1:8002/v1），26 批×重推理档与并发全文初稿互拖
+        排队 38 分钟未完成。期望：三个云档任务在提交层身份
+        （route_identity_snapshot）与 resolve_internal/resolve_registered
+        解析里都落 owner 指定云 profile。
+        """
+        import tempfile as _tempfile
+
+        from services.api.app.ai_execution_policy import (
+            TASK_TYPE_ROUTE_PROFILE_OVERRIDES,
+        )
+
+        cloud_tasks = (
+            "competitive_intelligence",
+            "protocol_design_synthesis",
+            "picos_design_coach",
+        )
+        for task_value in cloud_tasks:
+            self.assertEqual(
+                "independent_ai__ollama_cloud_dsv41",
+                TASK_TYPE_ROUTE_PROFILE_OVERRIDES[task_value],
+                f"{task_value} 必须在任务级路由表中",
+            )
+        with _tempfile.TemporaryDirectory() as tmp:
+            store = self._owner_route_table_store(tmp)
+            with patch(
+                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
+                return_value=store,
+            ):
+                for task_value in cloud_tasks:
+                    resolver = AiExecutionPolicyResolver()
+                    snapshot = resolver.route_identity_snapshot(
+                        task_type=task_value
+                    )
+                    self.assertEqual(
+                        "independent_ai__ollama_cloud_dsv41",
+                        snapshot["profile_id"],
+                        f"{task_value} 提交层身份必须落 owner 云 profile",
+                    )
+                    self.assertEqual(
+                        "https://ollama.com/v1",
+                        snapshot["base_url"],
+                        f"{task_value} 必须实际打到 ollama.com",
+                    )
+
+    def test_cloud_tier_override_falls_back_to_chain_order_when_missing(self):
+        """配置缺口永不拒绝服务：owner 指定 profile 缺失时，云档任务按
+        NEW-22 既有语义回退 fallback 链第一个 enabled 云 profile
+        （仍是云档，不是本地绑定主路），route_identity_snapshot 不抛错。"""
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            store = self._owner_route_table_store(tmp)
+            # 删除 owner 指定的 ollama profile（模拟配置缺口）
+            payload = store.load()
+            payload["profiles"] = [
+                item
+                for item in payload["profiles"]
+                if item["profile_id"] != "independent_ai__ollama_cloud_dsv41"
+            ]
+            store.save(payload)
+            with patch(
+                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
+                return_value=store,
+            ):
+                resolver = AiExecutionPolicyResolver()
+                snapshot = resolver.route_identity_snapshot(
+                    task_type="competitive_intelligence"
+                )
+            self.assertEqual(
+                "independent_ai__opencode_go_deepseek_v41_flash",
+                snapshot["profile_id"],
+                "配置缺口时云档任务按链序回退云 profile（NEW-22 语义），"
+                "而非拒绝服务或回落本地 MTPLX",
+            )
+
+    def test_registered_path_applies_cloud_tier_override(self):
+        """SMOKE-r1-1 根因1补充：resolve_registered（注册源入口）此前完全
+        不应用任务级路由表；云档任务不应因入口不同而漂移回绑定主路。
+        用 resolve_internal（内部源入口）验证同一表格生效。"""
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            store = self._owner_route_table_store(tmp)
+            with patch(
+                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
+                return_value=store,
+            ):
+                resolver = AiExecutionPolicyResolver()
+                request = AiTaskRequest(
+                    module="evidence_design",
+                    task_type="competitive_intelligence",
+                    prompt_version="competitive_intelligence_v0_1",
+                    allowed_sources=[
+                        AiTaskSourceRef(
+                            source_id="src_001",
+                            source_type="public_registry_record",
+                            title="登记记录",
+                            locator="nct:1",
+                            text_preview="...",
+                            project_id=PROJECT_ID,
+                            module="evidence_design",
+                        )
+                    ],
+                    user_instruction="竞品调研",
+                )
+                resolution = resolver.resolve_internal(PROJECT_ID, request)
+            self.assertEqual(
+                "independent_ai__ollama_cloud_dsv41",
+                resolution.route_profile_id,
+                "内部源入口的云档任务也必须落 owner 云 profile",
+            )
+
+    def test_full_draft_route_stays_on_bound_local_primary(self):
+        """SMOKE-r1-2 ⑤ 补充：PROTOCOL_FULL_DRAFT 不在任务级云路由表内——
+        全文初稿按 owner 决策（2026-09-28）留在绑定主路（本地 MTPLX），
+        提交层身份不得被泛化到云端。"""
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            store = self._owner_route_table_store(tmp)
+            with patch(
+                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
+                return_value=store,
+            ):
+                resolver = AiExecutionPolicyResolver()
+                snapshot = resolver.route_identity_snapshot(
+                    task_type="protocol_full_draft"
+                )
+            self.assertEqual(
+                "independent_ai__mtplx_qwen38_local",
+                snapshot["profile_id"],
+                "全文初稿必须留在绑定主路（本地 MTPLX）",
+            )
+
+    def test_revision_task_gets_long_request_window(self):
+        """SMOKE-r1-3 ⑦（R27 收敛修订）反例：医学修订是重上下文结构化生成，
+        ollama 云档 effort=max 下单请求合理耗时超过 profile 默认 600s 窗。
+        r2 实证（airun_20260930170310）每次尝试都在 600s 被 TimeoutError
+        杀掉、重试×回退把墙钟拖到 ~55 分钟；r3 同型 job 15.5 分钟仍无返回。
+        期望：修订任务获得 synopsis 同档长窗（单请求 1200s），预算允许
+        主路两次完整尝试（2400s），且档位不缩短更长配置。"""
+        from services.api.app.ai_execution_policy import (
+            TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS,
+            TASK_TYPE_ROUTE_TIMEOUT_SECONDS,
+        )
+
+        self.assertEqual(
+            1200.0, TASK_TYPE_ROUTE_TIMEOUT_SECONDS["medical_writing_revision"]
+        )
+        self.assertEqual(
+            2400.0,
+            TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS["medical_writing_revision"],
+        )
+        resolver = AiExecutionPolicyResolver()
+        timeout, budget = resolver._route_budgets_for_task(
+            AiTaskType.MEDICAL_WRITING_REVISION
+        )
+        self.assertEqual(1200.0, timeout)
+        self.assertEqual(2400.0, budget)
 
     def test_prompt_version_is_server_selected_and_client_mismatch_is_denied(self):
         provider = RecordingProvider()

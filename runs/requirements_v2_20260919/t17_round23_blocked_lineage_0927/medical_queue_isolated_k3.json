@@ -1,0 +1,27 @@
+{
+ "command": "medical-queue",
+ "db": "runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/writing_reference.sqlite3",
+ "project_id": "proj_user_fad9f64f3151",
+ "read_only": true,
+ "count": 1,
+ "by_project": {
+  "proj_user_fad9f64f3151": 1
+ },
+ "items": [
+  {
+   "item_id": "wref_translation_item_c561fdf957b2132967c662b1",
+   "project_id": "proj_user_fad9f64f3151",
+   "batch_id": "wref_translation_batch_79e7f4e51e7270b75688e8e9",
+   "nct_id": "NCT02176291",
+   "artifact_id": "wref_doc_ebb777f66538aee37598",
+   "chapter_id": "ch_232c9ebdb6e023c8f14fc6dceb7829aaaad6190b6e7475f4c5e919714e177210",
+   "attempt": 14,
+   "translation_id": "wref_translation_ch_efe5de7307631d0681706cf8",
+   "translation_revision": 1,
+   "fidelity_failure_codes": [
+    "unit_1:numeric_tokens_changed",
+    "unit_1:source_abbreviation_missing"
+   ]
+  }
+ ]
+}

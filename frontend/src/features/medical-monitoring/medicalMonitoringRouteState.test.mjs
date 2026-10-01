@@ -236,8 +236,8 @@ const malformedProjects = resolveMedicalMonitoringProjectRoute(
   "missing-fallback",
 );
 check(
-  malformedProjects.status === "default" && malformedProjects.projectId === "proj-my009",
-  "ignores malformed and duplicate project candidates",
+  malformedProjects.status === "empty" && malformedProjects.projectId === "",
+  "ignores malformed and duplicate project candidates and never substitutes the first project (AGG25-P1-6)",
 );
 
 const matchedRisk = resolveMedicalMonitoringRiskRoute(

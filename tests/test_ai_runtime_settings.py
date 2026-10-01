@@ -101,6 +101,23 @@ class AiRuntimeSettingsTests(unittest.TestCase):
             values["ALIBABA_CODING_PLAN_API_KEY"],
         )
 
+    def test_profile_with_unknown_handwritten_key_still_loads(self):
+        """R27 环境前置反例：isolated_runtime 的 ai_provider_settings.json 里
+        手写的未知键（output_token_budget）曾让 AiProviderProfile(**item)
+        抛 TypeError → 该 profile 被静默丢弃 → translation_support 角色在
+        main.py 导入期 role_env() 处 KeyError('independent_ai__ollama_cloud_
+        dsv41')，5301 拒绝启动。未知键必须只忽略该键，不得丢弃整个 profile。
+        """
+        self.store.upsert(self.profile, activate=True)
+        payload = json.loads(self.settings_path.read_text())
+        payload["profiles"][0]["output_token_budget"] = 32768
+        self.settings_path.write_text(json.dumps(payload, ensure_ascii=False))
+
+        loaded = {item.profile_id: item for item in self.store.profiles()}
+
+        self.assertIn("alibaba_qwen38", loaded)
+        self.assertFalse(hasattr(loaded["alibaba_qwen38"], "output_token_budget"))
+
     def test_disabled_independent_role_blocks_profile_and_environment_fallback(self):
         self.store.upsert(self.profile, api_key="private-test-key", activate=True)
         role_path = self.root / "ai_role_bindings.json"

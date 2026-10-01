@@ -434,21 +434,58 @@ def _normalized_phase1_part(value: str) -> str:
     return aliases.get(compact, "")
 
 
+_PHASE_TOKEN_RE = re.compile(r"IV|III|II|I|[1-4]")
+# 分期token之间的合法分隔（I/II、I+II、组合分期等）。
+_PHASE_SEPARATOR_CHARS = "/+-· 、,，;；:："
+
+
 def _phase_one_status(study_phase: str) -> Optional[bool]:
+    """NEW-1(R1-c)（R27 第2轮修订）：分期解析改为正则提取+归一。
+
+    旧行为只做 token 精确匹配：'IIa'→'IIA' 不等于 'II'、分期带自由文本
+    尾巴、纯数字 '2' 等一律落到 None；而 None（未解析）与 False（非 I 期）
+    语义分叉——False 走 not_applicable 放行，None 让全部 design.phase1.*
+    模块 blocker。现在：
+    - 仅 I/I期/1期/Ⅰ期（含组合 I/II 中的 I）→ True；
+    - IIa/IIB/2期/Ⅱ期（含尾巴文本）→ False（明确非 I 期）；
+    - 空串或开头无分期表达 → None。
+    只扫描字符串开头的分期表达区，防止尾部自由文本（如英文 RANDOMIZED）
+    里的字母 I 误判为 I 期。
+    """
     normalized = (
         study_phase.upper()
         .replace("Ⅰ", "I")
         .replace("Ⅱ", "II")
         .replace("Ⅲ", "III")
+        .replace("Ⅳ", "IV")
+        .replace("一期", "1")
+        .replace("二期", "2")
+        .replace("三期", "3")
+        .replace("四期", "4")
         .replace("期", "")
         .strip()
     )
     if not normalized:
         return None
-    tokens = [token for token in re.split(r"[/+\\\-]", normalized) if token]
-    if any(token == "I" for token in tokens):
+    expression = ""
+    position = 0
+    while position < len(normalized):
+        match = _PHASE_TOKEN_RE.match(normalized, position)
+        if match:
+            expression += match.group(0)
+            position = match.end()
+            continue
+        if normalized[position] in _PHASE_SEPARATOR_CHARS or normalized[position].isspace():
+            expression += normalized[position]
+            position += 1
+            continue
+        break
+    tokens = _PHASE_TOKEN_RE.findall(expression)
+    if not tokens:
+        return None
+    if "I" in tokens or "1" in tokens:
         return True
-    if any(token in {"II", "III", "IV"} for token in tokens):
+    if any(token in {"II", "2", "III", "3", "IV", "4"} for token in tokens):
         return False
     return None
 

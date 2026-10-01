@@ -1,0 +1,23 @@
+# R2-D 现场笔记（未完）
+
+- 测试开始：2026-09-29 20:45:34 CST
+- 前端：http://127.0.0.1:5186
+- tabId：c0e4672a-9ea0-43e2-b627-8a8740d71778
+- 任务空间：loop27-r2-d（camofox user=grok，listItemId=default）
+- 无登录、无角色选择，直接进项目总看板
+- 未见 monitoring_principal_unavailable
+- 未见前后端版本不一致横幅
+- 入口B界面叫法：**导入方案摘要**（副文案：先解析文件，确认提取结果后创建项目）
+- 导入模式没有独立项目名称栏，也没有试验药物/适应症/分期手工栏（那些只在「从零开始」出现）
+- 选文件后出现「导入并提取」按钮
+- 提交导入：2026-09-29 20:49:25
+- 首次几乎立刻报错：`chunk 0 validation failed: Managed local model server unavailable: ensure(triage) failed on mtplx; queued dispatch aborted`
+- 点「继续处理」后变成「方案摘要解析已暂停，已完成的进度仍会保留。」
+- 再点「继续处理」后进入：AI正在提取研究框架与PICOS / 正在处理 1/1 个内容块 / 模型处理中或排队等待空位 / 第2次解析尝试 / 模型正被1个任务占用
+- 20:56:10（提交后约 6 分 45 秒）再次报错：`chunk 0 validation failed: Managed local model server unavailable: ensure(triage) failed during arbitration (switch retried 2x, budget capped)`。当时 watcher 误把「PICOS」按钮文案当成解析成功，截了 16-解析结果出现.png，实际没有提取结果。
+- 续跑 20:58:13 发现对话框还在，但已选文件丢失，变回空的「选择方案摘要或完整方案」。
+- 20:58:33 重新选同一份 docx 再点「导入并提取」。约 12 秒后红条「方案摘要解析失败。已完成的解析进度仍会保留，您可以继续处理。」点「继续处理」无变化。
+- 20:59:51 再点「导入并提取」，界面回到排队：已运行 10 分钟 · 第3次解析尝试（累计时长从首次提交 20:49:25 算起）。
+- 首次提交 30 分钟卡点 = 21:19:25。
+- 21:19:25 卡点到达：仍是「已运行 29–30 分钟 · 第3次解析尝试 · 2个占用+1项排队」，只有「取消」，无提取结果。记 P0。未改走从零开始。
+- 21:21 已关 tab，list_tabs 为空。cleaned=true。report.md 已写。

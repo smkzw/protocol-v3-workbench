@@ -1,0 +1,28 @@
+{
+ "total_requests": 2733,
+ "by_phase": {
+  "translation": {
+   "count": 2732,
+   "ok": 2732,
+   "non_ok": 0,
+   "max_elapsed_s": 0.758,
+   "min_elapsed_s": 0.202,
+   "errors": []
+  },
+  "triage": {
+   "count": 1,
+   "ok": 0,
+   "non_ok": 1,
+   "max_elapsed_s": 637.04,
+   "min_elapsed_s": 637.04,
+   "errors": [
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: Managed local model server unavailable: omlx has in-flight work"
+    }
+   ]
+  }
+ },
+ "co_resident_samples": 0,
+ "samples": 121
+}

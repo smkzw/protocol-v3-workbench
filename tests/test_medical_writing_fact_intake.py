@@ -1207,6 +1207,40 @@ class FactIntakeServiceTests(unittest.TestCase):
             MedicalWritingFactIntakeProposalDecision.REJECTED, decided.decision
         )
 
+    def test_broken_provider_raises_provider_unavailable_subclass(self):
+        """AGG25-P1-4: an unreachable provider is a service condition (503
+        upstream), distinct from a write conflict (409)."""
+        from packages.contracts.workbench_contracts import (
+            MedicalWritingFactIntakeProviderUnavailableError,
+        )
+
+        def broken_factory():
+            raise RuntimeError("connection refused")
+
+        service = MedicalWritingFactIntakeService(
+            self.db_path, provider_factory=broken_factory
+        )
+        service.create(
+            self.project_id,
+            MedicalWritingFactIntakeConversationCreateRequest(
+                scope=MedicalWritingFactIntakeScope.STUDY_FRAMING,
+                actor="medical_manager",
+                idempotency_key="create-broken",
+            ),
+        )
+        with self.assertRaises(MedicalWritingFactIntakeProviderUnavailableError):
+            service.turn(
+                self.project_id,
+                MedicalWritingFactIntakeScope.STUDY_FRAMING,
+                MedicalWritingFactIntakeTurnRequest(
+                    expected_revision=1,
+                    message_text="RA II",
+                    ib_status="not_provided",
+                    actor="medical_manager",
+                    idempotency_key="turn-broken",
+                ),
+            )
+
     def test_disabled_provider_raises_configuration_conflict(self):
         service = MedicalWritingFactIntakeService(
             self.db_path, provider_factory=lambda: DisabledAiProvider()

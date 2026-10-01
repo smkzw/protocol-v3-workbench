@@ -349,9 +349,25 @@ const recommendedClinicalTrialsSearchCandidate = (journey) => {
   ) return null;
   return candidate;
 };
-const prefillDestination = (fieldPath) => {
-  const entry = Object.entries(PREFILL_GROUP_FIELDS).find(([, fields]) => fields.includes(fieldPath));
-  if (!entry) return null;
+const PREFILL_FIELD_PREFIX_FALLBACKS = [
+  // AGG25-P1-5: product-profile and CT.gov cards had no mapping, so their
+  // refine button visibly did nothing. Every known field family now lands
+  // on an editable group; unknown paths fall back by prefix.
+  { prefix: "framing.product_profile", stage: "framing", group: "identity" },
+  { prefix: "framing.clinicaltrials", stage: "framing", group: "identity" },
+  { prefix: "framing.", stage: "framing", group: "identity" },
+  { prefix: "design.", stage: "picos", group: "applicability" },
+  { prefix: "picos.", stage: "picos", group: "applicability" },
+];
+
+export const prefillDestination = (fieldPath) => {
+  const path = String(fieldPath || "");
+  const entry = Object.entries(PREFILL_GROUP_FIELDS).find(([, fields]) => fields.includes(path));
+  if (!entry) {
+    const fallback = PREFILL_FIELD_PREFIX_FALLBACKS.find((item) => path.startsWith(item.prefix));
+    if (!fallback) return null;
+    return { stage: fallback.stage, group: fallback.group };
+  }
   const [stage, group] = entry[0].split(":");
   return { stage, group };
 };
@@ -393,6 +409,40 @@ const CONFIDENCE_LABELS = {
 const lines = (value) => String(value || "").split(/\n+/).map((item) => item.trim()).filter(Boolean);
 const lineText = (value) => (value || []).join("\n");
 const hasPopulatedList = (value) => Array.isArray(value) && value.some((item) => String(item || "").trim());
+// L4（R26：必填缺项只报数量不报字段名，用户得翻页签自己找）：缺失必填字段
+// 一律映射为界面标签后点名展示；未知键原样显示，绝不静默吞掉。
+const missingFieldLabel = (stage, key) => SYNOPSIS_FIELD_LABELS[`${stage}.${key}`]
+  || DESIGN_PREFILL_FIELD_LABELS[`${stage}.${key}`]
+  || DESIGN_PREFILL_FIELD_LABELS[`design.${key}`]
+  || key;
+const missingFieldLabelText = (stage, keys) => keys.map((key) => missingFieldLabel(stage, key)).join("、");
+const framingMissingFields = (values, phase1PartsReady) => {
+  const missing = [];
+  for (const key of ["protocol_id", "document_title", "indication", "study_phase", "investigational_product", "design_pattern", "population_intent"]) {
+    if (!String(values[key] || "").trim()) missing.push(key);
+  }
+  if (!values.intrinsic_objectives?.length) missing.push("intrinsic_objectives");
+  if (!phase1PartsReady) missing.push("phase1_parts");
+  return missing;
+};
+const picosMissingFields = (values) => {
+  const missing = [];
+  if (!values.design_archetype) missing.push("design_archetype");
+  if (!values.population_summary?.trim()) missing.push("population_summary");
+  if (!hasPopulatedList(values.inclusion_modules)) missing.push("inclusion_modules");
+  if (!hasPopulatedList(values.exclusion_modules)) missing.push("exclusion_modules");
+  if (!values.intervention_summary?.trim()) missing.push("intervention_summary");
+  if (!values.intervention_dose_regimen?.trim()) missing.push("intervention_dose_regimen");
+  if (!isConditionalPicosFieldComplete(values, "comparator_summary")) missing.push("comparator_summary");
+  if (!values.primary_endpoint?.trim()) missing.push("primary_endpoint");
+  if (!hasPopulatedList(values.safety_endpoints)) missing.push("safety_endpoints");
+  if (!hasPopulatedList(values.study_epochs)) missing.push("study_epochs");
+  if (!values.visit_strategy?.trim()) missing.push("visit_strategy");
+  if (!isConditionalPicosFieldComplete(values, "estimand_strategy")) missing.push("estimand_strategy");
+  if (!values.sample_size_strategy?.trim()) missing.push("sample_size_strategy");
+  if (!values.statistical_strategy?.trim()) missing.push("statistical_strategy");
+  return missing;
+};
 const normalizePicosForWrite = (value) => ({
   ...value,
   ...Object.fromEntries(PICOS_TEXT_LIST_FIELDS.map((field) => [
@@ -400,7 +450,90 @@ const normalizePicosForWrite = (value) => ({
     (value?.[field] || []).map((item) => String(item || "").trim()).filter(Boolean),
   ])),
 });
-const persistedStagePayload = (journey, targetStage) => journey?.[`${targetStage}_draft`]?.[targetStage] || journey?.[targetStage] || (targetStage === "picos" ? emptyPicos : null);
+// NEW-6（R27 第2轮修订）：响应缺该 stage 载荷时返回 null（而不是拿 emptyPicos
+// 顶替）——调用侧 null 则保留当前值，杜绝"异步响应不带 picos 就整替为空"。
+const persistedStagePayload = (journey, targetStage) => journey?.[`${targetStage}_draft`]?.[targetStage] || journey?.[targetStage] || null;
+// NEW-6：脏状态下的覆写改为逐键合并且空值不清空本地已填——服务端回包缺
+// product_profile/structured_design 等结构化子对象时（r2-A 现场：勾选的
+// 给药途径被回滚），用户已填内容原样保留；深层对象递归合并，数组空则保local。
+export const isEmptyPayloadValue = (value) => value == null
+  || value === ""
+  || (Array.isArray(value) && value.length === 0)
+  || (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0);
+// NEW-12(a)/NEW-1(4)（R27 第2轮修订）：单一错误翻译边界。已知英文模式→中文
+// 指引；装配阻断额外给出中文字段清单+可跳转目标（prefillDestination 复用）。
+// 未匹配模式保留原文并标记 technical（前端可折叠展示技术细节）。
+export const BLOCKER_FIELD_LABEL_FALLBACKS = {
+  "product.modality": "药物技术类型",
+  "product.route": "给药途径",
+  "product.dosage_form": "剂型",
+  "product.exposure_scope": "暴露范围",
+  "design.open_label_extension": "开放标签延长期设计",
+  "evidence.systemic_oral_defaults": "给药途径与暴露范围（全身/局部）",
+};
+const blockerFieldLabel = (fieldPath) => ASSEMBLY_PLAN_BLOCKER_LABELS[fieldPath]
+  || BLOCKER_FIELD_LABEL_FALLBACKS[fieldPath]
+  || (String(fieldPath).startsWith("design.phase1.")
+    ? `I期研究模块（${String(fieldPath).split(".").pop()}）`
+    : "")
+  || DESIGN_PREFILL_FIELD_LABELS[fieldPath]
+  || SYNOPSIS_FIELD_LABELS[fieldPath]
+  || FACT_FIELD_LABELS[fieldPath]
+  || prefillFieldLabel(fieldPath);
+
+export function blockerJumpDestination(fieldPath) {
+  const path = String(fieldPath || "");
+  if (path.startsWith("intervention.")) return { stage: "picos", group: "intervention" };
+  if (path.startsWith("design.")) return { stage: "picos", group: "applicability" };
+  if (path.startsWith("product.")) return { stage: "framing", group: "identity" };
+  return prefillDestination(path);
+}
+
+export function normalizeWorkbenchError(message) {
+  const raw = String(message || "").trim();
+  if (!raw) return { title: "", items: [], technical: false };
+  const blockers = raw.match(/unresolved scientific design blockers\s*:\s*([\s\S]+)$/i);
+  if (blockers) {
+    const fields = blockers[1].split(/,\s*/).map((item) => item.trim()).filter(Boolean);
+    return {
+      title: `方案装配仍有未决设计事实（${fields.length}项），请逐项补齐后再进入写作平台：`,
+      items: fields.map((fieldPath) => ({ fieldPath, label: blockerFieldLabel(fieldPath) })),
+      technical: false,
+    };
+  }
+  if (/immutable search snapshot/i.test(raw)) {
+    return { title: "该检索计划已锁定快照，请刷新页面后重试检索。", items: [], technical: false };
+  }
+  if (/Managed local model server unavailable|ensure\([^)]*\) failed|phase_queue_timeout|could not be arbitrated/i.test(raw)) {
+    return { title: "本地模型服务正忙或正在冷启动，任务已排队，请稍候重试。", items: [], technical: true };
+  }
+  // NEW-12（R27 第3轮修订）：执行层路由白名单拒绝与 provider 枚举/端点清单
+  // 直出（mwjob_859f4055 三连拒原文）→ 行动指引；端点清单折叠为技术细节。
+  if (/requires a product-owned approved direct route|provider must be one of /i.test(raw)) {
+    return { title: "修订通道配置未授权该模型，请联系集成人核对路由白名单。", items: [], technical: true };
+  }
+  if (/failed after bounded retries/i.test(raw)) {
+    return { title: "模型服务繁忙或响应超时，任务已保留，请稍候重试。", items: [], technical: true };
+  }
+  return { title: raw, items: [], technical: !/[\u4e00-\u9fff]/.test(raw) };
+}
+
+export const mergeIncomingPreservingLocal = (current, incoming) => {
+  const merged = { ...(current || {}) };
+  for (const [key, value] of Object.entries(incoming || {})) {
+    if (isEmptyPayloadValue(value)) continue;
+    const local = merged[key];
+    if (
+      value && local && typeof value === "object" && typeof local === "object"
+      && !Array.isArray(value) && !Array.isArray(local)
+    ) {
+      merged[key] = mergeIncomingPreservingLocal(local, value);
+    } else {
+      merged[key] = value;
+    }
+  }
+  return merged;
+};
 const synopsisReviewPending = (journey) => journey?.entry_mode === "synopsis_import" && journey?.synopsis_import?.status !== "confirmed";
 
 async function stableSynopsisUploadKey(projectId, file) {
@@ -636,6 +769,8 @@ function listFactValue(value) {
 }
 
 function applyConfirmedFactsToFraming(current, confirmedValues = {}, conversation = null) {
+  // NEW-6：current 为 null（载荷缺 framing）时跳过合并，返回 null 由调用侧保留当前值。
+  if (current == null) return current;
   const factPacket = { ...(current.minimum_product_fact_packet || {}) };
   const conversationHasFactState = Boolean(
     conversation
@@ -772,7 +907,9 @@ export function MedicalWritingAuthoringJourneySetup({
   const [stage, setStage] = useState("framing");
   const [group, setGroup] = useState("identity");
   const [prefillSection, setPrefillSection] = useState("identity");
-  const [advancedRefinementOpen, setAdvancedRefinementOpen] = useState(Boolean(readOnly));
+  // L1（R26-MW：表单体塌缩为骨架）：表单体默认必须展开。折叠只允许来自
+  // 用户主动点击 summary 收起；装载、切换步骤、硬刷新重挂载都不得重新折叠。
+  const [advancedRefinementOpen, setAdvancedRefinementOpen] = useState(true);
   const [deferredPrefillFields, setDeferredPrefillFields] = useState([]);
   const [compositeAdoptReceipt, setCompositeAdoptReceipt] = useState(null);
   const [researchRecovery, setResearchRecovery] = useState(null);
@@ -780,6 +917,8 @@ export function MedicalWritingAuthoringJourneySetup({
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
+  // NEW-1(4)：结构化阻断清单（中文字段名+可跳转目标），与纯文本 message 并存。
+  const [messageDetail, setMessageDetail] = useState(null);
   const [searchMessage, setSearchMessage] = useState("");
   const [impact, setImpact] = useState(null);
   const [overrideReason, setOverrideReason] = useState("");
@@ -807,14 +946,17 @@ export function MedicalWritingAuthoringJourneySetup({
     automaticResearchGenerationRef.current += 1;
     automaticMinimumSearchLockRef.current = "";
     setJourney(null); setEntryMode("");
-    setFraming(initialFramingFor(projectHeader)); setPicos(emptyPicos);
+    // NEW-6（R27 第2轮修订）：不再对 framing/picos 先行清空——装载期间保持
+    // 初值（首次挂载=initialFramingFor(projectHeader) 默认值），装载屏遮住
+    // 视图；回填结果到达后由下方 setFring/setPicos 的 null 安全写法接管。
+    // 此前"先清空再异步回填"的窗口里，任何回包缺级都会把表单顶成空。
     setStage("framing"); setGroup("identity"); setPrefillSection("identity");
-    setAdvancedRefinementOpen(Boolean(readOnly)); setDeferredPrefillFields([]); setCompositeAdoptReceipt(null);
+    setAdvancedRefinementOpen(true); setDeferredPrefillFields([]); setCompositeAdoptReceipt(null);
     setResearchRecovery(null);
     setInterventionPanel(initialInterventionPanel || "");
     setSynopsisFile(null); setSynopsisFileIdentity(null); setSynopsisUploadKey(""); setSynopsisReplacementPending(false); setSynopsisText("");
     setSynopsisAcknowledged([]); setSynopsisOverrideReason("");
-    setBusy(""); setMessage(""); setSearchMessage(""); setImpact(null);
+    setBusy(""); setMessage(""); setMessageDetail(null); setSearchMessage(""); setImpact(null);
     setCompetitorDrawerOpen(false);
     setReferencePanelRequest(null);
     setSelectedCorpusBriefIds([]);
@@ -851,20 +993,43 @@ export function MedicalWritingAuthoringJourneySetup({
         }
         if (controller.signal.aborted) return;
         setJourney(payload); setEntryMode(payload.entry_mode || "guided_greenfield");
-        setFraming(loadedFraming);
-        setPicos(synopsisReviewPending(payload) ? payload.synopsis_import.proposed_picos : persistedStagePayload(payload, "picos"));
+        // NEW-6：回填 null 安全——载荷缺该 stage 时保留当前值（初值默认），
+        // 绝不 setFraming(null)/setPicos(null) 把表单顶崩。
+        setFraming((current) => loadedFraming ?? current);
+        const loadedPicos = synopsisReviewPending(payload) ? payload.synopsis_import.proposed_picos : persistedStagePayload(payload, "picos");
+        setPicos((current) => loadedPicos ?? current);
         setSynopsisText(payload.synopsis_import?.proposed_synopsis_text || payload.study_definition?.synopsis_text || "");
         const restoredStage = payload.framing_draft ? "framing" : payload.picos_draft ? "picos" : payload.current_stage === "writing" ? "corpus" : payload.current_stage;
         const requestedStageAllowed = initialStage === "framing"
           || (initialStage === "picos" && payload.framing_complete)
           || (initialStage === "corpus" && payload.picos_complete);
-        const nextStage = requestedStageAllowed ? initialStage : restoredStage;
+        let nextStage = requestedStageAllowed ? initialStage : restoredStage;
         const requestedGroups = nextStage === "framing" ? FRAMING_GROUPS : nextStage === "picos" ? PICOS_GROUPS : [];
-        const nextGroup = requestedGroups.some((item) => item.key === initialGroup)
+        let nextGroup = requestedGroups.some((item) => item.key === initialGroup)
           ? initialGroup
           : nextStage === "picos" ? "applicability" : nextStage === "framing" ? "identity" : "corpus";
+        // NEW-7：装载尚未落 persisted 默认位前先读取 UI 锚点（同 commit 内
+        // 持久化效果会在其后覆盖该键，读取必须发生在装载期）。
+        try {
+          const anchor = JSON.parse(
+            globalThis.sessionStorage?.getItem(`workbench.authoring.uiAnchor.${projectId}`) || "null",
+          );
+          const stageAllowed = anchor && typeof anchor === "object" && (
+            anchor.stage === "framing"
+            || (anchor.stage === "picos" && payload.framing_complete)
+            || (anchor.stage === "corpus" && payload.picos_complete)
+          );
+          if (stageAllowed) {
+            nextStage = anchor.stage;
+            const anchorGroups = anchor.stage === "picos" ? PICOS_GROUPS : anchor.stage === "framing" ? FRAMING_GROUPS : [];
+            if (anchorGroups.some((item) => item.key === anchor.group)) nextGroup = anchor.group;
+          }
+        } catch { /* 无锚点或不可解析时用默认定位 */ }
         setStage(nextStage);
         setGroup(nextGroup);
+        if (nextStage !== "corpus") {
+          setPrefillSection(nextStage === "picos" ? "design" : "identity");
+        }
       } catch (error) {
         if (!controller.signal.aborted && error.status !== 404) {
           setLoadError(error.message);
@@ -877,7 +1042,51 @@ export function MedicalWritingAuthoringJourneySetup({
     return () => controller.abort();
   }, [projectId, loadNonce]);
 
-  useEffect(() => { setAcknowledged([]); setOverrideReason(""); }, [journey?.revision, journey?.corpus_gate?.missing_requirements?.length]);
+  // NEW-7（R27 第1轮末修订）：按项目把 UI 锚点（stage/group/prefillSection）
+  // 存入 sessionStorage，刷新/重开弹窗后恢复到最后停留的位置——不再每次都
+  // 落回默认组让用户重新找路。挂载实例上切换项目时清除旧项目锚点；只读与
+  // 终态不参与复位（锚点保留，不做额外改写）。刷新本身也是 unmount，所以
+  // unmount 时故意不清除——清除只发生在"同实例切换项目"这一种情形。
+  const authoringAnchorKey = `workbench.authoring.uiAnchor.${projectId}`;
+  const anchoredProjectRef = useRef(projectId);
+  useEffect(() => {
+    if (anchoredProjectRef.current === projectId) return;
+    try {
+      globalThis.sessionStorage?.removeItem(
+        `workbench.authoring.uiAnchor.${anchoredProjectRef.current}`,
+      );
+    } catch { /* sessionStorage unavailable */ }
+    anchoredProjectRef.current = projectId;
+  }, [projectId]);
+
+  useEffect(() => {
+    if (loading) return;
+    try {
+      globalThis.sessionStorage?.setItem(
+        authoringAnchorKey,
+        JSON.stringify({ stage, group, prefillSection }),
+      );
+    } catch { /* sessionStorage unavailable */ }
+  }, [authoringAnchorKey, stage, group, prefillSection, loading]);
+
+  // AGG-P0-03: a journey revision bump alone (benign concurrent write —
+  // corpus gate recalculation, search write-back, status refresh) must never
+  // wipe the medical manager's per-gap acknowledgements and override reason.
+  // The R26 field flow lost five checked gaps exactly this way. Remap by
+  // label only when the missing set itself actually changed: surviving labels
+  // stay checked, resolved labels drop off. The override reason is the
+  // manager's judgement and survives both cases until the project switches.
+  const missingRequirementsKey = Array.isArray(journey?.corpus_gate?.missing_requirements)
+    ? [...journey.corpus_gate.missing_requirements].map(String).sort().join("\u0000")
+    : "";
+  const lastMissingRequirementsKeyRef = useRef(null);
+  useEffect(() => {
+    const previousKey = lastMissingRequirementsKeyRef.current;
+    lastMissingRequirementsKeyRef.current = missingRequirementsKey;
+    if (previousKey === null || previousKey === missingRequirementsKey) return;
+    const currentLabels = new Set(missingRequirementsKey ? missingRequirementsKey.split("\u0000") : []);
+    setAcknowledged((current) => current.filter((label) => currentLabels.has(label)));
+  }, [missingRequirementsKey]);
 
   useEffect(() => {
     if (!journey || readOnly) return undefined;
@@ -1097,9 +1306,11 @@ export function MedicalWritingAuthoringJourneySetup({
   const technologyTypeReady = Boolean(framing.product_profile?.technology_type)
     && framing.product_profile.technology_type !== "unknown";
   const administrationRouteReady = Boolean(framing.product_profile?.administration_routes?.length);
-  const framingReady = Boolean(framing.protocol_id?.trim() && framing.document_title?.trim() && framing.indication?.trim() && framing.study_phase?.trim() && framing.intrinsic_objectives?.length && framing.investigational_product?.trim() && framing.design_pattern?.trim() && framing.population_intent?.trim() && typedPhase1PartsReady);
+  const framingMissing = framingMissingFields(framing, typedPhase1PartsReady);
+  const framingReady = framingMissing.length === 0;
   const framingSearchReady = Boolean(framing.investigational_product?.trim() && framing.indication?.trim() && framing.study_phase?.trim());
-  const picosReady = Boolean(picos.design_archetype && picos.population_summary?.trim() && hasPopulatedList(picos.inclusion_modules) && hasPopulatedList(picos.exclusion_modules) && picos.intervention_summary?.trim() && picos.intervention_dose_regimen?.trim() && isConditionalPicosFieldComplete(picos, "comparator_summary") && picos.primary_endpoint?.trim() && hasPopulatedList(picos.safety_endpoints) && hasPopulatedList(picos.study_epochs) && picos.visit_strategy?.trim() && isConditionalPicosFieldComplete(picos, "estimand_strategy") && picos.sample_size_strategy?.trim() && picos.statistical_strategy?.trim());
+  const picosMissing = picosMissingFields(picos);
+  const picosReady = picosMissing.length === 0;
   const framingDirty = journey ? JSON.stringify(framing) !== JSON.stringify(persistedStagePayload(journey, "framing")) : true;
   const picosDirty = Boolean(journey && JSON.stringify(picos) !== JSON.stringify(persistedStagePayload(journey, "picos")));
   const framingPendingDraft = Boolean(journey?.framing_draft);
@@ -1112,8 +1323,21 @@ export function MedicalWritingAuthoringJourneySetup({
       && !PIPELINE_TERMINAL_STAGES.has(pipelineStage)
       && !PIPELINE_STABLE_WAITING_STAGES.has(pipelineStage),
   );
+  // SMOKE-r1-1 根因2（R27 收敛修订）：快照冻结范围收窄到已提交字段——
+  // 阶段提交（完成第一/二步）在管线推进期保持冻结，草稿保存只在
+  // searching（检索快照写入期）冻结，其余长阶段（分诊/翻译等）放行，
+  // 用户不再整页只读。后端 /draft 端点已同步收窄
+  // （authoring_draft_save_blocked_by_pipeline）。
+  const authoringDraftSaveBlocked = pipelineStage === "searching";
   const authoringWriteBlockedMessage = authoringWriteBlocked
-    ? `研究流水线正在${PIPELINE_STAGE_LABELS[pipelineStage] || pipelineStage}；为保持检索/分诊快照冻结，暂不能保存研究框架。可等待流水线结束后重试，或在竞品处理抽屉取消本次流水线。`
+    ? `研究流水线正在${PIPELINE_STAGE_LABELS[pipelineStage] || pipelineStage}；为保持检索/分诊快照冻结，暂不能完成本阶段（提交）。${authoringDraftSaveBlocked ? "检索结束前也暂不能保存草稿。" : "草稿仍可正常编辑与保存；完成本阶段请等流水线结束，或在竞品处理抽屉取消本次流水线。"}`
+    : "";
+  const authoringDraftSaveBlockedMessage = authoringDraftSaveBlocked
+    ? "研究流水线正在执行公开检索；为避免改写正在生成的检索快照，本阶段暂不能保存草稿。检索通常数分钟内完成，可稍后重试。"
+    : "";
+  // NEW-42：writeBlocked 灰因说明绝不许为空（防御性兜底）。
+  const writeBlockedTitle = authoringWriteBlocked
+    ? (authoringWriteBlockedMessage || "竞品调研进行中，暂不能编辑")
     : "";
 
   const requestPrefillPackage = async (nextJourney, force = false, requestProjectId = projectId) => {
@@ -1474,9 +1698,11 @@ export function MedicalWritingAuthoringJourneySetup({
           error = reloadError;
         }
       }
+      // NEW-12（R27 第3轮修订）：与建稿失败同构——items 存入清单状态供渲染
+      const normalizedSearch = normalizeWorkbenchError(error.message);
       const failureDetail = error.name === "AbortError"
         ? "请求超时"
-        : error.message;
+        : (normalizedSearch.title || error.message);
       const detail = adoptionConfirmed
         ? searched
           ? `公开研究已检索，后续准备未完成：${failureDetail}`
@@ -1484,6 +1710,7 @@ export function MedicalWritingAuthoringJourneySetup({
         : `自动调研未完成：${failureDetail}`;
       setResearchRecovery({ projectId: requestProjectId, adoptionConfirmed });
       setSearchMessage(detail);
+      setMessageDetail(normalizedSearch.items.length ? normalizedSearch.items : null);
       if (adoptionConfirmed) setMessage(detail);
       return { status: "failed", error };
     } finally {
@@ -1526,8 +1753,25 @@ export function MedicalWritingAuthoringJourneySetup({
   const applyJourneyResponse = (response) => {
     setJourney(response);
     setEntryMode(response.entry_mode || "guided_greenfield");
-    setFraming(synopsisReviewPending(response) ? response.synopsis_import.proposed_framing : persistedStagePayload(response, "framing"));
-    setPicos(synopsisReviewPending(response) ? response.synopsis_import.proposed_picos : persistedStagePayload(response, "picos"));
+    // NEW-6（R27 第2轮修订）：三个异步写者（调研写回/重试/保存）带回的载荷
+    // 此前被无条件整替进 framing/picos——载荷缺结构化子对象时用户已填内容
+    // 被清空（r2-A：给药途径「口服」回空、三臂名单回空）。现在：
+    // 1) 载荷缺该 stage（null）→ 保留当前值；
+    // 2) 脏状态（framingDirty/picosDirty）→ 逐键合并且空值不清空本地已填；
+    //    干净状态仍整替，保住"保存后服务端即真相"与有意删除的语义。
+    if (synopsisReviewPending(response)) {
+      setFraming(response.synopsis_import.proposed_framing);
+      setPicos(response.synopsis_import.proposed_picos);
+    } else {
+      const nextFraming = persistedStagePayload(response, "framing");
+      const nextPicos = persistedStagePayload(response, "picos");
+      setFraming((current) => (nextFraming == null
+        ? current
+        : (framingDirty ? mergeIncomingPreservingLocal(current, nextFraming) : nextFraming)));
+      setPicos((current) => (nextPicos == null
+        ? current
+        : (picosDirty ? mergeIncomingPreservingLocal(current, nextPicos) : nextPicos)));
+    }
     setSynopsisText(response.synopsis_import?.proposed_synopsis_text || response.study_definition?.synopsis_text || "");
   };
 
@@ -1580,7 +1824,19 @@ export function MedicalWritingAuthoringJourneySetup({
       setFactConversation(factConversationFromBackend(response, ""));
       setMessage(response.ai_message?.text || "产品事实已拆解，请采用、修订或拒绝候选。");
     } catch (error) {
-      setMessage(`事实采集未完成：${error.message}`);
+      // AGG25-P1-4: a 503 provider_unavailable means the local model was
+      // not ready — the content stays in the input and can be resubmitted.
+      let detail = error.message;
+      try {
+        const parsed = JSON.parse(detail);
+        if (parsed?.code === "provider_unavailable") {
+          detail = "本地模型服务未就绪。已输入的内容保留在输入框，稍后可重新提交。";
+          setFactConversation((current) => ({ ...current, pendingInput: userInput }));
+        }
+      } catch {
+        // plain error message, surface it as-is
+      }
+      setMessage(`事实采集未完成：${detail}`);
     } finally {
       if (activeProjectRef.current === requestProjectId) setBusy("");
     }
@@ -2031,9 +2287,9 @@ export function MedicalWritingAuthoringJourneySetup({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  const commitPayload = async (targetStage, payload, previewId = "") => {
+  const commitPayload = async (targetStage, payload, previewId = "", revisionOverride = null) => {
     const requestProjectId = projectId;
-    const sourceRevision = journey.revision;
+    const sourceRevision = revisionOverride ?? journey.revision;
     const idempotencyKey = await stableAuthoringWriteKey(requestProjectId, `commit-${targetStage}`, sourceRevision, payload, previewId);
     let response;
     try {
@@ -2057,11 +2313,12 @@ export function MedicalWritingAuthoringJourneySetup({
     return response;
   };
 
-  const saveStage = async (targetStage) => {
+  const saveStage = async (targetStage, revisionOverride = null) => {
     if (authoringWriteBlocked) {
       setMessage(authoringWriteBlockedMessage);
       return;
     }
+    const baseRevision = revisionOverride ?? journey?.revision;
     const payload = targetStage === "framing" ? framing : normalizePicosForWrite(picos);
     setBusy(`save-${targetStage}`); setMessage("");
     try {
@@ -2082,16 +2339,40 @@ export function MedicalWritingAuthoringJourneySetup({
         if (created.framing_complete) { setStage("picos"); setGroup("applicability"); await runPublicSearch(created); }
         return;
       }
-      const preview = await fetch(`/api/projects/${projectId}/medical-writing/authoring-journey/impact-preview`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ expected_revision: journey.revision, stage: targetStage, [targetStage]: payload }) }).then(readJson);
-      if (preview.requires_confirmation) { setImpact({ preview, targetStage, payload }); return; }
-      await commitPayload(targetStage, payload);
-    } catch (error) { setMessage(`保存未完成：${error.message}`); }
+      const preview = await fetch(`/api/projects/${projectId}/medical-writing/authoring-journey/impact-preview`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ expected_revision: baseRevision, stage: targetStage, [targetStage]: payload }) }).then(readJson);
+      if (preview.requires_confirmation) { setImpact({ preview, targetStage, payload, baseRevision }); return; }
+      await commitPayload(targetStage, payload, "", baseRevision);
+    } catch (error) {
+      // 探针实测红（R27 第2轮修订）：竞品流水线在用户填写期间推进修订号，
+      // 「完成第一步/第二步」直接报 stale 且用户无路可走（草稿保存有恢复链，
+      // 提交却没有）。刷新修订号后自动重试一次；用户已填内容经 NEW-6 守卫
+      // 原样保留。
+      if (
+        error?.status === 409
+        && String(error?.message || "").includes("stale authoring journey revision")
+        && revisionOverride == null
+      ) {
+        try {
+          const latest = await fetch(`/api/projects/${projectId}/medical-writing/authoring-journey`).then(readJson);
+          if (activeProjectRef.current === projectId && latest.revision > (journey?.revision ?? 0)) {
+            applyJourneyResponse(latest);
+            return saveStage(targetStage, latest.revision);
+          }
+        } catch (reloadError) {
+          setMessage(`保存未完成：${reloadError.message}`);
+          return;
+        }
+      }
+      setMessage(`保存未完成：${error.message}`);
+    }
     finally { setBusy(""); }
   };
 
   const saveDraft = async (targetStage, baseJourneyOverride = null) => {
-    if (authoringWriteBlocked) {
-      setMessage(authoringWriteBlockedMessage);
+    // SMOKE-r1-1 根因2：草稿保存仅在 searching 冻结（后端同步收窄）；
+    // 分诊等长阶段放行草稿，用户不再整页只读。
+    if (authoringDraftSaveBlocked) {
+      setMessage(authoringDraftSaveBlockedMessage);
       return null;
     }
     const payload = targetStage === "framing" ? framing : normalizePicosForWrite(picos);
@@ -2140,8 +2421,8 @@ export function MedicalWritingAuthoringJourneySetup({
       }
       if (activeProjectRef.current !== requestProjectId) return;
       applyJourneyResponse(response);
-      const missingCount = response?.[`${targetStage}_draft`]?.missing_required_fields?.length || 0;
-      setMessage(`草稿已保存，未完成本阶段${missingCount ? `；仍有${missingCount}项必填内容待确认` : "；内容完整后仍需点击完成本阶段"}。`);
+      const missingFields = response?.[`${targetStage}_draft`]?.missing_required_fields || [];
+      setMessage(`草稿已保存，未完成本阶段${missingFields.length ? `；仍缺必填项：${missingFieldLabelText(targetStage, missingFields)}` : "；内容完整后仍需点击完成本阶段"}。`);
       return response;
     } catch (error) { setMessage(`草稿保存失败：${error.message}`); }
     finally { setBusy(""); }
@@ -2295,7 +2576,7 @@ export function MedicalWritingAuthoringJourneySetup({
   const confirmImpact = async () => {
     if (!impact) return;
     setBusy("confirm-impact"); setMessage("");
-    try { await commitPayload(impact.targetStage, impact.payload, impact.preview.preview_id); }
+    try { await commitPayload(impact.targetStage, impact.payload, impact.preview.preview_id, impact.baseRevision ?? null); }
     catch (error) { setMessage(`变更未提交：${error.message}`); }
     finally { setBusy(""); }
   };
@@ -2433,7 +2714,12 @@ export function MedicalWritingAuthoringJourneySetup({
       }).then(readJson);
       const response = await fetch(`/api/projects/${projectId}/medical-writing/greenfield-document`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ protocol_id: approvedFraming.protocol_id, version: approvedFraming.version, document_title: approvedFraming.document_title, indication: approvedFraming.indication, study_phase: approvedFraming.study_phase, source_study_definition_id: studyDefinition.definition_id, source_study_definition_revision: studyDefinition.revision, source_study_definition_sha256: studyDefinition.state_sha256, template_id: defaultTemplate.template_id, template_version: defaultTemplate.template_version, actor: "medical_manager", idempotency_key: `greenfield-from-definition-${projectId}-${studyDefinition.definition_id}-${studyDefinition.revision}-${defaultTemplate.template_version}`.slice(0, 200) }) }).then(readJson);
       onCreated(response);
-    } catch (error) { setMessage(`建立工作稿失败：${error.message}`); }
+    } catch (error) {
+      // NEW-12(a)/NEW-1(4)：英文技术报错在此翻译；装配阻断给出中文字段清单。
+      const normalized = normalizeWorkbenchError(error.message);
+      setMessage(`建立工作稿失败：${normalized.title || error.message}`);
+      setMessageDetail(normalized.items.length ? normalized.items : null);
+    }
     finally { setBusy(""); }
   };
 
@@ -2494,11 +2780,30 @@ export function MedicalWritingAuthoringJourneySetup({
     setPrefillSection(destination.stage === "picos" ? (destination.group === "applicability" ? "design" : "picos") : destination.group === "design" ? "design" : "identity");
     setAdvancedRefinementOpen(true);
   };
+  // NEW-1(4)：阻断清单的「去填写」——复用 prefillDestination 的 stage/group
+  // 映射，直接落到可编辑字段组并展开高级微调。
+  const jumpToBlockerField = (fieldPath) => {
+    const destination = blockerJumpDestination(fieldPath);
+    if (!destination) return;
+    setStage(destination.stage);
+    setGroup(destination.group);
+    setPrefillSection(destination.stage === "picos" ? "design" : "identity");
+    setAdvancedRefinementOpen(true);
+    setMessageDetail(null);
+  };
   const competitorSnapshotId = journey?.search_plan?.latest_snapshot_id
     || journey?.discovery_basket_projection?.snapshot_id
     || "";
   const competitorSearchCount = journey?.search_plan?.returned_count || 0;
   const compactResearchPipeline = pipelineStatus?.pipeline || {};
+  // NEW-11（竞品侧，R27 第1轮末修订）：检索计划未成形且流水线未启动时，
+  // 系统其实在等第一步（研究框架）提交——旧文案只说"将自动检索"并显示
+  // 0% 假进度条，用户以为卡死（R1A 现场悬挂约90分钟无解释）。
+  const compactResearchAwaitingFirstStep = Boolean(
+    !competitorSnapshotId
+    && !compactResearchPipeline.stage
+    && !journey?.framing_complete,
+  );
   const compactResearchPercent = Math.max(
     0,
     Math.min(100, Number(compactResearchPipeline.percent || 0)),
@@ -2544,7 +2849,9 @@ export function MedicalWritingAuthoringJourneySetup({
         : showCompactResearchProgress
           ? `已锁定${competitorSearchCount ? ` ${competitorSearchCount} 项` : ""}候选研究；${compactResearchLabel}，可同时查看已准备资料。`
           : `公开研究处理已完成${competitorSearchCount ? ` · ${competitorSearchCount} 项研究` : ""}；可随时查看分诊结果与原文。`)
-    : "项目已建立；系统将自动检索并处理竞品研究，当前草稿会持续保留。";
+    : compactResearchAwaitingFirstStep
+      ? "等待第一步（研究框架）提交后自动启动竞品检索；当前草稿会持续保留。"
+      : "项目已建立；系统将自动检索并处理竞品研究，当前草稿会持续保留。";
   const openCompetitorDrawer = () => setCompetitorDrawerOpen(true);
   const closeCompetitorDrawer = () => setCompetitorDrawerOpen(false);
 
@@ -2602,10 +2909,15 @@ export function MedicalWritingAuthoringJourneySetup({
           onResume={resumeResearchPipeline}
             onRetryTriage={retryResearchPipelineTriage}
             onStartRound2={startResearchPipelineRound2}
+            zeroRetainedBasket={Boolean(
+              pipelineStatus?.pipeline?.snapshot_id
+              && journey.corpus_triage?.snapshot_id === pipelineStatus.pipeline.snapshot_id
+              && !(journey.corpus_triage?.retained_candidate_ids || []).length,
+            )}
           />
         </details>
       )}
-      <nav className="authoring-stage-strip" aria-label="医学写作建项步骤">{stageItems.map((item) => { const disabled = interactionLocked || (item.key === "picos" && (!journey?.framing_complete || framingDirty || framingPendingDraft)) || (item.key === "corpus" && (!journey?.picos_complete || hasUncommittedChanges)); return <button key={item.key} type="button" className={`${stage === item.key ? "active" : ""} ${item.done ? "done" : ""} ${item.exception ? "exception" : ""}`} onClick={() => { if (disabled) return; setStage(item.key); setGroup(item.key === "framing" ? "identity" : item.key === "picos" ? "applicability" : "corpus"); setPrefillSection(item.key === "picos" ? "design" : "identity"); setAdvancedRefinementOpen(Boolean(readOnly)); }} disabled={disabled}><span>{item.done ? <CheckCircle2 size={15} /> : item.exception ? <ShieldAlert size={14} /> : item.index}</span><strong>{item.label}</strong></button>; })}</nav>
+      <nav className="authoring-stage-strip" aria-label="医学写作建项步骤">{stageItems.map((item) => { const picosLocked = item.key === "picos" && (!journey?.framing_complete || framingDirty || framingPendingDraft); const corpusLocked = item.key === "corpus" && (!journey?.picos_complete || hasUncommittedChanges); const disabled = interactionLocked || picosLocked || corpusLocked; const stripTitle = !disabled ? "" : item.key === "picos" && picosLocked ? "请先完成第一步研究框架（含保存草稿）后再进入PICOS设计" : item.key === "corpus" && corpusLocked ? "请先完成第二步PICOS设计并处理未保存修改后再进入语料准备" : "正在处理中，请稍候"; return <button key={item.key} type="button" className={`${stage === item.key ? "active" : ""} ${item.done ? "done" : ""} ${item.exception ? "exception" : ""}`} onClick={() => { if (disabled) return; setStage(item.key); setGroup(item.key === "framing" ? "identity" : item.key === "picos" ? "applicability" : "corpus"); setPrefillSection(item.key === "picos" ? "design" : "identity"); setAdvancedRefinementOpen(true); }} disabled={disabled} title={stripTitle}><span>{item.done ? <CheckCircle2 size={15} /> : item.exception ? <ShieldAlert size={14} /> : item.index}</span><strong>{item.label}</strong></button>; })}</nav>
       {stage !== "corpus" && (
         <div className="authoring-competitor-toolbar" data-testid="authoring-competitor-toolbar">
           <div>
@@ -2620,25 +2932,32 @@ export function MedicalWritingAuthoringJourneySetup({
               <span
                 className="authoring-automatic-research-state"
                 data-testid="authoring-automatic-research-progress"
+                data-state={compactResearchAwaitingFirstStep ? "pending-first-step" : "running"}
               >
                 <RefreshCw className={compactResearchActive || busy ? "spin" : ""} size={14} />
                 <span>
-                  <strong>{compactResearchLabel}</strong>
-                  <small>
-                    {compactResearchChildTotal > 0
-                      ? `已完成 ${compactResearchChildCompleted}/${compactResearchChildTotal} · ${compactResearchChildPercent}%`
-                      : `${compactResearchPercent}%`}
-                  </small>
-                  <span
-                    className="authoring-automatic-research-track"
-                    role="progressbar"
-                    aria-label="竞品调研进度"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow={compactResearchPercent}
-                  >
-                    <span style={{ width: `${compactResearchPercent}%` }} />
-                  </span>
+                  <strong>{compactResearchAwaitingFirstStep ? "待启动" : compactResearchLabel}</strong>
+                  {compactResearchAwaitingFirstStep ? (
+                    <small>等待第一步（研究框架）提交</small>
+                  ) : (
+                    <>
+                      <small>
+                        {compactResearchChildTotal > 0
+                          ? `已完成 ${compactResearchChildCompleted}/${compactResearchChildTotal} · ${compactResearchChildPercent}%`
+                          : `${compactResearchPercent}%`}
+                      </small>
+                      <span
+                        className="authoring-automatic-research-track"
+                        role="progressbar"
+                        aria-label="竞品调研进度"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow={compactResearchPercent}
+                      >
+                        <span style={{ width: `${compactResearchPercent}%` }} />
+                      </span>
+                    </>
+                  )}
                 </span>
               </span>
             )}
@@ -2738,8 +3057,11 @@ export function MedicalWritingAuthoringJourneySetup({
         {stage === "corpus" && <CorpusGate projectId={projectId} journey={journey} setJourney={setJourney} selectedBriefIds={selectedCorpusBriefIds} setSelectedBriefIds={setSelectedCorpusBriefIds} searchMessage={searchMessage} busy={busy} onSearch={() => runPublicSearch(journey)} acknowledged={acknowledged} setAcknowledged={setAcknowledged} overrideReason={overrideReason} setOverrideReason={setOverrideReason} allAcknowledged={allAcknowledged} onOverride={overrideCorpusGate} onCreateDocument={createDocument} onReviewAssemblyPlan={() => { setStage("picos"); setGroup("intervention"); }} readOnly={readOnly} existingDocument={existingDocument} />}
       </fieldset></main>
       {impact && <section className="authoring-impact-panel" aria-live="polite"><div><ShieldAlert size={18} /><span><strong>该变更会使下游内容失效</strong><small>确认后系统保留旧版本，并把以下对象标记为需要重新核验。</small></span></div><ul>{impact.preview.affected_dependents.map((item) => <li key={item}>{DEPENDENT_LABELS[item] || item}</li>)}</ul>{authoringWriteBlocked && <p className="authoring-impact-wait" data-state="pipeline-busy">{authoringWaitHint}本次变更可以排队等待：流水线结束后会自动重新核验并请您确认，不会静默写入（排队仅在本页面生效，离开页面后需重新提交，已填写的内容不会丢失）；若不想等待，也可以取消本次流水线后立即提交（已完成的检索/分诊将作废并重新检索）。</p>}{queuedImpact && <p className="authoring-impact-wait" data-state="queued">已排队（仅本页有效）：流水线结束后将自动重新核验本次变更并请您确认；刷新页面后需重新提交，已填写内容不会丢失。</p>}<div className="authoring-impact-actions"><button type="button" onClick={() => { setImpact(null); setQueuedImpact(null); setImpactCancelArmed(false); }}>返回修改</button>{authoringWriteBlocked && <button type="button" onClick={() => { setQueuedImpact(impact); setImpactCancelArmed(false); }} disabled={Boolean(queuedImpact)}>等待流水线结束后自动提交{queuedImpact ? "（已排队）" : ""}</button>}{authoringWriteBlocked && (impactCancelArmed ? <><button type="button" onClick={cancelPipelineThenSubmit} disabled={busy === "pipeline-cancel"}>确认取消流水线并提交变更</button><button type="button" onClick={() => setImpactCancelArmed(false)}>先不取消</button></> : <button type="button" onClick={() => setImpactCancelArmed(true)} title="已完成的检索/分诊结果将作废，提交后系统将重新检索">取消本次流水线并立即提交</button>)}<button className="primary-button" type="button" onClick={confirmImpact} disabled={busy === "confirm-impact" || authoringWriteBlocked} title={authoringWriteBlocked ? `${authoringWaitHint}可等待结束后自动提交，或取消本次流水线后提交` : busy === "confirm-impact" ? "正在确认变更" : "确认变更并重新核验"}>确认变更并重新核验</button></div></section>}
+      {stage === "framing" && !readOnly && framingMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="framing-missing-guidance">{framingMissing.map((key) => <li key={key}><span>{missingFieldLabelText("framing", [key])}</span></li>)}</ul>}
+      {stage === "picos" && !readOnly && picosMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="picos-missing-guidance">{picosMissing.map((key) => <li key={key}><span>{missingFieldLabelText("picos", [key])}</span></li>)}</ul>}
+      {messageDetail && messageDetail.length > 0 && <ul className="authoring-blocker-guidance" data-testid="authoring-blocker-guidance">{messageDetail.map((item) => <li key={item.fieldPath}><span>{item.label}</span><button type="button" onClick={() => jumpToBlockerField(item.fieldPath)} disabled={interactionLocked}>去填写</button></li>)}</ul>}
       {(message || hasUncommittedChanges) && <p className={`authoring-journey-message ${message.includes("失败") ? "danger" : ""}`} role="status"><span>{message || (hasUnsavedChanges ? "当前有尚未保存的修改。" : "草稿已保存，尚未提交当前阶段。")}</span>{researchRecovery?.projectId === projectId && <button type="button" onClick={retryAutomaticResearch} disabled={Boolean(busy)}><RefreshCw size={13} /> 重试</button>}</p>}
-      {stage !== "corpus" && !impact && !readOnly && <footer className="authoring-journey-footer"><span>{authoringWriteBlockedMessage || (unresolvedPhase1PartCount > 0 ? `还有 ${unresolvedPhase1PartCount} 个I期Part缺少研究人群或队列/剂量方案；可先保存草稿，但投影与阶段完成继续阻断。` : stage === "framing" ? "研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。" : framingPendingDraft ? "研究设计已写入第一步草稿；请返回第一步完成变更后再提交PICOS。" : "先采用或微调调研建议；精确剂量、阈值和终点仍需项目证据支持。")}</span><div>{stage === "picos" && <button type="button" onClick={() => { setStage("framing"); setGroup(isPhaseOneStudy(framing.study_phase) ? "design" : "identity"); setPrefillSection("identity"); setAdvancedRefinementOpen(true); }} disabled={authoringWriteBlocked}><ArrowLeft size={14} /> 返回第一步</button>}<button type="button" onClick={saveCurrentDrafts} disabled={authoringWriteBlocked || Boolean(busy) || (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty))} title={authoringWriteBlocked ? authoringWriteBlockedMessage : busy ? "正在处理中，请稍候" : (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty)) ? "当前没有需要保存的修改" : "保存当前草稿"}><Save size={14} /> {String(busy).startsWith("draft-") ? "保存中" : "保存草稿"}</button><button className="primary-button" type="button" onClick={() => saveStage(stage)} disabled={authoringWriteBlocked || Boolean(busy) || (stage === "framing" ? !framingReady : !picosReady || framingDirty || framingPendingDraft || !typedPhase1PartsReady)} title={authoringWriteBlockedMessage ? authoringWriteBlockedMessage : busy ? "正在处理中，请稍候" : stage === "framing" ? (!framingReady ? "请先补齐第一步必填项；未知产品技术类型不会阻断此步骤" : "提交并完成第一步") : framingDirty || framingPendingDraft ? "请先保存并完成第一步变更后再提交PICOS" : !typedPhase1PartsReady ? "请先补齐I期Part必填项" : !picosReady ? "请先补齐第二步必填项后再完成" : "提交并完成第二步"}>{busy === `save-${stage}` ? "提交中" : stage === "framing" ? "完成第一步" : "完成第二步"}<ArrowRight size={14} /></button></div></footer>}
+      {stage !== "corpus" && !impact && !readOnly && <footer className="authoring-journey-footer"><span>{authoringWriteBlockedMessage || (unresolvedPhase1PartCount > 0 ? `还有 ${unresolvedPhase1PartCount} 个I期Part缺少研究人群或队列/剂量方案；可先保存草稿，但投影与阶段完成继续阻断。` : stage === "framing" ? "研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。" : framingPendingDraft ? "研究设计已写入第一步草稿；请返回第一步完成变更后再提交PICOS。" : "先采用或微调调研建议；精确剂量、阈值和终点仍需项目证据支持。")}</span><div>{stage === "picos" && <button type="button" onClick={() => { setStage("framing"); setGroup(isPhaseOneStudy(framing.study_phase) ? "design" : "identity"); setPrefillSection("identity"); setAdvancedRefinementOpen(true); }}><ArrowLeft size={14} /> 返回第一步</button>}<button type="button" onClick={saveCurrentDrafts} disabled={authoringDraftSaveBlocked || Boolean(busy) || (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty))} title={authoringDraftSaveBlocked ? authoringDraftSaveBlockedMessage : busy ? "正在处理中，请稍候" : (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty)) ? "当前没有需要保存的修改" : "保存当前草稿"}><Save size={14} /> {String(busy).startsWith("draft-") ? "保存中" : "保存草稿"}</button><button className="primary-button" type="button" onClick={() => saveStage(stage)} disabled={authoringWriteBlocked || Boolean(busy) || (stage === "framing" ? !framingReady : !picosReady || framingDirty || framingPendingDraft || !typedPhase1PartsReady)} title={authoringWriteBlocked ? writeBlockedTitle : busy ? "正在处理中，请稍候" : stage === "framing" ? (!framingReady ? `请先补齐第一步必填项：${missingFieldLabelText("framing", framingMissing)}；未知产品技术类型不会阻断此步骤` : "提交并完成第一步") : framingDirty || framingPendingDraft ? "请先保存并完成第一步变更后再提交PICOS" : !typedPhase1PartsReady ? "请先补齐I期Part必填项" : !picosReady ? `请先补齐第二步必填项：${missingFieldLabelText("picos", picosMissing)}` : "提交并完成第二步"}>{busy === `save-${stage}` ? "提交中" : stage === "framing" ? "完成第一步" : "完成第二步"}<ArrowRight size={14} /></button></div></footer>}
       <AuthoringCompetitorDrawer
         open={competitorDrawerOpen}
         onClose={closeCompetitorDrawer}
@@ -2774,6 +3096,7 @@ function ResearchPipelineBanner({
   onResume,
   onRetryTriage,
   onStartRound2,
+  zeroRetainedBasket = false,
 }) {
   const pipeline = status?.pipeline;
   if (!pipeline || !pipeline.stage) return null;
@@ -2813,14 +3136,10 @@ function ResearchPipelineBanner({
     && stage !== "awaiting_triage_confirm"
     && stage !== "awaiting_preparation_admission";
   const isPreparationStageWaiting = stage === "awaiting_preparation_admission";
-  const emptyBasketFallback = stage === "awaiting_corpus_admission"
-    && [
-      "no_retainable_candidates_after_confirm",
-      "no_retainable_candidates",
-      "no_public_protocol_results",
-    ].includes(
-      String(pipeline.error_summary || ""),
-    );
+  // NEW-48（R27 第4轮修订）：此前限定三种 error_summary 才显示「查看语料
+  // 准入」——grok 锁定直接竞品后 error_summary 不在列表内，按钮消失，
+  // banner 文案与实际可达面不符。现在只要到达语料准入等待位就显示按钮。
+  const emptyBasketFallback = stage === "awaiting_corpus_admission";
   const downstreamRetryable = isFailed && Boolean(status?.pipeline_retryable);
   const failedTaskMessage = String(pipeline.error_summary || "").includes(
     "HTTP 401",
@@ -2878,7 +3197,11 @@ function ResearchPipelineBanner({
         : "当前有其他操作进行中，请稍候")
     : "";
   const cancelDisabled = Boolean(busy) || isTerminal;
-  const continueDisabled = Boolean(busy);
+  // NEW-9（R27 第1轮末修订）：已确认篮子为 0 时禁止「确认分诊后继续」——
+  // 正常流程（候选全被合理排除）必然踩中的死锁入口。title 给出与后端 409
+  // 同款的三条出路文案；重新检索/处理入口不受影响。
+  const zeroBasketBlocked = stage === "awaiting_triage_confirm" && zeroRetainedBasket;
+  const continueDisabled = Boolean(busy) || zeroBasketBlocked;
   return (
     <section
       className={`research-pipeline-banner ${isFailed ? "danger" : isTerminal ? "success" : isWaitingForUser ? "waiting" : "active"}`}
@@ -3034,7 +3357,11 @@ function ResearchPipelineBanner({
             className="primary-button"
             onClick={onContinueAfterTriage}
             disabled={continueDisabled}
-            title={continueDisabled ? busyReason : "确认分诊结果后继续研究流水线"}
+            title={zeroBasketBlocked
+              ? "当前确认的篮子为 0 项，继续会锁定空篮子。请任选其一：①回到分诊把相关研究标记为保留后重新确认；②调整检索条件后重新检索；③在语料准入处使用已审核共享语料或手动上传，并记录项目特异例外理由后放行。"
+              : continueDisabled
+                ? busyReason
+                : "确认分诊结果后继续研究流水线"}
           >
             <CheckCircle2 size={13} /> {busy === "pipeline-continue" ? "处理中" : "确认分诊后继续"}
           </button>
@@ -3269,7 +3596,9 @@ function PrefillFieldCard({ group, projectConfirmedCandidate, busy, readOnly, on
     </div>
     {!readOnly && <div className="authoring-prefill-primary-actions">
       {!confirmed && recommended && <button type="button" className="primary-button" data-prefill-action="adopt-recommended" onClick={() => onAdopt(group.field_path, recommended)} disabled={Boolean(busy) || isPendingCompositeCandidate(recommended)} title={isPendingCompositeCandidate(recommended) ? prefillCandidateBlockedReason(recommended) : "采用当前推荐方案"}>{busy === `prefill-adopt-${group.field_path}` ? "写入中" : "采用推荐"}</button>}
-      {!confirmed && STRING_PREFILL_FIELDS.has(group.field_path) && recommended && <button type="button" onClick={() => startEdit(recommended)} disabled={Boolean(busy) || isPendingCompositeCandidate(recommended)} title={isPendingCompositeCandidate(recommended) ? prefillCandidateBlockedReason(recommended) : "修改后采用，写入您的表述"}>修改后采用</button>}
+      {!confirmed && STRING_PREFILL_FIELDS.has(group.field_path) && recommended && (isPendingCompositeCandidate(recommended)
+        ? <button type="button" onClick={() => onRefine(group.field_path)} disabled={Boolean(busy)} title="候选内容待生成；直接打开对应的表单字段手动填写">手动填写</button>
+        : <button type="button" onClick={() => startEdit(recommended)} disabled={Boolean(busy)} title="修改后采用，写入您的表述">修改后采用</button>)}
       {!confirmed && <button type="button" className={deferred ? "selected" : ""} onClick={() => onDefer(group.field_path)} disabled={Boolean(busy)} title="仅暂缓本次处理，不写入项目事实；下次读取仍会保留该建议">{deferred ? "继续处理" : "暂不确定"}</button>}
       <button type="button" onClick={() => onRefine(group.field_path)} disabled={refineDisabled} title={refineDisabled ? "正在处理中，请稍候" : "打开高级微调面板；已有内容会保留，空字段可从推荐预填"}>{STRING_PREFILL_FIELDS.has(group.field_path) ? "其他表述" : "其他/高级微调"}</button>
     </div>}
@@ -3671,6 +4000,7 @@ const STRUCTURED_DESIGN_MODE_OPTIONS = Object.freeze({
     ["undecided", "待确认"],
     ["placebo", "安慰剂对照"],
     ["active", "阳性/活性对照"],
+    ["placebo_and_active", "安慰剂+阳性药（三臂）"],
     ["none_or_dose_escalation", "无对照/剂量递增"],
     ["other", "其他（需说明）"],
   ],
@@ -3729,11 +4059,15 @@ function StructuredDesignFactEditor({ framing, picos, update }) {
       <label><span>SRC</span><select aria-label="SRC计划状态" value={design.src_planned == null ? "" : String(Boolean(design.src_planned))} onChange={(event) => updateDesign({ src_planned: event.target.value === "" ? null : event.target.value === "true" })}><option value="">待确认</option><option value="false">不计划</option><option value="true">计划</option></select></label>
       <label><span>DMC</span><select aria-label="DMC计划状态" value={design.dmc_planned == null ? "" : String(Boolean(design.dmc_planned))} onChange={(event) => updateDesign({ dmc_planned: event.target.value === "" ? null : event.target.value === "true" })}><option value="">待确认</option><option value="false">不计划</option><option value="true">计划</option></select></label>
     </div>
+    <div className="authoring-field-grid two" data-testid="arm-cohort-manual-editor">
+      <Field label="研究臂/队列结构"><select aria-label="研究臂/队列结构" value={design.arm_or_cohort_kind || ""} onChange={(event) => updateDesign({ arm_or_cohort_kind: event.target.value })}><option value="">待确认</option><option value="parallel_arms">平行臂组（如试验药组/对照组）</option><option value="dose_cohorts">剂量递增队列</option><option value="single_arm">单臂</option><option value="other">其他（需说明）</option></select></Field>
+      <Field label="研究臂/队列名称（每行一组，如：试验药组、对照组）"><textarea aria-label="研究臂/队列名称" rows={2} value={(design.arm_or_cohort_labels || []).join("\n")} onChange={(event) => { const seen = new Set(); updateDesign({ arm_or_cohort_labels: String(event.target.value).split(/\n+/).map((item) => item.trim()).filter((item) => { if (!item || seen.has(item)) return false; seen.add(item); return true; }) }); }} placeholder={"试验药组\n对照组"} /></Field>
+    </div>
   </section>;
 }
 
 function PicosFields({ projectId, framing, picos, group, updateFraming, update, updateApplicability, interventionPanel, setInterventionPanel, hasPrefillRecommendations = false, existingDocument = false, readOnly = false, appendixReady = false, onSaveDesignDraft = null, framingDirty = false, busy = "" }) {
-  if (group === "applicability") return <section className="authoring-field-section"><header><strong>研究设计适用性</strong><span>优先采用上方调研建议；随机化、盲法、对照、分组和期中分析等维度分别确认，系统再组合成研究设计。</span></header>{picos.design_archetype && <div className="authoring-current-design"><CheckCircle2 size={15} /><span>当前兼容设计类型：<strong>{DESIGN_ARCHETYPES.find((item) => item.value === picos.design_archetype)?.label || picos.design_archetype}</strong></span></div>}<details className="authoring-manual-design-options" open={!hasPrefillRecommendations}><summary>{hasPrefillRecommendations ? "手动选择兼容设计类型" : "选择兼容设计类型"}</summary><div className="authoring-design-archetypes">{DESIGN_ARCHETYPES.map((item) => <label key={item.value} className={picos.design_archetype === item.value ? "selected" : ""}><input type="radio" name="picos-design-archetype" value={item.value} checked={picos.design_archetype === item.value} onChange={() => update("design_archetype", item.value)} /><span><strong>{item.label}</strong><small>{item.detail}</small></span></label>)}</div></details>{picos.design_archetype && <div className="authoring-applicability-list"><div className="authoring-applicability-head"><strong>条件字段</strong><span>标记为“不适用”时，必须填写理由并由医学经理确认。</span></div>{CONDITIONAL_PICOS_FIELDS.map((item) => { const decision = picos.field_applicability?.[item.key] || { status: "applicable", reason: "", confirmed_by_medical_manager: false }; const lockedRequired = picos.design_archetype === "randomized_confirmatory" || (picos.design_archetype === "randomized_exploratory" && item.key === "comparator_summary"); const notApplicable = decision.status === "not_applicable"; return <div className="authoring-applicability-row" key={item.key}><div><strong>{item.label}</strong><small>{lockedRequired ? "当前随机设计中必须填写" : "可根据已确认的研究设计判断是否适用"}</small></div><select aria-label={`${item.label}适用性`} value={lockedRequired ? "applicable" : decision.status} onChange={(event) => updateApplicability(item.key, { status: event.target.value })} disabled={lockedRequired}><option value="applicable">适用，需填写</option><option value="not_applicable">不适用</option></select>{notApplicable && !lockedRequired && <><textarea aria-label={`${item.label}不适用理由`} rows={2} value={decision.reason || ""} onChange={(event) => updateApplicability(item.key, { reason: event.target.value })} placeholder="说明本研究为何无需该设计项；不少于10个字符" /><label className="authoring-applicability-confirm"><input type="checkbox" checked={Boolean(decision.confirmed_by_medical_manager)} onChange={(event) => updateApplicability(item.key, { confirmed_by_medical_manager: event.target.checked })} /><span>医学经理确认该项不适用</span></label></>}</div>; })}</div>}<StructuredDesignFactEditor framing={framing} picos={picos} update={updateFraming} /><Phase1PartsEditor framing={framing} update={updateFraming} onSave={onSaveDesignDraft} dirty={framingDirty} busy={busy} /></section>;
+  if (group === "applicability") return <section className="authoring-field-section"><header><strong>研究设计适用性</strong><span>优先采用上方调研建议；随机化、盲法、对照、分组和期中分析等维度分别确认，系统再组合成研究设计。</span></header>{picos.design_archetype && <div className="authoring-current-design"><CheckCircle2 size={15} /><span>当前兼容设计类型：<strong>{DESIGN_ARCHETYPES.find((item) => item.value === picos.design_archetype)?.label || picos.design_archetype}</strong></span></div>}<details className="authoring-manual-design-options" open={!picos.design_archetype}><summary>{hasPrefillRecommendations ? "手动选择兼容设计类型" : "选择兼容设计类型"}</summary><div className="authoring-design-archetypes">{DESIGN_ARCHETYPES.map((item) => <label key={item.value} className={picos.design_archetype === item.value ? "selected" : ""}><input type="radio" name="picos-design-archetype" value={item.value} checked={picos.design_archetype === item.value} onChange={() => update("design_archetype", item.value)} /><span><strong>{item.label}</strong><small>{item.detail}</small></span></label>)}</div></details>{picos.design_archetype && <div className="authoring-applicability-list"><div className="authoring-applicability-head"><strong>条件字段</strong><span>标记为“不适用”时，必须填写理由并由医学经理确认。</span></div>{CONDITIONAL_PICOS_FIELDS.map((item) => { const decision = picos.field_applicability?.[item.key] || { status: "applicable", reason: "", confirmed_by_medical_manager: false }; const lockedRequired = picos.design_archetype === "randomized_confirmatory" || (picos.design_archetype === "randomized_exploratory" && item.key === "comparator_summary"); const notApplicable = decision.status === "not_applicable"; return <div className="authoring-applicability-row" key={item.key}><div><strong>{item.label}</strong><small>{lockedRequired ? "当前随机设计中必须填写" : "可根据已确认的研究设计判断是否适用"}</small></div><select aria-label={`${item.label}适用性`} value={lockedRequired ? "applicable" : decision.status} onChange={(event) => updateApplicability(item.key, { status: event.target.value })} disabled={lockedRequired}><option value="applicable">适用，需填写</option><option value="not_applicable">不适用</option></select>{notApplicable && !lockedRequired && <><textarea aria-label={`${item.label}不适用理由`} rows={2} value={decision.reason || ""} onChange={(event) => updateApplicability(item.key, { reason: event.target.value })} placeholder="说明本研究为何无需该设计项；不少于10个字符" /><label className="authoring-applicability-confirm"><input type="checkbox" checked={Boolean(decision.confirmed_by_medical_manager)} onChange={(event) => updateApplicability(item.key, { confirmed_by_medical_manager: event.target.checked })} /><span>医学经理确认该项不适用</span></label></>}</div>; })}</div>}<StructuredDesignFactEditor framing={framing} picos={picos} update={updateFraming} /><Phase1PartsEditor framing={framing} update={updateFraming} onSave={onSaveDesignDraft} dirty={framingDirty} busy={busy} /></section>;
   if (group === "population") return <section className="authoring-field-section"><header><strong>研究人群</strong><span>模块化确定人群、入排、洗脱与重筛边界</span></header><div className="authoring-field-grid two"><Field label="目标人群概述" required className="span-2"><textarea rows={3} value={picos.population_summary} onChange={(event) => update("population_summary", event.target.value)} /></Field><StructuredListField label="入选标准" prefix="IN" required value={picos.inclusion_modules} onChange={(value) => update("inclusion_modules", value)} /><StructuredListField label="排除标准" prefix="EX" required value={picos.exclusion_modules} onChange={(value) => update("exclusion_modules", value)} /><StructuredListField className="span-2" label="药物/治疗洗脱规则" prefix="WO" value={picos.washout_rules} onChange={(value) => update("washout_rules", value)} /></div></section>;
   if (group === "intervention") return <section className="authoring-field-section"><header><strong>干预措施</strong><span>试验药物、非试验用药和普通CM保持清晰边界</span></header><div className="authoring-field-grid two"><Field label="试验药物干预概述" required><textarea rows={4} value={picos.intervention_summary} onChange={(event) => update("intervention_summary", event.target.value)} /></Field><Field label="试验药物常规用法用量" required><textarea rows={4} value={picos.intervention_dose_regimen} onChange={(event) => update("intervention_dose_regimen", event.target.value)} /></Field><StructuredListField label="必须使用/背景治疗" prefix="BG" value={picos.required_background_rules} onChange={(value) => update("required_background_rules", value)} /><StructuredListField label="允许使用的合并用药/治疗" prefix="CM-A" value={picos.allowed_concomitant_rules} onChange={(value) => update("allowed_concomitant_rules", value)} /><StructuredListField label="限制/禁止使用的合并用药/治疗" prefix="CM-P" value={picos.prohibited_concomitant_rules} onChange={(value) => update("prohibited_concomitant_rules", value)} /><StructuredListField label="访视/评价前用药与治疗限制" prefix="TIME" value={picos.assessment_timing_restrictions} onChange={(value) => update("assessment_timing_restrictions", value)} /></div><InterventionRulesEditor value={picos.intervention_rules || null} onChange={(value) => update("intervention_rules", value)} panel={interventionPanel} onPanelChange={setInterventionPanel} /></section>;
   if (group === "comparator") { const notApplicable = picos.field_applicability?.comparator_summary?.status === "not_applicable" && !["randomized_confirmatory", "randomized_exploratory"].includes(picos.design_archetype); return <section className="authoring-field-section"><header><strong>对照</strong><span>{notApplicable ? "已在设计适用性中标记为不适用；理由仍保留在正式研究事实中" : "明确安慰剂、阳性对照或随机组间比较及其用法用量"}</span></header>{notApplicable ? <ApplicabilitySummary label="对照/组间比较设计" decision={picos.field_applicability.comparator_summary} onEdit={() => {}} /> : <Field label="对照/组间比较设计" required><textarea rows={7} value={picos.comparator_summary} onChange={(event) => update("comparator_summary", event.target.value)} /></Field>}</section>; }

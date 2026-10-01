@@ -37,6 +37,7 @@ from packages.contracts.workbench_contracts import (
     MedicalWritingFactIntakeApplyRequest,
     MedicalWritingFactIntakeApplyResult,
     MedicalWritingFactIntakeConflictError,
+    MedicalWritingFactIntakeProviderUnavailableError,
     MedicalWritingFactIntakeConversation,
     MedicalWritingFactIntakeConversationCreateRequest,
     MedicalWritingFactIntakeFactKind,
@@ -1282,11 +1283,11 @@ class MedicalWritingFactIntakeService:
         try:
             provider = self.provider_factory()
         except Exception as exc:
-            raise MedicalWritingFactIntakeConflictError(
+            raise MedicalWritingFactIntakeProviderUnavailableError(
                 f"fact intake AI provider is not configured: {exc}"
             ) from exc
         if isinstance(provider, DisabledAiProvider):
-            raise MedicalWritingFactIntakeConflictError(
+            raise MedicalWritingFactIntakeProviderUnavailableError(
                 "fact intake AI provider is not configured; "
                 "configure an approved product AI route "
                 "before running a conversational turn"

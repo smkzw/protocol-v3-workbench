@@ -1,0 +1,549 @@
+2026-09-30 03:43:58 screenshot 02 png bytes=116712 path=/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/t17_round27_loop/r3-D/screenshots/02-首页项目总看板.png
+2026-09-30 03:46:31 03 png 143204 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/t17_round27_loop/r3-D/screenshots/03-新建项目对话框-入口B可见.png
+2026-09-30 03:47:19 04 png 141455
+2026-09-30 03:48:25 SHOT 05-文件已选-导入并提取待点.png bytes=142851
+2026-09-30 03:48:25 G1_START click_info={"ok": true, "txt": "导入并提取", "disabled": false, "cls": "", "t0": 1790711305066}
+2026-09-30 03:48:27 SHOT 06-导入并提取点击后立即状态.png bytes=155336
+2026-09-30 03:48:27 G1_T+2s classify={"err": false, "result": true, "wait": true, "blob_head": "医学写作\n新建研究方案项目\n从零开始\n两阶段反问确定研究框架与 PICOS\n导入方案摘要\n先解析文件，确认提取结果后创建项目\nR3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx\n38 KB · PDF / DOCX\n正在识别章节\n正在处理 1 / 1 个内容块\n模型正被2个任务占用；如长时间无进展可取消后稍后再来。\n取消\n项目总看板 证据调研与方案设计 入排审核 医学监查 数据分析与TFL 医学写作 安全信号与PV协同 来源台账 审批中心 新建项目 新建项目 从零开始\n两阶段反问确定研究框架与 PICOS 导入方案摘要\n先解析文件，确认提取结果后创建项目 取消\n高风险开放\n0\n"}
+2026-09-30 03:48:27 G1_T+2s dialog=医学写作
+新建研究方案项目
+从零开始
+两阶段反问确定研究框架与 PICOS
+导入方案摘要
+先解析文件，确认提取结果后创建项目
+R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx
+38 KB · PDF / DOCX
+正在识别章节
+正在处理 1 / 1 个内容块
+模型正被2个任务占用；如长时间无进展可取消后稍后再来。
+取消
+2026-09-30 03:49:07 G1_POLL#1 elapsed=42s err=False result=True wait=True buttons=['项目总看板', '证据调研与方案设计', '入排审核', '医学监查', '数据分析与TFL', '医学写作', '安全信号与PV协同', '来源台账', '审批中心', '新建项目', '新建项目', '从零开始\n两阶段反问确定研究框架与 PICOS', '导入方案摘要\n先解析文件，确认提取结果后创建项目', '取消'] alerts=['高风险开放\n0'] reds=[]
+2026-09-30 03:49:07 G1_DIALOG#1 医学写作
+新建研究方案项目
+从零开始
+两阶段反问确定研究框架与 PICOS
+导入方案摘要
+先解析文件，确认提取结果后创建项目
+R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx
+38 KB · PDF / DOCX
+AI正在提取研究框架与PICOS
+正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位
+模型正被2个任务占用；如长时间无进展可取消后稍后再来。
+取消
+2026-09-30 03:49:07 SHOT 09-提取结果出现-42s.png bytes=161428
+2026-09-30 03:49:07 G1_DONE result elapsed_s=42.1 elapsed_min=0.70
+2026-09-30 03:49:07 G1_END outcome=RESULT min=0.70
+2026-09-30 03:50:02 G1_RESUME true-wait continue from original t0=03:48:25
+2026-09-30 03:50:02 SHOT 06d-解析排队续等-纠正后.png bytes=162860
+2026-09-30 03:50:47 G1R_POLL#1 elapsed=143s/2.38min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:50:47 G1R_DIALOG#1 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 2 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:50:47 SHOT 06e-解析界面变化-142s.png bytes=162966
+2026-09-30 03:51:32 G1R_POLL#2 elapsed=188s/3.13min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:51:32 G1R_DIALOG#2 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 3 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:51:32 SHOT 06e-解析界面变化-187s.png bytes=163002
+2026-09-30 03:52:17 G1R_POLL#3 elapsed=233s/3.88min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:52:17 G1R_DIALOG#3 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 3 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:53:02 G1R_POLL#4 elapsed=278s/4.63min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:53:02 G1R_DIALOG#4 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 4 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:53:02 SHOT 06e-解析界面变化-277s.png bytes=162939
+2026-09-30 03:53:02 SHOT 06f-解析等待心跳-277s.png bytes=162939
+2026-09-30 03:53:47 G1R_POLL#5 elapsed=323s/5.38min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:53:47 G1R_DIALOG#5 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 5 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:53:47 SHOT 06e-解析界面变化-322s.png bytes=162982
+2026-09-30 03:54:33 G1R_POLL#6 elapsed=368s/6.13min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:54:33 G1R_DIALOG#6 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 6 分钟 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:54:33 SHOT 06e-解析界面变化-367s.png bytes=162934
+2026-09-30 03:55:18 G1R_POLL#7 elapsed=413s/6.88min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:55:18 G1R_DIALOG#7 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 6 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:55:18 SHOT 06e-解析界面变化-413s.png bytes=162996
+2026-09-30 03:56:03 G1R_POLL#8 elapsed=458s/7.63min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:56:03 G1R_DIALOG#8 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 7 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:56:03 SHOT 06e-解析界面变化-458s.png bytes=162918
+2026-09-30 03:56:03 SHOT 06f-解析等待心跳-458s.png bytes=162908
+2026-09-30 03:56:48 G1R_POLL#9 elapsed=503s/8.39min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:56:48 G1R_DIALOG#9 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 8 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:56:48 SHOT 06e-解析界面变化-503s.png bytes=163010
+2026-09-30 03:57:33 G1R_POLL#10 elapsed=548s/9.14min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:57:33 G1R_DIALOG#10 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 9 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:57:33 SHOT 06e-解析界面变化-548s.png bytes=163007
+2026-09-30 03:58:18 G1R_POLL#11 elapsed=593s/9.89min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:58:18 G1R_DIALOG#11 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 9 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:59:03 G1R_POLL#12 elapsed=638s/10.64min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:59:03 G1R_DIALOG#12 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 10 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:59:03 SHOT 06e-解析界面变化-638s.png bytes=163050
+2026-09-30 03:59:03 SHOT 06f-解析等待心跳-638s.png bytes=163076
+2026-09-30 03:59:48 G1R_POLL#13 elapsed=683s/11.39min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 03:59:48 G1R_DIALOG#13 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 11 分钟 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 03:59:48 SHOT 06e-解析界面变化-683s.png bytes=162882
+2026-09-30 04:00:33 G1R_POLL#14 elapsed=728s/12.14min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:00:33 G1R_DIALOG#14 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 12 分钟 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:00:33 SHOT 06e-解析界面变化-728s.png bytes=162954
+2026-09-30 04:01:18 G1R_POLL#15 elapsed=773s/12.89min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:01:18 G1R_DIALOG#15 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 12 分钟 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:02:03 G1R_POLL#16 elapsed=818s/13.64min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:02:03 G1R_DIALOG#16 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 13 分钟 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:02:03 SHOT 06e-解析界面变化-818s.png bytes=162951
+2026-09-30 04:02:03 SHOT 06f-解析等待心跳-818s.png bytes=162963
+2026-09-30 04:02:48 G1R_POLL#17 elapsed=864s/14.39min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:02:48 G1R_DIALOG#17 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 14 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:02:48 SHOT 06e-解析界面变化-863s.png bytes=162956
+2026-09-30 04:03:33 G1R_POLL#18 elapsed=909s/15.14min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:03:33 G1R_DIALOG#18 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 15 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:03:33 SHOT 06e-解析界面变化-908s.png bytes=163007
+2026-09-30 04:04:18 G1R_POLL#19 elapsed=954s/15.89min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:04:18 G1R_DIALOG#19 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 15 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:05:03 G1R_POLL#20 elapsed=999s/16.64min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:05:03 G1R_DIALOG#20 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 16 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:05:03 SHOT 06e-解析界面变化-998s.png bytes=163007
+2026-09-30 04:05:03 SHOT 06f-解析等待心跳-998s.png bytes=163023
+2026-09-30 04:05:48 G1R_POLL#21 elapsed=1044s/17.40min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:05:48 G1R_DIALOG#21 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 17 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:05:48 SHOT 06e-解析界面变化-1043s.png bytes=162958
+2026-09-30 04:06:33 G1R_POLL#22 elapsed=1089s/18.15min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:06:33 G1R_DIALOG#22 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 18 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:06:33 SHOT 06e-解析界面变化-1088s.png bytes=163056
+2026-09-30 04:07:18 G1R_POLL#23 elapsed=1134s/18.90min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:07:18 G1R_DIALOG#23 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 18 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:08:03 G1R_POLL#24 elapsed=1179s/19.65min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:08:03 G1R_DIALOG#24 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 19 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:08:03 SHOT 06e-解析界面变化-1178s.png bytes=163106
+2026-09-30 04:08:03 SHOT 06f-解析等待心跳-1178s.png bytes=163117
+2026-09-30 04:08:48 G1R_POLL#25 elapsed=1224s/20.40min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:08:48 G1R_DIALOG#25 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 20 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:08:48 SHOT 06e-解析界面变化-1223s.png bytes=163198
+2026-09-30 04:09:34 G1R_POLL#26 elapsed=1269s/21.15min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:09:34 G1R_DIALOG#26 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 21 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:09:34 SHOT 06e-解析界面变化-1269s.png bytes=163070
+2026-09-30 04:10:19 G1R_POLL#27 elapsed=1314s/21.90min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:10:19 G1R_DIALOG#27 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 21 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:11:04 G1R_POLL#28 elapsed=1359s/22.65min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:11:04 G1R_DIALOG#28 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 22 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:11:04 SHOT 06e-解析界面变化-1359s.png bytes=163122
+2026-09-30 04:11:04 SHOT 06f-解析等待心跳-1359s.png bytes=163106
+2026-09-30 04:11:49 G1R_POLL#29 elapsed=1404s/23.40min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:11:49 G1R_DIALOG#29 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 23 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:11:49 SHOT 06e-解析界面变化-1404s.png bytes=163154
+2026-09-30 04:12:34 G1R_POLL#30 elapsed=1449s/24.15min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:12:34 G1R_DIALOG#30 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 24 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:12:34 SHOT 06e-解析界面变化-1449s.png bytes=163088
+2026-09-30 04:13:19 G1R_POLL#31 elapsed=1494s/24.91min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:13:19 G1R_DIALOG#31 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 24 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:14:04 G1R_POLL#32 elapsed=1539s/25.66min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:14:04 G1R_DIALOG#32 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 25 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:14:04 SHOT 06e-解析界面变化-1539s.png bytes=163162
+2026-09-30 04:14:04 SHOT 06f-解析等待心跳-1539s.png bytes=163178
+2026-09-30 04:14:49 G1R_POLL#33 elapsed=1584s/26.41min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:14:49 G1R_DIALOG#33 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 26 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:14:49 SHOT 06e-解析界面变化-1584s.png bytes=163214
+2026-09-30 04:15:34 G1R_POLL#34 elapsed=1629s/27.16min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:15:34 G1R_DIALOG#34 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 27 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:15:34 SHOT 06e-解析界面变化-1629s.png bytes=163153
+2026-09-30 04:16:19 G1R_POLL#35 elapsed=1674s/27.91min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:16:19 G1R_DIALOG#35 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 27 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:17:04 G1R_POLL#36 elapsed=1720s/28.66min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:17:04 G1R_DIALOG#36 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 28 分钟 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:17:04 SHOT 06e-解析界面变化-1719s.png bytes=163207
+2026-09-30 04:17:04 SHOT 06f-解析等待心跳-1719s.png bytes=163174
+2026-09-30 04:17:49 G1R_POLL#37 elapsed=1765s/29.41min err=False result=False extracting=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:17:49 G1R_DIALOG#37 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 29 分钟 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:17:49 SHOT 06e-解析界面变化-1764s.png bytes=163124
+2026-09-30 04:18:34 G1R_POLL#38 elapsed=1810s/30.16min err=False result=True extracting=False btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '导入并提取', '继续处理', '重新选择']
+2026-09-30 04:18:34 G1R_DIALOG#38 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | 导入并提取 | 解析未完成：模型本次响应超时，通常是因为模型正被其他任务占用（繁忙，不是故障）。您可以点“继续处理”再试一次，也可以取消本次任务稍后再来。 | 继续处理 | 重新选择
+2026-09-30 04:18:34 SHOT 06e-解析界面变化-1809s.png bytes=169289
+2026-09-30 04:18:34 SHOT 09-提取结果出现-1809s.png bytes=169289
+2026-09-30 04:18:34 G1_TRUE_DONE elapsed_s=1809.6 elapsed_min=30.16
+2026-09-30 04:18:34 G1R_END outcome=RESULT min=30.16
+2026-09-30 04:19:46 SHOT 07b-G2超时红条与恢复按钮.png bytes=169289
+2026-09-30 04:19:46 G2_BEFORE {"url": "http://127.0.0.1:5186/", "dialog": "医学写作\n新建研究方案项目\n从零开始\n两阶段反问确定研究框架与 PICOS\n导入方案摘要\n先解析文件，确认提取结果后创建项目\nR3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx\n38 KB · PDF / DOCX\n导入并提取\n解析未完成：模型本次响应超时，通常是因为模型正被其他任务占用（繁忙，不是故障）。您可以点“继续处理”再试一次，也可以取消本次任务稍后再来。\n继续处理\n重新选择", "interesting_buttons": ["从零开始 两阶段反问确定研究框架与 PICOS", "导入方案摘要 先解析文件，确认提取结果后创建项目", "导入并提取", "继续处理", "重新选择"], "files": [["R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx"]], "hasFilename": true, "extracting": false, "timeoutBanner": true, "englishErr": false}
+2026-09-30 04:19:46 G2_CLICK_CONTINUE {"ok": true, "txt": "继续处理"}
+2026-09-30 04:19:48 SHOT 08-G2点击继续处理后立即.png bytes=165153
+2026-09-30 04:19:48 G2_AFTER_CLICK classify=EXTRACTING files=[['R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx']] filename=True extracting=True
+2026-09-30 04:19:48 G2_AFTER_DIALOG 医学写作
+新建研究方案项目
+从零开始
+两阶段反问确定研究框架与 PICOS
+导入方案摘要
+先解析文件，确认提取结果后创建项目
+R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx
+38 KB · PDF / DOCX
+AI正在提取研究框架与PICOS
+正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 31 分钟 · 第2次解析尝试
+模型正被2个任务占用；如长时间无进展可取消后稍后再来。
+取消
+2026-09-30 04:20:28 G2_POLL#1 elapsed=42s/0.70min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:20:28 G2_DIALOG#1 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 32 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:20:28 SHOT 08b-G2状态变化-EXTRACTING-42s.png bytes=165256
+2026-09-30 04:21:08 G2_POLL#2 elapsed=82s/1.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:21:08 G2_DIALOG#2 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 32 分钟 · 第2次解析尝试 | 模型正被4个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:21:48 G2_POLL#3 elapsed=122s/2.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:21:48 G2_DIALOG#3 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 33 分钟 · 第2次解析尝试 | 模型正被4个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:22:28 G2_POLL#4 elapsed=162s/2.70min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:22:28 G2_DIALOG#4 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 34 分钟 · 第2次解析尝试 | 模型正被4个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:23:08 G2_POLL#5 elapsed=202s/3.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:23:08 G2_DIALOG#5 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 34 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:23:48 G2_POLL#6 elapsed=242s/4.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:23:48 G2_DIALOG#6 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 35 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:23:48 SHOT 08c-G2继续处理等待-242s.png bytes=165291
+2026-09-30 04:24:28 G2_POLL#7 elapsed=282s/4.70min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:24:28 G2_DIALOG#7 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 36 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:25:08 G2_POLL#8 elapsed=322s/5.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:25:08 G2_DIALOG#8 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 36 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:25:48 G2_POLL#9 elapsed=362s/6.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:25:48 G2_DIALOG#9 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 37 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:26:28 G2_POLL#10 elapsed=402s/6.70min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:26:28 G2_DIALOG#10 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 37 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:27:08 G2_POLL#11 elapsed=442s/7.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:27:08 G2_DIALOG#11 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 38 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:27:48 G2_POLL#12 elapsed=482s/8.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:27:48 G2_DIALOG#12 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 39 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:27:48 SHOT 08c-G2继续处理等待-482s.png bytes=165347
+2026-09-30 04:28:28 G2_POLL#13 elapsed=522s/8.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:28:28 G2_DIALOG#13 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 39 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:29:08 G2_POLL#14 elapsed=562s/9.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:29:08 G2_DIALOG#14 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 40 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:29:48 G2_POLL#15 elapsed=602s/10.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:29:48 G2_DIALOG#15 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 41 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:30:28 G2_POLL#16 elapsed=642s/10.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:30:28 G2_DIALOG#16 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 42 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:31:08 G2_POLL#17 elapsed=682s/11.37min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:31:08 G2_DIALOG#17 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 42 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:31:48 G2_POLL#18 elapsed=722s/12.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:31:48 G2_DIALOG#18 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 43 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:31:48 SHOT 08c-G2继续处理等待-722s.png bytes=165253
+2026-09-30 04:32:28 G2_POLL#19 elapsed=763s/12.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:32:28 G2_DIALOG#19 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 44 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:33:08 G2_POLL#20 elapsed=803s/13.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:33:08 G2_DIALOG#20 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 44 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:33:48 G2_POLL#21 elapsed=843s/14.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:33:48 G2_DIALOG#21 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 45 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:34:28 G2_POLL#22 elapsed=883s/14.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:34:28 G2_DIALOG#22 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 46 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:35:08 G2_POLL#23 elapsed=923s/15.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:35:08 G2_DIALOG#23 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 46 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:35:48 G2_POLL#24 elapsed=963s/16.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:35:48 G2_DIALOG#24 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 47 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:35:48 SHOT 08c-G2继续处理等待-962s.png bytes=165110
+2026-09-30 04:36:28 G2_POLL#25 elapsed=1003s/16.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:36:28 G2_DIALOG#25 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 48 分钟 · 第2次解析尝试 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:37:08 G2_POLL#26 elapsed=1043s/17.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:37:08 G2_DIALOG#26 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 48 分钟 · 第2次解析尝试 | 模型正被1个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:37:48 G2_POLL#27 elapsed=1083s/18.04min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:37:48 G2_DIALOG#27 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 49 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:38:28 G2_POLL#28 elapsed=1123s/18.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:38:28 G2_DIALOG#28 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 50 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:39:08 G2_POLL#29 elapsed=1163s/19.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:39:08 G2_DIALOG#29 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 50 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:39:48 G2_POLL#30 elapsed=1203s/20.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:39:48 G2_DIALOG#30 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 51 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:39:48 SHOT 08c-G2继续处理等待-1202s.png bytes=165214
+2026-09-30 04:40:28 G2_POLL#31 elapsed=1243s/20.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:40:28 G2_DIALOG#31 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 52 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:41:08 G2_POLL#32 elapsed=1283s/21.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:41:08 G2_DIALOG#32 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 52 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:41:49 G2_POLL#33 elapsed=1323s/22.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:41:49 G2_DIALOG#33 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 53 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:42:29 G2_POLL#34 elapsed=1363s/22.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:42:29 G2_DIALOG#34 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 54 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:43:09 G2_POLL#35 elapsed=1403s/23.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:43:09 G2_DIALOG#35 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 54 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:43:49 G2_POLL#36 elapsed=1443s/24.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:43:49 G2_DIALOG#36 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 55 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:43:49 SHOT 08c-G2继续处理等待-1442s.png bytes=165277
+2026-09-30 04:44:29 G2_POLL#37 elapsed=1483s/24.71min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:44:29 G2_DIALOG#37 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 56 分钟 · 第2次解析尝试 | 模型正被2个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:45:09 G2_POLL#38 elapsed=1523s/25.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:45:09 G2_DIALOG#38 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 56 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:45:49 G2_POLL#39 elapsed=1563s/26.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:45:49 G2_DIALOG#39 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 57 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:46:29 G2_POLL#40 elapsed=1603s/26.72min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:46:29 G2_DIALOG#40 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 58 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:47:09 G2_POLL#41 elapsed=1643s/27.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:47:09 G2_DIALOG#41 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 58 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:47:49 G2_POLL#42 elapsed=1683s/28.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:47:49 G2_DIALOG#42 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 59 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:47:49 SHOT 08c-G2继续处理等待-1682s.png bytes=165298
+2026-09-30 04:48:29 G2_POLL#43 elapsed=1723s/28.72min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:48:29 G2_DIALOG#43 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 60 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:49:09 G2_POLL#44 elapsed=1763s/29.38min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:49:09 G2_DIALOG#44 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 60 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:49:49 G2_POLL#45 elapsed=1803s/30.05min cls=EXTRACTING extracting=True timeoutBanner=False englishErr=False hasFilename=True btns=['从零开始 两阶段反问确定研究框架与 PICOS', '导入方案摘要 先解析文件，确认提取结果后创建项目', '取消']
+2026-09-30 04:49:49 G2_DIALOG#45 医学写作 | 新建研究方案项目 | 从零开始 | 两阶段反问确定研究框架与 PICOS | 导入方案摘要 | 先解析文件，确认提取结果后创建项目 | R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx | 38 KB · PDF / DOCX | AI正在提取研究框架与PICOS | 正在处理 1 / 1 个内容块 · 模型处理中或排队等待空位 · 已运行 61 分钟 · 第2次解析尝试 | 模型正被3个任务占用；如长时间无进展可取消后稍后再来。 | 取消
+2026-09-30 04:49:49 SHOT 10-G2继续处理满30分钟.png bytes=165221
+2026-09-30 04:49:49 G2_TIMEOUT elapsed_min=30.05
+2026-09-30 04:49:49 G2_END outcome=TIMEOUT_30MIN min=30.05
+2026-09-30 04:50:29 SHOT 11-G2第二次仍在提取将点取消.png bytes=165276
+2026-09-30 04:51:05 SHOT 12-G2取消后文件仍在可重选.png bytes=152961
+2026-09-30 04:51:05 G2_RESELECT {"ok": true}
+2026-09-30 04:51:06 SHOT 13-G2重新选择后是否清空文件.png bytes=141455
+2026-09-30 04:51:06 G2_RESELECT_AFTER {"dialog": "医学写作\n新建研究方案项目\n从零开始\n两阶段反问确定研究框架与 PICOS\n导入方案摘要\n先解析文件，确认提取结果后创建项目\n选择方案摘要或完整方案\n系统先提取，您确认后才创建正式项目", "files": [["R3D-慢性咳嗽-II期-P2X3拮抗剂-摘要.docx"]], "hasR3D": false, "btns": ["从零开始 两阶段反问确定研究框架与 PICOS", "导入方案摘要 先解析文件，确认提取结果后创建项目"]}
+2026-09-30 04:51:25 BYPASS_CLICK_FROM_ZERO {"ok": true, "txt": "从零开始\n两阶段反问确定研究框架与 PICOS"}
+2026-09-30 04:51:26 SHOT 14-绕过-从零开始表单.png bytes=143204
+2026-09-30 04:51:26 FROMZERO_FIELDS {"fields": [{"tag": "SELECT", "type": "select-one", "name": "", "id": "", "aria": "选择临床研究项目", "value": "", "required": false}, {"tag": "INPUT", "type": "text", "name": "", "id": "", "ph": "药物代号或通用名", "aria": null, "value": "", "required": true}, {"tag": "INPUT", "type": "text", "name": "", "id": "", "ph": "例如 类风湿关节炎", "aria": null, "value": "", "required": true}, {"tag": "SELECT", "type": "select-one", "name": "", "id": "", "aria": null, "value": "", "required": true}], "drugFound": true}
+2026-09-30 04:51:45 G5_FILL_DRUG_ONLY {"ok": false, "inputs": []}
+2026-09-30 04:51:45 SHOT 15-G5故意留空适应症与分期.png bytes=143204
+2026-09-30 04:51:45 G5_CLICK_CREATE {"ok": true, "disabled": false}
+2026-09-30 04:51:47 SHOT 16-G5留空提交后校验.png bytes=159085
+2026-09-30 04:51:47 G5_AFTER {"dialog": "医学写作\n新建研究方案项目\n从零开始\n两阶段反问确定研究框架与 PICOS\n导入方案摘要\n先解析文件，确认提取结果后创建项目\n试验药物\n请填写试验药物\n适应症\n请填写适应症\n研究分期\n请填写研究分期\n\n请先补全标记为必填的项目信息。后续研究设计细节可在两阶段反问中继续确认。\n\n取消\n创建并进入写作", "alerts": ["请填写试验药物", "请填写适应症", "请填写研究分期"], "invalids": [{"tag": "FORM", "aria": "新建医学写作项目", "name": ""}, {"tag": "INPUT", "ph": "药物代号或通用名", "aria": null, "name": "", "validation": "Please fill out this field."}, {"tag": "INPUT", "ph": "例如 类风湿关节炎", "aria": null, "name": "", "validation": "Please fill out this field."}, {"tag": "SELECT", "aria": null, "name": "", "validation": "Please select an item in the list."}], "url": "http://127.0.0.1:5186/"}
+2026-09-30 04:52:15 TYPE_DRUG {'ok': True}
+2026-09-30 04:52:15 TYPE_IND {'ok': True}
+2026-09-30 04:52:15 SELECT_PHASE {"ok": true, "value": "", "text": "请选择项目（共65个）"}
+2026-09-30 04:52:16 SHOT 17-从零开始已填R3D三项待创建.png bytes=148869
+2026-09-30 04:52:16 FILLED {"ins": [], "sels": [{"aria": "选择临床研究项目", "v": "", "t": "请选择项目（共65个）"}, {"aria": null, "v": "", "t": "请选择"}]}
+2026-09-30 04:52:16 G7_DOUBLE_CREATE {"ok": true, "disabledAfter": false, "txt": "创建并进入写作"}
+2026-09-30 04:52:18 SHOT 18-G7连点创建后.png bytes=159277
+2026-09-30 04:52:18 AFTER_CREATE url=http://127.0.0.1:5186/ dialog=医学写作
+新建研究方案项目
+从零开始
+两阶段反问确定研究框架与 PICOS
+导入方案摘要
+先解析文件，确认提取结果后创建项目
+试验药物
+适应症
+研究分期
+请填写研究分期
+
+请先补全标记为必填的项目信息。后续研究设计细节可在两阶段反问中继续确认。
+
+取消
+创建并进入写作
+2026-09-30 04:52:18 AFTER_CREATE_TEXT 项目总看板
+证据调研与方案设计
+入排审核
+医学监查
+数据分析与TFL
+医学写作
+安全信号与PV协同
+来源台账
+审批中心
+最后更新
+暂无数据
+项目
+新建项目
+适应症
+暂无项目数据
+方案版本
+暂无项目数据
+数据批次
+暂无项目数据
+当前来源
+未选择项目
+未读决策
+0
+高风险开放
+0
+待交接
+0
+待审批
+0
+项目总看板
+请选择项目
+可运行
+AI 设置 · mtplx · mtplx-flash-next-optimized-speed
+新建项目
+项目数
+65
+模块进度
+—
+开放风险
+—
+待审批
+—
+尚未选择项目
+系统内共有 65 个项目。请在页面上方的项目下拉列表中选择一个项目开始医学工作；您的选择在本会话内会被记住。
+医学写作
+新建研究方案项目
+从零开始
+两阶段反问确定研究框架与 PICOS
+导入方案摘要
+先解析文件，确认提取结果后创建项目
+试验药物
+适应症
+研究分期
+请填写研究分期
+
+请先补全标记为必填的项目信息。后续研究设计细节可在两阶段反问中继续确认。
+
+取消
+创建并进入写作
+2026-09-30 04:52:41 PHASE {"value": "II期", "text": "II期", "selectedIndex": 3}
+2026-09-30 04:52:41 SHOT 17b-三项已填含II期.png bytes=146058
+2026-09-30 04:52:41 PROJECTS_BEFORE {"n": 66, "hasR3D": false, "sample": ["口服P2X3受体拮抗剂（小分子，每日两次给药） · 难治性慢性咳嗽（Refactory Chronic Cough，RFC）／难治性慢性咳嗽（Unexplained Chronic Cough，UCC） · Ⅱ期 · MW-PHASE-465867A1"]}
+2026-09-30 04:52:41 G7_CREATE {"ok": true, "disabled": false}
+2026-09-30 04:52:44 SHOT 19-创建后页面.png bytes=250935
+2026-09-30 04:52:44 CREATE_RESULT url=http://127.0.0.1:5186/
+2026-09-30 04:52:44 CREATE_DIALOG None
+2026-09-30 04:52:44 CREATE_TEXT 项目总看板
+证据调研与方案设计
+入排审核
+医学监查
+数据分析与TFL
+医学写作
+安全信号与PV协同
+来源台账
+审批中心
+最后更新
+09:00
+项目
+新建项目
+适应症
+成人难治性或不明原因慢性咳嗽
+方案版本
+草案
+数据批次
+未登记批次
+当前来源
+医学写作
+未读决策
+0
+高风险开放
+0
+待交接
+0
+待审批
+0
+医学写作
+研究方案智能设计与写作
+新建中国临床试验方案
+研究设计引导
+项目状态
+研究框架准备中
+来源：从零开始 · 版本 2
+01
+研究框架
+02
+PICOS设计
+03
+语料准备
+竞品方案处理
+项目已建立；系统将自动检索并处理竞品研究，当前草稿会持续保留。
+正在启动公开研究检索
+0%
+重试
+部分建议已就绪
+AI正在结合项目事实与公开研究形成整套建议
+更新建议
+AI推荐研究方案
+先审阅整套设计与关键差异；采用后仍可在高级微调中逐项修改。
+研究设计（正交维度）
+待审阅
+干预与合并治疗模块
+待审阅
+结局与终点模块
+待审阅
+研究人群模块
+待审阅
+产品画像模块
+待审阅
+执行与统计模块
+待审阅
+
+该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。
+
+需您选择/补全
+design模块待AI基于语料生成
+模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。
+无置信
+研究设计（正交维度）
+
+该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。
+
+一键采用推荐方案
+展开单字段修改与依据
+仅在整包建议需要局部调整时使用
+高级微调
+仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开
+项目与产品
+项目与产品
+研究目的
+竞品范围
+总体设计
+项目与产品
+研究药物、适应症和研究分期是启动竞品检索的最小三项；其他内容可由系统预填后再确认
+可选：研究者手册（IB）
+暂未形成·稍后补充
+最小产品事实包
+可进入调研与建议包
+高影响缺口 3 项：药物技术类型、给药途径、靶点/作用机制
+上传研究者手册
+暂不提供IB
+方案号
+版本
+研究分期*
+开发区域
+方案标题
+适应症*
+试验药物*
+药物技术类型*
+暴露范围
+剂型
+给药途径
+口服
+静脉注射
+皮下注射
+外用
+吸入
+其他
+ClinicalTrials.gov疾病检索词（系统建议，可修改）
+该字段用于优化注册库检索，不是启动检索的硬门；留空时使用适应症。
+补充产品事实（自然语言）
+可粘贴大段文字、药学资料摘要或临床前结论；独立AI拆解为可确认事实、推断、未知项、冲突和高影响缺口，每轮最多追问3个影响下游设计的问题。
+IB可选·缺少不阻断调研
+提交并拆解
+
+尚未发起事实采集。无IB不阻断竞品调研；当前目标产品事实仅采用用户输入或已绑定来源，竞品信息不会自动写成本品事实。此处补充的自然语言会合并进入版本化事实。
+
+研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。
+保存草稿
+完成第一步
+文献
+项目文献库
+0 条可追溯文献
+DOI、PMID 或文献官网链接
+导入
+当前项目引文格式
+官网链接无法自动识别时，手动确认基本信息
+当前项目尚无匹配文献。
+2026-09-30 04:53:06 SHOT 19b-研究框架默认窗口.png bytes=250935
+2026-09-30 04:53:06 SHOT 19c-研究框架整页.png bytes=250935
+2026-09-30 04:53:06 FRAMEWORK_INFO {"nOpts": 67, "r3d": ["R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-9F29BDC1", "R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-2C4DE228"], "p2x": ["R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-9F29BDC1", "R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-2C4DE228", "口服P2X3受体拮抗剂（小分子，每日两次给药） · 难治性慢性咳嗽（Refactory Chronic Cough，RFC）／难治性慢性咳嗽（Unexplained Chronic Cough，UCC） · Ⅱ期 · MW-PHASE-465867A1"], "banner": [], "tabs": ["项目总看板", "证据调研与方案设计", "入排审核", "医学监查", "数据分析与TFL", "医学写作", "安全信号与PV协同", "来源台账", "审批中心", "01\n研究框架", "02\nPICOS设计", "03\n语料准备", "研究设计（正交维度）\n待审阅\n干预与合并治疗模块\n待审阅\n结局与终点模块\n待审阅\n研究人群模块\n待审阅\n产品画像模块\n待审阅\n执行与统计模块\n待审阅", "研究设计（正交维度）\n待审阅", "干预与合并治疗模块\n待审阅", "结局与终点模块\n待审阅", "研究人群模块\n待审阅", "产品画像模块\n待审阅", "执行与统计模块\n待审阅", "项目身份6项总体设计11项PICOS2项", "项目身份6项", "总体设计11项", "PICOS2项", "项目与产品\n研究目的\n竞品范围\n总体设计", "项目与产品", "研究目的", "竞品范围", "总体设计", "文献"], "headings": ["研究方案智能设计与写作", "研究设计引导"], "internals": ["design模块"], "inputCount": 29, "inputs": [{"tag": "SELECT", "type": "select-one", "aria": "选择临床研究项目", "name": "", "v": "proj_user_f46164665a86"}, {"tag": "INPUT", "type": "file", "ph": "", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "MW-II-9F29BDC1-DRAFT"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "草案"}, {"tag": "INPUT", "type": "text", "ph": "选择常用分期或直接输入", "aria": null, "name": "", "v": "II期"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "中国"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "R3D-CC-2109（口服P2X3受体拮抗剂）用于治疗成人难治性或不明原因慢性咳嗽的II期临床研究"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "成人难治性或不明原因慢性咳嗽"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": "R3D-CC-2109（口服P2X3受体拮抗剂）"}, {"tag": "SELECT", "type": "select-one", "aria": "药物技术类型", "name": "", "v": "unknown"}, {"tag": "SELECT", "type": "select-one", "aria": "暴露范围", "name": "", "v": "unknown"}, {"tag": "SELECT", "type": "select-one", "aria": "剂型", "name": "", "v": ""}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "checkbox", "ph": "", "aria": null, "name": "", "v": "on"}, {"tag": "INPUT", "type": "text", "ph": "可留空；系统先按适应症形成检索计划，并可在调研后建议规范英文词", "aria": null, "name": "", "v": ""}, {"tag": "TEXTAREA", "type": "textarea", "ph": "例如：CMS-D1是抗IL-23p19单抗，静脉输注，首次人体，已有食蟹猴4周毒理，NOAEL 30mg/kg，暂无人体PK数据，关注输注反应和免疫原性。", "aria": "自然语言事实输入", "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "例如 10.1016/... 或 PMID: 33957195", "aria": null, "name": "", "v": ""}, {"tag": "SELECT", "type": "select-one", "aria": null, "name": "", "v": "gbt_7714_2015_numeric"}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "多位作者用逗号分隔", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "", "aria": null, "name": "", "v": ""}, {"tag": "TEXTAREA", "type": "textarea", "ph": "可说明已核对的原始页面或确认依据", "aria": null, "name": "", "v": ""}, {"tag": "INPUT", "type": "text", "ph": "按题名、作者、期刊、DOI 或 PMID 搜索", "aria": null, "name": "", "v": ""}], "vw": {"w": 2319, "h": 1091, "sh": 2665}, "selected": "R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-9F29BDC1"}
+2026-09-30 04:53:36 VIEWPORT_TALL b'{"ok":true,"width":1440,"height":1600}'
+2026-09-30 04:53:37 SHOT 20-G6拉高窗口研究框架.png bytes=288264
+2026-09-30 04:53:56 G6_NOW {"vw": {"w": 1440, "h": 1600}, "inputs": 29, "visibleInputs": 28, "present": {"项目与产品": true, "研究目的": true, "竞品范围": true, "总体设计": true, "研究设计（正交维度）": true, "干预与合并治疗": true, "结局与终点": true, "研究人群": true, "产品画像": true, "执行与统计": true}}
+2026-09-30 04:53:56 G3_UNSAVED_TYPED {"ok": true, "v": "R3D-UNSAVED-MARKER：CC-2109为口服选择性P2X3受体拮抗剂，每日两次，阻断气道感觉神经末梢ATP介导的咳嗽反射敏化。重点关注味觉障碍。"}
+2026-09-30 04:53:56 SHOT 21-G3刷新前已输入未保存标记.png bytes=288264
+2026-09-30 04:54:48 SHOT 22-G3研究框架F5后.png bytes=165726
+2026-09-30 04:54:48 G3_AFTER_F5 {"url": "http://127.0.0.1:5186/", "selected": "R3D-CC-2109（口服P2X3受体拮抗剂） · 成人难治性或不明原因慢性咳嗽 · II期 · MW-II-9F29BDC1", "r3dCount": 2, "step01": false, "onWriting": false, "unsaved": false, "savedDrug": false, "savedInd": true, "ta": "", "head": "项目总看板\n证据调研与方案设计\n入排审核\n医学监查\n数据分析与TFL\n医学写作\n安全信号与PV协同\n来源台账\n审批中心\n最后更新\n09:00\n项目\n新建项目\n适应症\n成人难治性或不明原因慢性咳嗽\n方案版本\n草案\n数据批次\n未登记批次\n当前来源\n项目总看板\n未读决策\n0\n高风险开放\n0\n待交接\n0\n待审批\n0\n项目全览\n统一工作收件箱 · 0 项待决策\n处理最高优先级\n优先级\n来源模块\n事项\n对象\n下一步\n状态\n当前无未读医学决策项。已处理内容及系统运行记录仍可在对应模块中查看。\n\n仅显示需要医学经理作出项目或内容判断的未读事项。\n\n模块状态矩阵\n项目总看板\n待决策 0\n10%\n医学写作\n待决策 0\n10%\n审批中心\n待决策 0\n10%\n项目风险摘要\n紧急\n—\n开放风险\n高\n—\n开放风险\n中\n—\n开放风险\n低\n—\n开放风险\n\n中心×风险类型热力图仅在后端返回真实风险矩阵后展示；当前不使用固定示例值替代项目风险数据。\n\n独立 AI\n可运行\nmtplx · mtplx-flash-next-optimized-speed"}
+2026-09-30 04:55:37 SHOT 23-回访研究框架已保存数据仍在.png bytes=288264
+2026-09-30 04:55:37 FILL_GAPS {"type": {"v": "small_molecule", "t": "小分子"}, "exp": {"v": "systemic", "t": "全身暴露"}, "form": {"v": "口服固体制剂", "t": "口服固体制剂"}, "oralChecked": true}
+2026-09-30 04:55:37 NO_IB {"clicked": true}
+2026-09-30 04:55:38 SHOT 24-补产品事实后.png bytes=288094
+2026-09-30 04:55:38 TAB_研究目的 {"ok": true, "selected": "false"}
+2026-09-30 04:55:39 SHOT 25-G6页签-研究目的.png bytes=289606
+2026-09-30 04:55:39 TABSTATE_研究目的 {"slice": "高级微调中逐项修改。\n研究设计（正交维度）\n待审阅\n干预与合并治疗模块\n待审阅\n结局与终点模块\n待审阅\n研究人群模块\n待审阅\n产品画像模块\n待审阅\n执行与统计模块\n待审阅\n\n该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。\n\n需您选择/补全\ndesign模块待AI基于语料生成\n模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。\n无置信\n研究设计（正交维度）\n\n该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。\n\n一键采用推荐方案\n展开单字段修改与依据\n仅在整包建议需要局部调整时使用\n高级微调\n仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开\n研究目的\n项目与产品\n研究目的\n竞品范围\n总体设计\n内在研究目的\n不是正文中的“研究目的”，用于决定设计路径和证据检索范围\n首次人体试验（FIH）\n首次患者试验（first-in-patient）\n药理/药效探索\n机制验证（PoM）\n概念验证（PoC）\n剂量探索\n确证性研究\n长期延展性研究（OLE）\n其他研究目的（自然语言，每行一项）\n关键科学与开发不确定性（每行一项）\n\n已记录当前不提供研究者手册；可继续使用最小事实对话和公开竞品调研。 重试\n\n研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。\n保存草稿\n完成第一步\n文献\n项目文献库\n0 条可追溯文献\nDOI、PMID 或文献官网链接\n导入\n当前项目引文格式\n官网链接无法自动识别时，手动确认基本信息\n当前项目尚无匹配文献。", "saveDisabled": true, "finishDisabled": true, "picosDisabled": true}
+2026-09-30 04:55:39 TAB_竞品范围 {"ok": true, "selected": "false"}
+2026-09-30 04:55:39 SHOT 25-G6页签-竞品范围.png bytes=300352
+2026-09-30 04:55:39 TABSTATE_竞品范围 {"slice": "高级微调中逐项修改。\n研究设计（正交维度）\n待审阅\n干预与合并治疗模块\n待审阅\n结局与终点模块\n待审阅\n研究人群模块\n待审阅\n产品画像模块\n待审阅\n执行与统计模块\n待审阅\n\n该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。\n\n需您选择/补全\ndesign模块待AI基于语料生成\n模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。\n无置信\n研究设计（正交维度）\n\n该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。\n\n一键采用推荐方案\n展开单字段修改与依据\n仅在整包建议需要局部调整时使用\n高级微调\n仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开\n竞品范围\n项目与产品\n研究目的\n竞品范围\n总体设计\n靶点与竞品范围\n第一步完成后据此形成宽检索和人工分诊篮子；未知时可留空，由IB或后续证据补充\n靶点/作用机制\n竞品靶点与机制范围\n已准备的Protocol文件名称或资料编号（每行一项）\n\n已记录当前不提供研究者手册；可继续使用最小事实对话和公开竞品调研。 重试\n\n研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。\n保存草稿\n完成第一步\n文献\n项目文献库\n0 条可追溯文献\nDOI、PMID 或文献官网链接\n导入\n当前项目引文格式\n官网链接无法自动识别时，手动确认基本信息\n当前项目尚无匹配文献。", "saveDisabled": true, "finishDisabled": true, "picosDisabled": true}
+2026-09-30 04:55:39 TAB_总体设计 {"ok": true, "selected": "false"}
+2026-09-30 04:55:40 SHOT 25-G6页签-总体设计.png bytes=303359
+2026-09-30 04:55:40 TABSTATE_总体设计 {"slice": "高级微调中逐项修改。\n研究设计（正交维度）\n待审阅\n干预与合并治疗模块\n待审阅\n结局与终点模块\n待审阅\n研究人群模块\n待审阅\n产品画像模块\n待审阅\n执行与统计模块\n待审阅\n\n该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。\n\n需您选择/补全\ndesign模块待AI基于语料生成\n模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。\n无置信\n研究设计（正交维度）\n\n该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。\n\n一键采用推荐方案\n展开单字段修改与依据\n仅在整包建议需要局部调整时使用\n高级微调\n仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开\n总体设计\n项目与产品\n研究目的\n竞品范围\n总体设计\n总体设计意图\n回答“准备做什么研究”，暂不要求写成方案正文；总体设计须明确采用/不采用，禁止待确认\n总体设计模式*\n目标研究人群意图*\n年龄段\n成人\n儿童\n青少年\n疾病状态\n轻中度\n中重度\n重度\n经治情况\n初治\n经治疗效不佳\n未经某类治疗\n上述选项会自动写入「目标研究人群意图」摘要；可继续补充自然语言细节。\n\n已记录当前不提供研究者手册；可继续使用最小事实对话和公开竞品调研。 重试\n\n研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。\n保存草稿\n完成第一步\n文献\n项目文献库\n0 条可追溯文献\nDOI、PMID 或文献官网链接\n导入\n当前项目引文格式\n官网链接无法自动识别时，手动确认基本信息\n当前项目尚无匹配文献。", "saveDisabled": true, "finishDisabled": true, "picosDisabled": true}
+2026-09-30 04:55:40 TAB_项目与产品 {"ok": true, "selected": "false"}
+2026-09-30 04:55:41 SHOT 25-G6页签-项目与产品.png bytes=288094
+2026-09-30 04:55:41 TABSTATE_项目与产品 {"slice": "高级微调中逐项修改。\n研究设计（正交维度）\n待审阅\n干预与合并治疗模块\n待审阅\n结局与终点模块\n待审阅\n研究人群模块\n待审阅\n产品画像模块\n待审阅\n执行与统计模块\n待审阅\n\n该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。\n\n需您选择/补全\ndesign模块待AI基于语料生成\n模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。\n无置信\n研究设计（正交维度）\n\n该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。\n\n一键采用推荐方案\n展开单字段修改与依据\n仅在整包建议需要局部调整时使用\n高级微调\n仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开\n项目与产品\n项目与产品\n研究目的\n竞品范围\n总体设计\n项目与产品\n研究药物、适应症和研究分期是启动竞品检索的最小三项；其他内容可由系统预填后再确认\n可选：研究者手册（IB）\n尚无IB·不阻断调研\n最小产品事实包\n可进入调研与建议包\n高影响缺口 3 项：药物技术类型、给药途径、靶点/作用机制\n上传研究者手册\n暂不提供IB\n方案号\n版本\n研究分期*\n开发区域\n方案标题\n适应症*\n试验药物*\n药物技术类型*\n暴露范围\n剂型\n给药途径\n口服\n静脉注射\n皮下注射\n外用\n吸入\n其他\nClinicalTrials.gov疾病检索词（系统建议，可修改）\n该字段用于优化注册库检索，不是启动检索的硬门；留空时使用适应症。\n补充产品事实（自然语言）\n可粘贴大段文字、药学资料摘要或临床前结论；独立AI拆解为可确认事实、推断、未知项、冲突和高影响缺口，每轮最多追问3个影响下游设计的问题。\nIB可选·缺少不阻断调研\n提交并拆解\n\n尚未发起事实采集。无IB不阻断竞品调研；当前目标产品事实仅采用用户输入或已绑定来源，竞品信息不会自动写成本品事实。此处补充的自然语言会合并进入版本化事实。\n\n已记录当前不提供研究者手册；可继续使用最小事实对话和公开竞品调研。 重试\n\n研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。\n保存草稿\n完成第一步\n文献\n项目", "saveDisabled": true, "finishDisabled": true, "picosDisabled": true}
+2026-09-30 04:55:41 ACTION_BTNS {"save": {"txt": "保存草稿", "d": true}, "fin": {"txt": "完成第一步", "d": true}, "picos": {"txt": "02\nPICOS设计", "d": true}}
+2026-09-30 04:55:41 G7_SAVE_DISABLED_SKIP
+2026-09-30 04:55:41 FINISH_DISABLED
+2026-09-30 04:55:41 COMPETITOR {"m": "正在启动公开研究检索\n0%\n重试\n部分建议已就绪\nAI正在结合项目事实与公开研究形成整套建议\n更新建", "has0": true, "internals": ["design模块"]}
+2026-09-30 04:56:14 CTRLS [{"tag": "SELECT", "role": null, "type": "select-one", "aria": "选择临床研究项目", "name": "", "txt": "", "v": "proj_user_f46164665a86"}, {"tag": "TEXTAREA", "role": null, "type": "textarea", "aria": null, "ph": "如随机、双盲、安慰剂对照、平行组、多中心", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "INPUT", "role": null, "type": "checkbox", "aria": null, "ph": "", "name": "", "txt": "", "v": "on"}, {"tag": "TEXTAREA", "role": null, "type": "textarea", "aria": "目标研究人群补充说明", "ph": "补充疾病定义、治疗线、既往治疗与严重程度等自然语言意图", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "例如 10.1016/... 或 PMID: 33957195", "name": "", "txt": "", "v": ""}, {"tag": "SELECT", "role": null, "type": "select-one", "aria": null, "name": "", "txt": "", "v": "gbt_7714_2015_numeric"}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "多位作者用逗号分隔", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "", "name": "", "txt": "", "v": ""}, {"tag": "TEXTAREA", "role": null, "type": "textarea", "aria": null, "ph": "可说明已核对的原始页面或确认依据", "name": "", "txt": "", "v": ""}, {"tag": "INPUT", "role": null, "type": "text", "aria": null, "ph": "按题名、作者、期刊、DOI 或 PMID 搜索", "name": "", "txt": "", "v": ""}]
+2026-09-30 04:56:14 CLICK_INTENTS {"hits": [{"w": "成人", "tag": "DIV", "role": null}, {"w": "中重度", "tag": "LABEL", "role": null}, {"w": "经治疗效不佳", "tag": "LABEL", "role": null}]}
+2026-09-30 04:57:20 SHOT 29-保存草稿前-版本3.png bytes=305862
+2026-09-30 04:57:20 G7_SAVE {"ok": true, "afterD": false}
+2026-09-30 04:57:23 SHOT 30-G7连点保存草稿后.png bytes=303926
+2026-09-30 04:57:51 SHOT 32-完成第一步与PICOS仍灰-版本4.png bytes=303926
+2026-09-30 04:57:51 RETRY_SEARCH {"ok": true}
+2026-09-30 04:58:21 RETRY_POLL#1 elapsed=30 {"has0": true, "busy": true, "fail": false, "finD": true}
+2026-09-30 04:58:51 RETRY_POLL#2 elapsed=60 {"has0": true, "busy": true, "fail": false, "finD": true}
+2026-09-30 04:59:21 RETRY_POLL#3 elapsed=90 {"has0": true, "busy": true, "fail": false, "finD": true}
+2026-09-30 04:59:51 RETRY_POLL#4 elapsed=120 {"has0": true, "busy": true, "fail": false, "finD": true}
+2026-09-30 04:59:51 SHOT 33-点重试后约2分钟.png bytes=302550
+2026-09-30 04:59:51 PICOS_CLICK {"clicked": true, "disabled": true, "afterText": true}
+2026-09-30 04:59:52 SHOT 34-尝试点击PICOS后.png bytes=302550

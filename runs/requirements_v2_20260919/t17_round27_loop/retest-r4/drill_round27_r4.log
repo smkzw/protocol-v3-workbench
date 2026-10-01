@@ -1,0 +1,71 @@
+drill start 2026-09-30T15:09:17.721032 duration=300.0s
+{
+ "total_requests": 129276,
+ "by_phase": {
+  "translation": {
+   "count": 1,
+   "ok": 0,
+   "non_ok": 1,
+   "max_elapsed_s": 415.257,
+   "min_elapsed_s": 415.257,
+   "errors": [
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: Managed local model server unavailable: refusing to stop a server we do not own: {'owned': False, 'pid': 18233, 'reason': 'process_not_running'} (switch retried 2x, budget capped)"
+    }
+   ]
+  },
+  "triage": {
+   "count": 129275,
+   "ok": 0,
+   "non_ok": 129275,
+   "max_elapsed_s": 0.093,
+   "min_elapsed_s": 0.001,
+   "errors": [
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: AI provider request failed: HTTP 401"
+    }
+   ]
+  }
+ },
+ "co_resident_samples": 0,
+ "samples": 61
+}
+events -> /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/t17_round27_loop/retest-r4/concurrency_drill_events.jsonl

@@ -1,0 +1,54 @@
+{
+  "source_receipts.json": [],
+  "pipeline_lineage.json": [],
+  "chapter_mapping.json": [],
+  "candidate_sets.json": [],
+  "quality_scorecard.json": [],
+  "browser_qc.json": [
+    {
+      "indication": "DRY",
+      "page_errors": [],
+      "http_failures": [],
+      "project_id": "proj_user_9d5a7ffc3cf5"
+    }
+  ],
+  "dry_run_evidence": {
+    "project_id": "proj_user_9d5a7ffc3cf5",
+    "workspace_route_present": true,
+    "authoring_journey_shell_visible": true,
+    "project_selector_value": "proj_user_9d5a7ffc3cf5",
+    "new_project_dialog_closed": true,
+    "page_errors": [],
+    "http_failures": [],
+    "failures": [
+      "laptop-viewport:shell-client-height-5-below-420",
+      "laptop-viewport:journey-body-client-height-0-below-300"
+    ],
+    "laptop_viewport": {
+      "present": true,
+      "shellClientHeight": 5,
+      "bodyClientHeight": 0,
+      "refinementOpen": true,
+      "tabs": [
+        {
+          "label": "项目与产品",
+          "visible": true
+        },
+        {
+          "label": "研究目的",
+          "visible": true
+        },
+        {
+          "label": "竞品范围",
+          "visible": true
+        },
+        {
+          "label": "总体设计",
+          "visible": true
+        }
+      ],
+      "gridTemplateRows": "28px 0px 760px"
+    },
+    "passed": false
+  }
+}

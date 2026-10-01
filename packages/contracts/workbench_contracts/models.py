@@ -76,6 +76,73 @@ class Project(WorkbenchModel):
     updated_at: datetime
 
 
+# NEW-8（R27 第1轮末修订）：分期归一表——罗马数字（含 Unicode Ⅰ-Ⅳ）、中文
+# 数词（一-四期）、全角数字统一折算成 ASCII token；归一后仍提不出分期 token
+# 的输入（空串、"不适用"、"待定"、自由乱写）一律 ValidationError（API 层
+# 422），MW-PHASE 占位代号从此不可能出厂。分隔符集合与 token 正则对齐
+# services/api/app/medical_writing_protocol_assembly_plan.py 的 _phase_one_status
+# 归一口径，两处不会各说各话。
+_PHASE_WIDTH_MAP = str.maketrans({
+    "Ⅰ": "I",
+    "Ⅱ": "II",
+    "Ⅲ": "III",
+    "Ⅳ": "IV",
+    "０": "0",
+    "１": "1",
+    "２": "2",
+    "３": "3",
+    "４": "4",
+})
+_PHASE_CN_NUMERALS = (
+    ("一期", "1"),
+    ("二期", "2"),
+    ("三期", "3"),
+    ("四期", "4"),
+)
+_PHASE_TOKEN_RE = re.compile(r"IV|III|II|I|[1-4]")
+_PHASE_SEPARATOR_CHARS = "/+-· 、,，;；:："
+# 规范标签一律用罗马数字（'3期'→'III期'），与既有 I期/II期/III期 口径一致。
+_PHASE_DIGIT_ROMAN = {"1": "I", "2": "II", "3": "III", "4": "IV"}
+
+
+def _phase_plain_form(value: str) -> str:
+    """归一文本形态：全角/罗马数字折算 + 中文数词折算 + 去「期」后缀。"""
+    normalized = str(value or "").strip().translate(_PHASE_WIDTH_MAP).upper()
+    for source, target in _PHASE_CN_NUMERALS:
+        normalized = normalized.replace(source, target)
+    return normalized.replace("期", "").strip()
+
+
+def _normalize_study_phase_label(value: str) -> tuple[str, str]:
+    """Return (canonical_label, code_token) for a study-phase expression.
+
+    canonical_label 为空表示无法识别（调用方必须拒绝）。code_token 永不为
+    'PHASE'——提不出 token 时 canonical_label 为空，由调用方 422。
+    """
+    normalized = _phase_plain_form(value)
+    if not normalized:
+        return "", ""
+    expression = ""
+    position = 0
+    while position < len(normalized):
+        match = _PHASE_TOKEN_RE.match(normalized, position)
+        if match:
+            expression += match.group(0)
+            position = match.end()
+            continue
+        if normalized[position] in _PHASE_SEPARATOR_CHARS or normalized[position].isspace():
+            expression += normalized[position]
+            position += 1
+            continue
+        break
+    tokens = [token for token in _PHASE_TOKEN_RE.findall(expression) if token]
+    if not tokens:
+        return "", ""
+    canonical = "/".join(_PHASE_DIGIT_ROMAN.get(token, token) for token in tokens) + "期"
+    code_token = re.sub(r"[^A-Za-z0-9]+", "", canonical).upper()
+    return canonical, code_token
+
+
 class UserProjectCreateRequest(WorkbenchModel):
     project_code: str = Field(default="", max_length=80)
     project_name: str = Field(default="", max_length=200)
@@ -104,16 +171,30 @@ class UserProjectCreateRequest(WorkbenchModel):
             "idempotency_key",
         ):
             setattr(self, field_name, str(getattr(self, field_name)).strip())
-        self.study_phase = {
-            "I": "I期",
-            "I/II": "I/II期",
-            "II": "II期",
-            "II/III": "II/III期",
-            "III": "III期",
-        }.get(self.study_phase, self.study_phase)
+        canonical_phase, phase_token = _normalize_study_phase_label(self.study_phase)
+        if not canonical_phase:
+            raise ValueError(
+                "研究分期无法识别，请选择I-IV期（如 II期、III期）；留空或填写"
+                "「不适用/待定」都无法建项"
+            )
+        # 纯分期表达（含罗马/中文数词写法）整体改写为规范标签；带自由文本
+        # 尾巴的输入保留原文，仅用归一 token 生成代号。比较前把数字形态也
+        # 折算成罗马数字，使 '三期'（数字形态 '3'）与 'III期' 可判等。
+        normalized_plain = _phase_plain_form(self.study_phase)
+        normalized_roman = "".join(
+            _PHASE_DIGIT_ROMAN.get(char, char) for char in normalized_plain
+        )
+        separator_pattern = rf"[{re.escape(_PHASE_SEPARATOR_CHARS)}\s]"
+        if re.sub(separator_pattern, "", normalized_roman) == re.sub(
+            separator_pattern, "", canonical_phase[:-1]
+        ):
+            self.study_phase = canonical_phase
         if not self.project_code:
-            phase_token = re.sub(r"[^A-Za-z0-9]+", "", self.study_phase).upper()
-            phase_token = phase_token or "PHASE"
+            if not phase_token or phase_token == "PHASE":
+                raise ValueError(
+                    "研究分期无法识别，请选择I-IV期（如 II期、III期）；"
+                    "系统不再生成 MW-PHASE 占位代号"
+                )
             identity = "|".join(
                 (
                     self.product_name,
@@ -3036,6 +3117,7 @@ class MedicalWritingStructuredStudyDesign(WorkbenchModel):
         "undecided",
         "placebo",
         "active",
+        "placebo_and_active",
         "none_or_dose_escalation",
         "other",
     ] = "undecided"
@@ -5067,6 +5149,7 @@ class MedicalWritingNormalizedDesignView(WorkbenchModel):
         "undecided",
         "placebo",
         "active",
+        "placebo_and_active",
         "none_or_dose_escalation",
         "other",
     ]
@@ -6005,6 +6088,12 @@ class SynopsisImportJobStatusResponse(WorkbenchModel):
     heartbeat_at: Optional[datetime] = None
     elapsed_seconds: int = Field(default=0, ge=0)
     heartbeat_age_seconds: int = Field(default=0, ge=0)
+    # AGG25-P0-2②/P1-1: retry count and structured failure reason
+    attempt_count: int = Field(default=1, ge=1)
+    failure_code: str = Field(default="", max_length=60)
+    # NEW-11（R27 第1轮修订）：AI 阶段（含网关排队）置 "model_wait"，让等待
+    # 面板能点名「模型处理中或排队等待空位」，消灭「正在启动0%」黑等。
+    waiting_on: str = Field(default="", max_length=40)
 
 
 class SynopsisImportJobCancelResponse(WorkbenchModel):
@@ -11956,6 +12045,14 @@ class MedicalWritingFactIntakeApplyResult(WorkbenchModel):
 
 class MedicalWritingFactIntakeConflictError(ValueError):
     """Raised for duplicate, stale, or forbidden fact-intake writes."""
+
+
+class MedicalWritingFactIntakeProviderUnavailableError(
+    MedicalWritingFactIntakeConflictError,
+):
+    """AGG25-P1-4: the AI provider could not be reached or is not
+    configured.  This is a temporary service condition (503), never a
+    write conflict (409)."""
 
 
 # ---------------------------------------------------------------------------

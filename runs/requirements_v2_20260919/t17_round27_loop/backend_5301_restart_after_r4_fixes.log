@@ -1,0 +1,567 @@
+
+
+=== env-admin restart 2026-10-01 06:1x: SIGTERM 50s未退(3个探针handler挂起),SIGKILL后复启,env同集成人05:55实例 ===
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+MuPDF error: format error: No common ancestor in structure tree
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_d0b71443bc1c561fae7fda2f batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_ed24223bd0417c27269182d4 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_174f74fe540a6cfc3a4a4997 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_174f74fe540a6cfc3a4a4997 阶段= attempt=1 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+translation item wref_translation_item_174f74fe540a6cfc3a4a4997 failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_2292ce7dc9f9c840eb35346e batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_2292ce7dc9f9c840eb35346e 阶段= attempt=1 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+translation item wref_translation_item_2292ce7dc9f9c840eb35346e failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_4beb930a0e8b4b8f75c4a11d batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] item=wref_translation_item_4beb930a0e8b4b8f75c4a11d 阶段= attempt=1 unhandled before failure-write
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2840, in translate_units_with_bounded_correction
+    child_result, child_map = translate_units_with_bounded_correction(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        translator,
+        ^^^^^^^^^^^
+    ...<6 lines>...
+        read_only_context=read_only_context,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+translation item wref_translation_item_4beb930a0e8b4b8f75c4a11d failed with full stack:
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1163, in _managed_dispatch
+    with arbiter.managed_lease(base_url):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1652, in managed_lease
+    with self.lease(phase, reason=reason, timeout=timeout) as grant:
+         ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/model_lifecycle_orchestrator.py", line 1629, in lease
+    raise LifecycleRefusal(
+    ...<2 lines>...
+        f"budget {'spent' if remaining <= 0 else 'capped'})")
+app.model_lifecycle_orchestrator.LifecycleRefusal: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2368, in _hy_mt2_translator_adapter
+    run_gated_omlx_request(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        _execute_body_translation_request,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        kind="translation",
+        ^^^^^^^^^^^^^^^^^^^
+        owner="medical-writing-api:translation-body",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/omlx_workload_gate_client.py", line 291, in run_gated_omlx_request
+    return operation(lease)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2363, in _execute_body_translation_request
+    with _managed_dispatch(base_url):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/ai_gateway.py", line 1169, in _managed_dispatch
+    raise AiProviderRuntimeError(
+    ...<6 lines>...
+    ) from exc
+app.ai_gateway.AiProviderRuntimeError: Managed local model server unavailable: ensure(translation) failed during arbitration (switch retried 2x, budget capped)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 4903, in _process_claimed_item
+    self._process_with_composite_pipeline(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        item, actor, cancel_check=cancel_check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/writing_reference_translation_batch.py", line 5395, in _process_with_composite_pipeline
+    hy_mt2_result, chunk_parsed = translate_units_with_bounded_correction(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.chapter_pipeline.hy_mt2_translator,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        read_only_context=chunk_spec.adjacent_context or "",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2840, in translate_units_with_bounded_correction
+    child_result, child_map = translate_units_with_bounded_correction(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        translator,
+        ^^^^^^^^^^^
+    ...<6 lines>...
+        read_only_context=read_only_context,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2896, in translate_units_with_bounded_correction
+    result = call_hy_mt2_translator(
+        translator,
+    ...<5 lines>...
+        correction_note=note,
+    )
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/chapter_translation_pipeline.py", line 2675, in call_hy_mt2_translator
+    return translator(*arguments)
+  File "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/services/api/app/main.py", line 2381, in _hy_mt2_translator_adapter
+    raise CompositePipelineUnavailableError(
+        f"body translation model unavailable: {type(exc).__name__}"
+    ) from exc
+app.chapter_translation_pipeline.CompositePipelineUnavailableError: body translation model unavailable: AiProviderRuntimeError
+
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9bb73e3b89f36b6e7a5d10ba batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_f69cbf0576d2639c7ac64f28 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_591b4076111f20cd8f51da04 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_56ebf199e9c6df9494a2e989 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_cee971473411dc11ee14168b batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_e0419c167212ef8dd5bf07ab batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_ab9a60a073e4a235a7588a2c batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_bbc3d6283d0f644036f4026a batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_f8c0fba62180bf286383126e batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_8988d1f3381ae095c25a6497 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_48de270c7aa6112d27697a3a batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_9f7890369ecf4df4c10fc94c batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_c922397c90a586506f151148 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_510b57e4cac8bb86ede54fe2 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=
+[MW-ENTRY-DIAG] enter item=wref_translation_item_70af51767c4c2c98cf46cdf6 batch=wref_translation_batch_f113659cc7a7171fa5aecef7 attempt=1 stage= active_upper=

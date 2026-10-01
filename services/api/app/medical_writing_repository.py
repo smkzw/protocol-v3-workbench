@@ -65,6 +65,327 @@ from .sqlite_runtime_store import (
 )
 
 
+# NEW-3/15/18/43 内容族②（R27 第3轮修订）：安全性/法规类缺口章节的确定性
+# 参数化模板。源证据缺失时这些章节不再只留【待补齐】占位，而是落入标准
+# 监管文本骨架（ICH E2A/GCP 通用表述，试验药物/日期参数化），并显式提示
+# 医学经理审核。非安全性章节保持原占位不变。命中规则按标题关键词，兼容
+# 不同模板的章节编号差异。
+_SAFETY_REGULATORY_HEADING_MARKERS = (
+    "不良事件",
+    "严重不良事件",
+    "安全性评价",
+    "安全性行动",
+    "紧急揭盲",
+    "揭盲",
+    "妊娠",
+    "避孕",
+    "VZV",
+    "水痘",
+    "SUSAR",
+    # NEW-15/18 残留（R27 第1轮末修订）：随机化/盲法与风险控制/委员会章节
+    # 同样落入确定性骨架，不再整节空壳。
+    "随机化",
+    "盲法",
+    "风险控制",
+    "委员会",
+    "SRC",
+    "DMC",
+)
+
+_SAFETY_AE_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按本项目实际情况审核确认）。"
+    "不良事件（AE）为受试者使用{product}后发生的任何不良医学事件，"
+    "并不一定与该治疗有因果关系。严重不良事件（SAE）为符合以下任一情形的"
+    "不良事件：导致死亡、危及生命、需住院或住院时间延长、永久或显著的"
+    "功能丧失/残疾、先天性异常/出生缺陷，或其他重要医学事件。"
+    "可疑且非预期严重不良反应（SUSAR）为性质或严重程度与现有资料不一致的"
+    "SAE。研究者应在获知 SAE 后 24 小时内将完整信息（受试者编号、事件名称、"
+    "严重程度、起止时间、因果关系判断及处理措施）应在 24 小时内通过专用报告表报告至"
+    "申办方药物警戒部门（safety@sponsor.example，以项目联络表为准），"
+    "并同步完成纸质原始记录。随访信息应在获得后 24 小时内补充报告。"
+    "申办方将按 ICH E2A 及国家相关法规时限要求向监管机构快速报告 SUSAR。"
+)
+
+_SAFETY_UNBLINDING_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理审核确认）。发生严重不良事件且"
+    "其救治需要知晓治疗分配时，方可实施紧急揭盲。紧急揭盲应由研究者向"
+    "申办方提出书面申请并说明医学理由，经申办方授权人员确认后，通过"
+    "中央随机化系统的紧急揭盲功能执行；揭盲结果仅告知直接救治所需的最小"
+    "信息范围，并须在 24 小时内书面记录揭盲理由、执行人与时间。揭盲后"
+    "该受试者按方案规定退出或继续随访，揭盲事件本身将记录为方案偏离并"
+    "纳入安全性数据审核。"
+)
+
+_SAFETY_PREGNANCY_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按药物类别审核确认）。"
+    "妊娠期女性、哺乳期女性及近半年内有妊娠计划者不入选。具生育能力的"
+    "女性受试者及男性受试者的配偶须在整个研究期间及末次给药后规定时间内"
+    "采取有效避孕措施（方案规定的医学可接受方式）。受试者或其配偶在研究"
+    "期间妊娠时，应立即报告研究者；申办方将对妊娠结局进行随访直至分娩，"
+    "非预期妊娠流产或胎儿/新生儿不良事件按 SAE 流程 24 小时内上报。"
+    "按药物类别要求的 VZV/水痘-带状疱疹血清学筛查应在筛选期完成，"
+    "血清阴性者按说明书 considerations 进行接种评估并记录。"
+)
+
+_SAFETY_GENERIC_TEMPLATE = _SAFETY_AE_TEMPLATE
+
+# NEW-15 残留（R27 第1轮末修订）：随机化方法与盲法设计的确定性骨架——
+# 分配比例/区组与分层/盲态层级/紧急破盲流程。对照类型、盲态与研究设计
+# 短语由 structured_design（comparator_type/randomization_mode/blinding_mode/
+# design_archetype）选择；分配比例与样本量等未记录的定量事实一律显式
+# 「待医学经理确认」，绝不编造。
+_RANDOMIZATION_BLINDING_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按本项目已确认设计审核确认）。"
+    "{design_phrase}。合格受试者将按既定分配比例随机分配至各治疗组"
+    "（分配比例以已确认统计设计为准；当前设计事实未记录具体比例，"
+    "待医学经理确认后写入）。随机化由中央随机化系统（IWRS）执行，"
+    "采用区组随机，区组大小对研究者保密；并按研究中心及方案规定的"
+    "关键分层因素（分层因素由已确认设计事实确定，待医学经理复核）"
+    "分层，以保证组间基线可比。计划入组{sample_size_phrase}例受试者。"
+    "盲法管理：本研究采用{blinding_phrase}。盲态由不参与疗效与安全性"
+    "评价的独立团队维持，研究期间保持盲态完整，直至数据库锁定后按"
+    "预先设定的揭盲流程执行最终揭盲；盲态数据（如配药、编盲与盲态"
+    "核查记录）由申办方盲态管理团队专档保存。"
+    "紧急破盲流程：当受试者发生严重不良事件且其救治必须知晓治疗分配时，"
+    "研究者可通过中央随机化系统的紧急揭盲功能获取该受试者治疗信息"
+    "（详见紧急揭盲章节）；每次破盲须书面记录理由、执行人与时间，"
+    "立即通知申办方，并将该事件计入方案偏离与安全性数据审核。"
+)
+
+# NEW-18 残留（R27 第1轮末修订）：AESI 章节的监测频次/处置流程/报告要求
+# 三段参数化骨架——只有清单没有可执行路径是 PV 视角的核心缺口。
+_SAFETY_AESI_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按药物类别与试验药物安全性"
+    "特征审核确认）。特别关注的不良事件（AESI）为{product}已知安全性"
+    "特征中需主动监测的专项事件，按以下三段执行："
+    "（一）监测频次：AESI 相关实验室检查与临床评估在筛选期基线采集，"
+    "治疗期每次访视复查，出现提示症状时随时加做；具体频次与项目见"
+    "研究流程表（数值待医学经理依据药物类别确认后写入流程表）。"
+    "（二）处置流程：发生 AESI 或相关异常时，依次执行：评估严重程度"
+    "与因果关系；按方案规定的暂停、调整或终止研究药物规则处理"
+    "（剂量调整规则见相应章节）；给予必要的对症治疗并加密随访，"
+    "直至事件恢复、稳定或达到终止标准。"
+    "（三）报告要求：达到 SAE 标准的 AESI 按 SAE/SUSAR 流程在 24 小时内"
+    "报告申办方药物警戒部门；未达 SAE 标准的 AESI 记录为不良事件并在"
+    "病例报告表中作 AESI 专项标记，纳入定期安全性汇总报告与研发期间"
+    "安全性更新（DSUR）。"
+)
+
+# NEW-18 残留：风险控制计划与 SRC/DMC 委员会章节骨架——审查频率、决策
+# 规则等治理参数显式留待医学经理确认，不编造具体数值。
+_RISK_CONTROL_COMMITTEE_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理审核确认审查频率与决策规则）。"
+    "本研究设立独立的 数据监查委员会（DMC）/安全性审查委员会（SRC），"
+    "由不包括本研究研究者的独立专家组成，负责定期审查累积安全性数据、"
+    "不良事件/严重不良事件/特别关注不良事件趋势及关键有效性数据"
+    "（外部证据，不进入本方案正文的因果判断）。审查频率与具体决策规则"
+    "待医学经理确认后写入（建议至少按预设例数间隔或固定日历间隔审查"
+    "一次）；委员会的建议（继续研究、修订方案、暂停入组或终止研究）"
+    "以书面形式提交申办方与主要研究者，并存档备查。"
+    "风险控制计划：研究期间按 AESI 章节执行主动监测；出现与试验药物"
+    "相关的系统性风险信号时，申办方应及时评估是否修订方案、更新知情"
+    "同意书、加强监测或暂停入组，并按法规要求报告监管机构。"
+)
+
+
+def _is_safety_regulatory_section(section: Mapping[str, Any]) -> bool:
+    heading = str(section.get("heading") or "")
+    return any(marker in heading for marker in _SAFETY_REGULATORY_HEADING_MARKERS)
+
+
+def _gap_placeholder_block(
+    section: Mapping[str, Any],
+    front_matter_overrides: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """为缺口章节生成占位块：安全性/法规章节给参数化标准文本，其余保持
+    【待补齐】标记。"""
+    overrides = front_matter_overrides or {}
+    product = str(overrides.get("investigational_product") or "").strip() or "研究药物"
+    if _is_safety_regulatory_section(section):
+        heading = str(section.get("heading") or "")
+        heading_upper = heading.upper()
+        if "揭盲" in heading:
+            template = _SAFETY_UNBLINDING_TEMPLATE
+        elif "妊娠" in heading or "避孕" in heading or "VZV" in heading or "水痘" in heading:
+            template = _SAFETY_PREGNANCY_TEMPLATE
+        elif "特别关注" in heading or "AESI" in heading_upper:
+            template = _SAFETY_AESI_TEMPLATE
+        elif (
+            "风险控制" in heading
+            or "委员会" in heading
+            or "SRC" in heading_upper
+            or "DMC" in heading_upper
+        ):
+            template = _RISK_CONTROL_COMMITTEE_TEMPLATE
+        elif "随机化" in heading or "盲法" in heading:
+            # NEW-15 残留：设计短语由已确认结构化设计事实选择；未记录的值
+            # 一律落「待医学经理确认」，不编造比例、区组大小或样本量。
+            comparator = str(overrides.get("design_comparator_type") or "").strip()
+            randomization = str(overrides.get("design_randomization_mode") or "").strip()
+            blinding = str(overrides.get("design_blinding_mode") or "").strip()
+            comparator_phrase = {
+                "placebo": "安慰剂对照",
+                "active": "阳性/活性对照",
+            }.get(comparator, "")
+            random_word = {
+                "randomized": "随机",
+                "non_randomized": "非随机",
+            }.get(randomization, "")
+            design_parts = [part for part in (random_word, comparator_phrase) if part]
+            design_phrase = (
+                f"本研究采用{'、'.join(design_parts)}设计"
+                if design_parts
+                else "本研究采用随机对照设计（对照类型以已确认设计事实为准，"
+                "当前设计事实未记录，待医学经理确认）"
+            )
+            blinding_phrase = {
+                "double_blind": "双盲设计",
+                "triple_blind": "三盲设计",
+                "single_blind": "单盲设计",
+                "open_label": "开放标签设计（不设盲；盲态管理条款仅适用于"
+                "紧急破盲与编盲记录的保留要求）",
+            }.get(blinding, "双盲设计（盲法层级以已确认设计事实为准，"
+            "当前设计事实未记录盲法层级，待医学经理确认）")
+            sample_size_raw = str(overrides.get("sample_size_strategy") or "")
+            sample_size_match = re.search(r"(\d[\d,，\s]*)\s*例", sample_size_raw)
+            if sample_size_match:
+                sample_size_phrase = re.sub(r"[,，\s]", "", sample_size_match.group(1))
+            else:
+                sample_size_phrase = "既定样本量（以统计分析章节确认为准，待医学经理确认）"
+            template = (
+                _RANDOMIZATION_BLINDING_TEMPLATE
+                .replace("{design_phrase}", design_phrase)
+                .replace("{blinding_phrase}", blinding_phrase)
+                .replace("{sample_size_phrase}", sample_size_phrase)
+            )
+        else:
+            template = _SAFETY_GENERIC_TEMPLATE
+        text = template.replace("{product}", product)
+    else:
+        text = (
+            "【待补齐】本章正文尚缺来源证据支持，将在补充资料后"
+            "由 AI 重写本节；当前为占位标记，正式导出前必须补齐。"
+        )
+    return {
+        "block_id": f"gap_marker_{section.get('section_id')}",
+        "block_type": "paragraph",
+        "text": text,
+        "source_kind": "full_draft_gap_marker",
+    }
+
+
+_SOA_HEADING_MARKERS = ("研究流程表", "schedule of activities", "soa")
+
+
+def _is_soa_section(section: Mapping[str, Any]) -> bool:
+    heading = str(section.get("heading") or "").lower()
+    return any(marker in heading for marker in _SOA_HEADING_MARKERS)
+
+
+def _soa_skeleton_blocks(
+    section: Mapping[str, Any],
+    front_matter_overrides: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """NEW-16（R27 第1轮末修订）：研究流程表（SoA）章节的确定性骨架。
+
+    由已确认 picos.study_epochs（列）×标准研究活动（行）构造访视×活动矩阵
+    表体（含访视窗列）。骨架语义： contact 点只按 epoch 名称做确定性映射
+    （筛选期→筛选评估、治疗期→给药与评估），其余单元格一律「待确认」；
+    全表标注待医学经理确认。导出走既有 table 渲染路径（from_table_block
+    可解析），不做任何医学推断性填充。
+    """
+    overrides = front_matter_overrides or {}
+    section_id = str(section.get("section_id") or "soa")
+    epochs_raw = overrides.get("study_epochs")
+    epochs = [
+        str(value).strip()
+        for value in (epochs_raw if isinstance(epochs_raw, list) else [])
+        if str(value).strip()
+    ][:12]
+    if not epochs:
+        epochs = ["筛选期", "治疗期", "随访期"]
+    columns = ["活动", *epochs, "访视窗"]
+    activities = (
+        "知情同意与筛选评估",
+        "研究药物治疗/给药",
+        "疗效评估",
+        "安全性评估（AE/SAE监测）",
+        "AESI专项检查",
+        "合并用药记录",
+    )
+
+    def cell(text: str, row: int, col: int) -> dict[str, Any]:
+        return {
+            "cell_id": f"soa_{section_id}_r{row}c{col}",
+            "text": text,
+            "grid_column_index": col,
+        }
+
+    rows: list[list[dict[str, Any]]] = []
+    header = [cell(name, 0, index) for index, name in enumerate(columns)]
+    rows.append(header)
+    for row_order, activity in enumerate(activities, start=1):
+        row_cells = [cell(activity, row_order, 0)]
+        for col_order, epoch in enumerate(epochs, start=1):
+            scheduled = (
+                (row_order == 1 and "筛选" in epoch)
+                or (row_order == 2 and any(k in epoch for k in ("治疗", "给药", "双盲")))
+                or (row_order == 3 and any(k in epoch for k in ("治疗", "随访")))
+                or (row_order == 4 and any(k in epoch for k in ("治疗", "随访", "筛选")))
+                or (row_order == 5 and any(k in epoch for k in ("治疗",)))
+            )
+            row_cells.append(cell("✓" if scheduled else "待确认", row_order, col_order))
+        row_cells.append(cell("待医学经理确认", row_order, len(columns) - 1))
+        rows.append(row_cells)
+
+    note = (
+        "本节为确定性研究流程表骨架（待医学经理逐格确认后写入正式流程表）。"
+        "访视×活动矩阵由已确认研究时期与访视策略生成："
+        f"研究时期 {('、'.join(epochs))}；访视策略："
+        f"{str(overrides.get('visit_strategy') or '待补充（PICOS 访视策略未记录）')}。"
+        "「✓」为按时期名称确定性映射的计划接触点，「待确认」与访视窗列需"
+        "医学经理依据药物类别、评估时点与访视窗逐一确认；本骨架不构成"
+        "医学推断，未确认前不得作为正式流程表导出。"
+    )
+    table_block = {
+        "block_id": f"gap_marker_{section_id}_soa_table",
+        "block_type": "table",
+        "table_id": f"mwsoa_{section_id}",
+        "rows": rows,
+        "structure": {
+            "column_ids": [f"mwsoacol_{section_id}_{i}" for i in range(len(columns))],
+            "columns": [
+                {"column_id": f"mwsoacol_{section_id}_{i}", "label": name}
+                for i, name in enumerate(columns)
+            ],
+            "row_ids": [f"mwsoarow_{section_id}_{i}" for i in range(len(rows))],
+        },
+        "source_kind": "full_draft_gap_marker",
+    }
+    return [
+        {
+            "block_id": f"gap_marker_{section_id}_soa_note",
+            "block_type": "paragraph",
+            "text": note,
+            "source_kind": "full_draft_gap_marker",
+        },
+        table_block,
+    ]
+
+
+def _gap_placeholder_blocks(
+    section: Mapping[str, Any],
+    front_matter_overrides: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """缺口章节占位块列表：SoA 章节返回 [说明段, 访视×活动矩阵表体]，
+    其余章节返回单个占位块（与既有 _gap_placeholder_block 一致）。"""
+    if _is_soa_section(section):
+        return _soa_skeleton_blocks(section, front_matter_overrides)
+    return [_gap_placeholder_block(section, front_matter_overrides)]
+
+
+
+
 class MedicalWritingRuntimeRepository:
     _LEGACY_FROZEN_STATES = {
         ApprovalState.MEDICALLY_APPROVED,
@@ -230,6 +551,7 @@ class MedicalWritingRuntimeRepository:
         self,
         project_id: str,
         mode: str,
+        front_matter_overrides: Mapping[str, Any] | None = None,
     ) -> ProtocolDocument:
         """Assemble one complete document without mutating the source protocol.
 
@@ -375,17 +697,18 @@ class MedicalWritingRuntimeRepository:
             for section in assembled_document.sections:
                 if str(section.section_id) not in gap_ids:
                     continue
-                section.content_blocks.append(
+                # NEW-3/15/18/43 内容族②：安全性/法规章节落参数化标准文本
+                # （24小时上报/紧急揭盲/妊娠避孕VZV），其余章节保持原占位。
+                # NEW-16：研究流程表（SoA）章节落 [说明段+访视×活动矩阵表体]。
+                for gap_block in _gap_placeholder_blocks(
                     {
-                        "block_id": f"gap_marker_{section.section_id}",
-                        "block_type": "paragraph",
-                        "text": (
-                            "【待补齐】本章正文尚缺来源证据支持，将在补充资料后"
-                            "由 AI 重写本节；当前为占位标记，正式导出前必须补齐。"
-                        ),
-                        "source_kind": "full_draft_gap_marker",
-                    }
-                )
+                        "section_id": section.section_id,
+                        "heading": section.heading,
+                        "section_number": section.section_number,
+                    },
+                    front_matter_overrides,
+                ):
+                    section.content_blocks.append(gap_block)
         if mode == "approved_final":
             self._require_content_quality_clear(assembled_document)
         return assembled_document

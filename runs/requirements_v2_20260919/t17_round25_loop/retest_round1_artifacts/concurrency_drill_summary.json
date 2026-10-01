@@ -1,0 +1,28 @@
+{
+ "total_requests": 10,
+ "by_phase": {
+  "translation": {
+   "count": 1,
+   "ok": 0,
+   "non_ok": 1,
+   "max_elapsed_s": 900.022,
+   "min_elapsed_s": 900.022,
+   "errors": [
+    {
+     "status": -1,
+     "detail": "TimeoutError: timed out"
+    }
+   ]
+  },
+  "triage": {
+   "count": 9,
+   "ok": 9,
+   "non_ok": 0,
+   "max_elapsed_s": 84.411,
+   "min_elapsed_s": 44.294,
+   "errors": []
+  }
+ },
+ "co_resident_samples": 121,
+ "samples": 121
+}

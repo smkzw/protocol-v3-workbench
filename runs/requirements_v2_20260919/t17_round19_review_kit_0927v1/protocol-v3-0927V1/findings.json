@@ -1,0 +1,116 @@
+[
+  {
+    "id": "F01",
+    "severity": "high",
+    "title": "baseline必须等于当前HEAD的自阻塞",
+    "evidence_class": "source_predicate_and_counterexample",
+    "probes": [
+      "P10",
+      "P11"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py",
+      "tools/acceptance/known_failures_0926v1.json"
+    ]
+  },
+  {
+    "id": "F02",
+    "severity": "high",
+    "title": "现场环境继承及非隔离状态使失败漂移",
+    "evidence_class": "source_and_agent_record",
+    "probes": [
+      "P15"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py",
+      "runs/requirements_v2_20260919/t17_round18_0926v1/g1_step6_drift_classification.md"
+    ]
+  },
+  {
+    "id": "F03",
+    "severity": "high",
+    "title": "必测可被skip/同名class/其他参数替代",
+    "evidence_class": "isolated_reproduction",
+    "probes": [
+      "P04",
+      "P05",
+      "P06"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py"
+    ]
+  },
+  {
+    "id": "F04",
+    "severity": "high",
+    "title": "静态工具执行失败仍返回ok",
+    "evidence_class": "isolated_reproduction",
+    "probes": [
+      "P12",
+      "P13",
+      "P14"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py"
+    ]
+  },
+  {
+    "id": "F05",
+    "severity": "high",
+    "title": "坏报告错误路径结构不完整、证据未持久化",
+    "evidence_class": "isolated_control_flow_and_source",
+    "probes": [
+      "P07",
+      "P08",
+      "P09"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py"
+    ]
+  },
+  {
+    "id": "F06",
+    "severity": "medium",
+    "title": "多root歧义自动取首项",
+    "evidence_class": "isolated_reproduction",
+    "probes": [
+      "P16"
+    ],
+    "files": [
+      "tools/acceptance/run_acceptance_gate.py"
+    ]
+  },
+  {
+    "id": "F07",
+    "severity": "medium_high",
+    "title": "模型readiness无视phase并warm两端",
+    "evidence_class": "full_module_mock_usage_frequency_unverified",
+    "probes": [
+      "P17",
+      "P18"
+    ],
+    "files": [
+      "services/api/app/model_phase_scheduler.py"
+    ]
+  },
+  {
+    "id": "F08",
+    "severity": "high",
+    "title": "永久KNOWN及全库清点阻塞开发",
+    "evidence_class": "design_review_not_runtime_bug",
+    "probes": [],
+    "files": [
+      "runs/requirements_v2_20260919/t17_round18_0926v1/HANDOFF_0927_PAUSE.md"
+    ]
+  },
+  {
+    "id": "F09",
+    "severity": "medium",
+    "title": "HANDOFF实现状态与当前源码不同",
+    "evidence_class": "source_record_mismatch",
+    "probes": [],
+    "files": [
+      "services/api/app/writing_reference_preparation_batch.py"
+    ]
+  }
+]

@@ -97,12 +97,20 @@ SERVER_PROMPT_VERSIONS[AiTaskType.PROTOCOL_FULL_DRAFT] = (
 # touching code.
 TASK_TYPE_ROUTE_TIMEOUT_SECONDS: Dict[str, float] = {
     "protocol_synopsis_structuring": 1200.0,
+    # SMOKE-r1-3 ⑦（R27 收敛修订）：医学修订是重上下文结构化生成（章节
+    # 全文+来源约束+2-4 互异候选），ollama 云档 effort=max 下单请求合理
+    # 耗时超过 profile 默认 600s 窗。r2/r3 实证（airun_20260930170310 等）：
+    # 每次尝试都在 600s 被 TimeoutError 杀掉 → 有界重试×回退链把墙钟拖到
+    # ~55 分钟仍未得到有效输出。给修订同 synopsis 档的长窗，预算允许主路
+    # 两次完整尝试。
+    "medical_writing_revision": 1200.0,
 }
 TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS: Dict[str, float] = {
     # Total wall-clock cap for the whole bounded-retry ladder on one route:
     # attempt 1 may use the full 1200s window; later attempts get whatever
     # remains, so the primary route can never black-hole for an hour.
     "protocol_synopsis_structuring": 1800.0,
+    "medical_writing_revision": 2400.0,
 }
 # NEW-22（R27 第2轮修订）：任务级路由表——owner 决策（2026-09-28 修正）指定
 # MEDICAL_WRITING_REVISION 走 ollama-cloud deepseek-v4.1-flash
@@ -111,9 +119,46 @@ TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS: Dict[str, float] = {
 # 修订任务被送到链首网关（实测 mwjob_3dc3f0fa → opencode-go）。表内任务
 # 优先按表解析；表项 profile 缺失/禁用/非云时回退原链序，永不因配置缺口
 # 拒绝服务。其他任务类型按需追加表项。
+# SMOKE-r1-1 根因1（R27 收敛修订）：owner 决策（2026-09-28，
+# runs/requirements_v2_20260919/t17_round27_loop/OWNER_DECISION_task_routing_20260928.md）
+# 的完整路由表是——竞品分诊/研究设计综合/PICOS 辅导/医学修订/翻译辅助走
+# ollama-cloud deepseek-v4.1-flash；本地 MTPLX 只保留方案初稿+摘要结构化。
+# 此前表里只有 medical_writing_revision：竞品分诊经角色绑定主路落到了本地
+# MTPLX xhigh（durable 实证 mwjob_7b72ebc6a4eda816682ab3d1，
+# base_url=127.0.0.1:8002/v1），26 批×重推理档与并发的全文初稿互相排队，
+# 单节点 38 分钟仍未完成。表内任务按表解析；表项 profile 缺失/禁用/非云时
+# 回退原链序，永不因配置缺口拒绝服务。
 TASK_TYPE_ROUTE_PROFILE_OVERRIDES: Dict[str, str] = {
     "medical_writing_revision": "independent_ai__ollama_cloud_dsv41",
+    "competitive_intelligence": "independent_ai__ollama_cloud_dsv41",
+    "protocol_design_synthesis": "independent_ai__ollama_cloud_dsv41",
+    "picos_design_coach": "independent_ai__ollama_cloud_dsv41",
 }
+
+
+def task_routed_cloud_profile(task_type_value: str) -> AiProviderProfile | None:
+    """Owner-designated cloud profile for one task type, or ``None``.
+
+    SMOKE-r1-1 根因1：把 override 表的解析提成单一入口，供
+    ``_capture_task_cloud_route``（提交层路由冻结）与 main.py 的分诊网关
+    （provider 构建 + FrozenTriageAiRoute 冻结）共用，保证两条路径看到的
+    是同一个 profile。只在表项 profile 存在、enabled 且确为 cloud scope
+    时返回它；任何配置缺口返回 ``None``（调用方回退绑定主路/链序），
+    绝不抛错。
+    """
+    preferred_id = TASK_TYPE_ROUTE_PROFILE_OVERRIDES.get(
+        str(task_type_value or "").strip(), ""
+    )
+    if not preferred_id:
+        return None
+    store = runtime_ai_settings_store()
+    try:
+        profile = store.profile(preferred_id)
+    except KeyError:
+        return None
+    if not profile.enabled or profile.deployment_scope != "cloud":
+        return None
+    return profile
 
 GLOBAL_FORBIDDEN_SOURCE_IDS = {
     "generated_html_reference",
@@ -407,36 +452,36 @@ class AiExecutionPolicyResolver:
     def _capture_revision_cloud_route(self) -> bool:
         """Owner decision 2026-09-23/09-28: revision tasks route to cloud.
 
-        The local MTPLX speed model cannot reliably satisfy the medical-
-        writing revision contract (2-4 textually distinct candidates), so
-        MEDICAL_WRITING_REVISION resolves its primary cloud route here.
-        NEW-22: the owner-designated profile
-        (independent_ai__ollama_cloud_dsv41) is resolved FIRST from
-        TASK_TYPE_ROUTE_PROFILE_OVERRIDES; the first enabled cloud profile
-        in the approved fallback chain is only the fallback when the
-        designated profile is missing/disabled/non-cloud.  Other tasks keep
-        the bound primary (local-first).  Returns True when a cloud route
-        was applied; False leaves the bound primary in place.
+        Kept as the revision-named entry point for the existing call sites
+        and tests; delegates to the generalized task-scoped capture.
+        """
+        return self._capture_task_cloud_route(AiTaskType.MEDICAL_WRITING_REVISION)
+
+    def _capture_task_cloud_route(self, task_type: AiTaskType) -> bool:
+        """Owner decision 2026-09-28 (full route table): cloud-tier tasks.
+
+        沿革：2026-09-23 决策=修订走云（本地 MTPLX speed 档在 2-4 互异候选
+        上不可靠，R11 发现）；2026-09-28 owner 修正=竞品分诊/研究设计综合/
+        PICOS 辅导/翻译辅助同样走 ollama-cloud deepseek-v4.1-flash，本地
+        MTPLX 只保留方案初稿+摘要结构化（SMOKE-r1-1 根因1：分诊此前经
+        角色绑定主路落本地 MTPLX xhigh，与全文初稿互拖排队）。
+
+        NEW-22: the owner-designated profile is resolved FIRST via
+        ``task_routed_cloud_profile`` (TASK_TYPE_ROUTE_PROFILE_OVERRIDES);
+        the first enabled cloud profile in the approved fallback chain is
+        only the fallback when the designated profile is
+        missing/disabled/non-cloud.  Tasks without a table entry keep the
+        bound primary (local-first).  Returns True when a cloud route was
+        applied; False leaves the bound primary in place.
         """
         store = runtime_ai_settings_store()
-        preferred_id = TASK_TYPE_ROUTE_PROFILE_OVERRIDES.get(
-            AiTaskType.MEDICAL_WRITING_REVISION.value, ""
-        )
-        if preferred_id:
-            try:
-                profile = store.profile(preferred_id)
-            except KeyError:
-                profile = None
-            if (
-                profile is not None
-                and profile.enabled
-                and profile.deployment_scope == "cloud"
-            ):
-                self._apply_route_profile(
-                    profile,
-                    store.profile_env(profile, dict(os.environ)),
-                )
-                return True
+        preferred = task_routed_cloud_profile(task_type.value)
+        if preferred is not None:
+            self._apply_route_profile(
+                preferred,
+                store.profile_env(preferred, dict(os.environ)),
+            )
+            return True
         for route in store.fallback_chain():
             try:
                 profile = store.profile(route.profile_id)
@@ -528,10 +573,16 @@ class AiExecutionPolicyResolver:
         if task_type and not self.test_only_provider_injection:
             # Test-only provider injection freezes the route at the harness
             # boundary: resolution must not consult live runtime settings
-            # (owner revision→cloud decision applies to production paths).
+            # (owner task→cloud decisions apply to production paths).
+            # SMOKE-r1-1 根因1：任务级路由按表生效（分诊/设计综合/PICOS
+            # 辅导/修订），不再只对修订生效。
             try:
-                if self._task_type(task_type) == AiTaskType.MEDICAL_WRITING_REVISION:
-                    self._capture_revision_cloud_route()
+                resolved_task_type = self._task_type(task_type)
+                if (
+                    resolved_task_type.value in TASK_TYPE_ROUTE_PROFILE_OVERRIDES
+                    and self._dynamic_runtime
+                ):
+                    self._capture_task_cloud_route(resolved_task_type)
             except AiExecutionPolicyDenied:
                 pass
         payload = {
@@ -564,6 +615,20 @@ class AiExecutionPolicyResolver:
     ) -> AiExecutionResolution:
         self._refresh_dynamic_route()
         task_type = self._task_type(request.task_type)
+        if (
+            task_type.value in TASK_TYPE_ROUTE_PROFILE_OVERRIDES
+            and not self.test_only_provider_injection
+            # SMOKE-r2-2 ⑦（R27 收敛修订）：只在动态解析器上应用任务级
+            # 路由表。resolve_*_for_profile 为回退链构造的静态解析器携带
+            # 指定 profile 的完整身份（base_url+密钥环境）；在此覆盖会把
+            # opencode-go 的档案撕成 ollama.com 的 base_url（实测
+            # airun_20261001023257：route_profile_id=opencode_go 但
+            # base_url=ollama.com、密钥环境=OPENCODE_API_KEY → 401×3）。
+            and self._dynamic_runtime
+        ):
+            # SMOKE-r1-1 根因1：注册源路径与内部源路径应用同一任务级路由
+            # 表，云档任务的提交层身份不因入口不同而漂移。
+            self._capture_task_cloud_route(task_type)
         if task_type == AiTaskType.ELIGIBILITY_RULE_REVIEW:
             raise AiExecutionPolicyDenied(
                 "eligibility rule review requires the trusted server batch service"
@@ -711,11 +776,15 @@ class AiExecutionPolicyResolver:
         self._refresh_dynamic_route()
         task_type = self._task_type(request.task_type)
         if (
-            task_type == AiTaskType.MEDICAL_WRITING_REVISION
+            task_type.value in TASK_TYPE_ROUTE_PROFILE_OVERRIDES
             and not self.test_only_provider_injection
+            # SMOKE-r2-2 ⑦：同上——静态（回退链）解析器身份冻结不覆盖。
+            and self._dynamic_runtime
         ):
             # Same test-injection boundary as route_identity_snapshot above.
-            self._capture_revision_cloud_route()
+            # SMOKE-r1-1 根因1：任务级路由按表生效（分诊/设计综合/PICOS
+            # 辅导/修订），不再只对修订生效。
+            self._capture_task_cloud_route(task_type)
         prompt_version = self._validate_common(
             request.module,
             task_type,

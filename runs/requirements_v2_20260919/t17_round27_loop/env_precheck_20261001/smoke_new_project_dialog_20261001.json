@@ -1,0 +1,17 @@
+{
+  "check": "⑥ 新场景冒烟：浏览器打开5186+新建项目对话框可打开不提交",
+  "executed_at": "2026-10-01T18:2x CST（环境管理员，本ask内实跑）",
+  "tool": "ego-browser（真实浏览器，agent task space 29，结束后已关闭）",
+  "steps": [
+    {"step": "打开 http://127.0.0.1:5186/", "result": "loaded", "title": "康哲 AI 医学经理工作台", "url": "http://127.0.0.1:5186/"},
+    {"step": "点击『新建项目』按钮", "result": "dialog_opened", "dialog_role": "新建医学写作项目", "dialog_heading": "新建研究方案项目"},
+    {"step": "核验对话框表单完整性", "result": "complete", "fields": ["建项方式(从零开始/导入方案摘要)", "试验药物", "适应症", "研究分期"]},
+    {"step": "不提交，点击关闭按钮", "result": "dialog_closed", "dialog_still_open_after_close": false},
+    {"step": "项目数未增加", "result": "unchanged", "ui_count": "83", "api_count": 83}
+  ],
+  "evidence_files": [
+    "smoke_new_project_dialog_20261001_snapshot.txt（对话框打开时全页快照）",
+    "smoke_new_project_dialog_20261001_after_close.txt（关闭后全页快照）"
+  ],
+  "side_effects": "零新建项目；space 29 用后即关（finish keep=[]，closedSpace=true）"
+}

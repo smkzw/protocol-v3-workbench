@@ -19,6 +19,8 @@ import pytest
 from services.api.app.medical_writing_research_pipeline import (
     MedicalWritingResearchPipelineService,
     ResearchPipelineState,
+    authoring_draft_save_blocked_by_pipeline,
+    authoring_draft_save_blocker_detail,
     authoring_write_blocker_detail,
     authoring_writes_blocked_by_pipeline,
     research_ready_for_design_recommendations,
@@ -150,6 +152,45 @@ class TestEmptyPipelineState:
 )
 def test_authoring_writes_block_only_while_pipeline_owns_frozen_inputs(stage, blocked):
     assert authoring_writes_blocked_by_pipeline(stage) is blocked
+
+
+# SMOKE-r1-1 根因2反例：管线非终态时 /draft 端点此前与 commit 共用
+# authoring_writes_blocked_by_pipeline——分诊 38 分钟实测期间用户整页只读，
+# 「完成第一步/保存草稿」全部 disabled（前端 MedicalWritingAuthoringJourneySetup
+# authoringWriteBlocked 同源）。修订契约（测试者建议、owner 认可）：快照冻结
+# 范围收窄到已提交字段——commit 保持全量冻结，草稿保存只在 searching 冻结
+# （框架未完成时草稿保存会重建 search_plan，可能改写检索快照写入目标）。
+# 分诊确认层的 material facts hash 失效保护不变：草稿改动若触及相关性字段，
+# 确认时仍按「project material facts have changed」拒绝。
+@pytest.mark.parametrize(
+    "stage,blocked",
+    [
+        ("", False),
+        ("queued", False),
+        ("searching", True),
+        ("triaging", False),
+        ("awaiting_triage_confirm", False),
+        ("preparing", False),
+        ("translating", False),
+        ("analyzing_round1", False),
+        ("analyzing_round2", False),
+        ("awaiting_document_validation", False),
+        ("awaiting_translation_scope", False),
+        ("awaiting_corpus_analysis", False),
+        ("awaiting_corpus_admission", False),
+        ("corpus_ready", False),
+        ("failed", False),
+        ("cancelled", False),
+    ],
+)
+def test_authoring_draft_save_blocked_only_during_searching(stage, blocked):
+    assert authoring_draft_save_blocked_by_pipeline(stage) is blocked
+
+
+def test_authoring_draft_save_blocker_detail_is_actionable():
+    detail = authoring_draft_save_blocker_detail("searching")
+    assert "检索" in detail
+    assert "暂不能保存草稿" in detail
 
 
 def test_authoring_write_blocker_detail_is_actionable():

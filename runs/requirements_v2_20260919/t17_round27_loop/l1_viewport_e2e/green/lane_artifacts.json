@@ -1,0 +1,67 @@
+{
+  "source_receipts.json": [],
+  "pipeline_lineage.json": [],
+  "chapter_mapping.json": [],
+  "candidate_sets.json": [],
+  "quality_scorecard.json": [],
+  "browser_qc.json": [
+    {
+      "indication": "DRY",
+      "page_errors": [],
+      "http_failures": [],
+      "project_id": "proj_user_068a597c49fb"
+    }
+  ],
+  "dry_run_evidence": {
+    "project_id": "proj_user_068a597c49fb",
+    "workspace_route_present": true,
+    "authoring_journey_shell_visible": true,
+    "project_selector_value": "proj_user_068a597c49fb",
+    "new_project_dialog_closed": true,
+    "page_errors": [],
+    "http_failures": [],
+    "failures": [],
+    "laptop_viewport": {
+      "present": true,
+      "shellClientHeight": 612,
+      "bodyClientHeight": 360,
+      "refinementOpen": true,
+      "tabs": [
+        {
+          "label": "项目与产品",
+          "visible": true
+        },
+        {
+          "label": "研究目的",
+          "visible": true
+        },
+        {
+          "label": "竞品范围",
+          "visible": true
+        },
+        {
+          "label": "总体设计",
+          "visible": true
+        }
+      ],
+      "gridTemplateRows": "640px 0px",
+      "layoutChildren": [
+        {
+          "className": "panel editor-panel writing-editor-core writing-pre-document-core",
+          "gridRow": "editor/editor",
+          "gridColumn": "editor/editor",
+          "minHeight": "0px",
+          "rectHeight": 640
+        },
+        {
+          "className": "panel ai-rail writing-ai-core",
+          "gridRow": "ai/ai",
+          "gridColumn": "ai/ai",
+          "minHeight": "0px",
+          "rectHeight": 28
+        }
+      ]
+    },
+    "passed": true
+  }
+}

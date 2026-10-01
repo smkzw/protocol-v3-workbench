@@ -4913,6 +4913,43 @@ class CompetitorTriageService:
 
         run = run.model_copy(update={"chunks": updated_chunks})
 
+        # NEW-28（R27 第3轮修订）：传输层瞬时失败（provider error）自动重试
+        # 一次。此前一次模型抖动就把整轮跑成 partial_failed，用户必须自己
+        # 发现并手动重试。验证失败与缺失补偿耗尽类不重试——它们已用满每
+        # chunk 2 次的调用预算（TestBoundedMissingCandidateCompensation 契约
+        # 禁止第三次调用），确定性失败（候选缺失/输入漂移）重跑也不会变。
+        transient_failed = [
+            chunk for chunk in updated_chunks
+            if chunk.status == CompetitorTriageChunkStatus.FAILED
+            and (chunk.error_message or "").startswith("provider error:")
+        ]
+        if transient_failed:
+            retried_chunk_ids: List[str] = []
+            for failed_chunk in transient_failed:
+                idx = updated_chunks.index(failed_chunk)
+                retry_candidates = [
+                    candidate_map[nct]
+                    for nct in failed_chunk.nct_ids
+                    if nct in candidate_map
+                ]
+                if not retry_candidates:
+                    continue
+                retry_input = _build_chunk_input(
+                    journey, retry_candidates, failed_chunk.chunk_index
+                )
+                if _hash_value(retry_input) != failed_chunk.input_hash:
+                    continue
+                retried_chunk_ids.append(failed_chunk.chunk_id)
+                updated_chunks[idx] = self._execute_chunk(
+                    verified, failed_chunk, retry_input, failed_chunk.nct_ids
+                )
+            run = run.model_copy(update={"chunks": updated_chunks})
+            if retried_chunk_ids:
+                logger.info(
+                    "NEW-28 triage auto-retry executed once: chunks=%s",
+                    retried_chunk_ids,
+                )
+
         # Inline and durable paths share finalization so deterministic chunks
         # cannot mask the independent-AI provider at run level.
         run = self._finalize_run_status(run)

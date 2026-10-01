@@ -1,0 +1,31 @@
+== r5-revroute 医学修订路由核对（sqlite3 只读 + 无认证路径探针） ==
+时间: 2026-09-30 15:49:40 +0800  后端: PID 14256（09-30 15:27:52 起，含 14:28 仓储修复）
+
+-- 本次UI触发的新修订 durable job（M8·随机化节·统计视角指令） --
+mwjob_437ad40206a3f143ff0c6789|failed|ollama-cloud|deepseek-v4.1-flash|3|2026-09-30T07:46:42.090383+00:00|2026-09-30T07:47:27.984274+00:00
+
+-- payload 提交层路由快照 --
+ai_policy.base_url = https://ollama.com
+ai_policy.provider_name = ollama-cloud
+ai_policy.model_name = deepseek-v4.1-flash
+ai_policy.route_profile_id = independent_ai__ollama_cloud_dsv41
+route_snapshot.identity_sha256 = 010d92439b71a7a69d0f83fcd8a49d3a4602e39745dbd754248ba931830a0f7f
+
+-- gateway 实际调用（ai_task_runs.jsonl 本窗口 medical_writing_revision） --
+2026-09-30T07:46:43.169348Z failed route_base_url=https://ollama.com error=AI provider request failed: HTTP 404
+2026-09-30T07:46:57.814907Z failed route_base_url=https://ollama.com error=AI provider request failed: HTTP 404
+2026-09-30T07:47:27.615207Z failed route_base_url=https://ollama.com error=AI provider request failed: HTTP 404
+
+-- 无认证路径探针（空JSON、无密钥，仅判路径形态） --
+POST https://ollama.com/chat/completions  -> 404（路径不存在；与gateway报错一致）
+POST https://ollama.com/v1/chat/completions -> 401（路径存在，仅缺认证）
+GET  https://ollama.com/v1/models          -> 200
+
+-- 客户端URL拼接（services/api/app/ai_gateway.py:1312） --
+  request = urllib.request.Request(f\"{self.base_url}/chat/completions\", ...)
+  ⇒ base_url=https://ollama.com 时 POST 打到 /chat/completions（404）；其余所有云 profile 的 base_url 均含 /v1（opencode/deepseek/alibaba/cms-router/MTPLX）
+
+== 结论 ==
+① ai_route.base_url 字面核对：= https://ollama.com ✓（owner决策转录值）——提交层路由真实生效并已发起真实外呼
+② 功能性路由错误（P0）：base_url 缺 /v1 后缀 → 每次调用 404，修订零产出；应改 independent_ai__ollama_cloud_dsv41 的 base_url 为 https://ollama.com/v1（或网关对无/v1的base_url规范化）——owner决策文档转录值本身缺后缀
+③ UI可见失败：「AI修订失败：ValueError: 独立AI输出未通过医学写作校验：AI provider request failed: HTTP 404」（错误归因为『输出未通过校验』与实际404网络错误不符，误导性表述，P2）

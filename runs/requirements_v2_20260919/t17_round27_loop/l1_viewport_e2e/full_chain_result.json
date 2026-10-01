@@ -1,0 +1,94 @@
+{
+  "trace": [
+    {
+      "name": "project created",
+      "at": "2026-09-29T17:16:49.073Z"
+    },
+    {
+      "name": "framing button diag",
+      "detail": "{\"disabled\":false,\"title\":\"提交并完成第一步\"}",
+      "at": "2026-09-29T17:17:18.004Z"
+    },
+    {
+      "name": "framing after-click diag",
+      "detail": "{\"impact\":true,\"strip0done\":\"active  \",\"msg\":[\"当前有尚未保存的修改。\"],\"pipelineStage\":\"等待语料准入\"}",
+      "at": "2026-09-29T17:17:20.509Z"
+    },
+    {
+      "name": "framing committed",
+      "at": "2026-09-29T17:17:24.951Z"
+    },
+    {
+      "name": "picos button diag",
+      "detail": "{\"disabled\":true,\"title\":\"研究流水线正在检索公开研究；为保持检索/分诊快照冻结，暂不能保存研究框架。可等待流水线结束后重试，或在竞品处理抽屉取消本次流水线。\"}",
+      "at": "2026-09-29T17:17:34.070Z"
+    },
+    {
+      "name": "picos button diag settled",
+      "detail": "{\"disabled\":true,\"title\":\"研究流水线正在检索公开研究；为保持检索/分诊快照冻结，暂不能保存研究框架。可等待流水线结束后重试，或在竞品处理抽屉取消本次流水线。\"}",
+      "at": "2026-09-29T17:17:34.070Z"
+    },
+    {
+      "name": "picos button diag after cancel",
+      "detail": "{\"disabled\":true,\"title\":\"请先保存并完成第一步变更后再提交PICOS\"}",
+      "at": "2026-09-29T17:18:23.628Z"
+    },
+    {
+      "name": "step1 back to draft, re-completing",
+      "detail": "round=0",
+      "at": "2026-09-29T17:18:23.628Z"
+    },
+    {
+      "name": "picos commit round",
+      "detail": "round=1",
+      "at": "2026-09-29T17:18:26.065Z"
+    },
+    {
+      "name": "picos final diag",
+      "detail": "{\"impact\":true,\"strip1\":\"  \",\"msg\":[\"当前有尚未保存的修改。\"],\"btn\":{\"title\":\"\"},\"fieldsetDisabled\":true}",
+      "at": "2026-09-29T17:18:26.066Z"
+    },
+    {
+      "name": "picos strip not done this round",
+      "at": "2026-09-29T17:19:12.475Z"
+    },
+    {
+      "name": "picos commit round",
+      "detail": "round=2",
+      "at": "2026-09-29T17:19:12.476Z"
+    },
+    {
+      "name": "picos final diag",
+      "detail": "{\"impact\":false,\"strip1\":\"active  \",\"msg\":[\"当前有尚未保存的修改。\"],\"btn\":{\"title\":\"\"},\"fieldsetDisabled\":true}",
+      "at": "2026-09-29T17:19:12.496Z"
+    },
+    {
+      "name": "picos committed",
+      "at": "2026-09-29T17:19:12.831Z"
+    },
+    {
+      "name": "picos committed",
+      "at": "2026-09-29T17:19:12.882Z"
+    },
+    {
+      "name": "override click diag",
+      "detail": "{\"overrideDetailsOpen\":null,\"overrideBtn\":\"gone\",\"msg\":[\"已记录医学例外放行；语料状态仍保持“未就绪”，缺口不会被隐藏。\"],\"gateText\":\"尚未满足的准入条件竞品候选研究已完成人工相关性分诊至少一份相关Protocol已完成内容校验与结构化解析英文竞品方案关键章节已形成监管中文参考译文项目适用中文语料已完成医学准入PICOS关键设计事实与语料冲突已处置\"}",
+      "at": "2026-09-29T17:19:17.546Z"
+    },
+    {
+      "name": "corpus override granted",
+      "at": "2026-09-29T17:19:17.589Z"
+    },
+    {
+      "name": "document created OK",
+      "at": "2026-09-29T17:19:20.688Z"
+    }
+  ],
+  "finalState": {
+    "failure": false,
+    "blockerGuidance": false,
+    "bodySnippet": "\n    项目总看板证据调研与方案设计入排审核医学监查数据分析与TFL医学写作安全信号与PV协同来源台账审批中心最后更新09:00项目MSC-201 · 绝经后血管舒缩症状（潮热） · II期 · MW-II-052E7230磷酸芦可替尼乳膏 · 特应性皮炎 · III · RUX-03-002CMS-D001 · 银屑病 · II/III · CMS-D001MY009 · 溃疡性结肠炎 · IIa · MY009-UCMY008211A · 阵发性睡眠性血红蛋白尿 · III · MY008211A-PNH-3-01MY008211A · 阵发性睡眠性血红蛋白尿 · III · MY008211A-PNH-3-02MG-K10 · 季节性过敏性鼻炎 · II · MG-K10-SAR-001MG-K10 · 慢性鼻窦炎伴鼻息肉 · III · MG-K10-CRSwNPMG-K10 ·"
+  },
+  "product": "MSC-201",
+  "indication": "绝经后血管舒缩症状（潮热）"
+}

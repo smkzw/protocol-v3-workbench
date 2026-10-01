@@ -1,0 +1,23 @@
+== r2-revroute 医学修订路由核对（sqlite3 只读） ==
+DB: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_durable_jobs.sqlite3
+时间: 2026-09-29 21:18:32 +0800
+
+-- 最新 section_ai_candidate durable job（本次UI触发） --
+mwjob_3dc3f0faf7e7f564c7304ab8|completed|opencode-go|deepseek-v4.1-flash|2|2026-09-29T12:50:38.197251+00:00|2026-09-29T13:16:38.869902+00:00
+
+-- payload ai_policy / route_identity_snapshot --
+ai_policy.base_url = https://opencode.ai/zen/go/v1
+ai_policy.provider_name = opencode-go
+ai_policy.model_name = deepseek-v4.1-flash
+ai_policy.route_profile_id = independent_ai__opencode_go_deepseek_v41_flash
+route_identity_snapshot.base_url = https://opencode.ai/zen/go/v1
+route_identity_snapshot.profile_id = independent_ai__opencode_go_deepseek_v41_flash
+route_identity_snapshot.model = deepseek-v4.1-flash
+route_identity_snapshot.identity_sha256 = 66d6af5b4a440fe9df235ac21dae0342c25a92516e1c478f1797e80e6360cc1e
+
+-- ai_task_runs.jsonl 本次修订 gateway 运行 --
+2026-09-29T12:50:40.191319Z failed route_base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4.1-flash profile=independent_ai__opencode_go_deepseek_v41_flash
+2026-09-29T12:58:14.981607Z completed route_base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4.1-flash profile=independent_ai__opencode_go_deepseek_v41_flash
+
+-- 期望（owner决策20260928）: ai_route.base_url = https://ollama.com (independent_ai__ollama_cloud_dsv41) --
+-- 实测: https://opencode.ai/zen/go/v1 (independent_ai__opencode_go_deepseek_v41_flash) => 路由未按owner决策生效 => P0 --

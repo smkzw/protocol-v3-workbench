@@ -51,6 +51,7 @@ from packages.contracts.workbench_contracts import (
     MedicalWritingAuthoringJourneyDraftSaveRequest,
     MedicalWritingFactIntakeApplyRequest,
     MedicalWritingFactIntakeConflictError,
+    MedicalWritingFactIntakeProviderUnavailableError,
     MedicalWritingFactIntakeConversationCreateRequest,
     MedicalWritingFactIntakeScope,
     MedicalWritingFactIntakeTurnRequest,
@@ -226,6 +227,8 @@ from .medical_writing_research_pipeline import (
     RESEARCH_PIPELINE_JOB_TYPE,
     authoring_writes_blocked_by_pipeline,
     authoring_write_blocker_detail,
+    authoring_draft_save_blocked_by_pipeline,
+    authoring_draft_save_blocker_detail,
 )
 
 logger = logging.getLogger(__name__)
@@ -1220,6 +1223,17 @@ medical_writing_authoring_journey_service = MedicalWritingAuthoringJourneyServic
 
 
 def _current_medical_writing_study_definition(project_id: str):
+    # NEW-1 存量回填（R27 第3轮修订，惰性重派生）：装配计划取定义前，对
+    # PICOS 已提交但干预规则仍为旧版权威的存量项目（HFrEF 等）做一次回填，
+    # 派生并持久化结构化权威——旧项目下次打开装配计划即解锁 8 项干预阻断。
+    # 幂等：回填方法内部对已结构化/无旧字段的项目直接跳过。
+    try:
+        medical_writing_authoring_journey_service.backfill_structured_intervention_rules(
+            project_id
+        )
+    except Exception:
+        # 回填是尽力而为的解锁路径；任何异常不得阻断装配计划本身。
+        pass
     definition = medical_writing_authoring_journey_service.get(
         project_id
     ).study_definition
@@ -1608,6 +1622,27 @@ def _independent_ai_profile():
     return profile
 
 
+def _task_routed_independent_profile(task_type_value: str):
+    """SMOKE-r1-1 根因1：任务级路由感知的独立 AI profile 解析。
+
+    Owner 决策（2026-09-28，OWNER_DECISION_task_routing_20260928.md）：竞品
+    分诊/研究设计综合/PICOS 辅导走 ollama-cloud deepseek-v4.1-flash，本地
+    MTPLX 只保留方案初稿+摘要结构化。角色的 independent_ai 绑定仍指向
+    绑定主路（本地 MTPLX，服务初稿/摘要），云档任务在此改读
+    TASK_TYPE_ROUTE_PROFILE_OVERRIDES 指定的云 profile；表项缺失/禁用/非云
+    时回退绑定主路（含原有 binding 校验），绝不因配置缺口拒绝服务。
+    """
+    try:
+        from .ai_execution_policy import task_routed_cloud_profile
+
+        profile = task_routed_cloud_profile(task_type_value)
+    except Exception:
+        profile = None
+    if profile is not None:
+        return profile
+    return _independent_ai_profile()
+
+
 def _independent_ai_provider_for_profile(profile):
     """Build a frozen independent-AI provider from the selected profile."""
 
@@ -1617,7 +1652,7 @@ def _independent_ai_provider_for_profile(profile):
     return configured_ai_provider_from_env(values)
 
 
-def _independent_ai_primary_unusable_reason(env: Dict[str, str]) -> str:
+def _independent_ai_primary_unusable_reason(env: dict[str, str]) -> str:
     """Reason the primary independent-AI provider cannot run, or "" if usable.
 
     R02: the production chain only accepts OpenAICompatibleAiProvider;
@@ -1743,8 +1778,14 @@ class _RoleBoundRemoteOcrGateway:
             method="POST",
         )
         def send_request(_lease=None):
-            with urllib.request.urlopen(http_request, timeout=self.timeout_seconds) as response:
-                return response.read()
+            # 0928: this is a managed-server model touchpoint (oMLX OCR), so
+            # it must go through the same phase-arbitration + lifecycle
+            # sentinel bracket as every other dispatch (no bypass).
+            from .ai_gateway import _managed_dispatch
+
+            with _managed_dispatch(self.base_url):
+                with urllib.request.urlopen(http_request, timeout=self.timeout_seconds) as response:
+                    return response.read()
 
         try:
             response_body = (
@@ -2314,8 +2355,14 @@ def _hy_mt2_translator_adapter(
             },
         )
         def _execute_body_translation_request(_lease=None):
-            with urllib.request.urlopen(request, timeout=300) as response:
-                return _adapter_json.loads(response.read().decode("utf-8"))
+            # 0928: managed oMLX touchpoint (translation_body role) — must go
+            # through the same phase-arbitration + lifecycle sentinel bracket
+            # as every other dispatch (no bypass).
+            from .ai_gateway import _managed_dispatch
+
+            with _managed_dispatch(base_url):
+                with urllib.request.urlopen(request, timeout=300) as response:
+                    return _adapter_json.loads(response.read().decode("utf-8"))
 
         result = (
             run_gated_omlx_request(
@@ -2594,7 +2641,12 @@ competitor_triage_service = CompetitorTriageService(
     durable_store=mw_durable_store,
     durable_worker=mw_durable_worker,
     provider_factory=lambda: _resolve_triage_provider(),
-    active_profile_resolver=_independent_ai_profile,
+    # SMOKE-r1-1 根因1：分诊路由冻结与 provider 构建必须看到同一个
+    # 任务级路由结果（competitive_intelligence → owner 决策云档），否则
+    # 冻结快照与执行 provider 身份不一致。
+    active_profile_resolver=lambda: _task_routed_independent_profile(
+        "competitive_intelligence"
+    ),
 )
 
 from .medical_writing_corpus_analysis_ai import (  # noqa: E402
@@ -3664,6 +3716,16 @@ def runtime_readiness():
 @app.get("/api/ai-gateway/status")
 def ai_gateway_status():
     return ai_gateway_status_from_env()
+
+
+@app.get("/api/model-lifecycle/status")
+def model_lifecycle_status():
+    """AGG25 P1-7: expose managed-server residency plus the arbiter state
+    (current grant, per-phase users, queue positions) so the UI can tell a
+    queued user where they stand instead of a silent wait."""
+    from .model_lifecycle_orchestrator import lifecycle_status
+
+    return lifecycle_status()
 
 
 @app.get("/api/ai-gateway/settings")
@@ -5848,9 +5910,9 @@ def retry_writing_reference_translation_batch(
         # load.  ensure() additionally handles server-up, mutual exclusion
         # and A18 verification; refusal/failure must never block the retry.
         try:
-            from .model_lifecycle_orchestrator import ensure_phase
+            from .model_lifecycle_orchestrator import warm_phase
 
-            ensure_phase("translation")
+            warm_phase("translation")
         except Exception:
             pass  # warm-up is best-effort; the fallback chain handles failures
         batch = writing_reference_translation_batch_service.retry(
@@ -6928,6 +6990,16 @@ def post_medical_writing_fact_intake_turn(
         )
         payload = result.model_dump(mode="json")
         return payload
+    except MedicalWritingFactIntakeProviderUnavailableError as exc:
+        # AGG25-P1-4: provider unavailability is a temporary service
+        # condition, not a write conflict — never surfaced as 409.
+        raise HTTPException(
+            status_code=503,
+            detail=json.dumps(
+                {"code": "provider_unavailable", "message": str(exc)},
+                ensure_ascii=False,
+            ),
+        ) from exc
     except MedicalWritingFactIntakeConflictError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
     except KeyError as exc:
@@ -8001,6 +8073,38 @@ def start_medical_writing_full_draft(project_id: str, request: dict):
         raise HTTPException(status_code=409, detail=str(exc))
 
 
+@app.post("/api/projects/{project_id}/medical-writing/full-drafts/{job_id}/resume", status_code=202)
+def resume_medical_writing_full_draft(project_id: str, job_id: str, request: dict):
+    """NEW-35（R27 第3轮修订）：失败/取消的全文初稿任务续跑入口。
+
+    批次工件按批落盘，run_job 重跑时逐批复用已完成批次（不会重头再来）。
+    此前任务失败后 UI 没有任何恢复入口，用户等待数小时颗粒无收。仅接受
+    failed/cancelled 状态（store.retry 对 queued/running/completed 拒绝
+    重复执行）。
+    """
+    try:
+        canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        retry_result = mw_durable_store.retry(canonical_id, job_id)
+        if retry_result.requeued:
+            try:
+                mw_durable_worker.wake(canonical_id, job_id)
+            except Exception:
+                pass
+        record = mw_durable_store.get(canonical_id, job_id)
+        return {
+            "job_id": job_id,
+            "status": record.status,
+            "requeued": retry_result.requeued,
+            "job_type": FULL_DRAFT_JOB_TYPE,
+        }
+    except (KeyError, FileNotFoundError):
+        raise HTTPException(status_code=404, detail=f"medical writing project not found: {project_id}")
+    except DurableJobRequestConflict as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except (RuntimeStoreError, ValueError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+
+
 @app.get("/api/projects/{project_id}/medical-writing/full-drafts/current")
 def get_current_medical_writing_full_draft(project_id: str):
     """Rediscover the newest completed candidate that still targets this draft."""
@@ -8310,6 +8414,9 @@ def continue_medical_writing_research_pipeline_after_triage(project_id: str, req
             retained_candidate_ids=list(retained) if retained else None,
         )
         return {"pipeline": state.as_dict()}
+    except ResearchPipelineConflictError as exc:
+        # NEW-9：零篮子确认且无语料出路记录 → 409，横幅展示三条出路文案。
+        raise HTTPException(status_code=409, detail=str(exc))
     except ResearchPipelineError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
     except KeyError as exc:
@@ -8853,9 +8960,12 @@ def save_medical_writing_authoring_stage_draft(
             ).stage
         except KeyError:
             pipeline_stage = ""
-        if authoring_writes_blocked_by_pipeline(pipeline_stage):
+        # SMOKE-r1-1 根因2：草稿保存只在与活跃节点冲突时冻结（searching），
+        # 分诊/翻译等长阶段放行草稿编辑；阶段提交（commit 端点）仍按
+        # authoring_writes_blocked_by_pipeline 全量冻结已提交字段。
+        if authoring_draft_save_blocked_by_pipeline(pipeline_stage):
             raise ResearchPipelineConflictError(
-                authoring_write_blocker_detail(pipeline_stage)
+                authoring_draft_save_blocker_detail(pipeline_stage)
             )
         return medical_writing_authoring_journey_service.save_stage_draft(
             canonical_id, request
@@ -8911,8 +9021,13 @@ def finalize_medical_writing_corpus_triage(
 
 
 def _resolve_triage_provider():
-    """Resolve the active product-owned independent AI for triage."""
-    profile = _independent_ai_profile()
+    """Resolve the active product-owned independent AI for triage.
+
+    SMOKE-r1-1 根因1：分诊按 owner 决策（2026-09-28）走任务级路由表——
+    competitive_intelligence 命中 ollama-cloud deepseek-v4.1-flash 时直接
+    构建云 provider；表项缺失/禁用/非云时回退 independent_ai 绑定主路。
+    """
+    profile = _task_routed_independent_profile("competitive_intelligence")
     role_store = runtime_ai_role_settings_store()
     provider = configured_ai_provider_from_env(
         role_store.provider_store.profile_env(profile)
@@ -8932,6 +9047,26 @@ def _resolve_triage_provider():
         ) from exc
 
 
+def _warm_triage_phase_for_provider(provider: Any) -> None:
+    """round21 warm-up, SMOKE-r1-1 根因1 修订：只对本地受管端点预热。
+
+    分诊走云（owner 决策 2026-09-28）后，warm_phase("triage") 不应再把
+    MTPLX 拉起来与全文初稿抢队列；仅当解析出的分诊 provider 指向受管本地
+    服务器（回退绑定主路的场景）时才预热。best-effort，绝不阻断分诊本身。
+    """
+    try:
+        from .ai_gateway import _endpoint_is_managed
+
+        base_url = str(getattr(provider, "base_url", "") or "")
+        if not _endpoint_is_managed(base_url):
+            return
+        from .model_lifecycle_orchestrator import warm_phase
+
+        warm_phase("triage")
+    except Exception:
+        pass  # warm-up is best-effort; the fallback chain handles failures
+
+
 @app.post(
     "/api/projects/{project_id}/medical-writing/authoring-journey/competitor-triage",
     status_code=202,
@@ -8942,16 +9077,10 @@ def create_competitor_triage_run(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
-        # round21: warm the MTPLX triage model before dispatching (best-effort,
-        # same contract as the translation retry warm-up).
-        try:
-            from .model_lifecycle_orchestrator import ensure_phase
-
-            ensure_phase("triage")
-        except Exception:
-            pass  # warm-up is best-effort; the fallback chain handles failures
+        triage_provider = _resolve_triage_provider()
+        _warm_triage_phase_for_provider(triage_provider)
         result = competitor_triage_service.create_run(
-            canonical_id, request, _resolve_triage_provider()
+            canonical_id, request, triage_provider
         )
         # In durable mode, create_run returns TriageDurableStartResult with
         # run_id + job_id and does NOT execute AI inline.  Wake the worker.
@@ -9044,16 +9173,10 @@ def retry_competitor_triage_run(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
-        # round21: warm the MTPLX triage model before dispatching (best-effort,
-        # same contract as the translation retry warm-up).
-        try:
-            from .model_lifecycle_orchestrator import ensure_phase
-
-            ensure_phase("triage")
-        except Exception:
-            pass  # warm-up is best-effort; the fallback chain handles failures
+        triage_provider = _resolve_triage_provider()
+        _warm_triage_phase_for_provider(triage_provider)
         result = competitor_triage_service.retry_run(
-            canonical_id, run_id, request, _resolve_triage_provider()
+            canonical_id, run_id, request, triage_provider
         )
         if hasattr(result, "job_id") and result.job_id:
             try:
@@ -10013,14 +10136,17 @@ def _verify_medical_writing_document_export(project_id: str, mode: str) -> dict:
     return {"project_id": project_id, "mode": mode}
 
 
-def _assemble_medical_writing_document_export(verified: dict) -> dict:
+def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
+    # SMOKE-r1-3 ⑧（R27 收敛修订）：占位符门要读导出任务上下文里的
+    # acknowledge_placeholders。此前函数体内引用了未定义的 _context
+    # （前轮 NEW-17 引入的残留），「组装章节」阶段必抛
+    # NameError: name '_context' is not defined（r2/r3 两轮导出 job 实证
+    # 逐字一致）。回调 lambda 现在把任务上下文原样传入。
     canonical_id = str(verified["project_id"])
     mode = str(verified["mode"])
-    document = medical_writing_runtime_repository.assemble_document_for_export(
-        canonical_id,
-        mode,
-    )
     source_mode = medical_writing_document_service.source_mode(canonical_id)
+    # NEW-3/15/18/43 内容族②：overrides 先行计算并传入装配器，安全性缺口
+    # 章节的参数化法规文本（试验药物/日期）因此可得。
     front_matter_overrides = {}
     if source_mode != "original_protocol_docx":
         if medical_writing_authoring_journey_service.has_project(canonical_id):
@@ -10033,6 +10159,33 @@ def _assemble_medical_writing_document_export(verified: dict) -> dict:
                 front_matter_overrides["investigational_product"] = (
                     definition.framing.investigational_product
                 )
+            # NEW-15/18 残留（R27 第1轮末修订）：随机化/盲法与风险控制骨架的
+            # 参数来自已确认结构化设计事实与 PICOS 事实；未记录的值保持空串，
+            # 由模板侧以「待医学经理确认」占位，绝不编造。
+            if definition is not None:
+                structured = getattr(definition.framing, "structured_design", None)
+                if structured is not None:
+                    front_matter_overrides["design_comparator_type"] = str(
+                        getattr(structured, "comparator_type", "") or ""
+                    )
+                    front_matter_overrides["design_randomization_mode"] = str(
+                        getattr(structured, "randomization_mode", "") or ""
+                    )
+                    front_matter_overrides["design_blinding_mode"] = str(
+                        getattr(structured, "blinding_mode", "") or ""
+                    )
+                picos = getattr(definition, "picos", None)
+                if picos is not None:
+                    front_matter_overrides["sample_size_strategy"] = str(
+                        getattr(picos, "sample_size_strategy", "") or ""
+                    )
+                    # NEW-16：SoA 骨架列由已确认研究时期与访视策略生成。
+                    front_matter_overrides["study_epochs"] = list(
+                        getattr(picos, "study_epochs", []) or []
+                    )
+                    front_matter_overrides["visit_strategy"] = str(
+                        getattr(picos, "visit_strategy", "") or ""
+                    )
         project_record = user_project_store.get(canonical_id)
         if project_record is not None:
             product_name = str(project_record.product_name or "").strip()
@@ -10046,11 +10199,33 @@ def _assemble_medical_writing_document_export(verified: dict) -> dict:
                 front_matter_overrides["protocol_date"] = (
                     project_record.protocol_date
                 )
+    document = medical_writing_runtime_repository.assemble_document_for_export(
+        canonical_id,
+        mode,
+        front_matter_overrides=front_matter_overrides,
+    )
+    # NEW-21：错字词典替换只发生在导出副本（存储的源文档行不动），逐章变更
+    # 注记并入占位符报告一并呈现。
+    typo_notes = _apply_export_text_quality_lint(document)
+    # NEW-17 内容族①（R27 第3轮修订）：导出占位符门。
+    placeholder_report = _export_placeholder_report(document)
+    if typo_notes:
+        placeholder_report["text_quality"]["replacements"] = typo_notes
+    _enforce_export_placeholder_gate(
+        placeholder_report,
+        mode=mode,
+        acknowledge=bool(
+            (getattr(context, "payload", None) or {}).get(
+                "acknowledge_placeholders"
+            )
+        ),
+    )
     return {
         **verified,
         "document": document,
         "source_mode": source_mode,
         "front_matter_overrides": front_matter_overrides,
+        "placeholder_report": placeholder_report,
     }
 
 
@@ -10193,6 +10368,148 @@ def _medical_writing_export_headers(
     }
 
 
+_EXPORT_PLACEHOLDER_PATTERN = re.compile(
+    r"【待补齐】"
+    r"|【切片闭环\d{4}V\d+】"
+    r"|【UI编辑\d{4}V\d+】"
+)
+
+
+# NEW-21（R27 第1轮末修订）：导出层错字词典——仅收录有真实现场证据的错字
+# （R1A 慢咳项目「咳嗉」），避免无证据映射引入新错。替换只发生在导出副本
+# 并留逐章变更注记；导入源行不动（守 immutable 红线）。
+_EXPORT_TYPO_REPLACEMENTS = {
+    "咳嗉": "咳嗽",
+}
+# CJK 叠词：2-4 个汉字单元紧邻重复（如「策略策略」「评估评估」）。
+# 仅检测入清单，不自动改写——去重需要语义判断，交给医学经理/AI 修订。
+_EXPORT_CJK_STUTTER_PATTERN = re.compile(r"([\u4e00-\u9fff]{2,4})\1")
+
+
+def _apply_export_text_quality_lint(document) -> list[dict]:
+    """在导出副本上应用错字替换，返回逐章变更注记。存储的源文档不动。"""
+    notes: list[dict] = []
+    for section in document.sections:
+        for index, block in enumerate(section.content_blocks or []):
+            if not isinstance(block, Mapping):
+                continue
+            text = block.get("text")
+            if not isinstance(text, str) or not text:
+                continue
+            replaced = text
+            block_notes: list[dict] = []
+            for wrong, correct in _EXPORT_TYPO_REPLACEMENTS.items():
+                if wrong in replaced:
+                    block_notes.append(
+                        {
+                            "section_number": section.section_number or "",
+                            "section_heading": section.heading,
+                            "block_id": str(block.get("block_id") or ""),
+                            "wrong": wrong,
+                            "correct": correct,
+                            "count": replaced.count(wrong),
+                        }
+                    )
+                    replaced = replaced.replace(wrong, correct)
+            if block_notes:
+                block["text"] = replaced
+                notes.extend(block_notes)
+    return notes
+
+
+def _export_placeholder_report(document) -> dict:
+    """NEW-17 内容族①（R27 第3轮修订）：逐章统计导出件中的【待补齐】占位
+    与历史测试标记，供导出门拦截与清单确认。NEW-21：同报告附文本质量清单
+    （错字命中 + CJK 叠词逐章摘录）。"""
+    sections_report: list[dict] = []
+    total = 0
+    typo_hits: list[dict] = []
+    stutters: list[dict] = []
+    for section in document.sections:
+        texts: list[str] = []
+        for block in section.content_blocks or []:
+            if isinstance(block, Mapping):
+                text = str(block.get("text") or block.get("body") or "")
+            else:
+                text = str(block or "")
+            if text:
+                texts.append(text)
+        matches: list[str] = []
+        for text in texts:
+            matches.extend(match.group(0) for match in _EXPORT_PLACEHOLDER_PATTERN.finditer(text))
+        if matches:
+            total += len(matches)
+            sections_report.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                    "count": len(matches),
+                    "excerpts": [
+                        text[max(0, match.start() - 12): match.end() + 12]
+                        for text in texts
+                        for match in _EXPORT_PLACEHOLDER_PATTERN.finditer(text)
+                    ][:5],
+                }
+            )
+        joined = "\n".join(texts)
+        for wrong in _EXPORT_TYPO_REPLACEMENTS:
+            if wrong in joined:
+                typo_hits.append(
+                    {
+                        "section_number": section.section_number or "",
+                        "section_heading": section.heading,
+                        "wrong": wrong,
+                        "count": joined.count(wrong),
+                    }
+                )
+        for match in _EXPORT_CJK_STUTTER_PATTERN.finditer(joined):
+            stutters.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                    "excerpt": joined[max(0, match.start() - 10): match.end() + 10],
+                }
+            )
+    return {
+        "total_count": total,
+        "sections": sections_report,
+        "text_quality": {
+            "typo_hits": typo_hits,
+            "stutters": stutters[:50],
+            "stutter_count": len(stutters),
+        },
+    }
+
+
+def _enforce_export_placeholder_gate(
+    report: dict,
+    *,
+    mode: str,
+    acknowledge: bool,
+) -> None:
+    """approved_final 存在占位符一律拒绝；draft 需显式确认（携带逐章清单）。"""
+    total = int(report.get("total_count") or 0)
+    if not total:
+        return
+    sections = report.get("sections") or []
+    listing = "；".join(
+        f"{item.get('section_number') or item.get('section_heading')}（{item.get('count')}处）"
+        for item in sections
+    )
+    if mode == "approved_final":
+        raise ValueError(
+            f"正式导出被拒绝：文档仍有 {total} 处【待补齐】占位或测试标记"
+            f"（{listing}）。请逐章补齐并冻结后再正式导出。"
+        )
+    if not acknowledge:
+        raise ValueError(
+            f"草稿导出含 {total} 处【待补齐】占位或测试标记（{listing}）。"
+            "请逐章补齐；确需先行导出草稿时，请勾选「已知悉未完成占位」"
+            "（acknowledge_placeholders=true）后重试。"
+        )
+    return None
+
+
 def _medical_writing_document_export_callbacks():
     return MedicalWritingDocumentExportCallbacks(
         verify_export_conditions=lambda context: (
@@ -10201,8 +10518,8 @@ def _medical_writing_document_export_callbacks():
                 context.mode,
             )
         ),
-        assemble_sections=lambda _context, verified: (
-            _assemble_medical_writing_document_export(verified)
+        assemble_sections=lambda context, verified: (
+            _assemble_medical_writing_document_export(context, verified)
         ),
         process_sources_and_citations=lambda _context, assembled: (
             _process_medical_writing_document_export_sources(assembled)
@@ -10284,10 +10601,25 @@ def export_medical_writing_document(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        # SMOKE-r1-3 ⑧：同步导出路径同样要传导出上下文（占位符门的
+        # acknowledge 读取处）；此处无用户 payload，用空上下文承载。
+        from .medical_writing_document_export_jobs import (
+            MedicalWritingDocumentExportJobContext,
+        )
+
+        sync_context = MedicalWritingDocumentExportJobContext(
+            job_id="sync-export",
+            project_id=canonical_id,
+            mode=mode,
+            payload={},
+            input_hash="",
+            actor="medical_manager",
+        )
         rendered = _render_medical_writing_document_export(
             _process_medical_writing_document_export_sources(
                 _assemble_medical_writing_document_export(
-                    _verify_medical_writing_document_export(canonical_id, mode)
+                    sync_context,
+                    _verify_medical_writing_document_export(canonical_id, mode),
                 )
             )
         )

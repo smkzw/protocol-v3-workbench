@@ -64,6 +64,14 @@ FULL_DRAFT_MINIMUM_BODY_CHARS = 80
 # final-output budget.  An eight-section v0.4 batch was observed to end before
 # its outer JSON object closed, leaving only a nested evidence object parsable.
 FULL_DRAFT_CHUNK_SIZE = 4
+# SMOKE-r2-3 ⑤（R27 收敛修订）：单批校验失败（模型回显畸变如 task_id 少
+# 一位、正文残留草稿标记等模型输出格式问题）允许整批重新请求，最多
+# FULL_DRAFT_CHUNK_ATTEMPTS 次尝试。证据：mwjob_d8ab5c5ab56d5f3238f6f413
+# 第8批失败（task_id 回显 20261001→20260100 + 残留草稿标记），前7批全部
+# 合格——格式性抖动弃掉整 jobs 数小时产出不成比例。身份边界不变：每次
+# 重试都是全新 AiTaskRun（新run_id、全新校验），identity 门照常执行；
+# 确定性失败（路由身份变化/上下文漂移/未配置）不重试，保持 fail-fast。
+FULL_DRAFT_CHUNK_ATTEMPTS = 3
 FULL_DRAFT_MAX_OUTPUT_TOKENS = 65_536
 # design.* paths whose authoritative mapping needs structured (dict) input; a
 # prose decision answer would be silently dropped there, so such decisions
@@ -112,6 +120,95 @@ _DECISION_PATH_HEADING_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
         re.compile(r"^研究目的和终点$"),
     ),
 }
+
+_SAMPLE_SIZE_NUMBER_RE = r"(\d+(?:\.\d+)?)"
+
+
+def _z_value(alpha: float, one_sided: bool) -> float:
+    """正态近似的双侧/单侧分位数（无 scipy 依赖，标准正态解析近似）。"""
+    from statistics import NormalDist
+
+    tail = alpha if one_sided else alpha / 2
+    return NormalDist().inv_cdf(1 - tail)
+
+
+def sample_size_consistency_check(text: str) -> dict | None:
+    """NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验。
+
+    从生成文本中提取声明参数（每组例数、α、把握度、SD、δ）并按
+    n ≥ 2·(z_α+z_β)²·SD²/δ² 复算；声明与复算不一致或参数缺失即判
+    「样本量要素未齐」。文本不含样本量声明时返回 None。
+    """
+    raw = str(text or "")
+    if not ("样本量" in raw or "每组" in raw):
+        return None
+    declared_match = re.search(
+        r"每组(?:需|约|需约|需要)?\s*" + _SAMPLE_SIZE_NUMBER_RE + r"\s*例", raw
+    ) or re.search(
+        r"\b" + _SAMPLE_SIZE_NUMBER_RE + r"\s*例\s*/\s*组", raw
+    )
+    if declared_match is None:
+        return None
+    declared = float(declared_match.group(1))
+
+    missing: list[str] = []
+    alpha_match = re.search(r"α\s*=\s*(0?\.\d+)|α\s*=\s*(0?\.\d+)", raw)
+    alpha = float(alpha_match.group(1) or alpha_match.group(2) or 0) if alpha_match else None
+    if alpha is None:
+        missing.append("α")
+    power_match = re.search(r"把握度\s*(?:达|为|≥|>=)?\s*(\d+(?:\.\d+)?)\s*%", raw)
+    power = float(power_match.group(1)) / 100 if power_match else None
+    if power is None:
+        missing.append("把握度")
+    sd_match = re.search(
+        r"(?:标准差|SD)\s*(?:为|是|=|约)?\s*" + _SAMPLE_SIZE_NUMBER_RE, raw
+    )
+    sd = float(sd_match.group(1)) if sd_match else None
+    if sd is None:
+        missing.append("SD")
+        missing.append("标准差") if False else None
+    delta_match = re.search(
+        r"(?:差异|δ|组间差异)[^。；]*?" + _SAMPLE_SIZE_NUMBER_RE + r"\s*次?\s*/\s*(?:24小时|日|天)|δ\s*=\s*" + _SAMPLE_SIZE_NUMBER_RE,
+        raw,
+    )
+    delta = float(delta_match.group(1) or delta_match.group(2) or 0) if delta_match else None
+    if delta is None:
+        missing.append("δ")
+    one_sided = bool(re.search(r"单侧", raw))
+
+    if missing or not alpha or not power or not sd or not delta or sd <= 0 or delta <= 0:
+        detail = "统计要素未齐（缺失：" + "、".join(sorted(set(missing))) + "）；"
+        return {
+            "status": "样本量要素未齐",
+            "declared_per_group": int(declared),
+            "required_per_group": None,
+            "detail": detail + "不得声称样本量已确认。",
+        }
+    # z_α：单侧取全尾、双侧取半尾；z_β：恒取全尾 inv_cdf(1-β)。
+    z_alpha = _z_value(alpha or 0.05, one_sided)
+    z_beta = _z_value(1 - power, True)
+    required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
+    required_ceil = max(2, int(required + 0.999))
+    ratio = declared / required_ceil if required_ceil else 0
+    if ratio < 0.8 or ratio > 1.25:
+        return {
+            "status": "样本量要素未齐",
+            "declared_per_group": int(declared),
+            "required_per_group": required_ceil,
+            "detail": (
+                f"按声明参数（δ={delta}、SD={sd}、α={alpha}、"
+                f"{'单侧' if one_sided else '双侧'}、把握度{int(power * 100)}%）复算约需 "
+                f"{required_ceil} 例/组，与声明的 {int(declared)} 例/组不一致"
+                "（偏差超过±20%）；样本量要素未齐，不得声称已确认。"
+            ),
+        }
+    return {
+        "status": "自洽",
+        "declared_per_group": int(declared),
+        "required_per_group": required_ceil,
+        "detail": f"按声明参数复算约需 {required_ceil} 例/组，与声明一致。",
+    }
+
 
 _PLACEHOLDER_RE = re.compile(
     r"(?:^|[\s，。；：])(?:待补充|待确认|待定|TBD|TODO|不适用|无适用内容|由方案规定|见方案规定)(?:$|[\s，。；：])",
@@ -522,7 +619,12 @@ class MedicalWritingFullDraftService:
                 if scope
                 else "当前文档没有可生成的空白正文章节；请先检查适用性或已有正文"
             )
-        policy = dict(service._policy_identity())
+        # SMOKE-r1-2 ⑤：按任务自身的 task_type 冻结提交层路由身份
+        # （PROTOCOL_FULL_DRAFT→绑定主路 MTPLX，owner 决策 2026-09-28），
+        # 不再误用修订任务的云端路由。
+        policy = dict(
+            service._policy_identity(task_type="protocol_full_draft")
+        )
         policy["prompt_version"] = FULL_DRAFT_PROMPT_VERSION
         decision_path_owners = self._decision_path_owners(
             targets,
@@ -1240,7 +1342,11 @@ class MedicalWritingFullDraftService:
                 != expected.get("execution_context_sha256")):
             return DurableJobResult(error="全文初稿上下文已变化，请重新生成候选", retryable=False)
         expected_policy = (expected.get("ai_policy") or {}).get("route_identity_hash")
-        current_policy = service._policy_identity()
+        # SMOKE-r1-2 ⑤：比较基准同样按 PROTOCOL_FULL_DRAFT 的任务级路由解析，
+        # 与 build_descriptor 的冻结口径一致。
+        current_policy = service._policy_identity(
+            task_type="protocol_full_draft"
+        )
         if expected_policy != current_policy.get("route_identity_hash"):
             return DurableJobResult(error="独立AI路由身份已变化，请重新生成全文初稿", retryable=False)
 
@@ -1388,10 +1494,46 @@ class MedicalWritingFullDraftService:
                     if isinstance(item, dict)
                 )
             else:
-                try:
-                    output, run, sources = self._execute_chunk(service, job.project_id, expected, chunk)
-                except Exception as exc:
-                    return DurableJobResult(error=str(exc), retryable=False)
+                # SMOKE-r2-3 ⑤：校验类失败（模型输出格式抖动）整批重请求，
+                # 最多 FULL_DRAFT_CHUNK_ATTEMPTS 次；其余异常保持原样快速
+                # 失败。最后一次仍失败时按原语义返回错误（retryable=False）。
+                output = run = sources = None
+                chunk_error: Exception | None = None
+                for attempt in range(1, FULL_DRAFT_CHUNK_ATTEMPTS + 1):
+                    try:
+                        output, run, sources = self._execute_chunk(
+                            service, job.project_id, expected, chunk
+                        )
+                        chunk_error = None
+                        break
+                    except Exception as exc:
+                        chunk_error = exc
+                        if "未通过校验" not in str(exc):
+                            # 确定性失败：保持 fail-fast 原语义
+                            return DurableJobResult(
+                                error=str(exc), retryable=False
+                            )
+                        if attempt < FULL_DRAFT_CHUNK_ATTEMPTS:
+                            if not heartbeat(
+                                DurableJobProgressPayload(
+                                    phase="calling_synthesis_ai",
+                                    percent=(index - 1) / max(total, 1),
+                                    step=index,
+                                    step_total=total,
+                                    message=(
+                                        f"第 {index}/{total} 批输出未通过校验，"
+                                        f"正在重新请求（第 {attempt + 1} 次尝试）"
+                                    ),
+                                )
+                            ):
+                                return DurableJobResult(
+                                    error="全文初稿任务失去执行权",
+                                    retryable=True,
+                                )
+                if chunk_error is not None:
+                    return DurableJobResult(
+                        error=str(chunk_error), retryable=False
+                    )
                 if cancel_check():
                     return DurableJobResult(error="AI完成后任务已取消，未持久化全文候选", retryable=False)
                 chunk_source_bindings = [
@@ -1505,6 +1647,19 @@ class MedicalWritingFullDraftService:
                         retryable=False,
                     )
                 seen_decision_paths.add(fact_path)
+        # NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验——
+        # 生成后按声明参数复算，不自洽的章节带「样本量要素未齐」状态随工件
+        # 持久化，供审阅侧禁用「样本量已确认」类措辞并指明复算依据。
+        for item in all_sections:
+            section_number = str(item.get("section_number") or "")
+            heading = str(item.get("heading") or "")
+            if not (section_number.startswith("9") or "统计" in heading):
+                continue
+            check = sample_size_consistency_check(
+                str(item.get("proposal_text") or "")
+            )
+            if check is not None:
+                item["sample_size_check"] = check
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections

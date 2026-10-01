@@ -1,0 +1,38 @@
+{
+  "captured_at": "2026-09-27T20:09+08:00",
+  "checker": "环境核对员 (read-only env check)",
+  "git_head": "06b5155",
+  "git_head_parent": "d3682a9",
+  "head_ge_d3682a9": true,
+  "ports": {
+    "5301_backend": {"status": "up", "pid": 28484, "evidence": "GET /api/health -> status ok, runtime_store integrity ok, schema_version 16, audit_chain_violation_count 0; /health -> 404 (endpoint is /api/health)"},
+    "5186_frontend": {"status": "DOWN", "evidence": "curl connection refused; lsof shows no listener on 518x; logs/mw_vite_5186.log last write 2026-09-27 09:40, process gone"},
+    "8001_omlx": {"status": "up", "pid": 52352, "evidence": "GET /health -> healthy, 12-model pool, 0 loaded; /v1/models lists GLM-OCR-bf16, Qwen3.6-35B-A3B, ..."},
+    "8002_mtplx": {"status": "offline_by_design", "note": "per ask: orchestrator auto-starts on demand when tests trigger; not pulled up"}
+  },
+  "disk": {"filesystem": "/dev/disk3s1s1", "avail": "416Gi", "used_pct": "3%"},
+  "project_baseline": {
+    "source": "GET http://127.0.0.1:5301/api/projects",
+    "count": 15,
+    "expectation": "testers only ADD projects; this baseline is for later count comparison",
+    "projects": [
+      {"id": "proj_rux_03_002", "code": "RUX-03-002", "name": "磷酸芦可替尼乳膏 RUX-03-002", "indication": "特应性皮炎", "phase": "III"},
+      {"id": "proj_d001", "code": "CMS-D001", "name": "CMS-D001 银屑病 2/3 期临床研究", "indication": "银屑病", "phase": "II/III"},
+      {"id": "proj_my009_uc", "code": "MY009-UC", "name": "MY009 溃疡性结肠炎 IIa 期临床研究", "indication": "溃疡性结肠炎", "phase": "IIa"},
+      {"id": "proj_my008_pnh_3_01", "code": "MY008211A-PNH-3-01", "name": "MY008211A-PNH-3-01 阵发性睡眠性血红蛋白尿研究", "indication": "阵发性睡眠性血红蛋白尿", "phase": "III"},
+      {"id": "proj_my008_pnh_3_02", "code": "MY008211A-PNH-3-02", "name": "MY008211A-PNH-3-02 阵发性睡眠性血红蛋白尿研究", "indication": "阵发性睡眠性血红蛋白尿", "phase": "III"},
+      {"id": "proj_mgk10_sar_real", "code": "MG-K10-SAR-001", "name": "MG-K10-SAR 季节性过敏性鼻炎临床研究", "indication": "季节性过敏性鼻炎", "phase": "II"},
+      {"id": "proj_mgk10_crswnp", "code": "MG-K10-CRSwNP", "name": "MG-K10 慢性鼻窦炎伴鼻息肉 III期临床研究", "indication": "慢性鼻窦炎伴鼻息肉", "phase": "III"},
+      {"id": "proj_mgk10_sar_demo", "code": "MG-K10-SAR-DEMO", "name": "MG-K10 SAR 医学经理工作台演示项目", "indication": "季节性过敏性鼻炎", "phase": "III"},
+      {"id": "proj_ra_greenfield_sandbox", "code": "RA-GREENFIELD", "name": "类风湿关节炎从零方案写作沙盒", "indication": "类风湿关节炎", "phase": ""},
+      {"id": "proj_user_b436dc1489fa", "code": "MW-II-9DE75AA7", "name": "合成药TD联合SSRI治疗难治性重度抑郁症的II期临床研究", "indication": "难治性重度抑郁症（TRD）", "phase": "II期"},
+      {"id": "proj_user_aff56a47edde", "code": "MW-II-869AD68B", "name": "合成药C7（口服选择性PDE3/4抑制剂）用于治疗慢性阻塞性肺疾病（COPD）的II期临床研究", "indication": "慢性阻塞性肺疾病（COPD）", "phase": "II期"},
+      {"id": "proj_user_f496d45acce5", "code": "MW-II-2B34FE2E", "name": "待定口服辅助药物用于治疗难治性重度抑郁症的II期临床研究", "indication": "难治性重度抑郁症", "phase": "II期"},
+      {"id": "proj_user_97189da36a75", "code": "MW-II-00990781", "name": "合成药M8用于治疗复发缓解型多发性硬化的II期临床研究", "indication": "复发缓解型多发性硬化", "phase": "II期"},
+      {"id": "proj_user_a5f104df6d03", "code": "MW-II-EE441A2B", "name": "K3用于治疗膝关节骨关节炎的II期临床研究", "indication": "膝关节骨关节炎", "phase": "II期"},
+      {"id": "proj_user_fad9f64f3151", "code": "MW-II-3FE41099", "name": "口服辅助药物用于治疗难治性重度抑郁症的II期临床研究", "indication": "难治性重度抑郁症", "phase": "II期"}
+    ]
+  },
+  "round_dir_created": "runs/requirements_v2_20260919/t17_round23_e2e_multi",
+  "blocker": "frontend 5186 is down; testers (UI black-box) cannot start until it is restarted. Not restarted by this checker: mandate is read-only env check; frontend lifecycle belongs to the orchestrator (vite was last alive 2026-09-27 09:40 per logs/mw_vite_5186.log)."
+}

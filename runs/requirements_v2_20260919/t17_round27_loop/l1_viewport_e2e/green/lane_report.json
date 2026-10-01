@@ -1,0 +1,31 @@
+{
+  "indication": "AD",
+  "indicationLabel": "特应性皮炎",
+  "studyPhase": "II",
+  "projectCode": "QC-MW-AD-1790672591235",
+  "productName": "AD-01",
+  "mode": "dry-run",
+  "passed": false,
+  "projectId": null,
+  "framingRevision": null,
+  "searchPlanId": null,
+  "searchSnapshot": null,
+  "expectedStudyFound": null,
+  "expectedDocumentFound": null,
+  "artifactEvidence": null,
+  "sourceReceipts": [],
+  "pipelineLineage": null,
+  "candidateSets": [],
+  "docxExported": false,
+  "gateFailures": [],
+  "pageErrors": [],
+  "httpFailures": [],
+  "failures": [
+    "error:TypeError: Cannot read properties of null (reading 'textContent')\n    at <anonymous>:1:15",
+    "quality scorecard schema validation failed: Traceback (most recent call last):\n  File \"<string>\", line 4, in <module>\n    schema=json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))\n                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 787, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/records/active_slices/medical_writing_cross_indication_reference_gate_20260718/quality_scorecard.schema.json'"
+  ],
+  "screenshots": [],
+  "_invarianceObserved": false,
+  "_workingCopyUnchanged": null,
+  "qualityScorecardSchemaValid": false
+}

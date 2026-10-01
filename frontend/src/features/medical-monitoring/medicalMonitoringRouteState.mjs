@@ -154,9 +154,13 @@ export function resolveMedicalMonitoringProjectRoute(
   if (fallback && available.includes(fallback)) {
     return Object.freeze({ status: "fallback", projectId: fallback, requestedProjectId: "" });
   }
+  // AGG25-P1-6: with no explicit request, no current selection and no
+  // fallback, staying empty (with a pick-a-project guide in the UI) is
+  // safer than silently adopting the first project — which in a shared
+  // deployment belongs to someone else.
   return Object.freeze({
-    status: available.length ? "default" : "empty",
-    projectId: available[0] || "",
+    status: "empty",
+    projectId: "",
     requestedProjectId: "",
   });
 }
