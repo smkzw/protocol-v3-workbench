@@ -2597,3 +2597,128 @@
 2026-10-01 18:51:51 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
 2026-10-01 18:52:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
 2026-10-01 18:53:00 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:23:01 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:23:28 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:23:28 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==64743, cmdline markers ok | 前状态=pid=64743 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-01 21:23:30 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.11s
+2026-10-01 21:23:31 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-01 21:23:37 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=8.76s
+2026-10-01 21:23:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:23:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:23:57 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:24:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:24:04 [arbiter/queue] 动作=queue_enter | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-01 21:24:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:24:37 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:25:11 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:33:28 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:33:28 [arbiter/wait] 动作=queue_grant | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=564.06s
+2026-10-01 21:33:28 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-01 21:33:45 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=16.86s
+2026-10-01 21:35:12 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:35:52 [arbiter/queue] 动作=queue_enter | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-01 21:43:28 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:28 [arbiter/wait] 动作=queue_grant | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=456.98s
+2026-10-01 21:43:29 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==80008, cmdline markers ok | 前状态=pid=80008 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-01 21:43:29 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=0.05s
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 1 failed | 结果=requeued at front, budget left 1343s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 2 failed | 结果=requeued at front, budget left 1343s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 1 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 2 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 1 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 2 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 1 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:29 [arbiter/retry] 动作=switch_retry_requeue | 目标=translation@omlx | 原因=memory_guard | 前置校核=- | 前状态=attempt 2 failed | 结果=requeued at front, budget left 1800s | 耗时=-
+2026-10-01 21:43:29 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:29 [refused/memory_guard] 动作=lifecycle_refusal | 目标=omlx | 原因=memory_guard | 前置校核=- | 前状态=- | 结果=refused: model_memory_max=5076992912 < est×factor=34375000000 | 耗时=-
+2026-10-01 21:43:30 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-01 21:43:30 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-01 21:43:36 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=6.39s
+2026-10-01 21:43:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:53:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:54:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:54:46 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:55:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:56:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:56:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:56:46 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:57:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:57:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 21:57:28 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 22:25:11 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=0.66s
+2026-10-01 22:25:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 22:25:22 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:17:04 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:17:46 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:18:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:19:16 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:20:30 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:21:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:22:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:23:03 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:23:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:24:12 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:24:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:25:54 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:27:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:28:31 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:31:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:33:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:34:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:36:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:38:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:40:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:41:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:42:57 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:44:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:45:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:46:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:48:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:55:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:55:50 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:56:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:57:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-01 23:59:36 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:01:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:03:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:04:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:05:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:06:12 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:06:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:07:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:07:50 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:08:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:09:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:10:18 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:10:52 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:11:36 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:12:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:13:15 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:13:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:14:01 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:14:28 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:15:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:19:50 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:20:57 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-02 00:41:08 [gap/ocr-idle-recycle] 发现=OCR改绑后GLM-OCR不受编排器idle回收覆盖（config只管翻译模型dawncr0w），最后一次OCR请求14:25Z后驻留2h+无人调用；主会话手动admin unload（loaded 1→0，内存释放2.3GB）；下批修复项=编排器omlx条目扩展OCR模型idle回收或加ocr phase条目
