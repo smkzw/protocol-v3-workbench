@@ -443,3 +443,7 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **再测试（retest_r26.md，09-29 00:33–01:58，复测协调员Camoufox黑盒；台账员抽验：后端-k override 5 passed、前端overrideAck/prefill/runtimeReadiness 9/9、5301指纹api-a8a3f1a2bf2430a1=vite5186期望、压测summary=翻译1080/1080）**：新建MW-II-61F34329（溃疡性结肠炎II期·从零）/MW-II-6878CDAE（入口B全链打通：排队提示真实占用数→约5分钟落库completed→提取确认页字段与源一致→建项成功）；5项修复浏览器通过+2回归抽查重过；AGG-P0-03浏览器未达（受语料前置阻断，反例后端5过+前端套件全绿，不计浏览器通过）；R26-QA P0-2端到端未闭合；语料→翻译→生成→Word导出链因OCR key环境缺口未复测；新立案3条（P2同内容哈希复导入永久继承"已取消"终态、OCR key缺失复现、必填计数不指名）。
 **下一轮判定**：allPass=false→LOOP继续第2轮（换视角组合，如数据管理与统计/PV/工程师入池）；必修清单=AGG-P0-03浏览器端闭合、R26-QA P0-2端到端、语料→翻译→生成→导出全链复测（前置=集成人补Paddle等云端key，不得伪造）、3条新P2；收敛标准不变=五场景全导出+无开放P0/P1+并发干净。
 **递交**：只add本轮路径（runs/requirements_v2_20260919/t17_round26_loop/全目录+本checkpoint）；源码修订批与t17_round25/27等他轮路径不add；commit=test(protocol-v3): R26 user-perspective LOOP round1，push origin。
+
+## 无损暂停检查点（2026-10-01，深度复盘版）
+**位置**：LOOP dwfrun-a9f250b5已TaskStop（可Resume）；**权威handoff=runs/requirements_v2_20260919/t17_round27_loop/HANDOFF_0930_PAUSE.md（含完整复盘，接手先读）**。HEAD=3320a37已push。
+**恢复顺序**：①Resume工作流→②自检末次（⑦预算已调）→③测试者首次出发→④背景能力批（三份规格）→⑤循环收敛→递交。
