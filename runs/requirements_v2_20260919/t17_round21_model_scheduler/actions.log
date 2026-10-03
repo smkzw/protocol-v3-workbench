@@ -3288,3 +3288,4 @@
 2026-10-03 14:59:08 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=1.86s
 2026-10-03 14:59:09 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=20.72s
 2026-10-03 16:38:59 [eval/omlx-flash-substitution] 用户提议初稿改用oMLX的Qwen3.8-flash——实测不可行：短id Qwen3.8-flash=Jundot-oQ4e-mtp 103.94GB、Youssofal版112.49GB（当前可回收仅7-10GB）；小候选DFlash2 3.76GB权重损坏（服务端标记unavailable）。结论=保持MTPLX初稿；提速走自检从首红续跑+初稿并行评估
+2026-10-03 16:46:14 [plan/bench-20261003] 用户裁定：自检绿后测试者出发前插入限时40min对比测试——A方=oMLX短id Qwen3.8-flash（Jundot版103.9GB/ssd_offload=True/RAM~72GB），B方=MTPLX现行Flash-Next（B方基线直接引用自检实跑233s/章不重跑）；严格串行互斥（停MTPLX→加载A→测3章→卸载A→恢复MTPLX）；加载超15min或内存不足=loadFeasible:false有效数据不阻塞；热更新至dwfrun-97eead4a
