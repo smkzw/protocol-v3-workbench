@@ -3289,3 +3289,70 @@
 2026-10-03 14:59:09 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=20.72s
 2026-10-03 16:38:59 [eval/omlx-flash-substitution] 用户提议初稿改用oMLX的Qwen3.8-flash——实测不可行：短id Qwen3.8-flash=Jundot-oQ4e-mtp 103.94GB、Youssofal版112.49GB（当前可回收仅7-10GB）；小候选DFlash2 3.76GB权重损坏（服务端标记unavailable）。结论=保持MTPLX初稿；提速走自检从首红续跑+初稿并行评估
 2026-10-03 16:46:14 [plan/bench-20261003] 用户裁定：自检绿后测试者出发前插入限时40min对比测试——A方=oMLX短id Qwen3.8-flash（Jundot版103.9GB/ssd_offload=True/RAM~72GB），B方=MTPLX现行Flash-Next（B方基线直接引用自检实跑233s/章不重跑）；严格串行互斥（停MTPLX→加载A→测3章→卸载A→恢复MTPLX）；加载超15min或内存不足=loadFeasible:false有效数据不阻塞；热更新至dwfrun-97eead4a
+2026-10-03 16:46:21 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:46:44 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:47:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:47:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:48:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:49:00 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:50:15 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:50:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:51:18 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:51:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:52:17 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:52:59 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:53:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:53:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:54:43 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:55:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:55:31 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:56:09 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:56:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:56:52 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:57:30 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 16:59:11 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:00:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:00:53 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:01:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:01:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:03:53 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:05:09 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:06:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:06:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:07:42 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:08:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:09:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:09:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:11:05 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:11:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://opencode.ai/zen/go/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:12:21 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:13:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:13:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:14:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:15:04 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:15:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:16:04 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:16:42 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:18:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:18:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:19:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:20:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:20:28 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:20:40 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:21:09 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:21:23 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 17:22:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:05:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:06:41 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-03 18:06:41 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==70571, cmdline markers ok | 前状态=pid=70571 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-03 18:06:43 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.11s
+2026-10-03 18:06:43 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-03 18:06:48 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=6.69s
+2026-10-03 18:07:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:07:52 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:08:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:08:36 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:08:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:08:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:08:54 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=https://ollama.com/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-03 18:09:04 [directive/20261003b] 用户指令两条已热更新（dwfrun-6fcef243）：①五人舰队codex位模型gpt-6-sol→gpt-6.1-sol（harness/provider/effort不变），新增第五派发=注册QA视角/移植肾排斥III期抗IL-6R；②测试者出发前新增'前端预清理批'阶段——设计语言对齐kangzhe-design（功能优先美观统一/不追求100%）、修UI偏左不用满宽、清工程化语言残留、修不和谐换行；测试者后续各轮对美观/易用/逻辑三句式评价
