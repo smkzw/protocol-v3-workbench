@@ -1,0 +1,1403 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="18" skipped="8" tests="421" time="84.784" timestamp="2026-09-27T04:45:02.556402+08:00" hostname="MacBook-Pro-4.local"><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_batch_triage_mixed_pages" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_empty_page_routes_to_ocr" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_image_page_routes_to_ocr" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_spatial_layout_page_routes_to_ocr" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_text_page_skips_ocr" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.PageTriageTests" name="test_whitespace_only_page_routes_to_ocr" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrRenderSpecTests" name="test_below_minimum_dpi_rejected" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrRenderSpecTests" name="test_default_render_spec_is_200_dpi" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrRenderSpecTests" name="test_higher_dpi_is_allowed" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrRenderSpecTests" name="test_wrong_model_rejected" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_clamped_to_8" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_default_is_8" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_negative_rejected" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_one_is_valid" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_pipeline_enforces_concurrency_in_constructor" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_pipeline_processes_all_pages_within_concurrency_cap" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrConcurrencyTests" name="test_zero_rejected" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.ModelAllowlistTests" name="test_flash_allowlist" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.ModelAllowlistTests" name="test_hy_mt2_allowlist_contains_exact_id" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.ModelAllowlistTests" name="test_ocr_allowlist_contains_specialized_models" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.ModelAllowlistTests" name="test_upper_layer_allowlist_adds_pro_without_changing_body_allowlist" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.ModelAllowlistTests" name="test_wrong_body_model_rejected" time="0.002" /><testcase classname="tests.test_chapter_translation_pipeline.PipelineOrderTests" name="test_body_translator_is_hy_mt2_not_flash" time="0.053" /><testcase classname="tests.test_chapter_translation_pipeline.PipelineOrderTests" name="test_flash_plan_before_translation_before_qc" time="0.002" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_missing_pro_parent_lineage_is_rejected" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_persisted_adapter_keeps_failed_pro_in_latest_lineage_when_flash_is_selected" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_persisted_service_adapter_preserves_stage_hash_lineage" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_pro_qc_reuses_exact_hy_target_map_and_does_not_retranslate" time="0.003" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_real_shared_stage_service_connects_through_persisted_adapter" time="0.017" /><testcase classname="tests.test_chapter_translation_pipeline.UpperLayerOrchestrationTests" name="test_transient_flash_status_cannot_validate_as_pro_escalation" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.FidelityBlockingTests" name="test_qc_advisory_cannot_replace_or_block_faithful_hy_body" time="0.003" /><testcase classname="tests.test_chapter_translation_pipeline.FidelityBlockingTests" name="test_qc_pass_produces_ready_candidate" time="0.002" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_different_glossary_produces_different_fingerprint" time="0.003" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_different_source_text_produces_different_fingerprint" time="0.003" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_lineage_contains_all_required_dimensions" time="0.002" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_lineage_fingerprint_is_deterministic" time="0.002" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_ocr_lineage_recorded_in_fingerprint" time="0.003" /><testcase classname="tests.test_chapter_translation_pipeline.LineagePersistenceTests" name="test_ocr_lineage_records_dpi_model_profile" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.PipelineStageEnumTests" name="test_all_required_stages_exist" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.PipelineStageEnumTests" name="test_candidate_ready_stage_for_passed_qc" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrIntegrationTests" name="test_ocr_called_with_200_dpi_and_correct_model" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.OcrIntegrationTests" name="test_ocr_not_called_for_text_only_document" time="0.001" /><testcase classname="tests.test_chapter_translation_pipeline.BackwardCompatibilityTests" name="test_batch_item_accepts_legacy_payload_without_pipeline_fields" time="0.000" /><testcase classname="tests.test_chapter_translation_pipeline.BackwardCompatibilityTests" name="test_batch_item_round_trips_pipeline_fields" time="0.001" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p17_translation_phase_warms_only_translation" time="0.001" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p17_triage_phase_warms_only_triage" time="0.000" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p17_readonly_default_never_sends_chat" time="0.000" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p17_unknown_phase_warms_nothing" time="0.000" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p18_probe_rejects_wrong_model_identity" time="0.002" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p18_probe_rejects_empty_choices" time="0.000" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p18_probe_rejects_unparseable_body" time="0.001" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p18_probe_accepts_matching_nonempty_response" time="0.001" /><testcase classname="tests.acceptance.test_model_phase_scheduler_phase_contract" name="test_p18_resident_listing_requires_model_id" time="0.001" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_api_create_get_and_retry_use_202_contract" time="0.041"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_api_create_get_and_retry_use_202_contract&gt;
+
+    def test_api_create_get_and_retry_use_202_contract(self) -&gt; None:
+        unrelated = public_document(
+            RA_NCT_ID,
+            "ctgov_NCT05306353_other",
+            "other",
+            "NCT05306353_Other.pdf",
+            len(self.payload),
+        )
+        self._seed(project_snapshot(RA_PROJECT_ID, RA_SNAPSHOT_ID, RA_NCT_ID, [unrelated]))
+        client = TestClient(app)
+        with (
+            patch(
+                "services.api.app.main.writing_reference_preparation_batch_service",
+                self.service,
+            ),
+            patch(
+                "services.api.app.main._canonical_module_project_id",
+                side_effect=lambda project_id, module: project_id,
+            ),
+        ):
+&gt;           created = client.post(
+                f"/api/projects/{RA_PROJECT_ID}/medical-writing/references/preparation-batches",
+                json={
+                    "snapshot_id": RA_SNAPSHOT_ID,
+                    "actor": "medical_manager",
+                    "idempotency_key": "ra-api-preparation-create-001",
+                },
+            )
+
+tests/test_writing_reference_preparation_batch.py:1298: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:560: in post
+    return super().post(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:459: in request
+    return super().request(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:362: in handle_request
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/testclient.py:359: in handle_request
+    portal.call(self.app, scope, receive, send)
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:454: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:396: in __get_result
+    raise self._exception
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/fastapi/applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:162: in __exit__
+    self.gen.throw(value)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_utils.py:87: in collapse_excgroups
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/main.py:608: in enforce_medical_writing_client_contract
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+/opt/homebrew/lib/python3.14/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:660: in __call__
+    await self.middleware_stack(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:680: in app
+    await route.handle(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/routing.py:276: in handle
+    await self.app(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:134: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+/opt/homebrew/lib/python3.14/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:120: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:674: in app
+    raw_response = await run_endpoint_function(
+/opt/homebrew/lib/python3.14/site-packages/fastapi/routing.py:330: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.14/site-packages/starlette/concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/_backends/_asyncio.py:2518: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+/Users/smkzw/Library/Python/3.14/lib/python/site-packages/anyio/_backends/_asyncio.py:1002: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/main.py:5618: in create_writing_reference_preparation_batch
+    batch = writing_reference_preparation_batch_service.create(
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_ra_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_ra_locked', retained_candidate_ids=['NCT05306353']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_bounded_stage_admission_is_idempotent_and_restart_safe" time="0.032"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_bounded_stage_admission_is_idempotent_and_restart_safe&gt;
+
+    def test_bounded_stage_admission_is_idempotent_and_restart_safe(self) -&gt; None:
+        documents = [
+            public_document(
+                PNH_NCT_ID,
+                f"ctgov_{PNH_NCT_ID}_protocol_{index}",
+                "protocol",
+                f"{PNH_NCT_ID}_Protocol_{index}.pdf",
+                len(self.payload),
+            )
+            for index in range(7)
+        ]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                documents,
+            )
+        )
+        processed_item_ids: list[str] = []
+    
+        def process_item(item, actor, *, progress_callback=None):
+            processed_item_ids.append(item.item_id)
+            self.service._complete_item(item, "prepared", actor)
+    
+        self.service._process_claimed_item = process_item
+    
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-bounded-stage-create-001",
+                stage_size=3,
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_confirmed_validation_is_prepared_without_override" time="0.033"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_confirmed_validation_is_prepared_without_override&gt;
+
+    def test_confirmed_validation_is_prepared_without_override(self) -&gt; None:
+        confirmed_payload = confirmed_protocol_pdf(PNH_NCT_ID)
+        self.client.payload = confirmed_payload
+        document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_confirmed_protocol",
+            "protocol",
+            "NCT03896152_Confirmed_Protocol.pdf",
+            len(confirmed_payload),
+            document_date="2026-01-01",
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-confirmed-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:610: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_glm_restart_after_extraction_commit_replays_without_second_ocr_call" time="0.028"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_glm_restart_after_extraction_commit_replays_without_second_ocr_call&gt;
+
+    def test_glm_restart_after_extraction_commit_replays_without_second_ocr_call(
+        self,
+    ) -&gt; None:
+        document = pymupdf.open()
+        document.new_page()
+        scanned_payload = document.tobytes()
+        document.close()
+        self.client.payload = scanned_payload
+        source_document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_glm_commit_crash",
+            "protocol",
+            "NCT03896152_GLM_Commit_Crash.pdf",
+            len(scanned_payload),
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [source_document],
+            )
+        )
+        ocr_calls: list[tuple[int, int, str]] = []
+        durable_extraction = WritingReferenceExtractionService(
+            self.repo,
+            artifact_root=Path(self.tmp.name) / "artifacts",
+            ocr_runner=lambda page, dpi, model, image: (
+                ocr_calls.append((page, dpi, model))
+                or "STUDY PROTOCOL NCT03896152 Study Objectives and Endpoints"
+            ),
+        )
+    
+        class CrashAfterExtractionCommit:
+            def __init__(self) -&gt; None:
+                self.crash = True
+    
+            def resolve_ocr_model(self) -&gt; str:
+                return "GLM-OCR-bf16"
+    
+            def extract(self, *args, **kwargs):
+                result = durable_extraction.extract(*args, **kwargs)
+                if self.crash:
+                    self.crash = False
+                    raise KeyboardInterrupt(
+                        "simulated crash after extraction persistence"
+                    )
+                return result
+    
+        extraction = CrashAfterExtractionCommit()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            extraction,
+            clock=lambda: NOW,
+        )
+&gt;       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-glm-commit-crash-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:987: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_invalidated_existing_artifact_fails_before_extraction" time="0.034"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_invalidated_existing_artifact_fails_before_extraction&gt;
+
+    def test_invalidated_existing_artifact_fails_before_extraction(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+        artifact = self.document_service.ingest(
+            PNH_PROJECT_ID,
+            WritingReferenceDocumentIngestRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                nct_id=PNH_NCT_ID,
+                document_id=document.document_id,
+                actor="medical_manager",
+                idempotency_key="pnh-invalidated-ingest",
+            ),
+        )
+        self.repo.invalidate_artifact(
+            project_id=PNH_PROJECT_ID,
+            artifact_id=artifact.artifact_id,
+            reason="公开来源版本已失效，必须重新确认来源后再处理。",
+            actor="medical_manager",
+            expected_revision=1,
+            idempotency_key="pnh-invalidated-source",
+        )
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-invalidated-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:569: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_latest_batch_is_strictly_scoped_by_project_and_snapshot" time="0.029"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_latest_batch_is_strictly_scoped_by_project_and_snapshot&gt;
+
+    def test_latest_batch_is_strictly_scoped_by_project_and_snapshot(self) -&gt; None:
+        pnh_document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [pnh_document],
+            )
+        )
+&gt;       pnh_first = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-latest-first",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1354: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_ocr_progress_reports_render_and_completion_page_units" time="0.169" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_ocr_progress_separates_physical_page_from_selected_ocr_count" time="0.158" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted" time="0.026"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted&gt;
+
+    def test_paddle_crash_restart_is_outcome_unknown_and_not_resubmitted(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+        real_extraction = self.extraction_service
+    
+        class CrashAfterPaddlePin:
+            def __init__(self) -&gt; None:
+                self.calls = 0
+    
+            def resolve_ocr_model(self) -&gt; str:
+                return "PaddleOCR-VL-1.6"
+    
+            def extract(self, *args, **kwargs):
+                self.calls += 1
+                raise KeyboardInterrupt("simulated crash after Paddle submit")
+    
+        crash = CrashAfterPaddlePin()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            crash,
+            clock=lambda: NOW,
+        )
+&gt;       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-crash-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1066: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_pnh_reuses_protocol_and_retries_only_failed_sap" time="0.058"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_pnh_reuses_protocol_and_retries_only_failed_sap&gt;
+
+    def test_pnh_reuses_protocol_and_retries_only_failed_sap(self) -&gt; None:
+        documents = self._pnh_documents()
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        self._seed(source_snapshot)
+    
+        protocol = self.document_service.ingest(
+            PNH_PROJECT_ID,
+            WritingReferenceDocumentIngestRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                nct_id=PNH_NCT_ID,
+                document_id=documents[0].document_id,
+                actor="medical_manager",
+                idempotency_key="pnh-existing-protocol-ingest",
+            ),
+        )
+        self.extraction_service.extract(
+            PNH_PROJECT_ID,
+            protocol.artifact_id,
+            actor="medical_manager",
+            extraction_idempotency_key="pnh-existing-protocol-extract",
+        )
+        protocol_validation = self.repo.document_validation(
+            PNH_PROJECT_ID,
+            protocol.artifact_id,
+        )
+        warning_codes = sorted(
+            check.check_code
+            for check in protocol_validation.checks
+            if check.outcome in {"warning", "mismatch"}
+        )
+        overridden = self.repo.override_document_validation(
+            project_id=PNH_PROJECT_ID,
+            artifact_id=protocol.artifact_id,
+            reason="医学经理已核对公开原文，明确确认该Protocol可用于当前竞品准备。",
+            acknowledged_warning_codes=warning_codes,
+            actor="medical_manager",
+            expected_revision=protocol_validation.revision,
+            idempotency_key="pnh-existing-protocol-override",
+        )
+        self.client.calls.clear()
+        self.client.failures_remaining[documents[1].download_url] = 1
+    
+        request = WritingReferencePreparationBatchCreateRequest(
+            snapshot_id=PNH_SNAPSHOT_ID,
+            actor="medical_manager",
+            idempotency_key="pnh-preparation-create-001",
+        )
+&gt;       accepted = self.service.create(PNH_PROJECT_ID, request)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_writing_reference_preparation_batch.py:263: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_progress_callback_failure_cannot_strand_terminal_batch" time="0.025"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_progress_callback_failure_cannot_strand_terminal_batch&gt;
+
+    def test_progress_callback_failure_cannot_strand_terminal_batch(self) -&gt; None:
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            self._pnh_documents(),
+        )
+        self._seed(source_snapshot)
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-callback-failure-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:725: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_progress_is_persisted_at_real_boundaries_and_survives_refresh" time="0.022"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_progress_is_persisted_at_real_boundaries_and_survives_refresh&gt;
+
+    def test_progress_is_persisted_at_real_boundaries_and_survives_refresh(self) -&gt; None:
+        documents = self._pnh_documents()[:1]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        self._seed(source_snapshot)
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-fine-progress-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1422: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_ra_without_public_protocol_has_manual_upload_study_item" time="0.023"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_ra_without_public_protocol_has_manual_upload_study_item&gt;
+
+    def test_ra_without_public_protocol_has_manual_upload_study_item(self) -&gt; None:
+        unrelated = public_document(
+            RA_NCT_ID,
+            "ctgov_NCT05306353_other",
+            "other",
+            "NCT05306353_Other.pdf",
+            len(self.payload),
+        )
+        source_snapshot = project_snapshot(
+            RA_PROJECT_ID,
+            RA_SNAPSHOT_ID,
+            RA_NCT_ID,
+            [unrelated],
+        )
+        self._seed(source_snapshot)
+&gt;       batch = self.service.create(
+            RA_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=RA_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="ra-preparation-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:777: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_ra_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_ra_locked', retained_candidate_ids=['NCT05306353']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing" time="0.022"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing&gt;
+
+    def test_restart_excludes_legacy_nonterminal_standalone_sap_without_processing(
+        self,
+    ) -&gt; None:
+        document = public_document(
+            PNH_NCT_ID,
+            "ctgov_NCT03896152_legacy_sap",
+            "protocol",
+            "NCT03896152_Legacy_SAP.pdf",
+            len(self.payload),
+        )
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="legacy-sap-restart-create",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:493: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_restart_recovers_accepted_items_as_failed_retryable" time="0.024"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_recovers_accepted_items_as_failed_retryable&gt;
+
+    def test_restart_recovers_accepted_items_as_failed_retryable(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            [document],
+        )
+        self._seed(source_snapshot)
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-restart-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:809: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_restart_retry_reuses_durable_document_ocr_model_pin" time="0.023"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_restart_retry_reuses_durable_document_ocr_model_pin&gt;
+
+    def test_restart_retry_reuses_durable_document_ocr_model_pin(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            [document],
+        )
+        self._seed(source_snapshot)
+        real_extraction = self.extraction_service
+    
+        class CrashOnceExtraction:
+            def __init__(self) -&gt; None:
+                self.current_model = "GLM-OCR-bf16"
+                self.calls: list[str] = []
+                self.crash = True
+    
+            def resolve_ocr_model(self) -&gt; str:
+                return self.current_model
+    
+            def extract(self, *args, ocr_model_override="", **kwargs):
+                self.calls.append(ocr_model_override)
+                if self.crash:
+                    self.crash = False
+                    raise KeyboardInterrupt("simulated process crash")
+                return real_extraction.extract(
+                    *args,
+                    ocr_model_override=ocr_model_override,
+                    **kwargs,
+                )
+    
+        crash_once = CrashOnceExtraction()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            crash_once,
+            clock=lambda: NOW,
+        )
+&gt;       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-ocr-pin-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:879: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_retry_claim_resets_stale_progress_from_failed_attempt" time="0.023"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_retry_claim_resets_stale_progress_from_failed_attempt&gt;
+
+    def test_retry_claim_resets_stale_progress_from_failed_attempt(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-stale-progress-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_retry_does_not_resubmit_paddle_outcome_unknown_item" time="0.028"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_retry_does_not_resubmit_paddle_outcome_unknown_item&gt;
+
+    def test_retry_does_not_resubmit_paddle_outcome_unknown_item(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-unknown-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_run_pending_reports_persisted_locked_scope_and_document_progress" time="0.029"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_run_pending_reports_persisted_locked_scope_and_document_progress&gt;
+
+    def test_run_pending_reports_persisted_locked_scope_and_document_progress(self) -&gt; None:
+        documents = self._pnh_documents()
+        source_snapshot = project_snapshot(
+            PNH_PROJECT_ID,
+            PNH_SNAPSHOT_ID,
+            PNH_NCT_ID,
+            documents,
+        )
+        excluded_nct_id = "NCT99999999"
+        excluded_candidate = source_snapshot.candidates[0].model_copy(
+            update={
+                "nct_id": excluded_nct_id,
+                "study_record_url": f"https://clinicaltrials.gov/study/{excluded_nct_id}",
+                "public_documents": [
+                    public_document(
+                        excluded_nct_id,
+                        "ctgov_NCT99999999_protocol",
+                        "protocol",
+                        "NCT99999999_Protocol.pdf",
+                        len(self.payload),
+                    )
+                ],
+            },
+            deep=True,
+        )
+        source_snapshot = source_snapshot.model_copy(
+            update={"candidates": [source_snapshot.candidates[0], excluded_candidate]},
+            deep=True,
+        )
+        self._seed(source_snapshot)
+    
+&gt;       accepted = self.service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-progress-callback-batch",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:662: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests" name="test_submit_outcome_unknown_is_classified_and_not_retried" time="0.041"><failure message="AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'">self = &lt;tests.test_writing_reference_preparation_batch.WritingReferencePreparationBatchTests testMethod=test_submit_outcome_unknown_is_classified_and_not_retried&gt;
+
+    def test_submit_outcome_unknown_is_classified_and_not_retried(self) -&gt; None:
+        document = self._pnh_documents()[0]
+        self._seed(
+            project_snapshot(
+                PNH_PROJECT_ID,
+                PNH_SNAPSHOT_ID,
+                PNH_NCT_ID,
+                [document],
+            )
+        )
+    
+        class SubmitOutcomeUnknown:
+            def __init__(self) -&gt; None:
+                self.calls = 0
+    
+            def resolve_ocr_model(self) -&gt; str:
+                return "PaddleOCR-VL-1.6"
+    
+            def extract(self, *args, **kwargs):
+                self.calls += 1
+                raise PaddleOcrOutcomeUnknownError(
+                    "Paddle OCR submit request failed: HTTP 503"
+                )
+    
+        extraction = SubmitOutcomeUnknown()
+        service = WritingReferencePreparationBatchService(
+            self.repo,
+            self.journeys,
+            self.document_service,
+            extraction,
+            clock=lambda: NOW,
+        )
+&gt;       accepted = service.create(
+            PNH_PROJECT_ID,
+            WritingReferencePreparationBatchCreateRequest(
+                snapshot_id=PNH_SNAPSHOT_ID,
+                actor="medical_manager",
+                idempotency_key="pnh-paddle-submit-unknown-create-001",
+            ),
+        )
+
+tests/test_writing_reference_preparation_batch.py:1143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+services/api/app/writing_reference_preparation_batch.py:223: in create
+    retained_ids, scope_entries, study_facts_sha256 = self._frozen_scope(
+services/api/app/writing_reference_preparation_batch.py:605: in _frozen_scope
+    study_facts_sha256 = self._study_facts_hash(journey)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/writing_reference_preparation_batch.py:596: in _study_facts_hash
+    return _material_facts_hash(journey)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+services/api/app/medical_writing_competitor_triage.py:594: in _material_facts_hash
+    framing, picos = effective_authoring_values(journey)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = namespace(search_plan=namespace(latest_snapshot_id='wref_search_pnh_locked'), corpus_triage=namespace(status='finalized', snapshot_id='wref_search_pnh_locked', retained_candidate_ids=['NCT03896152']))
+
+    def effective_authoring_values(
+        state: MedicalWritingAuthoringJourney,
+    ) -&gt; tuple[Any, Any]:
+        """Return the values the medical writer currently sees and edits.
+    
+        A confirmed synopsis can populate stage drafts before every required field
+        is resolved. Those drafts are the active authoring surface and must drive
+        prefill generation, fingerprints, and candidate adoption.
+        """
+        framing_draft = getattr(state, "framing_draft", None)
+        picos_draft = getattr(state, "picos_draft", None)
+        draft_framing = getattr(framing_draft, "framing", None)
+        draft_picos = getattr(picos_draft, "picos", None)
+        framing = (
+            draft_framing
+            if draft_framing is not None
+&gt;           else state.framing
+                 ^^^^^^^^^^^^^
+        )
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'framing'
+
+services/api/app/medical_writing_authoring_prefill.py:240: AttributeError</failure></testcase><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_connection_reset_maps_to_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_exceeds_size_limit_maps_to_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_generic_runtime_error_from_client_maps_to_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_http_error_maps_to_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_local_file_not_found_is_not_misreported_as_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_local_permission_error_is_not_misreported_as_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_network_url_error_maps_to_download_failed" time="0.001" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_pdf_validation_failure_still_maps_to_content_invalid" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_preparation_item_error_keeps_its_own_code" time="0.001" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_redirect_not_allowed_still_maps_to_redirect_code" time="0.000" /><testcase classname="tests.test_writing_reference_preparation_batch.WritingReferencePreparationErrorCodeTests" name="test_timeout_error_maps_to_download_failed" time="0.000" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_ambiguous_parents_are_reclassified_not_fatal" time="0.039" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_anchor_filter_and_request_contract_prevent_span_injection" time="0.036" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_anchor_preview_projects_cached_scope_without_rescanning_documents" time="0.078" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_contract_rejects_unapproved_metadata_identifiers" time="0.017" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_medical_review_approves_eligible_rows_and_projects_confirmation" time="0.275" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_medical_review_idempotent_replay_does_not_duplicate_reviews" time="0.192" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_medical_review_request_dedupes_targets" time="0.015" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_medical_review_stale_row_does_not_conceal_remaining_rows" time="0.194" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_batch_operations_append_metadata_only_audit_chain_events" time="0.185" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_combined_file_includes_only_spans_before_explicit_sap_boundary" time="0.038" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_combined_file_without_reliable_boundary_fails_closed" time="0.032" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_composite_batch_blocked_merges_deterministic_and_flash_qc_codes" time="0.116" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_composite_batch_idempotent_rerun_does_not_duplicate_revision" time="0.128" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_composite_batch_persists_revision_and_merges_fidelity_codes" time="0.135" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_composite_batch_uses_aligned_unit_contract_end_to_end" time="0.117" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_concurrent_integration_winner_drives_translation_lineage" time="0.121" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_document_validation_must_match_latest_extraction_revision" time="0.031" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_http_contract_is_explicit_single_item" time="0.717" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_is_single_item_new_identity_and_restart_safe" time="0.504" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_pre_dispatch_recovery_and_retry_are_bounded" time="0.352" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_real_abbreviation_preflight_fails_closed" time="0.333" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_recovers_persisted_chunk_before_after_observer" time="0.440" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_takeover_after_intent_commit_fails_closed" time="0.388" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_takeover_before_intent_commit_calls_model_once" time="0.414" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_downstream_transition_unknown_call_outcome_never_repeats_model" time="0.367" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_dual_document_gates_and_terminal_preparation_are_required" time="0.026" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_blocked_is_terminal_and_has_no_review_or_admission_side_effect" time="0.101" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_admits_complete_candidate_with_stale_codes" time="0.055" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_keeps_item_blocked_when_codes_persist" time="0.048" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_never_rechecks_hy_blocked_fragment" time="0.048" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_rejects_running_batch_without_writes" time="0.035" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_reports_incomplete_unit_targets_as_data_missing" time="0.047" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_fidelity_reeval_reports_missing_chunk_list_as_data_missing" time="0.036" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_get_projects_review_and_admission_without_mixing_generation_state" time="0.092" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_get_projects_the_current_revision_after_medical_return_and_revision" time="0.093" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_http_batch_medical_review_reports_per_item_outcomes" time="0.216" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_http_core_contract_and_span_injection_rejection" time="1.157" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_idempotency_conflict_existing_reuse_and_legacy_contract_regeneration" time="0.213" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_incomplete_cross_block_sentence_is_excluded_before_translation" time="0.041" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_invalidated_source_keeps_review_as_history_but_clears_current_author_confirmation" time="0.118" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_large_exclusion_groups_return_bounded_examples_and_conserve_counts" time="0.027" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_missing_preparation_batch_returns_actionable_workflow_error" time="0.016" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_partial_failure_retries_only_retryable_item" time="0.200" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_plan_lookup_never_uses_fingerprint_agnostic_historical_plan" time="0.116" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_planner_runtime_failure_does_not_use_deterministic_fallback" time="0.061" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_preview_cache_invalidates_when_effective_ocr_lineage_changes" time="0.056" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_preview_cache_invalidates_when_validation_lineage_changes" time="0.034" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_pro_integration_reuses_persisted_hy_chunks_and_projects_lineage" time="0.137" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_ra_zero_preview_is_valid_but_empty_create_is_rejected" time="0.037" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_restart_only_recovers_running_and_preserves_pending" time="0.054" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_retryable_failure_does_not_echo_provider_or_source_text" time="0.115" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_same_batch_and_translation_ids_are_fully_isolated_across_projects" time="0.189" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_semantically_aligned_plan_is_not_rejected" time="0.019" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_semantically_collapsed_plan_is_detected_before_anchor_gate" time="0.017" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_single_item_medical_review_path_still_rejects_batch_payload" time="0.142" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_stale_lineage_is_terminal_before_fake_ai" time="0.061" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_standalone_sap_is_excluded_from_protocol_corpus_scope" time="0.054" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_structural_planner_failure_recovers_from_frozen_segments" time="0.074" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_structural_retry_without_persisted_parent_is_fresh_and_auditable" time="0.054" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_superseded_extraction_keeps_review_as_history_but_clears_current_author_confirmation" time="0.142" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_time_and_events_schedule_title_matches_schedule_filter" time="0.032" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_unexpected_error_code_without_lineage_retries_as_ordinary" time="0.045" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchTests" name="test_windowed_integration_does_not_run_unaligned_final_rewrite" time="0.479" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_create_accepts_confirmed_discovery_projection" time="0.043" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_ignores_finalized_triage_for_stale_snapshot" time="0.053" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_prefers_finalized_triage_over_discovery" time="0.036" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_preview_accepts_confirmed_discovery_projection" time="0.039" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_rejects_missing_discovery_confirmation" time="0.031" /><testcase classname="tests.test_writing_reference_translation_batch.WritingReferenceTranslationBatchDiscoveryProjectionTests" name="test_rejects_wrong_snapshot_discovery_projection" time="0.045" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_comparison_direction_and_numeric_binding_drift_are_blocked" time="0.023" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_contract_validation_failure_gets_one_bounded_retry" time="0.043" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_flash_qc_concern_is_advisory_when_hy_fidelity_passes" time="0.044" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_historical_pro_run_is_not_reused_after_flash_contract_switch" time="0.063" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_independent_ai_translation_is_pinned_fidelity_checked_and_persisted" time="0.081" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_latest_extraction_requires_matching_validation_and_approved_structure_review" time="0.040" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_legacy_prompt_contract_is_preserved_but_not_reused_as_current" time="0.079" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_numeric_and_negation_drift_is_saved_as_blocked_not_admissible" time="0.066" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_provider_failure_is_not_blindly_retried" time="0.055" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_returned_translation_is_revised_in_place_and_requires_current_review" time="0.093" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_save_translation_rejects_same_idempotency_key_with_changed_payload" time="0.046" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_stale_returned_review_cannot_create_revision_after_later_approval" time="0.062" /><testcase classname="tests.test_writing_reference_translation_service.WritingReferenceTranslationServiceTests" name="test_unconfirmed_content_gate_blocks_before_ai_call" time="0.051" /><testcase classname="tests.test_writing_reference_translation_service" name="test_fidelity_accepts_chinese_magnitude_scaled_numerals" time="0.005" /><testcase classname="tests.test_writing_reference_translation_service" name="test_fidelity_accepts_full_chinese_term_for_known_abbreviation" time="0.005" /><testcase classname="tests.test_writing_reference_translation_service" name="test_cardinality_ignores_sentence_final_week_numbers" time="0.000" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 5 mg.-\u5242\u91cf50 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 1.5 mg.-\u5242\u91cf15 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 15 mg.-\u5242\u91cf1.5 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Enroll 120 participants.-\u5165\u7ec41200\u4f8b\u53d7\u8bd5\u8005\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Evaluate at week 12.-\u5728\u7b2c120\u5468\u8bc4\u4f30\u3002-True]" time="0.001" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[116 million people.-1.16\u4e07\u4eba\u3002-True]" time="0.003" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[2 visits and 2 calls.-2\u6b21\u8bbf\u89c6\u548c\u7535\u8bdd\u968f\u8bbf\u3002-True]" time="0.001" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[116 million people.-1.16\u4ebf\u4eba\u3002-False]" time="0.001" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[$635 billion.-6350\u4ebf\u7f8e\u5143\u3002-False]" time="0.003" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[116 million people.-2.50\u4ebf\u4eba\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 5 mg.-\u5242\u91cf7 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_does_not_forgive_unlicensed_scaling[Dose 5 mg.-\u5242\u91cf5 mg\u3002-False]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[Response rate was 5%.-\u5e94\u7b54\u7387\u4e3a50%\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[Dose was -5 mg.-\u5242\u91cf\u4e3a5 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[Threshold: at least 50 patients.-\u9608\u503c\uff1a\u81f3\u5c115\u4f8b\u60a3\u8005\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[Dose is 5 mg.-\u5242\u91cf\u4e3a5 g\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[Range 5-10 mg.-\u8303\u56f450-100 mg\u3002-True]" time="0.002" /><testcase classname="tests.test_writing_reference_numeric_fidelity" name="test_numeric_fidelity_a107_strict_semantics[1.2 million people.-120\u4e07\u4eba\u3002-False]" time="0.002" /><testcase classname="tests.test_writing_reference_final_candidate_fidelity.FinalCandidateFidelityTests" name="test_checker_identity_is_written_into_evaluation_records" time="0.150" /><testcase classname="tests.test_writing_reference_final_candidate_fidelity.FinalCandidateFidelityTests" name="test_final_candidate_is_evaluated_before_admission" time="0.150" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_ai_result_reads_fail_closed_before_runner_access" time="0.038" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_client_exclusions_can_only_restrict_and_cannot_overlap_selected_sources" time="0.010" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_cross_module_source_id_collision_is_denied_before_provider_factory" time="0.010" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_cross_module_source_is_denied_without_provider_call" time="0.011" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_direct_allowed_sources_api_is_fail_closed_before_runner_or_provider" time="0.014" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_duplicate_requested_source_ids_are_denied_before_provider_factory" time="0.008" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_internal_source_requires_project_and_module_binding_before_provider_factory" time="0.013" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_legacy_run_store_is_atomically_rewritten_to_audit_safe_projection" time="0.012" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_medical_writing_defaults_prefer_local_mtplx_qwen" time="0.010" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_medical_writing_revision_policy_accepts_plan_pin_only_as_known_optional_key" time="0.011" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_persisted_and_public_run_projections_do_not_include_source_text_or_quotes" time="0.013" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_policy_denial_occurs_before_provider_factory_is_called" time="0.009" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_prompt_version_is_server_selected_and_client_mismatch_is_denied" time="0.008" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_provider_factory_identity_mismatch_is_denied_before_provider_run" time="0.013" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_provider_identity_and_prompt_must_match_effective_server_decision" time="0.015" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_registered_source_eligibility_review_requires_trusted_batch_service" time="0.009" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_registered_source_execution_api_fails_closed_before_runner" time="0.014" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_registered_source_execution_api_requires_server_principal" time="0.011" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_sensitive_listing_is_denied_for_document_only_deployment_profile" time="0.010" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_task_module_mismatch_is_denied_without_provider_call" time="0.009" /><testcase classname="tests.test_ai_execution_policy.AiExecutionPolicyTests" name="test_valid_registered_source_reaches_provider_with_server_policy" time="0.012" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_confirmed_stages_create_nested_structured_fact_states" time="0.048" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_document_creation_reservation_locks_facts_until_created_or_released" time="0.092" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_draft_of_completed_framing_does_not_mutate_committed_downstream" time="0.023" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_edited_imported_fact_drops_old_evidence_and_reprojects_synopsis" time="0.021" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_exact_three_facts_create_and_execute_search_before_full_framing" time="0.012" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_framing_commit_preserves_uncommitted_picos_draft" time="0.035" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_framing_triage_change_preserves_matching_registry_snapshot" time="0.021" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_historical_protocol_and_sap_search_plan_is_read_as_protocol_only" time="0.012" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_identical_commit_is_noop_and_draft_promotion_preserves_gate" time="0.055" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_identical_picos_commit_reconciles_completion_after_upstream_invalidation" time="0.047" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_incomplete_draft_persists_without_completing_or_invalidating_stage" time="0.018" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_later_upstream_edit_cannot_leave_imported_synopsis_current" time="0.067" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_legacy_framing_payload_loads_without_product_profile_or_ib" time="0.005" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_legacy_top_level_fact_states_are_conservatively_migrated_on_read" time="0.017" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_legacy_v1_journey_migrates_design_and_fails_closed_when_incomplete" time="0.031" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_minimum_search_snapshot_is_available_to_later_prefill" time="0.042" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_missing_any_one_of_three_search_facts_blocks_plan_and_execution" time="0.015" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_nested_metadata_is_excluded_and_unknown_values_remain_deferred" time="0.007" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_no_ib_is_a_normal_minimum_fact_packet_state" time="0.003" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_picos_applicability_depends_on_explicit_design_archetype" time="0.004" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_product_modality_and_route_change_competitor_applicability_facets" time="0.005" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_reasoned_override_allows_writing_without_falsifying_readiness" time="0.033" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_research_pipeline_projection_rejects_late_stale_job_binding" time="0.021" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_search_contract_is_project_agnostic_for_crswnp" time="0.007" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_search_snapshot_is_attached_to_current_plan_and_survives_reload" time="0.029" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_second_draft_from_stale_revision_is_rejected" time="0.015" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_target_mechanism_is_enrichment_not_a_framing_completion_gate" time="0.003" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_three_fact_draft_unlocks_search_without_confirming_other_draft_fields" time="0.016" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_two_stage_journey_persists_search_plan_and_keeps_corpus_not_ready" time="0.029" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_unchanged_imported_fact_retains_source_evidence_after_review" time="0.023" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_unchanged_imported_nested_fact_inherits_parent_source_evidence" time="0.032" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_upstream_change_requires_matching_impact_preview_and_invalidates_downstream" time="0.039" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyServiceTests" name="test_writing_document_binding_rejects_stale_study_definition" time="0.020" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyApiTests" name="test_api_blocks_authoring_write_while_pipeline_owns_frozen_inputs" time="0.017" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyApiTests" name="test_api_exposes_locked_product_decisions_and_resumable_journey" time="2.336" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyApiTests" name="test_api_projects_deferred_corpus_confirmation_after_picos_commit" time="0.037" /><testcase classname="tests.test_medical_writing_authoring_journey.MedicalWritingAuthoringJourneyApiTests" name="test_api_saves_incomplete_picos_draft_without_advancing_stage" time="0.032" /><testcase classname="tests.test_medical_writing_authoring_journey.CarryForwardCorpusGateTests" name="test_active_override_keeps_access" time="0.005" /><testcase classname="tests.test_medical_writing_authoring_journey.CarryForwardCorpusGateTests" name="test_inactive_override_is_carried_as_object_not_none" time="0.004" /><testcase classname="tests.test_medical_writing_authoring_journey.CarryForwardCorpusGateTests" name="test_missing_gate_defaults_to_inactive_override" time="0.002" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_cross_project_and_stale_registered_sources_fail_before_provider_call" time="1.833" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_multiple_selections_share_one_document_entry_without_losing_spans" time="0.097" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_provider_evidence_locator_and_quote_must_match_registered_selection" time="0.964" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_real_revision_missing_provider_fails_without_thread_creation" time="1.691" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_real_revision_missing_registry_fails_before_provider_and_thread_creation" time="1.314" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_real_revision_service_uses_registered_source_and_persists_opaque_policy_metadata" time="4.452" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_registered_revision_missing_policy_profile_fails_before_provider" time="0.962" /><testcase classname="tests.test_medical_writing_registered_sources.MedicalWritingRegisteredSourceTests" name="test_rux_and_d001_can_register_one_selected_paragraph_after_span_200" time="3.777" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p01_control_clean_suite_passes" time="0.600" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p02_control_unknown_failure_fails" time="0.567" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p03_control_collection_error_fails" time="0.732" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p10_control_known_failure_same_head" time="1.541" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p04_required_node_skipped_must_not_pass" time="0.832" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p05_wrong_class_same_leaf_must_not_satisfy" time="0.715" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p06_missing_required_parameter_must_not_satisfy" time="0.668" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p07_zero_tests_with_rc0_must_fail" time="0.003" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p08_missing_report_through_cmd_run_is_structured" time="0.034" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p09_collection_error_through_real_cli_keeps_structure" time="0.713" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p11_ancestor_baseline_not_blocked" time="0.991" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p12_broken_pyflakes_not_false_green" time="0.004" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p13_eslint_execution_failure_not_ok" time="0.179" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p14_eslint_corrupt_json_not_ok" time="0.073" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p14b_eslint_fatal_counts_as_finding" time="0.071" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p15_offline_pytest_env_whitelist" time="0.603" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_p16_multi_root_ambiguity_blocked" time="0.176" /><testcase classname="tests.acceptance.test_gate_counterexamples_0927v1" name="test_run_pytest_timeout_keeps_evidence_and_kills_own_group" time="6.026" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_result_json_roundtrip_and_stdout_parity" time="0.662" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_from_result_rereads_without_rerun" time="0.809" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_from_result_missing_file_stable_fail" time="0.162" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_from_result_tampered_schema_rejected" time="0.718" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_truncated_result_file_stable_fail" time="0.718" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_single_char_mutations_of_required_fields_rejected" time="0.558" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_deleting_any_required_field_rejected" time="0.578" /><testcase classname="tests.acceptance.test_gate_result_protocol" name="test_failed_count_matches_failed_ids" time="0.568" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_imported_document_without_content_changes_preserves_content_and_normalizes_fonts" time="2.621" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_original_protocol_path_is_available_only_for_configured_imported_project" time="0.000" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_approved_unchanged_imported_document_is_blocked_until_external_reindex" time="1.997" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_imported_paragraph_edit_changes_only_main_document_part_and_keeps_source_layout" time="2.666" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_text_only_imported_paragraph_edit_preserves_original_runs_fields_and_properties" time="2.341" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_imported_table_cell_edit_preserves_table_geometry_and_all_other_package_parts" time="2.445" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_governed_generated_table_is_inserted_at_imported_section_end_without_rebuilding_source_tables" time="2.834" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_imported_paragraph_cross_reference_resolves_against_source_document_index" time="2.610" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_managed_citation_in_imported_protocol_gets_hyperlink_and_reindexed_reference_bookmark" time="1.689" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_governed_study_schema_figure_adds_only_relationship_content_type_and_media_parts" time="2.720" /><testcase classname="tests.test_medical_writing_source_preserving_export" name="test_multiple_governed_figures_receive_distinct_svg_parts_and_may_share_identical_png_fallback" time="3.348" /><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_primary_protocol_selection_excludes_amendment_summary" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:37: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_validator_rejects_locator_page_without_source_overlap" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:65: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_executor_candidate_packet_is_complete_current_and_hash_bound" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:112: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_production_runner_requires_explicit_boundary_opt_in" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:134: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_finalization_instruction_carries_both_untrusted_candidates" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:159: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_flash_translation_contract_is_distinct_from_pro_contract" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:175: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_biologic_selection_reuses_current_translation_contract" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:186: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.test_phase1_corpus_source_boundaries" name="test_flash_correction_instruction_is_source_authority_and_quality_specific" time="0.000"><skipped type="pytest.skip" message="local phase1 corpus slice (records/active_slices/...) absent from this checkout">/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/tests/test_phase1_corpus_source_boundaries.py:210: local phase1 corpus slice (records/active_slices/...) absent from this checkout</skipped></testcase><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_restart_retains_exact_bytes_and_identity" time="0.014" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_old_content_replay_does_not_replace_successor" time="0.018" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_same_bytes_different_role_cannot_relabel_previous_source" time="0.010" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_same_bytes_keep_distinct_project_provenance" time="0.008" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_failed_canonical_commit_does_not_adopt_staged_files" time="0.023" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_two_service_instances_import_same_source_once" time="0.019" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_contract_whitespace_normalization_keeps_one_logical_source" time="0.010" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_explicit_metadata_correction_retains_original_and_same_bytes" time="0.016" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_replaying_metadata_correction_keeps_later_file_revision" time="0.017" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_stale_metadata_edit_cannot_change_a_successor" time="0.012" /><testcase classname="tests.protocol_v3.test_source_identity_product" name="test_distinct_content_same_name_across_store_instances_keeps_both_revisions" time="0.023" /><testcase classname="tests.protocol_v3.test_pinned_chapter_sources" name="test_pinned_sources_read_original_bytes_after_successor_without_database_writes[protocol-docx-xml.v1]" time="0.021" /><testcase classname="tests.protocol_v3.test_pinned_chapter_sources" name="test_pinned_sources_read_original_bytes_after_successor_without_database_writes[protocol-docx-xml.v2]" time="0.026" /><testcase classname="tests.protocol_v3.test_pinned_chapter_sources" name="test_wrong_project_cannot_supply_another_projects_source_material" time="0.012" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRegistrySelection" name="test_selection_is_closed_pinned_and_immutable" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRegistrySelection" name="test_selection_rejects_mutable_list" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRegistrySelection" name="test_selection_rejects_unpinned_dict_entries" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRegistrySelection" name="test_selection_rejects_non_frozen_skill" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRegistrySelection" name="test_selection_rejects_duplicate_skill_ids" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_records_approved_versions_only" time="0.005" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_is_deterministic" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_rejects_unknown_skill" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_rejects_skill_hash_mismatch" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_rejects_missing_study_definition" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_pin_rejects_mutable_collections" time="0.005" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRunManifestPinning" name="test_manifest_rejects_duplicate_skill_ids" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_single_source_revision_accepted" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_multiple_unique_source_revisions_accepted" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_empty_source_revision_lineage_rejected" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_duplicate_source_revisions_rejected" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_mutable_source_revision_sequence_rejected" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestSourceRevisionLineage" name="test_coordinator_pin_fails_closed_on_empty_lineage" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_deterministic_dependency_order" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_decompose_rejects_unknown_skill" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_decompose_rejects_duplicate_package_ids" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_decompose_rejects_dependency_cycle" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_decompose_rejects_missing_dependency" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_decompose_rejects_empty_and_mutable_inputs" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestWorkPackageDecomposition" name="test_self_dependency_rejected" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_progress_reflects_run_status_verbatim" time="0.015" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_aggregation_leaves_store_unchanged" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_gate_summary_deterministic_and_read_only" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_gate_summary_empty_without_observer" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_gate_observer_must_return_typed_values" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestReadOnlyAggregation" name="test_decision_request_queue_contains_only_unresolved" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_public_payload_uses_catalog_copy_only" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_audit_payload_carries_machine_fields_only" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_public_payload_never_leaks_audit_content" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_public_payload_rejects_internal_wording" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_card_is_immutable_and_closed" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestExceptionCards" name="test_to_exception_card_rejects_non_protocol_error" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_coordinator_exposes_no_forbidden_mutation_capabilities" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_coordinator_attributes_have_no_authority_handles" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_query_facade_is_narrow" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_facade_rejects_foreign_identity_queries" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_coordinator_rejects_raw_service_and_mutable_inputs" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_direct_fact_mutation_impossible" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_gate_observation_immutable_and_has_no_skip_vocabulary" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_no_submission_ready_capability_anywhere" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_no_decision_record_construction_path" time="0.002" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestAuthorityBoundary" name="test_value_objects_are_frozen_and_closed" time="0.004" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_coordinator_retained_graph_has_no_authority_handles" time="0.010" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_facade_retained_graph_has_no_authority_handles" time="0.003" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_retained_graph_of_run_results_has_no_authority_handles" time="0.010" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_scanner_detects_service_behind_bound_method" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_scanner_detects_service_behind_partial" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_scanner_detects_service_behind_closure_cell" time="0.000" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_scanner_detects_service_behind_mapping_and_sequence" time="0.001" /><testcase classname="tests.protocol_v3.test_agent5_authority_boundary.TestRetainedGraphAuthority" name="test_scanner_handles_cycles" time="0.000" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_clean_manifest_passes_and_covers_all_authority_surfaces" time="0.199" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_summary_asset_count_tamper_fails_closed" time="0.339" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_summary_physical_fingerprint_tamper_fails_closed" time="0.330" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_exact_missing_allowlist_current_twelve_passes_with_synthetic_observation" time="0.219" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_missing_allowlist_rejects_raw_relative_spelling" time="0.211" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_missing_allowlist_removal_blocks_with_synthetic_inventory" time="0.002" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_missing_allowlist_unobserved_addition_blocks_with_synthetic_inventory" time="0.003" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_missing_allowlist_newly_missing_entry_blocks_with_synthetic_inventory" time="0.003" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_persisted_cmss_rule_is_authority_not_runtime_synthesis" time="0.601" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_exact_authority_hashes_and_mutable_baseline_commit_are_frozen" time="0.003" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_deterministic_rebuild_and_required_owner_reference_fields" time="0.007" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_copied_source_mutation_and_unknown_source_diff_fail_closed" time="0.235" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_copied_sqlite_row_mutation_fails_logical_comparator" time="0.008" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_wal_shm_physical_only_drift_never_becomes_logical_row_change" time="0.005" /><testcase classname="tests.protocol_v3.test_frozen_authority_manifest" name="test_symlink_escape_ownerless_and_unresolved_rules_fail_closed" time="0.169" /><testcase classname="tests.test_medical_risk_authority" name="test_identity_rejects_ambiguous_scope" time="0.001" /><testcase classname="tests.test_medical_risk_authority" name="test_from_risk_case_requires_explicit_trial_identity_and_preserves_scope" time="0.000" /><testcase classname="tests.test_medical_risk_authority" name="test_event_is_immutable_and_hashes_the_full_payload" time="0.000" /><testcase classname="tests.test_medical_risk_authority" name="test_cas_rejects_stale_write_and_allows_exact_idempotent_replay" time="0.000" /><testcase classname="tests.test_medical_risk_authority" name="test_disposition_query_reopen_and_reclassification_are_separate_dimensions" time="0.000" /><testcase classname="tests.test_medical_risk_authority" name="test_event_identity_and_source_revision_are_bound_to_the_aggregate" time="0.001" /><testcase classname="tests.test_medical_risk_authority" name="test_public_payload_exposes_identity_and_separate_workflow_dimensions" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_authenticated_principal_requires_explicit_session_and_scope" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_unauthenticated_or_wrong_project_fails_closed" time="0.001" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_medical_manager_can_review_and_dispose_without_default_second_approval" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_assurance_actions_are_explicitly_scoped_to_medical_manager_or_director" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_medical_writer_is_read_and_export_only" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_system_admin_cannot_change_medical_judgement" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_high_risk_disposition_requires_reauthentication_and_signature" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_high_risk_close_and_rule_change_are_director_only" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_principal_mismatch_and_invalid_signature_do_not_authorize" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_signature_evidence_rejects_noncanonical_digest_shape[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_signature_evidence_rejects_noncanonical_digest_shape[ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_signature_evidence_rejects_noncanonical_digest_shape[123]" time="0.000" /><testcase classname="tests.test_monitoring_identity_authorization" name="test_first_release_helper_is_explicit_and_decision_payload_is_stable" time="0.000" /><testcase classname="tests.test_monitoring_approval_source_gate" name="test_stale_monitoring_source_blocks_internal_approval_before_repository_write" time="0.006" /></testsuite></testsuites>

@@ -42,7 +42,7 @@
     },
     {
       "api_key_env": "",
-      "base_url": "http://127.0.0.1:8000/v1",
+      "base_url": "http://127.0.0.1:8001/v1",
       "deployment_profile": "local_private_clinical",
       "deployment_scope": "loopback",
       "discovery_mode": "models_endpoint",
@@ -52,13 +52,13 @@
       "model": "GLM-OCR-bf16",
       "profile_id": "local_omlx",
       "provider": "omlx",
-      "revision": 1,
+      "revision": 2,
       "timeout_seconds": 300.0,
       "transport": "openai_compatible"
     },
     {
       "api_key_env": "",
-      "base_url": "http://127.0.0.1:8000/v1",
+      "base_url": "http://127.0.0.1:8001/v1",
       "deployment_profile": "local_private_clinical",
       "deployment_scope": "loopback",
       "discovery_mode": "models_endpoint",
@@ -68,7 +68,7 @@
       "model": "GLM-OCR-bf16",
       "profile_id": "ocr_local_omlx",
       "provider": "omlx",
-      "revision": 1,
+      "revision": 2,
       "timeout_seconds": 300.0,
       "transport": "openai_compatible"
     },
@@ -90,7 +90,7 @@
     },
     {
       "api_key_env": "",
-      "base_url": "http://127.0.0.1:8000/v1",
+      "base_url": "http://127.0.0.1:8001/v1",
       "deployment_profile": "local_private_clinical",
       "deployment_scope": "loopback",
       "discovery_mode": "models_endpoint",
@@ -100,7 +100,7 @@
       "model": "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
       "profile_id": "translation_body_local_omlx",
       "provider": "omlx",
-      "revision": 1,
+      "revision": 2,
       "timeout_seconds": 300.0,
       "transport": "openai_compatible"
     },
@@ -184,8 +184,8 @@
       "model": "mtplx-flash-next-optimized-speed",
       "profile_id": "independent_ai__mtplx_qwen38_local",
       "provider": "mtplx",
-      "reasoning_effort": "max",
-      "revision": 3,
+      "reasoning_effort": "xhigh",
+      "revision": 4,
       "thinking": "enabled",
       "timeout_seconds": 300.0,
       "transport": "openai_compatible"
@@ -207,8 +207,43 @@
       "thinking": "enabled",
       "timeout_seconds": 300.0,
       "transport": "openai_compatible"
+    },
+    {
+      "api_key_env": "OLLAMA_CLOUD_API_KEY",
+      "base_url": "https://ollama.com/v1",
+      "deployment_profile": "local_private_clinical",
+      "deployment_scope": "cloud",
+      "discovery_mode": "manual_plus_probe",
+      "enabled": true,
+      "expected_response_model": "deepseek-v4.1-flash",
+      "label": "DeepSeek v4.1 Flash（ollama-cloud，分诊/设计/PICOS/翻译辅助）",
+      "model": "deepseek-v4.1-flash",
+      "output_token_budget": 32768,
+      "profile_id": "independent_ai__ollama_cloud_dsv41",
+      "provider": "ollama-cloud",
+      "revision": 1,
+      "timeout_seconds": 600.0,
+      "transport": "openai_compatible"
+    },
+    {
+      "api_key_env": "OLLAMA_CLOUD_API_KEY",
+      "base_url": "https://ollama.com/v1",
+      "deployment_profile": "local_private_clinical",
+      "deployment_scope": "cloud",
+      "discovery_mode": "manual_plus_probe",
+      "enabled": true,
+      "expected_response_model": "deepseek-v4.1-flash",
+      "label": "DeepSeek v4.1 Flash（ollama-cloud，分诊/设计/PICOS/翻译辅助） · 翻译辅助LLM",
+      "model": "deepseek-v4.1-flash",
+      "profile_id": "translation_support__independent_ai__ollama_cloud_dsv41",
+      "provider": "ollama-cloud",
+      "reasoning_effort": "max",
+      "revision": 1,
+      "thinking": "enabled",
+      "timeout_seconds": 600.0,
+      "transport": "openai_compatible"
     }
   ],
-  "revision": 23,
+  "revision": 24,
   "schema_version": "ai_provider_registry_v1"
 }
