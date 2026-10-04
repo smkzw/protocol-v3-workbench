@@ -528,6 +528,13 @@ export const mergeIncomingPreservingLocal = (current, incoming) => {
       && !Array.isArray(value) && !Array.isArray(local)
     ) {
       merged[key] = mergeIncomingPreservingLocal(local, value);
+    } else if (Array.isArray(value)) {
+      // R26 自检R5第2次 P0-A：脏态合并中本地非空数组是用户较新的未保存
+      // 工作（编辑器给药方案行、结构化清单）。异步旅程写回（框架往返/
+      // 门重算）带回的是旧快照数组，此前"incoming非空即整替"把用户行
+      // 覆盖丢失（现场：IP方案行4轮提交不落库、删除重交后清单回退）。
+      // 本地非空数组优先保留；incoming 只填补本地从未填过的数组。
+      if (!Array.isArray(local) || local.length === 0) merged[key] = value;
     } else {
       merged[key] = value;
     }
@@ -2586,6 +2593,22 @@ export function MedicalWritingAuthoringJourneySetup({
   // a truthful wait explanation and two exits instead of a late 409.
   const [queuedImpact, setQueuedImpact] = useState(null);
   const [impactCancelArmed, setImpactCancelArmed] = useState(false);
+  // R26 自检第4次 P2-5：下游失效确认面板是 impact 打开期间唯一的提交
+  // 出口（footer 隐藏）。竞品抽屉是全页覆盖层——现场（proj_user_
+  // 97c9c19afb20）确认面板被抽屉遮盖，点击落点被拦截、无任何反馈静默
+  // 无效。确认面板出现（含排队后自动重开）时必须关闭抽屉并把面板滚动
+  // 到可见位置。
+  const impactPanelRef = useRef(null);
+  useEffect(() => {
+    if (!impact) return undefined;
+    setCompetitorDrawerOpen(false);
+    const panel = impactPanelRef.current;
+    if (panel && typeof panel.scrollIntoView === "function") {
+      panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    panel?.setAttribute("data-revealed", "true");
+    return () => panel?.removeAttribute("data-revealed");
+  }, [impact]);
   const pipelineStageLabel = PIPELINE_STAGE_LABELS[pipelineStage] || pipelineStage || "";
   const pipelinePercentValue = Number(pipelineStatus?.pipeline?.percent);
   const authoringWaitHint = authoringWriteBlocked
@@ -3056,7 +3079,7 @@ export function MedicalWritingAuthoringJourneySetup({
         </details>}
         {stage === "corpus" && <CorpusGate projectId={projectId} journey={journey} setJourney={setJourney} selectedBriefIds={selectedCorpusBriefIds} setSelectedBriefIds={setSelectedCorpusBriefIds} searchMessage={searchMessage} busy={busy} onSearch={() => runPublicSearch(journey)} acknowledged={acknowledged} setAcknowledged={setAcknowledged} overrideReason={overrideReason} setOverrideReason={setOverrideReason} allAcknowledged={allAcknowledged} onOverride={overrideCorpusGate} onCreateDocument={createDocument} onReviewAssemblyPlan={() => { setStage("picos"); setGroup("intervention"); }} readOnly={readOnly} existingDocument={existingDocument} />}
       </fieldset></main>
-      {impact && <section className="authoring-impact-panel" aria-live="polite"><div><ShieldAlert size={18} /><span><strong>该变更会使下游内容失效</strong><small>确认后系统保留旧版本，并把以下对象标记为需要重新核验。</small></span></div><ul>{impact.preview.affected_dependents.map((item) => <li key={item}>{DEPENDENT_LABELS[item] || item}</li>)}</ul>{authoringWriteBlocked && <p className="authoring-impact-wait" data-state="pipeline-busy">{authoringWaitHint}本次变更可以排队等待：流水线结束后会自动重新核验并请您确认，不会静默写入（排队仅在本页面生效，离开页面后需重新提交，已填写的内容不会丢失）；若不想等待，也可以取消本次流水线后立即提交（已完成的检索/分诊将作废并重新检索）。</p>}{queuedImpact && <p className="authoring-impact-wait" data-state="queued">已排队（仅本页有效）：流水线结束后将自动重新核验本次变更并请您确认；刷新页面后需重新提交，已填写内容不会丢失。</p>}<div className="authoring-impact-actions"><button type="button" onClick={() => { setImpact(null); setQueuedImpact(null); setImpactCancelArmed(false); }}>返回修改</button>{authoringWriteBlocked && <button type="button" onClick={() => { setQueuedImpact(impact); setImpactCancelArmed(false); }} disabled={Boolean(queuedImpact)}>等待流水线结束后自动提交{queuedImpact ? "（已排队）" : ""}</button>}{authoringWriteBlocked && (impactCancelArmed ? <><button type="button" onClick={cancelPipelineThenSubmit} disabled={busy === "pipeline-cancel"}>确认取消流水线并提交变更</button><button type="button" onClick={() => setImpactCancelArmed(false)}>先不取消</button></> : <button type="button" onClick={() => setImpactCancelArmed(true)} title="已完成的检索/分诊结果将作废，提交后系统将重新检索">取消本次流水线并立即提交</button>)}<button className="primary-button" type="button" onClick={confirmImpact} disabled={busy === "confirm-impact" || authoringWriteBlocked} title={authoringWriteBlocked ? `${authoringWaitHint}可等待结束后自动提交，或取消本次流水线后提交` : busy === "confirm-impact" ? "正在确认变更" : "确认变更并重新核验"}>确认变更并重新核验</button></div></section>}
+      {impact && <section ref={impactPanelRef} className="authoring-impact-panel" aria-live="polite"><div><ShieldAlert size={18} /><span><strong>该变更会使下游内容失效</strong><small>确认后系统保留旧版本，并把以下对象标记为需要重新核验。</small></span></div><ul>{impact.preview.affected_dependents.map((item) => <li key={item}>{DEPENDENT_LABELS[item] || item}</li>)}</ul>{authoringWriteBlocked && <p className="authoring-impact-wait" data-state="pipeline-busy">{authoringWaitHint}本次变更可以排队等待：流水线结束后会自动重新核验并请您确认，不会静默写入（排队仅在本页面生效，离开页面后需重新提交，已填写的内容不会丢失）；若不想等待，也可以取消本次流水线后立即提交（已完成的检索/分诊将作废并重新检索）。</p>}{queuedImpact && <p className="authoring-impact-wait" data-state="queued">已排队（仅本页有效）：流水线结束后将自动重新核验本次变更并请您确认；刷新页面后需重新提交，已填写内容不会丢失。</p>}<div className="authoring-impact-actions"><button type="button" onClick={() => { setImpact(null); setQueuedImpact(null); setImpactCancelArmed(false); }}>返回修改</button>{authoringWriteBlocked && <button type="button" onClick={() => { setQueuedImpact(impact); setImpactCancelArmed(false); }} disabled={Boolean(queuedImpact)}>等待流水线结束后自动提交{queuedImpact ? "（已排队）" : ""}</button>}{authoringWriteBlocked && (impactCancelArmed ? <><button type="button" onClick={cancelPipelineThenSubmit} disabled={busy === "pipeline-cancel"}>确认取消流水线并提交变更</button><button type="button" onClick={() => setImpactCancelArmed(false)}>先不取消</button></> : <button type="button" onClick={() => setImpactCancelArmed(true)} title="已完成的检索/分诊结果将作废，提交后系统将重新检索">取消本次流水线并立即提交</button>)}<button className="primary-button" type="button" onClick={confirmImpact} disabled={busy === "confirm-impact" || authoringWriteBlocked} title={authoringWriteBlocked ? `${authoringWaitHint}可等待结束后自动提交，或取消本次流水线后提交` : busy === "confirm-impact" ? "正在确认变更" : "确认变更并重新核验"}>确认变更并重新核验</button></div></section>}
       {stage === "framing" && !readOnly && framingMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="framing-missing-guidance">{framingMissing.map((key) => <li key={key}><span>{missingFieldLabelText("framing", [key])}</span></li>)}</ul>}
       {stage === "picos" && !readOnly && picosMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="picos-missing-guidance">{picosMissing.map((key) => <li key={key}><span>{missingFieldLabelText("picos", [key])}</span></li>)}</ul>}
       {messageDetail && messageDetail.length > 0 && <ul className="authoring-blocker-guidance" data-testid="authoring-blocker-guidance">{messageDetail.map((item) => <li key={item.fieldPath}><span>{item.label}</span><button type="button" onClick={() => jumpToBlockerField(item.fieldPath)} disabled={interactionLocked}>去填写</button></li>)}</ul>}
@@ -3748,12 +3771,19 @@ function FramingFields({ projectId, framing, group, update, factConversation, se
   return <DesignIntentFields framing={framing} update={update} />;
 }
 
-function parsePopulationIntentStructure(text) {
+export function parsePopulationIntentStructure(text) {
   const source = String(text || "");
+  // P2-22（R27 第1轮末修订）：此前 options.filter(item => match[1].includes(item))
+  // 是子串匹配——『疾病状态：中重度』会把『重度』一并勾上，保存→重载→再
+  // 保存即静默改写用户输入。改为按『、』（兼容中英文逗号）切分后全等匹配。
   const extract = (label, options) => {
     const match = source.match(new RegExp(`${label}：([^；;]+)`));
     if (!match) return [];
-    return options.filter((item) => match[1].includes(item));
+    const selected = String(match[1])
+      .split(/[、,，]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+    return options.filter((item) => selected.includes(item));
   };
   let freeText = source;
   for (const label of ["年龄段", "疾病状态", "经治情况"]) {

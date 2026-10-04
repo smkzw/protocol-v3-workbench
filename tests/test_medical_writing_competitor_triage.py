@@ -545,14 +545,21 @@ class TriageTestBase(unittest.TestCase):
             snapshot_hash,
             facts_hash,
         )
-        result = plan.deterministic_chunks[0].results[0]
-        indication_dimension = next(
-            item for item in result.matching_dimensions if item.dimension == "indication"
-        )
-
-        self.assertEqual("match", indication_dimension.match)
-        self.assertNotIn("适应症不同", result.reason)
-        self.assertIn("同适应症", result.reason)
+        # R26 自检第4次 P1-3①：同适应症（exact/mixed）无公开方案候选改送
+        # 独立AI分诊（直接竞品识别不得被文档可得性劫持），确定性排除仅
+        # 保留给无同病关系的候选。
+        self.assertEqual(0, len(plan.deterministic_chunks))
+        ai_nct_ids = [
+            candidate.nct_id
+            for chunk in plan.ai_candidate_chunks
+            for candidate in chunk
+        ]
+        self.assertIn("NCT12345683", ai_nct_ids)
+        # 绑定检索条件词仍驱动确定性适应症关系（exact，服务端权威字段）。
+        payload = _build_chunk_input(
+            pnh_journey, [snapshot.candidates[0]], 0
+        )["candidates"][0]
+        self.assertEqual("exact", payload["project_indication_relation"])
 
     def test_v19_bound_search_condition_changes_material_facts_hash(self):
         journey = self.journey_service.get(self.project_id)

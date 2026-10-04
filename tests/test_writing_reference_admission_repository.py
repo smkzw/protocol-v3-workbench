@@ -302,7 +302,12 @@ class WritingReferenceAdmissionRepositoryTests(unittest.TestCase):
             blocked,
             idempotency_key="translation-fidelity-blocked",
         )
-        with self.assertRaisesRegex(ValueError, "not eligible"):
+        # R26 自检第3次 P0-A 契约修订：忠实度阻断的译文不再绝对无出路（现场
+        # 只能项目级例外放行）；但无逐项确认的准入仍整体失败且不留半程状态。
+        # 未确认全部阻断码 → 明确点名缺失码拒绝；评审不落库；证据簿保持空。
+        with self.assertRaisesRegex(
+            ValueError, "忠实度未通过的译文必须先逐项确认"
+        ):
             self.repo.record_medical_review(
                 project_id=PROJECT_ID,
                 translation_id=blocked.translation_id,

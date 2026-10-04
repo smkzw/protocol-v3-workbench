@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { medicalWritingSafeErrorText } from "./errorContract.mjs";
 import {
   AlertTriangle,
   BookPlus,
@@ -64,7 +65,7 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
       if (activeProjectRef.current !== requestedProject) return;
       setLibrary(payload);
     } catch (error) {
-      if (activeProjectRef.current === requestedProject) setMessage(`文献库读取失败：${error.message}`);
+      if (activeProjectRef.current === requestedProject) setMessage(`文献库读取失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       if (activeProjectRef.current === requestedProject) setBusy("");
     }
@@ -125,7 +126,7 @@ export function MedicalWritingLiteraturePanel({ projectId, onInsertReference = (
       setOverrideReason("");
       await refresh({ preserveMessage: true });
     } catch (error) {
-      if (activeProjectRef.current === requestedProject) setMessage(`文献导入失败：${error.message}`);
+      if (activeProjectRef.current === requestedProject) setMessage(`文献导入失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       if (activeProjectRef.current === requestedProject) setBusy("");
     }

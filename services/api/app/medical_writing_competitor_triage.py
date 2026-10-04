@@ -101,7 +101,10 @@ MAX_AI_CANDIDATES_PER_CHUNK = 5
 MAX_AI_CHUNK_INPUT_CHARS = 25_000
 MAX_AI_CHUNK_OUTPUT_TOKENS = 24_000
 MAX_DETERMINISTIC_RESULTS_PER_CHUNK = 250
-TRIAGE_DETERMINISTIC_POLICY_VERSION = "competitor_triage_registry_gate_v2"
+# R26 自检第4次 P1-3①：v3——无公开方案的确定性排除收窄到"无同病关系"
+# 候选；同适应症无公开方案候选改送独立AI分诊（医学相关性与文档可得性
+# 分离）。历史 v2 排除结果保留审计，不重算。
+TRIAGE_DETERMINISTIC_POLICY_VERSION = "competitor_triage_registry_gate_v3"
 _DETERMINISTIC_CHUNK_PREFIX = "ct_det_"
 TRIAGE_DURABLE_JOB_TYPE = "competitor_triage"
 TRIAGE_ROUTE_SNAPSHOT_VERSION = "competitor_triage_ai_route_v2"
@@ -766,15 +769,35 @@ def _deterministic_triage_disposition(
 
     document_suitability = _derive_document_suitability(candidate, "")
     if not document_suitability["has_public_protocol"]:
+        # R26 自检第4次 P1-3①：文档可得性 ≠ 医学相关性。现场
+        # （proj_user_97c9c19afb20 心衰II期口服sGC）全部同机制
+        # vericiguat/sGC 研究（NCT01951625/38 等）因无公开Protocol 被
+        # 本确定性门以 confidence=1.0 排除、AI 从未评估——直接竞品参照
+        # 缺失。同适应症（exact/mixed）无公开方案的候选改送独立AI做医学
+        # 分类；其文档缺口由下游准备批次的 study_manual_upload_required
+        # 项与手动上传通路承接。仅当适应症关系也为 none（确定性词法无
+        # 同适应症证据）时维持无公开方案的确定性排除。
+        relation = _candidate_indication_relation(candidate, project_facts)
+        if relation == "none":
+            return DeterministicTriageDisposition(
+                nct_id=nct_id,
+                action="excluded",
+                reason_code="no_public_protocol",
+                reason=(
+                    "确定性未进入语料：候选与项目适应症无确定性同病关系且"
+                    "未提供公开Protocol，不能进入竞品方案语料；独立SAP不作"
+                    "为本语料库输入。未调用AI。该结论不等同于"
+                    "否定其临床研究价值。"
+                ),
+            )
         return DeterministicTriageDisposition(
             nct_id=nct_id,
-            action="excluded",
-            reason_code="no_public_protocol",
+            action="requires_ai",
+            reason_code="requires_source_bounded_ai_triage_no_public_protocol",
             reason=(
-                "确定性未进入语料：同适应症候选未提供公开Protocol，"
-                "不能进入竞品方案语料；独立SAP不作为本语料库输入。未调用AI。"
-                "该结论不等同于"
-                "否定其临床研究价值。"
+                "候选具同适应症关系但未提供公开Protocol；保留至独立AI分诊"
+                "做医学相关性分类（保留后经手动上传方案原文进入语料），"
+                "不作确定性竞争性推断。"
             ),
         )
 
@@ -1660,6 +1683,132 @@ _COPD_ENGLISH_SEQUENCES = frozenset(
 )
 _COPD_ABBREVIATIONS = frozenset({"copd"})
 
+# R26 自检第4次 P1-3②：心衰射血分数方向的中英受控双语桥（沿用
+# UC/CRSwNP 语义证据先例）。现场（proj_user_97c9c19afb20）：项目适应症
+# 『射血分数降低的心力衰竭（HFrEF）』与候选登记条件
+# "Chronic Heart Failure With Reduced Ejection Fraction" 是同一疾病，
+# 但通用词法为 cross_language_unresolved，模型未建立双语等价 → 同机制
+# 研究被误判"适应症不匹配"排除。仅同方向全称/缩写等价视为匹配；方向
+# 相反（保留 vs 降低）不匹配；未限定射血分数的泛心衰不由本桥改判。
+_HF_CHINESE_LABEL = "心力衰竭"
+_HF_EF_REDUCED_ZH = ("射血分数降低", "射血分数减低", "射血分数下降")
+_HF_EF_PRESERVED_ZH = ("射血分数保留", "射血分数正常")
+_HF_EF_REDUCED_EN = ("reduced ejection fraction",)
+_HF_EF_PRESERVED_EN = ("preserved ejection fraction",)
+_HF_EF_REDUCED_ABBREVIATIONS = frozenset({"hfref"})
+_HF_EF_PRESERVED_ABBREVIATIONS = frozenset({"hfpef"})
+
+
+def _heart_failure_ef_qualifier(text: str) -> str:
+    """Return "reduced"/"preserved" when text names HF with an EF direction.
+
+    Empty string means the text does not establish a bounded ejection-
+    fraction population (unqualified heart failure, or no heart failure at
+    all). The direction must come from a controlled full phrase or the
+    established HFrEF/HFpEF abbreviations — never from symptoms or numbers.
+    """
+    raw = str(text or "").strip()
+    if not raw:
+        return ""
+    lowered = raw.lower()
+    if any(token in raw for token in _HF_EF_REDUCED_ZH):
+        return "reduced" if _HF_CHINESE_LABEL in raw else ""
+    if any(token in raw for token in _HF_EF_PRESERVED_ZH):
+        return "preserved" if _HF_CHINESE_LABEL in raw else ""
+    if any(token in lowered for token in _HF_EF_REDUCED_EN):
+        return "reduced" if "heart failure" in lowered or "hfref" in lowered else ""
+    if any(token in lowered for token in _HF_EF_PRESERVED_EN):
+        return (
+            "preserved"
+            if "heart failure" in lowered or "hfpef" in lowered
+            else ""
+        )
+    abbrevs = _extract_parenthetical_abbrevs(raw)
+    if abbrevs & _HF_EF_REDUCED_ABBREVIATIONS:
+        return "reduced"
+    if abbrevs & _HF_EF_PRESERVED_ABBREVIATIONS:
+        return "preserved"
+    # Standalone registry acronym labels (for example a condition that is
+    # exactly "HFrEF") also establish the direction.
+    compact = lowered.replace(" ", "")
+    if "hfref" in compact and not "hfpef" in compact:
+        return "reduced"
+    if "hfpef" in compact:
+        return "preserved"
+    return ""
+
+
+def _text_establishes_heart_failure(text: str) -> bool:
+    raw = str(text or "").strip()
+    if not raw:
+        return False
+    if _HF_CHINESE_LABEL in raw or "心衰" in raw:
+        return True
+    lowered = raw.lower()
+    if "heart failure" in lowered:
+        return True
+    if _heart_failure_ef_qualifier(raw):
+        return True
+    return False
+
+
+def _project_establishes_qualified_heart_failure(
+    project_facts: Dict[str, Any],
+) -> str:
+    """Return the project's bounded HF ejection-fraction direction, or ""."""
+    for key in ("indication", "clinicaltrials_condition_term"):
+        term = str(project_facts.get(key, "") or "").strip()
+        if not term:
+            continue
+        if not _text_establishes_heart_failure(term):
+            continue
+        qualifier = _heart_failure_ef_qualifier(term)
+        if qualifier:
+            return qualifier
+    return ""
+
+
+def _candidate_heart_failure_semantic_evidence(
+    candidate: Dict[str, Any],
+    project_facts: Dict[str, Any],
+) -> tuple[str, List[str], str]:
+    """Bounded bilingual HF EF-qualifier equivalence (R26 self-check #4 P1-3).
+
+    ``exact``/``mixed`` only when every matched condition label establishes
+    heart failure with the SAME ejection-fraction direction as the project.
+    Opposite direction and unqualified generic heart failure stay ``none``
+    (the generic lexical path and the independent AI remain authoritative
+    for those).
+    """
+    project_qualifier = _project_establishes_qualified_heart_failure(
+        project_facts
+    )
+    if not project_qualifier:
+        return "none", [], ""
+    conditions = candidate.get("conditions")
+    if not isinstance(conditions, list):
+        return "none", [], ""
+    labels = [
+        str(value).strip()
+        for value in conditions
+        if isinstance(value, str) and value.strip()
+    ]
+    if not labels:
+        return "none", [], ""
+    matching_labels: List[str] = []
+    for label in labels:
+        if not _text_establishes_heart_failure(label):
+            continue
+        if _heart_failure_ef_qualifier(label) == project_qualifier:
+            matching_labels.append(label)
+    if not matching_labels:
+        return "none", [], ""
+    return (
+        "mixed" if len(matching_labels) < len(labels) else "exact",
+        matching_labels,
+        "heart_failure_ef_qualifier_bilingual",
+    )
+
 _UC_CHINESE_LABELS = frozenset({"溃疡性结肠炎", "溃疡性大腸炎", "溃疡性大肠炎"})
 _UC_ENGLISH_SEQUENCES = frozenset(
     {
@@ -2391,6 +2540,14 @@ def _candidate_indication_relation(
         )
         if relation != "none":
             return relation
+    # R26 自检第4次 P1-3②：心衰射血分数方向双语桥（项目限定方向与候选
+    # 登记条件同方向时建立 exact/mixed；方向相反/泛心衰不匹配）。
+    hf_relation, _, _ = _candidate_heart_failure_semantic_evidence(
+        candidate,
+        project_facts,
+    )
+    if hf_relation != "none":
+        return hf_relation
     conditions = candidate.get("conditions")
     if not isinstance(conditions, list):
         return "none"

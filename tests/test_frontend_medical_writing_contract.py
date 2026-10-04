@@ -289,7 +289,7 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         self.assertIn('prefix="CM-A"', source)
         self.assertIn('prefix="CM-P"', source)
         self.assertIn("normalizePicosForWrite", source)
-        self.assertIn("hasPopulatedList(picos.inclusion_modules)", source)
+        self.assertIn("hasPopulatedList(values.inclusion_modules)", source)
         self.assertIn(".authoring-structured-list-row", self.styles)
 
     def test_target_mechanism_is_enrichment_not_a_frontend_completion_gate(self):
@@ -432,7 +432,7 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         self.assertIn("validation_warnings", source)
         self.assertIn("acknowledged_validation_warnings", source)
         self.assertIn("validation_override_reason", source)
-        self.assertIn("synopsisOverrideReason.trim().length >= 10", source)
+        self.assertIn("不少于10个字符的沿用理由", source)
         self.assertIn('setMessage(`摘要导入失败：${error.message}`)', source)
         self.assertNotIn("synopsisTechnicalOverride", source)
         self.assertIn("activeProjectRef.current !== requestProjectId", source)
@@ -783,7 +783,14 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         authoring = self.authoring_journey_source
 
         self.assertIn('variant="authoring"', authoring)
-        self.assertIn("snapshotId={searchPlan.latest_snapshot_id}", authoring)
+        # Earlier-round contract: the authoring drawer binds the panel to the
+        # reusable locked snapshot (search snapshot first, confirmed discovery
+        # projection fallback) instead of the raw search-plan field.
+        self.assertIn("snapshotId={reusableSnapshotId}", authoring)
+        self.assertIn(
+            "const reusableSnapshotId = searchPlan?.latest_snapshot_id",
+            authoring,
+        )
         self.assertIn(
             'const query = authoringMode && snapshotId ? `?snapshot_id=${encodeURIComponent(snapshotId)}` : "";',
             reference,
@@ -873,12 +880,24 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         self.assertIn('journey?.corpus_triage?.status === "finalized"', reference)
         self.assertIn('journey?.corpus_triage?.snapshot_id === snapshotId', reference)
         self.assertIn('activeView === "documents"', reference)
-        self.assertIn("authoringMode && triageFinalized", reference)
-        self.assertIn("triageReviewLocked = triageFinalized || (", reference)
+        # R26 自检第4次 P0-2：AI分诊确认路径同样解锁原文准备——篮子权威
+        # = triageFinalized || 已确认 discovery 投影（与后端 _frozen_scope
+        # 的 Authority path B 同口径），准备批次/OCR复核/逐文件入口挂
+        # basketConfirmed。
+        self.assertIn("authoringMode && basketConfirmed", reference)
+        self.assertIn("const basketConfirmed = triageFinalized || discoveryConfirmed;", reference)
         self.assertIn(
-            'authoringMode && aiTriageRun?.run?.status === "confirmed"',
+            "const discoveryConfirmed = Boolean(",
             reference,
         )
+        self.assertIn(
+            "discoveryProjection?.snapshot_id === snapshotId",
+            reference,
+        )
+        self.assertIn("triageReviewLocked = triageFinalized || (", reference)
+        # Formatting-independent: the confirmed AI run locks manual retriage
+        # (multi-line prettier layout in source).
+        self.assertIn('aiTriageRun?.run?.status === "confirmed"', reference)
         self.assertIn("&& !triageReviewLocked", reference)
         self.assertIn("<ReferencePreparationBatchPanel", reference)
         self.assertIn(
@@ -1421,7 +1440,7 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
             "证据缺口",
             "确认并锁定全部",
             "确认全部排除并继续",
-            "无合适竞品理由（必填）",
+            "无合适竞品理由（可选）",
             "手工上传方案或使用通用语料库",
             "部分分块失败",
             "旧结果仅保留审计",
@@ -1436,7 +1455,10 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         self.assertIn("no_suitable_competitor_reason", confirm_block)
         self.assertIn("retained_nct_ids: retainedNctIds", confirm_block)
         self.assertIn("excluded_nct_ids: excludedNctIds", confirm_block)
-        self.assertIn("/confirm`", confirm_block)
+        # Earlier-round contract: the confirm endpoint is selected between
+        # "confirm" and "reconfirm" (reconfirmation flow) via the endpoint var.
+        self.assertIn("${endpoint}", confirm_block)
+        self.assertIn('endpoint = triageReconfirmationRequired ? "reconfirm" : "confirm"', confirm_block)
         self.assertIn("await refreshWorkspace({ preserveMessage: true })", confirm_block)
         self.assertIn("/medical-writing/authoring-journey`", confirm_block)
         self.assertIn("onJourneyChange(latestJourney)", confirm_block)

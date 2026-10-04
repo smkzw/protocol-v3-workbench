@@ -5,7 +5,9 @@ import { readFileSync, readdirSync } from "node:fs";
 import { dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || "http://127.0.0.1:8910";
+// R27 批一（已立案脚枪排雷）：默认代理曾指向 live 8910（医学监查共享
+// runtime）。本子系统固定为 5301；显式 VITE_API_PROXY_TARGET 仍可覆盖。
+const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || "http://127.0.0.1:5301";
 const frontendDir = dirname(fileURLToPath(import.meta.url));
 const workbenchRoot = resolve(frontendDir, "..");
 const runtimeContract = JSON.parse(readFileSync(

@@ -3239,14 +3239,35 @@ class WritingReferenceRepository:
             raise KeyError(translation_id)
         return WritingReferenceTranslationRevision.model_validate_json(row["payload_json"])
 
+    @staticmethod
+    def _normalized_fidelity_codes(codes) -> set[str]:
+        """Normalize unit-prefixed fidelity codes for acknowledgement comparison.
+
+        ``unit_2:source_abbreviation_missing`` and ``source_abbreviation_missing``
+        denote the same check; acknowledgement of either form counts.
+        """
+        normalized = set()
+        for code in codes or ():
+            text = str(code).strip()
+            if not text:
+                continue
+            if text.startswith("unit_") and ":" in text:
+                text = text.split(":", 1)[1]
+            normalized.add(text)
+        return normalized
+
     def record_medical_review(
         self, *, project_id: str, translation_id: str, translation_revision: int,
         decision: str, comment: str, actor: str, expected_revision: int,
         idempotency_key: str,
+        acknowledged_fidelity_failure_codes: list[str] | None = None,
     ) -> WritingReferenceMedicalReviewDecision:
         if decision not in {"approved", "returned", "rejected"} or not comment.strip():
             raise ValueError("valid author confirmation decision and comment are required")
-        semantic = {"translation_id": translation_id, "translation_revision": translation_revision, "decision": decision, "comment": comment, "actor": actor, "expected_revision": expected_revision}
+        acknowledged_codes = [
+            str(code).strip() for code in (acknowledged_fidelity_failure_codes or []) if str(code).strip()
+        ]
+        semantic = {"translation_id": translation_id, "translation_revision": translation_revision, "decision": decision, "comment": comment, "actor": actor, "expected_revision": expected_revision, "acknowledged_fidelity_failure_codes": acknowledged_codes}
         request_hash = _payload_hash(semantic)
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -3268,6 +3289,40 @@ class WritingReferenceRepository:
                     "translation revision is no longer current: "
                     f"requested={translation_revision}, current={current_translation_revision}"
                 )
+            # R26 自检第3次 P0-A：忠实度阻断的译文此前完全没有作者出路（UI 禁用
+            # + admit_translation 硬拒），现场只能靠项目级例外放行。修复后：作者
+            # 可准入，但必须逐项确认全部忠实度阻断码；缺一项即列出缺的码拒绝。
+            if decision == "approved":
+                translation_row = connection.execute(
+                    """
+                    SELECT record.payload_json
+                    FROM writing_reference_translation_state AS state
+                    JOIN writing_reference_translation_records AS record
+                      ON record.tenant_id=state.tenant_id AND record.project_id=state.project_id
+                     AND record.translation_id=state.translation_id AND record.revision=state.revision
+                    WHERE state.tenant_id=? AND state.project_id=? AND state.translation_id=?
+                      AND state.revision=?
+                    """,
+                    (TENANT_ID, project_id, translation_id, translation_revision),
+                ).fetchone()
+                if translation_row is None:
+                    connection.rollback()
+                    raise KeyError(translation_id)
+                translation_payload = json.loads(translation_row["payload_json"])
+                if str(translation_payload.get("fidelity_status") or "") != "passed":
+                    blocked_codes = sorted(
+                        self._normalized_fidelity_codes(
+                            translation_payload.get("fidelity_failure_codes")
+                        )
+                    )
+                    acknowledged = self._normalized_fidelity_codes(acknowledged_codes)
+                    missing = [code for code in blocked_codes if code not in acknowledged]
+                    if missing:
+                        connection.rollback()
+                        raise ValueError(
+                            "忠实度未通过的译文必须先逐项确认全部忠实度阻断码后才能准入；"
+                            f"还需确认：{'、'.join(missing)}"
+                        )
             replay = self._idempotent_result(connection, project_id, "record_medical_review", idempotency_key, request_hash)
             if replay:
                 row = connection.execute("SELECT payload_json FROM writing_reference_medical_review_records WHERE tenant_id=? AND project_id=? AND review_id=?", (TENANT_ID, project_id, replay)).fetchone()
@@ -3329,6 +3384,7 @@ class WritingReferenceRepository:
                 decision_type="author_confirmation",
                 admission_status="admitted" if decision == "approved" else "not_admitted",
                 evidence_brief_id=evidence_brief_id,
+                acknowledged_fidelity_failure_codes=acknowledged_codes,
                 created_at=now,
             )
             connection.execute("INSERT INTO writing_reference_medical_review_records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (TENANT_ID, project_id, review_id, translation_id, translation_revision, revision, decision, _canonical_json(review.model_dump(mode="json")), now.isoformat()))
@@ -3716,15 +3772,28 @@ class WritingReferenceRepository:
             ):
                 connection.rollback()
                 raise ValueError("current approved medical review is required")
-            if (
-                translation.fidelity_status != "passed"
-                or translation.status
-                not in {
-                    "pending_author_confirmation",
-                    "author_confirmed_admitted",
-                    "pending_medical_approval",
-                }
-            ):
+            # R26 自检第3次 P0-A：机器通过=一键准入（语义不变）；忠实度阻断=
+            # 仅当当前 approved 评审已逐项确认全部阻断码时允许作者残留准入。
+            if translation.fidelity_status != "passed":
+                blocked_codes = self._normalized_fidelity_codes(
+                    translation.fidelity_failure_codes
+                )
+                acknowledged = self._normalized_fidelity_codes(
+                    review.acknowledged_fidelity_failure_codes
+                )
+                missing = [code for code in sorted(blocked_codes) if code not in acknowledged]
+                if missing:
+                    connection.rollback()
+                    raise ValueError(
+                        "translation is not eligible for corpus admission: "
+                        "fidelity-blocked translations require an approved review "
+                        f"acknowledging every fidelity failure code; missing: {'、'.join(missing)}"
+                    )
+            if translation.status not in {
+                "pending_author_confirmation",
+                "author_confirmed_admitted",
+                "pending_medical_approval",
+            }:
                 connection.rollback()
                 raise ValueError("translation is not eligible for corpus admission")
 
@@ -3772,6 +3841,7 @@ class WritingReferenceRepository:
 
             brief_id = "wref_brief_" + _payload_hash(admission_semantic)[:20]
             now = _utc_now()
+            fidelity_residual_admission = translation.fidelity_status != "passed"
             brief = WritingReferenceEvidenceBrief(
                 brief_id=brief_id, project_id=project_id, nct_id=artifact.nct_id,
                 artifact_id=artifact.artifact_id, span_id=span.span_id,
@@ -3789,6 +3859,17 @@ class WritingReferenceRepository:
                     medical_review_id
                     if review.decision_type == "author_confirmation"
                     else ""
+                ),
+                admission_basis=(
+                    "author_confirmed_with_fidelity_residual"
+                    if fidelity_residual_admission
+                    else "machine_fidelity_passed"
+                ),
+                fidelity_status_at_admission=str(translation.fidelity_status),
+                acknowledged_fidelity_failure_codes=(
+                    list(review.acknowledged_fidelity_failure_codes)
+                    if fidelity_residual_admission
+                    else []
                 ),
                 created_at=now,
             )

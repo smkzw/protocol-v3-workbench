@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, ExternalLink, Filter, RefreshCw, Search, ShieldAlert } from "lucide-react";
+import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
 
 
 const reviewLabels = {
@@ -59,7 +60,7 @@ export function SharedPhase1CorpusPanel() {
         ? current
         : payload.items?.[0]?.segment_id || "");
     } catch (error) {
-      setMessage(`共享语料读取失败：${error.message}`);
+      setMessage(`共享语料读取失败：${medicalWritingSafeErrorText(error)}`);
     }
   };
 
@@ -85,7 +86,7 @@ export function SharedPhase1CorpusPanel() {
       setMessage(successMessage);
       setComment("");
     } catch (error) {
-      setMessage(`操作未完成：${error.message}`);
+      setMessage(`操作未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusy("");
     }

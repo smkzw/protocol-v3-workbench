@@ -391,9 +391,12 @@ class TestImmediateReturnWithSlowProvider(DurableTriageTestBase):
 
 class TestPartialFailureRouteAttribution(DurableTriageTestBase):
     def test_failed_ai_chunk_is_not_mislabeled_as_deterministic_only(self):
-        deterministic = _make_candidate("NCT00000001").model_copy(
-            update={"public_documents": []}
-        )
+        # R26 自检第4次 P1-3①：同适应症无公开方案候选改送AI；确定性腿
+        # 需用无同病关系的候选。
+        deterministic = _make_candidate(
+            "NCT00000001",
+            conditions=["Psoriatic Arthritis"],
+        ).model_copy(update={"public_documents": []})
         ai_candidate = _make_candidate("NCT00000002")
         snapshot = self._bind_snapshot([deterministic, ai_candidate])
         journey = self.journey_service.get(self.project_id)
@@ -483,9 +486,12 @@ class TestDedupeOnDoubleCreate(DurableTriageTestBase):
 
 class TestParentRetryReplayPreservesRun(DurableTriageTestBase):
     def test_replayed_create_run_keeps_terminal_partial_failed_state(self):
-        deterministic = _make_candidate("NCT00000001").model_copy(
-            update={"public_documents": []}
-        )
+        # R26 自检第4次 P1-3①：同适应症无公开方案候选改送AI；确定性腿
+        # 需用无同病关系的候选。
+        deterministic = _make_candidate(
+            "NCT00000001",
+            conditions=["Psoriatic Arthritis"],
+        ).model_copy(update={"public_documents": []})
         ai_candidate = _make_candidate("NCT00000002")
         snapshot = self._bind_snapshot([deterministic, ai_candidate])
         journey = self.journey_service.get(self.project_id)

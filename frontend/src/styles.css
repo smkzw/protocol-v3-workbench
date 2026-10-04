@@ -14694,6 +14694,32 @@ textarea {
   resize: vertical;
 }
 
+/* fe_cleanup_r1 ④（R27-R1-D截图22"底部一排下拉挤在一起、换行错位"）：
+   复杂设计计划状态行（适应性设计/交叉/OLE/DMC/SRC…10+个下拉）此前无任何
+   规则，裸块堆叠。改为响应式自动列：每列≥150px，容器变窄时自动换行，
+   标签与控件对齐。 */
+.authoring-structured-planned-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px 10px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.authoring-structured-planned-grid label {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.authoring-structured-planned-grid select {
+  width: 100%;
+  min-width: 0;
+}
+
 .authoring-structured-list {
   min-width: 0;
   margin: 0;
@@ -20207,7 +20233,10 @@ textarea {
 
 .writing-reference-validation-checks > div {
   display: grid;
-  grid-template-columns: 64px 48px minmax(0, 1fr);
+  /* fe_cleanup_r1 ④（R26-MW现场"匹配维度表汉字竖着挤成一列"）：首列
+     64px 固定宽把 4-5 字中文维度标签逐字换行；放宽为 minmax(88px, auto)
+     ——下限容纳5字标签，内容更长时按内容增长。 */
+  grid-template-columns: minmax(88px, auto) 48px minmax(0, 1fr);
   gap: 6px;
   align-items: start;
   padding-top: 4px;
@@ -20216,6 +20245,8 @@ textarea {
 
 .writing-reference-validation-checks b {
   font-size: 11px;
+  /* fe_cleanup_r1 ④：中文标签不逐字断行（keep-all），配合放宽后的首列。 */
+  word-break: keep-all;
 }
 
 .writing-reference-validation-checks small {

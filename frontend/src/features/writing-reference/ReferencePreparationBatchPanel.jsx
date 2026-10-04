@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, Play, RefreshCw, RotateCcw } from "lucide-react";
 import { WritingReferenceProgressJourney } from "./WritingReferenceProgressJourney";
+import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
 
 const ACTIVE_BATCH_STATUSES = new Set(["accepted", "running"]);
 const TERMINAL_BATCH_STATUSES = new Set([
@@ -352,7 +353,7 @@ export function ReferencePreparationBatchPanel({
       setMessage("");
       setPollSuspended(false);
     } catch (error) {
-      if (generation === generationRef.current) setMessage(`批次状态读取失败：${error.message}`);
+      if (generation === generationRef.current) setMessage(`批次状态读取失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       if (!silent && generation === generationRef.current) setLoading(false);
     }
@@ -371,7 +372,7 @@ export function ReferencePreparationBatchPanel({
       setPollSuspended(false);
     } catch (error) {
       if (generation !== generationRef.current) return;
-      setMessage(`${polling ? "批次轮询" : "批次刷新"}失败：${error.message}`);
+      setMessage(`${polling ? "批次轮询" : "批次刷新"}失败：${medicalWritingSafeErrorText(error)}`);
       if (polling) setPollSuspended(true);
     } finally {
       if (!polling && generation === generationRef.current) setLoading(false);
@@ -466,7 +467,7 @@ export function ReferencePreparationBatchPanel({
       setMessage("批量准备已启动；刷新页面后仍可恢复当前进度。");
       createKeyRef.current = "";
     } catch (error) {
-      setMessage(`批量准备未启动：${error.message}`);
+      setMessage(`批量准备未启动：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }
@@ -491,7 +492,7 @@ export function ReferencePreparationBatchPanel({
       setMessage("已仅重新提交失败项；成功项和待人工确认项不会重复处理。");
       retryKeyRef.current = { batchId: "", key: "" };
     } catch (error) {
-      setMessage(`失败项重试未启动：${error.message}`);
+      setMessage(`失败项重试未启动：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }
@@ -519,7 +520,7 @@ export function ReferencePreparationBatchPanel({
       setMessage("已准入下一阶段原文；成功项不会重复下载或 OCR。批次将继续处理。");
       advanceKeyRef.current = { batchId: "", key: "" };
     } catch (error) {
-      setMessage(`下一阶段准入未启动：${error.message}`);
+      setMessage(`下一阶段准入未启动：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }

@@ -2731,8 +2731,18 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
             persisted.document_structure_plan_id,
             persisted.chapter_id,
         )
-        self.assertEqual("", persisted.translated_text)
-        self.assertEqual("", integration.integrated_chinese_text)
+        # R26 自检R5(第1次) P0 契约修订：空译文候选被现场定罪（残留准入据此
+        # 生成空 brief，语料门实质性检查永不过）。首块阻断时候选必须回填
+        # 模型的 last_output 片段（作者可对照原文逐码确认后准入）；空候选
+        # 不再允许。integration 诊断行仍保留 raw 供溯源。
+        self.assertEqual(
+            "Participants receive SCS within 7 days.",
+            persisted.translated_text,
+        )
+        self.assertEqual(
+            "Participants receive SCS within 7 days.",
+            integration.integrated_chinese_text,
+        )
         self.assertIn(
             "Participants receive SCS within 7 days.",
             integration.blocked_raw_provider_output,

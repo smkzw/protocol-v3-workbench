@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpDown, CheckCheck, Eye, Languages, Play, RefreshCw, RotateCcw } from "lucide-react";
 import { WritingReferenceProgressJourney } from "./WritingReferenceProgressJourney";
+import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
 import {
   pollDurableMwJob,
   buildLocator,
@@ -314,7 +315,7 @@ export function ReferenceTranslationBatchPanel({
       }
       setPreviewError("");
     } catch (error) {
-      if (generation === previewGenerationRef.current) setPreviewError(`候选范围预览失败：${error.message}`);
+      if (generation === previewGenerationRef.current) setPreviewError(`候选范围预览失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       if (!silent && generation === previewGenerationRef.current) setPreviewLoading(false);
     }
@@ -334,7 +335,7 @@ export function ReferenceTranslationBatchPanel({
       setPollSuspended(false);
     } catch (error) {
       if (generation !== batchGenerationRef.current) return;
-      setBatchError(`${polling ? "批次状态轮询" : "批次刷新"}失败：${error.message}`);
+      setBatchError(`${polling ? "批次状态轮询" : "批次刷新"}失败：${medicalWritingSafeErrorText(error)}`);
       if (polling) setPollSuspended(true);
     } finally {
       batchRequestInFlightRef.current = false;
@@ -359,7 +360,7 @@ export function ReferenceTranslationBatchPanel({
       setBatchError("");
       setPollSuspended(false);
     } catch (error) {
-      if (generation === batchGenerationRef.current) setBatchError(`当前批次读取失败：${error.message}`);
+      if (generation === batchGenerationRef.current) setBatchError(`当前批次读取失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       batchRequestInFlightRef.current = false;
       if (generation === batchGenerationRef.current) setBatchLoading(false);
@@ -612,7 +613,7 @@ export function ReferenceTranslationBatchPanel({
       setNotice("候选生成批次已受理；页面刷新后仍可恢复当前批次状态。");
       createKeyRef.current = "";
     } catch (error) {
-      setBatchError(`候选生成未启动：${error.message}`);
+      setBatchError(`候选生成未启动：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }
@@ -681,7 +682,7 @@ export function ReferenceTranslationBatchPanel({
       setPollSuspended(false);
       setNotice("已仅重新提交可重试失败项；成功项、忠实度阻断项和终止失败项不会重复生成。");
       } catch (error) {
-      setBatchError(`失败项重试未启动：${error.message}`);
+      setBatchError(`失败项重试未启动：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }
@@ -722,7 +723,7 @@ export function ReferenceTranslationBatchPanel({
       // remain at a stale zero-count after a successful one-click confirmation.
       await onBatchSettled();
     } catch (error) {
-      setBatchError(`一键确认未完成：${error.message}`);
+      setBatchError(`一键确认未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setAction("");
     }

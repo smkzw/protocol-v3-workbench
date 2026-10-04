@@ -43,3 +43,21 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论与 09-29 一致：**共存无互斥卸载**，翻译调用后 OCR 热复测仍亚秒级通过；本轮 RSS 峰值 ~16.3 GB（低于 09-29 的 ~33 GB，因翻译模型该次未被重复加载，oMLX 按需加载两模型之一驻留即可承接交替调用）。证据：`../env_precheck_20261001/` 下 `ocr_probe_visual_response.json`、`translation_probe_response.json`、`ocr_probe_visual_round2.json`。
 
 追加（18:2x，环境管理员第1轮复核）：再次经 `POST /api/ai-gateway/roles/ocr/probe-visual`（产品 API、运行中 5301 pid 19523）实测一次 OCR 视觉推理 → HTTP 200 / 0.78 s，roles[ocr] `availability=available、ready=true、capability_status=specialized_whitelisted`（绑定 `ocr_local_omlx/GLM-OCR-bf16`）。距上表翻译探针约 15 分钟后 OCR 仍热态亚秒通过，进一步佐证共存无互斥卸载。证据：`../env_precheck_20261001/ocr_probe_visual_myrun.json`。
+
+---
+
+# 复测 · 2026-10-03 18:14–18:16 CEST（R27环境预检·新一轮第1轮，环境管理员）
+
+绑定状态延续核验：`ai_role_bindings.json` revision 19，ocr 角色 = `ocr_local_omlx / GLM-OCR-bf16`（enabled，capability_status=specialized_whitelisted）；改绑备份 `ai_role_bindings.json.pre-ocr-rebind-20260928` 仍在。PADDLE_OCR_API_KEY 复核仍不存在（`grep -c PADDLE ~/.config/cms-medical-workbench/ai-runtime.env` → 0；运行中 5301 进程环境亦 0 命中），维持主会话裁决路线。运行中 5301（pid 28117，11:32 起）已加载该绑定，无需重启。
+
+实测序列（全部经产品自身 API；探针前 8001 /v1/models 已同时列出 GLM-OCR-bf16 与 dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX，oMLX RSS 32,329,680 KB）：
+
+| 时刻 | 动作 | oMLX server RSS | 响应耗时 |
+|---|---|---|---|
+| 18:14 | OCR 视觉探针 #1（读图 "CMS VISION 7429"）→ **passed** | 32,329,680 KB | 165 ms（热态） |
+| 18:15 | 翻译探针（translation_body_local_omlx / dawncr0w，结构化 {"status":"ok"}）→ **passed** | 32,329,680 KB | 352 ms |
+| 18:16 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 32,332,144 KB | 162 ms |
+
+结论与 09-29 / 10-01 两节一致：**共存无互斥卸载**；翻译调用后 OCR 热复测仍亚秒级通过，RSS 全程稳定（~32.3 GB）。证据：`../env_precheck_round1_20261003/` 下 `ocr_probe_visual_r1.json`、`translation_probe_r1.json`、`ocr_probe_visual_r1_round2.json`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改任何产品代码（本节为环境侧验证记录）。

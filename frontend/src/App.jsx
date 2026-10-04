@@ -1301,6 +1301,13 @@ function AppShell({
   children,
 }) {
   const [newProjectOpen, setNewProjectOpen] = useState(false);
+  // R27 NEW-P0-04①：弹窗会话稳定幂等键——打开时生成一次，成功创建后才
+  // 重置。此前每次提交用 Date.now/random 现拼，同帧双击=两个不同键，
+  // 后端幂等去重永不命中（现场0.26秒双项目实据）。
+  const [newProjectIdempotencyKey, setNewProjectIdempotencyKey] = useState("");
+  // R27 NEW-P0-04②：同步 ref 守卫挡同帧双提交（setNewProjectBusy 是异步
+  // state，重渲染前不生效）。
+  const newProjectSubmitRef = useRef(false);
   const [newProjectDraft, setNewProjectDraft] = useState(EMPTY_NEW_PROJECT);
   const [newProjectBusy, setNewProjectBusy] = useState(false);
   const [newProjectMessage, setNewProjectMessage] = useState("");
@@ -1338,6 +1345,8 @@ function AppShell({
   const createNewProject = async (event) => {
     event.preventDefault();
     if (newProjectDraft.entry_mode === "synopsis_import") return;
+    if (newProjectSubmitRef.current) return;
+    newProjectSubmitRef.current = true;
     const requiredFields = [
       ["product_name", "试验药物"],
       ["indication", "适应症"],
@@ -1367,17 +1376,19 @@ function AppShell({
           ...newProjectDraft,
           product_name: newProjectDraft.product_name.trim(),
           actor: "medical_manager",
-          idempotency_key: `create-project-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          idempotency_key: newProjectIdempotencyKey,
         }),
       });
       const payload = await readJsonOrThrow(response);
       onProjectCreated?.(payload.project, payload.entry_mode);
       setNewProjectDraft(EMPTY_NEW_PROJECT);
       setNewProjectOpen(false);
+      setNewProjectIdempotencyKey("");
     } catch (error) {
       setNewProjectMessage(`创建失败：${apiErrorText(error)}`);
     } finally {
       setNewProjectBusy(false);
+      newProjectSubmitRef.current = false;
     }
   };
   return (
@@ -1502,6 +1513,9 @@ function AppShell({
             onAiGatewayStatusChange={onAiGatewayStatusChange}
             onCreateProject={() => {
               setNewProjectMessage("");
+              setNewProjectIdempotencyKey(
+                `create-project-session-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
+              );
               setNewProjectOpen(true);
             }}
           />
@@ -8106,6 +8120,10 @@ function WritingPage({
   const [soaCreateConfirmOpen, setSoaCreateConfirmOpen] = useState(false);
   const [documentExportBusy, setDocumentExportBusy] = useState("");
   const [documentExportProgress, setDocumentExportProgress] = useState(null);
+  // NEW-17 内容族①修订（编辑安全契约）：占位符门失败后的知情重试不再
+  // 使用原生确认弹窗（阻塞、无中文明确选项、绕过显式选择契约），
+  // 改为显式行内确认块。
+  const [exportPlaceholderAck, setExportPlaceholderAck] = useState(null);
   const [fullDraftJob, setFullDraftJob] = useState(null);
   const [fullDraftArtifact, setFullDraftArtifact] = useState(null);
   const [fullDraftConfirmedSections, setFullDraftConfirmedSections] = useState([]);
@@ -10927,16 +10945,16 @@ function WritingPage({
         setDocumentExportProgress(null);
         const detail = medicalWritingExportErrorText(error);
         // NEW-17 内容族①：占位符门失败——用户知悉后可带确认位重试一次
+        // （编辑安全契约修订：显式行内确认块，不再使用原生 confirm）。
         if (
           mode === "draft_preview"
           && !acknowledgePlaceholders
           && /【待补齐】|acknowledge_placeholders/.test(detail)
-          && globalThis.window?.confirm
-          && globalThis.window.confirm(
-            `导出件含未完成占位（${detail.slice(0, 160)}）。\n\n确认知悉后仍要导出草稿预览吗？（文件名将带「正文未完成」标记）`,
-          )
         ) {
-          exportMedicalWritingDocument(mode, true);
+          setExportPlaceholderAck({
+            mode,
+            detail: detail.slice(0, 200),
+          });
           return;
         }
         setWorkingCopyMessage(`Word 导出失败：${detail}`);
@@ -11479,6 +11497,31 @@ function WritingPage({
                   <FileCheck2 size={14} /> {documentExportBusy === "approved_final" ? "生成中" : "正式 Word"}
                 </button>
               </div>
+              {exportPlaceholderAck && (
+                <div className="document-export-progress" role="alertdialog" aria-label="导出占位确认">
+                  <strong>导出件含未完成占位</strong>
+                  <small>{exportPlaceholderAck.detail}</small>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ack = exportPlaceholderAck;
+                        setExportPlaceholderAck(null);
+                        exportMedicalWritingDocument(ack.mode, true);
+                      }}
+                    >
+                      知悉占位，仍导出草稿预览
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setExportPlaceholderAck(null)}
+                    >
+                      返回补齐正文
+                    </button>
+                  </div>
+                  <small>确认后文件名将带「正文未完成」标记；返回补齐不会丢失当前内容。</small>
+                </div>
+              )}
               {documentExportProgress && (
                 <div className="document-export-progress" role="status" aria-live="polite">
                   <div

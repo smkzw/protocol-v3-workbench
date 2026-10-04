@@ -12,6 +12,7 @@ from io import BytesIO
 import os
 from pathlib import Path
 import re
+import time
 from threading import Lock
 from typing import Any, Mapping, Optional
 from urllib.parse import quote
@@ -377,6 +378,8 @@ from .monitoring_risk_evidence import (
 from .writing_reference import (
     ClinicalTrialsGovClient,
     MAX_MANUAL_DOCUMENT_BYTES,
+    REFERENCE_TRANSLATION_REVISE_JOB_TYPE,
+    TranslationReviseDurableExecutor,
     WritingReferenceDiscoveryService,
     WritingReferenceDocumentService,
     WritingReferenceExtractionService,
@@ -2364,15 +2367,38 @@ def _hy_mt2_translator_adapter(
                 with urllib.request.urlopen(request, timeout=300) as response:
                     return _adapter_json.loads(response.read().decode("utf-8"))
 
-        result = (
-            run_gated_omlx_request(
-                _execute_body_translation_request,
-                kind="translation",
-                owner="medical-writing-api:translation-body",
+        def _dispatch_body_request():
+            return (
+                run_gated_omlx_request(
+                    _execute_body_translation_request,
+                    kind="translation",
+                    owner="medical-writing-api:translation-body",
+                )
+                if use_omlx_gate
+                else _execute_body_translation_request()
             )
-            if use_omlx_gate
-            else _execute_body_translation_request()
-        )
+
+        # R26 自检R5(第1次) P1-b：oMLX 由编排器按需加载（排队+最小驻留），
+        # 批次第一个正文调用会与加载竞态，编排拒绝以 AiProviderRuntimeError
+        # 浮出——历史上适配器把它直接包成 CompositePipelineUnavailableError，
+        # 一个瞬时拒绝烧掉整个条目并强制人工"仅重试失败项"（R2/R3/R5 现场
+        # 三轮同型：首轮恒 1 条 failed_retryable）。对编排/供应方可用性类
+        # 瞬时错误做有界等待重试，冷启动竞态在条目内自愈；耗尽后仍按原语义
+        # 失败关闭。忠实度阻断（FidelityBlockedError）不在此重试——它有自己
+        # 的作者确认语义。
+        from .ai_gateway import AiProviderRuntimeError
+
+        _body_transient_attempts = 4
+        _body_transient_wait_seconds = 20.0
+        result = None
+        for attempt in range(1, _body_transient_attempts + 1):
+            try:
+                result = _dispatch_body_request()
+                break
+            except AiProviderRuntimeError:
+                if attempt == _body_transient_attempts:
+                    raise
+                time.sleep(_body_transient_wait_seconds)
         # Truncated or empty output fails closed — never alignment-checked.
         translated = validate_completion_payload(result, body_model)
     except CompositePipelineUnavailableError:
@@ -2728,6 +2754,11 @@ mw_durable_worker.register_executor(
         writing_reference_translation_batch_service,
         mode="pending",
     )
+)
+# R26 self-check #2 P0-A：医学退回驱动的单章重新生成也走 durable 作业链，
+# 与批次翻译共享同一个 worker/重试/进度展示契约。
+mw_durable_worker.register_executor(
+    TranslationReviseDurableExecutor(writing_reference_translation_service)
 )
 mw_durable_worker.register_executor(
     SectionAiCandidateExecutor(service_resolver=_mw_service_resolver)
@@ -6411,6 +6442,54 @@ def create_writing_reference_translation(
         raise HTTPException(status_code=422, detail=str(exc))
 
 
+def _submit_reference_translation_revise_job(
+    project_id: str,
+    translation_id: str,
+    request: WritingReferenceTranslationRevisionRequest,
+) -> Optional[str]:
+    """Enqueue one ``reference_translation_revise`` durable job and wake the worker.
+
+    Returns the job id, or ``None`` when no durable store is configured so
+    the endpoint can fall back to the legacy synchronous behavior.
+    """
+    if mw_durable_store is None:
+        return None
+    from packages.contracts.workbench_contracts import DurableJobCreateRequest
+
+    payload = {
+        "translation_id": translation_id,
+        "expected_translation_revision": request.expected_translation_revision,
+        "medical_review_id": request.medical_review_id,
+        "user_instruction": request.user_instruction,
+        "actor": request.actor,
+        "idempotency_key": request.idempotency_key,
+    }
+    payload_json = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+    request_hash = sha256(
+        f"{project_id}|{REFERENCE_TRANSLATION_REVISE_JOB_TYPE}|{payload_json}".encode(
+            "utf-8"
+        )
+    ).hexdigest()[:64]
+    # business_key must differ per author attempt (the idempotency key is
+    # client-generated fresh per click): create_or_reuse raises a conflict
+    # when one business key arrives with different request hashes, and a
+    # failed-terminal first attempt must not block the author's next click.
+    attempt_key = sha256(request.idempotency_key.encode("utf-8")).hexdigest()[:16]
+    response = mw_durable_store.create_or_reuse(
+        DurableJobCreateRequest(
+            project_id=project_id,
+            job_type=REFERENCE_TRANSLATION_REVISE_JOB_TYPE,
+            business_key=f"{translation_id}:{request.medical_review_id}:{attempt_key}",
+            request_hash=request_hash,
+            payload_json=payload_json,
+            created_by=request.actor,
+            provider="composite_pipeline",
+        )
+    )
+    mw_durable_worker.wake(project_id, response.job_id)
+    return response.job_id
+
+
 @app.post(
     "/api/projects/{project_id}/medical-writing/references/translations/{translation_id}/revisions"
 )
@@ -6421,6 +6500,28 @@ def revise_writing_reference_translation(
 ):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        # R26 self-check #2 P0-A：医学退回后的"按审核意见重新生成"会重跑整条
+        # 复合章节管线（计划复用 -> Hy-MT2 正文 -> Flash QC），是分钟级模型
+        # 工作量。同步跑在 HTTP 请求里让恢复路径在浏览器侧静默失效（无进展、
+        # 无 durable job、断连后报错蒸发）。契约校验仍同步（真实违规立即
+        # 4xx），生成本身改为 reference_translation_revise durable 作业，由
+        # 共享 worker 执行——与批次翻译/分诊/章节候选同一条作业链。
+        writing_reference_translation_service.validate_revise(
+            canonical_id, translation_id, request
+        )
+        job_id = _submit_reference_translation_revise_job(
+            canonical_id, translation_id, request
+        )
+        if job_id is not None:
+            return {
+                "accepted": True,
+                "job_id": job_id,
+                "job_type": REFERENCE_TRANSLATION_REVISE_JOB_TYPE,
+                "translation_id": translation_id,
+                "status": "queued",
+            }
+        # No durable store configured (legacy synchronous deployments/tests):
+        # fall back to the previous synchronous behavior.
         return writing_reference_translation_service.revise(
             canonical_id,
             translation_id,
@@ -6453,6 +6554,7 @@ def review_writing_reference_translation(
             actor=request.actor,
             expected_revision=request.expected_revision,
             idempotency_key=request.idempotency_key,
+            acknowledged_fidelity_failure_codes=request.acknowledged_fidelity_failure_codes,
         ).model_dump(mode="json")
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))

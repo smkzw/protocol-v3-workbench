@@ -10229,6 +10229,9 @@ class WritingReferenceMedicalReviewRequest(WorkbenchModel):
     actor: str = "medical_manager"
     expected_revision: int = Field(default=0, ge=0)
     idempotency_key: str
+    # R26 自检第3次 P0-A：忠实度阻断的译文，作者准入前必须逐项确认全部
+    # 忠实度阻断码（接受原始码或 unit_N: 前缀码，比较按去前缀后的码值）。
+    acknowledged_fidelity_failure_codes: list[str] = Field(default_factory=list)
 
 
 class WritingReferenceAdmissionRequest(WorkbenchModel):
@@ -10257,6 +10260,9 @@ class WritingReferenceMedicalReviewDecision(WorkbenchModel):
     admission_status: str = "not_admitted"
     evidence_brief_id: str = ""
     identity_assurance: str = "unverified_client_claim"
+    # R26 自检第3次 P0-A：作者在忠实度阻断下准入时逐项确认的阻断码清单
+    # （机器通过的一键准入为空列表，语义不变）。
+    acknowledged_fidelity_failure_codes: list[str] = Field(default_factory=list)
     created_at: datetime
 
 
@@ -10278,6 +10284,12 @@ class WritingReferenceEvidenceBrief(WorkbenchModel):
     confirmation_type: str = "legacy_medical_review"
     author_confirmation_id: str = ""
     status: str = "approved_current"
+    # R26 自检第3次 P0-A：准入依据（machine_fidelity_passed=机器忠实度一次
+    # 通过；author_confirmed_with_fidelity_residual=作者逐项确认残留码后准入）
+    # 与准入时刻的忠实度状态、确认过的残留码清单——审计与下游台账可追溯。
+    admission_basis: str = "machine_fidelity_passed"
+    fidelity_status_at_admission: str = "passed"
+    acknowledged_fidelity_failure_codes: list[str] = Field(default_factory=list)
     created_at: datetime
 
 

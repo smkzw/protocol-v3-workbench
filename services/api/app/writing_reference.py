@@ -44,6 +44,7 @@ from packages.contracts.workbench_contracts import (
 
 from .writing_reference_repository import (
     WritingReferenceConflictError,
+    WritingReferenceStaleStateError,
     WritingReferenceRepository,
 )
 from .writing_reference_m11 import (
@@ -495,6 +496,21 @@ class ClinicalTrialsGovClient:
         parsed = urlparse(url)
         if parsed.scheme != "https" or parsed.hostname not in CTGOV_ALLOWED_HOSTS:
             raise ValueError("ClinicalTrials.gov URL is outside the allowlist")
+        # R27 NEW-P0-01③：CT.gov 对复杂 query.cond 返回 400（表达式解析
+        # 失败）。此前 HTTPError 未映射直接上抛成 500；改为领域错误，端点
+        # 已有 ValueError→422 映射，文案给用户可行动指引。
+        try:
+            return self._fetch_json_checked(url)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 400:
+                raise ValueError(
+                    "检索条件过于复杂，ClinicalTrials.gov 拒绝了该请求"
+                    "（HTTP 400）。请简化或修改检索条件词后重试；系统对"
+                    "可自动提取的英文条件词已自动简化。"
+                ) from exc
+            raise
+
+    def _fetch_json_checked(self, url: str) -> dict[str, Any]:
         opener = urllib.request.build_opener(
             _AllowlistedRedirectHandler(),
             urllib.request.HTTPSHandler(context=ssl.create_default_context()),
@@ -1168,12 +1184,20 @@ class WritingReferenceTranslationService:
             "legacy Flash-only translation is not permitted"
         )
 
-    def revise(
+    def validate_revise(
         self,
         project_id: str,
         translation_id: str,
         request: WritingReferenceTranslationRevisionRequest,
-    ) -> WritingReferenceTranslationRevision:
+    ) -> tuple[WritingReferenceTranslationRevision, Any]:
+        """Validate the author revise contract without generating anything.
+
+        Shared by the synchronous fallback and the durable executor so the
+        endpoint can reject contract violations (missing/stale review,
+        non-returned decision, stale extraction lineage, validation gates)
+        with an immediate 4xx while the generation itself runs as a durable
+        job.
+        """
         current = self.repository.translation(
             project_id,
             translation_id,
@@ -1210,6 +1234,17 @@ class WritingReferenceTranslationService:
                 "translation revision requires the latest extraction lineage"
             )
         self._require_current_content_validation(project_id, artifact)
+        return current, review
+
+    def revise(
+        self,
+        project_id: str,
+        translation_id: str,
+        request: WritingReferenceTranslationRevisionRequest,
+    ) -> WritingReferenceTranslationRevision:
+        current, review = self.validate_revise(project_id, translation_id, request)
+        span = self.repository.source_span(project_id, current.span_id)
+        artifact = self.repository.document_artifact(project_id, span.artifact_id)
         instruction = (
             f"{request.user_instruction.strip()}\n医学审核意见：{review.comment}"
         )
@@ -1574,7 +1609,21 @@ class WritingReferenceTranslationService:
             # without calling Flash integration.
             flash_passed = False
             qc_failure_codes.extend(hy_block_codes)
-            final_text = hy_block_text
+            # R26 自检R5(第1次) P0：与批次路径统一"绝不落空候选"契约——
+            # completed 块优先；无 completed 时回填失败块 last_output 片段；
+            # 两者皆空则拒绝落库（模型零输出属生成失败，不是可复核的
+            # 忠实度阻断候选）。
+            blocked_fragment = (hy_block_text or hy_block_raw_text or "").strip()
+            if (chapter_translated or "").strip():
+                final_text = chapter_translated
+            elif blocked_fragment:
+                final_text = blocked_fragment
+            else:
+                raise CompositePipelineUnavailableError(
+                    "Hy-MT2 fidelity block left no reviewable output for "
+                    f"chapter {chapter_id}: no completed chunks and empty "
+                    "last output; refusing to persist an empty blocked candidate"
+                )
             final_hash = _pipeline_sha256(final_text)
         else:
             # Chapter-level aligned units -> aligned marked Flash envelope.
@@ -1818,6 +1867,123 @@ class WritingReferenceTranslationService:
         raise CompositePipelineUnavailableError(
             "legacy Flash-only translation path is permanently disabled; "
             "use the composite document pipeline (plan -> Hy-MT2 -> Flash QC)"
+        )
+
+
+REFERENCE_TRANSLATION_REVISE_JOB_TYPE = "reference_translation_revise"
+
+
+class TranslationReviseDurableExecutor:
+    """Durable-job executor for author-requested translation revisions.
+
+    The medical revise ("退回修改 → 按审核意见重新生成") re-runs the full
+    composite chapter pipeline (plan reuse -> Hy-MT2 body -> Flash QC) — a
+    multi-minute model workload.  Running it synchronously inside the HTTP
+    request left the author with a silently dead recovery path: no progress
+    surface, proxy-abort prone, and errors that evaporate on client
+    disconnect (R26 self-check #2 P0-A: no new revision, no durable job, no
+    surfaced error in the field).  The durable worker owns the run instead,
+    exactly like batch translation, triage and section candidates.
+
+    Contract violations (missing/stale review, lineage/validation gates) are
+    non-retryable — the endpoint rejects them synchronously via
+    ``validate_revise`` before enqueueing; a violation seen at execute time
+    (racing state change) fails the job terminally rather than retry-looping.
+    Transient model/infrastructure errors stay retryable per the store's
+    max_attempts policy.
+    """
+
+    job_type = REFERENCE_TRANSLATION_REVISE_JOB_TYPE
+
+    def __init__(self, service: WritingReferenceTranslationService) -> None:
+        self._service = service
+
+    def execute(
+        self,
+        job: Any,
+        claim_token: str,
+        cancel_check: Any,
+        heartbeat: Any,
+    ) -> Any:
+        from services.api.app.medical_writing_durable_jobs import DurableJobResult
+
+        del claim_token
+        payload: dict[str, Any] = {}
+        if getattr(job, "payload_json", ""):
+            try:
+                payload = json.loads(job.payload_json)
+            except (json.JSONDecodeError, TypeError):
+                payload = {}
+        translation_id = str(payload.get("translation_id", ""))
+        request = WritingReferenceTranslationRevisionRequest(
+            expected_translation_revision=int(payload.get("expected_translation_revision", 0)),
+            medical_review_id=str(payload.get("medical_review_id", "")),
+            user_instruction=str(
+                payload.get("user_instruction")
+                or "请严格按医学审核意见修订译文，保持原文数字、单位、时间点、缩写、否定和终点层级忠实。"
+            ),
+            actor=str(payload.get("actor", "medical_manager")),
+            idempotency_key=str(payload.get("idempotency_key", "")),
+        )
+        try:
+            if cancel_check():
+                return DurableJobResult(
+                    error="executor invoked with stale or cancelled claim",
+                    retryable=True,
+                )
+            if heartbeat:
+                from packages.contracts.workbench_contracts import (
+                    DurableJobProgressPayload,
+                )
+
+                try:
+                    heartbeat(
+                        DurableJobProgressPayload(
+                            phase="revising",
+                            percent=1.0,
+                            step=1,
+                            step_total=1,
+                            message="按医学审核意见重新生成译文中",
+                        )
+                    )
+                except Exception:
+                    return DurableJobResult(
+                        error="durable heartbeat lost before translation revise",
+                        retryable=True,
+                    )
+            revised = self._service.revise(job.project_id, translation_id, request)
+        except (KeyError, ValueError) as exc:
+            return DurableJobResult(
+                error=f"{type(exc).__name__}: {exc}",
+                retryable=False,
+            )
+        except (WritingReferenceConflictError, WritingReferenceStaleStateError) as exc:
+            return DurableJobResult(
+                error=f"{type(exc).__name__}: {exc}",
+                retryable=False,
+            )
+        except CompositePipelineUnavailableError as exc:
+            return DurableJobResult(
+                error=f"{type(exc).__name__}: {exc}",
+                retryable=False,
+            )
+        except Exception as exc:  # transient model/infra failures stay retryable
+            return DurableJobResult(
+                error=f"{type(exc).__name__}: {exc}",
+                retryable=True,
+            )
+        return DurableJobResult(
+            artifact_locator=json.dumps(
+                {
+                    "translation_id": revised.translation_id,
+                    "revision": revised.revision,
+                    "span_id": revised.span_id,
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            ),
+            provider=revised.provider,
+            model=revised.model_name,
         )
 
 
@@ -2413,7 +2579,15 @@ def search_url(
     request: WritingReferenceSearchRequest,
     page_token: str | None = None,
 ) -> str:
-    indication = request.indication.strip()
+    from .medical_writing_condition_term_resolver import (
+        sanitize_condition_query_term,
+    )
+
+    # R27 NEW-P0-01①：query.cond 防御性安全化。上游 resolver 已尽力归一，
+    # 但任何残留的括号/斜杠/保留字/中文都会被 CT.gov 当表达式解析并 400
+    # （现场：难治性/不明原因慢性咳嗽（Refractory Chronic cough / …）→
+    # 11次500）。安全化失败（无有效英文词元）按 ValueError→422 人话上抛。
+    indication = sanitize_condition_query_term(request.indication)
     phases = sorted(
         {phase.strip().upper() for phase in request.phases if phase.strip()}
     )

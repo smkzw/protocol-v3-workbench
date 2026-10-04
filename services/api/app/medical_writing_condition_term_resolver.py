@@ -76,6 +76,13 @@ _ZH_TO_EN_CONDITION: dict[str, str] = {
     "荨麻疹": "urticaria",
     "过敏性鼻炎": "allergic rhinitis",
     "季节性过敏性鼻炎": "seasonal allergic rhinitis",
+    # R27 第1轮末修订 NEW-P0-01：现场（R1-A 难治性/不明原因慢性咳嗽）无别名
+    # 可映射即 fail-open 放行复杂中文串 → CT.gov query.cond 表达式 400。
+    "慢性咳嗽": "chronic cough",
+    "难治性慢性咳嗽": "refractory chronic cough",
+    "不明原因慢性咳嗽": "chronic cough",
+    "良性前列腺增生": "benign prostatic hyperplasia",
+    "前列腺增生": "benign prostatic hyperplasia",
 }
 
 
@@ -129,6 +136,60 @@ def _lookup_known_alias(value: str) -> tuple[str, str] | None:
     return None
 
 
+# ---- R27 NEW-P0-01：英文段抽取与 query.cond 安全化 -----------------------
+#
+# CT.gov 的 query.cond 按表达式解析：全角/半角括号、斜杠、AND/OR 保留字、
+# 中日韩字符都会触发 "Too complicated query" 400。富化产物常形如
+# 『难治性/不明原因慢性咳嗽（Refractory Chronic cough / Unexplained
+# Chronic Cough，RCC/UCC）』——括注里恰好有可用的英文条件词。
+
+_QUERY_COND_RESERVED_WORDS = frozenset({"AND", "OR", "NOT"})
+_QUERY_COND_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9'\-]*")
+_CJK_CLASS_RE = re.compile(r"[\u3400-\u9fff]")
+
+
+def extract_english_condition_phrase(value: str) -> str:
+    """Return the first pure-English phrase usable as ``query.cond``.
+
+    Splits the raw string on brackets/slashes/commas/semicolons and returns
+    the first segment whose tokens are all ASCII words (reserved CT.gov
+    operators dropped). Empty string when no such segment exists.
+    """
+    cleaned = re.sub(r"[（）()\[\]【】]", " ", value or "")
+    segments = re.split(r"[/、，,;；]", cleaned)
+    for segment in segments:
+        tokens = [
+            token
+            for token in segment.split()
+            if _QUERY_COND_TOKEN_RE.fullmatch(token)
+            and token.upper() not in _QUERY_COND_RESERVED_WORDS
+        ]
+        if tokens:
+            return " ".join(tokens)
+    return ""
+
+
+def sanitize_condition_query_term(value: str) -> str:
+    """Sanitize any candidate condition term for CT.gov ``query.cond``.
+
+    Known-clean English phrases pass through unchanged; mixed/CJK strings
+    degrade to the first embedded English phrase; strings with no usable
+    English phrase raise :class:`ValueError` with a human-actionable message
+    (the API layer already maps ValueError to 422) instead of forwarding a
+    guaranteed-400 expression to ClinicalTrials.gov.
+    """
+    raw = (value or "").strip()
+    if not raw:
+        raise ValueError("检索条件为空：请先补充有效的英文条件词后重试。")
+    phrase = extract_english_condition_phrase(raw)
+    if phrase:
+        return phrase
+    raise ValueError(
+        "检索条件过于复杂（含括号/斜杠/保留字或非英文词元），且未包含可"
+        "自动提取的英文条件词；请修改条件词（例如使用标准英文病名）后重试。"
+    )
+
+
 def resolve_clinicaltrials_condition_term(
     *,
     indication: str = "",
@@ -152,6 +213,14 @@ def resolve_clinicaltrials_condition_term(
     ):
         if not candidate:
             continue
+        # R27 NEW-P0-01②：含中文的混合串若带 ASCII 英文括注/英文段，优先
+        # 抽取该英文段——它是AI对该完整限定标签的英文裁定，比别名表的
+        # 子串包含命中（如『不明原因慢性咳嗽』→chronic cough）更忠实、
+        # 更具体。纯中文串继续走别名表。
+        if contains_cjk(candidate):
+            english_phrase = extract_english_condition_phrase(candidate)
+            if english_phrase:
+                return english_phrase, f"en_extract:{source}"
         alias = _lookup_known_alias(candidate)
         if alias:
             mapped, match_kind = alias
@@ -162,6 +231,13 @@ def resolve_clinicaltrials_condition_term(
     if indication_text and not contains_cjk(indication_text):
         return indication_text, None
 
-    # Fail-open: keep preferred Chinese / original so UI can show the gap.
+    # R27 NEW-P0-01②：混合串（中文+ASCII括注/英文段）时抽取英文段作
+    # 条件词——fail-open 原样放行复杂中文串会被 CT.gov 当表达式解析 400。
     fallback = preferred or indication_text
+    if fallback and contains_cjk(fallback):
+        english_phrase = extract_english_condition_phrase(fallback)
+        if english_phrase:
+            return english_phrase, "en_extract:clinicaltrials_condition_term"
+
+    # Fail-open: keep preferred Chinese / original so UI can show the gap.
     return fallback, None

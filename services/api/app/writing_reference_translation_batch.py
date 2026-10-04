@@ -5631,7 +5631,28 @@ class WritingReferenceTranslationBatchService:
             integration_windowed = False
             flash_passed = False
             qc_failure_codes.extend(hy_block_codes)
-            final_text = chapter_translated_text
+            # R26 自检R5(第1次) P0：首块即阻断时 completed 为空，历史上把
+            # 空译文落成 fidelity_blocked 候选——作者残留准入据此生成空
+            # brief（approved_zh_text=""），语料门实质性检查（≥20字）永不过，
+            # 正常门数学上不可通过。修复：无 completed 时回填失败块的
+            # last_output 片段（作者可对照原文逐码确认后准入）；连片段都
+            # 没有（模型零输出）则不得落候选，按可重试生成失败处理。
+            blocked_fragment = (hy_block_text or hy_block_raw_text or "").strip()
+            if chapter_translated_text.strip():
+                final_text = chapter_translated_text
+            elif blocked_fragment:
+                final_text = blocked_fragment
+            else:
+                from .chapter_translation_pipeline import (
+                    ChapterTranslationPipelineError,
+                )
+
+                raise ChapterTranslationPipelineError(
+                    "Hy-MT2 fidelity block left no reviewable output for "
+                    f"chapter {chapter_id} of item {item.item_id}: no completed "
+                    "chunks and empty last output; refusing to persist an "
+                    "empty blocked candidate"
+                )
             final_text_sha256 = _pipeline_sha256(final_text)
         else:
             windows = build_integration_windows(

@@ -162,7 +162,7 @@ class FrontendMedicalWritingTranslationBatchContractTests(unittest.TestCase):
             "summary.existing_candidate",
             "summary.fidelity_blocked",
             'option.value.toLowerCase() !== "unmapped"',
-            "setSelectedAnchors(returnedAnchors.map((item) => item.value))",
+            "setSelectedAnchors(supportedAnchors(returnedAnchors.map((item) => item.value)))",
             'type="checkbox"',
             "selectedAnchors.includes(anchor.value)",
             "M11 结构范围（已选",
@@ -175,7 +175,7 @@ class FrontendMedicalWritingTranslationBatchContractTests(unittest.TestCase):
 
     def test_latest_batch_restores_its_frozen_scope_and_never_mixes_other_preview_counts(self):
         for contract in (
-            "setSelectedAnchors([...payload.anchor_filter])",
+            "setSelectedAnchors(supportedAnchors(payload.anchor_filter))",
             "const batchMatchesSelection = Boolean(batch)",
             "selectedScopeMatchesPreview(batch, selectedAnchors)",
             "const visibleBatch = batchMatchesSelection ? batch : null",

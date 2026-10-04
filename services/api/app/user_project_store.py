@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sqlite3
 from typing import Iterable, Optional
 from uuid import uuid4
 
 from packages.contracts.workbench_contracts import UserProjectCreateRequest
+
+
+def _five_seconds_ago_iso() -> str:
+    return (datetime.now(timezone.utc) - timedelta(seconds=5)).isoformat()
 
 
 @dataclass(frozen=True)
@@ -48,6 +52,30 @@ class UserProjectStore:
             ).fetchone()
             if duplicate is not None:
                 raise ValueError(f"项目编号已存在：{request.project_code}")
+            # R27 NEW-P0-04③：同帧双击软查重。前端防双击是异步 state，同帧
+            # 双击会以两个不同幂等键进入；绿田项目编号自动随机也绕过
+            # project_code 查重（现场0.26秒双行实据）。同一操作者5秒内
+            # 同名同适应症的第二次创建按幂等回放返回既有项目。
+            soft = connection.execute(
+                """
+                SELECT * FROM user_projects
+                WHERE lower(project_name) = lower(?)
+                  AND lower(indication) = lower(?)
+                  AND created_by = ?
+                  AND entry_mode = ?
+                  AND created_at >= ?
+                ORDER BY created_at DESC LIMIT 1
+                """,
+                (
+                    request.project_name,
+                    request.indication,
+                    request.actor,
+                    request.entry_mode,
+                    _five_seconds_ago_iso(),
+                ),
+            ).fetchone()
+            if soft is not None:
+                return self._record(soft)
             now = datetime.now(timezone.utc).isoformat()
             project_id = f"proj_user_{uuid4().hex[:12]}"
             connection.execute(

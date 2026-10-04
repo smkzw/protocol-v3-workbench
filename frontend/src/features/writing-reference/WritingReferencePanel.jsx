@@ -8,6 +8,7 @@ import {
   ExternalLink,
   FileSearch,
   FileText,
+  PenLine,
   RefreshCw,
   Search,
   Upload,
@@ -28,6 +29,7 @@ import {
   mergeTriageSelections,
 } from "./triagePresentationState.mjs";
 import { alignedArtifactId } from "./referenceIdentity.mjs";
+import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
 
 const viewDefinitions = [
   { id: "candidates", label: "候选研究" },
@@ -135,6 +137,36 @@ function currentReview(workspace, translation) {
     .sort((left, right) => right.revision - left.revision)[0];
 }
 
+// R26 自检第3次 P1：跨批次重跑会让同一 span 存在多条 translation 记录。
+// 不能再按数组序 find() 取第一条——退回评审落在另一条上时，当前评审对
+// 不上号，'按审核意见重新生成'等评审动作会间歇性消失。确定性规则：
+// ①有当前评审（同 translation_id+revision）的记录优先；
+// ②其次取 revision 最高者；
+// ③同分取数组序靠后者（workspace 按更新时间升序，靠后=较新）。
+function currentSpanTranslation(workspace, span) {
+  const candidates = (workspace?.translations || []).filter(
+    (item) => item.span_id === span?.span_id,
+  );
+  if (!candidates.length) return null;
+  const reviews = new Set(
+    (workspace?.medical_reviews || []).map(
+      (item) => `${item.translation_id}::${item.translation_revision}`,
+    ),
+  );
+  let best = null;
+  let bestScore = -1;
+  candidates.forEach((item, index) => {
+    const score = (reviews.has(`${item.translation_id}::${item.revision}`) ? 2 : 0)
+      + Number(item.revision || 0) * 0.01
+      + index * 1e-6;
+    if (score > bestScore) {
+      bestScore = score;
+      best = item;
+    }
+  });
+  return best;
+}
+
 function triageCandidateResults(runResponse) {
   return (runResponse?.run?.chunks || [])
     .filter((chunk) => chunk.status === "succeeded")
@@ -201,6 +233,8 @@ export function WritingReferencePanel({
   const [selectedSpanId, setSelectedSpanId] = useState("");
   const [reason, setReason] = useState("");
   const [reviewComment, setReviewComment] = useState("");
+  // R26 自检第3次 P0-A：忠实度阻断译文的作者残留准入——逐项确认的阻断码。
+  const [acknowledgedFidelityCodes, setAcknowledgedFidelityCodes] = useState([]);
   const [showReviewWithdrawal, setShowReviewWithdrawal] = useState(false);
   const [structureReviewComment, setStructureReviewComment] = useState("");
   const [structureIssues, setStructureIssues] = useState("");
@@ -255,7 +289,7 @@ export function WritingReferencePanel({
       setSelectedArtifactId((current) => artifactIds.includes(current) ? current : artifactIds[0] || "");
     } catch (error) {
       if (generation === refreshGenerationRef.current && activeProjectRef.current === requestedProjectId) {
-        setMessage(`竞品方案参照读取失败：${error.message}`);
+        setMessage(`竞品方案参照读取失败：${medicalWritingSafeErrorText(error)}`);
       }
     } finally {
       if (generation === refreshGenerationRef.current && activeProjectRef.current === requestedProjectId) setLoading(false);
@@ -350,7 +384,7 @@ export function WritingReferencePanel({
       ) return null;
       return adoptTriageRun(payload);
     } catch (error) {
-      setAiTriageError(`AI分诊结果恢复失败：${error.message}`);
+      setAiTriageError(`AI分诊结果恢复失败：${medicalWritingSafeErrorText(error)}`);
       return null;
     } finally {
       if (
@@ -447,7 +481,7 @@ export function WritingReferencePanel({
         setSelectedSpanId((current) => (payload.items || []).some((item) => item.span_id === current) ? current : payload.items?.[0]?.span_id || "");
       })
       .catch((error) => {
-        if (error.name !== "AbortError") setMessage(`结构化片段读取失败：${error.message}`);
+        if (error.name !== "AbortError") setMessage(`结构化片段读取失败：${medicalWritingSafeErrorText(error)}`);
       });
     return () => controller.abort();
   }, [
@@ -530,17 +564,34 @@ export function WritingReferencePanel({
   const triageFinalized = authoringMode
     && journey?.corpus_triage?.status === "finalized"
     && journey?.corpus_triage?.snapshot_id === snapshotId;
+  // R26 自检第4次 P0-2：AI分诊确认路径的篮子权威。后端原文准备/翻译
+  // _frozen_scope 已接受"锁定快照的已确认 discovery 投影"（PICOS 前的
+  // 一次性确认写入 journey.discovery_basket_projection）；此前前端只认
+  // corpus_triage.finalized（仅人工定稿/PICOS后投影可置），导致 AI 确认后
+  // 准备批次/OCR复核/逐文件入口全部不可达，翻译范围永远报 not ready。
+  const discoveryProjection = journey?.discovery_basket_projection;
+  const discoveryConfirmed = Boolean(
+    authoringMode
+    && discoveryProjection?.confirmation_id
+    && discoveryProjection?.snapshot_id === snapshotId,
+  );
+  const basketConfirmed = triageFinalized || discoveryConfirmed;
   const triageReviewLocked = triageFinalized || (
     authoringMode
       && aiTriageRun?.run?.status === "confirmed"
       && !triageReconfirmationRequired
   );
-  const retainedCandidateIds = journey?.corpus_triage?.retained_candidate_ids || [];
+  const retainedCandidateIds = journey?.corpus_triage?.status === "finalized"
+    && journey?.corpus_triage?.snapshot_id === snapshotId
+    ? journey?.corpus_triage?.retained_candidate_ids || []
+    : discoveryProjection?.snapshot_id === snapshotId
+      ? discoveryProjection?.retained_nct_ids || []
+      : [];
   const retainedCandidateIdSet = useMemo(
     () => new Set(retainedCandidateIds),
     [retainedCandidateIds],
   );
-  const documentCandidates = triageFinalized
+  const documentCandidates = basketConfirmed
     ? candidates.filter((item) => retainedCandidateIdSet.has(item.nct_id))
     : candidates;
   const selectedDocumentCandidate = documentCandidates.find((item) => item.nct_id === selectedNctId)
@@ -560,7 +611,7 @@ export function WritingReferencePanel({
   const selectedExtractionReview = (workspace?.extraction_reviews || [])
     .filter((item) => item.artifact_id === selectedArtifactId && item.extraction_revision === selectedExtractionRevision)
     .sort((left, right) => right.revision - left.revision)[0];
-  const selectedTranslation = (workspace?.translations || []).find((item) => item.span_id === selectedSpan?.span_id);
+  const selectedTranslation = currentSpanTranslation(workspace, selectedSpan);
   const selectedReview = currentReview(workspace, selectedTranslation);
   const selectedBrief = (workspace?.evidence_brief_history || []).find(
     (item) => item.translation_id === selectedTranslation?.translation_id
@@ -630,7 +681,8 @@ export function WritingReferencePanel({
   useEffect(() => {
     setShowReviewWithdrawal(false);
     setReviewComment("");
-  }, [selectedSpan?.span_id, selectedTranslation?.revision]);
+    setAcknowledgedFidelityCodes([]);
+  }, [selectedSpan?.span_id, selectedTranslation?.revision, selectedTranslation?.translation_id]);
 
   useEffect(() => {
     setCandidatePage((current) => Math.min(current, candidatePageCount));
@@ -666,7 +718,7 @@ export function WritingReferencePanel({
       }
       setMessage(successMessage);
     } catch (error) {
-      setMessage(`操作未完成：${error.message}`);
+      setMessage(`操作未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusyAction("");
     }
@@ -912,7 +964,7 @@ export function WritingReferencePanel({
       }
     } catch (error) {
       setAiTriageStatus(run.status);
-      setAiTriageError(`AI分诊重试未完成：${error.message}`);
+      setAiTriageError(`AI分诊重试未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusyAction("");
     }
@@ -1009,7 +1061,7 @@ export function WritingReferencePanel({
         );
       }
     } catch (error) {
-      setAiTriageError(`确认并锁定未完成：${error.message}`);
+      setAiTriageError(`确认并锁定未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusyAction("");
     }
@@ -1040,7 +1092,7 @@ export function WritingReferencePanel({
       await recoverLatestTriageRun({ silentNotFound: false });
       setMessage("已恢复确认结果与写作旅程的同步，无需再次审核。");
     } catch (error) {
-      setAiTriageError(`确认结果同步仍未完成：${error.message}`);
+      setAiTriageError(`确认结果同步仍未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusyAction("");
     }
@@ -1298,7 +1350,7 @@ export function WritingReferencePanel({
     "监管中文候选已生成；忠实度通过后仍需医学作者对照原文确认。",
   );
 
-  const reviewTranslation = (decision) => runAction(
+  const reviewTranslation = (decision, extra = {}) => runAction(
     `review-${decision}`,
     () => fetch(`/api/projects/${projectId}/medical-writing/references/translations/${selectedTranslation.translation_id}/medical-review`, {
       method: "POST",
@@ -1310,23 +1362,43 @@ export function WritingReferencePanel({
         actor: "medical_manager",
         expected_revision: selectedReview?.revision || 0,
         idempotency_key: requestKey("reference-review"),
+        ...extra,
       }),
     }).then(readJson),
     decision === "approved" ? "医学作者已确认译文，已直接纳入写作参考库。" : "译文作者处置已记录。",
   );
 
+  // R26 自检第2次 P0-A：医学退回后的重新生成是分钟级复合管线工作量，后端
+  // 以 reference_translation_revise durable 作业受理。此处轮询作业终态：
+  // 进度/失败原因可见，离开页面作业不丢失（回来刷新工作区即可看到新版本）。
   const reviseTranslation = () => runAction(
     `revise-${selectedTranslation?.translation_id}`,
-    () => fetch(`/api/projects/${projectId}/medical-writing/references/translations/${selectedTranslation.translation_id}/revisions`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        expected_translation_revision: selectedTranslation.revision,
-        medical_review_id: selectedReview.review_id,
-        actor: "medical_manager",
-        idempotency_key: requestKey("reference-translation-revision"),
-      }),
-    }).then(readJson),
+    async () => {
+      const accepted = await fetch(`/api/projects/${projectId}/medical-writing/references/translations/${selectedTranslation.translation_id}/revisions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          expected_translation_revision: selectedTranslation.revision,
+          medical_review_id: selectedReview.review_id,
+          actor: "medical_manager",
+          idempotency_key: requestKey("reference-translation-revision"),
+        }),
+      }).then(readJson);
+      if (accepted?.accepted && accepted?.job_id) {
+        const polled = await pollDurableMwJob(projectId, accepted.job_id, {
+          intervalMs: 2000,
+          maxLoops: 900,
+          onUpdate: (job) => {
+            if (["queued", "running", "retry_wait"].includes(job.status)) {
+              setMessage(`正在按审核意见重新生成译文（后台作业${job.status === "running" ? "运行中" : "排队中"}，可离开页面稍后回来查看）`);
+            }
+          },
+        });
+        if (polled.status !== "completed") {
+          throw new Error(polled.error || `重新生成作业未完成（${polled.status}），请稍后重试或在批次列表查看`);
+        }
+      }
+    },
     "已按作者退回意见生成新译文版本，仍需重新核对与确认。",
   );
 
@@ -1609,7 +1681,7 @@ export function WritingReferencePanel({
 
       {activeView === "documents" && (
         <div className="writing-reference-view">
-          {authoringMode && triageFinalized && (
+          {authoringMode && basketConfirmed && (
             <ReferencePreparationBatchPanel
               projectId={projectId}
               snapshotId={snapshotId}
@@ -1621,7 +1693,7 @@ export function WritingReferencePanel({
               onBatchSettled={refreshAuthoringAfterBatchSettled}
             />
           )}
-          {authoringMode && triageFinalized && (
+          {authoringMode && basketConfirmed && (
             <MixedOcrReviewPanel
               projectId={projectId}
               reviews={workspace?.ocr_consistency_reviews || []}
@@ -1629,7 +1701,7 @@ export function WritingReferencePanel({
               onSettled={() => refreshWorkspace({ preserveMessage: true })}
             />
           )}
-          {triageFinalized && (
+          {basketConfirmed && (
             <div className="writing-reference-single-document-entry">
               <button type="button" data-action="toggle-single-document-tools" onClick={() => setLegacyIssueOpen((current) => !current)}>
                 <FileSearch size={14} />逐文件问题处理
@@ -1637,7 +1709,7 @@ export function WritingReferencePanel({
               <span>用于批次失败、缺失公开文件或待人工确认项；保留原下载、导入、解析与核验流程。</span>
             </div>
           )}
-          {(!triageFinalized || legacyIssueOpen) && (
+          {(!basketConfirmed || legacyIssueOpen) && (
           <div className="writing-reference-single-document-tools" ref={legacyIssueToolsRef}>
           <label className="writing-reference-select">候选研究<select value={selectedNctId} onChange={(event) => selectCandidateForReview(event.target.value)}>{documentCandidates.map((item) => <option value={item.nct_id} key={item.nct_id}>{item.nct_id}</option>)}</select></label>
           <div className="writing-reference-manual-upload">
@@ -1854,7 +1926,7 @@ export function WritingReferencePanel({
                   <div className="writing-reference-translation"><span>监管中文候选 · v{selectedTranslation.revision}</span><ReferenceTag value={selectedReviewIsCurrentConfirmation ? selectedReview.decision : selectedTranslation.status} dictionary={selectedReviewIsCurrentConfirmation ? reviewLabels : translationStatusLabels} /><p>{selectedTranslation.translated_text}</p>{selectedTranslation.fidelity_failure_codes?.length > 0 && <small>{selectedTranslation.fidelity_failure_codes.join("、")}</small>}</div>
                   {selectedReview && <div className="writing-reference-review-state"><ReferenceTag value={selectedReview.decision} dictionary={selectedReviewIsCurrentConfirmation ? reviewLabels : historicalReviewLabels} /><span>{selectedReview.comment}{!selectedReviewIsCurrentConfirmation && "（仅保留为历史记录，不构成当前作者确认）"}</span></div>}
                   {selectedTranslationInvalidated && <div className="writing-reference-review-state"><ReferenceTag value={selectedTranslation.status} dictionary={translationStatusLabels} /><span>请基于当前来源和结构解析重新生成译文后再确认。</span></div>}
-                  {!selectedTranslationInvalidated && selectedReview?.decision === "returned" && <button className="primary-button" onClick={reviseTranslation} disabled={Boolean(busyAction)}>按审核意见重新生成</button>}
+                  {!selectedTranslationInvalidated && selectedReview?.decision === "returned" && <button className="primary-button" onClick={reviseTranslation} disabled={Boolean(busyAction)} title={busyAction === `revise-${selectedTranslation?.translation_id}` ? "正在后台按审核意见重新生成译文；作业有进度与重试记录，不会静默丢失" : "按作者退回意见重新生成译文；生成在后台作业中运行，完成后此处会显示新版本"}>{busyAction === `revise-${selectedTranslation?.translation_id}` ? <><RefreshCw size={14} /> 重新生成中…</> : <><PenLine size={14} /> 按审核意见重新生成</>}</button>}
                   {selectedReviewIsCurrentConfirmation && !showReviewWithdrawal && <button onClick={() => setShowReviewWithdrawal(true)} disabled={Boolean(busyAction)}>发现问题，撤回译文</button>}
                   {selectedReviewIsCurrentConfirmation && showReviewWithdrawal && <>
                     <label>撤回理由<textarea value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} placeholder="说明复核发现的具体问题；撤回后旧准入证据立即失效。" /></label>
@@ -1873,6 +1945,40 @@ export function WritingReferencePanel({
                   </>}
                   {!selectedReview && !selectedTranslationInvalidated && <>
                     <label>作者核对意见<textarea value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} placeholder="对照原文记录医学含义、数字、时间窗及否定关系的核对结论。" /></label>
+                    {selectedTranslation.fidelity_status !== "passed" && (
+                      <div className="writing-reference-override">
+                        <div className="writing-reference-override-warning"><AlertTriangle size={15} /><span>机器忠实度校验未通过。准入前必须逐项确认以下全部阻断码均已对照原文人工核实（确认的是残留问题可接受，不是机器误报的撤销）。</span></div>
+                        <fieldset>
+                          <legend>逐项确认忠实度阻断码</legend>
+                          {(selectedTranslation.fidelity_failure_codes || []).map((code) => (
+                            <label className="writing-reference-override-check" key={code}>
+                              <input
+                                type="checkbox"
+                                checked={acknowledgedFidelityCodes.includes(code)}
+                                onChange={() => {
+                                  setAcknowledgedFidelityCodes((current) => (
+                                    current.includes(code)
+                                      ? current.filter((item) => item !== code)
+                                      : [...current, code]
+                                  ));
+                                }}
+                              />
+                              <span><strong>{code}</strong></span>
+                            </label>
+                          ))}
+                        </fieldset>
+                        <button
+                          className="primary-button"
+                          onClick={() => reviewTranslation("approved", { acknowledged_fidelity_failure_codes: acknowledgedFidelityCodes })}
+                          disabled={
+                            reviewComment.trim().length < 10
+                            || acknowledgedFidelityCodes.length !== (selectedTranslation.fidelity_failure_codes || []).length
+                            || Boolean(busyAction)
+                          }
+                          title="按作者逐项确认结果准入；准入依据与残留码将写入证据台账（author_confirmed_with_fidelity_residual）"
+                        >确认译文并准入（已核对全部忠实度残留）</button>
+                      </div>
+                    )}
                     <div className="button-row">
                       <button className="primary-button" onClick={() => reviewTranslation("approved")} disabled={!reviewComment.trim() || selectedTranslation.fidelity_status !== "passed" || Boolean(busyAction)}>确认译文并准入</button>
                       <button onClick={() => reviewTranslation("returned")} disabled={!reviewComment.trim() || Boolean(busyAction)}>退回修改</button>

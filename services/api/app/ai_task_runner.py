@@ -668,7 +668,13 @@ def validate_medical_writing_revision_semantics(
             if is_blank_greenfield_draft
             else sorted(source_population_terms.difference(candidate_population_terms))
         )
-        if introduced_population_terms:
+        if introduced_population_terms and source_population_terms:
+            # R26 自检第4次 P1-4：人群称谓词检查的本意是术语一致性——源侧
+            # 已选定称谓（试验参与者/受试者/患者/健康志愿者）时，修订稿换用
+            # 或新增不同称谓属于术语漂移，仍然拒稿。源侧完全没有既定称谓时，
+            # 正常临床措辞使用人群称谓不再是"AI-only upgrade"（现场⑦：3次
+            # 重试约90分钟全部因『患者』被拒，而语料链路阻断使任何称谓都
+            # 无法补进源文本）。其余守卫照常生效。
             errors.append(
                 f"{prefix}.proposal_text introduces population terms not present "
                 f"in current-project sources: {introduced_population_terms}"

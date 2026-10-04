@@ -2985,7 +2985,19 @@ class MedicalWritingAuthoringJourneyService:
             if journey.picos_draft is not None
             else []
         )
-        detail = "、".join(picos_missing) if picos_missing else "第二步PICOS必填项"
+        if not picos_missing:
+            # L4 同族收尾（活体复现 proj_user_335ebdcef0b7）：从未保存过
+            # PICOS 草稿时，用模型自身的必填清单具名（全默认值=全缺），
+            # 不再回退到"第二步PICOS必填项"这类泛称——用户不需要翻页签
+            # 自己找字段。
+            from packages.contracts.workbench_contracts import (
+                MedicalWritingPicosDefinition,
+            )
+
+            picos_missing = (
+                MedicalWritingPicosDefinition().missing_required_fields()
+            )
+        detail = "、".join(picos_missing)
         return ValueError(
             "例外放行前需先完成第二步PICOS；当前仍缺必填项："
             f"{detail}。请在第二步补齐并完成后重试例外放行；"
@@ -6354,11 +6366,13 @@ def _derive_structured_intervention_rules_from_legacy(
     if picos is None:
         return picos
     rules = getattr(picos, "intervention_rules", None)
-    if (
-        rules is not None
-        and getattr(rules, "authority", None) == InterventionRulesAuthority.STRUCTURED
-    ):
-        return picos
+    # R26 自检R5第2次 P0-A：结构化权威不再整体跳过派生。此前只要任意一行
+    # 手工/派生记录落库为 authority=structured，派生永久失效——结合前端
+    # 编辑器行在往返中丢失，形成"编辑器存不进+派生被锁死"死路（装配
+    # blocker intervention.investigational_product_regimen 无法清除）。改为
+    # 按角色缺口补齐：仅当必需角色（试验药；安慰剂对照设计下的安慰剂）
+    # 缺失且旧版文本可忠实派生时追加该角色，幂等固定 id；结构化规则已有
+    # 的任何行绝不改动。
     dose_text = str(getattr(picos, "intervention_dose_regimen", "") or "").strip()
     summary_text = str(getattr(picos, "intervention_summary", "") or "").strip()
     background = [
@@ -6386,6 +6400,47 @@ def _derive_structured_intervention_rules_from_legacy(
     ).strip()
     existing_rules = rules
     regimens = list(getattr(existing_rules, "ip_regimens", None) or [])
+    rules_already_structured = (
+        rules is not None
+        and getattr(rules, "authority", None) == InterventionRulesAuthority.STRUCTURED
+    )
+    if rules_already_structured:
+        existing_roles = {getattr(row, "product_role", None) for row in regimens}
+        backfilled = False
+        if (
+            InterventionRulesProductRole.INVESTIGATIONAL_PRODUCT not in existing_roles
+            and (dose_text or summary_text)
+        ):
+            regimens.append(
+                MedicalWritingInterventionIpRegimen(
+                    regimen_id="legacy-derived-ip-1",
+                    product_name=product_name,
+                    product_role=InterventionRulesProductRole.INVESTIGATIONAL_PRODUCT,
+                    dose_and_frequency=dose_text or summary_text,
+                )
+            )
+            backfilled = True
+        if (
+            comparator_type == "placebo"
+            and comparator_text
+            and InterventionRulesProductRole.PLACEBO not in existing_roles
+        ):
+            regimens.append(
+                MedicalWritingInterventionIpRegimen(
+                    regimen_id="legacy-derived-placebo-1",
+                    product_name="安慰剂",
+                    product_role=InterventionRulesProductRole.PLACEBO,
+                    dose_and_frequency=comparator_text,
+                )
+            )
+            backfilled = True
+        if not backfilled:
+            return picos
+        derived = existing_rules.model_copy(
+            update={"ip_regimens": regimens},
+            deep=True,
+        )
+        return picos.model_copy(update={"intervention_rules": derived}, deep=True)
     if dose_text or summary_text:
         regimens.append(
             MedicalWritingInterventionIpRegimen(

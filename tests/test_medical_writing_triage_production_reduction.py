@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import unittest
 
 from packages.contracts.workbench_contracts import (
@@ -59,7 +60,10 @@ class TestProductionTriageReduction(TriageTestBase):
             )
             for index in range(1, 501)
         )
-        # Same indication but no public Protocol/SAP: not a corpus input.
+        # Same indication but no public Protocol/SAP: R26 self-check #4
+        # P1-3 — document availability no longer hijacks medical relevance;
+        # these route to the independent AI (manual-upload path carries the
+        # document gap downstream when retained).
         candidates.extend(
             _make_candidate(
                 f"NCT8{index:07d}",
@@ -109,15 +113,18 @@ class TestProductionTriageReduction(TriageTestBase):
         self.assertEqual(652, len(deterministic_ids) + len(ai_ids))
         self.assertEqual(len(deterministic_ids), len(set(deterministic_ids)))
         self.assertEqual(len(ai_ids), len(set(ai_ids)))
-        self.assertEqual(60, plan.disposition_counts["no_public_protocol"])
+        # 60 same-indication no-protocol candidates now require AI triage
+        # (direct-competitor recall); only the 10 device interventions stay
+        # deterministic.
+        self.assertEqual(
+            0, plan.disposition_counts.get("no_public_protocol", 0)
+        )
         self.assertEqual(
             10,
             plan.disposition_counts["explicit_non_pharmacologic_intervention"],
         )
-        self.assertEqual(582, plan.disposition_counts["requires_source_bounded_ai_triage"])
-        self.assertEqual(582, plan.ai_candidate_count)
-        self.assertEqual(117, len(plan.ai_candidate_chunks))
-        self.assertLess(len(plan.ai_candidate_chunks), 120)
+        self.assertEqual(642, plan.ai_candidate_count)
+        self.assertEqual(len(plan.ai_candidate_chunks), math.ceil(642 / 5))
 
         for chunk in plan.deterministic_chunks:
             self.assertTrue(chunk.chunk_id.startswith("ct_det_"))
@@ -164,7 +171,13 @@ class TestProductionTriageReduction(TriageTestBase):
         self.assertEqual(1, plan.ai_candidate_count)
 
     def test_no_public_document_is_audit_exclusion_not_silent_drop(self):
-        _, _, plan = self._plan([_make_candidate("NCT80000001", docs=[])])
+        # R26 自检第4次 P1-3①：确定性无公开方案排除仅适用于无同病关系的
+        # 候选；同适应症无方案候选在 recall 测试中另行覆盖。
+        _, _, plan = self._plan([
+            _make_candidate(
+                "NCT80000001", docs=[], conditions=["Psoriatic Arthritis"]
+            )
+        ])
         self.assertEqual(1, plan.deterministic_candidate_count)
         result = plan.deterministic_chunks[0].results[0]
         self.assertEqual("excluded", result.classification.value)
@@ -192,7 +205,9 @@ class TestProductionTriageReduction(TriageTestBase):
     def test_mixed_run_reports_actual_ai_route_not_deterministic_route(self):
         snapshot = self._bind_snapshot(
             [
-                _make_candidate("NCT80000002", docs=[]),
+                _make_candidate(
+                    "NCT80000002", docs=[], conditions=["Psoriatic Arthritis"]
+                ),
                 _make_candidate("NCT60000003"),
             ]
         )

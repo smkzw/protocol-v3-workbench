@@ -1,0 +1,203 @@
+
+  VITE v6.4.2  ready in 134 ms
+
+  ➜  Local:   http://127.0.0.1:5186/
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+4:20:11 AM [vite] http proxy error: /api/projects
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:20:11 AM [vite] http proxy error: /api/ai-gateway/status
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:20:11 AM [vite] http proxy error: /api/runtime-readiness
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:20:11 AM [vite] http proxy error: /api/runtime-readiness
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:20:11 AM [vite] http proxy error: /api/projects
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:20:11 AM [vite] http proxy error: /api/ai-gateway/status
+Error: connect ECONNREFUSED 127.0.0.1:5301
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+4:58:05 AM [vite] (client) hmr update /src/styles.css
+4:58:22 AM [vite] (client) hmr update /src/features/writing-reference/WritingReferencePanel.jsx
+4:58:22 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+4:58:22 AM [vite] (client) hmr update /src/features/writing-reference/ReferencePreparationBatchPanel.jsx
+4:58:22 AM [vite] (client) hmr update /src/features/writing-reference/SharedPhase1CorpusPanel.jsx
+4:58:22 AM [vite] (client) hmr update /src/features/writing-reference/MixedOcrReviewPanel.jsx
+4:58:22 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+4:58:22 AM [vite] (client) Pre-transform error: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/writing-reference/ReferenceTranslationBatchPanel.jsx: Unexpected keyword 'import'. (13:0)
+
+  11 | } from "../medical-writing/useDurableMwJob";
+  12 | import {
+> 13 | import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
+     | ^
+  14 |   deriveDocumentTranslationProgress,
+  15 |   formatDocumentTranslationProgressSummary,
+  16 | } from "./progressJourneyLogic.mjs";
+  Plugin: vite:react-babel
+  File: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/writing-reference/ReferenceTranslationBatchPanel.jsx:13:0
+  11 |  } from "../medical-writing/useDurableMwJob";
+  12 |  import {
+  13 |  import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
+     |  ^
+  14 |    deriveDocumentTranslationProgress,
+  15 |    formatDocumentTranslationProgressSummary,
+4:58:22 AM [vite] Internal server error: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/writing-reference/ReferenceTranslationBatchPanel.jsx: Unexpected keyword 'import'. (13:0)
+
+  11 | } from "../medical-writing/useDurableMwJob";
+  12 | import {
+> 13 | import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
+     | ^
+  14 |   deriveDocumentTranslationProgress,
+  15 |   formatDocumentTranslationProgressSummary,
+  16 | } from "./progressJourneyLogic.mjs";
+  Plugin: vite:react-babel
+  File: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/writing-reference/ReferenceTranslationBatchPanel.jsx:13:0
+  11 |  } from "../medical-writing/useDurableMwJob";
+  12 |  import {
+  13 |  import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
+     |  ^
+  14 |    deriveDocumentTranslationProgress,
+  15 |    formatDocumentTranslationProgressSummary,
+      at constructor (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at JSXParserMixin.raise (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:6616:19)
+      at JSXParserMixin.checkReservedWord (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12241:12)
+      at JSXParserMixin.parseImportSpecifier (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14431:12)
+      at JSXParserMixin.parseNamedImportSpecifiers (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14259:37)
+      at JSXParserMixin.parseImport (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:13326:10)
+      at JSXParserMixin.parseProgram (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12629:25)
+      at JSXParserMixin.parse (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14505:25)
+      at parse (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14539:38)
+      at parser (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/parser/index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transformation/normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transformation/index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:261:32)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:223:11)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:189:28
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/gensync-utils/async.js:67:7
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:113:33
+      at step (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:287:14)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:223:11)
+4:58:22 AM [vite] Internal server error: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/MedicalWritingLiteraturePanel.jsx: Unexpected keyword 'import'. (3:0)
+
+  1 | import { useEffect, useMemo, useRef, useState } from "react";
+  2 | import {
+> 3 | import { medicalWritingSafeErrorText } from "./errorContract.mjs";
+    | ^
+  4 |   AlertTriangle,
+  5 |   BookPlus,
+  6 |   CheckCircle2,
+  Plugin: vite:react-babel
+  File: /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/features/medical-writing/MedicalWritingLiteraturePanel.jsx:3:0
+  1  |  import { useEffect, useMemo, useRef, useState } from "react";
+  2  |  import {
+  3  |  import { medicalWritingSafeErrorText } from "./errorContract.mjs";
+     |  ^
+  4  |    AlertTriangle,
+  5  |    BookPlus,
+      at constructor (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at JSXParserMixin.raise (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:6616:19)
+      at JSXParserMixin.checkReservedWord (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12241:12)
+      at JSXParserMixin.parseImportSpecifier (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14431:12)
+      at JSXParserMixin.parseNamedImportSpecifiers (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14415:36)
+      at JSXParserMixin.parseImportSpecifiersAndAfter (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14259:37)
+      at JSXParserMixin.parseImport (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14252:17)
+      at JSXParserMixin.parseStatementContent (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12893:27)
+      at JSXParserMixin.parseStatementLike (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12784:17)
+      at JSXParserMixin.parseModuleItem (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12761:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:13333:36)
+      at JSXParserMixin.parseBlockBody (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:13326:10)
+      at JSXParserMixin.parseProgram (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12639:10)
+      at JSXParserMixin.parseTopLevel (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:12629:25)
+      at JSXParserMixin.parse (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14505:25)
+      at parse (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/parser/lib/index.js:14539:38)
+      at parser (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/parser/index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transformation/normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transformation/index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:261:32)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:223:11)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:189:28
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/@babel/core/lib/gensync-utils/async.js:67:7
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:113:33
+      at step (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:287:14)
+      at /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/node_modules/gensync/index.js:223:11)
+5:00:18 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+5:00:39 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+
+  VITE v6.4.2  ready in 116 ms
+
+  ➜  Local:   http://127.0.0.1:5186/
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+9:54:25 AM [vite] (client) hmr update /src/App.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/writing-reference/MixedOcrReviewPanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/writing-reference/ReferencePreparationBatchPanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/writing-reference/SharedPhase1CorpusPanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/features/writing-reference/WritingReferencePanel.jsx
+9:54:25 AM [vite] (client) hmr update /src/styles.css
+9:55:02 AM [vite] (client) hmr update /src/App.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/writing-reference/MixedOcrReviewPanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/writing-reference/ReferencePreparationBatchPanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/writing-reference/SharedPhase1CorpusPanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/features/writing-reference/WritingReferencePanel.jsx
+9:55:02 AM [vite] (client) hmr update /src/styles.css
+9:57:57 AM [vite] (client) hmr update /src/App.jsx
+9:58:44 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx
+9:59:25 AM [vite] vite.config.mjs changed, restarting server...
+9:59:26 AM [vite] server restarted.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+10:01:46 AM [vite] vite.config.mjs changed, restarting server...
+10:01:46 AM [vite] (client) hmr update /src/App.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/writing-reference/MixedOcrReviewPanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/writing-reference/ReferencePreparationBatchPanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/writing-reference/SharedPhase1CorpusPanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/features/writing-reference/WritingReferencePanel.jsx
+10:01:46 AM [vite] (client) hmr update /src/styles.css
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+10:01:47 AM [vite] server restarted.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+10:01:49 AM [vite] vite.config.mjs changed, restarting server...
+10:01:49 AM [vite] (client) hmr update /src/App.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingAuthoringJourneySetup.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/medical-writing/MedicalWritingLiteraturePanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/writing-reference/MixedOcrReviewPanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/writing-reference/ReferencePreparationBatchPanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/writing-reference/ReferenceTranslationBatchPanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/writing-reference/SharedPhase1CorpusPanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/features/writing-reference/WritingReferencePanel.jsx
+10:01:49 AM [vite] (client) hmr update /src/styles.css
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.
+10:01:49 AM [vite] server restarted.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend/src/App.jsx as it exceeds the max of 500KB.

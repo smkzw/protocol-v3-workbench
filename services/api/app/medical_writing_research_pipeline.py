@@ -812,12 +812,57 @@ class MedicalWritingResearchPipelineService:
         state from its durable counts; only a batch with no reusable evidence
         remains terminally failed.
         """
-        if (
-            state.stage != "preparing"
-            or not state.prep_batch_id
-            or state.translation_batch_id
-        ):
+        if state.stage != "preparing" or state.translation_batch_id:
             return state
+        if not state.prep_batch_id:
+            # R26 自检第4次 P0-1③：无准备批次、无翻译批次、无在途作业的
+            # preparing 是毒化残留（现场：批次创建失败把状态留在 preparing，
+            # 按钮与 resume 全部失去入口）。状态读取是确定性自愈边界：篮子
+            # 已确认（锁定快照存在确认投影/已固化分诊）时回到
+            # awaiting_triage_confirm，前端轮询即恢复『确认分诊后继续』与
+            # 篮子确认 advance 入口；篮子权威缺失时不猜测，保持原样。
+            if project_id in getattr(self, "_active_resume_projects", set()):
+                return state
+            if self._has_live_durable_job(project_id, state):
+                return state
+            journey = None
+            try:
+                journey = self.journey_service.get(project_id)
+            except Exception:  # noqa: BLE001
+                return state
+            snapshot_id = state.snapshot_id or (
+                journey.search_plan.latest_snapshot_id
+                if getattr(journey, "search_plan", None)
+                else ""
+            )
+            triage = getattr(journey, "corpus_triage", None)
+            discovery = getattr(journey, "discovery_basket_projection", None)
+            basket_confirmed = (
+                (
+                    triage is not None
+                    and str(getattr(triage, "status", "")) == "finalized"
+                    and (not snapshot_id or str(getattr(triage, "snapshot_id", "")) == snapshot_id)
+                )
+                or (
+                    discovery is not None
+                    and str(getattr(discovery, "confirmation_id", "") or "")
+                    and (not snapshot_id or str(getattr(discovery, "snapshot_id", "")) == snapshot_id)
+                )
+            )
+            if not basket_confirmed:
+                return state
+            healed = self._set_stage(
+                state,
+                "awaiting_triage_confirm",
+                detail=(
+                    "检测到原文准备未启动的残留状态，已恢复为分诊确认入口；"
+                    "已确认的竞品篮子保持不变，点击『确认分诊后继续』即可"
+                    "继续下载与提取（不会重复执行已完成的工作）。"
+                ),
+                eta_seconds=None,
+                error="",
+            )
+            return self._persist(project_id, healed)
         if project_id in getattr(self, "_active_resume_projects", set()):
             return state
         getter = getattr(self.preparation_batch_service, "get", None)
@@ -2291,9 +2336,27 @@ class MedicalWritingResearchPipelineService:
                     "研究流水线已更新，请刷新当前状态后重试"
                 )
             if state.stage != "awaiting_triage_confirm":
-                # Already advanced (or not yet at the confirm gate).
-                # Return current state without error — idempotent.
-                return {"pipeline": state.as_dict(), "advanced": False}
+                # R26 自检第4次 P0-1②：篮子确认端点的 advance 是已毒化
+                # preparing 状态的唯一既定自愈入口。此前只接受
+                # awaiting_triage_confirm：现场（proj_user_97c9c19afb20）
+                # 用户确认 824 项篮子后 advance 静默返回 advanced=False、
+                # 不创建续跑作业，流水线永久卡在 preparing(50%)。当流水线
+                # 停在 preparing、无准备批次、无在途 durable 作业时按确认
+                # 门处理（下方 _resolve_confirmed_retained_ids 会验证篮子
+                # 权威，缺权威仍返回 advanced=False）。
+                recovering_stuck_preparing = (
+                    state.stage == "preparing"
+                    and not state.prep_batch_id
+                    and not state.translation_batch_id
+                    and not self._has_live_durable_job(project_id, state)
+                )
+                if not recovering_stuck_preparing:
+                    # Already advanced (or not yet at the confirm gate).
+                    # Return current state without error — idempotent.
+                    return {
+                        "pipeline": state.as_dict(),
+                        "advanced": False,
+                    }
 
             # Resolve the frozen retained IDs from the explicit argument
             # or from the current locked-snapshot confirmed projection.
@@ -2414,6 +2477,58 @@ class MedicalWritingResearchPipelineService:
                 current.last_resume_at = _iso()
                 self._persist(project_id, current)
                 raise
+
+    def _has_live_durable_job(
+        self, project_id: str, state: ResearchPipelineState
+    ) -> bool:
+        """Return True when the persisted ``job_id`` is still queued/running.
+
+        Conservative by design: when the durable store cannot be read the job
+        is treated as live so no read-path reconciliation ever interrupts an
+        in-flight continuation whose liveness cannot be disproven.
+        """
+        durable_store = getattr(self, "durable_store", None)
+        if durable_store is None or not state.job_id:
+            return False
+        try:
+            job = durable_store.get(project_id, state.job_id)
+        except Exception:  # noqa: BLE001
+            return True
+        if job is None:
+            return False
+        return str(getattr(job, "status", "")) in {
+            "queued",
+            "running",
+            "retry_wait",
+        }
+
+    def _revert_preparing_without_batch_to_triage_confirm(
+        self, project_id: str, exc: Exception
+    ) -> None:
+        """R26 自检第4次 P0-1①：准备批次创建失败不得毒化 preparing。
+
+        现场（proj_user_97c9c19afb20）：continue_after_triage 先持久化
+        stage=preparing 再创建准备批次；当批次创建因篮子权威缺失被拒时，
+        流水线停留在 preparing(50%)、无批次、无 durable 作业——按钮只按
+        awaiting_triage_confirm 渲染、resume 拒绝 preparing，唯一出路是
+        取消流水线。此处仅在"仍无批次"的失败窗口把持久化状态回退到
+        awaiting_triage_confirm（真实可行动门），错误原样向上抛。
+        """
+        current = self.get_state(project_id)
+        if current.stage != "preparing" or current.prep_batch_id:
+            return
+        current = self._set_stage(
+            current,
+            "awaiting_triage_confirm",
+            detail=(
+                f"继续未完成：{exc}。已确认的竞品篮子与既有分诊决策保持"
+                "不变；处理提示后可再次点击『确认分诊后继续』，已完成的工作"
+                "不会重复执行。"
+            ),
+            eta_seconds=None,
+            error=f"continue_failed:{type(exc).__name__}:{exc}",
+        )
+        self._persist(project_id, current)
 
     def _resolve_confirmed_retained_ids(
         self,
@@ -2576,69 +2691,88 @@ class MedicalWritingResearchPipelineService:
             )
 
         # --- preparing (download + extract) ---
-        state = self._set_stage(
-            state,
-            "preparing",
-            detail=f"已锁定候选 {len(retained_ids)} 项，正在核对公开Protocol范围…",
-            eta_seconds=None,
-        )
-        state = self._persist(project_id, state)
-        pulse(state.detail)
-
-        from packages.contracts.workbench_contracts.models import (
-            WritingReferencePreparationBatchCreateRequest,
-        )
-
-        # Reuse a successful prep for this snapshot when force/re-run would
-        # otherwise re-extract immutable artifacts.
-        reused_prep = self._find_reusable_preparation_batch(
-            project_id, snapshot_id=snapshot_id, retained_ids=retained_ids
-        )
-        if reused_prep is not None:
-            prep_batch = reused_prep
-            state.prep_batch_id = prep_batch.batch_id
-            state.detail = (
-                f"{self._preparation_progress_detail(prep_batch)}；"
-                f"复用已成功的原文准备批次 {prep_batch.batch_id}（跳过重复提取）"
+        # R26 自检第4次 P0-1③：从 preparing 持久化到批次落库之间持有进程内
+        # 租约，防止并发状态读取把该窗口误判为"无批次毒化残留"而改写。
+        active_resumes = getattr(self, "_active_resume_projects", None)
+        if active_resumes is None:
+            active_resumes = set()
+            self._active_resume_projects = active_resumes
+        active_resumes.add(project_id)
+        try:
+            state = self._set_stage(
+                state,
+                "preparing",
+                detail=f"已锁定候选 {len(retained_ids)} 项，正在核对公开Protocol范围…",
+                eta_seconds=None,
             )
             state = self._persist(project_id, state)
             pulse(state.detail)
-        else:
-            prep_batch = self.preparation_batch_service.create(
-                project_id,
-                WritingReferencePreparationBatchCreateRequest(
-                    snapshot_id=snapshot_id,
-                    actor=actor,
-                    idempotency_key=f"pipe-prep-snap-{snapshot_id}",
-                ),
-            )
-            state.prep_batch_id = prep_batch.batch_id
-            state = self._persist(project_id, state)
 
-            def report_preparation_progress(batch: Any) -> None:
-                nonlocal state
-                detail = self._preparation_progress_detail(batch)
-                self._apply_child_progress(
-                    state, **self._preparation_progress_projection(batch)
+            from packages.contracts.workbench_contracts.models import (
+                WritingReferencePreparationBatchCreateRequest,
+            )
+
+            # Reuse a successful prep for this snapshot when force/re-run would
+            # otherwise re-extract immutable artifacts.
+            reused_prep = self._find_reusable_preparation_batch(
+                project_id, snapshot_id=snapshot_id, retained_ids=retained_ids
+            )
+            if reused_prep is not None:
+                prep_batch = reused_prep
+                state.prep_batch_id = prep_batch.batch_id
+                state.detail = (
+                    f"{self._preparation_progress_detail(prep_batch)}；"
+                    f"复用已成功的原文准备批次 {prep_batch.batch_id}（跳过重复提取）"
                 )
-                state.detail = detail
-                state.eta_seconds = None
                 state = self._persist(project_id, state)
-                pulse(detail)
+                pulse(state.detail)
+            else:
+                try:
+                    prep_batch = self.preparation_batch_service.create(
+                        project_id,
+                        WritingReferencePreparationBatchCreateRequest(
+                            snapshot_id=snapshot_id,
+                            actor=actor,
+                            idempotency_key=f"pipe-prep-snap-{snapshot_id}",
+                        ),
+                    )
+                except Exception as exc:  # noqa: BLE001 — revert+re-raise
+                    # R26 自检第4次 P0-1①：批次创建失败时回退持久化
+                    # 状态，绝不把流水线毒化留在 preparing（现场死锁
+                    # 根因）。
+                    self._revert_preparing_without_batch_to_triage_confirm(
+                        project_id, exc
+                    )
+                    raise
+                state.prep_batch_id = prep_batch.batch_id
+                state = self._persist(project_id, state)
 
-            self.preparation_batch_service.run_pending(
-                project_id,
-                prep_batch.batch_id,
-                actor,
-                progress_callback=report_preparation_progress,
-            )
-            self._wait_preparation(project_id, state, pulse)
-            prep_batch = self._drain_deferred_preparation_stages(
-                project_id,
-                prep_batch.batch_id,
-                actor=actor,
-                progress_callback=report_preparation_progress,
-            )
+                def report_preparation_progress(batch: Any) -> None:
+                    nonlocal state
+                    detail = self._preparation_progress_detail(batch)
+                    self._apply_child_progress(
+                        state, **self._preparation_progress_projection(batch)
+                    )
+                    state.detail = detail
+                    state.eta_seconds = None
+                    state = self._persist(project_id, state)
+                    pulse(detail)
+
+                self.preparation_batch_service.run_pending(
+                    project_id,
+                    prep_batch.batch_id,
+                    actor,
+                    progress_callback=report_preparation_progress,
+                )
+                self._wait_preparation(project_id, state, pulse)
+                prep_batch = self._drain_deferred_preparation_stages(
+                    project_id,
+                    prep_batch.batch_id,
+                    actor=actor,
+                    progress_callback=report_preparation_progress,
+                )
+        finally:
+            active_resumes.discard(project_id)
 
         # Document-content validation is a user-authority boundary.
         admission = self._admit_prepared_public_documents(
@@ -2804,7 +2938,11 @@ class MedicalWritingResearchPipelineService:
                     input_hash=request_hash[:64],
                     payload_json=json.dumps(payload, ensure_ascii=False),
                     created_by=actor or "research_pipeline",
-                    max_attempts=3,
+                    # R26 自检第3次 P1-a：现场分析失败为模型输出方差，3次自动
+                    # 重试全部耗尽后仍需人工第4次（R2 第3次成功）。续跑对已
+                    # 完成阶段幂等，把自动重试预算提高到5次，减少把用户当
+                    # 重试循环的概率。
+                    max_attempts=5,
                     provider="workbench",
                     model="research_pipeline_orchestrator",
                 )
@@ -2959,72 +3097,91 @@ class MedicalWritingResearchPipelineService:
             )
 
         # --- preparing (download + extract) ---
-        state = self._set_stage(
-            state,
-            "preparing",
-            detail=f"已锁定候选 {len(retained_ids)} 项，正在核对公开Protocol范围…",
-            eta_seconds=None,
-        )
-        state = self._persist(project_id, state)
-        pulse(state.detail)
-
-        from packages.contracts.workbench_contracts.models import (
-            WritingReferencePreparationBatchCreateRequest,
-        )
-
-        # Reuse a successful prep for this snapshot when force/re-run would
-        # otherwise re-extract immutable artifacts ("immutable document
-        # extraction changed") and fail the whole pipeline.
-        reused_prep = self._find_reusable_preparation_batch(
-            project_id, snapshot_id=snapshot_id, retained_ids=retained_ids
-        )
-        if reused_prep is not None:
-            prep_batch = reused_prep
-            state.prep_batch_id = prep_batch.batch_id
-            state.detail = (
-                f"{self._preparation_progress_detail(prep_batch)}；"
-                f"复用已成功的原文准备批次 {prep_batch.batch_id}（跳过重复提取）"
+        # R26 自检第4次 P0-1③：从 preparing 持久化到批次落库之间持有进程内
+        # 租约，防止并发状态读取把该窗口误判为"无批次毒化残留"而改写。
+        active_resumes = getattr(self, "_active_resume_projects", None)
+        if active_resumes is None:
+            active_resumes = set()
+            self._active_resume_projects = active_resumes
+        active_resumes.add(project_id)
+        try:
+            state = self._set_stage(
+                state,
+                "preparing",
+                detail=f"已锁定候选 {len(retained_ids)} 项，正在核对公开Protocol范围…",
+                eta_seconds=None,
             )
             state = self._persist(project_id, state)
             pulse(state.detail)
-        else:
-            prep_batch = self.preparation_batch_service.create(
-                project_id,
-                WritingReferencePreparationBatchCreateRequest(
-                    snapshot_id=snapshot_id,
-                    actor=actor,
-                    # Stable across force re-runs of the same snapshot so
-                    # create() can idempotently return the prior batch.
-                    idempotency_key=f"pipe-prep-snap-{snapshot_id}",
-                ),
-            )
-            state.prep_batch_id = prep_batch.batch_id
-            state = self._persist(project_id, state)
 
-            def report_preparation_progress(batch: Any) -> None:
-                nonlocal state
-                detail = self._preparation_progress_detail(batch)
-                self._apply_child_progress(
-                    state, **self._preparation_progress_projection(batch)
+            from packages.contracts.workbench_contracts.models import (
+                WritingReferencePreparationBatchCreateRequest,
+            )
+
+            # Reuse a successful prep for this snapshot when force/re-run would
+            # otherwise re-extract immutable artifacts ("immutable document
+            # extraction changed") and fail the whole pipeline.
+            reused_prep = self._find_reusable_preparation_batch(
+                project_id, snapshot_id=snapshot_id, retained_ids=retained_ids
+            )
+            if reused_prep is not None:
+                prep_batch = reused_prep
+                state.prep_batch_id = prep_batch.batch_id
+                state.detail = (
+                    f"{self._preparation_progress_detail(prep_batch)}；"
+                    f"复用已成功的原文准备批次 {prep_batch.batch_id}（跳过重复提取）"
                 )
-                state.detail = detail
-                state.eta_seconds = None
                 state = self._persist(project_id, state)
-                pulse(detail)
+                pulse(state.detail)
+            else:
+                try:
+                    prep_batch = self.preparation_batch_service.create(
+                        project_id,
+                        WritingReferencePreparationBatchCreateRequest(
+                            snapshot_id=snapshot_id,
+                            actor=actor,
+                            # Stable across force re-runs of the same snapshot
+                            # so create() can idempotently return the prior
+                            # batch.
+                            idempotency_key=f"pipe-prep-snap-{snapshot_id}",
+                        ),
+                    )
+                except Exception as exc:  # noqa: BLE001 — revert+re-raise
+                    # R26 自检第4次 P0-1①：同步路径同样不得在批次创建失败
+                    # 后把流水线毒化留在 preparing（现场 422 后卡死根因）。
+                    self._revert_preparing_without_batch_to_triage_confirm(
+                        project_id, exc
+                    )
+                    raise
+                state.prep_batch_id = prep_batch.batch_id
+                state = self._persist(project_id, state)
 
-            self.preparation_batch_service.run_pending(
-                project_id,
-                prep_batch.batch_id,
-                actor,
-                progress_callback=report_preparation_progress,
-            )
-            self._wait_preparation(project_id, state, pulse)
-            prep_batch = self._drain_deferred_preparation_stages(
-                project_id,
-                prep_batch.batch_id,
-                actor=actor,
-                progress_callback=report_preparation_progress,
-            )
+                def report_preparation_progress(batch: Any) -> None:
+                    nonlocal state
+                    detail = self._preparation_progress_detail(batch)
+                    self._apply_child_progress(
+                        state, **self._preparation_progress_projection(batch)
+                    )
+                    state.detail = detail
+                    state.eta_seconds = None
+                    state = self._persist(project_id, state)
+                    pulse(detail)
+
+                self.preparation_batch_service.run_pending(
+                    project_id,
+                    prep_batch.batch_id,
+                    actor,
+                    progress_callback=report_preparation_progress,
+                )
+                self._wait_preparation(project_id, state, pulse)
+                prep_batch = self._drain_deferred_preparation_stages(
+                    project_id,
+                    prep_batch.batch_id,
+                    actor=actor,
+                    progress_callback=report_preparation_progress,
+                )
+        finally:
+            active_resumes.discard(project_id)
 
         # Document-content validation is a user-authority boundary. The
         # pipeline may batch-approve clean structure extraction, but it must
@@ -3552,6 +3709,34 @@ class MedicalWritingResearchPipelineService:
             )
         except Exception as exc:  # noqa: BLE001 — continue to prep; readiness recalculates later
             state.detail = f"分诊固化提示：{type(exc).__name__}: {exc}"
+
+        # R26 自检第4次 P0-1④：两条确认路径（confirm_basket / legacy
+        # finalize_triage）都没有把篮子权威写入 journey 时，绝不能继续进入
+        # 原文准备——现场（proj_user_97c9c19afb20）：分诊 run 因研究框架事实
+        # 变更而过期 → confirm_basket 失败；PICOS 未完成 → legacy finalize
+        # 必然失败；随后准备批次以 "preparation requires either finalized
+        # corpus triage or a confirmed discovery basket projection" 拒绝并把
+        # 流水线毒化在 preparing。这里改为给出可行动的明确错误。
+        journey_now = self.journey_service.get(project_id)
+        triage_now = getattr(journey_now, "corpus_triage", None)
+        discovery_now = getattr(journey_now, "discovery_basket_projection", None)
+        authority_persisted = (
+            triage_now is not None
+            and str(getattr(triage_now, "status", "")) == "finalized"
+            and str(getattr(triage_now, "snapshot_id", "")) == snapshot_id
+        ) or (
+            discovery_now is not None
+            and str(getattr(discovery_now, "confirmation_id", "") or "")
+            and str(getattr(discovery_now, "snapshot_id", "")) == snapshot_id
+        )
+        if not authority_persisted:
+            raise ResearchPipelineError(
+                "竞品篮子确认未生效：当前分诊结果无法确认（可能因研究信息已"
+                "更新而过期），且研究PICOS尚未完成、无法固化既有相关性决策。"
+                "请在竞品分诊中按当前研究信息重新分诊并确认篮子，或先完成"
+                "PICOS后再继续。"
+                f"（最近确认提示：{state.detail or '未提供'}）"
+            )
         return retained_ids
 
     def _round1_material_ready(
@@ -5155,9 +5340,19 @@ class ResearchPipelineDurableExecutor:
                 state.last_resume_result_stage = failure_stage
                 state.last_resume_at = _iso()
                 state = self.service._persist(project_id, state)
+                # R26 自检第2次 P0-B：仅分析阶段自身的失败（流水线已到
+                # analyzing_round1——下载/OCR/翻译全部完成，续跑对已完成
+                # 阶段幂等）属于模型输出方差，现场第3次重试即成功。恢复
+                # 必须由 durable 作业在有界 max_attempts 内自动重试，而不是
+                # 把用户变成重试循环（现场：不点"重试后续语料分析"就死等）。
+                # 翻译范围门（awaiting_translation_scope）等真实需要用户处置
+                # 的失败保持不可自动重试。
+                analysis_failure_auto_retry = (
+                    failure_stage == "awaiting_corpus_analysis"
+                )
                 return DurableJobResult(
                     error=str(exc)[:800],
-                    retryable=False,
+                    retryable=analysis_failure_auto_retry,
                     progress=_progress_payload(state, str(exc)[:300]),
                 )
             state = self.service._set_stage(

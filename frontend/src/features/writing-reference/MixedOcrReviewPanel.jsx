@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { medicalWritingSafeErrorText } from "../medical-writing/errorContract.mjs";
 
 function requestKey() {
   const suffix = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
@@ -66,7 +67,7 @@ export function MixedOcrReviewPanel({
         onSettled(payload);
       }
     } catch (error) {
-      setMessage(`批量确认未完成：${error.message}`);
+      setMessage(`批量确认未完成：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setBusy(false);
     }
