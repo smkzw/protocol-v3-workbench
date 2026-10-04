@@ -453,3 +453,9 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **本轮进展（恢复后约7小时）**：环境预检六项全过（OCR环境侧清偿确认有效，探针200/0.78s）；自检r1-1发现并修复**节点⑤写作入口死锁**（语料门就绪但装配计划confirmation_current=false时按钮disabled，而confirm端点只在该按钮handler内=鸡生蛋死锁；修复=前端单点放开确认入口+回归测试assemblyPlanConfirmEntry）；自检①②绿（分诊路由durable实证=ollama.com云端✓）。r1-2自检在途时被停止（写作入口修复后的复验未跑完）。
 **恢复动作**：ResumeWorkflowRun dwfrun-a9f250b5 → 自检从r1-2续（验证⑤修复是否解锁⑥⑦⑧）→ 全绿后测试者首次出发 → 背景能力批（三份规格）→ 循环收敛。
 **在途未闭合**：⑤修复未浏览器复验；⑦修订节点预算25分钟未实测；背景能力批代码未写。
+
+## 无损暂停检查点（2026-10-04，五测试者首轮完成版）
+**位置**：LOOP dwfrun-6fcef243 已 TaskStop（同run id可Resume无损接续）。HEAD=c41ad12（r1轮成果）→00471b4（handoff）均已push。**权威handoff=runs/requirements_v2_20260919/t17_round27_loop/HANDOFF_1004_PAUSE.md（全量回顾+深度复盘，接手先读）**。
+**本批四大里程碑**：①自检八节点历史首次全绿（r1-2 PASSED）；②模型对比完成=oMLX Qwen3.8-flash 144.3s/章 vs MTPLX 162.9s/章，质量无显著差→维持MTPLX（bench=model_bench_20261003.md）；③前端预清理四项完成（fe_cleanup_r1/）；④四测试者首轮真实浏览器E2E完成：r1-A心衰走到导出Word（57截图）/r1-B统计审阅14P1（"目录像翻开是提纲"）/r1-C工程核对2P0（V1测试标记入主审件）/r1-D grok BPH 3P0/8P1（正式Word按钮恒灰）；聚合24新缺陷/17开放P0P1；末修订批一落地复验在途被停。**第5席gpt-6.1-sol（注册QA/移植肾排斥）未及派发**。
+**恢复顺序**：①ResumeWorkflowRun dwfrun-6fcef243→②复验末修订批一→③派第5测试者gpt-6.1-sol→④背景能力实现批（三份规格T1-T12）→⑤内容路由批（V1标记/PV章节错位/正式Word冻结流程重设计）→⑥第2轮LOOP→收敛→全库门→递交。
+**待用户**：203项医学处置（medical_gate_queue.md）；8910测试残留清理授权。
