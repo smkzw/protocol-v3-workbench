@@ -459,3 +459,9 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **本批四大里程碑**：①自检八节点历史首次全绿（r1-2 PASSED）；②模型对比完成=oMLX Qwen3.8-flash 144.3s/章 vs MTPLX 162.9s/章，质量无显著差→维持MTPLX（bench=model_bench_20261003.md）；③前端预清理四项完成（fe_cleanup_r1/）；④四测试者首轮真实浏览器E2E完成：r1-A心衰走到导出Word（57截图）/r1-B统计审阅14P1（"目录像翻开是提纲"）/r1-C工程核对2P0（V1测试标记入主审件）/r1-D grok BPH 3P0/8P1（正式Word按钮恒灰）；聚合24新缺陷/17开放P0P1；末修订批一落地复验在途被停。**第5席gpt-6.1-sol（注册QA/移植肾排斥）未及派发**。
 **恢复顺序**：①ResumeWorkflowRun dwfrun-6fcef243→②复验末修订批一→③派第5测试者gpt-6.1-sol→④背景能力实现批（三份规格T1-T12）→⑤内容路由批（V1标记/PV章节错位/正式Word冻结流程重设计）→⑥第2轮LOOP→收敛→全库门→递交。
 **待用户**：203项医学处置（medical_gate_queue.md）；8910测试残留清理授权。
+
+## 恢复执行检查点（2026-10-04 晚，用户解除暂停）
+**运行**：AmendWorkflow 带修订脚本恢复 → 新run=**dwfrun-944e7158-4e14-4178-a79f-8abf96c05428**（旧run dwfrun-6fcef243 的42个已完成步全部缓存导入，8秒重放到位；唯一在途=第1轮复测协调员live重派）。子代理模型维持 GLM-5.3$max。环境四端健康（5301/5186/MTPLX 200/oMLX 200）。
+**脚本修订要点（缓存保全设计）**：四条1004指令（门重设计/前端深度对齐重开/8910不动/grok改cursor-grok-4.6）做成 `CONTEXT_1004` 常量，经 `ctxFor(round)` **只从第2轮起注入**任务书——第1轮全部ask文本与旧run字节一致故缓存全保；独立复核/递交两收口节点用 CONTEXT_FULL（含新指令）。收口 notCovered 已把医学处置改向（测试者以用户身份执行+门重设计）。
+**第2轮起将发生**：实现师修订环节承接两新批（忠实度门重设计：高置信自动放行+批量确认UX；前端深度对齐：逐页走查换行/字体/按钮/下钻四类问题）→测试扩为5席（+第5席gpt-6.1-sol注册QA/移植肾排斥）+修订路由验证员→D席grok换cursor-grok-4.6（omp pi harness）。
+**恢复前已入册**：OWNER_DECISION_gate_ux_frontend_grok_20261004.md（8594213已push）。
