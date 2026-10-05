@@ -2961,7 +2961,14 @@ class MedicalWritingAuthoringJourneyService:
                 expected_revision=current.revision,
                 event_type="authoring_journey_corpus_gate_recalculated",
                 actor=actor,
-                idempotency_key=f"corpus-projection-{source_state_hash}",
+                # P0-1（R27自检r3⑤）：事件键必须标识请求内容而非仅源态——
+                # requirements 变化而源态哈希不变时（准入推进/例外后重算），
+                # 旧键 corpus-projection-{hash} 与既往事件撞 UNIQUE 使写作
+                # 入口500死锁（现场 proj_user_bfcd0eec6505）。并入请求哈希
+                # 后：同请求=同键（幂等重放语义不变），异请求=异键。
+                idempotency_key=(
+                    f"corpus-projection-{request_sha256[:24]}"
+                ),
                 request_sha256=request_sha256,
                 detail={
                     "readiness_status": gate.readiness_status,
