@@ -6313,27 +6313,46 @@ class MedicalWritingAuthoringJourneyService:
         event_id = "mwjourney_event_" + hashlib.sha256(
             f"{state.project_id}|{event_type}|{idempotency_key}".encode("utf-8")
         ).hexdigest()[:24]
-        connection.execute(
-            """
-            INSERT INTO medical_writing_authoring_journey_events(
-                event_id, project_id, journey_id, revision, event_type,
-                actor, idempotency_key, request_sha256, created_at, payload_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                event_id,
-                state.project_id,
-                state.journey_id,
-                state.revision,
-                event_type,
-                actor,
-                idempotency_key,
-                request_sha256,
-                state.updated_at.isoformat(),
-                json.dumps(detail, ensure_ascii=False, sort_keys=True),
-            ),
-        )
-        return event_id
+        # P0-1收尾（R27 片1）：确定性事件键的幂等重放——同一请求（同
+        # request_sha256）的重算/重试在早退no-op不命中时（如gate被置
+        # stale后重算）仍会到达这里，INSERT 撞 UNIQUE 直接 500 死锁。
+        # 同请求=返回既有event_id（幂等重放），异请求同键=冲突上抛。
+        try:
+            connection.execute(
+                """
+                INSERT INTO medical_writing_authoring_journey_events(
+                    event_id, project_id, journey_id, revision, event_type,
+                    actor, idempotency_key, request_sha256, created_at, payload_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    event_id,
+                    state.project_id,
+                    state.journey_id,
+                    state.revision,
+                    event_type,
+                    actor,
+                    idempotency_key,
+                    request_sha256,
+                    state.updated_at.isoformat(),
+                    json.dumps(detail, ensure_ascii=False, sort_keys=True),
+                ),
+            )
+        except sqlite3.IntegrityError:
+            existing_row = connection.execute(
+                """
+                SELECT event_id, request_sha256
+                FROM medical_writing_authoring_journey_events
+                WHERE project_id=? AND idempotency_key=?
+                """,
+                (state.project_id, idempotency_key),
+            ).fetchone()
+            if (
+                existing_row is not None
+                and str(existing_row["request_sha256"] or "") == request_sha256
+            ):
+                return str(existing_row["event_id"])
+            raise
 
 
 def _changed_fields(prefix: str, current: dict[str, Any], proposed: dict[str, Any]) -> list[str]:
