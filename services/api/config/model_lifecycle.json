@@ -50,7 +50,14 @@
         "estimated_model_bytes": 31250000000,
         "factor": 1.1,
         "_basis": "mem_probe.md: 冷载 est 31.25GB / actual 29.83GB；守卫上限是漂移压力计（25.28/78.98/41.29/42.19GB 四读四值），只做 load 前现读预检，不写死判断"
-      }
+      },
+      "memory_guard_tier": "aggressive",
+      "_guard_tier_note": "20261005实测：oMLX balanced档的动态上限公式不计内核可逐出的文件缓存（27.4GB可用仍判18.9GB上限，31.25GB模型被拒）；aggressive档实测加载后仍余约32GB。串行模式下对侧已让位（mtplx_takeover），跨进程增长防护由互斥串行本身承担，aggressive安全且必要。编排器ensure时核对并自动对齐（带审计）。",
+      "drain_unload_models": [
+        "dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX",
+        "GLM-OCR-bf16"
+      ],
+      "_drain_note": "20261005 OCR回收缺口根治：切相排空时卸载本侧全部受管驻留模型（此前只卸managed_model_id，GLM-OCR由OCR角色加载后无回收机制永久驻留——owner指出'为什么OCR模型一直没卸载'）。MarkItDown等0B helper不在此列。"
     },
     "mtplx": {
       "endpoint": "http://127.0.0.1:8002",
@@ -90,8 +97,14 @@
       "idle_recycle_seconds": 1800,
       "start_timeout_seconds": 900,
       "_notes": "grace 30s 为保守初值（无一手实测停机时长），LIVE 校准后才允许收紧；quickstart 默认验证模型未缓存，必须显式 --model；明文禁 PATH 上 2.11.0 wrapper 与 open -a MTPLX",
-      "notes_add": "0928事故：start_timeout=120s远低于MTPLX冷启动实际耗时，编排器超时后反复launch_detached叠出4个实例→swap 37.8GB爆掉。已改900s；另需代码层补'重发前先stop上一尝试'（见HANDOFF）。"
+      "notes_add": "0928事故：start_timeout=120s远低于MTPLX冷启动实际耗时，编排器超时后反复launch_detached叠出4个实例→swap 37.8GB爆掉。已改900s；另需代码层补'重发前先stop上一尝试'（见HANDOFF）。",
+      "start_memory_min_bytes": 38654705664
     }
   },
-  "runtime_store_note": "0927修正：此前误指医学监查phase_c runtime（0926V1审查在案：不得读共享/监查runtime）；医学写作绑定的权威源=本子系统isolated_runtime（translation_body_local_omlx→8001/v1，三profile已对齐rev2）"
+  "runtime_store_note": "0927修正：此前误指医学监查phase_c runtime（0926V1审查在案：不得读共享/监查runtime）；医学写作绑定的权威源=本子系统isolated_runtime（translation_body_local_omlx→8001/v1，三profile已对齐rev2）",
+  "mtplx_takeover": {
+    "enabled": true,
+    "identity_probe": "/v1/models",
+    "_comment": "20261005串行根治（owner授权接管）：owner原话'如果没有模型调用的话当然可以由系统接管处置啊！'。实测裁决（scheduler_root_fix_20261005）：双模型'加载时共存'可行但'生成时共存'必爆（MTPLX生成时懒加载权重，dawncr0w驻留下实测swap 22GB）——共存旁路（20261004e）已删除，恢复严格互斥串行。串行需要8002让位时：①busy检查已通过（无在途调用）②/v1/models探针确认监听者是MTPLX家族（绝不盲目信号陌生进程）→ 授权接管停机（CLI stop优先，SIGTERM兜底，对外来进程绝不SIGKILL，停不确认即fail-closed拒绝）。8002空闲无监听时由编排器正常拉起自有实例。"
+  }
 }

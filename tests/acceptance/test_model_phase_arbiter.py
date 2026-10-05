@@ -592,7 +592,9 @@ def test_r10_ocr_endpoint_bracketed_by_arbitration(world, monkeypatch):
 def test_r11_vetoed_switch_rolls_back_the_server_it_started(world):
     """round25 09:47:25: ensure() launched MTPLX, then the exclusion drain of
     oMLX was vetoed — the launched server stayed resident (co-residency).
-    The switch must roll back: what ensure() started, ensure() stops."""
+    20261005 serial-rootfix: the drain now runs BEFORE any start — a vetoed
+    switch never launches MTPLX (no rollback needed, no cold-load overlap
+    window with the other side's unload)."""
     arb = _arb(world)
     _omlx_up(world.http, translation_loaded=True)
     _mtplx_script_restartable(world)
@@ -602,8 +604,9 @@ def test_r11_vetoed_switch_rolls_back_the_server_it_started(world):
         with pytest.raises(world.orch_mod.LifecycleRefusal) as excinfo:
             arb.lease("triage", reason="queued-user").__enter__()
         assert excinfo.value.reason == "busy_inflight", excinfo.value
-        # RED (round25 P0-A): the launched MTPLX must be stopped again
-        assert world.commands.ran("stop --port 8002"), world.commands.calls
+        # 20261005 new contract: a vetoed switch must not START MTPLX at all
+        assert not world.commands.ran("quickstart"), world.commands.calls
+        assert not world.commands.ran("stop --port 8002"), world.commands.calls
         assert arb.snapshot()["current"] is None, arb.snapshot()
     finally:
         world.orch_mod.gateway_dispatch_end(f"{OMLX}/v1")

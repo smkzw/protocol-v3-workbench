@@ -1,0 +1,31 @@
+{
+  "adoption": {
+    "mtplx": {
+      "adopted": true,
+      "adopted_at": "2026-10-01 01:39:28",
+      "checks": {
+        "cmdline_markers_ok": true,
+        "ledger_reason": "process_not_running",
+        "listener_found": true
+      },
+      "evidence": "SMOKE-r1-2 ③a: ledger pid=18233 (process_not_running) but the port listener matches this deployment's identity markers; cmdline='/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/python -P -m mtplx.server.openai --model /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed --backend-id nat'",
+      "operator": "self_adopt_stale_pidfile",
+      "pid": 63756
+    }
+  },
+  "observed_external": {
+    "mtplx": {
+      "endpoint": "http://127.0.0.1:8002",
+      "last_seen_at": 1791193118.2797928,
+      "last_seen_phase": "translation",
+      "note": "未纳管监听者（用户自有进程）；目标相模型已驻留且主机内存充足，按20261004e共存旁路保留其在运行，绝不停止。"
+    },
+    "omlx": {
+      "endpoint": "http://127.0.0.1:8001",
+      "last_seen_at": 1791180941.274229,
+      "last_seen_phase": "triage",
+      "note": "未纳管监听者（用户自有进程）；目标相模型已驻留且主机内存充足，按20261004e共存旁路保留其在运行，绝不停止。"
+    }
+  },
+  "release_unconfirmed": {}
+}

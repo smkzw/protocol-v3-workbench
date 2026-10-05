@@ -552,6 +552,148 @@ class ModelLifecycleOrchestrator:
                     "self_adopted": True}
         return None
 
+    def _authorized_reuse_identity(
+        self, server_key: str, server: dict, identity: dict, phase: str,
+    ) -> dict | None:
+        """20261005：pidfile指向外来活进程时的授权复用判定。
+
+        owner指示（20261005）："GUI已经启用了……直接从GUI调用模型"——
+        健康的MTPLX家族外来监听者（GUI服务器）直接复用，不启动自有实例
+        （用户在GUI可见模型活动）。条件同接管：takeover启用+/v1/models
+        探针确认家族。复用登记进state.reuse留台账。
+        """
+        tk = (self.config or {}).get("mtplx_takeover") or {}
+        if tk.get("enabled") is not True:
+            return None
+        probe_path = tk.get("identity_probe", "/v1/models")
+        status, body = self._get(f"{server['endpoint']}{probe_path}")
+        if status != 200:
+            return None
+        text = str(body).lower()
+        if not ("mtplx" in text or "flash-next" in text or "qwen" in text):
+            return None
+        state = self._read_state()
+        state.setdefault("reuse", {})[server_key] = {
+            "pid": identity.get("pid"),
+            "phase": phase,
+            "note": "healthy foreign MTPLX-family listener reused "
+                    "(owner 20261005: call the model via the GUI server)",
+            "at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        self._write_state(state)
+        self._audit(
+            "state/reuse", action="authorized_foreign_reuse",
+            target=f"{server_key}@{server['endpoint']} pid={identity.get('pid')}",
+            reason=f"ensure({phase}): MTPLX family confirmed via {probe_path}",
+            before="pidfile_identity_mismatch",
+            outcome="reuse healthy foreign listener (no start)")
+        return {"owned": False, "pid": identity.get("pid"),
+                "cmdline": identity.get("cmdline"), "reuse": True}
+
+    def _authorized_takeover_identity(
+        self, server_key: str, server: dict, phase: str,
+    ) -> dict | None:
+        """20261005串行根治：owner授权的未纳管8002监听者接管资格判定。
+
+        owner原话（20261005）："如果没有模型调用的话当然可以由系统接管
+        处置啊！"——串行切换（翻译相⇄初稿相）需要8002让位；实测共存
+        （20261004e旁路）在MTPLX生成时懒加载权重导致swap 22GB，已删除。
+        资格三条件（全满足才接管）：①config.mtplx_takeover.enabled；
+        ②端口有监听且经 identity_probe（/v1/models）确认是MTPLX家族
+        服务器——绝不盲目信号陌生进程；③busy检查已在_drain入口通过
+        （无在途模型调用=owner授权的前提条件）。满足则写pidfile与接管
+        台账（可追溯）并返回受管身份；否则None维持原fail-closed拒绝。
+        """
+        tk = (self.config or {}).get("mtplx_takeover") or {}
+        if tk.get("enabled") is not True:
+            return None
+        listener_pid = self._listen_pid(int(server["port"]))
+        if listener_pid is None or listener_pid < 0:
+            return None  # 无监听走陈账路径；观测不到=fail-closed
+        probe_path = tk.get("identity_probe", "/v1/models")
+        status, body = self._get(f"{server['endpoint']}{probe_path}")
+        family_ok = False
+        if status == 200:
+            text = str(body).lower()
+            family_ok = ("mtplx" in text or "flash-next" in text
+                         or "qwen" in text)
+        if not family_ok:
+            self._audit(
+                "arbitration/takeover-refused",
+                action="takeover_identity_probe_failed",
+                target=(f"{server_key}@{server['endpoint']} "
+                        f"pid={listener_pid}"),
+                reason=(f"probe {probe_path} HTTP {status}; listener not "
+                        "confirmed as MTPLX family server"),
+                before="foreign listener resident",
+                outcome="keep server_unowned refusal")
+            return None
+        cmdline = self._proc_cmdline(listener_pid) or ""
+        # 注意：接管不写pidfile——若写入外来pid，下一相位的
+        # _mtplx_identity会判pidfile_identity_mismatch而拒绝复用/切换；
+        # 接管台账（state.takeover）已足够追溯。
+        state = self._read_state()
+        state.setdefault("takeover", {})[server_key] = {
+            "pid": listener_pid,
+            "cmdline": cmdline[:200],
+            "phase": phase,
+            "authorization": "owner 20261005: idle-only takeover",
+            "at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        self._write_state(state)
+        self._audit(
+            "state/takeover",
+            action="authorized_takeover_foreign_listener",
+            target=(f"{server_key}@{server['endpoint']} "
+                    f"pid={listener_pid}"),
+            reason=(f"serialization for phase={phase!r}; busy checks "
+                    "passed and MTPLX family confirmed; owner "
+                    "authorization 20261005 (idle-only takeover)"),
+            before="foreign (GUI-spawned) listener resident",
+            outcome="adopted for graceful stop")
+        return {"owned": True, "pid": listener_pid,
+                "cmdline": cmdline, "takeover": True}
+
+    def _takeover_stop(self, server_key: str, server: dict,
+                       identity: dict, confirm_timeout: float) -> bool:
+        """接管停机（外来监听者专用）：CLI stop优先，SIGTERM兜底。
+
+        与 _stop_process_managed 的区别：后者要求部署身份标记
+        （runtime-venv等），外来GUI进程按定义不满足——接管路径的身份
+        依据是 identity_probe 的MTPLX家族确认（已在其调用方完成）。
+        对外来进程绝不SIGKILL：SIGTERM后未确认即返回False由调用方
+        fail-closed（owner可能在用GUI，宁可拒绝不可硬杀）。
+        """
+        pid = int(identity.get("pid") or 0)
+        try:
+            self.commands(list(server["stop_command"]),
+                          timeout=confirm_timeout + 60)
+            if self._confirm_released(server_key, server, confirm_timeout):
+                self._audit(
+                    "action/takeover-stop",
+                    action="takeover_cli_stop_confirmed",
+                    target=f"{server_key}@{server['endpoint']} pid={pid}",
+                    reason="authorized takeover; CLI stop confirmed release",
+                    before="foreign listener resident",
+                    outcome="stopped via CLI")
+                return True
+        except Exception:  # noqa: BLE001 — CLI失败走SIGTERM兜底
+            pass
+        self._audit(
+            "action/takeover-stop",
+            action="takeover_sigterm",
+            target=f"{server_key}@{server['endpoint']} pid={pid}",
+            reason="CLI stop unconfirmed; graceful SIGTERM to the "
+                   "probe-verified idle MTPLX listener",
+            before="foreign listener resident",
+            outcome="SIGTERM issued (no SIGKILL on foreign processes)")
+        try:
+            self.kill(pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        return bool(self._confirm_released(server_key, server,
+                                           confirm_timeout))
+
     def _listen_pid(self, port: int) -> int | None:
         """PID listening on the port; None = confirmed no listener;
         -1 = cannot observe (fail-closed for stop confirmation)."""
@@ -853,6 +995,46 @@ class ModelLifecycleOrchestrator:
                 self.sleep(interval)
         return busy
 
+    def _drain_model_ids(self, server: dict) -> list[str]:
+        """20261005 OCR回收缺口根治：排空时须卸载的全部受管模型。
+
+        此前非受管服务器（oMLX）只卸 managed_model_id——GLM-OCR 由 OCR
+        角色加载后没有任何机制回收，永久驻留（owner 20261005指出"为什
+        么OCR模型一直没卸载？？"）。排空语义=本侧全部受管模型清空。
+        """
+        ids = list(server.get("drain_unload_models") or [])
+        if server.get("managed_model_id") not in ids:
+            ids.insert(0, server["managed_model_id"])
+        return ids
+
+    def _any_managed_model_resident(self, server: dict) -> bool:
+        """互斥触发判定：本侧任一受管模型驻留即需排空（含OCR-only态）。"""
+        if server.get("process_managed"):
+            status, _ = self._get(f"{server['endpoint']}/health")
+            return status == 200
+        status, body = self._get(
+            f"{server['endpoint']}"
+            f"{server.get('admin_models_path', '/admin/api/models')}")
+        if status != 200:
+            return False
+        entries = {e.get("id"): e for e in body.get("models", []) or []}
+        for model_id in self._drain_model_ids(server):
+            entry = entries.get(model_id)
+            if entry and entry.get("loaded") and not entry.get("is_loading"):
+                return True
+        return False
+
+    def _loaded_managed_models(self, server: dict) -> list[str]:
+        """当前实际驻留的受管模型清单（排空卸载用）。"""
+        status, body = self._get(
+            f"{server['endpoint']}"
+            f"{server.get('admin_models_path', '/admin/api/models')}")
+        if status != 200:
+            return [server["managed_model_id"]]  # 读不到=fail-closed按全卸
+        entries = {e.get("id"): e for e in body.get("models", []) or []}
+        return [m for m in self._drain_model_ids(server)
+                if (entries.get(m) or {}).get("loaded")]
+
     def _resident(self, server: dict) -> bool:
         if server.get("process_managed"):
             status, _ = self._get(f"{server['endpoint']}/health")
@@ -883,13 +1065,13 @@ class ModelLifecycleOrchestrator:
                     f"{server['endpoint']}"
                     f"{server.get('admin_models_path', '/admin/api/models')}")
                 if status == 200:
-                    for entry in body.get("models", []) or []:
-                        if entry.get("id") == server["managed_model_id"]:
-                            if (not entry.get("loaded")
-                                    and not entry.get("is_loading")):
-                                return True
-                            break
-                    else:
+                    entries = {e.get("id"): e
+                               for e in body.get("models", []) or []}
+                    if not any(
+                        (entries.get(m) or {}).get("loaded")
+                        or (entries.get(m) or {}).get("is_loading")
+                        for m in self._drain_model_ids(server)
+                    ):
                         return True
             if self.clock() >= deadline:
                 return False
@@ -953,16 +1135,23 @@ class ModelLifecycleOrchestrator:
             if server.get("process_managed"):
                 identity = self._mtplx_identity(server, self._read_state())
                 stop_already_complete = False
+                takeover_stop = False
                 if not identity["owned"]:
                     identity = self._reconcile_unowned_server(
                         server_key, server, identity)
                     if identity is None:
-                        return self._refuse(
-                            "server_unowned",
-                            "refusing to stop a server we do not own "
-                            "(live listener is not this deployment)",
-                            phase=phase, target=server_key)
-                    if identity.get("stop_complete"):
+                        # 20261005串行根治：owner授权的空闲接管让位
+                        # （mtplx_takeover）。不可接管时维持原fail-closed。
+                        identity = self._authorized_takeover_identity(
+                            server_key, server, phase)
+                        if identity is None:
+                            return self._refuse(
+                                "server_unowned",
+                                "refusing to stop a server we do not own "
+                                "(live listener is not this deployment)",
+                                phase=phase, target=server_key)
+                        takeover_stop = True
+                    elif identity.get("stop_complete"):
                         stop_already_complete = True
                 if stop_already_complete:
                     # SMOKE-r1-2 ③a: stale ledger only — the ledger pid is
@@ -977,6 +1166,17 @@ class ModelLifecycleOrchestrator:
                                 outcome="stop already complete")
                     confirmed = self._confirm_released(
                         server_key, server, confirm_timeout)
+                elif takeover_stop:
+                    # 20261005：外来监听者接管停机——CLI stop优先、SIGTERM
+                    # 兜底；对外来进程绝不SIGKILL，停不确认即fail-closed。
+                    confirmed = self._takeover_stop(
+                        server_key, server, identity, confirm_timeout)
+                    if confirmed is not True:
+                        return self._refuse(
+                            "takeover_stop_unconfirmed",
+                            "authorized takeover stop did not confirm; "
+                            "fail-closed (no SIGKILL on foreign processes)",
+                            phase=phase, target=server_key)
                 else:
                     # SMOKE-r2-1 ③：直接受管停机优先（CLI stop 对启用鉴权的
                     # 服务器必然 not_mtplx 拒止，活体复现 rc=1）。None=身份
@@ -1007,17 +1207,21 @@ class ModelLifecycleOrchestrator:
                         confirmed = self._confirm_released(
                             server_key, server, confirm_timeout)
             else:
-                model_id = server["managed_model_id"]
-                self._audit("action/unload", action="admin_unload",
-                            target=f"{server_key}@{server['endpoint']}/{model_id}",
-                            reason=f"drain for {'release' if wait_for_zero else f'ensure({phase})'}",
-                            precheck="inflight=0, activity=0, no established",
-                            before="resident", outcome="unload POST issued")
-                status, _ = self._post(
-                    f"{server['endpoint']}"
-                    f"{server.get('unload_path', '/admin/api/models/{model}/unload')}"
-                    .format(model=model_id))
-                confirmed = (status == 200
+                # 20261005：卸载本侧全部驻留受管模型（OCR回收缺口根治——
+                # 此前只卸managed_model_id，GLM-OCR加载后永久驻留）。
+                unloaded, failed = [], []
+                for model_id in self._loaded_managed_models(server):
+                    self._audit("action/unload", action="admin_unload",
+                                target=f"{server_key}@{server['endpoint']}/{model_id}",
+                                reason=f"drain for {'release' if wait_for_zero else f'ensure({phase})'}",
+                                precheck="inflight=0, activity=0, no established",
+                                before="resident", outcome="unload POST issued")
+                    status, _ = self._post(
+                        f"{server['endpoint']}"
+                        f"{server.get('unload_path', '/admin/api/models/{model}/unload')}"
+                        .format(model=model_id))
+                    (unloaded if status == 200 else failed).append(model_id)
+                confirmed = (not failed
                              and self._confirm_released(server_key, server,
                                                         confirm_timeout))
 
@@ -1093,6 +1297,96 @@ class ModelLifecycleOrchestrator:
         except LifecycleRefusal as exc:
             return self._refuse(exc.reason, exc.detail, phase=phase)
 
+    def _await_memory_recovered(self, min_bytes: int) -> bool:
+        """20261005串行根治：等主机可用内存实际回升到 min_bytes。
+
+        背景（owner实抓）：对侧"逻辑卸载确认"（loaded=false）早于物理
+        内存页归还——紧接着启动/加载会在叠加窗口爆swap（今日两起同型
+        事故）。轮询 vm_stat（free+speculative+inactive）直到达标或
+        release_confirm_timeout 超时；读不出内存=true（fail-open由
+        服务器侧守卫兜底，不因观测缺失死锁）。
+        """
+        if min_bytes <= 0:
+            return True
+        interval = float((self.config or {}).get("poll_interval_seconds", 1.0))
+        deadline = self.clock() + float((self.config or {}).get(
+            "release_confirm_timeout_seconds", 120))
+        while True:
+            available = self._vm_stat_available_bytes()
+            if available is None:
+                return True  # 观测缺失不阻断（服务器侧守卫兜底）
+            if available >= min_bytes:
+                return True
+            if self.clock() >= deadline:
+                self._audit(
+                    "action/memory-wait", action="memory_recovery_timeout",
+                    target="host",
+                    reason=(f"available {available / 1024**3:.1f}GiB < "
+                            f"required {min_bytes / 1024**3:.0f}GiB after "
+                            "drain; physical pages not yet returned"),
+                    before="post-drain overlap window",
+                    outcome="refuse load/start (fail-closed)")
+                return False
+            self.sleep(interval)
+
+    def _vm_stat_available_bytes(self) -> int | None:
+        """vm_stat free+speculative+inactive（字节）；读不出None。"""
+        try:
+            rc, out, _err = self.commands(["vm_stat"], timeout=10)
+        except Exception:  # noqa: BLE001
+            return None
+        if rc != 0 or not out:
+            return None
+        page_size = 16384
+        values: dict[str, int] = {}
+        for line in out.splitlines():
+            if ":" not in line:
+                import re as _re
+                m = _re.search(r"page size of (\d+) bytes", line)
+                if m:
+                    page_size = int(m.group(1))
+                continue
+            key, _, rest = line.partition(":")
+            digits = "".join(ch for ch in rest if ch.isdigit())
+            if digits:
+                values[key.strip()] = int(digits) * page_size
+        return sum(values.get(n, 0) for n in (
+            "Pages free", "Pages speculative", "Pages inactive")) or None
+
+    def _ensure_omlx_guard_tier(self, server_key: str, server: dict) -> None:
+        """20261005串行根治：把 oMLX memory_guard_tier 对齐到配置档位。
+
+        实测依据（runs/.../t17_round27_loop/scheduler_root_fix_20261005/）：
+        balanced 档的动态上限公式不计内核可逐出的文件缓存——27.4GB 可用
+        仍判 18.9GB 上限，31.25GB 翻译模型被拒（几天来'拒绝变体'的真根
+        因之一）；aggressive 档实测加载后仍余约 32GB。串行模式下对侧已
+        让位（mtplx_takeover），跨进程增长防护由互斥串行本身承担，
+        aggressive 安全且必要。档位相符则零副作用；不符时 POST 一次并
+        审计；HTTP 失败不阻断 ensure（oMLX 服务器侧守卫仍兜底）。
+        """
+        tier = str(server.get("memory_guard_tier") or "").strip()
+        if not tier:
+            return
+        status, body = self._get(
+            f"{server['endpoint']}/admin/api/global-settings")
+        current = ((body or {}).get("memory") or {}).get(
+            "memory_guard_tier")
+        if status == 200 and current == tier:
+            return
+        status2, _ = self._post(
+            f"{server['endpoint']}/admin/api/global-settings",
+            {"memory_guard_tier": tier})
+        self._audit(
+            "action/guard-tier",
+            action="omlx_memory_guard_tier_align",
+            target=f"{server_key}@{server['endpoint']}",
+            reason=(f"config tier={tier} current={current!r}; balanced "
+                    "ceiling ignores kernel-evictable file cache "
+                    "(measured 20261005: 27.4GiB available -> 18.9GiB "
+                    "cap, 31.25GiB model refused)"),
+            before=str(current),
+            outcome=f"align POST HTTP {status2}")
+
     def _ensure(self, cfg: dict, phase: str, t0: float) -> dict:
         roles = cfg["phase_roles"].get(phase)
         if not roles:
@@ -1143,28 +1437,32 @@ class ModelLifecycleOrchestrator:
         # identity / reuse-first (read-only); healthy foreign instances are
         # reused, only a confirmed identity mismatch refuses
         started_here = False
+        needs_start = False
         if server.get("process_managed"):
             identity = self._mtplx_identity(server, state)
             healthy = self._resident(server)
             if (healthy
                     and identity.get("reason") == "pidfile_identity_mismatch"):
-                return self._refuse(
-                    "pidfile_identity_mismatch",
-                    f"pid={identity.get('pid')} "
-                    f"cmdline={identity.get('cmdline')!r}",
-                    phase=phase, target=server_key)
+                # 20261005：pidfile指着外来活进程——探针确认MTPLX家族且
+                # takeover启用时授权复用（owner指示直接从GUI服务器调用），
+                # 登记reuse台账继续；否则维持原fail-closed拒绝。
+                reuse = self._authorized_reuse_identity(
+                    server_key, server, identity, phase)
+                if reuse is None:
+                    return self._refuse(
+                        "pidfile_identity_mismatch",
+                        f"pid={identity.get('pid')} "
+                        f"cmdline={identity.get('cmdline')!r}",
+                        phase=phase, target=server_key)
             if not healthy:
-                started = self._start_server(server_key, server, phase)
-                if started["status"] != "ok":
-                    return started
-                started_here = True
+                # 20261005串行根治：启动延迟到互斥排空与内存归还之后——
+                # 旧序"先启动再排空"使MTPLX冷加载与对侧卸载并发（实测
+                # swap爆炸的struct性根因）。
+                needs_start = True
         else:
             status, _ = self._get(f"{server['endpoint']}/health")
             if status != 200:
-                started = self._start_server(server_key, server, phase)
-                if started["status"] != "ok":
-                    return started
-                started_here = True
+                needs_start = True
 
         # mutual exclusion: the two resident models cannot coexist (budget
         # arithmetic in mem_probe.md: ~29.8GB + ~80GB ≈ 110GB on 128GB).
@@ -1173,8 +1471,16 @@ class ModelLifecycleOrchestrator:
         # vetoed drain leaves the freshly launched server resident next to
         # the incumbent (persistent double load, no self-healing).
         for other_key, other in cfg["servers"].items():
-            if other_key == server_key or not self._resident(other):
+            if other_key == server_key or not (
+                self._resident(other)
+                or self._any_managed_model_resident(other)
+            ):
                 continue
+            # 20261005串行根治：删除20261004e共存旁路——实测双模型"加载时
+            # 装得下、生成时装不下"（MTPLX生成时懒加载权重，dawncr0w驻留
+            # 下实测swap 22GB）。恢复严格互斥串行；未纳管的8002监听者由
+            # _drain内owner授权接管（mtplx_takeover）优雅让位，绝无双侧
+            # 同时生成。
             drained = self._drain(other_key, other, phase,
                                   force=False, wait_for_zero=False)
             if drained["status"] != "ok":
@@ -1187,13 +1493,40 @@ class ModelLifecycleOrchestrator:
                             "phase": phase}
                 return drained
 
+        if needs_start:
+            # 20261005串行根治：排空完成后先等主机内存实际归还（逻辑
+            # unloaded≠物理页已释放，今天实测叠加窗口爆swap），再启动。
+            min_bytes = int(server.get("start_memory_min_bytes")
+                            or 32 * 1024**3)
+            if not self._await_memory_recovered(min_bytes):
+                return self._refuse(
+                    "memory_recovery_timeout",
+                    (f"host available did not recover to "
+                     f"{min_bytes / 1024**3:.0f}GiB after draining the "
+                     "other side; refusing to start (no overlap loads)"),
+                    phase=phase, target=server_key)
+            started = self._start_server(server_key, server, phase)
+            if started["status"] != "ok":
+                return started
+            started_here = True
+
         action_taken = False
         if not self._resident(server):
             if not server.get("process_managed"):
+                self._ensure_omlx_guard_tier(server_key, server)
                 precheck = self._memory_precheck(server)
                 if precheck is not None:
                     return self._refuse("memory_guard", precheck, phase=phase,
                                         target=server_key)
+            pre = server.get("load_memory_precheck") or {}
+            need_bytes = int(float(pre.get("estimated_model_bytes", 0))
+                             * float(pre.get("factor", 1.1))) if pre else 0
+            if need_bytes and not self._await_memory_recovered(need_bytes):
+                return self._refuse(
+                    "memory_recovery_timeout",
+                    (f"host available did not recover to "
+                     f"{need_bytes / 1024**3:.0f}GiB before load probe"),
+                    phase=phase, target=server_key)
             self._audit("action/load-probe", action="chat_probe_load",
                         target=f"{server_key}/{server['managed_model_id']}",
                         reason=f"ensure({phase}) model not resident",
