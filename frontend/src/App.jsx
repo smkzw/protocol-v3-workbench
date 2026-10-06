@@ -1281,6 +1281,7 @@ function EmptyProjectOverview({
 }
 
 function AppShell({
+  newProjectOpenRef,
   activePage,
   setActivePage,
   dashboard,
@@ -1305,6 +1306,13 @@ function AppShell({
   // 重置。此前每次提交用 Date.now/random 现拼，同帧双击=两个不同键，
   // 后端幂等去重永不命中（现场0.26秒双项目实据）。
   const [newProjectIdempotencyKey, setNewProjectIdempotencyKey] = useState("");
+  // P0-16（R27 片1③）：建项挂起可见性——弹窗冻结84秒无任何反馈（现场
+  // R3-D）。已耗时秒数实时显示+创建通常1-3分钟的预期提示。
+  const [newProjectElapsed, setNewProjectElapsed] = useState(0);
+  // NEW-P0-27批三A（半步）：由 App 下传的共享 ref——新建对话框开着时
+  // App 的项目收养effect不改activeProject（现场：对话框开着被扔回他人
+  // 项目）。ref 归 App 所有（收养effect在 App 作用域）。
+  newProjectOpenRef.current = newProjectOpen;
   // R27 NEW-P0-04②：同步 ref 守卫挡同帧双提交（setNewProjectBusy 是异步
   // state，重渲染前不生效）。
   const newProjectSubmitRef = useRef(false);
@@ -1342,11 +1350,22 @@ function AppShell({
     });
     setNewProjectMessage("");
   };
+  useEffect(() => {
+    if (!newProjectBusy) {
+      setNewProjectElapsed(0);
+      return undefined;
+    }
+    const startedAt = Date.now();
+    const timer = globalThis.setInterval(() => {
+      setNewProjectElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    }, 1000);
+    return () => globalThis.clearInterval(timer);
+  }, [newProjectBusy]);
+
   const createNewProject = async (event) => {
     event.preventDefault();
     if (newProjectDraft.entry_mode === "synopsis_import") return;
     if (newProjectSubmitRef.current) return;
-    newProjectSubmitRef.current = true;
     const requiredFields = [
       ["product_name", "试验药物"],
       ["indication", "适应症"],
@@ -1365,18 +1384,28 @@ function AppShell({
       });
       return;
     }
+    // P0-23（R27 片A①）：守卫置位移到校验通过之后——此前置位在校验
+    // 之前，空提交/Enter等价提交的早退return不复位ref，此后一切有效
+    // 提交在守卫行静默返回（R5-E 20分钟零反馈、R3-D 84秒冻结同根；
+    // 刷新重挂载=新ref=false才恢复）。
+    newProjectSubmitRef.current = true;
     setNewProjectBusy(true);
     setNewProjectMessage("");
     setNewProjectErrors({});
     try {
+      // P0-23（R27 片A②）：三轮处方的超时接线——裸fetch无超时，服务端
+      // 挂起时弹窗无限冻结且无任何反馈（现场84秒/20分钟）。10分钟软超时
+      // 覆盖最慢建项（journey库竞争长尾），超时经人话器给可行动提示。
       const response = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(10 * 60 * 1000),
         body: JSON.stringify({
           ...newProjectDraft,
           product_name: newProjectDraft.product_name.trim(),
           actor: "medical_manager",
-          idempotency_key: newProjectIdempotencyKey,
+          idempotency_key: newProjectIdempotencyKey
+            || `create-project-session-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
         }),
       });
       const payload = await readJsonOrThrow(response);
@@ -1385,7 +1414,9 @@ function AppShell({
       setNewProjectOpen(false);
       setNewProjectIdempotencyKey("");
     } catch (error) {
-      setNewProjectMessage(`创建失败：${apiErrorText(error)}`);
+      // NEW-P0-25批三A：422校验数组等工程原文经人话器（现场
+      // string_too_short/idempotency_key 原始JSON直出对话框）。
+      setNewProjectMessage(`创建失败：${medicalWritingSafeErrorText(error)}`);
     } finally {
       setNewProjectBusy(false);
       newProjectSubmitRef.current = false;
@@ -1464,6 +1495,12 @@ function AppShell({
               disabled={!projectsLoaded || Boolean(projectsLoadError)}
               onClick={() => {
                 setNewProjectMessage("");
+                // NEW-P0-25（批三A）：顶栏路径也生成会话幂等键——此前只有
+                // 空看板入口生成，有活动项目时只能走顶栏→键恒空→后端
+                // min_length=8 拒收422（现场6次复现）。
+                setNewProjectIdempotencyKey(
+                  `create-project-session-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
+                );
                 setNewProjectOpen(true);
               }}
               title={!projectsLoaded || projectsLoadError ? "项目列表尚未就绪，暂不能新建项目" : "新建中国临床试验方案写作项目"}
@@ -1562,7 +1599,7 @@ function AppShell({
                 {newProjectMessage && <p className="new-project-message">{newProjectMessage}</p>}
                 <footer>
                   <button type="button" onClick={() => setNewProjectOpen(false)} disabled={newProjectBusy} title={newProjectBusy ? "项目正在创建，请稍候" : "取消新建项目"}>取消</button>
-                  <button type="submit" className="primary-button" disabled={newProjectBusy} title={newProjectBusy ? "项目正在创建，请稍候" : "创建项目并进入写作工作台"}>{newProjectBusy ? "创建中" : "创建并进入写作"}</button>
+                  <button type="submit" className="primary-button" disabled={newProjectBusy} title={newProjectBusy ? "项目正在创建，请稍候" : "创建项目并进入写作工作台"}>{newProjectBusy ? `创建中…${newProjectElapsed}秒（通常需1-3分钟）` : "创建并进入写作"}</button>
                 </footer>
               </>
             )}
@@ -15604,14 +15641,21 @@ function ModuleUnavailablePage({ moduleKey, message = "当前项目尚未配置�
   );
 }
 
-function RuntimeBuildWarningsBanner({ assessment }) {
+function RuntimeBuildWarningsBanner({ assessment, onRetry }) {
   const warnings = assessment?.warnings || [];
-  if (!warnings.length) return null;
+  // P2-38（批三A）：构建漂移是咨询性提示——可关闭，且提供『重新检查』；
+  // 判定条件已收窄为『运行中后端落后于当前源码树』（runtimeReadiness.js）。
+  const [dismissed, setDismissed] = useState(false);
+  if (!warnings.length || dismissed) return null;
   return (
     <div className="runtime-build-warnings" role="status" data-testid="runtime-build-warnings">
       {warnings.map((warning) => (
         <p key={warning}>⚠ {warning}</p>
       ))}
+      <div className="runtime-build-warnings-actions">
+        <button type="button" onClick={onRetry} title="重新检测运行中后端是否已更新">重新检查</button>
+        <button type="button" onClick={() => setDismissed(true)} title="关闭本提示；提示不影响功能使用">关闭</button>
+      </div>
     </div>
   );
 }
@@ -15663,6 +15707,8 @@ function MedicalWritingRuntimeGate({ readiness, onRetry }) {
 }
 
 export function App() {
+  // NEW-P0-27批三A：对话框开闭状态共享给项目收养effect（跨组件作用域）。
+  const newProjectOpenRef = useRef(false);
   const initialMonitoringRouteRef = useRef(initialMonitoringBrowserState());
   const monitoringReturnScopeRef = useRef(
     initialMonitoringRouteRef.current.scope || "trial",
@@ -15850,7 +15896,6 @@ export function App() {
         expectation: dev.expectation,
         driftHint: dev.driftHint,
       });
-      if (dev.viteDriftWarning) assessment.warnings.push(dev.viteDriftWarning);
       setRuntimeReadiness({ status: assessment.ready ? "ready" : "blocked", assessment });
     } catch {
       setRuntimeReadiness({
@@ -15950,12 +15995,18 @@ export function App() {
             : "",
         );
         setActiveProjectId((current) => {
+          // NEW-P0-27批三A：新建对话框开着时不收养/不改当前项目。
+          if (newProjectOpenRef.current) return current;
           if (!canonicalProjects.length) return "";
+          // NEW-P0-27批三A：不再自动收养持久化/初始历史项目——首屏落
+          // 『请选择项目』，不自动进任何历史项目（共享部署下历史项目
+          // 属于他人，误入即误改风险）。显式监查深链（requested）与
+          // 当前已选项目仍正常解析。
           const resolved = resolveMedicalMonitoringProjectRoute(
             requestedMonitoringProjectId,
             canonicalProjects,
             current,
-            readPersistedMonitoringProjectId() || INITIAL_PROJECT_ID,
+            "",
           ).projectId;
           if (resolved) persistMonitoringProjectId(resolved);
           return resolved;
@@ -16559,7 +16610,7 @@ export function App() {
         const buildWarnings = runtimeReadiness.assessment?.warnings || [];
         return (
           <>
-            {buildWarnings.length > 0 && <RuntimeBuildWarningsBanner assessment={runtimeReadiness.assessment} />}
+            {buildWarnings.length > 0 && <RuntimeBuildWarningsBanner assessment={runtimeReadiness.assessment} onRetry={refreshRuntimeReadiness} />}
             <WritingPage key={activeProjectId} projectId={activeProjectId} projectHeader={activeManifest?.header_project} projectSourceMode={activeManifest?.source_mode || ""} aiGatewayStatus={aiGatewayStatus} refreshDashboard={refreshDashboard} onNavigationGuardChange={setWritingNavigationGuard} />
           </>
         );
@@ -16601,6 +16652,7 @@ export function App() {
   return (
     <>
       <AppShell
+        newProjectOpenRef={newProjectOpenRef}
         activePage={activePage}
         setActivePage={requestActivePage}
         dashboard={dashboard}

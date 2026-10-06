@@ -3593,6 +3593,51 @@ class MedicalWritingResearchPipelineService:
         snapshot_id = state.snapshot_id or (
             journey.search_plan.latest_snapshot_id if journey.search_plan else ""
         )
+        # P0-21（R27 片A③）：用户已在分诊UI锁定篮子（journey.corpus_triage
+        # finalized且快照一致）时以该保留集为主源，AI run 仅兜底——此前
+        # 无条件走AI run∩公开文档重算，用户锁定的N项被丢弃，交集为空时
+        # 篮子=0触发空篮409（现场：已锁定14项与篮子0项同屏矛盾）。
+        finalized_triage = getattr(journey, "corpus_triage", None)
+        if (
+            finalized_triage is not None
+            and str(getattr(finalized_triage, "status", "")) == "finalized"
+            and str(getattr(finalized_triage, "snapshot_id", "")) == snapshot_id
+        ):
+            finalized_retained = sorted(
+                dict.fromkeys(
+                    getattr(finalized_triage, "retained_candidate_ids", None)
+                    or []
+                )
+            )
+            if finalized_retained:
+                try:
+                    from packages.contracts.workbench_contracts import (
+                        MedicalWritingCorpusTriageFinalizeRequest,
+                    )
+
+                    self.corpus_readiness_service.finalize_triage(
+                        project_id,
+                        MedicalWritingCorpusTriageFinalizeRequest(
+                            snapshot_id=snapshot_id,
+                            retained_candidate_ids=finalized_retained,
+                            actor=actor,
+                            reason=(
+                                "研究流水线遵循医学经理在分诊界面锁定的"
+                                "竞品篮子（以用户finalized态为主源）。",
+                            ),
+                            idempotency_key=(
+                                f"pipe-finalize-user-{state.pipeline_id}"
+                            ),
+                            expected_revision=self.journey_service.get(
+                                project_id
+                            ).revision,
+                        ),
+                    )
+                except Exception as exc:  # noqa: BLE001 — 幂等重放等继续
+                    state.detail = (
+                        f"用户篮子固化重放提示：{type(exc).__name__}: {exc}"
+                    )
+                return finalized_retained
         repo = self.triage_service.repository
         confirm_basket = getattr(self.triage_service, "confirm_basket", None)
         run = None

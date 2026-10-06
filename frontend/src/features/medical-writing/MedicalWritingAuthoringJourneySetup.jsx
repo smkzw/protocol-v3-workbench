@@ -1163,7 +1163,19 @@ export function MedicalWritingAuthoringJourneySetup({
     try {
       const result = await fetch(`/api/projects/${requestProjectId}/medical-writing/research-pipeline/continue-after-triage`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actor: "medical_manager" }),
+        // P0-21（R27 片A③）：确认分诊后继续必须把用户在分诊UI锁定的
+        // 保留集交给流水线——此前只发{actor}，后端用AI run∩公开文档重算
+        // 篮子=0（现场：已锁定14项与篮子0项同屏矛盾→409空篮拦截）。
+        body: JSON.stringify({
+          actor: "medical_manager",
+          retained_candidate_ids: (
+            journey?.corpus_triage?.status === "finalized"
+            && journey?.corpus_triage?.snapshot_id === (journey?.search_plan?.latest_snapshot_id || "")
+            && journey?.corpus_triage?.retained_candidate_ids?.length
+          )
+            ? journey.corpus_triage.retained_candidate_ids
+            : undefined,
+        }),
       }).then(readJson);
       if (activeProjectRef.current !== requestProjectId) return;
       setPipelineStatus((current) => ({ ...(current || {}), pipeline: result.pipeline }));
