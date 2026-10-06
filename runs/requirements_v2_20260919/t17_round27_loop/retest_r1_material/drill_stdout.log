@@ -1,0 +1,34 @@
+drill start 2026-10-04T15:24:48.202905 duration=300.0s
+{
+ "total_requests": 107,
+ "by_phase": {
+  "translation": {
+   "count": 2,
+   "ok": 0,
+   "non_ok": 2,
+   "max_elapsed_s": 600.976,
+   "min_elapsed_s": 2.234,
+   "errors": [
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: Managed local model server unavailable: refusing to stop a server we do not own (live listener is not this deployment) (switch retried 2x, budget capped)"
+    },
+    {
+     "status": 502,
+     "detail": "AI profile probe failed: AiProviderRuntimeError: Managed local model server unavailable: refusing to stop a server we do not own (live listener is not this deployment) (switch retried 2x, budget capped)"
+    }
+   ]
+  },
+  "triage": {
+   "count": 105,
+   "ok": 105,
+   "non_ok": 0,
+   "max_elapsed_s": 95.525,
+   "min_elapsed_s": 1.688,
+   "errors": []
+  }
+ },
+ "co_resident_samples": 61,
+ "samples": 61
+}
+events -> /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/t17_round27_loop/retest_r1_material/concurrency_drill_events.jsonl

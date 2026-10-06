@@ -1,0 +1,868 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    text "最后更新"
+    text "09:00"
+  container
+    container
+      container
+        container
+          text "项目"
+          combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+            text "R6E-KZ-6210 · 慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防 · III期 · MW-III-FE196698"
+        button [ref=12]
+          svg_root
+          text "新建项目"
+        container
+          text "适应症"
+          text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+        container
+          text "方案版本"
+          text "1.0"
+        container
+          text "数据批次"
+          text "未登记批次"
+        container
+          text "当前来源"
+          text "医学写作"
+      container
+        container
+          svg_root
+          text "未读决策"
+          text "0"
+        container
+          svg_root
+          text "高风险开放"
+          text "0"
+        container
+          svg_root
+          text "待交接"
+          text "0"
+        container
+          svg_root
+          text "待审批"
+          text "0"
+        button [ref=13]
+          svg_root
+    container
+      container
+        text "医学写作"
+        heading
+          text "研究方案智能设计与写作"
+      container
+        container
+          container
+            text "新建中国临床试验方案"
+            heading
+              text "研究设计引导"
+          container
+            text "项目状态"
+            text "PICOS设计进行中"
+            container
+              text "来源：导入已有方案/方案摘要"
+              text "· 版本"
+              text "10"
+        container [ref=174]
+          container
+            svg_root
+            text "竞品调研进度"
+          text "AI竞品分诊"
+        container "医学写作建项步骤"
+          button [ref=42]
+            svg_root
+            text "研究框架"
+          button [ref=43]
+            text "02"
+            text "PICOS设计"
+          button [ref=44]
+            text "03"
+            text "语料准备"
+        container
+          container
+            svg_root
+            container
+              text "竞品方案处理"
+              text "已锁定 68 项候选研究；正在处理竞品文献 4/5 · 第 4 批，可同时查看已准备资料。"
+          container
+            container
+              svg_root
+              container
+                text "正在处理竞品文献 4/5 · 第 4 批"
+                text "已完成 3/5 · 60%"
+                progressindicator "竞品调研进度"
+            button [ref=175]
+              svg_root
+              text "查看竞品资料"
+        group [ref=46]
+          container "研究设计推荐包"
+            container
+              container
+                svg_root
+                container
+                  text "部分建议已就绪"
+                  text "已结合 68 项公开研究及 5 份Protocol"
+              container
+                button [ref=176]
+                  svg_root
+                  text "打开竞品处理"
+                button [ref=47]
+                  svg_root
+                  text "更新建议"
+            container "研究设计组合推荐"
+              container
+                svg_root
+                container
+                  text "AI推荐研究方案"
+                  text "先审阅整套设计与关键差异；采用后仍可在高级微调中逐项修改。"
+              container "组合推荐模块"
+                button [ref=48]
+                  text "研究设计（正交维度）"
+                  text "待审阅"
+                button [ref=49]
+                  text "干预与合并治疗模块"
+                  text "待审阅"
+                button [ref=50]
+                  text "结局与终点模块"
+                  text "待审阅"
+                button [ref=51]
+                  text "研究人群模块"
+                  text "待审阅"
+                button [ref=52]
+                  text "产品画像模块"
+                  text "待审阅"
+                button [ref=53]
+                  text "执行与统计模块"
+                  text "待审阅"
+              container
+                container
+                  paragraph
+                    text "该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。"
+                  button [ref=54]
+                    container
+                      text "需您选择/补全"
+                      text "design模块待AI基于语料生成"
+                      text "模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。"
+                    container
+                      text "无"
+                      text "置信"
+                container "组合采用"
+                  container
+                    text "研究设计（正交维度）"
+                    paragraph
+                      text "该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。"
+                  button [ref=55]
+                    text "一键采用推荐方案"
+            container [ref=56]
+              text "展开单字段修改与依据"
+              text "仅在整包建议需要局部调整时使用"
+          container
+            container [ref=57]
+              container
+                text "高级微调"
+                text "仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开"
+              text "设计适用性"
+            container
+              tablist
+                tab [ref=177]
+                  text "设计适用性"
+                tab [ref=178]
+                  text "研究人群"
+                tab [ref=179]
+                  text "干预措施"
+                tab [ref=180]
+                  text "对照"
+                tab [ref=181]
+                  text "结局指标"
+                tab [ref=182]
+                  text "执行与统计"
+              container
+                container
+                  text "研究设计适用性"
+                  text "优先采用上方调研建议；随机化、盲法、对照、分组和期中分析等维度分别确认，系统再组合成研究设计。"
+                svg_root
+                text "当前兼容设计类型："
+                text "随机对照确证性研究"
+                container [ref=183]
+                  text "手动选择兼容设计类型"
+                text "条件字段"
+                text "标记为“不适用”时，必须填写理由并由医学经理确认。"
+                text "对照组设计"
+                text "当前随机设计中必须填写"
+                combobox "对照组设计适用性" [ref=184, loc=css:select[aria-label="对照组设计适用性"]]
+                  text "适用，需填写"
+                text "估计目标策略"
+                text "当前随机设计中必须填写"
+                combobox "估计目标策略适用性" [ref=185, loc=css:select[aria-label="估计目标策略适用性"]]
+                  text "适用，需填写"
+                container
+                  container
+                    text "结构化研究设计确认"
+                    text "AI/当前方案文字已给出建议；确认后才会投影到方案摘要、流程图和正文。未确认的维度继续阻断，不会被系统猜测。"
+                    button [ref=186]
+                      text "采用当前方案文字建议"
+                  container
+                    text "随机化"
+                    text "*"
+                    combobox "随机化" [ref=187, loc=css:select[aria-label="随机化"]]
+                      text "随机"
+                  container
+                    text "盲法"
+                    text "*"
+                    combobox "盲法" [ref=188, loc=css:select[aria-label="盲法"]]
+                      text "双盲"
+                  container
+                    text "对照类型"
+                    text "*"
+                    combobox "对照类型" [ref=189, loc=css:select[aria-label="对照类型"]]
+                      text "安慰剂对照"
+                  container
+                    text "分组/分配方式"
+                    text "*"
+                    combobox "分组/分配方式" [ref=190, loc=css:select[aria-label="分组/分配方式"]]
+                      text "平行组"
+                  container
+                    text "中心模式"
+                    text "*"
+                    combobox "中心模式" [ref=191, loc=css:select[aria-label="中心模式"]]
+                      text "多中心"
+                  container
+                    text "随机化/盲法补充说明"
+                    textbox "随机化盲法补充说明" [ref=192, loc=css:input[placeholder="可保留分层因素、盲态角色等具体说明"]]
+                      text "可保留分层因素、盲态角色等具体说明"
+                  container
+                    text "适应性设计"
+                    combobox "适应性设计计划状态" [ref=193, loc=css:select[aria-label="适应性设计计划状态"]]
+                      text "不计划"
+                  container
+                    text "交叉设计"
+                    combobox "交叉设计计划状态" [ref=194, loc=css:select[aria-label="交叉设计计划状态"]]
+                      text "不计划"
+                  container
+                    text "开放标签延伸"
+                    combobox "开放标签延伸计划状态" [ref=195, loc=css:select[aria-label="开放标签延伸计划状态"]]
+                      text "不计划"
+                  container
+                    text "治疗转换"
+                    combobox "治疗转换计划状态" [ref=196, loc=css:select[aria-label="治疗转换计划状态"]]
+                      text "不计划"
+                  container
+                    text "样本量重估"
+                    combobox "样本量重估计划状态" [ref=197, loc=css:select[aria-label="样本量重估计划状态"]]
+                      text "不计划"
+                  container
+                    text "期中分析"
+                    combobox "期中分析计划状态" [ref=198, loc=css:select[aria-label="期中分析计划状态"]]
+                      text "不计划"
+                  container
+                    text "SRC"
+                    combobox "SRC计划状态" [ref=199, loc=css:select[aria-label="SRC计划状态"]]
+                      text "不计划"
+                  container
+                    text "DMC"
+                    combobox "DMC计划状态" [ref=200, loc=css:select[aria-label="DMC计划状态"]]
+                      text "计划"
+                  container
+                    text "研究臂/队列结构"
+                    combobox "研究臂/队列结构" [ref=201, loc=css:select[aria-label="研究臂/队列结构"]]
+                      text "平行臂组（如试验药组/对照组）"
+                  container
+                    text "研究臂/队列名称（每行一组，如：试验药组、对照组）"
+                    textbox "研究臂/队列名称" [ref=202, loc=css:textarea[placeholder="试验药组
+对照组"]]
+  text "R6E-背景免疫抑制+KZ-6210组"
+  text "R6E-背景免疫抑制+匹配安慰剂组"
+  status
+    text "草稿已保存，尚未提交当前阶段。"
+  container
+    text "研究流水线正在AI竞品分诊；为保持检索/分诊快照冻结，暂不能完成本阶段（提交）。草稿仍可正常编辑与保存；完成本阶段请等流水线结束，或在竞�..."
+    button [ref=203]
+      svg_root
+      text "返回第一步"
+    button [ref=204]
+      svg_root
+      text "保存草稿"
+    button [ref=205]
+      text "完成第二步"
+      svg_root
+  container
+    button "关闭竞品处理抽屉" [ref=85]
+    dialog "竞品方案处理"
+      container
+        container
+          text "建稿前语料处理"
+          text "竞品方案处理"
+          text "分诊、原文、译文与医学审核可在此完成；关闭抽屉不会清空研究框架或PICOS草稿。"
+        button "关闭竞品处理抽屉" [ref=206]
+          svg_root
+      container [ref=222]
+        container
+          text "优先处理候选研究、原文与分诊结论；运行标识与定位信息默认折叠。"
+          button "刷新来源、审核与版本状态" [ref=207, loc=css:button[aria-label="刷新来源、审核与版本状态"]]
+            svg_root
+        tablist "竞品方案参照工作步骤"
+          tab [ref=208]
+            text "候选研究"
+          tab [ref=209]
+            text "文档与解析"
+          tab [ref=210]
+            text "结构与译文确认"
+          tab [ref=211]
+            text "已准入证据"
+        container
+          container
+            container [ref=212]
+              text "本次公开检索结果与运行信息"
+            paragraph
+              text "API"
+              text "2.0.5"
+              text "· 数据时间"
+              text "2026-10-05T09:00:05"
+              text "· 返回"
+              text "68"
+              text "/"
+              text "68"
+              text "· 结果编号 wref_search_c38e68387cfc76ee2e55"
+          container
+            container
+              svg_root
+              textbox [ref=213, loc=css:input[placeholder="检索NCT号、标题或申办方"]]
+                text "检索NCT号、标题或申办方"
+            combobox [ref=214]
+              text "全部状态"
+            text "68项"
+          container [ref=223]
+            button [ref=224]
+              container
+                text "NCT03206801"
+                text "待AI分类"
+              text "Urine CXCL10 Monitoring Trial in Kidney Transplant"
+              container
+                text "University of Manitoba"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=225]
+              container
+                text "NCT00228020"
+                text "待AI分类"
+              text "Study of Safety and Efficacy of a Basiliximab, Mycophenolate Mofetil, Cyclosporine Microemulsion and Prednisone Combination Treatment Regimen in Pediatric Renal Allograft Recipients"
+              container
+                text "Novartis"
+                text "·"
+                text "PHASE3"
+            button [ref=226]
+              container
+                text "NCT01350882"
+                text "待AI分类"
+              text "Impact of Treatment With Rituximab on the Progression of Humoral Acute Rejection After Renal Transplantation"
+              container
+                text "University Hospital, Tours"
+                text "·"
+                text "PHASE3"
+            button [ref=227]
+              container
+                text "NCT05325008"
+                text "待AI分类"
+              text "A Trial to Treat Polyomavirus Infections (BKPyV) in Kidney and Simultaneous Kidney Pancreas Transplant Recipients"
+              container
+                text "The University of Queensland"
+                text "·"
+                text "PHASE3"
+            button [ref=228]
+              container
+                text "NCT03646344"
+                text "待AI分类"
+              text "Heme Arginate in Transplantation Study"
+              container
+                text "University of Edinburgh"
+                text "·"
+                text "PHASE3"
+            button [ref=229]
+              container
+                text "NCT00098735"
+                text "待AI分类"
+              text "Efficacy and Safety of FTY720 in Patients Who Receive a Kidney Transplantation"
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=230]
+              container
+                text "NCT03744910"
+                text "待AI分类"
+              text "Clazakizumab for the Treatment of Chronic Active Antibody Mediated Rejection in Kidney Transplant Recipients"
+              container
+                text "CSL Behring"
+                text "·"
+                text "PHASE3"
+            button [ref=231]
+              container
+                text "NCT03386539"
+                text "待AI分类"
+              text "Tacrolimus/Everolimus vs. Tacrolimus/MMF in Pediatric Heart Transplant Recipients Using the MATE Score"
+              container
+                text "Boston Children's Hospital"
+                text "·"
+                text "PHASE3"
+            button [ref=232]
+              container
+                text "NCT02040584"
+                text "待AI分类"
+              text "A Multicentre, Randomised, Open-label, Controlled, 12-month Follow-up Study to Assess Impact on Renal Function of an Immunosuppression Regimen Based on Tacrolimus Minimisation in Association With Ever..."
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=233]
+              container
+                text "NCT00101738"
+                text "待AI分类"
+              text "Freedom Study: Myfortic in Kidney Transplant Patients"
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=234]
+              container
+                text "NCT04561986"
+                text "待AI分类"
+              text "TocIlizumab in Late/Chronic Active Antibody-mediated Rejection in Kidney Transplant Recipients"
+              container
+                text "Vastra Gotaland Region"
+                text "·"
+                text "PHASE3"
+            button [ref=235]
+              text "NCT00099801"
+              text "待AI分类"
+              text "Safety and Efficacy of FTY720 in Adult Patients Who Receive a Kidney Transplant"
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=236]
+              text "NCT03994783"
+              text "待AI分类"
+              text "Transplant Antibody-Mediated Rejection: Guiding Effective Treatments"
+              container
+                text "Imperial College London"
+                text "·"
+                text "PHASE3"
+            button [ref=237]
+              text "NCT03363945"
+              text "待AI分类"
+              text "Cellular Immunotherapy in Recipients of HLA-matched, Living Donor Kidney Transplants"
+              container
+                text "Medeor Therapeutics, Inc."
+                text "·"
+                text "PHASE3"
+            button [ref=238]
+              text "NCT06474273"
+              text "待AI分类"
+              text "A Multicenter Randomized Controlled Trial to Treat Acute T Cell Mediated Rejection in Kidney and Kidney-Pancreas Transplant Recipients"
+              container
+                text "University of Sydney"
+                text "·"
+                text "PHASE3"
+            button [ref=239]
+              text "NCT01453192"
+              text "待AI分类"
+              text "Renal Transplantation and Raltegravir in HIV-Infected Patients"
+              container
+                text "ANRS, Emerging Infectious Diseases"
+                text "·"
+                text "PHASE3"
+            button [ref=240]
+              text "NCT01066689"
+              text "待AI分类"
+              text "Impact of Treatment With Rituximab on the Progression of Humoral Acute Rejection After Renal Transplantation"
+              container
+                text "University Hospital, Tours"
+                text "·"
+                text "PHASE3"
+            button [ref=241]
+              text "NCT01544491"
+              text "待AI分类"
+              text "Efficacy, Tolerability and Safety of Early Introduction of Everolimus, Reduced Calcineurin Inhibitors and Early Steroid Elimination Compared to Standard CNI, Mycophenolate Mofetil and Steroid Regimen ..."
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=242]
+              text "NCT03289650"
+              text "待AI分类"
+              text "Extended Release Tacrolimus vs. Twice-Daily Tacrolimus"
+              container
+                text "Lorenzo Gallon"
+                text "·"
+                text "PHASE3"
+            button [ref=243]
+              text "NCT01453218"
+              text "待AI分类"
+              text "Safety Use of ATeGe in Liver Transplant Recipients With Pre-transplant Renal Dysfunction"
+              container
+                text "Hospital Vall d'Hebron"
+                text "·"
+                text "PHASE3"
+            button [ref=244]
+              text "NCT01680861"
+              text "待AI分类"
+              text "Tacrolimus/Everolimus Versus Tacrolimus/Enteric-Coated Mycophenolate Sodium"
+              container
+                text "Gaetano Ciancio"
+                text "·"
+                text "PHASE3"
+            button [ref=245]
+              text "NCT00752401"
+              text "待AI分类"
+              text "Vitamin D3 Substitution in Vitamin D Deficient Kidney Transplant Recipients"
+              container
+                text "Medical University of Vienna"
+                text "·"
+                text "PHASE3"
+            button [ref=246]
+              text "NCT00251004"
+              text "待AI分类"
+              text "Efficacy and Safety Study of Everolimus Plus Reduced Cyclosporine Versus Mycophenolic Acid Plus Cyclosporine in Kidney Transplant Recipients"
+              container
+                text "Novartis"
+                text "·"
+                text "PHASE3"
+            button [ref=247]
+              text "NCT00817206"
+              text "待AI分类"
+              text "Safety and Efficacy of LCP-Tacro™ Once Daily in Stable Renal Transplant Patients Converted From Prograf® Twice Daily"
+              container
+                text "Veloxis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=248]
+              text "NCT00975000"
+              text "待AI分类"
+              text "Treatment of Autonomous Hyperparathyroidism in Post Renal Transplant Recipients"
+              container
+                text "Amgen"
+                text "·"
+                text "PHASE3"
+            button [ref=249]
+              text "NCT00707759"
+              text "待AI分类"
+              text "Steroid Withdrawal in Pediatric Renal Transplant: Impact on Growth, Bone Metabolism and Acute Rejection"
+              container
+                text "Fondo Nacional de Desarrollo Científico y Tecnológico, Chile"
+                text "·"
+                text "PHASE3"
+            button [ref=250]
+              text "NCT06291103"
+              text "待AI分类"
+              text "Screening for Subclinical Antibody Mediated Rejection and Efficacy of Belatacept in the Context of de Novo Donor Specific Antibody After Kidney Transplantation (BELA-M-R)"
+              container
+                text "University Hospital, Rouen"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=251]
+              text "NCT00141804"
+              text "待AI分类"
+              text "Efficacy and Safety of Sirolimus in Combination With Tacrolimus"
+              container
+                text "University Hospital Muenster"
+                text "·"
+                text "PHASE3"
+            button [ref=252]
+              text "NCT00005010"
+              text "待AI分类"
+              text "Prevention of Kidney Transplant Rejection"
+              container
+                text "National Institute of Allergy and Infectious Diseases (NIAID)"
+                text "·"
+                text "PHASE3"
+            button [ref=253]
+              text "NCT00238992"
+              text "待AI分类"
+              text "Study of Enteric-coated Mycophenolate Sodium (EC-MPS) With Steroid Withdrawal vs EC-MPS With Standard Steroid Regimen in de Novo Renal Transplant Recipients."
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=254]
+              text "NCT02374736"
+              text "待AI分类"
+              text "Effect of Privigen Against Graft Loss"
+              container
+                text "Assistance Publique - Hôpitaux de Paris"
+                text "·"
+                text "PHASE3"
+            button [ref=255]
+              text "NCT01160978"
+              text "待AI分类"
+              text "Donor Simvastatin Treatment in Organ Transplantation"
+              container
+                text "Helsinki University Central Hospital"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=256]
+              text "NCT01843348"
+              text "待AI分类"
+              text "12 Month Athena Study: Everolimus vs. Standard Regimen in de Novo Kidney Transplant Patients"
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=257]
+              text "NCT00171392"
+              text "待AI分类"
+              text "Clinical Study to Evaluate the Tolerability, Safety and Efficacy of Enteric-coated Mycophenolate Sodium, After Equimolar Conversion From Mycophenolate Mofetil (MMF), in Patients With Stable Renal Tran..."
+              container
+                text "Novartis"
+                text "·"
+                text "PHASE3"
+            button [ref=258]
+              text "NCT07444489"
+              text "待AI分类"
+              text "A Study to Learn More About the Long-Term Safety and Effects of Felzartamab Infusions in Adults With Kidney Transplants Who Have Antibody-Mediated Rejection (AMR) or Microvascular Inflammation (MVI) (..."
+              container
+                text "Biogen"
+                text "·"
+                text "PHASE3"
+            button [ref=259]
+              text "NCT00316810"
+              text "待AI分类"
+              text "Simultaneous Pancreas-kidney Transplantation With Campath Protocol"
+              container
+                text "Dr. Claudia Bösmüller"
+                text "·"
+                text "PHASE3"
+            button [ref=260]
+              text "NCT06801886"
+              text "待AI分类"
+              text "Silymarin's Advantage on Graft Effectiveness"
+              container
+                text "University Hospital, Martin"
+                text "·"
+                text "PHASE3"
+            button [ref=261]
+              text "NCT00273871"
+              text "待AI分类"
+              text "Study Comparing Conversion From Calcineurin Inhibitors to Rapamune Versus Standard Therapy in Established Renal Allograft Recipients"
+              container
+                text "Wyeth is now a wholly owned subsidiary of Pfizer"
+                text "·"
+                text "PHASE3"
+            button [ref=262]
+              text "NCT00147381"
+              text "待AI分类"
+              text "Effectiveness and Safety of Campath in Combination With Tacrolimus Monotherapy to Prevent Kidney Graft Rejection"
+              container
+                text "Dr. Claudia Bösmüller"
+                text "·"
+                text "PHASE3"
+            button [ref=263]
+              text "NCT00000936"
+              text "待AI分类"
+              text "A Study To Test An Anti-Rejection Therapy After Kidney Transplantation"
+              container
+                text "National Institute of Allergy and Infectious Diseases (NIAID)"
+                text "·"
+                text "PHASE3"
+            button [ref=264]
+              text "NCT07835581"
+              text "待AI分类"
+              text "Study of Tegoprubart Efficacy and Safety Compared With Tacrolimus in Kidney Transplantation"
+              container
+                text "Eledon Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=265]
+              text "NCT02547220"
+              text "待AI分类"
+              text "A Multicenter Study to Evaluate the Efficacy and Safety of Cinryze® for the Treatment of Acute Antibody-mediated Rejection in Participants With Kidney Transplant"
+              container
+                text "Shire"
+                text "·"
+                text "PHASE3"
+            button [ref=266]
+              text "NCT00697996"
+              text "待AI分类"
+              text "Rituximab for Pediatric Renal Transplant Rejection"
+              container
+                text "Stanford University"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=267]
+              text "NCT03605654"
+              text "待AI分类"
+              text "Cellular Immunotherapy in Recipients of Human Leukocyte Antigen (HLA)-Mismatched, Living Donor Kidney Transplants"
+              container
+                text "Medeor Therapeutics, Inc."
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=268]
+              text "NCT05385432"
+              text "待AI分类"
+              text "Induction in Sensitized Kidney Transplant Recipients Without Pre-existing Donor-specific antiboDies"
+              container
+                text "University Hospital, Tours"
+                text "·"
+                text "PHASE3"
+            button [ref=269]
+              text "NCT01598987"
+              text "待AI分类"
+              text "Efficacy, Safety and Tolerability of Everolimus in Combination With Reduced Exposure Cyclosporine or Tacrolimus in Paediatric Liver Transplant Recipients."
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+            button [ref=270]
+              text "NCT00682292"
+              text "待AI分类"
+              text "Daclizumab Versus Thymoglobulin in Renal Transplant Recipients With High Immunological Risk"
+              container
+                text "University Hospital, Lille"
+                text "·"
+                text "PHASE3"
+            button [ref=271]
+              text "NCT00099749"
+              text "待AI分类"
+              text "Safety and Efficacy of FTY720 in Adult Patients Who Receive a Kidney Transplant"
+              container
+                text "Novartis Pharmaceuticals"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=272]
+              text "NCT00565331"
+              text "待AI分类"
+              text "Rituximab for Prevention of Rejection After Renal Transplantation"
+              container
+                text "Radboud University Medical Center"
+                text "·"
+                text "PHASE2/PHASE3"
+            button [ref=273]
+              text "NCT01187953"
+              text "待AI分类"
+              text "Double-Blind,Double-Dummy,Efficacy/Safety,LCP-Tacro™ Vs Prograf®,Prevention Rejection,De Novo Adult Kidney Tx"
+              container
+                text "Veloxis Pharmaceuticals"
+                text "·"
+                text "PHASE3"
+          container
+            button [ref=274]
+              text "上一页"
+            container
+              text "1"
+              text "/"
+              text "2"
+            button [ref=275]
+              text "下一页"
+          container
+            container
+              text "医学分类理由"
+              textbox [ref=215, loc=css:textarea[placeholder="说明适应症、分期、机制、设计或人群的参照关系。"]]
+                text "说明适应症、分期、机制、设计或人群的参照关系。"
+            paragraph
+              text "填写左侧医学分类理由后，即可标记该候选。"
+            container
+              button [ref=216]
+                text "标记为直接竞品"
+              button [ref=217]
+                text "标记为间接参照"
+              button [ref=218]
+                text "排除"
+          text "AI辅助分诊"
+          text "AI先完成全量分类；您整体浏览，必要时展开修改，再一次确认锁定。"
+          button [ref=219]
+            text "刷新"
+          paragraph
+            text "已完成 3/5 个分诊批次；已返回 61/68 项建议。"
+          text "锁定深度处理篮子"
+          text "当前已有"
+          text "0"
+          text "项直接竞品/间接参照；锁定后仍保留所有候选和分诊审计。"
+          container
+            text "分诊定稿理由"
+            textbox [ref=220, loc=css:textarea[placeholder="说明为何当前篮子足以进入Protocol深度处理。"]]
+              text "说明为何当前篮子足以进入Protocol深度处理。"
+          paragraph
+            text "请先在候选列表中至少标记一项「直接竞品」或「间接参照」，再锁定篮子。"
+          button [ref=221]
+            text "锁定竞品篮子"
+  container
+    button [ref=86]
+      text "文献"
+    container "项目文献库"
+      container
+        text "项目文献库"
+        text "0"
+        text "条可追溯文献"
+        button [ref=87]
+          svg_root
+      container
+        text "DOI、PMID 或文献官网链接"
+        textbox [ref=88, loc=css:input[placeholder="例如 10.1016/... 或 PMID: 33957195"]]
+          text "例如 10.1016/... 或 PMID: 33957195"
+        button [ref=89]
+          svg_root
+          text "导入"
+      container
+        text "当前项目引文格式"
+        combobox [ref=90]
+          text "GB/T 7714-2015 顺序编码制"
+      container [ref=91]
+        text "官网链接无法自动识别时，手动确认基本信息"
+      container
+        paragraph
+          text "手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。"
+        container
+          text "题名"
+          textbox [ref=92]
+        container
+          text "作者"
+          textbox [ref=93, loc=css:input[placeholder="多位作者用逗号分隔"]]
+            text "多位作者用逗号分隔"
+        container
+          text "期刊"
+          textbox [ref=94]
+        container
+          text "年份"
+          textbox [ref=95]
+        container
+          text "文献官网链接"
+          textbox [ref=96]
+        container
+          text "补充说明（可选）"
+          textbox [ref=97, loc=css:textarea[placeholder="可说明已核对的原始页面或确认依据"]]
+            text "可说明已核对的原始页面或确认依据"
+        button [ref=98]
+          text "确认信息并导入"
+      container
+        svg_root
+        textbox [ref=99, loc=css:input[placeholder="按题名、作者、期刊、DOI 或 PMID 搜索"]]
+          text "按题名、作者、期刊、DOI 或 PMID 搜索"
+      text "当前项目尚无匹配文献。"

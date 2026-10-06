@@ -1,0 +1,49 @@
+# R27第5轮(20261006晨) 医学修订路由核对 · sqlite3只读证据
+# 测试者=第5轮医学修订路由验证员 | DB=runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_durable_jobs.sqlite3（live后端PID46041于2026-10-06 04:08本地启动后使用的库）
+# 提交路径：浏览器UI（5186）→ R26MW-SGC2101（proj_user_1fb1fb310f86）→ 医学写作 → 表格设计器 → 第7行/第2列（版本日期值单元格）→ 修订意图=改写 → 提交AI修订（2026-10-06T04:51:00Z建job）
+
+## 1) durable job 终态
+job_id=mwjob_5ba2f545af45bb809f00e405|status=failed|attempt=2/3|provider=ollama-cloud|model=deepseek-v4.1-flash|created=2026-10-06T04:51:00.154171+00:00|finished=2026-10-06T06:19:10.838759+00:00|error=AI run route identity mismatch at post_ai_pre_commit: expected 84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909, got 66d6af5b4a440fe9df235ac21dae0342c25a92516e1c478f1797e80e6360cc1e
+
+## 2) payload ai_policy / route_identity（任务③字面对象）
+ai_policy.base_url=https://ollama.com/v1|route_profile_id=independent_ai__ollama_cloud_dsv41|provider=ollama-cloud|model=deepseek-v4.1-flash|route_identity_hash=84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909|snapshot.base_url=https://ollama.com/v1
+
+## 3) 提交锚点（本轮新任务：第7行/第2列版本日期单元格，区别于r1标题/r2适应症/r3研究药物/r4方案编号）
+intent=medical_writing_revision|cell_id=mwcell_greenfield_c99018d9a78fc455_6_value|captured_text=2026-09-30|instruction_len=129
+
+## 4) gateway ai_task_runs.jsonl 本job全部运行记录（3条）
+run_id=airun_20261006045101_6b5fc744
+provider=ollama-cloud
+route_profile_id=independent_ai__ollama_cloud_dsv41
+route_base_url=https://ollama.com/v1
+status=failed
+actual_response_model=
+output_validation_status=failed
+error_message=AI provider retry ladder budget exhausted after 2 attempt(s) within 2400s (last TimeoutError)
+created_at=2026-10-06T04:51:01.584851Z
+---
+run_id=airun_20261006053115_879b731f
+provider=ollama-cloud
+route_profile_id=independent_ai__ollama_cloud_dsv41
+route_base_url=https://ollama.com/v1
+status=failed
+actual_response_model=
+output_validation_status=failed
+error_message=AI provider request failed after bounded retries: TimeoutError
+created_at=2026-10-06T05:31:15.765262Z
+---
+run_id=airun_20261006061115_619c4575
+provider=opencode-go
+route_profile_id=independent_ai__opencode_go_deepseek_v41_flash
+route_base_url=https://opencode.ai/zen/go/v1
+status=completed
+actual_response_model=deepseek-v4.1-flash
+output_validation_status=passed
+error_message=
+created_at=2026-10-06T06:11:15.810613Z
+---
+## 5) 判读
+- 声明路由：ai_policy.base_url=https://ollama.com/v1（host=https://ollama.com），profile=independent_ai__ollama_cloud_dsv41，identity=84324d70…→提交层路由核对通过（与r1-r4相同身份）。
+- 实际流量：主路两次运行均纯超时无模型输出（airun_045101 ladder预算2400s耗尽TimeoutError；airun_053115 bounded retries TimeoutError）；回退opencode-go运行完成且校验通过（airun_061115）。
+- 终态：job再次被post_ai_pre_commit身份门拦截（expected=84324d70 ollama，got=66d6af5b opencode），failed 2/3，共1小时28分10秒，0候选交付。
+- 结论：路由声明与身份门行为与r4一致（身份门再次正确拦截回退产出）；但主路ollama.com本轮连模型输出都未返回（两次纯超时），主路可用性较r4（有返回但校验失败）进一步恶化——r2 P0-A主路稳定性问题连续第二轮复现。

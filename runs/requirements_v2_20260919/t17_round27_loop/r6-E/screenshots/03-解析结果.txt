@@ -1,0 +1,198 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    container
+      text "最后更新"
+      text "暂无数据"
+  container
+    container
+      container
+        container
+          text "项目"
+          combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+            text "请选择项目（共128个）"
+        button [ref=12]
+          svg_root
+          text "新建项目"
+        container
+          text "适应症"
+          text "暂无项目数据"
+        container
+          text "方案版本"
+          text "暂无项目数据"
+        container
+          text "数据批次"
+          text "暂无项目数据"
+        container
+          text "当前来源"
+          text "未选择项目"
+      container
+        container
+          svg_root
+          text "未读决策"
+          text "0"
+        container
+          svg_root
+          text "高风险开放"
+          text "0"
+        container
+          svg_root
+          text "待交接"
+          text "0"
+        container
+          svg_root
+          text "待审批"
+          text "0"
+        button [ref=13]
+          svg_root
+    container
+      container
+        container
+          text "项目总看板"
+          heading
+            text "请选择项目"
+        container
+          container
+            container
+              text "可运行"
+              text "AI 设置 · mtplx · mtplx-flash-next-optimized-speed"
+            button [ref=14]
+              svg_root
+          button [ref=15]
+            svg_root
+            text "新建项目"
+      container
+        container
+          container
+            text "项目数"
+            text "128"
+          container
+            text "模块进度"
+            text "—"
+          container
+            text "开放风险"
+            text "—"
+          container
+            text "待审批"
+            text "—"
+        container
+          svg_root
+          text "尚未选择项目"
+          container
+            text "系统内共有"
+            text "128"
+            text "个项目。请在页面上方的项目下拉列表中选择一个项目开始医学工作；您的选择在本会话内会被记住。"
+  dialog "新建医学写作项目" [ref=28, loc=role:dialog[name="新建医学写作项目"]]
+    container
+      container
+        text "医学写作"
+        heading
+          text "新建研究方案项目"
+      button [ref=16]
+        svg_root
+    radiogroup "建项方式"
+      button [ref=17]
+        svg_root
+        text "从零开始"
+        text "两阶段反问确定研究框架与 PICOS"
+      button [ref=18]
+        svg_root
+        text "导入方案摘要"
+        text "先解析文件，确认提取结果后创建项目"
+    container
+      container
+        container
+          text "AI 已提取 · 一次确认"
+          text "R6E-移植肾排斥-IL6R单抗-III期-摘要.docx"
+        button [ref=29]
+          svg_root
+          text "更换文件"
+      container
+        container
+          text "试验药物"
+          textbox [ref=30]
+            text "KZ-6210"
+        container
+          text "适应症"
+          textbox [ref=31]
+            text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+        container
+          text "研究分期"
+          combobox [ref=32]
+            text "III期"
+        container
+          text "方案号"
+          textbox [ref=33]
+            text "R6E-KZ-6210-III"
+        container
+          text "建议方案标题"
+          textbox [ref=34]
+            text "R6E-移植肾排斥-IL6R单抗-III期｜方案摘要"
+        container
+          text "版本"
+          textbox [ref=35]
+            text "V0.1"
+      container
+        container
+          text "研究设计"
+          textbox [ref=36]
+            text "随机、双盲、安慰剂对照、平行分组、多中心III期研究"
+        container
+          text "研究人群"
+          textbox [ref=37]
+            text "18–70岁肾移植受者，移植后3–12个月，eGFR≥30 mL/min/1.73m²，背景免疫抑制稳定，存在供体特异性抗体（DSA）或高免疫学风险，能够接受协议活检并签署�..."
+        container
+          text "干预措施"
+          textbox [ref=38]
+            text "试验组在他克莫司、霉酚酸类和泼尼松标准背景免疫抑制之上，加用KZ-6210 162 mg皮下注射，每4周一次"
+        container
+          text "对照"
+          textbox [ref=39]
+            text "对照组使用外观匹配安慰剂皮下注射，每4周一次，背景治疗相同（他克莫司、霉酚酸类和泼尼松标准背景免疫抑制）"
+        container
+          text "主要终点"
+          textbox [ref=40]
+            text "第12个月协议活检证实的慢性活动性排斥发生率，采用Banff标准复合终点，由盲态中央病理评估确认"
+      container
+        container
+          text "后续仅需补充"
+          text "clinicaltrials_condition_term、intrinsic_objectives、exposure_scope、device_dependency、immunogenicity_relevance、pk_pd_considerations、historical_study_summaries、historical_dose_regimens、hi..."
+        container
+          text "需留意的原文差异"
+          text "无"
+      container
+        svg_root
+        text "确认后，已提取内容直接成为当前项目事实；不会再次要求医学批准。"
+        button [ref=41]
+          svg_root
+          text "确认并进入写作"

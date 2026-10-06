@@ -1,17 +1,11 @@
 {
-  "adoption": {
+  "takeover": {
     "mtplx": {
-      "adopted": true,
-      "adopted_at": "2026-10-01 01:39:28",
-      "checks": {
-        "cmdline_markers_ok": true,
-        "ledger_reason": "process_not_running",
-        "listener_found": true
-      },
-      "evidence": "SMOKE-r1-2 ③a: ledger pid=18233 (process_not_running) but the port listener matches this deployment's identity markers; cmdline='/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/python -P -m mtplx.server.openai --model /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed --backend-id nat'",
-      "operator": "self_adopt_stale_pidfile",
-      "pid": 63756
+      "at": "2026-10-05 11:55:05",
+      "authorization": "owner 20261005: idle-only takeover",
+      "cmdline": "/opt/homebrew/Cellar/python@3.12/3.12.13_2/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python -P -m mtplx.server.openai --model /Users/smkzw/.mtplx/models/Youssofal--",
+      "phase": "translation",
+      "pid": 1759
     }
-  },
-  "release_unconfirmed": {}
+  }
 }

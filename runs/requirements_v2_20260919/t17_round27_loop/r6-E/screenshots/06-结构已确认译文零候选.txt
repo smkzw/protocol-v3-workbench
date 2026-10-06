@@ -1,0 +1,550 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    text "最后更新"
+    text "09:00"
+  container
+    container
+      container
+        text "项目"
+        combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+          text "R6E-KZ-6210 · 慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防 · III期 · MW-III-FE196698"
+      button [ref=12]
+        svg_root
+        text "新建项目"
+      text "适应症"
+      text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+      text "方案版本"
+      text "1.0"
+      text "数据批次"
+      text "未登记批次"
+      text "当前来源"
+      text "医学写作"
+      svg_root
+      text "未读决策"
+      text "0"
+      svg_root
+      text "高风险开放"
+      text "0"
+      svg_root
+      text "待交接"
+      text "0"
+      svg_root
+      text "待审批"
+      text "0"
+      button [ref=13]
+        svg_root
+    container
+      text "医学写作"
+      heading
+        text "研究方案智能设计与写作"
+      container
+        container
+          container
+            text "新建中国临床试验方案"
+            heading
+              text "研究设计引导"
+            text "项目状态"
+            text "语料准备中"
+            text "来源：导入已有方案/方案摘要"
+            text "· 版本"
+            text "16"
+          container [ref=174]
+            svg_root
+            text "竞品调研进度"
+            text "已取消研究流水线"
+          status
+            text "研究流水线 ·"
+            text "已取消研究流水线"
+            text "30"
+            text "%"
+            paragraph
+              text "正在处理竞品文献 4/5 · 第 4 批"
+              text "3"
+              text "/"
+              text "5"
+              text "·"
+              text "60"
+              text "%"
+            paragraph
+              text "研究流水线已取消，已保留已完成步骤。"
+              text "证据化设计推荐已开放。"
+            text "阶段已清除：已取消研究流水线"
+          container "医学写作建项步骤"
+            button [ref=42]
+              svg_root
+              text "研究框架"
+            button [ref=43]
+              svg_root
+              text "PICOS设计"
+            button [ref=44]
+              text "03"
+              text "语料准备"
+          group [ref=46]
+            container
+              container
+                text "语料准备与写作准入"
+                text "公开竞品原文、监管中文语料和项目设计事实共同决定章节可写性"
+                text "当前阻断写作"
+              svg_root
+              text "ClinicalTrials.gov竞品检索计划"
+              text "先按注册库条件宽检索，再由医学经理按项目设计线索分诊相关研究。"
+              button [ref=385]
+                svg_root
+                text "重新检索竞品"
+              container "实际注册库过滤条件"
+                text "实际发送到注册库的条件"
+                unordered_list
+                  list_item
+                    text "疾病/适应症"
+                  list_item
+                    text "Kidney Transplant Rejection"
+                  list_item
+                    text "研究分期"
+                  list_item
+                    text "PHASE3"
+                  list_item
+                    text "研究类型"
+                  list_item
+                    text "INTERVENTIONAL"
+                  list_item
+                    text "干预名称"
+                  list_item
+                    text "不限"
+                  list_item
+                    text "研究地区"
+                  list_item
+                    text "不限"
+              container "检索后医学分诊条件"
+                text "检索后医学分诊线索"
+                unordered_list
+                  list_item
+                    text "靶点/作用机制相近"
+                    text "阻断IL-6通路、抑制B细胞活化，减少供体特异性抗体介导的慢性移植物损伤"
+                  list_item
+                    text "内在研究目的相近"
+                    text "确证性研究"
+                  list_item
+                    text "总体设计相近"
+                    text "随机、双盲、安慰剂对照、平行分组、多中心III期研究"
+                  list_item
+                    text "目标研究人群相近"
+                    text "18–70岁肾移植受者，移植后3–12个月，eGFR≥30 mL/min/1.73m²，背景免疫抑制稳定，存在供体特异性抗体（DSA）或高免疫学风险"
+                  list_item
+                    text "研究药物技术类型相近"
+                    text "monoclonal_antibody"
+                  list_item
+                    text "给药途径相近"
+                    text "皮下注射"
+                  list_item
+                    text "系统或局部暴露特征相近"
+                    text "systemic"
+              paragraph
+                text "已找到68项公开研究和5份Protocol，正在准备研究设计建议。"
+              container
+                text "建稿前语料准备"
+                text "竞品方案参照"
+                button [ref=386]
+                  svg_root
+                text "当前工作区已保存本次公开检索快照（wref_search_c38e68387cfc76ee2e55）；候选分诊、原文处理、译文审核和准入将沿用同一来源链。检索快照本身不等于医学..."
+                tab [ref=387]
+                  text "候选研究"
+                tab [ref=388]
+                  text "文档与解析"
+                tab [ref=389]
+                  text "结构与译文确认"
+                tab [ref=390]
+                  text "已准入证据"
+                container
+                  container
+                    container
+                      svg_root
+                      text "监管中文候选批次"
+                      text "按 M11 结构范围生成"
+                      text "机器忠实度检查只验证候选与原文的一致性；通过后由医学作者一键确认合格候选或逐片段核对，确认即直接准入。"
+                      text "cms_regulatory_zh_v1"
+                    text "当前范围批次"
+                    text "尚未生成"
+                    text "符合条件"
+                    text "616"
+                    text "已生成候选"
+                    text "0"
+                    text "忠实度阻断"
+                    text "0"
+                    text "失败"
+                    text "0"
+                    text "待作者确认"
+                    text "0"
+                    text "作者已确认"
+                    text "0"
+                    text "已准入"
+                    text "0"
+                    group [ref=405]
+                      text "M11 结构范围（已选"
+                      text "0"
+                      text "/"
+                      text "6"
+                      text "）"
+                      container [ref=430]
+                        container
+                          checkbox [ref=431]
+                          text "assessments"
+                          text "（"
+                          text "14"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=432]
+                          text "disposition"
+                          text "（"
+                          text "27"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=433]
+                          text "eligibility"
+                          text "（"
+                          text "54"
+                          text "）"
+                        container
+                          checkbox [ref=434]
+                          text "ethics_governance"
+                          text "（"
+                          text "25"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=435]
+                          text "front_matter"
+                          text "（"
+                          text "9"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=436]
+                          text "intervention"
+                          text "（"
+                          text "24"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=437]
+                          text "objectives_endpoints"
+                          text "（"
+                          text "166"
+                          text "）"
+                        container
+                          checkbox [ref=438]
+                          text "rationale"
+                          text "（"
+                          text "75"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=439]
+                          text "references"
+                          text "（"
+                          text "4"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=440]
+                          text "safety"
+                          text "（"
+                          text "166"
+                          text "）"
+                        container
+                          checkbox [ref=441]
+                          text "schedule"
+                          text "（"
+                          text "2"
+                          text "）"
+                        container
+                          checkbox [ref=442]
+                          text "statistics"
+                          text "（"
+                          text "42"
+                          text "）"
+                        container
+                          checkbox [ref=443]
+                          text "study_design"
+                          text "（"
+                          text "6"
+                          text "）"
+                          text "· 当前批量翻译合同暂不支持"
+                        container
+                          checkbox [ref=444]
+                          text "synopsis"
+                          text "（"
+                          text "2"
+                          text "）"
+                    text "616"
+                    text "预计新生成"
+                    text "0"
+                    text "复用当前契约候选"
+                    text "1870"
+                    text "排除"
+                    button [ref=406]
+                      svg_root
+                      text "生成候选"
+                    button [ref=407]
+                      svg_root
+                      text "刷新"
+                    button [ref=408]
+                      svg_root
+                      text "仅重试失败项"
+                    button [ref=409]
+                      svg_root
+                      text "一键确认合格候选（0）"
+                    container
+                      text "状态筛选"
+                      combobox [ref=445]
+                        text "全部状态"
+                    container
+                      text "Anchor 筛选"
+                      combobox [ref=446]
+                        text "全部 M11 结构"
+                    text "0"
+                    text "/"
+                    text "0"
+                    text "条"
+                    container
+                      table
+                        table_row
+                          table_cell
+                            button "按研究 / 文件降序排列" [ref=447, loc=css:button[aria-label="按研究 / 文件降序排列"]]
+                              text "研究 / 文件"
+                              svg_root
+                          table_cell
+                            button "按M11 结构与来源定位升序排列" [ref=448, loc=css:button[aria-label="按M11 结构与来源定位升序排列"]]
+                              text "M11 结构与来源定位"
+                              svg_root
+                          table_cell
+                            button "按生成状态升序排列" [ref=449, loc=css:button[aria-label="按生成状态升序排列"]]
+                              text "生成状态"
+                              svg_root
+                          table_cell
+                            button "按忠实度升序排列" [ref=450, loc=css:button[aria-label="按忠实度升序排列"]]
+                              text "忠实度"
+                              svg_root
+                          table_cell
+                            button "按作者确认升序排列" [ref=451, loc=css:button[aria-label="按作者确认升序排列"]]
+                              text "作者确认"
+                              svg_root
+                          table_cell
+                            button "按准入升序排列" [ref=452, loc=css:button[aria-label="按准入升序排列"]]
+                              text "准入"
+                              svg_root
+                          table_cell
+                            button "按下一步升序排列" [ref=453, loc=css:button[aria-label="按下一步升序排列"]]
+                              text "下一步"
+                              svg_root
+                      text "生成批次后将在此显示具体片段。"
+                    container [ref=419]
+                      text "排除项（"
+                      text "1870"
+                      text "）"
+                  container
+                    text "已登记文档"
+                    combobox [ref=420]
+                      text "NCT03744910 · Prot_000.pdf"
+                  text "文件内容核验"
+                  text "内容匹配"
+                  paragraph
+                    text "文件基本信息、适应症和文件类型与当前任务一致。"
+                  text "研究标识"
+                  text "匹配"
+                  text "CT.gov公开下载绑定NCT03744910（正文未印刷NCT编号）"
+                  text "适应症"
+                  text "匹配"
+                  text "Kidney Transplant Rejection"
+                  text "文件类型"
+                  text "匹配"
+                  text "ClinicalTrials.gov登记为Protocol（Prot_000.pdf）"
+                  text "来源与文件记录"
+                  text "匹配"
+                  text "https://clinicaltrials.gov/ProvidedDocs/10/NCT03744910/Prot_000.pdf -> https://cdn.clinicaltrials.gov/large-docs/10/NCT03744910/Prot_000.pdf"
+                  text "文件日期/版本"
+                  text "匹配"
+                  text "2023-07-20"
+                  container
+                    text "抽取结构医学审核"
+                    text "结构已确认"
+                    paragraph
+                      text "抽取版本"
+                      text "pymupdf_1.27.2.3_m11map_v11_ocr_reanchor_table_rows_bbox_q2pt_9f612a34f793755f"
+                      text "·"
+                      text "2486"
+                      text "个片段 · M11映射"
+                      text "14"
+                      text "类"
+                    container
+                      text "assessments"
+                      text "disposition"
+                      text "eligibility"
+                      text "ethics_governance"
+                      text "front_matter"
+                      text "intervention"
+                      text "objectives_endpoints"
+                      text "rationale"
+                      text "references"
+                      text "safety"
+                      text "schedule"
+                      text "statistics"
+                      text "study_design"
+                      text "synopsis"
+                    text "已在工作区查看原文标题、271页来源与2486片段、14类M11映射；本次仅为黑盒流程验收确认，不构成真实医学批准。"
+                    container
+                      text "结构审核说明"
+                      textbox [ref=421, loc=css:textarea[placeholder="说明已核对页码、章节标题、片段边界及M11结构映射。"]]
+                        text "说明已核对页码、章节标题、片段边界及M11结构映射。"
+                    container
+                      text "需修正问题（每行一项）"
+                      textbox [ref=422, loc=css:textarea[placeholder="仅在退回时填写，例如：第8章被错误映射为安全性章节。"]]
+                        text "仅在退回时填写，例如：第8章被错误映射为安全性章节。"
+                    container
+                      button [ref=423]
+                        text "确认结构完整"
+                      button [ref=424]
+                        text "退回重新解析"
+                  container
+                    container
+                      text "M11结构筛选"
+                      combobox [ref=425]
+                        text "全部结构（2486）"
+                    container
+                      text "结构化片段"
+                      combobox [ref=426]
+                        text "p1 · CLINICAL STUDY PROTOCOL"
+                    container
+                      container
+                        text "当前"
+                        text "1"
+                        text "-"
+                        text "500"
+                        text "/"
+                        text "2486"
+                      button "上一页片段" [ref=427, loc=css:button[aria-label="上一页片段"]]
+                        svg_root
+                      button "下一页片段" [ref=428, loc=css:button[aria-label="下一页片段"]]
+                        svg_root
+                  container
+                    container
+                      text "原始方案内容"
+                      paragraph
+                        text "CLINICAL STUDY PROTOCOL"
+                      text "ctgov:NCT03744910:wref_doc_95fc37afbcc397c54e94:p1:b1"
+                    button [ref=429]
+                      text "生成监管中文候选"
+              container
+                text "尚未满足的准入条件"
+                paragraph
+                  text "✓"
+                  text "竞品候选研究已完成人工相关性分诊"
+                paragraph
+                  text "✓"
+                  text "至少一份相关Protocol已完成内容校验与结构化解析"
+                container
+                  checkbox [ref=396]
+                  container
+                    text "英文竞品方案关键章节已形成监管中文参考译文"
+                    text "已覆盖关键M11锚点："
+                container
+                  checkbox [ref=397]
+                  container
+                    text "项目适用中文语料已完成医学准入"
+                    text "当前准入记录中存在不可支撑PICOS的短文本/占位译文；实质性证据0/0条，需补齐关键章节的完整监管中文参考译文。"
+                container
+                  checkbox [ref=398]
+                  container
+                    text "PICOS关键设计事实与语料冲突已处置"
+                    text "需针对当前PICOS版本和当前准入语料记录无冲突或冲突处置结论。"
+              container [ref=399]
+                text "在保留全部缺口的情况下例外进入写作"
+          button "关闭竞品处理抽屉" [ref=85]
+        container
+          button [ref=86]
+            text "文献"
+          container "项目文献库"
+            container
+              container
+                text "项目文献库"
+                container
+                  text "0"
+                  text "条可追溯文献"
+              button [ref=87]
+                svg_root
+            container
+              container
+                text "DOI、PMID 或文献官网链接"
+                textbox [ref=88, loc=css:input[placeholder="例如 10.1016/... 或 PMID: 33957195"]]
+                  text "例如 10.1016/... 或 PMID: 33957195"
+                button [ref=89]
+                  svg_root
+                  text "导入"
+              container
+                text "当前项目引文格式"
+                combobox [ref=90]
+                  text "GB/T 7714-2015 顺序编码制"
+              container [ref=91]
+                text "官网链接无法自动识别时，手动确认基本信息"
+              container
+                paragraph
+                  text "手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。"
+                container
+                  text "题名"
+                  textbox [ref=92]
+                container
+                  text "作者"
+                  textbox [ref=93, loc=css:input[placeholder="多位作者用逗号分隔"]]
+                    text "多位作者用逗号分隔"
+                container
+                  text "期刊"
+                  textbox [ref=94]
+                container
+                  text "年份"
+                  textbox [ref=95]
+                container
+                  text "文献官网链接"
+                  textbox [ref=96]
+                container
+                  text "补充说明（可选）"
+                  textbox [ref=97, loc=css:textarea[placeholder="可说明已核对的原始页面或确认依据"]]
+                    text "可说明已核对的原始页面或确认依据"
+                button [ref=98]
+                  text "确认信息并导入"
+            container
+              svg_root
+              textbox [ref=99, loc=css:input[placeholder="按题名、作者、期刊、DOI 或 PMID 搜索"]]
+                text "按题名、作者、期刊、DOI 或 PMID 搜索"
+            text "当前项目尚无匹配文献。"

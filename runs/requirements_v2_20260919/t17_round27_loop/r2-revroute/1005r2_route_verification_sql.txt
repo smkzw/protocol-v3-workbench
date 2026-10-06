@@ -1,0 +1,43 @@
+# R27医学修订路由核对 · sqlite3只读证据（20261005 第2轮复验）
+# 测试者=第2轮医学修订路由验证员 | DB=runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_durable_jobs.sqlite3（live后端PID19473实际打开的文件，lsof核实）
+# 提交路径：浏览器UI（5186）→ R26MW-SGC2101 → 医学写作 → 表格设计器 → 第4行/第2列（适应症值单元格 mwcell_greenfield_c99018d9a78fc455_3_value）→ 修订意图=改写 → 提交AI修订（2026-10-05T11:04:27Z建job）
+
+## 1) durable 最新 section_ai_candidate job（本测试者浏览器提交）
+job_id=mwjob_9b3f6a90d41cc08735daf421|project_id=proj_user_1fb1fb310f86|job_type=section_ai_candidate|status=running|attempt=2/3|provider=ollama-cloud|model=deepseek-v4.1-flash|created=2026-10-05T11:04:27.166754+00:00|updated=2026-10-05T12:18:33.647508+00:00
+
+## 2) payload 内 ai_policy / route_identity 核对（任务③字面对象）
+ai_policy.provider_name=ollama-cloud|ai_policy.model_name=deepseek-v4.1-flash|ai_policy.base_url=https://ollama.com/v1|ai_policy.route_profile_id=independent_ai__ollama_cloud_dsv41|ai_policy.route_profile_revision=1|ai_policy.required_response_model=deepseek-v4.1-flash|ai_policy.route_identity_hash=84324d70a264d3f7abc39a5125f9509e3d0902719f0948efa95a7f166b377909|snapshot.base_url=https://ollama.com/v1|snapshot.profile_id=independent_ai__ollama_cloud_dsv41|snapshot.provider=ollama-cloud|snapshot.model=deepseek-v4.1-flash
+
+## 3) 提交锚点核对（证明是本测试者本轮新任务：第4行/第2列适应症单元格，非上轮方案标题单元格）
+intent=medical_writing_revision|cell_id=mwcell_greenfield_c99018d9a78fc455_3_value|captured_text=慢性心力衰竭（HFrEF）|user_instruction=本单元格为方案首页「适应症」栏，现值为“慢性心力衰竭（HFrEF）”。请按中国注册临床试验方案的术语规范改写：中文病名补全亚型限定为“射血分数降低的慢性心力衰竭”，括注英文全称 heart failure with reduced ejection fraction 及缩写 HFrEF，缩写紧随全称；不得新增LVEF界值、NYHA分级或任何项目事实未确认的限定，不改变适应症本身，仅做规范化术语表述。
+
+## 4) 同项目历史对照（上两轮同链路job）
+mwjob_9b3f6a90d41cc08735daf421 running ollama-cloud/deepseek-v4.1-flash 2026-10-05T11:04:27.166754+00:00
+mwjob_c733fb4e4a5ea9bebbb4712f completed ollama-cloud/deepseek-v4.1-flash 2026-10-04T21:52:46.883714+00:00
+mwjob_26c11642a08ed6369d5a7a2e completed ollama-cloud/deepseek-v4.1-flash 2026-09-30T12:14:28.585966+00:00
+
+## 5) 终态（2026-10-05T13:23:18Z，本测试者运行期结束时补采）
+status=failed|attempt=3/3|started=2026-10-05T11:04:27.168502+00:00|finished=2026-10-05T13:23:18.229927+00:00|error_summary=ValueError: 独立AI输出未通过医学写作校验：AI provider retry ladder budget exhausted after 2 attempt(s) within 2400s (last TimeoutError)
+
+## 6) 网关 ai_task_runs.jsonl 本job全部运行记录（同项目今天11:00后，共4条，含route_base_url）
+run_id=airun_20261005110428_649c1d67
+  provider=ollama-cloud | route_profile_id=independent_ai__ollama_cloud_dsv41 | route_base_url=https://ollama.com/v1
+  status=failed | actual_response_model= | output_validation=failed
+  error=AI provider retry ladder budget exhausted after 2 attempt(s) within 2400s (last TimeoutError)
+run_id=airun_20261005114446_eb00d3e9
+  provider=ollama-cloud | route_profile_id=independent_ai__ollama_cloud_dsv41 | route_base_url=https://ollama.com/v1
+  status=failed | actual_response_model=deepseek-v4.1-flash | output_validation=failed
+  error=AI provider output failed validation
+run_id=airun_20261005122900_85101984
+  provider=opencode-go | route_profile_id=independent_ai__opencode_go_deepseek_v41_flash | route_base_url=https://opencode.ai/zen/go/v1
+  status=failed | actual_response_model=deepseek-v4.1-flash | output_validation=failed
+  error=AI provider output failed validation
+run_id=airun_20261005124317_1fa535f1
+  provider=ollama-cloud | route_profile_id=independent_ai__ollama_cloud_dsv41 | route_base_url=https://ollama.com/v1
+  status=failed | actual_response_model= | output_validation=failed
+  error=AI provider retry ladder budget exhausted after 2 attempt(s) within 2400s (last TimeoutError)
+
+## 7) 判读
+- 声明路由（durable payload ai_policy，任务③核对对象）：base_url=https://ollama.com/v1（host=https://ollama.com，/v1为R5轮裁定的端点后缀），profile=independent_ai__ollama_cloud_dsv41，provider=ollama-cloud，model=deepseek-v4.1-flash → owner决策20260928指定的医学修订路由在提交层真实生效。
+- 实际网关流量（4条运行）：3条打 https://ollama.com/v1（2条TimeoutError耗尽2400s预算、1条输出校验失败）；1条在主路耗尽后回退打 https://opencode.ai/zen/go/v1（provider=opencode-go，profile=independent_ai__opencode_go_deepseek_v41_flash，输出校验失败）→ 修订内容被送往owner未指定的外部网关。
+- 最终：job failed（3/3次尝试，11:04:27→13:23:18，共2小时18分51秒），0个候选交付，UI无任何失败痕迹（重进平台后同一单元格面板仍显示旧方案标题线程的4个候选）。

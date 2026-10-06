@@ -1,0 +1,281 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    container
+      text "最后更新"
+      text "09:00"
+  container
+    container
+      container
+        container
+          text "项目"
+          combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+            text "R6E-KZ-6210 · 慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防 · III期 · MW-III-FE196698"
+        button [ref=12]
+          svg_root
+          text "新建项目"
+        container
+          text "适应症"
+          text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+        container
+          text "方案版本"
+          text "1.0"
+        container
+          text "数据批次"
+          text "未登记批次"
+        container
+          text "当前来源"
+          text "医学写作"
+      container
+        container
+          svg_root
+          text "未读决策"
+          text "0"
+        container
+          svg_root
+          text "高风险开放"
+          text "0"
+        container
+          svg_root
+          text "待交接"
+          text "0"
+        container
+          svg_root
+          text "待审批"
+          text "0"
+        button [ref=13]
+          svg_root
+    container
+      container
+        container
+          text "医学写作"
+          heading
+            text "研究方案文档编辑与AI修订"
+        container
+          button [ref=528]
+            svg_root
+            text "研究设计"
+          button [ref=530]
+            svg_root
+            text "AI修订"
+          button [ref=531]
+            svg_root
+            text "全文生成中"
+          button [ref=532]
+            svg_root
+            text "目录"
+          button "确认并冻结当前版本" [ref=533, loc=css:button[aria-label="确认并冻结当前版本"]]
+            svg_root
+            text "确认并冻结"
+      container
+        container
+          container
+            container
+              container
+                text "文档工作副本"
+                text "版本 1"
+              text "编辑中"
+              text "已保存"
+              text "2026/10/6"
+            container
+              button [ref=534]
+                svg_root
+                text "待审核"
+                text "1"
+                text "项"
+              button [ref=1051]
+                svg_root
+                text "保存工作副本"
+              button [ref=536]
+                svg_root
+                text "重新加载"
+              button [ref=537]
+                svg_root
+                text "版本与恢复"
+              button [ref=538]
+                svg_root
+                text "内容核查"
+                text "0"
+              button [ref=539]
+                svg_root
+                text "预览 Word"
+              button [ref=540]
+                svg_root
+                text "版式估算"
+              button [ref=541]
+                svg_root
+                text "正式 Word"
+            alertdialog "导出占位确认"
+              text "导出件含未完成占位"
+              text "DOCX 导出失败（阶段：组装章节）: ValueError: 草稿导出含 70 处【待补齐】占位或测试标记（1（1处）；2.1（1处）；2.3（1处）；2.3.1（1处）；2.3.2（1处）�..."
+              container
+                button [ref=1108]
+                  text "知悉占位，仍导出草稿预览"
+                button [ref=1109]
+                  text "返回补齐正文"
+              text "确认后文件名将带「正文未完成」标记；返回补齐不会丢失当前内容。"
+          container
+            container
+              text "监查"
+              text "工作副本"
+              button "全屏编辑正文" [ref=1081, loc=css:button[aria-label="全屏编辑正文"]]
+                svg_root
+            container "医学写作格式工具栏"
+              container
+                container
+                  text "样式"
+                  combobox "段落样式" [ref=1082, loc=css:select[aria-label="段落样式"]]
+                    text "二级标题"
+                container
+                  text "字体"
+                  combobox "字体" [ref=1083, loc=css:select[aria-label="字体"]]
+                    text "黑体"
+                container
+                  text "字号"
+                  combobox "字号" [ref=1084, loc=css:select[aria-label="字号"]]
+                    text "14"
+                button "加粗" [ref=1085, loc=css:button[aria-label="加粗"]]
+                  svg_root
+                button "斜体" [ref=1086, loc=css:button[aria-label="斜体"]]
+                  svg_root
+                button "下划线" [ref=1087, loc=css:button[aria-label="下划线"]]
+                  svg_root
+                button "上标" [ref=1088, loc=css:button[aria-label="上标"]]
+                  svg_root
+                button "下标" [ref=1089, loc=css:button[aria-label="下标"]]
+                  svg_root
+                container
+                  svg_root
+                  textbox "文字颜色" [ref=1090, loc=css:input[aria-label="文字颜色"]]
+                container
+                  svg_root
+                  combobox "文字标黄" [ref=1091, loc=css:select[aria-label="文字标黄"]]
+                    text "无标黄"
+                button "清除直接格式" [ref=1092, loc=css:button[aria-label="清除直接格式"]]
+                  svg_root
+              container
+                button "项目符号" [ref=1093, loc=css:button[aria-label="项目符号"]]
+                  svg_root
+                button "编号" [ref=1094, loc=css:button[aria-label="编号"]]
+                  svg_root
+                button "左对齐" [ref=1095, loc=css:button[aria-label="左对齐"]]
+                  svg_root
+                button "居中" [ref=1096, loc=css:button[aria-label="居中"]]
+                  svg_root
+                button "右对齐" [ref=1097, loc=css:button[aria-label="右对齐"]]
+                  svg_root
+                button "两端对齐" [ref=1098, loc=css:button[aria-label="两端对齐"]]
+                  svg_root
+                button "减少左缩进" [ref=1099, loc=css:button[aria-label="减少左缩进"]]
+                  svg_root
+                button "增加左缩进" [ref=1100, loc=css:button[aria-label="增加左缩进"]]
+                  svg_root
+                container
+                  text "行距"
+                  combobox "行距" [ref=1101, loc=css:select[aria-label="行距"]]
+                    text "1"
+                button "段落设置" [ref=1102, loc=css:button[aria-label="段落设置"]]
+                  text "段落"
+                button "撤销" [ref=1103, loc=css:button[aria-label="撤销"]]
+                  svg_root
+                button "重做" [ref=1104, loc=css:button[aria-label="重做"]]
+                  svg_root
+                container
+                  svg_root
+                  combobox "插入交叉引用" [ref=1105, loc=css:select[aria-label="插入交叉引用"]]
+                    text "交叉引用"
+                button "插入结构化表格" [ref=1106, loc=css:button[aria-label="插入结构化表格"]]
+                  svg_root
+                  text "插入表格"
+            textfield [ref=1107]
+              heading
+                text "监查"
+              paragraph
+                text "申办方采用基于风险的监查计划，重点核对知情同意、入组标准、背景免疫抑制、随机与盲态、协议活检终点及感染和SAE报告。中央监查与现场核查互�..."
+        container
+          container
+            button [ref=542]
+              text "AI"
+            button [ref=543]
+              text "证据"
+            button [ref=544]
+              text "文献"
+            button [ref=545]
+              text "风险"
+            button [ref=546]
+              text "审阅"
+            button [ref=547]
+              text "版本"
+          container "研究方案全文初稿"
+            container
+              container
+                text "AI主导"
+                heading
+                  text "研究方案全文初稿"
+              text "待生成"
+            paragraph
+              text "独立AI会补写当前文档尚无实质正文的章节，并与既有结构化章节合并；你只需审核候选，确认后才会写入工作副本。"
+            status
+              text "正在生成全文初稿（第 1/22 批）"
+              container
+                text "0"
+                text "%"
+            paragraph
+              text "正在创建全文初稿任务；AI会先生成候选，不会自动改写正文。"
+          container
+            text "AI候选，待选择"
+            heading
+              text "AI修订指令"
+            container
+              text "修订意图"
+              combobox [ref=549]
+                text "改写"
+            container
+              text "用户指令"
+              textbox [ref=550]
+                text "在不改变研究事实、数字、单位、阈值、时间点、终点层级和不确定性的前提下，优化选中文本的信息顺序、句法、医学术语和行文紧凑度，去除口语�..."
+            button [ref=551]
+              text "提交AI修订"
+          container "当前章节AI候选版本" [ref=552]
+            container
+              container
+                text "独立AI"
+                text "可直接采用的版本"
+              container
+                text "0"
+                text "个"
+            container
+              text "尚未生成本章候选。独立AI将基于已确认研究事实、准入语料和本次所选证据提供 3-5 个版本。"
+              button [ref=553]
+                svg_root
+                text "生成本章首稿候选"

@@ -1,0 +1,8 @@
+taskSpace 88，loop27-r6-e。
+调用顺序为 Emulation.clearDeviceMetricsOverride → await task.finish({keep:[]}) → await task.tabs()。
+finish 调用返回后，程序执行到 task.tabs，后者报 task space 已结束、已不再分配给 agent，浏览器命令暂停。
+没有重新认领，没有第二次 finish，没有操作共享浏览器其他空间。
+因此空间关闭动作完成，但关闭后标签页列表没有取得；不能独立证明零残留。
+本轮只启动了一个有限页面观察进程 bg_1，已正常结束，输出显示 Wall time 360.35 seconds。
+本轮所有新生成本地文件均为验收证据；没有留下可删的自建中间脚本或渲染缓存。已有 supervisor.sh/log、run1.log、run2.log 属外部起航与续测材料，不删除、不杀外部管理进程。
+cleaned=false，仅因为关闭后的独立零残留核对被空间已结束状态阻止。共享浏览器的全局停止和缓存清除没有执行，避免影响并行验收者。

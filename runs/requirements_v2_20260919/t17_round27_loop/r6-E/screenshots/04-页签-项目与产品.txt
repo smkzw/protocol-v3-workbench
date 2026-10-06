@@ -1,0 +1,807 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    container
+      text "最后更新"
+      text "09:00"
+  container
+    container
+      container
+        container
+          text "项目"
+          combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+            text "R6E-KZ-6210 · 慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防 · III期 · MW-III-FE196698"
+        button [ref=12]
+          svg_root
+          text "新建项目"
+        container
+          text "适应症"
+          text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+        container
+          text "方案版本"
+          text "1.0"
+        container
+          text "数据批次"
+          text "未登记批次"
+        container
+          text "当前来源"
+          text "医学写作"
+      container
+        container
+          svg_root
+          text "未读决策"
+          text "0"
+        container
+          svg_root
+          text "高风险开放"
+          text "0"
+        container
+          svg_root
+          text "待交接"
+          text "0"
+        container
+          svg_root
+          text "待审批"
+          text "0"
+        button [ref=13]
+          svg_root
+    container
+      container
+        container
+          text "医学写作"
+          heading
+            text "研究方案文档编辑与AI修订"
+        container
+          button [ref=528]
+            svg_root
+            text "研究设计"
+          button [ref=530]
+            svg_root
+            text "AI修订"
+          button [ref=531]
+            svg_root
+            text "全文生成中"
+          button [ref=532]
+            svg_root
+            text "目录"
+          button "确认并冻结当前版本" [ref=533, loc=css:button[aria-label="确认并冻结当前版本"]]
+            svg_root
+            text "确认并冻结"
+      container
+        container
+          container
+            container
+              container
+                text "文档工作副本"
+                text "版本 1"
+              text "编辑中"
+              text "已保存"
+              text "2026/10/6"
+            container
+              button [ref=534]
+                svg_root
+                text "待审核"
+                text "1"
+                text "项"
+              button [ref=1051]
+                svg_root
+                text "保存工作副本"
+              button [ref=536]
+                svg_root
+                text "重新加载"
+              button [ref=537]
+                svg_root
+                text "版本与恢复"
+              button [ref=538]
+                svg_root
+                text "内容核查"
+                text "0"
+              button [ref=539]
+                svg_root
+                text "预览 Word"
+              button [ref=540]
+                svg_root
+                text "版式估算"
+              button [ref=541]
+                svg_root
+                text "正式 Word"
+          container
+            container
+              text "监查"
+              text "工作副本"
+              button "全屏编辑正文" [ref=1081, loc=css:button[aria-label="全屏编辑正文"]]
+                svg_root
+            container "医学写作格式工具栏"
+              container
+                container
+                  text "样式"
+                  combobox "段落样式" [ref=1082, loc=css:select[aria-label="段落样式"]]
+                    text "二级标题"
+                container
+                  text "字体"
+                  combobox "字体" [ref=1083, loc=css:select[aria-label="字体"]]
+                    text "黑体"
+                container
+                  text "字号"
+                  combobox "字号" [ref=1084, loc=css:select[aria-label="字号"]]
+                    text "14"
+                button "加粗" [ref=1085, loc=css:button[aria-label="加粗"]]
+                  svg_root
+                button "斜体" [ref=1086, loc=css:button[aria-label="斜体"]]
+                  svg_root
+                button "下划线" [ref=1087, loc=css:button[aria-label="下划线"]]
+                  svg_root
+                button "上标" [ref=1088, loc=css:button[aria-label="上标"]]
+                  svg_root
+                button "下标" [ref=1089, loc=css:button[aria-label="下标"]]
+                  svg_root
+                container
+                  svg_root
+                  textbox "文字颜色" [ref=1090, loc=css:input[aria-label="文字颜色"]]
+                container
+                  svg_root
+                  combobox "文字标黄" [ref=1091, loc=css:select[aria-label="文字标黄"]]
+                    text "无标黄"
+                button "清除直接格式" [ref=1092, loc=css:button[aria-label="清除直接格式"]]
+                  svg_root
+              container
+                button "项目符号" [ref=1093, loc=css:button[aria-label="项目符号"]]
+                  svg_root
+                button "编号" [ref=1094, loc=css:button[aria-label="编号"]]
+                  svg_root
+                button "左对齐" [ref=1095, loc=css:button[aria-label="左对齐"]]
+                  svg_root
+                button "居中" [ref=1096, loc=css:button[aria-label="居中"]]
+                  svg_root
+                button "右对齐" [ref=1097, loc=css:button[aria-label="右对齐"]]
+                  svg_root
+                button "两端对齐" [ref=1098, loc=css:button[aria-label="两端对齐"]]
+                  svg_root
+                button "减少左缩进" [ref=1099, loc=css:button[aria-label="减少左缩进"]]
+                  svg_root
+                button "增加左缩进" [ref=1100, loc=css:button[aria-label="增加左缩进"]]
+                  svg_root
+                container
+                  text "行距"
+                  combobox "行距" [ref=1101, loc=css:select[aria-label="行距"]]
+                    text "1"
+                button "段落设置" [ref=1102, loc=css:button[aria-label="段落设置"]]
+                  text "段落"
+                button "撤销" [ref=1103, loc=css:button[aria-label="撤销"]]
+                  svg_root
+                button "重做" [ref=1104, loc=css:button[aria-label="重做"]]
+                  svg_root
+                container
+                  svg_root
+                  combobox "插入交叉引用" [ref=1105, loc=css:select[aria-label="插入交叉引用"]]
+                    text "交叉引用"
+                button "插入结构化表格" [ref=1106, loc=css:button[aria-label="插入结构化表格"]]
+                  svg_root
+                  text "插入表格"
+            textfield [ref=1107]
+              heading
+                text "监查"
+              paragraph
+                text "申办方采用基于风险的监查计划，重点核对知情同意、入组标准、背景免疫抑制、随机与盲态、协议活检终点及感染和SAE报告。中央监查与现场核查互�..."
+        container
+          container
+            button [ref=542]
+              text "AI"
+            button [ref=543]
+              text "证据"
+            button [ref=544]
+              text "文献"
+            button [ref=545]
+              text "风险"
+            button [ref=546]
+              text "审阅"
+            button [ref=547]
+              text "版本"
+          container "研究方案全文初稿"
+            container
+              container
+                text "AI主导"
+                heading
+                  text "研究方案全文初稿"
+              text "待生成"
+            paragraph
+              text "独立AI会补写当前文档尚无实质正文的章节，并与既有结构化章节合并；你只需审核候选，确认后才会写入工作副本。"
+            status
+              text "第 2/22 批输出未通过校验，正在重新请求（第 2 次尝试）"
+              container
+                text "5"
+                text "%"
+            paragraph
+              text "正在创建全文初稿任务；AI会先生成候选，不会自动改写正文。"
+          container
+            text "AI候选，待选择"
+            heading
+              text "AI修订指令"
+            container
+              text "修订意图"
+              combobox [ref=549]
+                text "改写"
+            container
+              text "用户指令"
+              textbox [ref=550]
+                text "在不改变研究事实、数字、单位、阈值、时间点、终点层级和不确定性的前提下，优化选中文本的信息顺序、句法、医学术语和行文紧凑度，去除口语�..."
+            button [ref=551]
+              text "提交AI修订"
+          container "当前章节AI候选版本" [ref=552]
+            container
+              container
+                text "独立AI"
+                text "可直接采用的版本"
+              container
+                text "0"
+                text "个"
+            container
+              text "尚未生成本章候选。独立AI将基于已确认研究事实、准入语料和本次所选证据提供 3-5 个版本。"
+              button [ref=553]
+                svg_root
+                text "生成本章首稿候选"
+      dialog "研究设计基线"
+        container
+          container
+            text "研究设计基线"
+            text "研究框架、PICOS与动态章节"
+            text "医学经理的设计选择立即应用；已有正文不会丢失，受影响内容会进入调和与重新审阅。"
+          button [ref=1110]
+            svg_root
+        container
+          container "动态章节设计"
+            container
+              container
+                container
+                  svg_root
+                  text "动态章节"
+                text "按研究设计决定方案内容"
+                text "选择即按医学经理决策应用；不再增加同角色的二次批准。"
+              container
+                text "显示"
+                combobox [ref=1111]
+                  text "全部 31"
+            container
+              list [ref=1112]
+                listitem [ref=1113]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "I期研究组成"
+                  container
+                    text "4.2"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1114]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "单次给药剂量递增研究"
+                  container
+                    text "4.2.1"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1115]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "多次给药剂量递增研究"
+                  container
+                    text "4.2.2"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1116]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "食物影响研究"
+                  container
+                    text "4.2.3"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1117]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "特殊人群研究"
+                  container
+                    text "4.2.4"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1118]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "起始剂量设置依据"
+                  container
+                    text "4.3.1"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1119]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "剂量递增与停止规则"
+                  container
+                    text "4.3.2"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1120]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "剂量选择依据"
+                  container
+                    text "4.3.3"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1121]
+                  container
+                    svg_root
+                    text "已纳入"
+                  text "确证性设计与假设依据"
+                  container
+                    text "4.3.4"
+                    text "·"
+                    text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1122]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "PK/PD采集点设计依据"
+                  container
+                    text "4.3.5"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1123]
+                  container
+                    svg_root
+                    text "已纳入"
+                  text "随机化"
+                  container
+                    text "4.4"
+                    text "·"
+                    text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1124]
+                  container
+                    svg_root
+                    text "已纳入"
+                  text "盲法与揭盲"
+                  container
+                    text "4.5"
+                    text "·"
+                    text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1125]
+                  container
+                    svg_root
+                    text "已纳入"
+                  text "安全性审评/数据监查委员会"
+                  container
+                    text "4.6"
+                    text "·"
+                    text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1126]
+                  container
+                    svg_root
+                    text "不适用"
+                  text "参与者替换"
+                  container
+                    text "5.6"
+                    text "·"
+                    text "已确认的研究设计不包含该模块。"
+                listitem [ref=1127]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "必须使用的背景治疗"
+                  container
+                    text "6.6.3"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1128]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "补救治疗"
+                  container
+                    text "6.6.4"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1129]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "药代动力学评估"
+                  container
+                    text "7.4"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1130]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "药效动力学评估"
+                  container
+                    text "7.5"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1131]
+                  container
+                    svg_root
+                    text "已纳入"
+                  text "免疫原性评估"
+                  container
+                    text "7.6"
+                    text "·"
+                    text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1132]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "生物标志物评估"
+                  container
+                    text "7.7"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1133]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "生物样本采集、处置与保存"
+                  container
+                    text "7.8"
+                    text "·"
+                    text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1134]
+                  container
+                    svg_root
+                    text "待确定"
+                  text "特别关注的不良事件"
+                  text "8.8"
+                  text "·"
+                  text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1135]
+                  svg_root
+                  text "待确定"
+                  text "PK数据分析"
+                  text "9.6"
+                  text "·"
+                  text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1136]
+                  svg_root
+                  text "待确定"
+                  text "PD数据分析"
+                  text "9.7"
+                  text "·"
+                  text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1137]
+                  svg_root
+                  text "待确定"
+                  text "暴露-效应分析"
+                  text "9.8"
+                  text "·"
+                  text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1138]
+                  svg_root
+                  text "不适用"
+                  text "期中分析"
+                  text "9.9"
+                  text "·"
+                  text "已确认的研究设计不包含该模块。"
+                listitem [ref=1139]
+                  svg_root
+                  text "已纳入"
+                  text "多重性控制"
+                  text "9.10"
+                  text "·"
+                  text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1140]
+                  svg_root
+                  text "待确定"
+                  text "亚组及其他分析"
+                  text "9.11"
+                  text "·"
+                  text "现有项目事实不足以确定该章节是否适用。"
+                listitem [ref=1141]
+                  svg_root
+                  text "已纳入"
+                  text "避孕的规定与方法"
+                  text "14.1"
+                  text "·"
+                  text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1142]
+                  svg_root
+                  text "已纳入"
+                  text "研究量表和评价工具"
+                  text "14.2"
+                  text "·"
+                  text "已确认的研究设计满足章节适用条件。"
+                listitem [ref=1143]
+                  svg_root
+                  text "已纳入"
+                  text "实验室检查项目"
+                  text "14.3"
+                  text "·"
+                  text "已确认的研究设计满足章节适用条件。"
+              container
+                container
+                  text "4.2"
+                  text "I期研究组成"
+                container
+                  text "本研究如何处理"
+                  combobox [ref=1144]
+                    text "不适用，隐藏章节"
+                container
+                  text "医学设计依据"
+                  textbox [ref=1145, loc=css:textarea[placeholder="简要说明为什么本研究纳入、不适用或延后该模块。"]]
+                    text "已确认的研究设计不包含该模块。"
+                container
+                  text "同步更新"
+                  container
+                    text "方案摘要"
+                    text "正文"
+                    text "证据候选"
+                    text "AI候选"
+                button [ref=1146]
+                  text "应用到方案"
+          container
+            container
+              container
+                text "调整当前方案研究设计"
+                heading
+                  text "研究设计受控变更"
+              container
+                text "项目状态"
+                text "已建立工作稿"
+                container
+                  text "来源：导入已有方案/方案摘要"
+                  text "· 版本"
+                  text "25"
+            container [ref=1147]
+              container
+                svg_root
+                text "竞品调研进度"
+              text "已取消研究流水线"
+            container "医学写作建项步骤"
+              button [ref=1148]
+                svg_root
+                text "研究框架"
+              button [ref=1149]
+                svg_root
+                text "PICOS设计"
+              button [ref=1150]
+                svg_root
+                text "语料准备"
+            container
+              container
+                svg_root
+                container
+                  text "竞品方案处理"
+                  text "公开研究检索已保留；后续处理已取消，可查看现有资料后重试。"
+              button [ref=1167]
+                svg_root
+                text "查看竞品资料"
+            container [ref=1151]
+              group [ref=1152]
+                container "研究设计推荐包"
+                  container
+                    container
+                      svg_root
+                      container
+                        text "部分建议已就绪"
+                        text "已结合 68 项公开研究及 5 份Protocol"
+                    container
+                      button [ref=1168]
+                        svg_root
+                        text "打开竞品处理"
+                      button [ref=1169]
+                        svg_root
+                        text "更新建议"
+                  container "研究设计组合推荐"
+                    container
+                      svg_root
+                      container
+                        text "AI推荐研究方案"
+                        text "先审阅整套设计与关键差异；采用后仍可在高级微调中逐项修改。"
+                    container "组合推荐模块"
+                      button [ref=1170]
+                        text "研究设计（正交维度）"
+                        text "待审阅"
+                      button [ref=1171]
+                        text "干预与合并治疗模块"
+                        text "待审阅"
+                      button [ref=1172]
+                        text "结局与终点模块"
+                        text "待审阅"
+                      button [ref=1173]
+                        text "研究人群模块"
+                        text "待审阅"
+                      button [ref=1174]
+                        text "产品画像模块"
+                        text "待审阅"
+                      button [ref=1175]
+                        text "执行与统计模块"
+                        text "待审阅"
+                    container
+                      container
+                        paragraph
+                          text "该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。"
+                        button [ref=1176]
+                          container
+                            text "需您选择/补全"
+                            text "design模块待AI基于语料生成"
+                            text "模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。"
+                          container
+                            text "无"
+                            text "置信"
+                      container "组合采用"
+                        container
+                          text "研究设计（正交维度）"
+                          paragraph
+                            text "该分组当前没有推荐方案；请从候选中选择，或先处理待决字段。"
+                        button [ref=1177]
+                          text "一键采用推荐方案"
+                  container [ref=1178]
+                    text "展开单字段修改与依据"
+                    text "仅在整包建议需要局部调整时使用"
+                container
+                  container [ref=1179]
+                    container
+                      text "高级微调"
+                      text "仅在需要逐字段改写、补充精确规则或处理“其他”设计时展开"
+                    text "项目与产品"
+                  container
+                    tablist
+                      tab [ref=1373]
+                        text "项目与产品"
+                      tab [ref=1374]
+                        text "研究目的"
+                      tab [ref=1375]
+                        text "竞品范围"
+                      tab [ref=1376]
+                        text "总体设计"
+                    container
+                      container
+                        text "项目与产品"
+                        text "研究药物、适应症和研究分期是启动竞品检索的最小三项；其他内容可由系统预填后再确认"
+                      container
+                        container
+                          svg_root
+                          container
+                            container
+                              text "可选：研究者手册（IB）"
+                              text "（可选）"
+                            text "暂未形成·稍后补充"
+                        container
+                          text "最小产品事实包"
+                          text "尚未开始"
+                      container
+                        container
+                          svg_root
+                          text "上传研究者手册"
+                        button [ref=1377]
+                          text "暂不提供IB"
+                      container
+                        container
+                          text "方案号"
+                          textbox [ref=1378]
+                            text "R6E-KZ-6210-III"
+                        container
+                          text "版本"
+                          textbox [ref=1379]
+                            text "1.0"
+                        container
+                          container
+                            text "研究分期"
+                            text "*"
+                          textbox [ref=1380, loc=css:input[placeholder="选择常用分期或直接输入"]]
+                            text "III期"
+                        container
+                          text "开发区域"
+                          textbox [ref=1381]
+                            text "中国"
+                        container
+                          text "方案标题"
+                          textbox [ref=1382]
+                            text "R6E-移植肾排斥-IL6R单抗-III期｜方案摘要"
+                        container
+                          text "适应症"
+                          text "*"
+                          textbox [ref=1383]
+                            text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+                        container
+                          text "试验药物"
+                          text "*"
+                          textbox [ref=1384]
+                            text "R6E-KZ-6210"
+                        container
+                          text "药物技术类型"
+                          text "*"
+                          combobox "药物技术类型" [ref=1385, loc=css:select[aria-label="药物技术类型"]]
+                            text "单克隆抗体"
+                        container
+                          text "暴露范围"
+                          combobox "暴露范围" [ref=1386, loc=css:select[aria-label="暴露范围"]]
+                            text "全身暴露"
+                        container
+                          text "剂型"
+                          combobox "剂型" [ref=1387, loc=css:select[aria-label="剂型"]]
+                            text "注射剂"
+                        container
+                          text "给药途径"
+                          container
+                            checkbox [ref=1388]
+                            text "口服"
+                          container
+                            checkbox [ref=1389]
+                            text "静脉注射"
+                          container
+                            checkbox [ref=1390]
+                            text "皮下注射"
+                          container
+                            checkbox [ref=1391]
+                            text "外用"
+                          container
+                            checkbox [ref=1392]
+                            text "吸入"
+                          container
+                            checkbox [ref=1393]
+                            text "其他"
+                        container
+                          text "ClinicalTrials.gov疾病检索词（系统建议，可修改）"
+                          textbox [ref=1394]
+                            text "Kidney Transplant Rejection"
+                          text "该字段用于优化注册库检索，不是启动检索的硬门；留空时使用适应症。"
+                      container "对话式事实采集"
+                        container
+                          svg_root
+                          text "补充产品事实（自然语言）"
+                          text "可粘贴大段文字、药学资料摘要或临床前结论；独立AI拆解为可确认事实、推断、未知项、冲突和高影响缺口，每轮最多追问3个影响下游设计的问题。"
+                          text "IB可选·缺少不阻断调研"
+                        textbox "自然语言事实输入" [ref=1395, loc=css:textarea[aria-label="自然语言事实输入"]]
+                          text "例如：CMS-D1是抗IL-23p19单抗，静脉输注，首次人体，已有食蟹猴4周毒理，NOAEL 30mg/kg，暂无人体PK数据，关注输注反应和免疫原性。"
+                        button [ref=1396]
+                          svg_root
+                          text "提交并拆解"
+                        paragraph
+                          text "尚未发起事实采集。无IB不阻断竞品调研；当前目标产品事实仅采用用户输入或已绑定来源，竞品信息不会自动写成本品事实。此处补充的自然语言会合..."
+            container
+              text "研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。"
+              container
+                button [ref=1204]
+                  svg_root
+                  text "保存草稿"
+                button [ref=1205]
+                  text "完成第一步"
+                  svg_root
+            button "关闭竞品处理抽屉" [ref=1166]

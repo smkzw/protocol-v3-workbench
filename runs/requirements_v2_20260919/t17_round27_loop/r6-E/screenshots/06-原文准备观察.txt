@@ -1,0 +1,359 @@
+[p1 "康哲 AI 医学经理工作台" | space "loop27-r6-e"(88): 1 managed, 0 untracked — p1* "康哲 AI 医学经理工作台"]
+root
+  container
+    button "返回项目总看板" [ref=1, loc=css:button[aria-label="返回项目总看板"]]
+      image
+    container
+      button [ref=2]
+        svg_root
+        text "项目总看板"
+      button [ref=3]
+        svg_root
+        text "证据调研与方案设计"
+      button [ref=4]
+        svg_root
+        text "入排审核"
+      button [ref=5]
+        svg_root
+        text "医学监查"
+      button [ref=6]
+        svg_root
+        text "数据分析与TFL"
+      button [ref=7]
+        svg_root
+        text "医学写作"
+      button [ref=8]
+        svg_root
+        text "安全信号与PV协同"
+      button [ref=9]
+        svg_root
+        text "来源台账"
+      button [ref=10]
+        svg_root
+        text "审批中心"
+    text "最后更新"
+    text "09:00"
+  container
+    container
+      container
+        text "项目"
+        combobox "选择临床研究项目" [ref=11, loc=css:select[aria-label="选择临床研究项目"]]
+          text "R6E-KZ-6210 · 慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防 · III期 · MW-III-FE196698"
+      button [ref=12]
+        svg_root
+        text "新建项目"
+      text "适应症"
+      text "慢性移植肾排斥反应的预防，即肾移植受者慢性活动性排斥的预防"
+      text "方案版本"
+      text "1.0"
+      text "数据批次"
+      text "未登记批次"
+      text "当前来源"
+      text "医学写作"
+      svg_root
+      text "未读决策"
+      text "0"
+      svg_root
+      text "高风险开放"
+      text "0"
+      svg_root
+      text "待交接"
+      text "0"
+      svg_root
+      text "待审批"
+      text "0"
+      button [ref=13]
+        svg_root
+    container
+      text "医学写作"
+      heading
+        text "研究方案智能设计与写作"
+      container
+        container
+          container
+            text "新建中国临床试验方案"
+            heading
+              text "研究设计引导"
+            text "项目状态"
+            text "语料准备中"
+            text "来源：导入已有方案/方案摘要"
+            text "· 版本"
+            text "15"
+          container [ref=174]
+            svg_root
+            text "竞品调研进度"
+            text "已取消研究流水线"
+          status
+            text "研究流水线 ·"
+            text "已取消研究流水线"
+            text "30"
+            text "%"
+            paragraph
+              text "正在处理竞品文献 4/5 · 第 4 批"
+              text "3"
+              text "/"
+              text "5"
+              text "·"
+              text "60"
+              text "%"
+            paragraph
+              text "研究流水线已取消，已保留已完成步骤。"
+              text "证据化设计推荐已开放。"
+            text "阶段已清除：已取消研究流水线"
+          container "医学写作建项步骤"
+            button [ref=42]
+              svg_root
+              text "研究框架"
+            button [ref=43]
+              svg_root
+              text "PICOS设计"
+            button [ref=44]
+              text "03"
+              text "语料准备"
+          group [ref=46]
+            container
+              container
+                text "语料准备与写作准入"
+                text "公开竞品原文、监管中文语料和项目设计事实共同决定章节可写性"
+                text "当前阻断写作"
+              svg_root
+              text "ClinicalTrials.gov竞品检索计划"
+              text "先按注册库条件宽检索，再由医学经理按项目设计线索分诊相关研究。"
+              button [ref=385]
+                svg_root
+                text "重新检索竞品"
+              container "实际注册库过滤条件"
+                text "实际发送到注册库的条件"
+                unordered_list
+                  list_item
+                    text "疾病/适应症"
+                  list_item
+                    text "Kidney Transplant Rejection"
+                  list_item
+                    text "研究分期"
+                  list_item
+                    text "PHASE3"
+                  list_item
+                    text "研究类型"
+                  list_item
+                    text "INTERVENTIONAL"
+                  list_item
+                    text "干预名称"
+                  list_item
+                    text "不限"
+                  list_item
+                    text "研究地区"
+                  list_item
+                    text "不限"
+              container "检索后医学分诊条件"
+                text "检索后医学分诊线索"
+                unordered_list
+                  list_item
+                    text "靶点/作用机制相近"
+                    text "阻断IL-6通路、抑制B细胞活化，减少供体特异性抗体介导的慢性移植物损伤"
+                  list_item
+                    text "内在研究目的相近"
+                    text "确证性研究"
+                  list_item
+                    text "总体设计相近"
+                    text "随机、双盲、安慰剂对照、平行分组、多中心III期研究"
+                  list_item
+                    text "目标研究人群相近"
+                    text "18–70岁肾移植受者，移植后3–12个月，eGFR≥30 mL/min/1.73m²，背景免疫抑制稳定，存在供体特异性抗体（DSA）或高免疫学风险"
+                  list_item
+                    text "研究药物技术类型相近"
+                    text "monoclonal_antibody"
+                  list_item
+                    text "给药途径相近"
+                    text "皮下注射"
+                  list_item
+                    text "系统或局部暴露特征相近"
+                    text "systemic"
+              paragraph
+                text "已找到68项公开研究和5份Protocol，正在准备研究设计建议。"
+              container
+                container
+                  container
+                    text "建稿前语料准备"
+                    text "竞品方案参照"
+                  button [ref=386]
+                    svg_root
+                text "当前工作区已保存本次公开检索快照（wref_search_c38e68387cfc76ee2e55）；候选分诊、原文处理、译文审核和准入将沿用同一来源链。检索快照本身不等于医学..."
+                tablist "竞品方案参照工作步骤"
+                  tab [ref=387]
+                    text "候选研究"
+                  tab [ref=388]
+                    text "文档与解析"
+                  tab [ref=389]
+                    text "结构与译文确认"
+                  tab [ref=390]
+                    text "已准入证据"
+                container
+                  container
+                    container
+                      container
+                        text "已锁定竞品篮子"
+                        text "本批次 Protocol 准备"
+                        text "本批次只执行公开文件下载、结构解析和内容校验；结构确认、监管中文审核与语料准入在后续审核工作区完成。"
+                      text "批量准备完成"
+                    status
+                      container
+                        text "1"
+                        text "项研究"
+                      container
+                        text "1"
+                        text "份公开文件"
+                      container
+                        text "0"
+                        text "项失败"
+                      container
+                        text "0"
+                        text "项待人工确认"
+                      container
+                        text "0"
+                        text "项待手动导入"
+                    status
+                      container
+                        container
+                          text "资料已准备"
+                          text "·"
+                          text "1"
+                          text "/"
+                          text "1"
+                          text "·"
+                          text "100"
+                          text "%"
+                        container
+                          text "1"
+                          text "项资料已准备"
+                      progressindicator "资料处理进度"
+                    status
+                      text "全部文件准备完成"
+                      container
+                        text "1/1"
+                        container
+                          text "100"
+                          text "%"
+                      container "公开 Protocol 准备进度"
+                    container
+                      button [ref=402]
+                        svg_root
+                        text "刷新"
+                      button [ref=403]
+                        svg_root
+                        text "仅重试失败项"
+                    table
+                      table_row
+                        table_cell
+                          text "研究"
+                        table_cell
+                          text "公开文件"
+                        table_cell
+                          text "下载"
+                        table_cell
+                          text "结构解析"
+                        table_cell
+                          text "内容校验"
+                        table_cell
+                          text "下一步"
+                      table_row
+                        table_cell
+                          text "NCT03744910"
+                          text "Clazakizumab for the Treatment of Chronic Active Antibody Mediated Rejection in Kidney Transplant Recipients"
+                        table_cell
+                          text "Prot_000.pdf"
+                          text "protocol"
+                        table_cell
+                          text "已下载"
+                        table_cell
+                          text "已解析"
+                        table_cell
+                          text "内容匹配"
+                        table_cell
+                          svg_root
+                          text "待结构审核"
+                  container
+                    button [ref=404]
+                      svg_root
+                      text "逐文件问题处理"
+                    text "用于批次失败、缺失公开文件或待人工确认项；保留原下载、导入、解析与核验流程。"
+              container
+                text "尚未满足的准入条件"
+                paragraph
+                  text "✓"
+                  text "竞品候选研究已完成人工相关性分诊"
+                container
+                  checkbox [ref=395]
+                  container
+                    text "至少一份相关Protocol已完成内容校验与结构化解析"
+                    text "尚无当前有效、内容已确认且已结构化解析的相关Protocol。"
+                container
+                  checkbox [ref=396]
+                  container
+                    text "英文竞品方案关键章节已形成监管中文参考译文"
+                    text "已覆盖关键M11锚点："
+                container
+                  checkbox [ref=397]
+                  container
+                    text "项目适用中文语料已完成医学准入"
+                    text "当前准入记录中存在不可支撑PICOS的短文本/占位译文；实质性证据0/0条，需补齐关键章节的完整监管中文参考译文。"
+                container
+                  checkbox [ref=398]
+                  text "PICOS关键设计事实与语料冲突已处置"
+                  text "需针对当前PICOS版本和当前准入语料记录无冲突或冲突处置结论。"
+              container [ref=399]
+                text "在保留全部缺口的情况下例外进入写作"
+          button "关闭竞品处理抽屉" [ref=85]
+        container
+          button [ref=86]
+            text "文献"
+          container "项目文献库"
+            container
+              text "项目文献库"
+              text "0"
+              text "条可追溯文献"
+              button [ref=87]
+                svg_root
+            container
+              text "DOI、PMID 或文献官网链接"
+              textbox [ref=88, loc=css:input[placeholder="例如 10.1016/... 或 PMID: 33957195"]]
+                text "例如 10.1016/... 或 PMID: 33957195"
+              button [ref=89]
+                svg_root
+                text "导入"
+            container
+              text "当前项目引文格式"
+              combobox [ref=90]
+                text "GB/T 7714-2015 顺序编码制"
+            container [ref=91]
+              text "官网链接无法自动识别时，手动确认基本信息"
+            container
+              paragraph
+                text "手动确认不能替代来源标识：请先在上方输入框填入这篇文献的 DOI、PMID 或官网链接，再在这里核对题录信息。"
+              container
+                text "题名"
+                textbox [ref=92]
+              container
+                text "作者"
+                textbox [ref=93, loc=css:input[placeholder="多位作者用逗号分隔"]]
+                  text "多位作者用逗号分隔"
+              container
+                text "期刊"
+                textbox [ref=94]
+              container
+                text "年份"
+                textbox [ref=95]
+              container
+                text "文献官网链接"
+                textbox [ref=96]
+              container
+                text "补充说明（可选）"
+                textbox [ref=97, loc=css:textarea[placeholder="可说明已核对的原始页面或确认依据"]]
+                  text "可说明已核对的原始页面或确认依据"
+              button [ref=98]
+                text "确认信息并导入"
+            container
+              svg_root
+              textbox [ref=99, loc=css:input[placeholder="按题名、作者、期刊、DOI 或 PMID 搜索"]]
+                text "按题名、作者、期刊、DOI 或 PMID 搜索"
+            text "当前项目尚无匹配文献。"
