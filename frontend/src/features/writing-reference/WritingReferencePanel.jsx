@@ -216,13 +216,22 @@ export function WritingReferencePanel({
   const manualFileInputRef = useRef(null);
   const manualUploadKeyRef = useRef("");
   const aiTriageCreateKeyRef = useRef("");
-  const legacyIssueToolsRef = useRef(null);
-  const translationReviewRef = useRef(null);
+  const legacyIssueToolsRef = useRef(null);  const translationReviewRef = useRef(null);
   const [workspace, setWorkspace] = useState(null);
   const [activeView, setActiveView] = useState(authoringMode ? "candidates" : "approved");
   const [loading, setLoading] = useState(false);
   const [busyAction, setBusyAction] = useState("");
   const [message, setMessage] = useState("");
+  // P2-3（R27自检r3）：操作失败消息渲染在抽屉顶部，用户在底部（如PICOS
+  // 核对结论）操作后看不见——静默失败观感。危险级消息自动滚动入视野。
+  const messageRef = useRef(null);
+  useEffect(() => {
+    if (!message) return;
+    if (message.includes("失败") || message.includes("未完成")) {
+      messageRef.current?.scrollIntoView?.({ block: "center" });
+    }
+  }, [message]);
+
   const [indication, setIndication] = useState(lockedIndication);
   const [phase, setPhase] = useState(lockedPhase || "PHASE2");
   const phase1SharedAvailable = authoringMode && isPhase1(
@@ -1473,7 +1482,11 @@ export function WritingReferencePanel({
           <button key={view.id} role="tab" aria-selected={activeView === view.id} className={activeView === view.id ? "active" : ""} onClick={() => setActiveView(view.id)}>{view.label}</button>
         ))}
       </div>
-      {message && <div className={`writing-reference-message ${message.includes("失败") || message.includes("未完成") ? "danger" : ""}`}>{message}</div>}
+      {message && <div
+        ref={messageRef}
+        className={`writing-reference-message ${message.includes("失败") || message.includes("未完成") ? "danger" : ""}`}
+        role={message.includes("失败") || message.includes("未完成") ? "alert" : undefined}
+      >{message}</div>}
 
       {activeView === "candidates" && (
         <div className="writing-reference-view">

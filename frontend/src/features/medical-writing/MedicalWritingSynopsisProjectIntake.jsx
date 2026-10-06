@@ -497,7 +497,21 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
     await settleJob(current, started, generation, controller.signal);
   };
 
+  const startSubmitRef = useRef(false);
   const start = async () => {
+    // P0-15（R27 片1②a）：同步ref守卫挡同帧双击——异步state守卫在重渲染
+    // 前不生效，第二击可落在重渲染出的『取消』按钮坐标上（R3-D现场：
+    // 单点导入秒级假取消）。
+    if (startSubmitRef.current) return;
+    startSubmitRef.current = true;
+    try {
+      await _startOnce();
+    } finally {
+      startSubmitRef.current = false;
+    }
+  };
+
+  const _startOnce = async () => {
     if (!file || busy) return;
     setBusy("upload");
     setMessage("");
@@ -533,8 +547,21 @@ export function MedicalWritingSynopsisProjectIntake({ disabled = false, onCreate
     }
   };
 
+  const cancelArmedRef = useRef(false);
   const cancel = async () => {
     if (!intake?.intake_id || !intake?.idempotency_key) return;
+    // P0-15（R27 片1②c）：任务开始后<10秒的取消要二次确认——现场误触
+    // 取消发生在提交后的按钮重排瞬间，年轻任务大概率是误点；解析已在
+    // 跑30秒以上的取消视为有意。
+    const startedAtMs = Date.parse(intake?.started_at || job?.started_at || "") || 0;
+    const ageSeconds = startedAtMs ? (Date.now() - startedAtMs) / 1000 : Infinity;
+    if (ageSeconds < 10 && !cancelArmedRef.current) {
+      cancelArmedRef.current = true;
+      setMessage("刚提交的解析还在启动中。再点一次『取消』才会真的取消（10秒内防误触）。");
+      globalThis.setTimeout(() => { cancelArmedRef.current = false; }, 5000);
+      return;
+    }
+    cancelArmedRef.current = false;
     const generation = pollGenerationRef.current + 1;
     pollGenerationRef.current = generation;
     setBusy("cancel");

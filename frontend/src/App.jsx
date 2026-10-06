@@ -10675,7 +10675,7 @@ function WritingPage({
       })
       .catch((error) => {
         if (fullDraftRunRef.current !== runToken) return;
-        setFullDraftMessage(`全文初稿续跑失败：${apiErrorText(error)}`);
+        setFullDraftMessage(`全文初稿续跑失败：${medicalWritingSafeErrorText(error)}`);
       })
       .finally(() => {
         if (fullDraftRunRef.current === runToken) setFullDraftBusy(false);
@@ -10714,7 +10714,7 @@ function WritingPage({
       })
       .catch((error) => {
         if (fullDraftRunRef.current !== runToken) return;
-        setFullDraftMessage(`全文初稿生成失败：${apiErrorText(error)}`);
+        setFullDraftMessage(`全文初稿生成失败：${medicalWritingSafeErrorText(error)}`);
         if (error?.status === 404) localStorage.removeItem(fullDraftStorageKey);
       })
       .finally(() => {
@@ -10871,7 +10871,7 @@ function WritingPage({
         await monitorFullDraft(stored.job_id, runToken);
       } catch (error) {
         if (fullDraftRunRef.current === runToken) {
-          setFullDraftMessage(`全文初稿恢复失败：${apiErrorText(error)}`);
+          setFullDraftMessage(`全文初稿恢复失败：${medicalWritingSafeErrorText(error)}`);
           if (error?.status === 404) localStorage.removeItem(fullDraftStorageKey);
         }
       } finally {
@@ -10879,7 +10879,7 @@ function WritingPage({
       }
     };
     restore().catch((error) => {
-      if (!cancelled) setFullDraftMessage(`全文初稿状态读取失败：${apiErrorText(error)}`);
+      if (!cancelled) setFullDraftMessage(`全文初稿状态读取失败：${medicalWritingSafeErrorText(error)}`);
     });
     return () => {
       cancelled = true;

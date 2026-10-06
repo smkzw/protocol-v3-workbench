@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import re
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, get_args, get_origin
@@ -73,6 +74,36 @@ FULL_DRAFT_CHUNK_SIZE = 4
 # 确定性失败（路由身份变化/上下文漂移/未配置）不重试，保持 fail-fast。
 FULL_DRAFT_CHUNK_ATTEMPTS = 3
 FULL_DRAFT_MAX_OUTPUT_TOKENS = 65_536
+
+
+def classify_full_draft_chunk_failure(exc: Exception) -> str:
+    """R6 片B′（P0-25）：批次失败分型，决定重试/跳过/快速失败。
+
+    - ``capacity``：提供方容量/传输类（HTTP 507/5xx、空回包、重试梯预算
+      耗尽）。与校验类共享同一有界重试预算；耗尽后跳过该批并标记，
+      不再弃掉整单已生成批次（现场 r6-D：第8批507→整单失败→0可用输出）。
+    - ``validation``：模型输出格式抖动（“未通过校验”）。原重试语义保留。
+    - ``deterministic``：路由身份/上下文漂移等确定性失败，保持 fail-fast。
+    """
+    message = str(exc)
+    diagnostics = getattr(exc, "diagnostics", None)
+    if isinstance(diagnostics, dict):
+        failure_code = str(diagnostics.get("failure_code") or "")
+        http_status = diagnostics.get("http_status")
+        if failure_code in {
+            "provider_http_error",
+            "provider_response_empty",
+            "provider_transport_error",
+            "provider_ladder_budget_exhausted",
+        }:
+            return "capacity"
+        if isinstance(http_status, int) and http_status in {429, 500, 502, 503, 504, 507}:
+            return "capacity"
+    if "未通过校验" in message:
+        return "validation"
+    if "HTTP 507" in message or "HTTP 502" in message or "HTTP 503" in message or "HTTP 504" in message:
+        return "capacity"
+    return "deterministic"
 # design.* paths whose authoritative mapping needs structured (dict) input; a
 # prose decision answer would be silently dropped there, so such decisions
 # fail closed instead of persisting nothing.
@@ -1405,6 +1436,7 @@ class MedicalWritingFullDraftService:
                 ),
             )
         all_sections: list[dict[str, Any]] = []
+        skipped_chunks: list[dict[str, Any]] = []
         run_ids: list[str] = []
         route_receipts: list[dict[str, Any]] = []
         source_bindings: list[dict[str, Any]] = []
@@ -1495,10 +1527,13 @@ class MedicalWritingFullDraftService:
                 )
             else:
                 # SMOKE-r2-3 ⑤：校验类失败（模型输出格式抖动）整批重请求，
-                # 最多 FULL_DRAFT_CHUNK_ATTEMPTS 次；其余异常保持原样快速
-                # 失败。最后一次仍失败时按原语义返回错误（retryable=False）。
+                # 最多 FULL_DRAFT_CHUNK_ATTEMPTS 次。R6 片B′（P0-25）：容量类
+                # （提供方507/5xx/空回包/梯级预算耗尽）纳入同一重试预算
+                # （1次执行+≤2次重试）；预算耗尽后跳过该批并标记，其余批次
+                # 照常产出候选（可稍后“续跑”补齐）。确定性失败保持 fail-fast。
                 output = run = sources = None
                 chunk_error: Exception | None = None
+                chunk_failure_class = "deterministic"
                 for attempt in range(1, FULL_DRAFT_CHUNK_ATTEMPTS + 1):
                     try:
                         output, run, sources = self._execute_chunk(
@@ -1508,12 +1543,17 @@ class MedicalWritingFullDraftService:
                         break
                     except Exception as exc:
                         chunk_error = exc
-                        if "未通过校验" not in str(exc):
+                        chunk_failure_class = classify_full_draft_chunk_failure(exc)
+                        if chunk_failure_class == "deterministic":
                             # 确定性失败：保持 fail-fast 原语义
                             return DurableJobResult(
                                 error=str(exc), retryable=False
                             )
                         if attempt < FULL_DRAFT_CHUNK_ATTEMPTS:
+                            if chunk_failure_class == "capacity":
+                                # 提供方层已跑完自己的退避梯；批次层再等待
+                                # 一小段（1s/2s）即再试，不阻塞其他批次。
+                                time.sleep(min(2.0, float(attempt)))
                             if not heartbeat(
                                 DurableJobProgressPayload(
                                     phase="calling_synthesis_ai",
@@ -1521,8 +1561,9 @@ class MedicalWritingFullDraftService:
                                     step=index,
                                     step_total=total,
                                     message=(
-                                        f"第 {index}/{total} 批输出未通过校验，"
-                                        f"正在重新请求（第 {attempt + 1} 次尝试）"
+                                        f"第 {index}/{total} 批"
+                                        + ("输出未通过校验，正在重新请求" if chunk_failure_class == "validation" else "遇到服务繁忙，稍候自动重试")
+                                        + f"（第 {attempt + 1} 次尝试）"
                                     ),
                                 )
                             ):
@@ -1531,9 +1572,32 @@ class MedicalWritingFullDraftService:
                                     retryable=True,
                                 )
                 if chunk_error is not None:
-                    return DurableJobResult(
-                        error=str(chunk_error), retryable=False
-                    )
+                    # R6 片B′：重试预算耗尽→跳过并标记，不弃整单。
+                    skipped_chunks.append({
+                        "chunk_index": index,
+                        "section_ids": [item["section_id"] for item in chunk],
+                        "reason": str(chunk_error),
+                        "failure_class": chunk_failure_class,
+                        "attempts": FULL_DRAFT_CHUNK_ATTEMPTS,
+                    })
+                    if not heartbeat(
+                        DurableJobProgressPayload(
+                            phase="calling_synthesis_ai",
+                            percent=(index - 1) / max(total, 1),
+                            step=index,
+                            step_total=total,
+                            message=(
+                                f"第 {index}/{total} 批连续失败已跳过"
+                                f"（{'服务繁忙' if chunk_failure_class == 'capacity' else '输出未通过校验'}），"
+                                "其余批次继续；完成后可单独续跑补齐该批"
+                            ),
+                        )
+                    ):
+                        return DurableJobResult(
+                            error="全文初稿任务失去执行权",
+                            retryable=True,
+                        )
+                    continue
                 if cancel_check():
                     return DurableJobResult(error="AI完成后任务已取消，未持久化全文候选", retryable=False)
                 chunk_source_bindings = [
@@ -1624,7 +1688,28 @@ class MedicalWritingFullDraftService:
 
         expected_ids = [item["section_id"] for item in target]
         actual_ids = [str(item.get("section_id") or "") for item in all_sections]
-        if actual_ids != expected_ids:
+        # R6 片B′：被跳过批次的章节不计入覆盖缺口；未跳过而缺失仍是硬错误。
+        skipped_section_ids = {
+            section_id
+            for record in skipped_chunks
+            for section_id in record.get("section_ids") or []
+        }
+        expected_after_skip = [
+            section_id
+            for section_id in expected_ids
+            if section_id not in skipped_section_ids
+        ]
+        if not all_sections and skipped_chunks:
+            # 全部批次均失败：不落空工件，保持可续跑语义（resume 会跳过
+            # 已持久化批次、重跑失败批次）。
+            return DurableJobResult(
+                error=(
+                    f"全部批次均未产出（{len(skipped_chunks)} 批重试后仍失败，"
+                    "原因见进度消息）；任务保持可续跑，稍后可再试"
+                ),
+                retryable=True,
+            )
+        if actual_ids != expected_after_skip:
             return DurableJobResult(error="全文初稿合并后章节覆盖不完整，未写入任何正文", retryable=False)
         if not self._artifact_evidence_is_resolvable(
             {"sections": all_sections, "source_bindings": source_bindings}
@@ -1696,9 +1781,12 @@ class MedicalWritingFullDraftService:
             "decision_path_owners": decision_path_owners,
             "target_sections": target,
             "sections": all_sections,
+            "skipped_chunks": skipped_chunks,
             "coverage": {
                 "target_count": len(expected_ids),
                 "generated_count": len(all_sections),
+                "skipped_count": len(skipped_section_ids),
+                "skipped_section_ids": sorted(skipped_section_ids),
                 "required_review_count": len(required_review_ids),
                 "required_review_section_ids": required_review_ids,
                 "decision_required_count": len(decision_required_ids),
@@ -1760,7 +1848,12 @@ class MedicalWritingFullDraftService:
                 step_total=total,
                 message=(
                     f"全文初稿已生成 {len(all_sections)}/{len(expected_ids)} 个章节候选，"
-                    f"其中 {len(required_review_ids)} 个高影响章节需逐卡确认"
+                    + (
+                        f"另有 {len(skipped_section_ids)} 个章节因服务繁忙或校验失败已跳过（可单独续跑补齐），"
+                        if skipped_section_ids
+                        else ""
+                    )
+                    + f"其中 {len(required_review_ids)} 个高影响章节需逐卡确认"
                 ),
             ),
         )

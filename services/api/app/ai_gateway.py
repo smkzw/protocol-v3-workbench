@@ -98,7 +98,30 @@ AI_PROVIDER_MAX_ATTEMPTS = 3
 # 拖到几十分钟。有界重试（max_attempts 与梯预算照常封顶）让瞬时 401 在
 # 主路内自愈；真正的密钥失效仍会在有限次尝试+明确错误码后失败，不会
 # 静默。
-AI_PROVIDER_RETRYABLE_HTTP_CODES = frozenset({401, 429, 500, 502, 503, 504})
+# R6 片B′（P0-25）：507=本地推理层容量满（现场 r6-D w6截图39：再点生成
+# 立刻 HTTP 507 且作业整单失败）。与 429/5xx 同类——进入有界退避重试梯。
+AI_PROVIDER_RETRYABLE_HTTP_CODES = frozenset({401, 429, 500, 502, 503, 504, 507})
+# Retry-After 的采纳上限：容量类单头可能给出分钟级等待；梯级预算由
+# ladder_budget_seconds 兜底，单次退避再封顶30s防单头长挂。
+_RETRY_AFTER_CAP_SECONDS = 30.0
+
+
+def _retry_after_seconds(error: "urllib.error.HTTPError") -> Optional[float]:
+    header = None
+    headers = getattr(error, "headers", None)
+    if headers is not None:
+        try:
+            header = headers.get("Retry-After")
+        except Exception:
+            header = None
+    if header is None:
+        return None
+    text = str(header).strip()
+    try:
+        return float(text)
+    except ValueError:
+        # HTTP-date 形式的 Retry-After 不在此解析——按无头退避。
+        return None
 REQUIRED_FINDING_KEYS = {"finding_id", "status", "title", "source_id", "evidence_span_ids"}
 REQUIRED_EVIDENCE_SPAN_KEYS = {"span_id", "source_id", "locator", "quote"}
 REQUIRED_UNCERTAINTY_KEYS = {"level", "description"}
@@ -1324,6 +1347,7 @@ class OpenAICompatibleAiProvider:
         response_body = ""
         response_status: Optional[int] = None
         response_content_type = ""
+        retry_after_seconds: Optional[float] = None
         ladder_started = time.monotonic()
         for attempt in range(self.max_attempts):
             # AGG-ENV-02: the ladder budget bounds the total wall clock of the
@@ -1378,6 +1402,9 @@ class OpenAICompatibleAiProvider:
                             "http_status": int(exc.code),
                         },
                     ) from exc
+                # R6 片B′（P0-25）：退避尊重服务端 Retry-After 头（429/503/507
+                # 容量类信号；上限30s防单头长挂），无头时沿用指数退避。
+                retry_after_seconds = _retry_after_seconds(exc)
             except (
                 urllib.error.URLError,
                 http.client.IncompleteRead,
@@ -1398,7 +1425,14 @@ class OpenAICompatibleAiProvider:
                             "exception_type": type(exc).__name__,
                         },
                     ) from exc
-            backoff_seconds = (0.5 * (2**attempt)) + random.uniform(0.0, 0.25)
+            backoff_seconds = (
+                0.5 * (2**attempt)
+            ) + random.uniform(0.0, 0.25)
+            if retry_after_seconds is not None:
+                backoff_seconds = min(
+                    max(retry_after_seconds, 0.5), _RETRY_AFTER_CAP_SECONDS
+                )
+                retry_after_seconds = None
             time.sleep(backoff_seconds)
         verified_response_model = _completion_response_model(response_body)
         self.response_diagnostics = _completion_response_diagnostics(
@@ -2107,6 +2141,34 @@ def _is_string_list(value: Any) -> bool:
     return isinstance(value, list) and all(isinstance(item, str) and item for item in value)
 
 
+def sanitize_protocol_full_draft_sections(output: Dict[str, Any]) -> List[str]:
+    """R6 片B′（P0-25）：sections 未知字段降级——剥离+注记，不整批拒。
+
+    现场（r6-D w6截图48）：模型在 sections 里附带 ``rationale_note`` 等额
+    外字段，旧契约按 unexpected key 整批拒绝并触发修复重试循环，22 批
+    续跑 30+ 分钟零产出。契约修订：未知键就地剥离并返回可审计注记；
+    关键字段缺失/语义违规仍由校验器整批拒绝（fail-closed 不放宽）。
+    """
+    notes: List[str] = []
+    sections = (
+        output.get("full_draft", {}).get("sections")
+        if isinstance(output.get("full_draft"), dict)
+        else None
+    )
+    if not isinstance(sections, list):
+        return notes
+    for index, section in enumerate(sections):
+        if not isinstance(section, dict):
+            continue
+        unexpected = sorted(set(section).difference(PROTOCOL_FULL_DRAFT_REQUIRED_KEYS))
+        for key in unexpected:
+            section.pop(key, None)
+            notes.append(
+                f"full_draft.sections[{index}]: dropped unexpected key {key}"
+            )
+    return notes
+
+
 def _validate_protocol_full_draft_output(
     output: Dict[str, Any],
     evidence_by_id: Dict[str, Dict[str, Any]],
@@ -2130,15 +2192,15 @@ def _validate_protocol_full_draft_output(
     sections = full_draft.get("sections")
     if not isinstance(sections, list) or not sections:
         return [*errors, "protocol_full_draft.full_draft.sections must be non-empty"]
+    # R6 片B′：未知字段先剥离+注记（降级），不再产生 unexpected key 错误。
+    sanitize_protocol_full_draft_sections(output)
     for index, section in enumerate(sections):
         prefix = f"full_draft.sections[{index}]"
         if not isinstance(section, dict):
             errors.append(f"{prefix} must be an object")
             continue
         missing = sorted(PROTOCOL_FULL_DRAFT_REQUIRED_KEYS.difference(section))
-        unexpected = sorted(set(section).difference(PROTOCOL_FULL_DRAFT_REQUIRED_KEYS))
         errors.extend(f"{prefix} missing required key: {key}" for key in missing)
-        errors.extend(f"{prefix} contains unexpected key: {key}" for key in unexpected)
         if not isinstance(section.get("section_id"), str) or not section["section_id"].strip():
             errors.append(f"{prefix}.section_id must be a non-empty string")
         status = section.get("content_status")

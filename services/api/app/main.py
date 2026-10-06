@@ -4118,6 +4118,20 @@ def list_projects():
 
 @app.post("/api/projects", status_code=201)
 def create_project(request: UserProjectCreateRequest):
+    # P0-16（R27 片1③）：起点日志——uvicorn只在完成时打访问日志，现场
+    # 84秒静默冻结无法区分『请求未发出』vs『服务端悬挂』。起点+终点
+    # 两条日志让慢建项可定位（journey库BEGIN IMMEDIATE竞争为首选嫌疑）。
+    import time as _time
+
+    _t0 = _time.monotonic()
+    logger.info("[project-create-start] project_code=%s indication=%.40s", request.project_code or "<auto>", request.indication)
+    try:
+        return _create_project_impl(request)
+    finally:
+        logger.info("[project-create-done] elapsed=%.1fs", _time.monotonic() - _t0)
+
+
+def _create_project_impl(request: UserProjectCreateRequest):
     try:
         record = user_project_store.create(request)
         # Auto-admit new projects into the Protocol v3 workflow allowlist
@@ -6109,6 +6123,30 @@ def _translation_batch_review_skip_reason(item) -> str:
     return "not_eligible"
 
 
+def _translation_batch_item_is_substantive(project_id: str, item: Any) -> bool:
+    """P1-2（R27自检r3）：批量确认的实质性预过滤。
+
+    现场反例：『一键确认合格候选(12)』把机器忠实度通过但仅为标题型短文本
+    （如『4.2 排除标准』8字）的片段一并放行，PICOS对齐按同一实质性规则
+    （≥20字、非占位/待定标记）拒绝 6/12 → 语料门只能走例外。两道门必须
+    同口径：非实质性候选不进批量确认合格集，跳过并给出人话原因，由人工
+    单独核对或保持不入语料。
+    """
+    from .medical_writing_corpus_readiness import (
+        _is_substantive_evidence_brief,
+    )
+
+    try:
+        translation = writing_reference_repository.translation(
+            project_id, item.translation_id, item.translation_revision
+        )
+    except Exception:  # noqa: BLE001 — 读取失败按不可确处理（fail-closed）
+        return False
+    return _is_substantive_evidence_brief(
+        type("Brief", (), {"approved_zh_text": translation.translated_text})()
+    )
+
+
 @app.post(
     "/api/projects/{project_id}/medical-writing/references/translation-batches/{batch_id}/medical-review"
 )
@@ -6143,6 +6181,7 @@ def batch_review_writing_reference_translations(
                 and item.medical_review_status == "not_reviewed"
                 and item.author_confirmation_status == "not_confirmed"
                 and item.admission_status != "invalidated"
+                and _translation_batch_item_is_substantive(canonical_id, item)
             ):
                 eligible_keys.add((item.translation_id, item.translation_revision))
         skipped: list[WritingReferenceTranslationBatchReviewItemOutcome] = []
@@ -6172,6 +6211,21 @@ def batch_review_writing_reference_translations(
                             "translation revision changed: "
                             f"requested={target.translation_revision}, "
                             f"current={current.translation_revision}"
+                        ),
+                    )
+                )
+            elif not _translation_batch_item_is_substantive(
+                canonical_id, current
+            ):
+                skipped.append(
+                    WritingReferenceTranslationBatchReviewItemOutcome(
+                        translation_id=target.translation_id,
+                        translation_revision=target.translation_revision,
+                        outcome="skipped",
+                        reason=(
+                            "non_substantive_candidate_text: "
+                            "译文为标题型短文本或占位内容，不能支撑设计决策；"
+                            "请人工单独核对该片段或保持不入语料"
                         ),
                     )
                 )
@@ -10309,10 +10363,18 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
     # NEW-21：错字词典替换只发生在导出副本（存储的源文档行不动），逐章变更
     # 注记并入占位符报告一并呈现。
     typo_notes = _apply_export_text_quality_lint(document)
+    # R6 片C′（P1-42）：批注族先剥离（导出副本），未闭合残段随后由占位符
+    # 报告计数并拦门。
+    annotation_strip_notes = _apply_export_annotation_sanitization(document)
     # NEW-17 内容族①（R27 第3轮修订）：导出占位符门。
     placeholder_report = _export_placeholder_report(document)
     if typo_notes:
         placeholder_report["text_quality"]["replacements"] = typo_notes
+    if annotation_strip_notes:
+        placeholder_report["annotation_strip"] = {
+            "sections": annotation_strip_notes,
+            "total_count": sum(int(item.get("count") or 0) for item in annotation_strip_notes),
+        }
     _enforce_export_placeholder_gate(
         placeholder_report,
         mode=mode,
@@ -10322,6 +10384,16 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
             )
         ),
     )
+    # R6 片C′（P1-30）版本策略：占位/批注计数>0 的草稿导出只标「草案-N」。
+    version_label = _export_version_label(
+        document,
+        total_markers=int(placeholder_report.get("total_count") or 0)
+        + int((placeholder_report.get("annotation_strip") or {}).get("total_count") or 0),
+        mode=mode,
+    )
+    if version_label and version_label != str(getattr(document, "version", "") or ""):
+        document = document.model_copy(update={"version": version_label})
+        placeholder_report["version_label_policy"] = "draft_placeholder"
     return {
         **verified,
         "document": document,
@@ -10477,11 +10549,74 @@ _EXPORT_PLACEHOLDER_PATTERN = re.compile(
 )
 
 
+# R6 片C′（P1-42）：导出清扫正则族。现场（r5-A/export.docx 运行块127）：
+# 『…滴定导入；安（医学审核注：…口径统一。）慰剂组接受…』——批注随V1.0
+# 导出并把「安慰剂」从中间剖开（评审读感即“截断于『安』”）。剥离只认
+# 闭合形态（整对括号或至句号止），未闭合残段留给占位符报告计数拦门。
+_EXPORT_WORKFLOW_ANNOTATION_RE = re.compile(
+    r"[（(]\s*(?:医学审核注|医学撰写批注|内部工作流话术)[：:].*?[）)]"
+    r"|(?<![（(])(?:医学审核注|医学撰写批注|内部工作流话术)[：:][^。]*。"
+    r"|legacy-derived-[A-Za-z0-9_-]+"
+    r"|【V\d+】"
+)
+_EXPORT_ANNOTATION_RESIDUAL_RE = re.compile(
+    r"医学审核注|医学撰写批注|内部工作流话术|legacy-derived-"
+)
+
+
+def _apply_export_annotation_sanitization(document) -> list[dict]:
+    """在导出副本上剥离内联批注族，返回逐章注记。存储的源文档不动。"""
+    notes: list[dict] = []
+    for section in getattr(document, "sections", None) or []:
+        section_count = 0
+        for block in section.content_blocks or []:
+            if not isinstance(block, Mapping):
+                continue
+            targets: list[tuple[dict, str]] = []
+            if isinstance(block.get("text"), str) and block["text"]:
+                targets.append((block, "text"))
+            rich = block.get("rich_text")
+            if isinstance(rich, Mapping) and isinstance(rich.get("content"), list):
+                for node in rich["content"]:
+                    if isinstance(node, Mapping) and isinstance(node.get("text"), str) and node["text"]:
+                        targets.append((node, "text"))
+            for target, key in targets:
+                original = target[key]
+                replaced = _EXPORT_WORKFLOW_ANNOTATION_RE.sub("", original)
+                if replaced != original:
+                    section_count += len(
+                        list(_EXPORT_WORKFLOW_ANNOTATION_RE.finditer(original))
+                    )
+                    target[key] = replaced
+        if section_count:
+            notes.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                    "count": section_count,
+                }
+            )
+    return notes
+
+
+def _export_version_label(document, *, total_markers: int, mode: str) -> str:
+    """R6 片C′（P1-30）版本策略：占位/批注计数>0 的草稿导出只能标
+    “草案-N”（N 取正式版本号主版本），V1.0 正式导出要求计数=0（由
+    占位符门保证）。只改导出副本标签，存储文档版本不动。"""
+    if mode == "draft_preview" and int(total_markers) > 0:
+        match = re.match(r"\s*[Vv]?(\d+)", str(getattr(document, "version", "") or ""))
+        major = match.group(1) if match else "1"
+        return f"草案-{major}"
+    return str(getattr(document, "version", "") or "")
+
+
 # NEW-21（R27 第1轮末修订）：导出层错字词典——仅收录有真实现场证据的错字
 # （R1A 慢咳项目「咳嗉」），避免无证据映射引入新错。替换只发生在导出副本
 # 并留逐章变更注记；导入源行不动（守 immutable 红线）。
 _EXPORT_TYPO_REPLACEMENTS = {
     "咳嗉": "咳嗽",
+    # R6 片C′（P2-36）：r6-D export.docx 保密声明现场错字。
+    "监管管理部门": "监督管理部门",
 }
 # CJK 叠词：2-4 个汉字单元紧邻重复（如「策略策略」「评估评估」）。
 # 仅检测入清单，不自动改写——去重需要语义判断，交给医学经理/AI 修订。
@@ -10539,6 +10674,12 @@ def _export_placeholder_report(document) -> dict:
         matches: list[str] = []
         for text in texts:
             matches.extend(match.group(0) for match in _EXPORT_PLACEHOLDER_PATTERN.finditer(text))
+            # R6 片C′：清扫后仍残留的未闭合批注片段按占位符计入 total
+            #（V1.0 正式导出依赖该计数拦截）。
+            matches.extend(
+                f"批注残段:{match.group(0)}"
+                for match in _EXPORT_ANNOTATION_RESIDUAL_RE.finditer(text)
+            )
         if matches:
             total += len(matches)
             sections_report.append(

@@ -17,18 +17,14 @@ export async function loadDevRuntimeExpectation({ dev = Boolean(import.meta.env?
     if (!live || typeof live !== "object" || !live.expectedBackendBuildId) {
       return { expectation: runtimeExpectation, driftHint: "", live: false };
     }
-    // 方向判定：live 期望 ≠ vite 启动时期望 ⇒ vite 比当前源码树旧（重启vite，
-    // 独立告警——即使运行中后端已是新码也要点名，替换旧版"刷新或同步"空话）；
-    // 运行中后端 ≠ live 期望 ⇒ 后端旧（重启后端）。两个方向各自指名重启对象。
-    const viteStale = live.expectedBackendBuildId !== runtimeExpectation.expectedBackendBuildId;
+    // P2-38（批三A）：横幅判定只看『运行中后端 buildid 落后于当前源码树』
+    // （payload.backend_build_id vs live 期望，见 assessRuntimeReadiness）。
+    // vite 启动指纹落后不再作为横幅条件——dev 下比对基准本就取自当前
+    // 源码树（/runtime-build.json），vite 是否重启不影响判定正确性。
     return {
       expectation: Object.freeze({ ...runtimeExpectation, ...live }),
       live: true,
       driftHint: "请重启本子系统后端(5301)后刷新页面",
-      viteDriftWarning: viteStale
-        ? `前端开发服务早于当前后端代码（vite启动时 ${runtimeExpectation.expectedBackendBuildId}，`
-          + `当前源码树 ${live.expectedBackendBuildId}）——请重启vite后刷新页面`
-        : "",
     };
   } catch {
     return { expectation: runtimeExpectation, driftHint: "", live: false };

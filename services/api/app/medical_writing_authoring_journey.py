@@ -3115,10 +3115,18 @@ class MedicalWritingAuthoringJourneyService:
         # only remaining reasons an override may be refused.
         if not state.framing_complete or not state.picos_complete:
             raise self._override_precondition_error(state)
-        missing = set(state.corpus_gate.missing_requirements)
+        current_missing = set(state.corpus_gate.missing_requirements)
         acknowledged = set(request.acknowledged_missing_requirements)
-        if acknowledged != missing:
+        if acknowledged != current_missing:
             raise ValueError("corpus gate override must acknowledge every current missing requirement")
+        # R6 片A′（P2-43）：已放行幂等。门上已有 active override 且本次
+        # 确认集等于当前缺失集时，重复放行是医学上等价的决定——必须
+        # no-op 返回当前状态，不膨胀修订号、不追加 override 事件。现场
+        # （R6-A 等项目）重复放行曾把版本 14→16 静默膨胀并叠加前端
+        # 陈旧态；首次放行记录是唯一权威审计，缺失集在重算后变化时
+        # apply_corpus_projection 按契约保留放行，同样命中本分支。
+        if state.corpus_gate.access_permitted and state.corpus_gate.override.active:
+            return state
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             replay = self._idempotent_replay(

@@ -35,6 +35,55 @@ describe('A701 受控状态/错误码合同', () => {
 });
 
 // 0926V1 G7 / A702: 超时不得无证据称“任务仍在后台”。
+describe('NEW-P0-25批三A：FastAPI 422原始JSON人话化（R2现场string_too_short数组直出）', () => {
+  test('校验错误数组输出受控中文，不漏内部字段名', () => {
+    const raw = JSON.stringify([
+      { type: 'string_too_short', loc: ['body', 'idempotency_key'], msg: 'String should have at least 8 characters' },
+    ]);
+    const shown = medicalWritingSafeErrorText({ message: raw });
+    expect(shown).toMatch(/[\u3400-\u9fff]/);
+    expect(shown).not.toContain('string_too_short');
+    expect(shown).not.toContain('idempotency_key');
+    expect(shown).toContain('系统内部校验未通过');
+  });
+
+  test('单条pydantic错误对象同样人话化', () => {
+    const raw = "[{'type': 'missing', 'loc': ['body', 'indication'], 'msg': 'Field required'}]";
+    const shown = medicalWritingSafeErrorText({ message: raw });
+    expect(shown).toContain('系统内部校验未通过');
+    expect(shown).toMatch(/[\u3400-\u9fff]/);
+  });
+});
+
+// R6 片B′（P0-25）现场（r6-D report.md:175）：全文初稿失败消息把
+// `full_draft.sections[0] contains unexpected key: rationale_note`、
+// `ValueError: 草稿导出含 74 处【待补齐】`、`chunk 0` 等工程串直接
+// 摆进用户界面。契约：含这些工程痕迹的混合中文消息必须整体替换为
+// 受控中文，不得因“以中文开头/含中文”而原样透传。
+describe('R6 片B′：全文初稿工程串不得透传到用户消息', () => {
+  test.each([
+    ['独立AI全文初稿未通过校验：full_draft.sections[0] contains unexpected key: rationale_note; full_draft.sections[1] contains unexpected key: rationale_note'],
+    ['全文初稿续跑失败：artifact chunk 0 locator missing'],
+    ['AI provider request failed after bounded retries: HTTP 507'],
+  ])('工程痕迹消息 %j 输出受控中文', (raw) => {
+    const shown = medicalWritingSafeErrorText({ message: raw });
+    expect(shown).toMatch(/[\u3400-\u9fff]/);
+    expect(shown).not.toMatch(/full_draft\.sections|unexpected key|rationale_note|ValueError|chunk 0|HTTP 507/);
+  });
+
+  test('ValueError 前缀只剥前缀，中文合同正文保留（译文管线现场）', () => {
+    const shown = medicalWritingSafeErrorText({ message: 'ValueError: 译文管线暂时不可用' });
+    expect(shown).toContain('译文管线暂时不可用');
+    expect(shown).not.toContain('ValueError');
+  });
+
+  test('草稿导出占位提示剥前缀后仍是用户可读中文', () => {
+    const shown = medicalWritingSafeErrorText({ message: 'ValueError: 草稿导出含 74 处【待补齐】占位或测试标记' });
+    expect(shown).not.toContain('ValueError');
+    expect(shown).toContain('【待补齐】');
+  });
+});
+
 describe('A702 超时与后台声明', () => {
   test('超时且job状态未知：不声称仍在后台', () => {
     const shown = medicalWritingSafeErrorText({ message: 'Request timed out after 30000 ms' });

@@ -1,0 +1,434 @@
+[protocol-v3-test-inventory] runner=vitest tests=35
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ✓ src/features/medical-writing/protocol-workbench/DesignElementsCards.test.jsx (3 tests) 211ms
+ ✓ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx (9 tests) 254ms
+ ✓ src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx (10 tests) 315ms
+ ✓ src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx (20 tests) 370ms
+ ✓ src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.test.jsx (7 tests) 357ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx (4 tests) 405ms
+ ✓ src/features/writing-reference/WritingReferencePanel.residualAdmission.test.jsx (2 tests) 564ms
+     ✓ lets the author admit a fidelity-blocked translation after acknowledging every failure code  433ms
+ ✓ src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx (12 tests) 817ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx (9 tests) 624ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.platformEntryIdempotent.test.jsx (3 tests) 623ms
+     ✓ navigates via the existing greenfield document (GET first) instead of posting a second creation  356ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactStaleRecovery.test.jsx (1 test) 702ms
+     ✓ auto-refreshes the journey and resubmits on 409 stale instead of dead-ending  701ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx (21 tests) 976ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.pipelineDraftRelease.test.jsx (3 tests) 788ms
+     ✓ triaging keeps the draft save usable while the stage commit stays frozen  514ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.errorAndHydration.test.jsx (10 tests) 897ms
+     ✓ keeps the checked administration route when the draft-save response omits product_profile  410ms
+     ✓ NEW-42: explains disabled stage-strip buttons and always shows missing framing fields  311ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.overrideAck.test.jsx (3 tests) 971ms
+     ✓ keeps the checked gaps and reason when the revision bumps with an unchanged gap set  553ms
+ ✓ src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx (4 tests) 314ms
+ ✓ src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx (8 tests) 418ms
+ ✓ src/features/writing-reference/userFacingErrorCopy.test.jsx (3 tests) 235ms
+ ✓ src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx (3 tests) 236ms
+ ✓ src/runtimeReadiness.test.jsx (8 tests) 5ms
+ ✓ src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx (12 tests) 7ms
+ ✓ src/features/writing-reference/WritingReferencePanel.basketAuthority.test.jsx (3 tests) 361ms
+ ✓ src/features/medical-writing/errorContract.test.jsx (15 tests) 5ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactVisibility.test.jsx (1 test) 541ms
+     ✓ closes the competitor drawer and reveals the confirmation when impact opens  540ms
+ ✓ tests/ProtocolSourceSelectionRecovery.test.jsx (1 test) 273ms
+ ✓ src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.test.jsx (5 tests) 87ms
+ ✓ src/features/medical-writing/CorpusGate.overrideDeadlock.test.jsx (1 test) 163ms
+ ✓ src/features/medical-writing/lineBreakAndShellWidth.test.jsx (3 tests) 4ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.assemblyPlanConfirmEntry.test.jsx (3 tests) 503ms
+     ✓ enables the writing entry when the plan is complete but unconfirmed, and the click confirms the plan before creating the document  354ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.prefillDestination.test.jsx (3 tests) 2ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.requiredFieldSurfaces.test.jsx (7 tests) 1800ms
+     ✓ L1: 高级微调表单体默认展开，第二步与第一步皆可直接编辑  475ms
+     ✓ L4: 草稿保存后提示缺失字段名称而非仅数量  320ms
+     ✓ L2: 「研究臂/队列」在设计适用性组可手动编辑并写入结构化设计事实  408ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.dirtyMergeArrays.test.jsx (2 tests) 2ms
+ ✓ src/features/medical-writing/parsePopulationIntent.test.jsx (3 tests) 2ms
+ ✓ src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx (2 tests) 2ms
+ ❯ src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx (2 tests | 1 failed) 10374ms
+     ✓ sends the revision POST, polls the accepted durable job to completion, and surfaces the result  2300ms
+     × surfaces the durable job failure instead of failing silently 8073ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx > revise-on-returned-review recovery loop (R26 self-check #2 P0-A) > surfaces the durable job failure instead of failing silently
+TestingLibraryElementError: Unable to find an element with the text: /操作未完成：.*译文管线暂时不可用/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"writing-reference-panel authoring-mode"[39m
+      [33mdata-compact[39m=[32m"false"[39m
+      [33mdata-embedded[39m=[32m"false"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"writing-reference-header"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span>[39m
+            [0m建稿前语料准备[0m
+          [36m</span>[39m
+          [36m<strong>[39m
+            [0m竞品方案参照[0m
+          [36m</strong>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"icon-button"[39m
+          [33mtitle[39m=[32m"刷新来源、审核与版本状态"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"15"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"15"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"writing-reference-boundary"[39m
+      [36m>[39m
+        [0m当前工作区已保存本次公开检索快照（wref_snap_revise_front）；候选分诊、原文处理、译文审核和准入将沿用同一来源链。检索快照本身不等于医学确认。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"竞品方案参照工作步骤"[39m
+        [33mclass[39m=[32m"writing-reference-views"[39m
+        [33mrole[39m=[32m"tablist"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-selected[39m=[32m"false"[39m
+          [33mclass[39m=[32m""[39m
+          [33mrole[39m=[32m"tab"[39m
+        [36m>[39m
+          [0m候选研究[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-selected[39m=[32m"false"[39m
+          [33mclass[39m=[32m""[39m
+          [33mrole[39m=[32m"tab"[39m
+        [36m>[39m
+          [0m文档与解析[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-selected[39m=[32m"true"[39m
+          [33mclass[39m=[32m"active"[39m
+          [33mrole[39m=[32m"tab"[39m
+        [36m>[39m
+          [0m结构与译文确认[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-selected[39m=[32m"false"[39m
+          [33mclass[39m=[32m""[39m
+          [33mrole[39m=[32m"tab"[39m
+        [36m>[39m
+          [0m已准入证据[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"writing-reference-message danger"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0m操作未完成：AI输出里含有系统不识别的字段或标记：本次结果未写入，任务进度已保留，请重试或续跑；若反复出现请截图反馈给管理员。[0m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"writing-reference-view"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"writing-reference-translation-batch"[39m
+          [33mdata-batch-status[39m=[32m"not_started"[39m
+          [33mdata-testid[39m=[32m"reference-translation-batch"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"writing-reference-translation-batch-head"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-languages"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m5 8 6 6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m4 14 6-6 2-3"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 5h12"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M7 2h1"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m22 22-5-10-5 10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M14 18h6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m监管中文候选批次[0m
+              [36m</span>[39m
+              [36m<strong>[39m
+                [0m按 M11 结构范围生成[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m机器忠实度检查只验证候选与原文的一致性；通过后由医学作者一键确认合格候选或逐片段核对，确认即直接准入。[0m
+              [36m</small>[39m
+            [36m</div>[39m
+            [36m<code[39m
+              [33mtitle[39m=[32m"当前监管术语契约"[39m
+            [36m>[39m
+              [0mcms_regulatory_zh_v1[0m
+            [36m</code>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"writing-reference-translation-summary"[39m
+            [33mdata-testid[39m=[32m"translation-batch-counts"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<small>[39m
+                [0m当前范围批次[0m
+              [36m</small>[39m
+              [36m<b[39m
+                [33mclass[39m=[32m"not_started"[39m
+              [36m>[39m
+                [0m尚未生成[0m
+              [36m</b>[39m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<small>[39m
+                [0m符合条件[0m
+              [36m</small>[39m
+              [36m<b>[39m
+                [0m0[0m
+              [36m</b>[39m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<small>[39m
+                [0m已生成候选[0m
+ ...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"writing-reference-panel authoring-mode"[39m
+        [33mdata-compact[39m=[32m"false"[39m
+        [33mdata-embedded[39m=[32m"false"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"writing-reference-header"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<span>[39m
+              [0m建稿前语料准备[0m
+            [36m</span>[39m
+            [36m<strong>[39m
+              [0m竞品方案参照[0m
+            [36m</strong>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"icon-button"[39m
+            [33mtitle[39m=[32m"刷新来源、审核与版本状态"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"15"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"15"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"writing-reference-boundary"[39m
+        [36m>[39m
+          [0m当前工作区已保存本次公开检索快照（wref_snap_revise_front）；候选分诊、原文处理、译文审核和准入将沿用同一来源链。检索快照本身不等于医学确认。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"竞品方案参照工作步骤"[39m
+          [33mclass[39m=[32m"writing-reference-views"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mrole[39m=[32m"tab"[39m
+          [36m>[39m
+            [0m候选研究[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mrole[39m=[32m"tab"[39m
+          [36m>[39m
+            [0m文档与解析[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mclass[39m=[32m"active"[39m
+            [33mrole[39m=[32m"tab"[39m
+          [36m>[39m
+            [0m结构与译文确认[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mclass[39m=[32m""[39m
+            [33mrole[39m=[32m"tab"[39m
+          [36m>[39m
+            [0m已准入证据[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"writing-reference-message danger"[39m
+          [33mrole[39m=[32m"alert"[39m
+        [36m>[39m
+          [0m操作未完成：AI输出里含有系统不识别的字段或标记：本次结果未写入，任务进度已保留，请重试或续跑；若反复出现请截图反馈给管理员。[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"writing-reference-view"[39m
+        [36m>[39m
+          [36m<section[39m
+            [33mclass[39m=[32m"writing-reference-translation-batch"[39m
+            [33mdata-batch-status[39m=[32m"not_started"[39m
+            [33mdata-testid[39m=[32m"reference-translation-batch"[39m
+          [36m>[39m
+            [36m<header[39m
+              [33mclass[39m=[32m"writing-reference-translation-batch-head"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-languages"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"14"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m5 8 6 6"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m4 14 6-6 2-3"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M2 5h12"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M7 2h1"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m22 22-5-10-5 10"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M14 18h6"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m监管中文候选批次[0m
+                [36m</span>[39m
+                [36m<strong>[39m
+                  [0m按 M11 结构范围生成[0m
+                [36m</strong>[39m
+                [36m<small>[39m
+                  [0m机器忠实度检查只验证候选与原文的一致性；通过后由医学作者一键确认合格候选或逐片段核对，确认即直接准入。[0m
+                [36m</small>[39m
+              [36m</div>[39m
+              [36m<code[39m
+                [33mtitle[39m=[32m"当前监管术语契约"[39m
+              [36m>[39m
+                [0mcms_regulatory_zh_v1[0m
+              [36m</code>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33maria-live[39m=[32m"polite"[39m
+              [33mclass[39m=[32m"writing-reference-translation-summary"[39m
+              [33mdata-testid[39m=[32m"translation-batch-counts"[39m
+              [33mrole[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [36m<small>[39m
+                  [0m当前范围批次[0m
+                [36m</small>[39m
+                [36m<b[39m
+                  [33mclass[39m=[32m"not_started"[39m
+                [36m>[39m
+                  [0m尚未生成[0m
+           ...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx:226:11
+    224|     fireEvent.click(await screen.findByRole("button", { name: /按审核意见重新…
+    225|
+    226|     await waitFor(() => {
+       |           ^
+    227|       expect(screen.getByText(/操作未完成：.*译文管线暂时不可用/)).toBeTruthy();
+    228|     }, { timeout: 8000 });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 34 passed (35)
+      Tests  1 failed | 205 passed (206)
+   Start at  16:44:28
+   Duration  11.85s (transform 5.43s, setup 0ms, import 12.15s, tests 24.20s, environment 23.71s)
+

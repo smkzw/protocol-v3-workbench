@@ -91,17 +91,18 @@ describe("medical writing runtime readiness gate contract", () => {
   // vite 启动早于代码变更（R27 现场方向）：live 期望 ≠ vite 启动时期望时，
   // 即便运行中后端已是新码，也要有一条指名"重启vite"的独立告警——横幅指向
   // 正确的重启对象，而不是泛泛的"刷新页面或同步前后端"。
-  it("NEW-4: stale vite (live tree newer than startup expectation) names restarting vite", async () => {
+  it("P2-38: vite startup fingerprint drift is no longer a banner condition", async () => {
+    // 修订（批三A）：vite启动指纹落后于源码树不再作为横幅硬条件——运行中
+    // 后端与当前源码树一致即无警示（此前常驻『请重启vite』横幅功能无损）。
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(LIVE_TREE_EXPECTATION)));
     const dev = await loadDevRuntimeExpectation({ dev: true });
-    expect(dev.viteDriftWarning).toContain("重启vite");
+    expect(dev.viteDriftWarning || "").toBe("");
     const result = assessRuntimeReadiness(matchingPayload(dev.expectation), {
       expectation: dev.expectation,
       driftHint: dev.driftHint,
     });
     expect(result.ready).toBe(true);
-    const warnings = [...result.warnings, dev.viteDriftWarning].join("\n");
-    expect(warnings).toContain("重启vite");
+    expect(result.warnings).toEqual([]);
   });
 
   // 反方向（vite 树与当前树一致、后端旧）：指引必须指向重启后端，
@@ -111,15 +112,14 @@ describe("medical writing runtime readiness gate contract", () => {
     const dev = await loadDevRuntimeExpectation({ dev: true });
     expect(dev.live).toBe(true);
     expect(dev.expectation.expectedBackendBuildId).toBe(runtimeExpectation.expectedBackendBuildId);
-    expect(dev.viteDriftWarning).toBe("");
+    expect(dev.viteDriftWarning || "").toBe("");
     const result = assessRuntimeReadiness(
       matchingPayload({ ...runtimeExpectation, expectedBackendBuildId: "api-stalebackend00000" }),
       { expectation: dev.expectation, driftHint: dev.driftHint },
     );
     expect(result.ready).toBe(true);
-    const warnings = [...result.warnings, dev.viteDriftWarning].join("\n");
-    expect(warnings).toContain("重启本子系统后端");
-    expect(warnings).not.toContain("重启vite");
+    expect(result.warnings.join("\n")).toContain("重启本子系统后端");
+    expect(result.warnings.join("\n")).not.toContain("重启vite");
   });
 
   // prod（非 dev）不拉取 /runtime-build.json，仍用 define 注入的期望。
