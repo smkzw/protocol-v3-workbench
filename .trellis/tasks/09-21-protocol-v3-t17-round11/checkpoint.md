@@ -465,3 +465,8 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **脚本修订要点（缓存保全设计）**：四条1004指令（门重设计/前端深度对齐重开/8910不动/grok改cursor-grok-4.6）做成 `CONTEXT_1004` 常量，经 `ctxFor(round)` **只从第2轮起注入**任务书——第1轮全部ask文本与旧run字节一致故缓存全保；独立复核/递交两收口节点用 CONTEXT_FULL（含新指令）。收口 notCovered 已把医学处置改向（测试者以用户身份执行+门重设计）。
 **第2轮起将发生**：实现师修订环节承接两新批（忠实度门重设计：高置信自动放行+批量确认UX；前端深度对齐：逐页走查换行/字体/按钮/下钻四类问题）→测试扩为5席（+第5席gpt-6.1-sol注册QA/移植肾排斥）+修订路由验证员→D席grok换cursor-grok-4.6（omp pi harness）。
 **恢复前已入册**：OWNER_DECISION_gate_ux_frontend_grok_20261004.md（8594213已push）。
+
+## 检查点（2026-10-06 晚，首屏适配+协调记录+阶段递交）
+- **首屏重构适配**（workbench仓5a009dc6）：统一工作台首页改三子系统多选；写作侧选A+补缝（摘要导入路径modules透传四处surgical修复）；首屏五件套未碰；浏览器级回归待联合环境。**owner裁定：写作前端全量同步统一仓=后期各子系统完成后一并合并**（协调台账=workbench仓scripts/frontend_refactor_20261006/COORDINATION_LEDGER.md）。
+- **阶段递交**：R2-R7证据快照已提交push（源码由各轮修订批次提交）。
+- **LOOP现状**：dwfrun-5537f61d第7轮自检中（单撰写者制+运维帽+OCR准入三新规首战）；缺陷趋势24→22→14→15→8→6。
