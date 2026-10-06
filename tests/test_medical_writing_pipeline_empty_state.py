@@ -137,7 +137,10 @@ class TestEmptyPipelineState:
         ("queued", True),
         ("searching", True),
         ("triaging", True),
-        ("awaiting_triage_confirm", True),
+        # NEW-P0-19（R27 片2①）：分诊确认等待放行作者提交——现场两形态
+        # 死锁（完成第一步↔确认分诊互为前置），冻结输入由immutable
+        # snapshot单独守护。
+        ("awaiting_triage_confirm", False),
         ("preparing", True),
         ("translating", True),
         ("analyzing_round1", True),

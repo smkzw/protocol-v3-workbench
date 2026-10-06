@@ -2696,10 +2696,20 @@ class MedicalWritingAuthoringJourneyService:
             raise MedicalWritingAuthoringJourneyConflictError(
                 f"stale authoring journey revision: expected {request.expected_revision}, current {state.revision}"
             )
-        if not state.picos_complete or state.search_plan is None:
-            raise ValueError("PICOS and competitor search must be complete before triage finalization")
+        if state.search_plan is None:
+            raise ValueError(
+                "competitor search must be complete before triage finalization"
+            )
+        # NEW-P0-19（R27 片2②）：PICOS完成度不再是分诊固化的硬前置——
+        # PICOS对齐由独立corpus gate环节把关；双前置是现场死锁源头
+        # （完成第一步↔确认分诊互拒）。快照绑定校验保留（下一行）。
         if state.search_plan.latest_snapshot_id != request.snapshot_id:
-            raise ValueError("triage must use the immutable snapshot bound to the authoring journey")
+            raise ValueError(
+                # P1-34（R27 片2）：现场直出英文原文。快照漂移=检索结果已更新
+                # （自动重检索后人工标记基于旧结果）——给可行动指引而非内部术语。
+                "检索结果已更新，当前分诊标记基于旧结果：请在竞品分诊中刷新"
+                "后按最新候选重新核对，再确认锁定篮子。"
+            )
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             replay = self._idempotent_replay(

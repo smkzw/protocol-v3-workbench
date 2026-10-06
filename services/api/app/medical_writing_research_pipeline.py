@@ -75,6 +75,11 @@ USER_ACTION_WAITING_STAGES = frozenset(
 # user-action pauses; they may legitimately require a journey/PICOS update.
 AUTHORING_WRITE_ALLOWED_WAITING_STAGES = USER_ACTION_WAITING_STAGES | {
     "awaiting_corpus_admission",
+    # NEW-P0-19（R27 片2①）：分诊确认等待期放行作者提交。现场两形态死锁
+    # ——完成第一步被409挡住，而解除该状态的『确认分诊』又要求先完成
+    # PICOS（互为前置）。分诊确认动作本身不写framing/picos；其冻结输入
+    # 由immutable snapshot机制单独守护，放行提交不会污染分诊快照。
+    "awaiting_triage_confirm",
 }
 
 

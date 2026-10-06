@@ -2584,7 +2584,39 @@ export function MedicalWritingAuthoringJourneySetup({
     if (!impact) return;
     setBusy("confirm-impact"); setMessage("");
     try { await commitPayload(impact.targetStage, impact.payload, impact.preview.preview_id, impact.baseRevision ?? null); }
-    catch (error) { setMessage(`变更未提交：${error.message}`); }
+    catch (error) {
+      // P2-2（R27 自检20261005）：变更确认模态反复出现且内嵌
+      // 『变更未提交：stale authoring journey revision…』，此前唯一出路是
+      // 整页刷新——确认面板持有陈旧revision时，自动拉取最新旅程并按新
+      // 事实重走核验（需确认则带新数据重开面板，无需确认则直接提交），
+      // 不再把用户晾在死路模态里。
+      if (
+        error?.status === 409
+        && String(error?.message || "").includes("stale authoring journey revision")
+        && activeProjectRef.current === projectId
+      ) {
+        try {
+          const latest = await fetch(`/api/projects/${projectId}/medical-writing/authoring-journey`).then(readJson);
+          if (activeProjectRef.current !== projectId) return;
+          if (latest?.revision > (impact.baseRevision ?? 0)) {
+            applyJourneyResponse(latest);
+            const preview = await fetchImpactPreviewFor(impact.targetStage, impact.payload);
+            if (preview.requires_confirmation) {
+              setImpact({ preview, targetStage: impact.targetStage, payload: impact.payload, waitedForPipeline: true });
+              setMessage("检测到内容版本已更新：已按最新版本重新核验变更影响，请确认后提交。");
+            } else {
+              await commitPayload(impact.targetStage, impact.payload);
+              setImpact(null);
+            }
+            return;
+          }
+        } catch (recoveryError) {
+          setMessage(`变更未提交：${error.message}；自动恢复也未完成（${recoveryError.message}），请刷新页面后重试。`);
+          return;
+        }
+      }
+      setMessage(`变更未提交：${error.message}`);
+    }
     finally { setBusy(""); }
   };
 
@@ -2687,7 +2719,11 @@ export function MedicalWritingAuthoringJourneySetup({
     const missingLabels = Array.isArray((journey?.corpus_gate || {}).missing_requirements)
       ? [...((journey?.corpus_gate || {}).missing_requirements || [])]
       : [];
-    const ack = [...new Set(acknowledged || [])].sort();
+    // R27 本轮 P0-A：提交集严格过滤为当前缺失集——杜绝把已满足项
+    // （或历史缺失项）混入确认集触发后端精确相等校验422。
+    const ack = [...new Set(acknowledged || [])]
+      .filter((label) => missingLabels.includes(label))
+      .sort();
     const reasonText = (overrideReason || "").trim();
     if (!missingLabels.every((label) => ack.includes(label))) {
       setMessage("例外放行前请逐项确认全部未满足条件。");
@@ -3029,6 +3065,22 @@ export function MedicalWritingAuthoringJourneySetup({
                   title={busy ? "正在准入下一批原文，请稍候" : "复用已完成原文和OCR结果，准入下一批公开Protocol"}
                 >
                   <RefreshCw size={14} /> {busy === "pipeline-resume" ? "准入中" : "准入下一阶段原文"}
+                </button>
+              )}
+            {/* NEW-P0-19（R27 片2③）：分诊确认等待卡的逃生门——冻结文案承诺
+                『或取消本次流水线后立即提交』，此前全界面无该按钮（现场
+                双形态死锁的唯一出路）。 */}
+            {compactResearchPipeline.stage === "awaiting_triage_confirm"
+              && (
+                <button
+                  type="button"
+                  className="authoring-light-retry"
+                  data-action="cancel-stalled-pipeline"
+                  onClick={cancelResearchPipeline}
+                  disabled={Boolean(busy)}
+                  title={busy ? "正在取消，请稍候" : "取消本次研究流水线（已完成的检索/分诊将作废），随后可立即提交研究框架修改"}
+                >
+                  <RefreshCw size={14} /> {busy === "pipeline-cancel" ? "取消中" : "取消本次流水线"}
                 </button>
               )}
             {["awaiting_translation_scope", "awaiting_corpus_analysis"].includes(
@@ -4501,7 +4553,21 @@ function CorpusGate({ projectId, journey, setJourney, selectedBriefIds, setSelec
         {visibleSearchMessage && <p>{visibleSearchMessage}</p>}
       </div>
       {reusableSnapshotId && <WritingReferencePanel projectId={projectId} variant="authoring" snapshotId={reusableSnapshotId} lockedIndication={searchPlan.registry_filter?.condition_term || journey.framing?.clinicaltrials_condition_term || journey.framing?.indication || ""} lockedPhase={journey.framing?.study_phase || ""} journey={journey} onJourneyChange={setJourney} selectedBriefIds={selectedBriefIds} onSelectedBriefIdsChange={setSelectedBriefIds} />}
-      <div className="authoring-gate-checklist"><strong>{missing.length ? "尚未满足的准入条件" : "准入条件已满足"}</strong>{(gate?.requirements?.length ? gate.requirements : missing.map((label) => ({ label, satisfied: false, detail: "" }))).map((item) => <label key={item.label} className={item.satisfied ? "satisfied" : ""}><input type="checkbox" checked={item.satisfied || acknowledged.includes(item.label)} onChange={() => { if (item.satisfied) return; setAcknowledged((current) => current.includes(item.label) ? current.filter((value) => value !== item.label) : [...current, item.label]); }} disabled={readOnly || allowed || item.satisfied} /><span><b>{item.label}</b>{item.detail && <small>{item.detail}</small>}</span></label>)}</div>
+      <div className="authoring-gate-checklist"><strong>{missing.length ? "尚未满足的准入条件" : "准入条件已满足"}</strong>{(() => {
+        /* R27 本轮 P0-A（部分覆盖语料门例外放行死锁）：勾选框只按
+           missing_requirements 渲染缺失项；已满足项以状态行呈现（无
+           checkbox）。此前按 gate.requirements 渲染5项（含已满足），
+           而 allAcknowledged/提交按 missing_requirements 比对——两侧
+           标签串不一致时（已满足项标签≠缺失项文本）勾全部→后端
+           422『must acknowledge every current missing requirement』，
+           勾缺失集→前端判不齐=界面永不可满足（现场死锁）。 */
+        const detailByLabel = new Map((gate?.requirements || []).map((item) => [item.label, item.detail || ""]));
+        const covered = (gate?.requirements || []).filter((item) => item.satisfied && !missing.includes(item.label));
+        return (<>
+          {covered.map((item) => <p key={item.label} className="authoring-gate-covered" data-testid="corpus-gate-covered-item"><b>✓ {item.label}</b></p>)}
+          {missing.map((label) => <label key={label} className={acknowledged.includes(label) ? "checked" : ""}><input type="checkbox" checked={acknowledged.includes(label)} onChange={() => setAcknowledged((current) => current.includes(label) ? current.filter((value) => value !== label) : [...current, label])} disabled={readOnly || allowed} /><span><b>{label}</b>{detailByLabel.get(label) && <small>{detailByLabel.get(label)}</small>}</span></label>)}
+        </>);
+      })()}</div>
       {readOnly ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{ready && assemblyPlanReady ? "当前文档基于已核对语料与方案结构建立" : allowed ? "当前文档基于已记录的准入状态建立" : "当前语料门未满足"}</strong><small>此处仅回看文档创建所依据的设计、方案结构与语料状态；调整需进入受控变更流程。</small></span></div></div> : existingDocument ? <div className="authoring-writing-entry"><div>{ready && assemblyPlanReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>当前写作文档已建立</strong><small>研究设计变更提交后，返回编辑器完成受影响章节的重绑定、重新核对与审阅。</small></span></div></div> : !allowed ? <details className="authoring-override"><summary>在保留全部缺口的情况下例外进入写作</summary><p className="quiet-text">仅在项目确需先行建稿时使用。逐项确认上方全部缺口；补充说明为可选项。</p><label className="synopsis-override-reason"><span>例外说明（可选）</span><textarea rows={2} value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} placeholder="可选：说明当前为何先进入写作及后续资料计划" /></label><button className="primary-button" type="button" onClick={onOverride} disabled={busy === "override" || !allAcknowledged} title={!allAcknowledged ? "请先逐项确认全部缺口" : "记录例外并进入写作"}><ShieldAlert size={14} /> {busy === "override" ? "记录中" : "确认例外并放行"}</button></details> : <div className="authoring-writing-entry"><div>{writeEntryReady ? <CheckCircle2 size={18} /> : <ShieldAlert size={18} />}<span><strong>{writeEntryReady ? (ready ? "语料与方案结构均已就绪" : "已记录例外，可建立版本化方案工作稿") : ready ? "语料已就绪，仍需完成方案结构核对" : "例外已记录，但研究定义尚未完成版本绑定"}</strong><small>{writeEntryReady ? (ready ? assemblyPlanMessage : "已明确缺少公开语料；正式稿仍须以当前版本化研究定义为唯一事实来源。") : ready ? assemblyPlanMessage : "先完成两阶段研究定义的版本绑定；语料缺口和例外理由会持续保留并纳入审计链。"}</small></span></div>{ready && !assemblyPlanComplete && onReviewAssemblyPlan && <button className="secondary-button" type="button" onClick={onReviewAssemblyPlan} disabled={assemblyPlanState.status === "loading" || assemblyPlanState.status === "refreshing"}><PenLine size={14} /> 查看待确认项</button>}<button className="primary-button" type="button" onClick={onCreateDocument} disabled={!writeEntryReady || busy === "create-document"} title={!writeEntryReady ? (ready ? assemblyPlanMessage : "请先完成两阶段研究定义版本绑定") : ready ? "确认当前方案结构并建立版本化方案工作稿" : "在已记录例外的审计状态下建立版本化方案工作稿"}><FileText size={15} /> {busy === "create-document" ? "建立中" : writeEntryReady ? "进入写作平台" : ready ? "完成核对后进入写作" : "完成研究定义后进入写作"}</button></div>}
     </section>
   );

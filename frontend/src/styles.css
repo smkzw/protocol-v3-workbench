@@ -17701,6 +17701,13 @@ textarea {
   list-style: none;
 }
 
+.authoring-gate-covered {
+  margin: 0;
+  padding: 2px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .authoring-gate-checklist {
   display: grid;
   gap: 7px;
@@ -20067,6 +20074,19 @@ textarea {
 .writing-reference-validation[data-section="ai-triage-review"] {
   order: -1;
   border-left: 3px solid var(--orange);
+}
+
+/* P1-34（R27 片2）：现场确认按钮渲染 0×0 不可见不可点——分诊审核块内的
+   主操作按钮需要显式尺寸保障，任何父级网格挤压下不得塌缩为零。 */
+.writing-reference-validation[data-section="ai-triage-review"] .primary-button {
+  min-height: 32px;
+  min-width: 120px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.writing-reference-validation[data-section="ai-triage-review"] > div {
+  min-width: 0;
 }
 
 .writing-reference-validation.requires-review {
