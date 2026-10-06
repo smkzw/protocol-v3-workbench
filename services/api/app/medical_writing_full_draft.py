@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import re
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -74,6 +75,8 @@ FULL_DRAFT_CHUNK_SIZE = 4
 # 确定性失败（路由身份变化/上下文漂移/未配置）不重试，保持 fail-fast。
 FULL_DRAFT_CHUNK_ATTEMPTS = 3
 FULL_DRAFT_MAX_OUTPUT_TOKENS = 65_536
+# R8 片Z（P1-45）：批级心跳上限——现场单批2~9.5分钟、末批20分钟无心跳。
+FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS = 45.0
 
 
 def classify_full_draft_chunk_failure(exc: Exception) -> str:
@@ -1535,6 +1538,35 @@ class MedicalWritingFullDraftService:
                 chunk_error: Exception | None = None
                 chunk_failure_class = "deterministic"
                 for attempt in range(1, FULL_DRAFT_CHUNK_ATTEMPTS + 1):
+                    # R8 片Z（P1-45）：批级心跳≤60秒——单批AI调用2~9.5分钟
+                    # 期间作业行不再静默（现场：末批20分钟无心跳须用户自行
+                    # 刷新）。执行期间由看护线程持续续约；末批/校验重试附
+                    # 已耗时（分钟）。
+                    chunk_started = time.monotonic()
+                    keepalive_stop = threading.Event()
+                    keepalive_lost = threading.Event()
+
+                    def _keepalive() -> None:
+                        while not keepalive_stop.wait(FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS):
+                            elapsed_minutes = (time.monotonic() - chunk_started) / 60.0
+                            if not heartbeat(
+                                DurableJobProgressPayload(
+                                    phase="calling_synthesis_ai",
+                                    percent=(index - 1) / max(total, 1),
+                                    step=index,
+                                    step_total=total,
+                                    message=(
+                                        f"第 {index}/{total} 批仍在生成中（已 {elapsed_minutes:.0f} 分钟）"
+                                        + (f"；末批校验中（已 {elapsed_minutes:.0f} 分钟）"
+                                           if index == total and attempt > 1 else "")
+                                    ),
+                                )
+                            ):
+                                keepalive_lost.set()
+                                return
+
+                    keepalive = threading.Thread(target=_keepalive, daemon=True)
+                    keepalive.start()
                     try:
                         output, run, sources = self._execute_chunk(
                             service, job.project_id, expected, chunk
@@ -1563,7 +1595,7 @@ class MedicalWritingFullDraftService:
                                     message=(
                                         f"第 {index}/{total} 批"
                                         + ("输出未通过校验，正在重新请求" if chunk_failure_class == "validation" else "遇到服务繁忙，稍候自动重试")
-                                        + f"（第 {attempt + 1} 次尝试）"
+                                        + f"（第 {attempt + 1} 次尝试，已 {(time.monotonic() - chunk_started) / 60.0:.0f} 分钟）"
                                     ),
                                 )
                             ):
@@ -1571,6 +1603,14 @@ class MedicalWritingFullDraftService:
                                     error="全文初稿任务失去执行权",
                                     retryable=True,
                                 )
+                    finally:
+                        keepalive_stop.set()
+                        keepalive.join(timeout=1.0)
+                    if keepalive_lost.is_set():
+                        return DurableJobResult(
+                            error="全文初稿任务失去执行权",
+                            retryable=True,
+                        )
                 if chunk_error is not None:
                     # R6 片B′：重试预算耗尽→跳过并标记，不弃整单。
                     skipped_chunks.append({

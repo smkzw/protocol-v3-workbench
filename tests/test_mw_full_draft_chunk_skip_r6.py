@@ -94,6 +94,24 @@ class ChunkSkipAndMarkSourceContractTests(unittest.TestCase):
 
         self.assertLessEqual(FULL_DRAFT_CHUNK_ATTEMPTS, 3, "1次执行+至多2次重试。")
 
+    def test_chunk_heartbeat_interval_is_at_most_60s(self) -> None:
+        """R8 片Z（P1-45）：批级心跳≤60秒；末批校验重试附已耗时。"""
+        from services.api.app.medical_writing_full_draft import (
+            FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS,
+        )
+
+        self.assertLessEqual(
+            FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS,
+            60.0,
+            "单批AI调用2~9.5分钟，心跳间隔必须≤60秒。",
+        )
+        source = (
+            ROOT / "services" / "api" / "app" / "medical_writing_full_draft.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("keepalive", source)
+        self.assertIn("仍在生成中", source)
+        self.assertIn("末批校验中", source)
+
 
 if __name__ == "__main__":
     unittest.main()

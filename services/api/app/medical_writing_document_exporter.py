@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import contextvars
 import copy
 import difflib
 import hashlib
@@ -86,6 +87,40 @@ class MedicalWritingDocumentExportMode(str, Enum):
 
 class MedicalWritingDocumentDocxExportError(ValueError):
     """Raised when a medical-writing document is not safe to export."""
+
+
+# R8 片X（P0-26）：渲染自愈降级注记。导出器双表示不变量（rich_text 投影
+# == text）历史上是硬门（两处 raise 整单拒导出）；任一写入路径只改其一
+# 即埋雷且用户编辑无法解除（R7-A 现场三连败零导出件）。新契约：投影不
+# 一致的块降级按纯文本渲染并在导出报告留注记——完整性代价（丢富文本
+# 排版）远小于零导出。注记用 contextvar 收集，随请求上下文隔离。
+_RENDER_DEGRADATION_NOTES = contextvars.ContextVar(
+    "mw_export_render_degradation_notes", default=None
+)
+
+
+def reset_render_degradation_notes() -> None:
+    _RENDER_DEGRADATION_NOTES.set([])
+
+
+def take_render_degradation_notes() -> list:
+    notes = _RENDER_DEGRADATION_NOTES.get()
+    _RENDER_DEGRADATION_NOTES.set([])
+    return list(notes or [])
+
+
+def _note_rich_text_degradation(block: Mapping[str, object]) -> None:
+    notes = _RENDER_DEGRADATION_NOTES.get()
+    if notes is None:
+        notes = []
+        _RENDER_DEGRADATION_NOTES.set(notes)
+    text = str(block.get("text") or "")
+    notes.append(
+        {
+            "block_id": str(block.get("block_id") or "<unknown>"),
+            "preview": text[:20],
+        }
+    )
 
 
 @dataclass(frozen=True)
@@ -1124,11 +1159,7 @@ def _render_source_patch_paragraphs(
         if child.tag != qn("w:sectPr"):
             body.remove(child)
     rich_text = block.get("rich_text")
-    if isinstance(rich_text, Mapping):
-        if _rich_text_plain_text(rich_text) != str(block.get("text") or ""):
-            raise MedicalWritingDocumentDocxExportError(
-                f"block {block.get('block_id', '<unknown>')} rich text does not match its text projection"
-            )
+    if isinstance(rich_text, Mapping) and _rich_text_plain_text(rich_text) == str(block.get("text") or ""):
         _render_rich_text_root(
             scratch,
             rich_text,
@@ -1137,6 +1168,9 @@ def _render_source_patch_paragraphs(
             index_plan=index_plan,
         )
     else:
+        if isinstance(rich_text, Mapping):
+            # R8 片X（P0-26）自愈：表格单元格补丁路径同样降级不拒导出。
+            _note_rich_text_degradation(block)
         paragraph = scratch.add_paragraph()
         paragraph.add_run(str(block.get("text") or ""))
     return [
@@ -4288,11 +4322,7 @@ def _render_paragraph(
 ) -> int:
     text = str(block.get("text") or "")
     rich_text = block.get("rich_text")
-    if isinstance(rich_text, Mapping):
-        if _rich_text_plain_text(rich_text) != text:
-            raise MedicalWritingDocumentDocxExportError(
-                f"block {block.get('block_id', '<unknown>')} rich text does not match its text projection"
-            )
+    if isinstance(rich_text, Mapping) and _rich_text_plain_text(rich_text) == text:
         return _render_rich_text_root(
             output,
             rich_text,
@@ -4301,6 +4331,10 @@ def _render_paragraph(
             index_plan=index_plan,
             style_presets=style_presets,
         )
+    if isinstance(rich_text, Mapping):
+        # R8 片X（P0-26）自愈：投影不一致降级为纯文本渲染+注记，
+        # 不再整单拒导出（旧 raise 是 R7-A 三连败零导出件的死因）。
+        _note_rich_text_degradation(block)
 
     outline = block.get("outline_level")
     level = outline + 1 if isinstance(outline, int) and 0 <= outline <= 8 else 1

@@ -122,6 +122,7 @@ from packages.contracts.workbench_contracts import (
 )
 from packages.contracts.workbench_contracts.models import (
     MedicalWritingSectionFreezeRequest,
+    MedicalWritingSectionFreezeBatchRequest,
     MedicalWritingProtocolAssemblyPlanPreviewRequest,
     MonitoringBatchConfirmFullSnapshotRequest,
     MonitoringBatchTransitionRequest,
@@ -296,6 +297,8 @@ from .medical_writing_document_exporter import (
     export_medical_writing_document_docx,
     export_source_preserving_medical_writing_document_docx,
     medical_writing_document_export_snapshot_digest,
+    reset_render_degradation_notes,
+    take_render_degradation_notes,
 )
 from .medical_writing_pdf_page_hash import (
     MAX_CANONICAL_PDF_BYTES,
@@ -10384,12 +10387,13 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
             )
         ),
     )
-    # R6 片C′（P1-30）版本策略：占位/批注计数>0 的草稿导出只标「草案-N」。
+    # R6 片C′+R8 片X-4 版本策略：占位/批注/缺口（空章）任一>0 只标『草案-N』。
     version_label = _export_version_label(
         document,
         total_markers=int(placeholder_report.get("total_count") or 0)
         + int((placeholder_report.get("annotation_strip") or {}).get("total_count") or 0),
         mode=mode,
+        gap_count=int(placeholder_report.get("gap_count") or 0),
     )
     if version_label and version_label != str(getattr(document, "version", "") or ""):
         document = document.model_copy(update={"version": version_label})
@@ -10447,6 +10451,9 @@ def _render_medical_writing_document_export(prepared: dict) -> dict:
     exporter_document = prepared["exporter_document"]
     freeze_reference = str(prepared["freeze_reference"])
     literature_library = prepared["literature_library"]
+    # R8 片X（P0-26）：每次导出重置渲染降级注记，渲染后由元数据装配
+    # 读取并人话化（contextvar 随请求上下文隔离）。
+    reset_render_degradation_notes()
     if source_mode == "original_protocol_docx":
         result = export_source_preserving_medical_writing_document_docx(
             medical_writing_document_service.original_protocol_path(canonical_id),
@@ -10483,6 +10490,17 @@ def _medical_writing_export_metadata(rendered: dict) -> dict:
     result = rendered["result"]
     metadata = dict(result.metadata)
     source_ref_reindex = metadata.get("source_reference_reindex", {})
+    # R8 片X（P0-26+P1-07）：渲染降级注记入元数据——人话化定位到章/段，
+    # 计数与逐条文案随工件可查，导出不再静默丢失或整单失败。
+    degradation_notes = take_render_degradation_notes()
+    render_degradations = _humanize_render_degradations(document, degradation_notes)
+    warning_message = str(source_ref_reindex.get("warning_message", ""))
+    if render_degradations:
+        degradation_summary = (
+            f"导出完成：{len(render_degradations)} 处富文本与正文不一致已自动"
+            "降级为纯文本导出；" + "；".join(render_degradations)
+        )
+        warning_message = f"{warning_message}；{degradation_summary}" if warning_message else degradation_summary
     metadata.update(
         {
             "document_id": document.document_id,
@@ -10494,9 +10512,9 @@ def _medical_writing_export_metadata(rendered: dict) -> dict:
             "user_action_required": bool(
                 source_ref_reindex.get("user_action_required", False)
             ),
-            "warning_message": str(
-                source_ref_reindex.get("warning_message", "")
-            ),
+            "warning_message": warning_message,
+            "render_degradation_count": len(render_degradations),
+            "render_degradations": render_degradations,
         }
     )
     return metadata
@@ -10564,30 +10582,67 @@ _EXPORT_ANNOTATION_RESIDUAL_RE = re.compile(
 )
 
 
+def _iter_rich_text_text_nodes(node):
+    """R8 片X（P0-26）根修：递归枚举 rich_text 树中所有带 text 的节点。
+
+    现场存储形态是嵌套树 doc>paragraph>text（R7-A 块实证）；第6轮片C′只
+    遍历 content 一层，paragraph 节点无 text 键未被触及——清扫后 text
+    被剥离而 rich_text 原样，导出器双表示不变量被破坏（P0-26 死因）。
+    """
+    content = node.get("content") if isinstance(node, Mapping) else None
+    if not isinstance(content, list):
+        return
+    for child in content:
+        if not isinstance(child, Mapping):
+            continue
+        if isinstance(child.get("text"), str) and child["text"]:
+            yield child
+        yield from _iter_rich_text_text_nodes(child)
+
+
+def _rich_text_projection(node) -> str:
+    node_type = str(node.get("type") or "")
+    if node_type == "text":
+        return str(node.get("text") or "")
+    if node_type == "hardBreak":
+        return "\n"
+    parts = [_rich_text_projection(child) for child in node.get("content", []) or []]
+    return "\n".join(parts) if node_type == "doc" else "".join(parts)
+
+
 def _apply_export_annotation_sanitization(document) -> list[dict]:
-    """在导出副本上剥离内联批注族，返回逐章注记。存储的源文档不动。"""
+    """在导出副本上剥离内联批注族，返回逐章注记。存储的源文档不动。
+
+    R8 根修：①递归改写 rich_text 全部 text 节点（与 text 同步剥离）；
+    ②清扫后逐块重算校验投影==text，不等则以 rich_text 投影重建 text
+    （导出器双表示不变量在清扫后必须保持成立）。
+    """
     notes: list[dict] = []
     for section in getattr(document, "sections", None) or []:
         section_count = 0
         for block in section.content_blocks or []:
             if not isinstance(block, Mapping):
                 continue
-            targets: list[tuple[dict, str]] = []
-            if isinstance(block.get("text"), str) and block["text"]:
-                targets.append((block, "text"))
-            rich = block.get("rich_text")
-            if isinstance(rich, Mapping) and isinstance(rich.get("content"), list):
-                for node in rich["content"]:
-                    if isinstance(node, Mapping) and isinstance(node.get("text"), str) and node["text"]:
-                        targets.append((node, "text"))
-            for target, key in targets:
-                original = target[key]
-                replaced = _EXPORT_WORKFLOW_ANNOTATION_RE.sub("", original)
-                if replaced != original:
+            original_text = block.get("text")
+            if isinstance(original_text, str) and original_text:
+                replaced = _EXPORT_WORKFLOW_ANNOTATION_RE.sub("", original_text)
+                if replaced != original_text:
                     section_count += len(
-                        list(_EXPORT_WORKFLOW_ANNOTATION_RE.finditer(original))
+                        list(_EXPORT_WORKFLOW_ANNOTATION_RE.finditer(original_text))
                     )
-                    target[key] = replaced
+                    block["text"] = replaced
+            rich = block.get("rich_text")
+            if isinstance(rich, Mapping):
+                for text_node in _iter_rich_text_text_nodes(rich):
+                    original = text_node["text"]
+                    replaced = _EXPORT_WORKFLOW_ANNOTATION_RE.sub("", original)
+                    if replaced != original:
+                        text_node["text"] = replaced
+                # 清扫后重算校验：双表示必须一致，否则以投影重建 text。
+                if isinstance(block.get("text"), str):
+                    projection = _rich_text_projection(rich)
+                    if projection != block["text"]:
+                        block["text"] = projection
         if section_count:
             notes.append(
                 {
@@ -10599,11 +10654,43 @@ def _apply_export_annotation_sanitization(document) -> list[dict]:
     return notes
 
 
-def _export_version_label(document, *, total_markers: int, mode: str) -> str:
-    """R6 片C′（P1-30）版本策略：占位/批注计数>0 的草稿导出只能标
-    “草案-N”（N 取正式版本号主版本），V1.0 正式导出要求计数=0（由
-    占位符门保证）。只改导出副本标签，存储文档版本不动。"""
-    if mode == "draft_preview" and int(total_markers) > 0:
+def _humanize_render_degradations(document, notes: list[dict]) -> list[str]:
+    """R8 片X（P1-07）：渲染降级注记映射为用户可定位的中文文案。"""
+    if not notes:
+        return []
+    index_by_block: dict[str, tuple[str, str, int]] = {}
+    for section in getattr(document, "sections", None) or []:
+        for ordinal, block in enumerate(section.content_blocks or [], start=1):
+            if isinstance(block, Mapping):
+                index_by_block[str(block.get("block_id") or "")] = (
+                    section.section_number or "",
+                    section.heading or "",
+                    ordinal,
+                )
+    entries: list[str] = []
+    for note in notes:
+        block_id = str(note.get("block_id") or "")
+        number, heading, ordinal = index_by_block.get(
+            block_id, ("", "", 0)
+        )
+        where = (
+            f"第{number}章「{heading}」第{ordinal}段"
+            if number or heading
+            else f"块{block_id[:12]}…"
+        )
+        entries.append(
+            f"{where}的富文本与正文不一致，已自动降级为纯文本导出"
+            f"（首20字：{str(note.get('preview') or '')}）"
+        )
+    return entries
+
+
+def _export_version_label(document, *, total_markers: int, mode: str, gap_count: int = 0) -> str:
+    """R6 片C′+R8 片X-4（P1-30/P0-17）版本策略：占位/批注/缺口（空章）
+    任一计数>0 时导出副本只标『草案-N』（N 取正式版本号主版本），两种
+    模式都适用——堵 KRX451 以『1.0』携全要素缺口正式导出的路径。只改
+    导出副本标签，存储文档版本不动。"""
+    if int(total_markers) > 0 or int(gap_count) > 0:
         match = re.match(r"\s*[Vv]?(\d+)", str(getattr(document, "version", "") or ""))
         major = match.group(1) if match else "1"
         return f"草案-{major}"
@@ -10662,10 +10749,14 @@ def _export_placeholder_report(document) -> dict:
     total = 0
     typo_hits: list[dict] = []
     stutters: list[dict] = []
+    gap_sections: list[dict] = []
     for section in document.sections:
         texts: list[str] = []
+        has_table = False
         for block in section.content_blocks or []:
             if isinstance(block, Mapping):
+                if str(block.get("block_type") or "") == "table":
+                    has_table = True
                 text = str(block.get("text") or block.get("body") or "")
             else:
                 text = str(block or "")
@@ -10695,6 +10786,15 @@ def _export_placeholder_report(document) -> dict:
                 }
             )
         joined = "\n".join(texts)
+        # R8 片X-4：空章缺口——无任何非空正文且无表格的章节计为缺口
+        #（KRX451 现场形态：保险/法规/缩略语/参考文献/SoA 整章为空）。
+        if not any(text.strip() for text in texts) and not has_table:
+            gap_sections.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                }
+            )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:
             if wrong in joined:
                 typo_hits.append(
@@ -10716,6 +10816,10 @@ def _export_placeholder_report(document) -> dict:
     return {
         "total_count": total,
         "sections": sections_report,
+        # R8 片X-4：空章缺口（KRX451 现场：保险/法规/缩略语/参考文献/SoA
+        # 全空仍以1.0导出）计入版本门——缺口>0 时导出副本标『草案-N』。
+        "gap_count": len(gap_sections),
+        "gap_sections": gap_sections,
         "text_quality": {
             "typo_hits": typo_hits,
             "stutters": stutters[:50],
@@ -11268,6 +11372,31 @@ def freeze_medical_writing_section_version(
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
         return medical_writing_runtime_repository.freeze_current_version(
             canonical_id, section_id, request
+        ).model_dump(mode="json")
+    except (KeyError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=404, detail=str(exc).strip("'"))
+    except (RuntimeStoreError, StaleRuntimeStateError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.post(
+    "/api/projects/{project_id}/medical-writing/freeze-batch"
+)
+def freeze_medical_writing_sections_batch(
+    project_id: str,
+    request: MedicalWritingSectionFreezeBatchRequest,
+):
+    """R8 片X-5（P0-03）：一键冻结全部待冻章节。
+
+    单章冻结的审计语义不变；批量层只做编排——跳过项/失败项逐条返回，
+    单章冲突不中断批次。
+    """
+    try:
+        canonical_id = _canonical_module_project_id(project_id, "medical_writing")
+        return medical_writing_runtime_repository.freeze_current_versions_batch(
+            canonical_id, request
         ).model_dump(mode="json")
     except (KeyError, FileNotFoundError) as exc:
         raise HTTPException(status_code=404, detail=str(exc).strip("'"))

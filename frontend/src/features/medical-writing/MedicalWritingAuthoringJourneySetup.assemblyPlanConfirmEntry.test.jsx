@@ -214,7 +214,9 @@ describe("assembly-plan confirm-on-entry closes the ready-path deadlock (R26 nod
     });
 
     const entry = await findWritingEntryButton();
-    expect(entry.disabled).toBe(false);
+    // 按钮可点依赖异步装配计划读取——在重负载下 findByRole 先于计划
+    // 解析返回，此处等待同一断言成立（R6/R8 全量清单两次flaky根因）。
+    await waitFor(() => expect(entry.disabled).toBe(false));
 
     fireEvent.click(entry);
 
@@ -244,7 +246,7 @@ describe("assembly-plan confirm-on-entry closes the ready-path deadlock (R26 nod
     const { fetchMock, onCreated } = await renderCorpusStage({ plan: confirmedPlanState() });
 
     const entry = await findWritingEntryButton();
-    expect(entry.disabled).toBe(false);
+    await waitFor(() => expect(entry.disabled).toBe(false));
     expect(entry.textContent).toContain("进入写作平台");
 
     fireEvent.click(entry);

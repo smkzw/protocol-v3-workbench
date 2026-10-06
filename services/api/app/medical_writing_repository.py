@@ -3444,6 +3444,97 @@ class MedicalWritingRuntimeRepository:
             audit_event=apply_audit,
         )
 
+    def freeze_current_versions_batch(
+        self,
+        project_id: str,
+        request: "MedicalWritingSectionFreezeBatchRequest",
+    ) -> "MedicalWritingSectionFreezeBatchResult":
+        """R8 片X-5（P0-03）：一键冻结全部待冻章节。
+
+        以 final_freeze_readiness 的缺口清单为准：reason_code∈
+        {section_not_frozen, freeze_invalidated} 的章节逐章走既有
+        freeze_current_version（审计语义不变）；其余缺口（未保存/隔离/
+        适用性未决等）跳过并留原因。单章冲突（版本/绑定漂移）计入
+        failures 不中断批次——已冻结成果保留，作者按失败清单逐章处置。
+        """
+        from packages.contracts.workbench_contracts.models import (
+            MedicalWritingSectionFreezeBatchFailure,
+            MedicalWritingSectionFreezeBatchResult,
+            MedicalWritingSectionFreezeBatchSkip,
+        )
+
+        readiness = self.final_freeze_readiness(project_id)
+        document = self.protocol(project_id)
+        frozen: list[str] = []
+        skipped: list[MedicalWritingSectionFreezeBatchSkip] = []
+        failures: list[MedicalWritingSectionFreezeBatchFailure] = []
+        if readiness.ready and not readiness.gaps:
+            skipped.append(
+                MedicalWritingSectionFreezeBatchSkip(
+                    section_id="",
+                    reason_code="already_frozen",
+                    message="全部待冻章节均已冻结，无需重复操作。",
+                )
+            )
+        freezable = {"section_not_frozen", "freeze_invalidated"}
+        for gap in readiness.gaps:
+            if gap.reason_code not in freezable:
+                skipped.append(
+                    MedicalWritingSectionFreezeBatchSkip(
+                        section_id=gap.section_id,
+                        section_heading=gap.section_heading,
+                        reason_code=gap.reason_code,
+                        message=gap.message,
+                    )
+                )
+                continue
+            try:
+                current = self.working_copy(project_id, gap.section_id)
+                section_request = MedicalWritingSectionFreezeRequest(
+                    document_id=document.document_id,
+                    expected_working_copy_revision=max(int(current.revision), 1),
+                    expected_study_definition_id=str(
+                        current.source_study_definition_id or ""
+                    ),
+                    expected_study_definition_revision=(
+                        current.source_study_definition_revision
+                    ),
+                    expected_study_definition_sha256=str(
+                        current.source_study_definition_sha256 or ""
+                    ),
+                    reason=request.reason,
+                    actor=request.actor,
+                    idempotency_key=(
+                        f"{request.idempotency_key}:{gap.section_id}:r{current.revision}"
+                    )[:200],
+                )
+                self.freeze_current_version(project_id, gap.section_id, section_request)
+                frozen.append(gap.section_id)
+            except StaleRuntimeStateError as exc:
+                failures.append(
+                    MedicalWritingSectionFreezeBatchFailure(
+                        section_id=gap.section_id,
+                        section_heading=gap.section_heading,
+                        error=f"版本冲突，请刷新后重试该章：{exc}",
+                    )
+                )
+            except (RuntimeStoreError, ValueError) as exc:
+                failures.append(
+                    MedicalWritingSectionFreezeBatchFailure(
+                        section_id=gap.section_id,
+                        section_heading=gap.section_heading,
+                        error=str(exc),
+                    )
+                )
+        final = self.final_freeze_readiness(project_id)
+        return MedicalWritingSectionFreezeBatchResult(
+            frozen_section_ids=frozen,
+            skipped=skipped,
+            failures=failures,
+            readiness_ready=final.ready,
+            readiness_gaps_remaining=len(final.gaps),
+        )
+
     def freeze_current_version(
         self,
         project_id: str,

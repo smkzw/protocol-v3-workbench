@@ -67,6 +67,19 @@ UNRESOLVED_DRAFT_MARKER_RE = re.compile(
 DETECTOR_VERSION = "medical_writing_content_quality_v1"
 
 
+def _rich_text_projection(node: Any) -> str:
+    """与导出器 _rich_text_plain_text 同语义的本地投影（doc层\\n连接）。"""
+    if not isinstance(node, dict):
+        return ""
+    node_type = str(node.get("type") or "")
+    if node_type == "text":
+        return str(node.get("text") or "")
+    if node_type == "hardBreak":
+        return "\n"
+    parts = [_rich_text_projection(child) for child in node.get("content") or []]
+    return "\n".join(parts) if node_type == "doc" else "".join(parts)
+
+
 # These complete clauses describe study conduct, not an instruction to finish
 # writing the protocol. Match a local clause so neighbouring draft instructions
 # remain visible, including in the same table cell.
@@ -108,6 +121,59 @@ class MedicalWritingContentQualityDetector:
             )
         return findings
 
+    def _projection_mismatch_finding(
+        self,
+        document: ProtocolDocument,
+        section: ProtocolSection,
+        block: dict[str, Any],
+        text: str,
+        *,
+        content_revision: int,
+    ) -> MedicalWritingContentFinding:
+        block_id = str(block.get("block_id") or "")
+        fingerprint = hashlib.sha256(
+            f"{document.document_id}:{section.section_id}:{block_id}:{text}".encode("utf-8")
+        ).hexdigest()
+        identity = f"rich_text_projection_mismatch:{document.document_id}:{section.section_id}:{block_id}"
+        divergence = ""
+        projection = _rich_text_projection(block.get("rich_text") or {})
+        for index, (left, right) in enumerate(zip(text, projection)):
+            if left != right:
+                divergence = text[max(0, index - 8): index + 12]
+                break
+        return MedicalWritingContentFinding(
+            finding_id="mwq_" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24],
+            project_id=document.project_id,
+            document_id=document.document_id,
+            document_version=document.version,
+            section_id=section.section_id,
+            section_heading=section.heading,
+            block_id=block_id,
+            location_kind="paragraph",
+            source_kind=str(block.get("source_kind") or "original_protocol_docx"),
+            source_text=text[:200],
+            matched_text=divergence or text[:20],
+            match_start=0,
+            match_end=min(20, len(text)),
+            occurrence_index=0,
+            source_locator=str(block.get("source_locator") or ""),
+            table_id="",
+            cell_id="",
+            row_index=None,
+            cell_index=None,
+            rule_code="rich_text_projection_mismatch",
+            rule_label="富文本与正文不一致（导出时将降级为纯文本）",
+            detector_version=DETECTOR_VERSION,
+            finding_reason=(
+                "该段的富文本树与正文纯文本不一致（常见于AI改写或引文替换只改其一）。"
+                "导出时会自动降级为纯文本；建议重新保存该段使两者一致，以保留富文本排版。"
+            ),
+            severity=RiskSeverity.MEDIUM,
+            approval_blocking=False,
+            content_fingerprint=fingerprint,
+            content_revision=content_revision,
+        )
+
     def scan_section(
         self,
         document: ProtocolDocument,
@@ -130,6 +196,20 @@ class MedicalWritingContentQualityDetector:
                 )
                 continue
             text = str(block.get("text") or "")
+            # R8 片X-3（P0-26 配套）：投影一致性并入内容核查——编辑时预警
+            # 而非导出时炸。导出器已自愈降级，此处是预警不是新阻断门。
+            rich = block.get("rich_text")
+            if isinstance(rich, dict) and text:
+                if _rich_text_projection(rich) != text:
+                    findings.append(
+                        self._projection_mismatch_finding(
+                            document,
+                            section,
+                            block,
+                            text,
+                            content_revision=content_revision,
+                        )
+                    )
             if not text:
                 continue
             findings.extend(

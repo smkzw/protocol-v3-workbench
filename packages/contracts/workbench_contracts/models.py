@@ -7373,6 +7373,40 @@ class MedicalWritingSectionFreezeResult(WorkbenchModel):
     replayed: bool = False
 
 
+class MedicalWritingSectionFreezeBatchRequest(WorkbenchModel):
+    """R8 片X-5（P0-03）：一键冻结全部待冻章节的批量请求。"""
+
+    reason: str = Field(
+        default="医学作者确认全部待冻章节的当前保存版本已定稿。",
+        min_length=6,
+        max_length=2_000,
+    )
+    actor: str = Field(default="medical_manager", min_length=1, max_length=100)
+    idempotency_key: str = Field(min_length=8, max_length=200)
+
+
+class MedicalWritingSectionFreezeBatchFailure(WorkbenchModel):
+    section_id: str
+    section_heading: str = ""
+    error: str
+
+
+class MedicalWritingSectionFreezeBatchSkip(WorkbenchModel):
+    section_id: str
+    section_heading: str = ""
+    reason_code: str
+    message: str = ""
+
+
+class MedicalWritingSectionFreezeBatchResult(WorkbenchModel):
+    operation: Literal["freeze_current_versions_batch"] = "freeze_current_versions_batch"
+    frozen_section_ids: List[str] = Field(default_factory=list)
+    skipped: List[MedicalWritingSectionFreezeBatchSkip] = Field(default_factory=list)
+    failures: List[MedicalWritingSectionFreezeBatchFailure] = Field(default_factory=list)
+    readiness_ready: bool = False
+    readiness_gaps_remaining: int = 0
+
+
 class MedicalWritingSectionFreezeGap(WorkbenchModel):
     section_id: str
     section_heading: str

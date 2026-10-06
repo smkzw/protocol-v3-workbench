@@ -37,6 +37,7 @@ import {
   FileCheck2,
   FileText,
   FolderSearch2,
+  Layers,
   GitCompare,
   Heading1,
   Highlighter,
@@ -8129,6 +8130,9 @@ function WritingPage({
   const [workingCopyDraftBlocks, setWorkingCopyDraftBlocks] = useState([]);
   const [workingCopyLoading, setWorkingCopyLoading] = useState(false);
   const [workingCopyActionBusy, setWorkingCopyActionBusy] = useState(false);
+  // R8 片X-5（P0-03）：一键冻结全部待冻章节。
+  const [batchFreezeBusy, setBatchFreezeBusy] = useState(false);
+  const [batchFreezeMessage, setBatchFreezeMessage] = useState("");
   const [workingCopyMessage, setWorkingCopyMessage] = useState("");
   const [workingCopyEditing, setWorkingCopyEditing] = useState(false);
   const [workingCopyDirty, setWorkingCopyDirty] = useState(false);
@@ -8162,6 +8166,44 @@ function WritingPage({
   // 改为显式行内确认块。
   const [exportPlaceholderAck, setExportPlaceholderAck] = useState(null);
   const [fullDraftJob, setFullDraftJob] = useState(null);
+  // R8 片Z（P1-45）：等待时长分级提示——>2分钟显示排队位。
+  const [fullDraftQueueHint, setFullDraftQueueHint] = useState("");
+  const fullDraftActive = Boolean(
+    fullDraftJob?.job_id
+    && !["completed", "failed", "cancelled"].includes(fullDraftJob.status),
+  );
+  useEffect(() => {
+    if (!fullDraftActive) {
+      setFullDraftQueueHint("");
+      return undefined;
+    }
+    const startedAt = Date.now();
+    let cancelled = false;
+    const controller = new AbortController();
+    const checkQueue = async () => {
+      const elapsedMs = Date.now() - startedAt;
+      if (elapsedMs < 120_000) return;
+      try {
+        const payload = await fetch("/api/model-lifecycle/status", { signal: controller.signal }).then(readJsonOrThrow);
+        if (cancelled) return;
+        const queue = payload?.arbiter?.queue || [];
+        const current = payload?.arbiter?.current || "";
+        setFullDraftQueueHint(
+          queue.length
+            ? `前方还有 ${queue.length} 项模型任务排队（当前相位：${current || "切换中"}），完成后会自动继续`
+            : `模型服务处理中（当前相位：${current || "未知"}），任务在后台进行不会丢失`,
+        );
+      } catch {
+        if (!cancelled) setFullDraftQueueHint("模型服务处理中，任务在后台进行不会丢失");
+      }
+    };
+    const timer = setInterval(checkQueue, 30_000);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      clearInterval(timer);
+    };
+  }, [fullDraftActive]);
   const [fullDraftArtifact, setFullDraftArtifact] = useState(null);
   const [fullDraftConfirmedSections, setFullDraftConfirmedSections] = useState([]);
   const [fullDraftBusy, setFullDraftBusy] = useState(false);
@@ -11062,6 +11104,52 @@ function WritingPage({
     && !workingCopyDirty
     && workingCopyAuthoritative
     && !workingCopyActionBusy;
+  // R8 片X-5（P0-03）：一键冻结全部待冻章节——批量端点对可冻章节逐章
+  // 执行与单章一致的作者冻结审计；跳过/失败逐条人话化回报。
+  const submitBatchFreeze = () => {
+    if (
+      isDemoWritingSession
+      || batchFreezeBusy
+      || workingCopyActionBusy
+      || Boolean(documentExportBusy)
+      || !editorSessionAvailable
+      || !remainingFreezeSectionCount
+    ) return;
+    setBatchFreezeBusy(true);
+    setBatchFreezeMessage("");
+    fetch(`/api/projects/${projectId}/medical-writing/freeze-batch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reason: "医学作者确认全部待冻章节的当前保存版本已定稿。",
+        actor: "medical_manager",
+        idempotency_key: `batch-freeze-${projectId}-${Date.now()}`.slice(0, 200),
+      }),
+    })
+      .then(readJsonOrThrow)
+      .then(async (payload) => {
+        const frozenCount = (payload.frozen_section_ids || []).length;
+        const failedCount = (payload.failures || []).length;
+        const skippedCount = (payload.skipped || []).length;
+        const pieces = [
+          `已冻结 ${frozenCount} 个章节`,
+          skippedCount ? `${skippedCount} 个章节跳过（未保存或待调和，见章节列表）` : "",
+          failedCount ? `${failedCount} 个章节失败（版本冲突，请刷新后重试该章）` : "",
+        ].filter(Boolean);
+        setBatchFreezeMessage(`${pieces.join("；")}。`);
+        setWorkingCopyMessage(
+          `批量冻结完成：${pieces.join("；")}。`
+          + (payload.readiness_ready ? " 全部章节已形成当前作者确认冻结版本。" : ""),
+        );
+        await refreshFreezeReadiness();
+        await refreshDocumentSession?.();
+        await refreshDashboard?.();
+      })
+      .catch((error) => {
+        setBatchFreezeMessage(`批量冻结未完成：${medicalWritingSafeErrorText(error)}`);
+      })
+      .finally(() => setBatchFreezeBusy(false));
+  };
   const submitWorkingCopyFreeze = (operation) => {
     if (
       isDemoWritingSession
@@ -11419,6 +11507,21 @@ function WritingPage({
           {!isStudySchemaSection && !isDemoWritingSession && editorSessionAvailable && (
             <div className="working-copy-status-bar">
               <div className="working-copy-status-main">
+                {/* R8 片Z（P1-45）：全文初稿进度实时化——主视图与AI面板同源
+                    （同一 fullDraftJob 轮询状态），不再要求用户切到AI页签或
+                    手动刷新；等待>2分钟附排队提示。 */}
+                {fullDraftJob?.progress && !["completed", "failed", "cancelled"].includes(fullDraftJob.status) && (
+                  <div
+                    className="revision-progress full-draft-main-progress"
+                    role="status"
+                    aria-live="polite"
+                    data-testid="full-draft-main-progress"
+                  >
+                    <strong>{fullDraftJob.progress.message || "正在生成全文初稿"}</strong>
+                    <span>{Math.round(Number(fullDraftJob.progress.percent || 0) * 100)}%</span>
+                    {fullDraftQueueHint && <small>{fullDraftQueueHint}</small>}
+                  </div>
+                )}
                 <div className="working-copy-identity">
                   <span>文档工作副本</span>
                   <strong className="working-copy-revision">
@@ -11533,6 +11636,20 @@ function WritingPage({
                 >
                   <FileCheck2 size={14} /> {documentExportBusy === "approved_final" ? "生成中" : "正式 Word"}
                 </button>
+                {!isDemoWritingSession && (
+                  <button
+                    type="button"
+                    data-action="freeze-batch"
+                    onClick={submitBatchFreeze}
+                    disabled={Boolean(documentExportBusy) || Boolean(workingCopyActionBusy) || !editorSessionAvailable || batchFreezeBusy || !remainingFreezeSectionCount}
+                    title={batchFreezeMessage
+                      || (remainingFreezeSectionCount
+                        ? `对 ${remainingFreezeSectionCount} 个待冻章节逐章执行作者冻结（与逐章确认同一审计语义；未保存/待调和章节会跳过并列出原因）`
+                        : "全部待冻章节均已冻结")}
+                  >
+                    <Layers size={14} /> {batchFreezeBusy ? "批量冻结中" : `一键冻结全部待冻章节（${remainingFreezeSectionCount ?? 0}）`}
+                  </button>
+                )}
               </div>
               {exportPlaceholderAck && (
                 <div className="document-export-progress" role="alertdialog" aria-label="导出占位确认">
