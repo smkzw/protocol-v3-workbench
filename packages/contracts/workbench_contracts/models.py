@@ -3959,6 +3959,11 @@ class MedicalWritingPicosDefinition(WorkbenchModel):
     visit_strategy: str = Field(default="", max_length=5_000)
     estimand_strategy: str = Field(default="", max_length=5_000)
     sample_size_strategy: str = Field(default="", max_length=5_000)
+    # 第9轮末修订（P1-48）：样本量假设的可选具名溯源（先例试验/文献引用）。
+    # 有锚点时推导链附『依据：{锚点}』上纸；无锚点时生成层如实标注
+    # 『假设未具名溯源，建议引用外部先例』——数字正确但说出处是样本量
+    # 闭环的最后一段（r9-B 对照结论：系统有推导无出处、成型有出处无推导）。
+    sample_size_anchor: str = Field(default="", max_length=500)
     statistical_strategy: str = Field(default="", max_length=5_000)
 
     @model_validator(mode="after")

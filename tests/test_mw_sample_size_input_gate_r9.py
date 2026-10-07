@@ -197,7 +197,11 @@ class GenerationGuardTests(unittest.TestCase):
             "proposal_text": original,
         }
         apply_sample_size_guard_to_section(section)
-        self.assertEqual(original, section["proposal_text"])
+        # 契约修订（第9轮末修订 P1-48）：自洽数字不动（不改写），
+        # 但溯源标注按新契约追加（无锚点=未具名溯源提示）。
+        self.assertTrue(section["proposal_text"].startswith(original))
+        self.assertNotIn("两组各45例", section["proposal_text"])
+        self.assertIn("假设未具名溯源", section["proposal_text"])
         self.assertEqual("自洽", section["sample_size_check"]["status"])
 
 

@@ -10333,6 +10333,17 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
                     front_matter_overrides["design_blinding_mode"] = str(
                         getattr(structured, "blinding_mode", "") or ""
                     )
+                    # 第9轮收口片（P0-05/06）：分配比例与DMC设计事实——
+                    # 骨架『未记录比例』与『4.5不适用 vs 骨架设DMC』两处
+                    # 矛盾的注入源。
+                    front_matter_overrides["design_assignment_model"] = str(
+                        getattr(structured, "assignment_model", "") or ""
+                    )
+                    dmc_planned = getattr(structured, "dmc_planned", None)
+                    if dmc_planned is not None:
+                        front_matter_overrides["design_dmc_planned"] = bool(
+                            dmc_planned
+                        )
                 picos = getattr(definition, "picos", None)
                 if picos is not None:
                     front_matter_overrides["sample_size_strategy"] = str(

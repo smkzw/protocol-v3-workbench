@@ -303,7 +303,7 @@ def _rewrite_declared_sample_size(text: str, declared: int, required: int) -> st
     return replaced
 
 
-def apply_sample_size_guard_to_section(section_item: dict) -> None:
+def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> None:
     """R9 P0-18 生成层护栏：统计章声明数字不得照抄。
 
     - 复算不一致：声明数字改写为复算值（成对总数同步），并追加复算
@@ -311,6 +311,9 @@ def apply_sample_size_guard_to_section(section_item: dict) -> None:
     - 要素未齐（含比例型设计）：正文前插入 P1-21 式悬置块（含锁定
       条件），数字保留但标记待确认。
     - 自洽：不动。
+    第9轮末修订（P1-48）溯源收官：凡含样本量声明的统计章——有锚点附
+    『（样本量依据：{anchor}）』上纸；无锚点如实标注『假设未具名溯源，
+    建议引用外部先例』。
     就地修改 section_item（proposal_text 与 sample_size_check）。
     """
     section_number = str(section_item.get("section_number") or "")
@@ -341,6 +344,12 @@ def apply_sample_size_guard_to_section(section_item: dict) -> None:
             "（缺组间差/SD/α/把握度），系统无法复算；锁定条件：补齐假设并使"
             "复算与声明一致（差值≤±20%）后解除，正式稿不得带此标记。】" + text
         )
+    # P1-48：溯源标注（有锚点=具名依据上纸；无锚点=如实声明并建议补引）。
+    anchor_text = str(anchor or "").strip()
+    if anchor_text:
+        section_item["proposal_text"] += f"（样本量依据：{anchor_text}）"
+    else:
+        section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
 
 
 def sample_size_consistency_check(text: str) -> dict | None:
@@ -1952,9 +1961,16 @@ class MedicalWritingFullDraftService:
         # NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验。
         # R9（第8轮末修订动作2）P0-18 生成层护栏②：不自洽节的声明数字
         # 不得照抄——不一致改写为复算值+复算注记；要素未齐输出悬置块
-        # （含锁定条件）；自洽不动。见 apply_sample_size_guard_to_section。
+        # （含锁定条件）；自洽不动。第9轮末修订（P1-48）：溯源锚点从
+        # authoring journey 的 picos.sample_size_anchor 透传上纸。
+        anchor = str(
+            (
+                (expected.get("authoring_journey") or {}).get("picos") or {}
+            ).get("sample_size_anchor")
+            or ""
+        )
         for item in all_sections:
-            apply_sample_size_guard_to_section(item)
+            apply_sample_size_guard_to_section(item, anchor=anchor)
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections

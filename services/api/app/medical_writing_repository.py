@@ -136,9 +136,7 @@ _SAFETY_GENERIC_TEMPLATE = _SAFETY_AE_TEMPLATE
 # 「待医学经理确认」，绝不编造。
 _RANDOMIZATION_BLINDING_TEMPLATE = (
     "本节采用标准监管文本骨架（待医学经理按本项目已确认设计审核确认）。"
-    "{design_phrase}。合格受试者将按既定分配比例随机分配至各治疗组"
-    "（分配比例以已确认统计设计为准；当前设计事实未记录具体比例，"
-    "待医学经理确认后写入）。随机化由中央随机化系统（IWRS）执行，"
+    "{design_phrase}。{allocation_sentence}随机化由中央随机化系统（IWRS）执行，"
     "采用区组随机，区组大小对研究者保密；并按研究中心及方案规定的"
     "关键分层因素（分层因素由已确认设计事实确定，待医学经理复核）"
     "分层，以保证组间基线可比。计划入组{sample_size_phrase}例受试者。"
@@ -173,6 +171,8 @@ _SAFETY_AESI_TEMPLATE = (
 
 # NEW-18 残留：风险控制计划与 SRC/DMC 委员会章节骨架——审查频率、决策
 # 规则等治理参数显式留待医学经理确认，不编造具体数值。
+# 第9轮收口片（P0-06）：按 structured_design.dmc_planned 分支——设计事实
+# 明确不设 DMC 时骨架必须与正文一致（消『4.5不适用 vs 骨架设DMC』矛盾）。
 _RISK_CONTROL_COMMITTEE_TEMPLATE = (
     "本节采用标准监管文本骨架（待医学经理审核确认审查频率与决策规则）。"
     "本研究设立独立的 数据监查委员会（DMC）/安全性审查委员会（SRC），"
@@ -182,6 +182,17 @@ _RISK_CONTROL_COMMITTEE_TEMPLATE = (
     "待医学经理确认后写入（建议至少按预设例数间隔或固定日历间隔审查"
     "一次）；委员会的建议（继续研究、修订方案、暂停入组或终止研究）"
     "以书面形式提交申办方与主要研究者，并存档备查。"
+    "风险控制计划：研究期间按 AESI 章节执行主动监测；出现与试验药物"
+    "相关的系统性风险信号时，申办方应及时评估是否修订方案、更新知情"
+    "同意书、加强监测或暂停入组，并按法规要求报告监管机构。"
+)
+
+_RISK_CONTROL_NO_COMMITTEE_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理审核确认）。"
+    "本研究不设立独立的数据监查委员会（DMC）/安全性审查委员会（SRC）；"
+    "安全性数据的累积审阅由申办方医学监查团队按常规安全性报告流程执行，"
+    "关键有效性数据不安排中期外部审查（如设计变更需引入中期审查，"
+    "须先经医学经理确认并修订本节与相应设计章节）。"
     "风险控制计划：研究期间按 AESI 章节执行主动监测；出现与试验药物"
     "相关的系统性风险信号时，申办方应及时评估是否修订方案、更新知情"
     "同意书、加强监测或暂停入组，并按法规要求报告监管机构。"
@@ -216,7 +227,12 @@ def _gap_placeholder_block(
             or "SRC" in heading_upper
             or "DMC" in heading_upper
         ):
-            template = _RISK_CONTROL_COMMITTEE_TEMPLATE
+            # 第9轮收口片（P0-06）：设计事实明确不设 DMC 时走「不设立」
+            # 骨架——与正文（如4.5『不适用』）一致；未记录/设立保持原骨架。
+            if overrides.get("design_dmc_planned") is False:
+                template = _RISK_CONTROL_NO_COMMITTEE_TEMPLATE
+            else:
+                template = _RISK_CONTROL_COMMITTEE_TEMPLATE
         elif "随机化" in heading or "盲法" in heading:
             # NEW-15 残留：设计短语由已确认结构化设计事实选择；未记录的值
             # 一律落「待医学经理确认」，不编造比例、区组大小或样本量。
@@ -247,16 +263,40 @@ def _gap_placeholder_block(
             }.get(blinding, "双盲设计（盲法层级以已确认设计事实为准，"
             "当前设计事实未记录盲法层级，待医学经理确认）")
             sample_size_raw = str(overrides.get("sample_size_strategy") or "")
-            sample_size_match = re.search(r"(\d[\d,，\s]*)\s*例", sample_size_raw)
+            # 第9轮收口片（P0-05）：总数优先——『共N例』是设计入组总数
+            # （ID701：推导链每组96→脱落113→共230，骨架此前误抓96）；
+            # 未命中回落首个『N例』（纯每组声明形态，如『每组45例』）。
+            sample_size_total_match = re.search(
+                r"共[约]?\s*(\d[\d,，\s]*)\s*例", sample_size_raw
+            )
+            sample_size_match = sample_size_total_match or re.search(
+                r"(\d[\d,，\s]*)\s*例", sample_size_raw
+            )
             if sample_size_match:
                 sample_size_phrase = re.sub(r"[,，\s]", "", sample_size_match.group(1))
             else:
                 sample_size_phrase = "既定样本量（以统计分析章节确认为准，待医学经理确认）"
+            # 第9轮收口片（P0-06）：分配比例从 structured_design.assignment_model
+            # 注入（如『1:1』）；未记录时保留显式占位，绝不编造。
+            assignment_model = str(
+                overrides.get("design_assignment_model") or ""
+            ).strip()
+            if assignment_model:
+                allocation_sentence = (
+                    f"合格受试者将按{assignment_model}比例随机分配至各治疗组。"
+                )
+            else:
+                allocation_sentence = (
+                    "合格受试者将按既定分配比例随机分配至各治疗组"
+                    "（分配比例以已确认统计设计为准；当前设计事实未记录具体比例，"
+                    "待医学经理确认后写入）。"
+                )
             template = (
                 _RANDOMIZATION_BLINDING_TEMPLATE
                 .replace("{design_phrase}", design_phrase)
                 .replace("{blinding_phrase}", blinding_phrase)
                 .replace("{sample_size_phrase}", sample_size_phrase)
+                .replace("{allocation_sentence}", allocation_sentence)
             )
         else:
             template = _SAFETY_GENERIC_TEMPLATE
