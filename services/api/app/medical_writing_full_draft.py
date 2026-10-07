@@ -352,6 +352,38 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
         section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
 
 
+_DOSING_SECTION_RE = re.compile(r"^(?:6\.2)(?:\.\d+)?$|给药|研究治疗|研究用药")
+# P0-27（第10轮末修订）：剂量单位存在性——BE204 现场全文 mg/毫克 0 命中
+# 而一句话正文过门。单位族按基准轮口径：mg/毫克/µg/μg/微克/IU/国际单位。
+_DOSE_UNIT_RE = re.compile(r"mg|毫克|µg|μg|微克|IU|国际单位", re.IGNORECASE)
+
+
+def apply_dose_presence_guard_to_section(section_item: dict) -> None:
+    """P0-27 生成层：给药/研究治疗章的剂量存在性检查。
+
+    owner 裁定边界内行为（研究药物自身数据不可外查）：剂量单位 0 命中
+    时不编造剂量——显性标记『剂量缺失』并提示『需IB/立项补剂量方案』，
+    正文不阻断生成但带悬置提示随工件持久化（导出层据此计缺口→草案-N）。
+    """
+    section_number = str(section_item.get("section_number") or "")
+    heading = str(section_item.get("heading") or "")
+    if not (_DOSING_SECTION_RE.search(section_number) or _DOSING_SECTION_RE.search(heading)):
+        return
+    text = str(section_item.get("proposal_text") or "")
+    if not text.strip():
+        return
+    if _DOSE_UNIT_RE.search(text):
+        return
+    section_item["dose_check"] = {
+        "status": "剂量缺失",
+        "detail": "给药章节未出现任何剂量单位（mg/毫克/µg/μg/微克/IU/国际单位）。",
+    }
+    section_item["proposal_text"] = (
+        "【剂量待确认：本节未载明研究药物的剂量与规格（无 mg/毫克/IU 等"
+        "剂量单位）；需IB/立项补剂量方案后写入，正式稿不得带此标记。】" + text
+    )
+
+
 def sample_size_consistency_check(text: str) -> dict | None:
     """NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验。
 
@@ -1971,6 +2003,9 @@ class MedicalWritingFullDraftService:
         )
         for item in all_sections:
             apply_sample_size_guard_to_section(item, anchor=anchor)
+            # P0-27（第10轮末修订）：给药章剂量存在性——零剂量显性标记，
+            # 与样本量门同族的参数完整性防线（导出层据此计缺口）。
+            apply_dose_presence_guard_to_section(item)
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections

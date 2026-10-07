@@ -18,6 +18,7 @@ from typing import Any, Mapping, Optional
 from urllib.parse import quote
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.concurrency import run_in_threadpool
 
@@ -595,6 +596,31 @@ MGK10_SAR_PROTOCOL_PATH = Path(
 )
 
 app = FastAPI(title="AI Medical Manager Workbench", version="0.1.0")
+
+
+@app.exception_handler(RequestValidationError)
+async def humanize_request_validation_error(request: Request, exc: RequestValidationError):
+    """第10轮末修订（P1-50，live-red 补口）：模型校验 ValueError 在请求解析
+    层被 FastAPI 包成 detail 数组直出（现场 r10-A：dup draft 实测
+    detail[0].msg='Value error, inclusion_modules must be unique'——英文
+    内部字段名根本到不了端点内的人话映射）。唯一性类映射为中文标签+可
+    操作指引；其余校验数组给受控中文，不再原样透传。"""
+    for item in exc.errors():
+        match = re.search(r"([a-z_]+) must be unique", str(item.get("msg") or ""))
+        if match:
+            return JSONResponse(
+                status_code=422,
+                content={"detail": _mw_journey_error_detail(
+                    ValueError(f"{match.group(1)} must be unique")
+                )},
+            )
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": "本次提交未通过系统数据校验：请检查各字段内容后重试；"
+            "如重复出现，请刷新页面后再试并反馈。"
+        },
+    )
 app.include_router(eligibility_router)
 
 @app.middleware("http")
@@ -8988,11 +9014,43 @@ def adopt_medical_writing_authoring_prefill_composite(
 
 def _mw_journey_error_detail(exc: Exception) -> str:
     """消息卫生（T17 P1）：pydantic 校验细节（模型名/字段路径/外部链接）
-    不进入用户界面，转换为可操作的人话；其余原样返回。"""
+    不进入用户界面，转换为可操作的人话；其余原样返回。
+    第10轮末修订（P1-50）：唯一性类校验拒绝（『<field> must be unique』，
+    现场 r10-A：重复行422英文直出）映射为中文标签+可操作指引。"""
     text = str(exc)
     if "validation error for" in text or "errors.pydantic.dev" in text:
         return ("本次提交未通过系统数据校验，页面与服务器状态可能不同步；"
                 "请刷新页面后重新操作。如重复出现，请保留页面并反馈。")
+    unique_match = re.fullmatch(r"([a-z_]+) must be unique", text.strip())
+    if unique_match:
+        field_labels = {
+            "inclusion_modules": "入选标准",
+            "exclusion_modules": "排除标准",
+            "washout_rules": "洗脱规则",
+            "allowed_concomitant_rules": "允许的合并用药/治疗",
+            "required_background_rules": "必须使用的背景用药/治疗",
+            "prohibited_concomitant_rules": "限制或禁止的合并用药/治疗",
+            "assessment_timing_restrictions": "访视/评价前用药限制",
+            "primary_objectives": "主要研究目的",
+            "secondary_objectives": "次要研究目的",
+            "exploratory_objectives": "探索性研究目的",
+            "key_secondary_endpoints": "关键次要终点",
+            "other_secondary_endpoints": "其他次要终点",
+            "exploratory_endpoints": "探索性终点",
+            "safety_endpoints": "安全性终点",
+            "aesi_definitions": "特别关注的不良事件（AESI）",
+            "study_epochs": "研究时期/阶段",
+            "intrinsic_objectives": "内在研究目的",
+            "key_uncertainties": "关键科学与开发不确定性",
+            "development_regions": "研发区域",
+        }
+        label = field_labels.get(
+            unique_match.group(1), "提交内容"
+        )
+        return (
+            f"「{label}」中存在重复条目：请删除重复行后重试"
+            "（相同内容只需保留一行；保存前系统会自动合并重复项）。"
+        )
     return text
 
 
@@ -10349,6 +10407,11 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
                     front_matter_overrides["sample_size_strategy"] = str(
                         getattr(picos, "sample_size_strategy", "") or ""
                     )
+                    # 第10轮末修订（P1-12）：AESI 定义有无——骨架『按 AESI
+                    # 章节』与『按安全性监测章节』的条件化依据。
+                    front_matter_overrides["aesi_definitions"] = list(
+                        getattr(picos, "aesi_definitions", []) or []
+                    )
                     # NEW-16：SoA 骨架列由已确认研究时期与访视策略生成。
                     front_matter_overrides["study_epochs"] = list(
                         getattr(picos, "study_epochs", []) or []
@@ -10822,6 +10885,25 @@ def _export_placeholder_report(document) -> dict:
                             "section_number": section.section_number or "",
                             "section_heading": section.heading,
                             "reason": f"样本量{status}（{ss_check.get('detail') or ''}）",
+                        }
+                    )
+            # P0-27（第10轮末修订）导出层：给药/研究治疗章剂量单位存在性
+            #——一句话正文此前绕过空章门（BE204 现场全文 mg 0 命中）；
+            # 零剂量计入缺口 → 草案-N 强制。
+            from .medical_writing_full_draft import (
+                _DOSE_UNIT_RE,
+                _DOSING_SECTION_RE,
+            )
+
+            if _DOSING_SECTION_RE.search(str(section.section_number or "")) or _DOSING_SECTION_RE.search(
+                section.heading or ""
+            ):
+                if joined.strip() and not _DOSE_UNIT_RE.search(joined):
+                    gap_sections.append(
+                        {
+                            "section_number": section.section_number or "",
+                            "section_heading": section.heading,
+                            "reason": "剂量缺失（给药章节未出现任何剂量单位，需IB/立项补剂量方案）",
                         }
                     )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:

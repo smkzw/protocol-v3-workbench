@@ -100,8 +100,8 @@ _SAFETY_AE_TEMPLATE = (
     "功能丧失/残疾、先天性异常/出生缺陷，或其他重要医学事件。"
     "可疑且非预期严重不良反应（SUSAR）为性质或严重程度与现有资料不一致的"
     "SAE。研究者应在获知 SAE 后 24 小时内将完整信息（受试者编号、事件名称、"
-    "严重程度、起止时间、因果关系判断及处理措施）应在 24 小时内通过专用报告表报告至"
-    "申办方药物警戒部门（safety@sponsor.example，以项目联络表为准），"
+    "严重程度、起止时间、因果关系判断及处理措施）通过专用报告表报告至"
+    "申办方药物警戒部门（药物警戒联系人及邮箱待医学经理按项目联络表填写），"
     "并同步完成纸质原始记录。随访信息应在获得后 24 小时内补充报告。"
     "申办方将按 ICH E2A 及国家相关法规时限要求向监管机构快速报告 SUSAR。"
 )
@@ -123,9 +123,20 @@ _SAFETY_PREGNANCY_TEMPLATE = (
     "采取有效避孕措施（方案规定的医学可接受方式）。受试者或其配偶在研究"
     "期间妊娠时，应立即报告研究者；申办方将对妊娠结局进行随访直至分娩，"
     "非预期妊娠流产或胎儿/新生儿不良事件按 SAE 流程 24 小时内上报。"
-    "按药物类别要求的 VZV/水痘-带状疱疹血清学筛查应在筛选期完成，"
-    "血清阴性者按说明书 considerations 进行接种评估并记录。"
 )
+
+# 第10轮末修订（P1-14/P1-07）：VZV 筛查句仅限 VZV/水痘专属章节，不再
+# 印进所有适应症的妊娠/避孕骨架（BE204 支扩研究错配第14例）；英文
+# considerations 改中文。
+_SAFETY_VZV_SENTENCE = (
+    "按方案要求的 VZV/水痘-带状疱疹血清学筛查应在筛选期完成，"
+    "血清阴性者按说明书接种建议进行接种评估并记录。"
+)
+
+
+def _is_vzv_specific_heading(heading: str) -> bool:
+    text = str(heading or "").upper()
+    return "VZV" in text or "水痘" in text or "带状疱疹" in text
 
 _SAFETY_GENERIC_TEMPLATE = _SAFETY_AE_TEMPLATE
 
@@ -219,6 +230,9 @@ def _gap_placeholder_block(
             template = _SAFETY_UNBLINDING_TEMPLATE
         elif "妊娠" in heading or "避孕" in heading or "VZV" in heading or "水痘" in heading:
             template = _SAFETY_PREGNANCY_TEMPLATE
+            # 第10轮末修订（P1-14）：VZV 筛查句仅限 VZV/水痘专属章节。
+            if _is_vzv_specific_heading(heading):
+                template += _SAFETY_VZV_SENTENCE
         elif "特别关注" in heading or "AESI" in heading_upper:
             template = _SAFETY_AESI_TEMPLATE
         elif (
@@ -233,6 +247,12 @@ def _gap_placeholder_block(
                 template = _RISK_CONTROL_NO_COMMITTEE_TEMPLATE
             else:
                 template = _RISK_CONTROL_COMMITTEE_TEMPLATE
+            # 第10轮末修订（P1-12）：无 AESI 实文章节（aesi_definitions空）
+            # 时骨架改指安全性监测章节，消悬空引用。
+            if not overrides.get("aesi_definitions"):
+                template = template.replace(
+                    "按 AESI 章节执行主动监测", "按安全性监测章节执行主动监测"
+                )
         elif "随机化" in heading or "盲法" in heading:
             # NEW-15 残留：设计短语由已确认结构化设计事实选择；未记录的值
             # 一律落「待医学经理确认」，不编造比例、区组大小或样本量。

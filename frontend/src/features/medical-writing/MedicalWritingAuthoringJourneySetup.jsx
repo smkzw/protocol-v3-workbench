@@ -296,7 +296,7 @@ const FACT_GAP_LABELS = {
 const emptyPicos = {
   design_archetype: "", field_applicability: {}, population_summary: "", inclusion_modules: [], exclusion_modules: [], washout_rules: [], intervention_summary: "", intervention_dose_regimen: "", allowed_concomitant_rules: [], required_background_rules: [], prohibited_concomitant_rules: [], assessment_timing_restrictions: [], intervention_rules: null, comparator_summary: "", primary_endpoint: "", key_secondary_endpoints: [], other_secondary_endpoints: [], exploratory_endpoints: [], safety_endpoints: [], aesi_definitions: [], assessment_instruments: [], study_epochs: [], visit_strategy: "", estimand_strategy: "", sample_size_strategy: "", sample_size_anchor: "", statistical_strategy: "",
 };
-const PICOS_TEXT_LIST_FIELDS = [
+export const PICOS_TEXT_LIST_FIELDS = [
   "inclusion_modules", "exclusion_modules", "washout_rules", "allowed_concomitant_rules",
   "required_background_rules", "prohibited_concomitant_rules", "assessment_timing_restrictions",
   "key_secondary_endpoints", "other_secondary_endpoints", "exploratory_endpoints", "safety_endpoints",
@@ -450,12 +450,22 @@ const picosMissingFields = (values) => {
   }
   return missing;
 };
-const normalizePicosForWrite = (value) => ({
+// 第10轮末修订（P1-50）：保存前自动去重归并（保序、首现保留）——
+// 双次填充叠加产生的重复行在写路径上消失，服务端唯一性校验不再被
+// 触发（现场 r10-A：重复行→422 英文直出→普通用户无解）。
+export const normalizePicosForWrite = (value) => ({
   ...value,
-  ...Object.fromEntries(PICOS_TEXT_LIST_FIELDS.map((field) => [
-    field,
-    (value?.[field] || []).map((item) => String(item || "").trim()).filter(Boolean),
-  ])),
+  ...Object.fromEntries(PICOS_TEXT_LIST_FIELDS.map((field) => {
+    const seen = new Set();
+    const deduped = [];
+    for (const item of value?.[field] || []) {
+      const normalized = String(item || "").trim();
+      if (!normalized || seen.has(normalized)) continue;
+      seen.add(normalized);
+      deduped.push(normalized);
+    }
+    return [field, deduped];
+  })),
 });
 // NEW-6（R27 第2轮修订）：响应缺该 stage 载荷时返回 null（而不是拿 emptyPicos
 // 顶替）——调用侧 null 则保留当前值，杜绝"异步响应不带 picos 就整替为空"。

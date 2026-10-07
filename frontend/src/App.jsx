@@ -144,6 +144,7 @@ import {
 import { WritingReferencePanel } from "./features/writing-reference/WritingReferencePanel";
 import { StructuredTableDesigner } from "./features/medical-writing/StructuredTableDesigner";
 import { MedicalWritingAuthoringJourneySetup } from "./features/medical-writing/MedicalWritingAuthoringJourneySetup";
+import { buildBatchFreezeSummary } from "./features/medical-writing/batchFreezeSummary.mjs";
 import { LegacyAuthoringBootstrapPanel } from "./features/medical-writing/LegacyAuthoringBootstrapPanel";
 import { MedicalWritingSynopsisProjectIntake } from "./features/medical-writing/MedicalWritingSynopsisProjectIntake";
 import { MedicalWritingLiteraturePanel } from "./features/medical-writing/MedicalWritingLiteraturePanel";
@@ -8133,6 +8134,9 @@ function WritingPage({
   // R8 片X-5（P0-03）：一键冻结全部待冻章节。
   const [batchFreezeBusy, setBatchFreezeBusy] = useState(false);
   const [batchFreezeMessage, setBatchFreezeMessage] = useState("");
+  // 第10轮末修订（P1-51）：批结果（含跳过清单）行内可见——卡67现场
+  // 『连点8次零反馈』的根因是跳过章不可见，不是要强冻占位章。
+  const [batchFreezeResult, setBatchFreezeResult] = useState(null);
   const [workingCopyMessage, setWorkingCopyMessage] = useState("");
   const [workingCopyEditing, setWorkingCopyEditing] = useState(false);
   const [workingCopyDirty, setWorkingCopyDirty] = useState(false);
@@ -11128,17 +11132,11 @@ function WritingPage({
     })
       .then(readJsonOrThrow)
       .then(async (payload) => {
-        const frozenCount = (payload.frozen_section_ids || []).length;
-        const failedCount = (payload.failures || []).length;
-        const skippedCount = (payload.skipped || []).length;
-        const pieces = [
-          `已冻结 ${frozenCount} 个章节`,
-          skippedCount ? `${skippedCount} 个章节跳过（未保存或待调和，见章节列表）` : "",
-          failedCount ? `${failedCount} 个章节失败（版本冲突，请刷新后重试该章）` : "",
-        ].filter(Boolean);
-        setBatchFreezeMessage(`${pieces.join("；")}。`);
+        const summary = buildBatchFreezeSummary(payload);
+        setBatchFreezeResult(summary);
+        setBatchFreezeMessage(summary.line);
         setWorkingCopyMessage(
-          `批量冻结完成：${pieces.join("；")}。`
+          `批量冻结完成：${summary.line}`
           + (payload.readiness_ready ? " 全部章节已形成当前作者确认冻结版本。" : ""),
         );
         await refreshFreezeReadiness();
@@ -11647,8 +11645,26 @@ function WritingPage({
                         ? `对 ${remainingFreezeSectionCount} 个待冻章节逐章执行作者冻结（与逐章确认同一审计语义；未保存/待调和章节会跳过并列出原因）`
                         : "全部待冻章节均已冻结")}
                   >
-                    <Layers size={14} /> {batchFreezeBusy ? "批量冻结中" : `一键冻结全部待冻章节（${remainingFreezeSectionCount ?? 0}）`}
+                    <Layers size={14} /> {batchFreezeBusy
+                      ? "批量冻结中"
+                      : batchFreezeResult
+                        ? `已完成（冻结${batchFreezeResult.frozenCount}跳过${batchFreezeResult.skippedItems.length}失败${batchFreezeResult.failuresCount}）`
+                        : `一键冻结全部待冻章节（${remainingFreezeSectionCount ?? 0}）`}
                   </button>
+                )}
+                {batchFreezeResult && batchFreezeResult.skippedItems.length > 0 && (
+                  <div className="batch-freeze-skips" data-testid="batch-freeze-skips">
+                    <strong>以下章节本次未冻结（逐章原因）：</strong>
+                    <ul>
+                      {batchFreezeResult.skippedItems.map((item) => (
+                        <li key={item.label}>
+                          <span>{item.label}</span>
+                          <small>{item.reason}</small>
+                        </li>
+                      ))}
+                    </ul>
+                    <small>待保存章节请先在编辑器保存；待调和章节请完成研究设计调和后再次点击批量冻结。</small>
+                  </div>
                 )}
               </div>
               {exportPlaceholderAck && (
