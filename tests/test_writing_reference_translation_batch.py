@@ -194,7 +194,7 @@ class FakeTranslationRunner:
     # Default source-text -> translated-text mapping used by both the legacy
     # runner path and the deterministic composite pipeline fixture.
     TRANSLATIONS: dict[str, str] = {
-        "Participants must not receive SCS within 14 days.": "受试者在14天内不得接受SCS。",
+        "Participants must not receive SCS within 14 days.": "受试者在筛选前14天内不得接受SCS全身性皮质类固醇治疗。",
         "The primary endpoint is assessed at Week 16.": "主要终点在第16周进行评估。",
         "Participants are eligible.": "受试者符合条件。",
         "The endpoint is assessed.": "对终点进行评估。",
@@ -2956,7 +2956,7 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
         self.assertEqual(0, preview.eligible_count)
         self.assertEqual(1, preview.span_exclusion_reason_counts["unmapped"])
         self.assertEqual(1, preview.excluded_count)
-        with self.assertRaisesRegex(ValueError, "no eligible spans"):
+        with self.assertRaisesRegex(ValueError, "0 份已取得的公开参考文件"):
             self.service.create(
                 PROJECT_ID, self._create_request("translation-batch-ra-empty")
             )
@@ -3002,7 +3002,7 @@ class WritingReferenceTranslationBatchTests(unittest.TestCase):
             1,
             preview.span_exclusion_reason_counts["semantic_fragment_incomplete"],
         )
-        with self.assertRaisesRegex(ValueError, "no eligible spans"):
+        with self.assertRaisesRegex(ValueError, "0 份已取得的公开参考文件"):
             self.service.create(
                 PROJECT_ID,
                 self._create_request("translation-batch-incomplete-sentence"),

@@ -3261,7 +3261,13 @@ class WritingReferenceRepository:
         decision: str, comment: str, actor: str, expected_revision: int,
         idempotency_key: str,
         acknowledged_fidelity_failure_codes: list[str] | None = None,
+        decision_type: str = "author_confirmation",
     ) -> WritingReferenceMedicalReviewDecision:
+        # 20261004a：机器忠实度通过的候选由系统自动确认（machine_fidelity_
+        # auto），与人工作者确认（author_confirmation）在审计上区分；准入
+        # 基底沿用 machine_fidelity_passed。
+        if decision_type not in {"author_confirmation", "machine_fidelity_auto"}:
+            raise ValueError("unsupported medical review decision type")
         if decision not in {"approved", "returned", "rejected"} or not comment.strip():
             raise ValueError("valid author confirmation decision and comment are required")
         acknowledged_codes = [
@@ -3381,7 +3387,7 @@ class WritingReferenceRepository:
                 review_id=review_id, project_id=project_id, translation_id=translation_id,
                 translation_revision=translation_revision, decision=decision,
                 comment=comment.strip(), actor=actor, revision=revision,
-                decision_type="author_confirmation",
+                decision_type=decision_type,
                 admission_status="admitted" if decision == "approved" else "not_admitted",
                 evidence_brief_id=evidence_brief_id,
                 acknowledged_fidelity_failure_codes=acknowledged_codes,

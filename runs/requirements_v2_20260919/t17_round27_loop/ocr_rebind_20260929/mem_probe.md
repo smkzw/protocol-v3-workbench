@@ -190,3 +190,94 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 运维帽执行记录（用户指令20261006）：本轮durable仅1条running（protocol_full_draft，16:59Z创建于16:47Z后端重启之后、心跳实时、租约有效，与mtplx inflight=1吻合）——判定为进行中的收尾/验证任务，非卡死非遗留，未行使cancel；如后续轮次发现心跳死亡/租约过期的悬置job，按指令立即POST /jobs/{id}/cancel。
 
 红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码。
+
+---
+
+# 复测 · 2026-10-06 23:49–2026-10-07 00:02 CEST（R27环境预检·第8轮=运行上限轮，环境管理员）
+
+绑定核验：revision 43，ocr=`ocr_local_omlx/GLM-OCR-bf16`（enabled，specialized_whitelisted）；PADDLE key 复核仍不存在（文件/进程 0 命中）；备份仍在。
+
+实测序列（经产品 API；探针#1排队452.3s获切相——mtplx最小驻留+GLM-OCR冷加载；时序正常无memory_guard误拒）：
+
+| 时刻 | 动作 | oMLX RSS | 耗时 |
+|---|---|---|---|
+| 23:50–23:57 | OCR 视觉探针 #1 → **passed** | ~33.9GB | 452.3 s（含排队/切相/冷加载） |
+| 23:59 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,924,752 KB | 262 ms |
+| 23:59 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,924,752 KB | 96 ms |
+
+结论与历轮（09-29/10-03/10-05×3/10-06第6-7轮）完全一致：**共存无互斥卸载**（co_resident=true，RSS 稳定）。证据：`../env_precheck_round8_20261006/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间与omp-harness进程。
+
+---
+
+# 复测 · 2026-10-07 07:52–08:05 CEST（R27环境预检·第9轮，环境管理员）
+
+绑定核验：revision 46，ocr=`ocr_local_omlx/GLM-OCR-bf16`（enabled，specialized_whitelisted）；PADDLE key 复核仍不存在（文件/进程 0 命中）；备份仍在。
+
+实测序列（经产品 API；探针#1排队425.5s获切相，时序正常无memory_guard误拒）：
+
+| 时刻 | 动作 | oMLX RSS | 耗时 |
+|---|---|---|---|
+| 07:53–08:00 | OCR 视觉探针 #1 → **passed** | ~33.9GB | 425.5 s（含排队/切相/冷加载） |
+| 08:04 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,921,824 KB | 284 ms |
+| 08:04 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,921,824 KB | 102 ms |
+
+结论与历轮一致：共存无互斥卸载（co_resident=true，RSS 稳定）。证据：`../env_precheck_round9_20261007/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间。
+
+---
+
+# 复测 · 2026-10-07 10:39–10:52 CEST（R27环境预检·第10轮，环境管理员）
+
+绑定核验：revision 49，ocr=`ocr_local_omlx/GLM-OCR-bf16`（enabled，specialized_whitelisted）；PADDLE key 复核仍不存在（文件/进程 0 命中）；备份仍在。
+
+实测序列（经产品 API；探针#1排队412.5s获切相，时序正常无memory_guard误拒）：
+
+| 时刻 | 动作 | oMLX RSS | 耗时 |
+|---|---|---|---|
+| 10:40–10:47 | OCR 视觉探针 #1 → **passed** | ~33.9GB | 412.5 s（含排队/切相/冷加载） |
+| 10:51 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,924,496 KB | 309 ms |
+| 10:52 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,924,496 KB | 107 ms |
+
+结论与历轮一致：共存无互斥卸载（co_resident=true，RSS 稳定）。证据：`../env_precheck_round10_20261007/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间。
+
+---
+
+# 复测 · 2026-10-07 18:42–18:56 CEST（R27环境预检·第11轮，环境管理员）
+
+绑定核验：revision 52，ocr=`ocr_local_omlx/GLM-OCR-bf16`（enabled，specialized_whitelisted）；PADDLE key 复核仍不存在（文件/进程 0 命中）；备份仍在。
+
+实测序列（经产品 API；探针#1排队428.2s获切相，时序正常无memory_guard误拒）：
+
+| 时刻 | 动作 | oMLX RSS | 耗时 |
+|---|---|---|---|
+| 18:43–18:50 | OCR 视觉探针 #1 → **passed** | ~33.9GB | 428.2 s（含排队/切相/冷加载） |
+| 18:55 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,919,824 KB | 268 ms |
+| 18:55 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,919,824 KB | 97 ms |
+
+结论与历轮一致：共存无互斥卸载（co_resident=true，RSS 稳定）。证据：`../env_precheck_round11_20261007/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间。
+
+---
+
+# 复测 · 2026-10-07 21:22–21:34 CEST（R27环境预检·第12轮，环境管理员）
+
+绑定核验：revision 52，ocr=`ocr_local_omlx/GLM-OCR-bf16`（enabled，specialized_whitelisted）；PADDLE key 复核仍不存在（文件/进程 0 命中）；备份仍在。
+
+实测序列（经产品 API；首次探针因证据目录未建丢了响应文件但请求 200/112.9s 通过——排队112.9s（较近几轮短，mtplx驻留未满即获切相），补建目录后热态重跑取证）：
+
+| 时刻 | 动作 | oMLX RSS | 耗时 |
+|---|---|---|---|
+| 21:23 | OCR 视觉探针 #1（首次，证据文件未落盘）→ HTTP 200 | — | 112.9 s（含排队/切相/冷加载） |
+| 21:25 | OCR 探针 #1 重跑取证 → **passed** | ~33.9GB | 136 ms（热态） |
+| 21:26 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,916,528 KB | 315 ms |
+| 21:26 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,916,528 KB | 110 ms |
+
+结论与历轮一致：共存无互斥卸载（co_resident=true，RSS 稳定）。证据：`../env_precheck_round12_20261007/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间。

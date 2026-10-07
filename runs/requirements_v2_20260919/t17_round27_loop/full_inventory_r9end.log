@@ -1,0 +1,1008 @@
+[protocol-v3-test-inventory] runner=vitest tests=37
+
+ RUN  v4.1.10 /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/frontend
+
+ ✓ src/features/medical-writing/protocol-workbench/RegimenProposalCard.test.jsx (10 tests) 252ms
+ ✓ src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx (20 tests) 348ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolWritingDesk.test.jsx (4 tests) 373ms
+ ✓ src/features/writing-reference/WritingReferencePanel.residualAdmission.test.jsx (2 tests) 520ms
+     ✓ lets the author admit a fidelity-blocked translation after acknowledging every failure code  342ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactVisibility.test.jsx (1 test) 561ms
+     ✓ closes the competitor drawer and reveals the confirmation when impact opens  560ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.assemblyPlanConfirmEntry.test.jsx (3 tests) 564ms
+     ✓ enables the writing entry when the plan is complete but unconfirmed, and the click confirms the plan before creating the document  306ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.platformEntryIdempotent.test.jsx (3 tests) 609ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolIntakeWorkspace.test.jsx (9 tests) 620ms
+ ✓ src/features/medical-writing/protocol-workbench/RegimenAdoptionCard.test.jsx (12 tests) 880ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactStaleRecovery.test.jsx (1 test) 719ms
+     ✓ auto-refreshes the journey and resubmits on 409 stale instead of dead-ending  718ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.pipelineDraftRelease.test.jsx (3 tests) 837ms
+     ✓ triaging keeps the draft save usable while the stage commit stays frozen  530ms
+ ✓ src/features/medical-writing/protocol-workbench/ProtocolSourceIntake.test.jsx (21 tests) 1011ms
+ ❯ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.sampleSizeGate.test.jsx (8 tests | 1 failed) 946ms
+     ✓ 判不一致 "两组各45例共90例；按GERD-HRQL组间差6分、SD 12、α=0.05双侧、80%把握度探索性设定。" → 声明45需63 1ms
+     ✓ 判不一致 "每组45例；按组间差4.5%、SD 6.5%、双侧α=0.05、把握度80%设定。" → 声明45需33 0ms
+     ✓ 判不一致 "40例/组；按组间差25米、SD 45米、双侧α=0.05、把握度80%估算。" → 声明40需51 0ms
+     ✓ 比例型正向工艺不误拦（要素未齐而非不一致） 0ms
+     ✓ 自洽声明放行 0ms
+     ✓ 无声明返回 null 0ms
+     × 完成第二步按钮在含不一致声明时禁用且执行页签有内联警告 894ms
+     ✓ 自洽声明不阻断完成第二步 48ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.errorAndHydration.test.jsx (10 tests) 986ms
+     ✓ keeps the checked administration route when the draft-save response omits product_profile  391ms
+     ✓ NEW-42: explains disabled stage-strip buttons and always shows missing framing fields  378ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.overrideAck.test.jsx (3 tests) 992ms
+     ✓ keeps the checked gaps and reason when the revision bumps with an unchanged gap set  536ms
+ ✓ src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.test.jsx (7 tests) 362ms
+ ✓ src/features/medical-writing/protocol-workbench/DesignElementsCards.test.jsx (3 tests) 285ms
+ ✓ src/features/medical-writing/protocol-workbench/RegimenDesignWorkspace.test.jsx (9 tests) 338ms
+ ✓ src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx (3 tests) 168ms
+ ✓ src/features/medical-writing/errorContract.test.jsx (16 tests) 5ms
+ ✓ src/features/writing-reference/userFacingErrorCopy.test.jsx (3 tests) 240ms
+ ✓ src/features/writing-reference/WritingReferencePanel.basketAuthority.test.jsx (3 tests) 302ms
+ ✓ src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx (12 tests) 13ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.requiredFieldSurfaces.test.jsx (7 tests) 1671ms
+     ✓ L4: 草稿保存后提示缺失字段名称而非仅数量  315ms
+     ✓ L2: 「研究臂/队列」在设计适用性组可手动编辑并写入结构化设计事实  312ms
+ ✓ src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx (4 tests) 238ms
+ ✓ tests/ProtocolSourceSelectionRecovery.test.jsx (1 test) 193ms
+ ✓ src/runtimeReadiness.test.jsx (8 tests) 4ms
+ ✓ src/features/medical-writing/lineBreakAndShellWidth.test.jsx (3 tests) 3ms
+ ✓ src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx (8 tests) 383ms
+ ✓ src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.test.jsx (5 tests) 71ms
+ ✓ src/features/medical-writing/CorpusGate.overrideDeadlock.test.jsx (1 test) 130ms
+ ✓ src/features/medical-writing/sampleSizeGate.test.jsx (4 tests) 4ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.prefillDestination.test.jsx (3 tests) 2ms
+ ✓ src/features/medical-writing/parsePopulationIntent.test.jsx (3 tests) 3ms
+ ✓ src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx (2 tests) 2ms
+ ✓ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.dirtyMergeArrays.test.jsx (2 tests) 2ms
+ ✓ src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx (2 tests) 4324ms
+     ✓ sends the revision POST, polls the accepted durable job to completion, and surfaces the result  2249ms
+     ✓ surfaces the durable job failure instead of failing silently  2073ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/medical-writing/MedicalWritingAuthoringJourneySetup.sampleSizeGate.test.jsx > picosMissingFields 集成：不一致阻断完成第二步（组件级） > 完成第二步按钮在含不一致声明时禁用且执行页签有内联警告
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "执行与统计"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"authoring-journey-header"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "研究设计引导":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "医学写作建项步骤":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"医学写作建项步骤"[39m
+    [33mclass[39m=[32m"authoring-stage-strip"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "研究框架":
+  [36m<button[39m
+    [33mclass[39m=[32m" done "[39m
+    [33mtitle[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "02PICOS设计":
+  [36m<button[39m
+    [33mclass[39m=[32m"active  "[39m
+    [33mtitle[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "03语料准备":
+  [36m<button[39m
+    [33mclass[39m=[32m"  "[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtitle[39m=[32m"请先完成第二步PICOS设计并处理未保存修改后再进入语料准备"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "重新准备":
+  [36m<button[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "采用当前方案文字建议":
+  [36m<button[39m
+    [33mclass[39m=[32m"secondary-button"[39m
+    [33mdata-action[39m=[32m"apply-structured-design-suggestion"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "返回第一步":
+  [36m<button[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "保存草稿":
+  [36m<button[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtitle[39m=[32m"当前没有需要保存的修改"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "完成第二步":
+  [36m<button[39m
+    [33mclass[39m=[32m"primary-button"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtitle[39m=[32m"请先补齐第二步必填项：样本量声明与假设不一致（按您输入的差值/SD/α/把握度复算的例数与声明不符；请修正声明或调整假设）"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  progressbar:
+
+  Name "竞品调研进度":
+  [36m<span[39m
+    [33maria-label[39m=[32m"竞品调研进度"[39m
+    [33maria-valuemax[39m=[32m"100"[39m
+    [33maria-valuemin[39m=[32m"0"[39m
+    [33maria-valuenow[39m=[32m"0"[39m
+    [33mclass[39m=[32m"authoring-automatic-research-track"[39m
+    [33mrole[39m=[32m"progressbar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"authoring-journey-body"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<fieldset[39m
+    [33mclass[39m=[32m"authoring-journey-fieldset"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"authoring-advanced-refinement"[39m
+    [33mopen[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"authoring-manual-design-options"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  emphasis:
+
+  Name "":
+  [36m<em />[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"authoring-group-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "设计适用性":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"active"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "研究人群":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "干预措施":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "对照":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "结局指标":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "执行与统计":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m""[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  radio:
+
+  Name "随机对照确证性研究对照和估计目标为必填设计事实。":
+  [36m<input[39m
+    [33mchecked[39m=[32m""[39m
+    [33mname[39m=[32m"picos-design-archetype"[39m
+    [33mtype[39m=[32m"radio"[39m
+    [33mvalue[39m=[32m"randomized_confirmatory"[39m
+  [36m/>[39m
+
+  Name "随机探索性研究适用于随机、开放标签或盲法的剂量/概念探索；对照必填，估计目标可说明后标记不适用。":
+  [36m<input[39m
+    [33mname[39m=[32m"picos-design-archetype"[39m
+    [33mtype[39m=[32m"radio"[39m
+    [33mvalue[39m=[32m"randomized_exploratory"[39m
+  [36m/>[39m
+
+  Name "单臂早期探索适用于FIH、first-in-patient、PoM或剂量探索。":
+  [36m<input[39m
+    [33mname[39m=[32m"picos-design-archetype"[39m
+    [33mtype[39m=[32m"radio"[39m
+    [33mvalue[39m=[32m"single_arm_early_phase"[39m
+  [36m/>[39m
+
+  Name "开放标签延展研究适用于无同期对照的OLE研究。":
+  [36m<input[39m
+    [33mname[39m=[32m"picos-design-archetype"[39m
+    [33mtype[39m=[32m"radio"[39m
+    [33mvalue[39m=[32m"open_label_extension"[39m
+  [36m/>[39m
+
+  Name "其他研究设计由医学经理逐项确认适用性并说明依据。":
+  [36m<input[39m
+    [33mname[39m=[32m"picos-design-archetype"[39m
+    [33mtype[39m=[32m"radio"[39m
+    [33mvalue[39m=[32m"other"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "对照组设计适用性":
+  [36m<select[39m
+    [33maria-label[39m=[32m"对照组设计适用性"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "估计目标策略适用性":
+  [36m<select[39m
+    [33maria-label[39m=[32m"估计目标策略适用性"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "随机化":
+  [36m<select[39m
+    [33maria-label[39m=[32m"随机化"[39m
+    [33maria-required[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "盲法":
+  [36m<select[39m
+    [33maria-label[39m=[32m"盲法"[39m
+    [33maria-required[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "对照类型":
+  [36m<select[39m
+    [33maria-label[39m=[32m"对照类型"[39m
+    [33maria-required[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "分组/分配方式":
+  [36m<select[39m
+    [33maria-label[39m=[32m"分组/分配方式"[39m
+    [33maria-required[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "中心模式":
+  [36m<select[39m
+    [33maria-label[39m=[32m"中心模式"[39m
+    [33maria-required[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "适应性设计计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"适应性设计计划状态"[39m
+  [36m/>[39m
+
+  Name "交叉设计计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"交叉设计计划状态"[39m
+  [36m/>[39m
+
+  Name "开放标签延伸计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"开放标签延伸计划状态"[39m
+  [36m/>[39m
+
+  Name "治疗转换计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"治疗转换计划状态"[39m
+  [36m/>[39m
+
+  Name "样本量重估计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"样本量重估计划状态"[39m
+  [36m/>[39m
+
+  Name "期中分析计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"期中分析计划状态"[39m
+  [36m/>[39m
+
+  Name "SRC计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"SRC计划状态"[39m
+  [36m/>[39m
+
+  Name "DMC计划状态":
+  [36m<select[39m
+    [33maria-label[39m=[32m"DMC计划状态"[39m
+  [36m/>[39m
+
+  Name "研究臂/队列结构":
+  [36m<select[39m
+    [33maria-label[39m=[32m"研究臂/队列结构"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "适用，需填写":
+  [36m<option[39m
+    [33mvalue[39m=[32m"applicable"[39m
+  [36m/>[39m
+
+  Name "不适用":
+  [36m<option[39m
+    [33mvalue[39m=[32m"not_applicable"[39m
+  [36m/>[39m
+
+  Name "适用，需填写":
+  [36m<option[39m
+    [33mvalue[39m=[32m"applicable"[39m
+  [36m/>[39m
+
+  Name "不适用":
+  [36m<option[39m
+    [33mvalue[39m=[32m"not_applicable"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m"undecided"[39m
+  [36m/>[39m
+
+  Name "随机":
+  [36m<option[39m
+    [33mvalue[39m=[32m"randomized"[39m
+  [36m/>[39m
+
+  Name "非随机":
+  [36m<option[39m
+    [33mvalue[39m=[32m"non_randomized"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"other"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m"undecided"[39m
+  [36m/>[39m
+
+  Name "开放标签":
+  [36m<option[39m
+    [33mvalue[39m=[32m"open_label"[39m
+  [36m/>[39m
+
+  Name "单盲":
+  [36m<option[39m
+    [33mvalue[39m=[32m"single_blind"[39m
+  [36m/>[39m
+
+  Name "双盲":
+  [36m<option[39m
+    [33mvalue[39m=[32m"double_blind"[39m
+  [36m/>[39m
+
+  Name "三盲":
+  [36m<option[39m
+    [33mvalue[39m=[32m"triple_blind"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"other"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m"undecided"[39m
+  [36m/>[39m
+
+  Name "安慰剂对照":
+  [36m<option[39m
+    [33mvalue[39m=[32m"placebo"[39m
+  [36m/>[39m
+
+  Name "阳性/活性对照":
+  [36m<option[39m
+    [33mvalue[39m=[32m"active"[39m
+  [36m/>[39m
+
+  Name "安慰剂+阳性药（三臂）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"placebo_and_active"[39m
+  [36m/>[39m
+
+  Name "无对照/剂量递增":
+  [36m<option[39m
+    [33mvalue[39m=[32m"none_or_dose_escalation"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"other"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "平行组":
+  [36m<option[39m
+    [33mvalue[39m=[32m"平行组"[39m
+  [36m/>[39m
+
+  Name "交叉设计":
+  [36m<option[39m
+    [33mvalue[39m=[32m"交叉设计"[39m
+  [36m/>[39m
+
+  Name "序贯设计":
+  [36m<option[39m
+    [33mvalue[39m=[32m"序贯设计"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"其他"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "多中心":
+  [36m<option[39m
+    [33mvalue[39m=[32m"多中心"[39m
+  [36m/>[39m
+
+  Name "单中心":
+  [36m<option[39m
+    [33mvalue[39m=[32m"单中心"[39m
+  [36m/>[39m
+
+  Name "有限中心":
+  [36m<option[39m
+    [33mvalue[39m=[32m"有限中心"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"其他"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "不计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"false"[39m
+  [36m/>[39m
+
+  Name "计划":
+  [36m<option[39m
+    [33mvalue[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "待确认":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "平行臂组（如试验药组/对照组）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"parallel_arms"[39m
+  [36m/>[39m
+
+  Name "剂量递增队列":
+  [36m<option[39m
+    [33mvalue[39m=[32m"dose_cohorts"[39m
+  [36m/>[39m
+
+  Name "单臂":
+  [36m<option[39m
+    [33mvalue[39m=[32m"single_arm"[39m
+  [36m/>[39m
+
+  Name "其他（需说明）":
+  [36m<option[39m
+    [33mvalue[39m=[32m"other"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "随机化盲法补充说明":
+  [36m<input[39m
+    [33maria-label[39m=[32m"随机化盲法补充说明"[39m
+    [33mplaceholder[39m=[32m"可保留分层因素、盲态角色等具体说明"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "研究臂/队列名称":
+  [36m<textarea[39m
+    [33maria-label[39m=[32m"研究臂/队列名称"[39m
+    [33mplaceholder[39m=[32m"试验药组
+  对照组"[39m
+    [33mrows[39m=[32m"2"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul[39m
+    [33mclass[39m=[32m"authoring-blocker-guidance"[39m
+    [33mdata-testid[39m=[32m"picos-missing-guidance"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"authoring-journey-message danger"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"authoring-journey-footer"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"authoring-journey-shell"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"authoring-journey-header"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span>[39m
+            [0m新建中国临床试验方案[0m
+          [36m</span>[39m
+          [36m<h2>[39m
+            [0m研究设计引导[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"authoring-journey-state"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m项目状态[0m
+          [36m</span>[39m
+          [36m<strong>[39m
+            [0mPICOS设计进行中[0m
+          [36m</strong>[39m
+          [36m<small>[39m
+            [0m来源：从零开始[0m
+            [0m · 版本 [0m
+            [0m3[0m
+          [36m</small>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"医学写作建项步骤"[39m
+        [33mclass[39m=[32m"authoring-stage-strip"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m" done "[39m
+          [33mtitle[39m=[32m""[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-circle-check"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"15"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"15"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"10"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m9 12 2 2 4-4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</span>[39m
+          [36m<strong>[39m
+            [0m研究框架[0m
+          [36m</strong>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"active  "[39m
+          [33mtitle[39m=[32m""[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m02[0m
+          [36m</span>[39m
+          [36m<strong>[39m
+            [0mPICOS设计[0m
+          [36m</strong>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"  "[39m
+          [33mdisabled[39m=[32m""[39m
+          [33mtitle[39m=[32m"请先完成第二步PICOS设计并处理未保存修改后再进入语料准备"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m03[0m
+          [36m</span>[39m
+          [36m<strong>[39m
+            [0m语料准备[0m
+          [36m</strong>[39m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"authoring-competitor-toolbar"[39m
+        [33mdata-testid[39m=[32m"authoring-competitor-toolbar"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-search"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"15"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"15"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21 21-4.34-4.34"[39m
+            [36m/>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"11"[39m
+              [33mcy[39m=[32m"11"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0m竞品方案处理[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0m项目已建立；系统将自动检索并处理竞品研究，当前草稿会持续保留。[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"authoring-competitor-toolbar-actions"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"authoring-automatic-research-state"[39m
+            [33mdata-state[39m=[32m"running"[39m
+            [33mdata-testid[39m=[32m"authoring-automatic-research-progress"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [36m<strong>[39m
+                [0m正在启动公开研究检索[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m0%[0m
+              [36m</small>[39m
+              [36m<span[39m
+                [33maria-label[39m=[32m"竞品调研进度"[39m
+                [33maria-valuemax[39m=[32m"100"[39m
+                [33maria-valuemin[39m=[32m"0"[39m
+                [33maria-valuenow[39m=[32m"0"[39m
+                [33mclass[39m=[32m"authoring-automatic-research-track"[39m
+                [33mrole[39m=[32m"progressbar"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mstyle[39m=[32m"width: 0%;"[39m
+                [36m/>[39m
+              [36m</span>[39m
+            [36m</sp...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/medical-writing/MedicalWritingAuthoringJourneySetup.sampleSizeGate.test.jsx:93:33
+     91|       expect(commit.title).toContain("样本量声明与假设不一致");
+     92|     });
+     93|     const executionTab = screen.getByRole("button", { name: "执行与统计" });
+       |                                 ^
+     94|     executionTab.click();
+     95|     await waitFor(() => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 36 passed (37)
+      Tests  1 failed | 218 passed (219)
+   Start at  07:27:54
+   Duration  5.77s (transform 6.10s, setup 0ms, import 13.53s, tests 18.96s, environment 22.03s)
+

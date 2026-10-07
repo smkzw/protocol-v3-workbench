@@ -1,0 +1,25 @@
+drill start 2026-10-07T10:26:46.450080 duration=300.0s
+{
+ "total_requests": 938,
+ "by_phase": {
+  "translation": {
+   "count": 937,
+   "ok": 937,
+   "non_ok": 0,
+   "max_elapsed_s": 0.378,
+   "min_elapsed_s": 0.266,
+   "errors": []
+  },
+  "triage": {
+   "count": 1,
+   "ok": 1,
+   "non_ok": 0,
+   "max_elapsed_s": 607.928,
+   "min_elapsed_s": 607.928,
+   "errors": []
+  }
+ },
+ "co_resident_samples": 0,
+ "samples": 61
+}
+events -> /Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/t17_round27_loop/retest_r9_material/concurrency_drill_events.jsonl

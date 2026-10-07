@@ -5,7 +5,7 @@ import logging
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 from typing import Any, Callable
 
@@ -971,7 +971,31 @@ class WritingReferenceTranslationBatchService:
 
         scope = self._derive_scope(project_id, request)
         if not scope.item_specs:
-            raise ValueError("translation batch scope contains no eligible spans")
+            # NEW-P0-13（R27 片1④）：零可译片段的422必须诚实说明下层原因
+            # ——现场：0/0可选范围被当『服务端错误』展示，实际是该快照的
+            # 公开参考文件一份都没取得（准备层下载失败）。统计准备层失败
+            # 数给用户可行动指引，而不是一句无信息英文。
+            failed = 0
+            try:
+                with self.repository._connect() as connection:
+                    rows = connection.execute(
+                        """
+                        SELECT failed_count FROM writing_reference_preparation_batches
+                        WHERE tenant_id=? AND project_id=? AND snapshot_id=?
+                          AND failed_count > 0
+                        ORDER BY created_at DESC LIMIT 5
+                        """,
+                        ("kangzhe_local", project_id, request.snapshot_id),
+                    ).fetchall()
+                failed = sum(int(row["failed_count"] or 0) for row in rows)
+            except Exception:  # noqa: BLE001 — 统计失败退回基础文案
+                failed = 0
+            raise ValueError(
+                f"当前快照 0 份已取得的公开参考文件"
+                + (f"（{failed} 份获取失败）" if failed else "")
+                + "，没有可翻译的原文片段。请先在『文档与解析』重试原文获取，"
+                "或手动上传方案原文后再生成译文。"
+            )
 
         batch_id = "wref_translation_batch_" + _payload_hash(
             {
@@ -3571,7 +3595,87 @@ class WritingReferenceTranslationBatchService:
                 pass
         self._refresh_batch_status(project_id, record.target_batch_id)
 
+    # R27 自检20261005 节点③残留产品缺陷：卡死 running 条目无租约时限、
+    # 无回收路径（现场：1项悬置running>30分钟，worker早已不存在，重试入口
+    # 只认 pending/failed_retryable，条目永远无法重新认领）。批次读取是
+    # 确定性自愈边界：超过阈值的 running 条目回退 failed_retryable
+    # （error_code=reclaimed_stale_running，审计留痕）。阈值取单条目正常
+    # 耗时（约1分钟/条，20条批次约10-15分钟）的数倍冗余。
+    STALE_RUNNING_RECLAIM_SECONDS = 30 * 60
+
+    def _reclaim_stale_running_items(
+        self, project_id: str, batch_id: str
+    ) -> int:
+        import json as _json
+
+        cutoff = (
+            self.clock() - timedelta(seconds=self.STALE_RUNNING_RECLAIM_SECONDS)
+        ).isoformat()
+        reclaimed = 0
+        with self.repository._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            rows = connection.execute(
+                """
+                SELECT item_id, payload_json, updated_at
+                FROM writing_reference_translation_batch_items
+                WHERE tenant_id=? AND project_id=? AND batch_id=?
+                  AND generation_status='running' AND updated_at < ?
+                """,
+                (TENANT_ID, project_id, batch_id, cutoff),
+            ).fetchall()
+            for row in rows:
+                try:
+                    payload = _json.loads(row["payload_json"])
+                except Exception:  # noqa: BLE001 — 坏行不猜测，跳过
+                    continue
+                payload["generation_status"] = "failed_retryable"
+                payload["error_code"] = "reclaimed_stale_running"
+                payload["error_detail"] = (
+                    "条目在运行态超过30分钟无进展且无在途作业，已自动回收为"
+                    "可重试；可通过『仅重试失败项』重新生成。"
+                )
+                payload["pipeline_stage_detail"] = "已回收悬置运行条目"
+                connection.execute(
+                    """
+                    UPDATE writing_reference_translation_batch_items
+                    SET generation_status='failed_retryable', payload_json=?, updated_at=?
+                    WHERE tenant_id=? AND project_id=? AND batch_id=? AND item_id=?
+                      AND generation_status='running'
+                    """,
+                    (
+                        _json.dumps(payload, ensure_ascii=False),
+                        self.clock().isoformat(),
+                        TENANT_ID,
+                        project_id,
+                        batch_id,
+                        row["item_id"],
+                    ),
+                )
+                self.repository._append_audit(
+                    connection,
+                    project_id,
+                    "translation_item_reclaimed_stale_running",
+                    batch_id,
+                    "system_stale_running_reaper",
+                    {
+                        "item_id": row["item_id"],
+                        "stale_since": row["updated_at"],
+                        "threshold_seconds": self.STALE_RUNNING_RECLAIM_SECONDS,
+                    },
+                )
+                reclaimed += 1
+            if reclaimed:
+                self._refresh_batch_status_with(connection, project_id, batch_id)
+            connection.commit()
+        return reclaimed
+
     def get(self, project_id: str, batch_id: str) -> WritingReferenceTranslationBatch:
+        try:
+            self._reclaim_stale_running_items(project_id, batch_id)
+        except Exception:  # noqa: BLE001 — 自愈失败不阻断读取
+            logger.exception(
+                "stale-running reclaim failed for batch %s", batch_id
+            )
         with self.repository._connect() as connection:
             row = connection.execute(
                 """
@@ -7949,6 +8053,62 @@ class WritingReferenceTranslationBatchService:
                 "translation result has an unsupported fidelity status"
             )
 
+    def _auto_admit_machine_passed(
+        self, completed: WritingReferenceTranslationBatchItem
+    ) -> None:
+        """20261004a（P0产品方向）：高置信译文自动放行。
+
+        机器忠实度检查全部通过的候选（fidelity_status=passed）在条目完成
+        后由系统直接医学确认并准入（decision_type=machine_fidelity_auto、
+        admission_basis=machine_fidelity_passed、确定性幂等键，全程审计），
+        不产生任何人工点击——现场203段逐条人工放行不可接受。失败只记
+        审计不回滚条目（条目状态已提交），人工门兜底仍可用。
+        """
+        if (
+            completed.generation_status != "candidate_ready"
+            or not completed.translation_id
+            or completed.translation_revision < 1
+            or completed.fidelity_status != "passed"
+        ):
+            return
+        try:
+            self.repository.record_medical_review(
+                project_id=completed.project_id,
+                translation_id=completed.translation_id,
+                translation_revision=completed.translation_revision,
+                decision="approved",
+                comment=(
+                    "机器忠实度检查全部通过，按系统设定自动确认并准入；"
+                    "人工可随时在证据列表回看原文与译文。"
+                ),
+                actor="machine_fidelity_gate",
+                expected_revision=0,
+                idempotency_key=(
+                    f"machine-auto-admit:{completed.batch_id}:"
+                    f"{completed.translation_id}"
+                ),
+                decision_type="machine_fidelity_auto",
+            )
+        except Exception as exc:  # noqa: BLE001 — 自动放行失败不回滚条目
+            try:
+                with self.repository._connect() as connection:
+                    connection.execute("BEGIN IMMEDIATE")
+                    self.repository._append_audit(
+                        connection,
+                        completed.project_id,
+                        "translation_machine_auto_admission_failed",
+                        completed.batch_id,
+                        "machine_fidelity_gate",
+                        {
+                            "item_id": completed.item_id,
+                            "translation_id": completed.translation_id,
+                            "error": f"{type(exc).__name__}: {exc}"[:400],
+                        },
+                    )
+                    connection.commit()
+            except Exception:  # noqa: BLE001 — 审计失败静默
+                pass
+
     def _finish_claim(
         self,
         claimed: WritingReferenceTranslationBatchItem,
@@ -8031,9 +8191,14 @@ class WritingReferenceTranslationBatchService:
                 "pipeline_stage": status,
                 "pipeline_stage_detail": f"failed:{error_code}",
                 "error_code": error_code,
-                "error_detail": self._public_failure_detail(error_code),
+                # R27 自检③：把编排器拒因等底层提示带给用户（仅受控关键词）。
+                "error_detail": self._public_failure_detail(
+                    error_code, error=error
+                ),
                 "blocker_kind": blocker_kind,
-                "blocker_message": self._public_failure_detail(error_code),
+                "blocker_message": self._public_failure_detail(
+                    error_code, error=error
+                ),
                 "active_upper_layer_stage": (
                     "document_planning"
                     if isinstance(error, DocumentPlanValidationError)
@@ -8141,11 +8306,55 @@ class WritingReferenceTranslationBatchService:
             )
 
     @staticmethod
-    def _public_failure_detail(error_code: str) -> str:
+    def _orchestrator_refusal_hint(error: BaseException | None) -> str:
+        """R27 自检③产品侧补丁：从异常链提取编排器拒因的人话提示。
+
+        现场（批次 c4e1c16e…，16项）：底层是 LifecycleRefusal（8002 被非
+        本部署进程占用，防双载设计拒停→translation@omlx 相位切换被拒），
+        属环境性阻断；公开文案却写『请按错误码重试』，误导现场连重试
+        3轮×20项约2.5小时。仅提取受控关键词，不透传原始 traceback。
+        """
+        seen: set[int] = set()
+        exc = error
+        while exc is not None and id(exc) not in seen:
+            seen.add(id(exc))
+            name = type(exc).__name__
+            text = str(exc)
+            if name == "LifecycleRefusal" or "server_unowned" in text or (
+                "not this deployment" in text
+            ):
+                if "own" in text or "unowned" in text:
+                    return (
+                        "（底层原因：本地模型服务器被非本系统部署的进程占用，"
+                        "系统按防误停设计拒绝接管；重试不会自行好转，需先释放"
+                        "被占用的模型服务器再重试。）"
+                    )
+                return (
+                    f"（底层原因：本地模型服务调度被拒（{name}）；"
+                    "重试不会自行好转，请检查模型服务器状态后再重试。）"
+                )
+            exc = exc.__cause__ or exc.__context__
+        return ""
+
+    def _public_failure_detail(
+        self,
+        error_code: str,
+        *,
+        error: BaseException | None = None,
+    ) -> str:
         if error_code == "stale_lineage":
             return "冻结来源或合同状态已变化，请刷新范围后重新生成。"
         if error_code == "translation_generation_failed":
-            return "监管中文候选生成未完成；批次响应不回显供应商原始错误，请按错误码重试。"
+            detail = (
+                "监管中文候选生成未完成；批次响应不回显供应商原始错误，"
+                "请按错误码重试。"
+            )
+            hint = self._orchestrator_refusal_hint(error)
+            if hint:
+                detail = (
+                    "监管中文候选生成未完成；供应商错误未回显。" + hint
+                )
+            return detail
         if error_code == "document_plan_failed":
             return "文档章节规划未完成；本轮已停止该文档的后续生成，请修复后按文档重试。"
         if error_code == "model_call_outcome_unknown_after_restart":

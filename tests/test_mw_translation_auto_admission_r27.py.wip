@@ -1,0 +1,122 @@
+"""R27 用户指令20261004a：翻译忠实度人工门重设计（P0产品方向）。
+
+现场：203段译文逐条人工放行不可接受——正式运作一个方案的竞品翻译
+阶段就要几百条人工确认。重设计三原则：
+1) 高置信项自动放行：机器忠实度检查通过（fidelity_status=passed）的
+   候选在批次完成时由系统自动医学确认并准入（decision_type=
+   machine_fidelity_auto，admission_basis=machine_fidelity_passed，
+   全程留审计），不产生任何人工点击；
+2) 只拦真正可疑项：fidelity_blocked 的候选保留人工门（沿用既有
+   逐项确认全部阻断码的作者准入），是人类唯一需要看的集合；
+3) 人工介入压缩为批量确认的轻量界面（前端既有『一键确认合格候选』
+   面向的是遗留/历史批次与人工复核，不再是主路径）。
+
+反例（红）：跑完一个批次后，机器通过的候选仍停在 not_reviewed/
+not_confirmed，等待人工逐条/一键确认——即现场203条负担。
+"""
+
+from __future__ import annotations
+
+from tests.test_writing_reference_translation_batch import (
+    WritingReferenceTranslationBatchTests,
+)
+
+from tests.test_writing_reference_translation_batch import PROJECT_ID
+
+
+class MachinePassedAutoAdmissionTests(WritingReferenceTranslationBatchTests):
+    def _run_schedule_batch(self, key: str):
+        self._seed_artifact(
+            f"artifact_auto_admit_{abs(hash(key)) % 10000}",
+            [
+                ("span_auto_ready_1", "schedule", "The assessment occurs at Week 16."),
+                ("span_auto_ready_2", "schedule", "The primary endpoint is assessed."),
+                ("span_auto_block_1", "schedule", "Take 12.5 mg bid and 250 mg qd."),
+            ],
+        )
+        batch = self.service.create(
+            PROJECT_ID,
+            self._create_request(key, anchors=["schedule"]),
+        )
+        self.service.run_pending(
+            PROJECT_ID, batch.batch_id, "deterministic_auto_admit_worker"
+        )
+        return self.service.get(PROJECT_ID, batch.batch_id)
+
+    def test_machine_passed_items_are_auto_admitted_on_batch_completion(self):
+        batch = self._run_schedule_batch("auto-admit-machine-passed")
+
+        ready_items = [
+            item
+            for item in batch.items
+            if item.generation_status == "candidate_ready"
+        ]
+        self.assertTrue(ready_items, "fixture 应产出机器通过的候选")
+
+        for item in ready_items:
+            review = self.repo.current_medical_review(
+                PROJECT_ID, item.translation_id, item.translation_revision
+            )
+            self.assertIsNotNone(
+                review,
+                "机器忠实度通过的候选必须在批次完成时自动医学确认（现场"
+                "203条人工放行负担的根因：通过项仍停 not_reviewed）。",
+            )
+            self.assertEqual("approved", review.decision)
+            self.assertEqual(
+                "machine_fidelity_auto",
+                review.decision_type,
+                "自动放行必须以机器决策类型留痕，与人工确认区分。",
+            )
+            briefs = [
+                brief
+                for brief in self.repo.evidence_briefs(PROJECT_ID)
+                if brief.translation_id == item.translation_id
+                and brief.translation_revision == item.translation_revision
+                and brief.status == "approved_current"
+            ]
+            self.assertTrue(
+                briefs, "自动确认必须直接完成准入（证据brief）。"
+            )
+            self.assertEqual(
+                "machine_fidelity_passed", briefs[0].admission_basis
+            )
+
+    def test_fidelity_blocked_items_stay_human_gated(self):
+        batch = self._run_schedule_batch("auto-admit-blocked-stays")
+
+        blocked_items = [
+            item
+            for item in batch.items
+            if item.generation_status == "fidelity_blocked"
+        ]
+        if not blocked_items:
+            self.skipTest("fixture 本例未产出阻断项")
+        for item in blocked_items:
+            review = self.repo.current_medical_review(
+                PROJECT_ID, item.translation_id, item.translation_revision
+            )
+            self.assertIsNone(
+                review,
+                "忠实度阻断项不得自动放行——人工门保留（须逐项确认阻断码）。",
+            )
+
+    def test_batch_review_eligible_shrinks_to_human_set_only(self):
+        """自动放行后，批量医学审查端点的合格集只剩人工需看的集合。"""
+        batch = self._run_schedule_batch("auto-admit-eligible-shrink")
+        fresh = self.service.get(PROJECT_ID, batch.batch_id)
+        still_pending = [
+            item
+            for item in fresh.items
+            if item.generation_status == "candidate_ready"
+            and item.medical_review_status == "not_reviewed"
+        ]
+        self.assertEqual(
+            [],
+            still_pending,
+            "机器通过项自动放行后不得再出现在人工确认队列。",
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
