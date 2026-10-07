@@ -255,7 +255,7 @@ const DEPENDENT_LABELS = {
 };
 const SYNOPSIS_FIELD_LABELS = {
   "framing.protocol_id": "方案号", "framing.version": "版本", "framing.document_title": "方案标题", "framing.indication": "适应症", "framing.clinicaltrials_condition_term": "ClinicalTrials.gov疾病检索词", "framing.study_phase": "研究分期", "framing.intrinsic_objectives": "内在研究目的", "framing.investigational_product": "试验药物", "framing.target_mechanism": "靶点/作用机制", "framing.competitor_target_scope": "竞品靶点与机制范围", "framing.development_regions": "开发区域", "framing.design_pattern": "总体设计模式", "framing.population_intent": "目标研究人群", "framing.key_uncertainties": "关键科学与开发不确定性", "framing.manual_source_ids": "已准备的Protocol资料", "framing.terminology_policy": "受试者术语规范",
-  "picos.design_archetype": "研究设计类型", "picos.field_applicability": "设计字段适用性", "picos.population_summary": "研究人群概述", "picos.inclusion_modules": "入选标准", "picos.exclusion_modules": "排除标准", "picos.washout_rules": "药物/治疗洗脱规则", "picos.intervention_summary": "干预措施概述", "picos.intervention_dose_regimen": "试验药物用法用量", "picos.allowed_concomitant_rules": "允许的合并用药/治疗", "picos.required_background_rules": "必须使用的背景用药/治疗", "picos.prohibited_concomitant_rules": "限制或禁止的合并用药/治疗", "picos.assessment_timing_restrictions": "访视/评价前用药限制", "picos.comparator_summary": "对照组设计", "picos.primary_endpoint": "主要终点及评价时间", "picos.key_secondary_endpoints": "关键次要终点及评价时间", "picos.other_secondary_endpoints": "其他次要终点及评价时间", "picos.exploratory_endpoints": "探索性终点及评价时间", "picos.safety_endpoints": "安全性终点", "picos.aesi_definitions": "特别关注的不良事件（AESI）", "picos.assessment_instruments": "量表与评估工具", "picos.study_epochs": "研究阶段", "picos.visit_strategy": "访视与评价安排", "picos.estimand_strategy": "估计目标策略", "picos.sample_size_strategy": "样本量策略", "picos.statistical_strategy": "统计分析策略",
+  "picos.design_archetype": "研究设计类型", "picos.field_applicability": "设计字段适用性", "picos.population_summary": "研究人群概述", "picos.inclusion_modules": "入选标准", "picos.exclusion_modules": "排除标准", "picos.washout_rules": "药物/治疗洗脱规则", "picos.intervention_summary": "干预措施概述", "picos.intervention_dose_regimen": "试验药物用法用量", "picos.allowed_concomitant_rules": "允许的合并用药/治疗", "picos.required_background_rules": "必须使用的背景用药/治疗", "picos.prohibited_concomitant_rules": "限制或禁止的合并用药/治疗", "picos.assessment_timing_restrictions": "访视/评价前用药限制", "picos.comparator_summary": "对照组设计", "picos.primary_endpoint": "主要终点及评价时间", "picos.key_secondary_endpoints": "关键次要终点及评价时间", "picos.other_secondary_endpoints": "其他次要终点及评价时间", "picos.exploratory_endpoints": "探索性终点及评价时间", "picos.safety_endpoints": "安全性终点", "picos.aesi_definitions": "特别关注的不良事件（AESI）", "picos.assessment_instruments": "量表与评估工具", "picos.study_epochs": "研究阶段", "picos.visit_strategy": "访视与评价安排", "picos.estimand_strategy": "估计目标策略", "picos.sample_size_strategy": "样本量策略", "picos.sample_size_mismatch": "样本量声明与假设不一致（按您输入的差值/SD/α/把握度复算的例数与声明不符；请修正声明或调整假设）", "picos.statistical_strategy": "统计分析策略",
 };
 const FACT_FIELD_LABELS = {
   ...SYNOPSIS_FIELD_LABELS,
@@ -441,6 +441,13 @@ const picosMissingFields = (values) => {
   if (!isConditionalPicosFieldComplete(values, "estimand_strategy")) missing.push("estimand_strategy");
   if (!values.sample_size_strategy?.trim()) missing.push("sample_size_strategy");
   if (!values.statistical_strategy?.trim()) missing.push("statistical_strategy");
+  // R9 P0-18 输入层门（前端预检）：声明例数与假设复算不一致时阻断
+  // 完成第二步——与后端 commit 门同一契约（后端为权威，前端预检给
+  // 即时内联反馈）。检测状态码见 sampleSizeDeclarationCheck。
+  if (values.sample_size_strategy?.trim()) {
+    const check = sampleSizeDeclarationCheck(values.sample_size_strategy);
+    if (check && check.status === "不一致") missing.push("sample_size_mismatch");
+  }
   return missing;
 };
 const normalizePicosForWrite = (value) => ({
@@ -3870,6 +3877,87 @@ function FramingFields({ projectId, framing, group, update, factConversation, se
   return <DesignIntentFields framing={framing} update={update} />;
 }
 
+// R9（第8轮末修订动作2）P0-18 输入层门前端UX预警：样本量声明与假设的
+// 本地复算（与服务端 sample_size_declaration_check 同语义正则族；硬门
+// 在服务端 commit_stage——本地判定仅用于表单内联提示，边缘分歧不影响
+// 完成第二步的强制消解）。比例型设计（外部锚点，无连续SD/δ）不误拦。
+function _inverseNormalCdf(p) {
+  // Beasley-Springer-Moro 有理逼近（相对误差<1e-9），无依赖。
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pLow = 0.02425;
+  if (p < pLow) {
+    const q = Math.sqrt(-2 * Math.log(p));
+    return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  }
+  if (p <= 1 - pLow) {
+    const q = p - 0.5;
+    const r = q * q;
+    return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  }
+  const q = Math.sqrt(-2 * Math.log(1 - p));
+  return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+}
+
+export function sampleSizeDeclarationCheck(text) {
+  const raw = String(text || "");
+  if (!raw.trim()) return null;
+  const num = "(\\d+(?:\\.\\d+)?)";
+  let declared = null;
+  for (const re of [
+    new RegExp(`(?:两组各|各组|每臂各?|每组)(?:需|约|需约|需要)?\\s*${num}\\s*例`),
+    new RegExp(`(?:^|[^\\d])${num}\\s*例\\s*/\\s*组`),
+    new RegExp(`需\\s*${num}\\s*例\\s*/?\\s*组`),
+  ]) {
+    const match = raw.match(re);
+    if (match) { declared = parseFloat(match[1]); break; }
+  }
+  if (declared === null) return null;
+  let alpha = null;
+  for (const re of [new RegExp(`α\\s*=\\s*(0?\\.\\d+)`), /显著性水平\s*(?:为|是|=)?\s*(0\.\d+)/]) {
+    const match = raw.match(re);
+    if (match) { alpha = parseFloat(match[1]); break; }
+  }
+  let power = null;
+  for (const re of [new RegExp(`把握度\\s*(?:达|为|≥|>=)?\\s*${num}\\s*%`), new RegExp(`${num}\\s*%\\s*把握度`)]) {
+    const match = raw.match(re);
+    if (match) { power = parseFloat(match[1]) / 100; break; }
+  }
+  let sd = null;
+  const sdMatch = raw.match(new RegExp(`(?:标准差|SD)\\s*(?:为|是|=|约)?\\s*${num}`));
+  if (sdMatch) sd = parseFloat(sdMatch[1]);
+  let delta = null;
+  for (const re of [
+    new RegExp(`(?:组间差(?:异)?|差值|差异|δ)\\s*(?:为|是|=|约)?\\s*${num}\\s*(?:分|%|次|米|mL|ml|kg|mmHg|点|个?单位)?`),
+    new RegExp(`δ\\s*=\\s*${num}`),
+  ]) {
+    const match = raw.match(re);
+    if (match) { delta = parseFloat(match[1]); break; }
+  }
+  const oneSided = /单侧/.test(raw);
+  if (alpha === null || power === null || sd === null || delta === null || sd <= 0 || delta <= 0) {
+    return { status: "样本量要素未齐", declaredPerGroup: Math.round(declared), requiredPerGroup: null, detail: "" };
+  }
+  const zAlpha = _inverseNormalCdf(oneSided ? 1 - alpha : 1 - alpha / 2);
+  // z_β = Φ⁻¹(1-β) = Φ⁻¹(power)——必须取正支；此前误写 invNorm(1-power)
+  // 得负值使复算系统性偏小（GER601 复算11例/组的错值来源）。
+  const zBeta = _inverseNormalCdf(power);
+  const required = Math.max(2, Math.ceil(2 * ((zAlpha + zBeta) ** 2) * (sd ** 2) / (delta ** 2)));
+  const ratio = declared / required;
+  const side = oneSided ? "单侧" : "双侧";
+  if (ratio < 0.8 || ratio > 1.25) {
+    return {
+      status: "不一致",
+      declaredPerGroup: Math.round(declared),
+      requiredPerGroup: required,
+      detail: `按您输入的差值/SD/α/把握度（组间差${delta}、SD${sd}、α=${alpha}${side}、把握度${Math.round(power * 100)}%）复算需${required}例/组，当前声明${Math.round(declared)}例/组：请修正声明或调整假设。`,
+    };
+  }
+  return { status: "自洽", declaredPerGroup: Math.round(declared), requiredPerGroup: required, detail: "" };
+}
+
 export function parsePopulationIntentStructure(text) {
   const source = String(text || "");
   // P2-22（R27 第1轮末修订）：此前 options.filter(item => match[1].includes(item))
@@ -4202,7 +4290,7 @@ function PicosFields({ projectId, framing, picos, group, updateFraming, update, 
   if (group === "comparator") { const notApplicable = picos.field_applicability?.comparator_summary?.status === "not_applicable" && !["randomized_confirmatory", "randomized_exploratory"].includes(picos.design_archetype); return <section className="authoring-field-section"><header><strong>对照</strong><span>{notApplicable ? "已在设计适用性中标记为不适用；理由仍保留在正式研究事实中" : "明确安慰剂、阳性对照或随机组间比较及其用法用量"}</span></header>{notApplicable ? <ApplicabilitySummary label="对照/组间比较设计" decision={picos.field_applicability.comparator_summary} onEdit={() => {}} /> : <Field label="对照/组间比较设计" required><textarea rows={7} value={picos.comparator_summary} onChange={(event) => update("comparator_summary", event.target.value)} /></Field>}</section>; }
   if (group === "outcomes") return <section className="authoring-field-section"><header><strong>结局指标</strong><span>终点定义必须包含评价变量、时间点和必要的应答规则</span></header><div className="authoring-field-grid two"><Field label="主要终点及评价时间" required className="span-2"><textarea rows={3} value={picos.primary_endpoint} onChange={(event) => update("primary_endpoint", event.target.value)} /></Field><ListField label="关键次要终点" value={picos.key_secondary_endpoints} onChange={(value) => update("key_secondary_endpoints", value)} /><ListField label="其他次要终点" value={picos.other_secondary_endpoints} onChange={(value) => update("other_secondary_endpoints", value)} /><ListField label="探索性终点" value={picos.exploratory_endpoints} onChange={(value) => update("exploratory_endpoints", value)} /><ListField label="安全性终点" required value={picos.safety_endpoints} onChange={(value) => update("safety_endpoints", value)} /><ListField label="AESI定义" value={picos.aesi_definitions} onChange={(value) => update("aesi_definitions", value)} /></div><AssessmentInstrumentEditor projectId={projectId} value={picos.assessment_instruments || []} onChange={(value) => update("assessment_instruments", value)} existingDocument={existingDocument} readOnly={readOnly} appendixReady={appendixReady} /></section>;
   const estimandNotApplicable = picos.field_applicability?.estimand_strategy?.status === "not_applicable" && picos.design_archetype !== "randomized_confirmatory";
-  return <section className="authoring-field-section"><header><strong>研究执行与统计</strong><span>补齐生成流程表、估计目标和统计章节所需结构事实</span></header><div className="authoring-field-grid two"><ListField label="研究时期/阶段" required value={picos.study_epochs} onChange={(value) => update("study_epochs", value)} /><Field label="访视策略" required><textarea rows={4} value={picos.visit_strategy} onChange={(event) => update("visit_strategy", event.target.value)} placeholder="概述筛选、基线、治疗、关键评价和随访访视；具体活动可在SoA表格设计器中完善" /></Field>{estimandNotApplicable ? <ApplicabilitySummary label="估计目标策略" decision={picos.field_applicability.estimand_strategy} /> : <Field label="估计目标策略" required><textarea rows={4} value={picos.estimand_strategy} onChange={(event) => update("estimand_strategy", event.target.value)} /></Field>}<Field label="样本量策略" required><textarea rows={4} value={picos.sample_size_strategy} onChange={(event) => update("sample_size_strategy", event.target.value)} /></Field><Field label="统计分析策略" required className="span-2"><textarea rows={4} value={picos.statistical_strategy} onChange={(event) => update("statistical_strategy", event.target.value)} /></Field></div></section>;
+  return <section className="authoring-field-section"><header><strong>研究执行与统计</strong><span>补齐生成流程表、估计目标和统计章节所需结构事实</span></header><div className="authoring-field-grid two"><ListField label="研究时期/阶段" required value={picos.study_epochs} onChange={(value) => update("study_epochs", value)} /><Field label="访视策略" required><textarea rows={4} value={picos.visit_strategy} onChange={(event) => update("visit_strategy", event.target.value)} placeholder="概述筛选、基线、治疗、关键评价和随访访视；具体活动可在SoA表格设计器中完善" /></Field>{estimandNotApplicable ? <ApplicabilitySummary label="估计目标策略" decision={picos.field_applicability.estimand_strategy} /> : <Field label="估计目标策略" required><textarea rows={4} value={picos.estimand_strategy} onChange={(event) => update("estimand_strategy", event.target.value)} /></Field>}<Field label="样本量策略" required>{(() => { const ss = picos.sample_size_strategy || ""; const ssCheck = ss.trim() ? sampleSizeDeclarationCheck(ss) : null; return (<>{ssCheck && ssCheck.status === "不一致" && <p className="authoring-inline-warning" role="alert" data-testid="sample-size-warning">{ssCheck.detail}（完成第二步前必须消解；可先保存草稿）</p>}{ssCheck && ssCheck.status === "样本量要素未齐" && <p className="authoring-inline-hint">已声明{ssCheck.declaredPerGroup}例/组，但样本量假设要素不全（缺组间差/SD/α/把握度），系统无法复算；生成正文时该章会带「样本量待确认」悬置块。</p>}<textarea rows={4} value={ss} onChange={(event) => update("sample_size_strategy", event.target.value)} /></>); })()}</Field><Field label="统计分析策略" required className="span-2"><textarea rows={4} value={picos.statistical_strategy} onChange={(event) => update("statistical_strategy", event.target.value)} /></Field></div></section>;
 }
 
 const INSTRUMENT_KIND_OPTIONS = [

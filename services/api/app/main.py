@@ -10795,6 +10795,24 @@ def _export_placeholder_report(document) -> dict:
                     "section_heading": section.heading,
                 }
             )
+        else:
+            # R9 P0-18 导出门③：统计章样本量声明与假设复算不一致或要素
+            # 未齐 → 计入缺口（草案-N 强制）；同一正则族（与PICOS提交门、
+            # 生成层护栏同源），导出自算不依赖工件链路。
+            section_number_text = str(section.section_number or "")
+            if section_number_text.startswith("9") or "统计" in section.heading or "样本量" in section.heading:
+                from .medical_writing_full_draft import sample_size_declaration_check
+
+                ss_check = sample_size_declaration_check(joined)
+                if ss_check and ss_check.get("status") != "自洽":
+                    status = ss_check.get("status")
+                    gap_sections.append(
+                        {
+                            "section_number": section.section_number or "",
+                            "section_heading": section.heading,
+                            "reason": f"样本量{status}（{ss_check.get('detail') or ''}）",
+                        }
+                    )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:
             if wrong in joined:
                 typo_hits.append(

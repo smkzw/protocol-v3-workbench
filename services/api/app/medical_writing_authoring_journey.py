@@ -1334,6 +1334,23 @@ class MedicalWritingAuthoringJourneyService:
                 },
                 deep=True,
             )
+            # R9（第8轮末修订动作2）P0-18 输入层门：八轮八件样本量算不平
+            # 的终局根因是PICOS结构化输入无算术校验（错误声明原样入库→
+            # 生成层只注记不纠正→导出层无门）。同一正则族复算，声明与
+            # 假设不一致（偏差>±20%）即阻断完成第二步——允许带警告保存
+            # 草稿，但完成前必须修正声明或调整假设。要素未齐/比例型设计
+            # 不阻断（生成层走悬置块）。
+            from .medical_writing_full_draft import sample_size_declaration_check
+
+            declaration_check = sample_size_declaration_check(
+                str(request.picos.sample_size_strategy or "")
+            )
+            if declaration_check and declaration_check.get("status") == "不一致":
+                raise ValueError(
+                    "样本量声明与假设不一致："
+                    + str(declaration_check.get("detail") or "")
+                    + "（可先保存草稿；完成第二步前必须消解该不一致。）"
+                )
         proposed = request.framing if request.stage == "framing" else request.picos
         assert proposed is not None
         missing_required_fields = proposed.missing_required_fields()

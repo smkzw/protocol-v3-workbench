@@ -166,6 +166,183 @@ def _z_value(alpha: float, one_sided: bool) -> float:
     return NormalDist().inv_cdf(1 - tail)
 
 
+# R9（第8轮末修订动作2）P0-18 输入层门：与 sample_size_consistency_check
+# 同一正则族的广义声明解析——声明的例数形态（两组各N例/每组N例/N例/组/
+# 需N例/组）、差值单位（分/%/次/米等连续量）、把握度前后置（80%把握度/
+# 把握度80%）。比例型设计（外部锚点应答率，无连续SD/δ）解析不出差值→
+# 判「样本量要素未齐」不拦截，避免误拦基准轮正向工艺（51/102/192）。
+_SS_DECLARED_RES = (
+    re.compile(r"(?:两组各|各组|每臂各?|每组)(?:需|约|需约|需要)?\s*" + _SAMPLE_SIZE_NUMBER_RE + r"\s*例"),
+    re.compile(r"\b" + _SAMPLE_SIZE_NUMBER_RE + r"\s*例\s*/\s*组"),
+    re.compile(r"需\s*" + _SAMPLE_SIZE_NUMBER_RE + r"\s*例\s*/?\s*组"),
+)
+_SS_DELTA_RES = (
+    re.compile(
+        r"(?:组间差(?:异)?|差值|差异|δ)\s*(?:为|是|=|约)?\s*"
+        + _SAMPLE_SIZE_NUMBER_RE
+        + r"\s*(?:分|%|次|米|mL|ml|kg|mmHg|点|个?单位)?"
+    ),
+    re.compile(r"δ\s*=\s*" + _SAMPLE_SIZE_NUMBER_RE),
+)
+_SS_POWER_RES = (
+    re.compile(r"把握度\s*(?:达|为|≥|>=)?\s*(\d+(?:\.\d+)?)\s*%"),
+    re.compile(r"(\d+(?:\.\d+)?)\s*%\s*把握度"),
+)
+_SS_ALPHA_RES = (
+    re.compile(r"α\s*=\s*(0?\.\d+)"),
+    re.compile(r"显著性水平\s*(?:为|是|=)?\s*(0\.\d+)"),
+)
+
+
+def sample_size_declaration_check(text: str) -> dict | None:
+    """P0-18 输入层门校验器：声明例数 vs 假设复算（连续量公式）。
+
+    返回：
+    - None：文本不含样本量声明（不适用）；
+    - {"status": "自洽", declared, required, detail}：解析齐且偏差≤±20%；
+    - {"status": "不一致", declared, required, detail}：解析齐但复算与声明
+      偏差>±20%——完成第二步（PICOS提交）必须阻断；
+    - {"status": "样本量要素未齐", declared, required=None, detail}：声明了
+      例数但假设不全（或比例型设计）——不阻断，生成层走悬置块。
+    """
+    raw = str(text or "")
+    declared = None
+    for pattern in _SS_DECLARED_RES:
+        match = pattern.search(raw)
+        if match:
+            declared = float(match.group(1))
+            break
+    if declared is None:
+        return None
+
+    alpha = None
+    for pattern in _SS_ALPHA_RES:
+        match = pattern.search(raw)
+        if match:
+            alpha = float(match.group(1))
+            break
+    power = None
+    for pattern in _SS_POWER_RES:
+        match = pattern.search(raw)
+        if match:
+            power = float(match.group(1)) / 100
+            break
+    sd = None
+    sd_match = re.search(
+        r"(?:标准差|SD)\s*(?:为|是|=|约)?\s*" + _SAMPLE_SIZE_NUMBER_RE, raw
+    )
+    if sd_match:
+        sd = float(sd_match.group(1))
+    delta = None
+    for pattern in _SS_DELTA_RES:
+        match = pattern.search(raw)
+        if match:
+            delta = float(match.group(1) or match.group(2) or 0)
+            break
+    one_sided = bool(re.search(r"单侧", raw))
+
+    missing = [
+        label
+        for label, value in (
+            ("α", alpha), ("把握度", power), ("SD", sd), ("组间差/δ", delta),
+        )
+        if value is None
+    ]
+    if (
+        missing
+        or not alpha
+        or not power
+        or not sd
+        or not delta
+        or sd <= 0
+        or delta <= 0
+    ):
+        return {
+            "status": "样本量要素未齐",
+            "declared_per_group": int(declared),
+            "required_per_group": None,
+            "detail": "样本量假设要素不全（缺失：" + "、".join(missing) + "）；无法复算，不得声称样本量已确认。",
+        }
+    z_alpha = _z_value(alpha, one_sided)
+    z_beta = _z_value(1 - power, True)
+    required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
+    required_ceil = max(2, int(required + 0.999))
+    ratio = declared / required_ceil
+    side = "单侧" if one_sided else "双侧"
+    if ratio < 0.8 or ratio > 1.25:
+        return {
+            "status": "不一致",
+            "declared_per_group": int(declared),
+            "required_per_group": required_ceil,
+            "detail": (
+                f"按您输入的差值/SD/α/把握度（组间差{delta:g}、SD{sd:g}、"
+                f"α={alpha:g}{side}、把握度{int(power * 100)}%）复算需"
+                f"{required_ceil}例/组，当前声明{int(declared)}例/组：请修正声明或调整假设。"
+            ),
+        }
+    return {
+        "status": "自洽",
+        "declared_per_group": int(declared),
+        "required_per_group": required_ceil,
+        "detail": f"按声明参数复算约需 {required_ceil} 例/组，与声明一致。",
+    }
+
+
+def _rewrite_declared_sample_size(text: str, declared: int, required: int) -> str:
+    """生成层护栏②：不一致节的声明数字改写为复算值（含成对总数）。"""
+    replaced = text
+    pairs = (
+        (f"两组各{declared}例", f"两组各{required}例"),
+        (f"每组{declared}例", f"每组{required}例"),
+        (f"{declared}例/组", f"{required}例/组"),
+        (f"需{declared}例/组", f"需{required}例/组"),
+        (f"共{2 * declared}例", f"共{2 * required}例"),
+    )
+    for old, new in pairs:
+        replaced = replaced.replace(old, new)
+    return replaced
+
+
+def apply_sample_size_guard_to_section(section_item: dict) -> None:
+    """R9 P0-18 生成层护栏：统计章声明数字不得照抄。
+
+    - 复算不一致：声明数字改写为复算值（成对总数同步），并追加复算
+      注记（审计透明）；sample_size_check 记「不一致」。
+    - 要素未齐（含比例型设计）：正文前插入 P1-21 式悬置块（含锁定
+      条件），数字保留但标记待确认。
+    - 自洽：不动。
+    就地修改 section_item（proposal_text 与 sample_size_check）。
+    """
+    section_number = str(section_item.get("section_number") or "")
+    heading = str(section_item.get("heading") or "")
+    if not (section_number.startswith("9") or "统计" in heading or "样本量" in heading):
+        return
+    text = str(section_item.get("proposal_text") or "")
+    check = sample_size_declaration_check(text)
+    if check is None:
+        return
+    section_item["sample_size_check"] = check
+    status = check.get("status")
+    if status == "不一致":
+        declared = int(check.get("declared_per_group") or 0)
+        required = int(check.get("required_per_group") or 0)
+        if declared and required:
+            rewritten = _rewrite_declared_sample_size(text, declared, required)
+            rewritten += (
+                f"（样本量复算注记：按声明的组间差/SD/α/把握度复算需{required}例/组，"
+                f"原文声明{declared}例/组与复算不一致，正文已按复算值改写；"
+                "请核对假设或修正声明后重新生成。）"
+            )
+            section_item["proposal_text"] = rewritten
+    elif status == "样本量要素未齐":
+        declared = int(check.get("declared_per_group") or 0)
+        section_item["proposal_text"] = (
+            f"【样本量待确认：当前声明每组{declared}例，但样本量假设要素不全"
+            "（缺组间差/SD/α/把握度），系统无法复算；锁定条件：补齐假设并使"
+            "复算与声明一致（差值≤±20%）后解除，正式稿不得带此标记。】" + text
+        )
+
+
 def sample_size_consistency_check(text: str) -> dict | None:
     """NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验。
 
@@ -1772,19 +1949,12 @@ class MedicalWritingFullDraftService:
                         retryable=False,
                     )
                 seen_decision_paths.add(fact_path)
-        # NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验——
-        # 生成后按声明参数复算，不自洽的章节带「样本量要素未齐」状态随工件
-        # 持久化，供审阅侧禁用「样本量已确认」类措辞并指明复算依据。
+        # NEW-14/44 内容族③（R27 第3轮修订）：统计章样本量算术自洽校验。
+        # R9（第8轮末修订动作2）P0-18 生成层护栏②：不自洽节的声明数字
+        # 不得照抄——不一致改写为复算值+复算注记；要素未齐输出悬置块
+        # （含锁定条件）；自洽不动。见 apply_sample_size_guard_to_section。
         for item in all_sections:
-            section_number = str(item.get("section_number") or "")
-            heading = str(item.get("heading") or "")
-            if not (section_number.startswith("9") or "统计" in heading):
-                continue
-            check = sample_size_consistency_check(
-                str(item.get("proposal_text") or "")
-            )
-            if check is not None:
-                item["sample_size_check"] = check
+            apply_sample_size_guard_to_section(item)
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections
