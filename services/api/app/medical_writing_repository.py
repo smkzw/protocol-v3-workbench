@@ -38,6 +38,8 @@ from packages.contracts.workbench_contracts import (
 )
 from packages.contracts.workbench_contracts.models import (
     MedicalWritingFinalFreezeReadiness,
+    MedicalWritingSectionFreezeBatchRequest,
+    MedicalWritingSectionFreezeBatchResult,
     MedicalWritingSectionFreezeGap,
     MedicalWritingSectionFreezeRecord,
     MedicalWritingSectionFreezeRequest,

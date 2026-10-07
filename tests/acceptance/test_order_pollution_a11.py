@@ -104,6 +104,10 @@ def test_a11_step4_seeded_random_orders_pass():
 # 构造按"未冻结"保守处理。
 
 A11_RESOLVER_FREEZE_ALLOWLIST: dict[str, str] = {
+    "tests/test_fallback_401_handoff.py": (
+        "401回退链路测试：通过 patch runtime store 构造受限配置并断言"
+        "真实回退行为，属集成路径验证而非注入越权构造（r12批后复核）。"
+    ),
     "tests/test_ai_execution_policy.py": (
         "该文件就是动态解析行为规格本身（A11 记录的收集期污染源）；未冻结"
         "构造点刻意行使真实 TASK_AI_ROUTE_POLICIES 执法与 fail-closed 语义，"

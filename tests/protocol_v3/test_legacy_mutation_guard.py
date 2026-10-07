@@ -481,9 +481,9 @@ def test_real_source_passes_drift_check() -> None:
     report = verify_inventory_drift()
     assert isinstance(report, InventoryDriftReport)
     assert report.ok, report.findings
-    assert report.discovered_route_handlers == 239
-    assert report.discovered_route_mutators == 136
-    assert report.discovered_service_mutators == 197
+    assert report.discovered_route_handlers == 243
+    assert report.discovered_route_mutators == 139
+    assert report.discovered_service_mutators == 200
     assert report.inventoried_route_mutators == report.discovered_route_mutators
     assert report.inventoried_service_mutators == report.discovered_service_mutators
     assert report.findings == ()
