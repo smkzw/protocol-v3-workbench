@@ -138,11 +138,11 @@
         ".test.mjs": "node"
       },
       "counts": {
-        "total": 71,
-        "vitest": 23,
+        "total": 87,
+        "vitest": 39,
         "node": 48
       },
-      "paths_sha256": "b268387d73c51320bacd9d478e423f3c2e934dbffad2c59593377a934d0d02df",
+      "paths_sha256": "83fca9a0c6fcb485b523148f498290f0328e0e8a1111361dac934a72db68dee9",
       "explicit_node_paths": [
         "tests/monitoring_child_read_contract_qc.mjs",
         "tests/monitoring_source_only_ui_qc.mjs"
@@ -160,14 +160,25 @@
       "excluded_stale_qc_reason": "protected medical-monitoring baseline QC is stale against baseline source; monitoring owner adjudication required",
       "vitest_paths": [
         "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+        "src/features/medical-writing/CorpusGate.overrideDeadlock.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.assemblyPlanConfirmEntry.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.dirtyMergeArrays.test.jsx",
         "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.errorAndHydration.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactStaleRecovery.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactVisibility.test.jsx",
         "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.overrideAck.test.jsx",
         "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.pipelineDraftRelease.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.platformEntryIdempotent.test.jsx",
         "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.prefillDestination.test.jsx",
         "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.requiredFieldSurfaces.test.jsx",
+        "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.sampleSizeGate.test.jsx",
         "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
         "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+        "src/features/medical-writing/batchFreezeSummary.test.jsx",
         "src/features/medical-writing/errorContract.test.jsx",
+        "src/features/medical-writing/lineBreakAndShellWidth.test.jsx",
+        "src/features/medical-writing/parsePopulationIntent.test.jsx",
+        "src/features/medical-writing/picosDedupe.test.jsx",
         "src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx",
         "src/features/medical-writing/protocol-workbench/DesignElementsCards.test.jsx",
         "src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.test.jsx",
@@ -180,6 +191,11 @@
         "src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx",
         "src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx",
         "src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.test.jsx",
+        "src/features/medical-writing/sampleSizeGate.test.jsx",
+        "src/features/writing-reference/WritingReferencePanel.basketAuthority.test.jsx",
+        "src/features/writing-reference/WritingReferencePanel.residualAdmission.test.jsx",
+        "src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx",
+        "src/features/writing-reference/userFacingErrorCopy.test.jsx",
         "src/runtimeReadiness.test.jsx",
         "tests/ProtocolSourceSelectionRecovery.test.jsx"
       ]

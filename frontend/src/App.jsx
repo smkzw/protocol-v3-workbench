@@ -1495,6 +1495,7 @@ function AppShell({
               type="button"
               className={`new-project-trigger ${!hasActiveProject ? "primary-button" : ""}`}
               disabled={!projectsLoaded || Boolean(projectsLoadError)}
+              title={!projectsLoaded ? "项目列表加载中，请稍候" : projectsLoadError ? "项目列表加载失败，请重试或联系支持" : "新建研究项目"}
               onClick={() => {
                 setNewProjectMessage("");
                 // NEW-P0-25（批三A）：顶栏路径也生成会话幂等键——此前只有
@@ -3946,7 +3947,7 @@ function RiskDetail({ risk, subject, queryWorkflowPolicy, sourcePreviews = {}, s
               </span>
               <small>尚未写入当前实例。请结合当前冻结证据复核全部判断，并说明本次重新判断原因。</small>
             </div>
-            <button type="button" onClick={onClearReassessment} disabled={actionLoading}>取消引用</button>
+            <button type="button" onClick={onClearReassessment} disabled={actionLoading} title={actionLoading ? "正在处理上一步操作，请稍候" : "取消引用"}>取消引用</button>
           </div>
         )}
         <div className="disposition-steps">
@@ -4006,7 +4007,7 @@ function RiskDetail({ risk, subject, queryWorkflowPolicy, sourcePreviews = {}, s
             <textarea value={reopenReason} onChange={(event) => setReopenReason(event.target.value)} disabled={actionLoading} placeholder="说明新信息、数据变化或重新判断的原因" />
           </label>
           <div className="button-row">
-            <button className={reopenReason.trim() ? "primary-button" : ""} disabled={actionLoading || !risk.inboxItemId || !reopenReason.trim()} onClick={() => onApplyDisposition?.(risk, "reopen", {
+            <button title={actionLoading ? "正在处理上一步操作，请稍候" : !risk.inboxItemId ? "该风险项没有关联的收件箱条目，无法重开" : !reopenReason.trim() ? "请先填写重开理由" : "提交重开"} className={reopenReason.trim() ? "primary-button" : ""} disabled={actionLoading || !risk.inboxItemId || !reopenReason.trim()} onClick={() => onApplyDisposition?.(risk, "reopen", {
               comment: reopenReason,
               expected_source_version: risk.sourceVersion,
               expected_disposition_state: dispositionState,
@@ -11922,7 +11923,7 @@ function WritingPage({
             文献库按项目挂载、不依赖会话：greenfield 下提供只含「文献」的右栏。 */}
         {greenfieldSetupAvailable && <aside className="panel ai-rail writing-ai-core" hidden={isStudySchemaSection}>
           <div className="rail-tabs">
-            <button className="active" type="button" title="项目文献库与正文引文">文献</button>
+            <button className="active" type="button" disabled title="当前视图：项目文献库与正文引文">文献</button>
           </div>
           <MedicalWritingLiteraturePanel projectId={projectId} onInsertReference={queueCitationInsertion} />
         </aside>}
@@ -11961,7 +11962,7 @@ function WritingPage({
                 {fullDraftMessage && <p className="revision-message">{fullDraftMessage}</p>}
                 {fullDraftJob?.status === "failed" && (
                   <div className="full-draft-summary-actions">
-                    <button type="button" className="primary-button" onClick={resumeFullDraft} disabled={fullDraftBusy}>
+                    <button type="button" className="primary-button" onClick={resumeFullDraft} disabled={fullDraftBusy} title={fullDraftBusy ? "全文初稿正在生成，完成后可恢复" : "恢复全文初稿生成"}>
                       续跑全文初稿（已完成批次会复用，不会重头再来）
                     </button>
                   </div>
@@ -12002,6 +12003,7 @@ function WritingPage({
                               {fullDraftDecisionItems.length > 1 && (
                                 <button type="button" className="primary-button"
                                   disabled={Boolean(fullDraftDecisionBusy) || fullDraftBusy || editorFrozen}
+                                  title={fullDraftDecisionBusy ? "正在处理决定，请稍候" : fullDraftBusy ? "全文初稿生成中，结束后可批量确认" : editorFrozen ? "章节已冻结，请先解冻后处理" : "一次性确认全部相关决定"}
                                   onClick={() => resolveFullDraftDecision(fullDraftDecisionItems)}>
                                   <FileCheck2 size={14} /> 一次确认这 {fullDraftDecisionItems.length} 项相关决定
                                 </button>
@@ -12135,6 +12137,7 @@ function WritingPage({
                             <button
                               type="button"
                               className="primary-button"
+                              title="按章节版本与幂等键整体采纳全文候选；缺来源章节保留待补齐标记，发生冲突时停止写入"
                               onClick={adoptFullDraft}
                               disabled={
                                 fullDraftBusy
@@ -12146,7 +12149,6 @@ function WritingPage({
                                   (sectionId) => fullDraftConfirmedSections.includes(sectionId),
                                 )
                               }
-                              title="按章节版本与幂等键整体采纳全文候选；缺来源章节保留待补齐标记，发生冲突时停止写入"
                             >
                               <FileCheck2 size={14} /> {fullDraftBusy ? "采纳中" : "确认关键章节并采用全文"}
                             </button>

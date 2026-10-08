@@ -88,8 +88,8 @@ FRONTEND_PACKAGE_MANAGER_FIELD = "npm@10.9.8"
 FRONTEND_LOCKFILE_VERSION = 3
 FRONTEND_PACKAGE_COUNT = 329
 FRONTEND_INVENTORY_SCHEMA = "protocol-v3-test-inventory.v1"
-FRONTEND_INVENTORY_COUNTS = {"total": 71, "vitest": 23, "node": 48}
-FRONTEND_TEST_PATHS_SHA256 = "b268387d73c51320bacd9d478e423f3c2e934dbffad2c59593377a934d0d02df"
+FRONTEND_INVENTORY_COUNTS = {"total": 87, "vitest": 39, "node": 48}
+FRONTEND_TEST_PATHS_SHA256 = "83fca9a0c6fcb485b523148f498290f0328e0e8a1111361dac934a72db68dee9"
 FRONTEND_IGNORED_DIRECTORIES = [
     ".cache",
     ".git",
@@ -116,14 +116,25 @@ FRONTEND_VITEST_ENTRY = "frontend/node_modules/vitest/vitest.mjs"
 FRONTEND_NODE_RUNNER_ARGS = ["--test"]
 FRONTEND_VITEST_PATHS = [
     "src/features/medical-writing/AuthoringCandidatePackagePanel.test.jsx",
+    "src/features/medical-writing/CorpusGate.overrideDeadlock.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.assemblyPlanConfirmEntry.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.dirtyMergeArrays.test.jsx",
     "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.errorAndHydration.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactStaleRecovery.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.impactVisibility.test.jsx",
     "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.overrideAck.test.jsx",
     "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.pipelineDraftRelease.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.platformEntryIdempotent.test.jsx",
     "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.prefillDestination.test.jsx",
     "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.requiredFieldSurfaces.test.jsx",
+    "src/features/medical-writing/MedicalWritingAuthoringJourneySetup.sampleSizeGate.test.jsx",
     "src/features/medical-writing/MedicalWritingPreviewPanel.test.jsx",
     "src/features/medical-writing/MedicalWritingSynopsisProjectIntake.test.jsx",
+    "src/features/medical-writing/batchFreezeSummary.test.jsx",
     "src/features/medical-writing/errorContract.test.jsx",
+    "src/features/medical-writing/lineBreakAndShellWidth.test.jsx",
+    "src/features/medical-writing/parsePopulationIntent.test.jsx",
+    "src/features/medical-writing/picosDedupe.test.jsx",
     "src/features/medical-writing/protocol-workbench/ChapterDraftPreview.test.jsx",
     "src/features/medical-writing/protocol-workbench/DesignElementsCards.test.jsx",
     "src/features/medical-writing/protocol-workbench/ManuscriptWorkspace.test.jsx",
@@ -136,6 +147,11 @@ FRONTEND_VITEST_PATHS = [
     "src/features/medical-writing/protocol-workbench/ResearchInformationCard.test.jsx",
     "src/features/medical-writing/protocol-workbench/StudyContextWorkspace.test.jsx",
     "src/features/medical-writing/protocol-workbench/office/GenOfficeFrame.test.jsx",
+    "src/features/medical-writing/sampleSizeGate.test.jsx",
+    "src/features/writing-reference/WritingReferencePanel.basketAuthority.test.jsx",
+    "src/features/writing-reference/WritingReferencePanel.residualAdmission.test.jsx",
+    "src/features/writing-reference/WritingReferencePanel.reviseTranslation.test.jsx",
+    "src/features/writing-reference/userFacingErrorCopy.test.jsx",
     "src/runtimeReadiness.test.jsx",
     "tests/ProtocolSourceSelectionRecovery.test.jsx",
 ]
