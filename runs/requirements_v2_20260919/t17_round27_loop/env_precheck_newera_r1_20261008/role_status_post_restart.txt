@@ -1,0 +1,5 @@
+role_revision: 59
+independent_ai         -> independent_ai__mtplx_qwen38_local enabled=True
+ocr                    -> ocr_local_omlx enabled=True
+translation_body       -> translation_body_local_omlx enabled=True
+translation_support    -> translation_support__independent_ai__ollama_cloud_dsv41 enabled=True
