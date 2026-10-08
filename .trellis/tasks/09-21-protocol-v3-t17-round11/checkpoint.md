@@ -470,3 +470,10 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 - **首屏重构适配**（workbench仓5a009dc6）：统一工作台首页改三子系统多选；写作侧选A+补缝（摘要导入路径modules透传四处surgical修复）；首屏五件套未碰；浏览器级回归待联合环境。**owner裁定：写作前端全量同步统一仓=后期各子系统完成后一并合并**（协调台账=workbench仓scripts/frontend_refactor_20261006/COORDINATION_LEDGER.md）。
 - **阶段递交**：R2-R7证据快照已提交push（源码由各轮修订批次提交）。
 - **LOOP现状**：dwfrun-5537f61d第7轮自检中（单撰写者制+运维帽+OCR准入三新规首战）；缺陷趋势24→22→14→15→8→6。
+
+## 无损暂停检查点（2026-10-08 晨，新纪元首段）
+**位置**：新纪元LOOP=**dwfrun-7040398c**（TaskStop无损停止，ResumeWorkflowRun同id无损接续：已结算步骤journal重放，在途自检工程师重派且其SMOKE牺牲项目证据已落库、提速规则自动续验）。**恢复=一句话ResumeWorkflowRun dwfrun-7040398c，绝不CreateWorkflow/amend**。
+**新纪元状态**：第1轮环境预检六项全过（含后端指纹漂移处置）；账本种子=独立审计挂账14条（E1/E2工程根因：顺序污染+CLI环境卡全库门→E3/E4产品P1→E5-E8挂账复验→E9-E14基准内容缺口族按修法顺序）；基准轮第1轮即生效（MY009先行，rux-ad第3-4轮含同病种对照）；D/E外部席位关闭（涉密）；模型对比/前端预清理已跳过（一次性完成项）。
+**停机清点**：无agent浏览器空间残留；无omp残留；用户自有ego lite进程按纪律保留；OCR空闲已卸载（202）；MTPLX 8002已停（按需拉起）；durable表名核对未完成（恢复后首轮预检④自查覆盖）。
+**递交**：新纪元证据快照85afb67f已push（359文件剔除5个sqlite备份）。
+**12轮纪元权威档案**：HANDOFF_1004_PAUSE.md + final_audit_r1_12.md（可信度中+12条discrepancies）+ 收口批一二（9339a0c2）。
