@@ -301,3 +301,39 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 如实说明：探针 #1 因调用命令误写同窗内连发两次（首次9,987ms做功、第二次热态复用），保存的证据文件为首次响应；多出的一次调用为只读探针，无副作用。
 
 红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线空间（ego空间147/157保留）。
+
+---
+
+# 复测 · 2026-10-08 16:36–16:37 CEST（新纪元LOOP·环境预检·第1轮恢复执行，环境管理员）
+
+背景：新纪元r1预检于08:00–08:10完成后工作流中断存档（commit 85afb67f），本ask为恢复执行、逐项重验。后端5301仍为08:00重启的 pid 43270（指纹 api-b88acb53b5aff176 与 vite 期望 MATCH）；ocr 绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（revision 63），备份 `.pre-ocr-rebind-20261008` 在位；PADDLE key 仍不存在（历轮已穷尽排查）。
+
+实测序列（全部经产品 API；oMLX pid 2264）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 16:36 | OCR 视觉探针 #1 → **passed**（visual_probe.passed=true，HTTP 200） | 451,200 → 2,653,952（加载中） | 3,228 ms |
+| 16:36 | 翻译探针（dawncr0w Hy-MT2-30B，structured {"status":"ok"}）→ **passed** | 33,958,592（两模型同驻） | 6,746 ms |
+| 16:37 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,959,376（稳定微增） | **126 ms** |
+
+结论与历轮一致：GLM-OCR-bf16 与翻译模型 dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX 同驻 oMLX 8001 单进程，共存无互斥卸载（co_resident=true，翻译加载后 OCR 热复测 126ms 即证；RSS 稳定）。证据：`../env_precheck_newera_r1_resume_20261008/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；并行线 ego 空间保留（本ask关闭的仅为本线遗留空间161）。
+
+---
+
+# 复测 · 2026-10-09 04:50–04:51 CEST（新纪元LOOP·环境预检·第2轮，环境管理员）
+
+背景：后端5301已于当日01:45重启（pid 44173，指纹 api-70177dabe5ffaf176 两侧MATCH——vite亦于01:46带显式env重启，pid 44285）；bindings.json 当日04:30有更新（role_revision 63→65），ocr 绑定仍为 `ocr_local_omlx/GLM-OCR-bf16`（specialized_whitelisted，ready=true）；备份 `.pre-ocr-rebind-20261008` 在位。oMLX pid 2264（隔夜后模型未驻留，RSS 464,672KB 起步）。
+
+实测序列（全部经产品 API）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 04:50 | OCR 视觉探针 #1 → **passed**（HTTP 200） | 464,672 → 33,926,336（冷加载GLM-OCR-bf16后双模型驻留态） | 9,877 ms |
+| 04:50 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | 33,926,448 | 322 ms（翻译模型自昨夜仍驻留，热响应） |
+| 04:50 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,926,608 | **138 ms** |
+
+结论与历轮一致：双模型同驻共存无互斥卸载（co_resident=true）。证据：`../env_precheck_newera_r2_20261009/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；并行线 ego 空间保留。

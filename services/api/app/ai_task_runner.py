@@ -3208,7 +3208,13 @@ class AiTaskRunner:
             study_definition = output.get("study_definition")
             if isinstance(study_definition, dict):
                 errors.extend(
-                    self._validate_protocol_synopsis_nested_contract(study_definition)
+                    self._validate_protocol_synopsis_nested_contract(
+                        study_definition,
+                        source_text="\n".join(
+                            str(getattr(source, "text_preview", "") or "")
+                            for source in allowed_sources
+                        ),
+                    )
                 )
                 errors.extend(
                     validate_protocol_synopsis_source_fidelity(
@@ -3402,9 +3408,55 @@ class AiTaskRunner:
             errors.append("protocol full-draft output requires medical confirmation")
         return errors
 
+    # 批A②（R27 第2轮末修订，NEW-P0-08/P1-22）：文控字段走确定性抽取，
+    # 其余缺证据字段降级——不再整chunk否决。
+    _SYNOPSIS_DOCCTRL_FIELDS = frozenset(
+        {"framing.version", "framing.protocol_id", "framing.document_title"}
+    )
+    _SYNOPSIS_DOCCTRL_PATTERNS = (
+        ("framing.version", re.compile(r"(?:版本|Version)[:：]\s*([^\s；;，,、]+)")),
+        (
+            "framing.protocol_id",
+            re.compile(r"(?:研究代号|方案编号|Protocol\s*(?:编号|No\.?))[:：]\s*([^\s；;，,、]+)"),
+        ),
+    )
+
+    @classmethod
+    def _extract_docctrl_from_source(cls, field_path: str, source_text: str) -> str:
+        """Deterministically extract a document-control value from source text.
+
+        版本/研究代号按行标注正则；document_title 取首个非空行（文首标题
+        惯例，长度≤120且非文控行）。抽取失败返回空串。
+        """
+        text = str(source_text or "")
+        if not text.strip():
+            return ""
+        for path_key, pattern in cls._SYNOPSIS_DOCCTRL_PATTERNS:
+            if path_key != field_path:
+                continue
+            match = pattern.search(text)
+            if match:
+                return match.group(1).strip()
+            return ""
+        if field_path == "framing.document_title":
+            for line in text.splitlines():
+                candidate = line.strip()
+                if not candidate:
+                    continue
+                if any(
+                    keyword in candidate
+                    for keyword in ("版本", "日期", "研究代号", "方案编号")
+                ):
+                    continue
+                if len(candidate) <= 120:
+                    return candidate
+                return candidate[:120]
+        return ""
+
     def _validate_protocol_synopsis_nested_contract(
         self,
         study_definition: Dict[str, Any],
+        source_text: str = "",
     ) -> List[str]:
         errors: List[str] = []
         field_evidence = study_definition.get("field_evidence_span_ids")
@@ -3450,14 +3502,44 @@ class AiTaskRunner:
             values = validated.model_dump(mode="json")
             for nested_field, value in values.items():
                 field_path = f"{field_name}.{nested_field}"
+                # 批A②：文控字段确定性优先（版本/代号/标题）。注意 framing
+                # .version 的模型默认值就是"V0.1"——默认值等价跳过发生在
+                # 文控处理之前会把源文档"版本：1.0"吞成默认V0.1（现场
+                # P1-22 的机制根因），故文控字段先于默认值判断处理。
+                if field_path in AiTaskRunner._SYNOPSIS_DOCCTRL_FIELDS:
+                    deterministic = AiTaskRunner._extract_docctrl_from_source(
+                        field_path, source_text
+                    )
+                    if deterministic:
+                        evidence_ids = field_evidence.get(field_path)
+                        if str(value) != deterministic:
+                            overrides = study_definition.setdefault(
+                                "docctrl_overrides", {}
+                            )
+                            overrides[field_path] = {
+                                "model": str(value),
+                                "deterministic": deterministic,
+                            }
+                            payload[nested_field] = deterministic
+                        if not (isinstance(evidence_ids, list) and evidence_ids):
+                            field_evidence[field_path] = [
+                                f"docctrl:{field_path}"
+                            ]
+                            study_definition["field_evidence_span_ids"] = (
+                                field_evidence
+                            )
+                        continue
                 if value == defaults.get(nested_field) or field_path in missing_fields:
                     continue
                 evidence_ids = field_evidence.get(field_path)
-                if not isinstance(evidence_ids, list) or not evidence_ids:
-                    errors.append(
-                        "protocol synopsis non-default value requires source evidence at "
-                        f"{field_path}"
-                    )
+                if isinstance(evidence_ids, list) and evidence_ids:
+                    continue
+                # 其余缺证据字段：回退默认+记missing_fields（确认屏标黄），
+                # 不再整chunk否决（现场：确认屏永不出现）。
+                missing_fields.add(field_path)
+                study_definition["missing_fields"] = sorted(missing_fields)
+                if nested_field in payload:
+                    payload[nested_field] = defaults.get(nested_field)
         return errors
 
     def _validate_eligibility_batch_output(

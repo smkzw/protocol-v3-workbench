@@ -1,0 +1,33 @@
+INFO:     Started server process [36489]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5301 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54764 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54854 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54894 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61419 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61465 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61461 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61466 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61464 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61463 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61570 - "GET /api/projects/proj_user_a51472163a1e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61569 - "GET /api/projects/proj_user_a51472163a1e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61572 - "GET /api/projects/proj_user_a51472163a1e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61571 - "GET /api/projects/proj_user_a51472163a1e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61613 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61614 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61617 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61620 - "GET /api/ai-gateway/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61624 - "GET /api/projects/proj_user_a51472163a1e/source-manifest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61623 - "GET /api/projects/proj_user_a51472163a1e/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61628 - "GET /api/projects/proj_user_a51472163a1e/workbench-inbox HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61627 - "GET /api/projects/proj_user_a51472163a1e/ai-runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61615 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61618 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62973 - "GET /api/runtime-readiness HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [36489]

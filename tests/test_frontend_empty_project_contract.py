@@ -57,15 +57,23 @@ class FrontendEmptyProjectContractTests(unittest.TestCase):
             self.assertNotIn(leaked_reference, self.empty_overview)
 
     def test_empty_overview_has_zero_state_and_primary_create_action(self) -> None:
+        # AGG-P1-05（R26-QA）：状态链演进增加 awaiting-selection（有项目
+        # 未选择与零项目区分）；loading/unavailable/empty 语义保持。
         self.assertIn(
-            'data-project-state={loading ? "loading" : unavailable ? "unavailable" : "empty"}',
+            'data-project-state={loading ? "loading" : unavailable ? "unavailable" : awaitingSelection ? "awaiting-selection" : "empty"}',
             self.empty_overview,
         )
         self.assertIn("新建项目", self.empty_overview)
         self.assertIn('className="primary-button empty-project-create"', self.empty_overview)
         for metric in ("项目数", "模块进度", "开放风险", "待审批"):
             self.assertIn(metric, self.empty_overview)
-        self.assertGreaterEqual(self.empty_overview.count('"0"'), 4)
+        # AGG-P1-05：四个指标值改由 emptyProjectMetricValue 统一渲染
+        # （等待选择时为计数、零项目时为 0、加载/不可用为 —），零态
+        # 语义收敛到一个表达式而不是四处硬编码。
+        self.assertIn(
+            'const emptyProjectMetricValue = loading || unavailable ? "—" : awaitingSelection ? String(projectCount) : "0";',
+            self.empty_overview,
+        )
         self.assertNotIn("module-row", self.empty_overview)
         self.assertNotIn("risk_counts_by_severity", self.empty_overview)
         self.assertIn(".empty-project-overview", self.styles)

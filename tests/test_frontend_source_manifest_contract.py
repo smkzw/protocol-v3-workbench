@@ -73,7 +73,12 @@ class FrontendSourceManifestContractTests(unittest.TestCase):
         self.assertIn("data?.subject_id !== selectedSubject", self.source)
         self.assertIn("受试者目录响应项目身份不匹配，已阻止写入当前项目。", self.source)
         self.assertIn("受试者画像响应项目或受试者身份不匹配，已阻止写入当前个例。", self.source)
-        self.assertIn("monitoringDataError={monitoringDataError}", self.source)
+        # 契约随源演进（读错误聚合）：身份不匹配错误仍经 monitoringDataError
+        # 透传，且现在叠加 inbox/subjects/profile 读错误（超集，不放松门）。
+        self.assertIn(
+            "monitoringDataError={monitoringDataError || (monitoringReadError || monitoringSubjectReadError || monitoringProfileReadError",
+            self.source,
+        )
         self.assertIn('className="gate-error monitoring-data-identity-error"', self.source)
         self.assertIn('role="alert"', self.source)
         self.assertIn("setMonitoringSubjectCatalog([]);", self.source)

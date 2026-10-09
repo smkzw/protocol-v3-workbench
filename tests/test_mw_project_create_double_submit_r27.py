@@ -102,3 +102,68 @@ class FrontendStableKeyContractTests(unittest.TestCase):
     def test_submit_handler_has_synchronous_ref_guard(self):
         self.assertIn("newProjectSubmitRef", self.source)
         self.assertIn("if (newProjectSubmitRef.current) return;", self.source)
+
+    def test_topbar_new_project_path_also_generates_session_key(self):
+        """NEW-P0-25（R2回归，批三A）：顶栏『新建项目』按钮此前不生成会话
+        幂等键（只有空看板入口生成），有activeProject时只能走顶栏路径→
+        键恒空→后端 min_length=8 拒收422（现场6次复现）。契约：顶栏按钮
+        onClick 也必须生成键。"""
+        import re
+
+        # 匹配含 setNewProjectOpen(true) 的 onClick 块（模板字面量内含
+        # ${} 大括号，需按语句边界而非 [^}] 截断）。
+        blocks = re.findall(
+            r"onClick=\{\(\) => \{(.*?)\}\}",
+            self.source,
+            re.S,
+        )
+        openers = [b for b in blocks if "setNewProjectOpen(true)" in b]
+        self.assertTrue(openers, "未找到任何打开新建项目对话框的onClick")
+        self.assertTrue(
+            all("setNewProjectIdempotencyKey" in body for body in openers),
+            "所有 setNewProjectOpen(true) 打开路径都必须同时生成会话幂等键",
+        )
+
+    def test_submit_has_nonempty_idempotency_key_fallback(self):
+        """NEW-P0-25 兜底：提交体不得原样发送空键——必须有非空兜底。"""
+        self.assertRegex(
+            self.source,
+            r"idempotency_key: newProjectIdempotencyKey\s*\|\|",
+            "提交处需 newProjectIdempotencyKey || 兜底生成，杜绝空键422",
+        )
+
+
+class EntryPathKeyAuditTests(unittest.TestCase):
+    """批A①（R27第2轮末修订 NEW-P0-09）：全入口幂等键审计+提交期兜底。"""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.source = (ROOT / "frontend/src/App.jsx").read_text(encoding="utf-8")
+
+    def test_every_dialog_open_path_generates_session_key(self):
+        opens = [
+            m.start()
+            for m in __import__("re").finditer(r"setNewProjectOpen\(true\)", cls_src)
+        ] if (cls_src := None) else []
+        import re
+
+        opens = [m.start() for m in re.finditer(r"setNewProjectOpen\(true\)", self.source)]
+        self.assertTrue(opens, "应存在新建项目弹窗入口")
+        for pos in opens:
+            window = self.source[max(0, pos - 700) : pos]
+            self.assertIn(
+                "setNewProjectIdempotencyKey(",
+                window,
+                "每个打开新建项目弹窗的入口都必须先生成会话幂等键"
+                "（NEW-P0-09：单一入口生成→其他路径空键→422裸JSON）。",
+            )
+
+    def test_submit_time_last_resort_key_never_empty(self):
+        import re
+
+        self.assertRegex(
+            self.source,
+            r"idempotency_key:\s*newProjectIdempotencyKey\s*\|\|",
+            "提交体必须带兜底键生成——任何未来新增入口漏生成时，提交期"
+            "兜底保证键非空（现场：idempotency_key string_too_short 422）。",
+        )

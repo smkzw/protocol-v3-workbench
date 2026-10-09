@@ -286,10 +286,27 @@ class SideEffectSafetyTests(unittest.TestCase):
         main_path = _ROOT / "services/api/app/main.py"
         if not main_path.is_file():
             self.skipTest("main.py not present in this worktree")
+        # Snapshot the session's *.main modules and restore them in cleanup.
+        # Evicting without restoring splits module identity for the rest of
+        # the session: tests that bound ``app`` at collection time keep
+        # serving the evicted instance while their string patches
+        # (``patch("services.api.app.main.<attr>")``) resolve to a fresh
+        # re-import — the E1 wrapper→policy one-way order pollution pinned in
+        # tests/acceptance/test_order_pollution_a11.py::test_e1_step2.
+        evicted_main_modules = {
+            name: module
+            for name, module in sys.modules.items()
+            if name == "main" or name.endswith(".main")
+        }
+        self.addCleanup(
+            lambda: [
+                sys.modules.__setitem__(name, module)
+                for name, module in evicted_main_modules.items()
+            ]
+        )
         # Re-import the wrapper fresh and confirm main is not loaded.
-        for name in tuple(sys.modules):
-            if name == "main" or name.endswith(".main"):
-                sys.modules.pop(name, None)
+        for name in tuple(evicted_main_modules):
+            sys.modules.pop(name, None)
         importlib.reload(frontend_wrapper)
         loaded_main = [name for name in sys.modules if name == "main" or name.endswith(".main")]
         self.assertEqual(loaded_main, [], f"wrapper import loaded main modules: {loaded_main}")

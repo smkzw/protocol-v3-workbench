@@ -747,7 +747,9 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
         self.assertIn('stableAuthoringWriteKey(requestProjectId, `commit-${targetStage}`, sourceRevision, payload, previewId)', source)
         self.assertIn('stableAuthoringWriteKey(requestProjectId, "create-with-framing", sourceRevision, payload)', source)
         self.assertIn('stableAuthoringWriteKey(requestProjectId, `draft-${targetStage}`, sourceRevision, payload)', source)
-        self.assertIn('stableAuthoringWriteKey(requestProjectId, "corpus-override", sourceRevision, overridePayload)', source)
+        # 06d0b4f3（R6 P0-24/P2-43 幂等）：corpus-override 键的内容绑定不随
+        # revision 轮换（sourceRevision 传 undefined），重试跨 reconcile 共键。
+        self.assertIn('stableAuthoringWriteKey(requestProjectId, "corpus-override", undefined, overridePayload)', source)
         self.assertIn("const sourceRevision = journey.revision", source)
         self.assertIn("const sourceRevision = baseJourney.revision", source)
         self.assertIn("const sourceRevision = 0", source)
@@ -929,7 +931,9 @@ class FrontendMedicalWritingContractTests(unittest.TestCase):
             authoring,
         )
         self.assertIn('disabled={readOnly || busy === "search"', authoring)
-        self.assertIn('disabled={readOnly || allowed || item.satisfied}', authoring)
+        # f37b64e8（R4 NEW-P0-19）：已满足项不再渲染为复选框；未满足项
+        # 复选框在只读或已放行时禁用（防重复确认语义不变）。
+        self.assertIn('disabled={readOnly || allowed}', authoring)
 
     def test_reference_preparation_batch_uses_persisted_job_routes_and_safe_commands(self):
         batch = self.reference_preparation_batch_source

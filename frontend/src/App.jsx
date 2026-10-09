@@ -702,6 +702,8 @@ function monitoringReadErrorInfo(error, surface = "医学监查数据") {
     : status
       ? `HTTP ${status}`
       : "网络未响应";
+  // 预清理批 r2（20261003b③）：错误码/传输细节不再作为可见文本直出，
+  // 收进 title 悬浮提示（排障仍可查，界面只留人话）。
   const technical = [
     transport,
     code ? `code=${code}` : "",
@@ -730,7 +732,15 @@ function MonitoringReadUnavailable({ surface, error, compact = false }) {
       <div>
         <strong>{info.title}</strong>
         <p>{info.message}</p>
-        {info.technical && <small>{info.technical}</small>}
+        {info.technical && (
+          <small
+            title={info.technical}
+            className="monitoring-technical-hint"
+            aria-hidden="true"
+          >
+            技术详情已收进悬浮提示；反馈问题时可提供。
+          </small>
+        )}
       </div>
     </section>
   );
@@ -1597,7 +1607,7 @@ function AppShell({
                 <div className="new-project-fields">
                   <label>试验药物<input required aria-required="true" aria-invalid={Boolean(newProjectErrors.product_name)} aria-describedby={newProjectErrors.product_name ? "new-project-product-error" : undefined} maxLength={160} value={newProjectDraft.product_name} onChange={(event) => updateNewProjectField("product_name", event.target.value)} placeholder="药物代号或通用名" />{newProjectErrors.product_name && <small id="new-project-product-error" className="new-project-field-error">{newProjectErrors.product_name}</small>}</label>
                   <label>适应症<input required aria-required="true" aria-invalid={Boolean(newProjectErrors.indication)} aria-describedby={newProjectErrors.indication ? "new-project-indication-error" : undefined} maxLength={120} value={newProjectDraft.indication} onChange={(event) => updateNewProjectField("indication", event.target.value)} placeholder="例如 类风湿关节炎" />{newProjectErrors.indication && <small id="new-project-indication-error" className="new-project-field-error">{newProjectErrors.indication}</small>}</label>
-                  <label>研究分期<select required aria-required="true" aria-invalid={Boolean(newProjectErrors.study_phase)} aria-describedby={newProjectErrors.study_phase ? "new-project-phase-error" : undefined} value={newProjectDraft.study_phase} onChange={(event) => updateNewProjectField("study_phase", event.target.value)}><option value="">请选择</option><option value="I期">I期</option><option value="I/II期">I/II期</option><option value="II期">II期</option><option value="II/III期">II/III期</option><option value="III期">III期</option></select>{newProjectErrors.study_phase && <small id="new-project-phase-error" className="new-project-field-error">{newProjectErrors.study_phase}</small>}</label>
+                  <label>研究分期<select required aria-required="true" aria-invalid={Boolean(newProjectErrors.study_phase)} aria-describedby={newProjectErrors.study_phase ? "new-project-phase-error" : undefined} value={newProjectDraft.study_phase} onChange={(event) => updateNewProjectField("study_phase", event.target.value)}><option value="">请选择</option><option value="I期">I期</option><option value="Ib期">Ib期</option><option value="I/II期">I/II期</option><option value="II期">II期</option><option value="IIa期">IIa期</option><option value="IIb期">IIb期</option><option value="II/III期">II/III期</option><option value="III期">III期</option></select>{newProjectErrors.study_phase && <small id="new-project-phase-error" className="new-project-field-error">{newProjectErrors.study_phase}</small>}</label>
                 </div>
                 {newProjectMessage && <p className="new-project-message">{newProjectMessage}</p>}
                 <footer>
@@ -2109,7 +2119,11 @@ function AiGatewayPanel({ status, runs = [], onStatusChange, compact = false }) 
       <div className="ai-gateway-header">
         <div>
           <Tag tone={gatewayReady ? "success" : "warning"}>{gatewayLabel}</Tag>
-          <span>{compact ? `AI 设置 · ${providerLabel} · ${modelLabel}` : `${providerLabel} · ${modelLabel}`}</span>
+          <span
+            title={`当前 AI 接入：${providerLabel} · ${modelLabel}`}
+          >
+            {compact ? "AI 设置" : "AI 接入状态"}
+          </span>
         </div>
         <button className="icon-button" type="button" onClick={loadSettings} title="配置全系统 AI 角色" disabled={busy}>
           <Settings2 size={17} />
@@ -2940,7 +2954,8 @@ function MonitoringPage({
         if (!cancelled) {
           setRawMonitoring(null);
           const info = monitoringReadErrorInfo(error, "monitoring_raw");
-          setRawMonitoringError(`${info.title}：${info.message}（${info.technical}）`);
+          // 预清理批 r2（20261003b③）：人话提示不再拼接技术细节串。
+          setRawMonitoringError(`${info.title}：${info.message}`);
         }
       })
       .finally(() => {
@@ -11528,7 +11543,7 @@ function WritingPage({
                   </strong>
                 </div>
                 <Tag tone={workingCopyFreezeTone(workingCopy)}>{workingCopyFreezeLabel(workingCopy)}</Tag>
-                <strong className="working-copy-save-state">{workingCopyDirty ? "有未保存修订" : workingCopyRevision >= 1 ? "已保存" : isGreenfieldSession ? "绿地候选基线" : "原始方案只读来源"}</strong>
+                <strong className="working-copy-save-state">{workingCopyDirty ? "有未保存修订" : workingCopyRevision >= 1 ? "已保存" : isGreenfieldSession ? "新建方案候选基线" : "原始方案只读来源"}</strong>
                 <time title={workingCopy?.updated_at ? `最近更新：${new Date(workingCopy.updated_at).toLocaleString("zh-CN", { hour12: false })}` : "未生成工作副本"}>
                   {workingCopy?.updated_at ? new Date(workingCopy.updated_at).toLocaleDateString("zh-CN") : "未生成"}
                 </time>
@@ -11546,7 +11561,7 @@ function WritingPage({
                     title={!workingCopyAuthoritative
                       ? "当前历史内容已隔离，请先在版本面板处置"
                       : isGreenfieldSession
-                        ? "从当前绿地候选章节创建版本化工作副本"
+                        ? "从当前新建方案的候选章节创建版本化工作副本"
                         : "从当前原始方案章节创建本地工作副本"}
                   >
                     <PencilLine size={14} /> 创建工作副本
@@ -16137,11 +16152,15 @@ export function App() {
           // 『请选择项目』，不自动进任何历史项目（共享部署下历史项目
           // 属于他人，误入即误改风险）。显式监查深链（requested）与
           // 当前已选项目仍正常解析。
+          // NEW-4（第2轮修订）：本会话内用户自己选过的项目（sessionStorage，
+          // 关标签即失效）作为兜底认领并经解析器存在性校验——兑现
+          // 『您的选择在本会话内会被记住』；跨会话历史项目仍不自动收养。
+          const sessionPersistedProjectId = readPersistedMonitoringProjectId();
           const resolved = resolveMedicalMonitoringProjectRoute(
             requestedMonitoringProjectId,
             canonicalProjects,
             current,
-            "",
+            current || requestedMonitoringProjectId ? "" : sessionPersistedProjectId,
           ).projectId;
           if (resolved) persistMonitoringProjectId(resolved);
           return resolved;

@@ -482,6 +482,28 @@ class MedicalWritingSynopsisImportService:
                 separators=(",", ":"),
             ).encode("utf-8")
         ).hexdigest()
+        # 批A④（R27第2轮末修订）：同文件重传结构化缓存——确定性解析已有
+        # 同款键（extraction_revision=docx_xml_v1_m11map_v5_{sha}），AI结构
+        # 化补齐。命中同(source_sha256, media_type, expected_indication)且
+        # completed、result_json非空的既往导入时，直接以复用结果落一条新
+        # completed 记录，零AI调用（现场：失败梯一次烧14-73分钟）。
+        cached = self._find_reusable_structured_result(
+            content_sha256, media_type, expected_indication.strip()
+        )
+        if cached is not None:
+            reused = self._record_reused_import(
+                project_id=project_id,
+                idempotency_key=idempotency_key,
+                request_sha256=request_sha256,
+                content_sha256=content_sha256,
+                filename=Path(filename).name,
+                media_type=media_type,
+                expected_indication=expected_indication.strip(),
+                actor=actor,
+                cached=cached,
+            )
+            if reused is not None:
+                return reused
         claim_token = uuid.uuid4().hex
         observed_attempt: int | None = None
         while True:
@@ -544,6 +566,97 @@ class MedicalWritingSynopsisImportService:
         finally:
             heartbeat_stop.set()
             heartbeat_thread.join(timeout=1.0)
+
+    def _find_reusable_structured_result(
+        self,
+        content_sha256: str,
+        media_type: str,
+        expected_indication: str,
+    ) -> str | None:
+        import sqlite3
+
+        try:
+            connection = sqlite3.connect(self.db_path, timeout=30.0)
+            connection.row_factory = sqlite3.Row
+            row = connection.execute(
+                """
+                SELECT result_json FROM medical_writing_synopsis_imports
+                WHERE source_sha256=? AND media_type=?
+                  AND expected_indication=? AND status='completed'
+                  AND result_json IS NOT NULL AND result_json != ''
+                ORDER BY updated_at DESC LIMIT 1
+                """,
+                (content_sha256, media_type, expected_indication),
+            ).fetchone()
+            connection.close()
+        except sqlite3.Error:
+            return None
+        if row is None:
+            return None
+        return str(row["result_json"] or "") or None
+
+    def _record_reused_import(
+        self,
+        *,
+        project_id: str,
+        idempotency_key: str,
+        request_sha256: str,
+        content_sha256: str,
+        filename: str,
+        media_type: str,
+        expected_indication: str,
+        actor: str,
+        cached: str,
+    ) -> Any:
+        import sqlite3
+
+        # result_json 即 MedicalWritingSynopsisImport 的序列化形态（完成行
+        # 实测）；直接复用其内容作为新记录的 payload/result，AI结构化结果
+        # 零调用直出。status 回到 completed（语义=已结构化待确认）。
+        try:
+            cached_model = json.loads(cached)
+        except Exception:  # noqa: BLE001 — 坏缓存不走复用
+            return None
+        if not isinstance(cached_model, dict) or "source" not in cached_model:
+            return None
+        # 行status=completed（机器态），模型status保持 review_pending
+        # （已结构化待人工确认——与真实完成行一致）。
+        cached_model["status"] = "review_pending"
+        payload_json = json.dumps(cached_model, ensure_ascii=False)
+        now = datetime.now(timezone.utc).isoformat()
+        connection = sqlite3.connect(self.db_path, timeout=30.0)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute(
+            """
+            INSERT INTO medical_writing_synopsis_imports (
+                project_id, idempotency_key, request_sha256, status, payload_json,
+                claim_token, lease_expires_at, attempt_count, error_message,
+                created_at, updated_at, phase, chunk_index, chunk_total,
+                progress_json, source_sha256, source_filename, cancelled_at,
+                result_json, job_id, media_type, expected_indication, actor,
+                source_json, route_snapshot_json, route_identity_hash, failure_code
+            ) VALUES (?, ?, ?, 'completed', ?, '', '', 0, '', ?, ?, 'completed',
+                      0, 1, '{}', ?, ?, '', ?, '', ?, ?, ?, '{}', '{}', '',
+                      'reused_structured_result')
+            """,
+            (
+                project_id,
+                idempotency_key,
+                request_sha256,
+                payload_json,
+                now,
+                now,
+                content_sha256,
+                filename,
+                cached,
+                media_type,
+                expected_indication,
+                actor,
+            ),
+        )
+        connection.commit()
+        connection.close()
+        return MedicalWritingSynopsisImport.model_validate_json(payload_json)
 
     def _run_import(
         self,
@@ -805,6 +918,37 @@ class MedicalWritingSynopsisImportService:
             ):
                 connection.commit()
                 return {"action": "wait", "attempt_count": attempt_count}
+            if status == "cancelled":
+                # NEW-P0-15（R27 片1②）：cancelled导入同键重放=重新提交。
+                # 此前cancelled态在_claim_once直接落入"unknown state"——
+                # 同一文件重传（fileRequestKey=内容sha=同一幂等键）永远无法
+                # 重启解析，文件被永久毒化（R3-D现场四次POST全不启动）。
+                # 请求哈希一致性已由上面的内容校验守住：同内容=用户重新
+                # 提交，清cancelled_at重启；completed保持幂等回放不变。
+                connection.execute(
+                    """
+                    UPDATE medical_writing_synopsis_imports
+                    SET status='pending', cancelled_at='', claim_token=?,
+                        lease_expires_at=?, attempt_count=?, error_message='',
+                        phase='pending', chunk_index=0, updated_at=?
+                    WHERE project_id=? AND idempotency_key=? AND status='cancelled'
+                    """,
+                    (
+                        claim_token,
+                        lease_expires_at.isoformat(),
+                        attempt_count + 1,
+                        now.isoformat(),
+                        project_id,
+                        idempotency_key,
+                    ),
+                )
+                connection.commit()
+                return {
+                    "action": "claimed",
+                    "attempt_count": attempt_count + 1,
+                    "route_snapshot": frozen_snapshot,
+                    "route_identity_hash": frozen_hash,
+                }
             if status not in {"pending", "failed"}:
                 connection.rollback()
                 raise RuntimeError(f"unknown synopsis import state: {status}")

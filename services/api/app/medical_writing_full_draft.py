@@ -79,6 +79,75 @@ FULL_DRAFT_MAX_OUTPUT_TOKENS = 65_536
 FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS = 45.0
 
 
+# ── P0-A（新纪元第2轮修订）：全文初稿装配完整性确定性门 ───────────────────
+# 现场（NEW-13）：r10-A 导出件 9.2/9.3/9.4 三节正文逐字节相同——生成层只比
+# section_id 序列，模型违反指令时全链无拦截。本门在生成/采纳/导出三层做
+# 归一化跨节重复检测（>80 字相同正文出现于 ≥2 节即拒收/计缺口）。
+FULL_DRAFT_DUPLICATE_BODY_MIN_CHARS = 80
+
+
+def normalize_full_draft_body(text: str) -> str:
+    """装配重复检测的正文归一化：去除全部空白（含全角空白）。"""
+    return re.sub(r"[\s\u3000]+", "", str(text or ""))
+
+
+def find_full_draft_duplicate_sections(
+    sections: Iterable[Mapping[str, Any]],
+    *,
+    text_key: str = "proposal_text",
+) -> dict[str, list[str]]:
+    """跨节正文重复检测（共享长片段口径）：返回 {共享片段: [节号...]}（≥2 节）。
+
+    比对单位不是整节归一化文本（各节可有不同收尾），而是归一化后的
+    80 字滑窗：任一节的某个 80 字窗口原样出现于另一节即记共享片段
+    （现场 NEW-13 形态=同一段方法学正文被复制进多节、各节收尾不同）。
+    短于窗口的通用短语不参与（不误伤）；窗口签名取共享区域首个窗口，
+    值列表保持节序去重。
+    """
+    window = FULL_DRAFT_DUPLICATE_BODY_MIN_CHARS
+    window_owners: dict[str, list[str]] = {}
+    section_order: list[str] = []
+    for item in sections or []:
+        if not isinstance(item, Mapping):
+            continue
+        section_id = _text(item.get("section_id"))
+        if not section_id:
+            continue
+        section_order.append(section_id)
+        normalized = normalize_full_draft_body(item.get(text_key))
+        fingerprints: set[str] = set()
+        for start in range(0, max(0, len(normalized) - window + 1)):
+            fingerprints.add(normalized[start:start + window])
+        for fingerprint in fingerprints:
+            owners = window_owners.setdefault(fingerprint, [])
+            if section_id not in owners:
+                owners.append(section_id)
+    merged: dict[str, list[str]] = {}
+    # 合并相邻窗口：同属一对（或多对）同节组合的连续窗口折叠为一条共享
+    # 片段记录，签名取该组最小（字典序）窗口，保证一处装配重复只产一条。
+    grouped: dict[tuple[str, ...], set[str]] = {}
+    for fingerprint, owners in window_owners.items():
+        if len(owners) < 2:
+            continue
+        key = tuple(owners)
+        grouped.setdefault(key, set()).add(fingerprint)
+    for owners, fingerprints in grouped.items():
+        windows = sorted(fingerprints)
+        signature = windows[0]
+        merged[signature] = list(owners)
+    return merged
+
+
+def _duplicate_section_names(duplicates: Mapping[str, list[str]]) -> str:
+    """去重保序的节号点名串（供拒收/缺口消息使用）。"""
+    names: list[str] = []
+    for section_ids in duplicates.values():
+        for section_id in section_ids:
+            if section_id not in names:
+                names.append(section_id)
+    return "、".join(names)
+
+
 def classify_full_draft_chunk_failure(exc: Exception) -> str:
     """R6 片B′（P0-25）：批次失败分型，决定重试/跳过/快速失败。
 
@@ -288,6 +357,210 @@ def sample_size_declaration_check(text: str) -> dict | None:
     }
 
 
+# P1-53（新纪元第1轮修订·E9，规格 SPEC_sample_size_revision_gate_P1-53.md）
+# 样本量修订路径三件套：口径指纹、强制重算、单双侧混写禁令。
+# 现场根因：P0-18 输入层门只校验『完成第二步』时点的参数组合，假设事后
+# 修订（AD：28%vs18% → 38%vs18%）后陈旧基数（850/567/283）不重算就一路
+# 走到导出件——比例型文本声明总数无『每组』字样，P0-18 的声明正则族
+# 根本不适用。
+_SS_PROPORTION_PAIR_RES = (
+    re.compile(
+        r"(?:应答率|有效率|反应率|缓解率|发生率)\s*(\d+(?:\.\d+)?)\s*%"
+        r"\s*(?:与|和|vs\.?|对比|对)\s*(?:对照)?\s*"
+        r"(?:应答率|有效率|反应率|缓解率|发生率)?\s*(\d+(?:\.\d+)?)\s*%"
+    ),
+    re.compile(
+        r"(\d+(?:\.\d+)?)\s*%\s*(?:与|和|vs\.?|对比|对)\s*"
+        r"(?:对照(?:应答率|有效率|反应率|缓解率|发生率)?\s*)?"
+        r"(\d+(?:\.\d+)?)\s*%"
+    ),
+)
+_SS_TOTAL_WITH_ALLOCATION_RE = re.compile(
+    r"共?[约]?\s*(\d[\d,，\s]*)\s*例\s*[（(]\s*(\d[\d,，\s]*)\s*[/／]\s*(\d[\d,，\s]*)\s*[)）]"
+)
+_SS_BARE_TOTAL_RE = re.compile(r"共[约]?\s*(\d[\d,，\s]*)\s*例")
+
+
+def _parse_sample_size_assumptions(raw: str) -> dict:
+    """P1-53 假设五要素解析（单双侧|α|把握度|δ|SD，比例型由 p 对推导）。
+
+    与 sample_size_declaration_check 同一正则族取 α/把握度/SD/δ；比例型
+    设计（无连续 SD/δ）额外解析 p1/p2（百分点），δ=|p1-p2|、
+    SD=√(p̄(1-p̄))。任一要素缺失时对应值为 None（不编造）。
+    """
+    alpha = None
+    for pattern in _SS_ALPHA_RES:
+        match = pattern.search(raw)
+        if match:
+            alpha = float(match.group(1))
+            break
+    power = None
+    for pattern in _SS_POWER_RES:
+        match = pattern.search(raw)
+        if match:
+            power = float(match.group(1)) / 100
+            break
+    sd = None
+    sd_match = re.search(
+        r"(?:标准差|SD)\s*(?:为|是|=|约)?\s*" + _SAMPLE_SIZE_NUMBER_RE, raw
+    )
+    if sd_match:
+        sd = float(sd_match.group(1))
+    delta = None
+    for pattern in _SS_DELTA_RES:
+        match = pattern.search(raw)
+        if match:
+            delta = float(match.group(1) or match.group(2) or 0)
+            break
+    p1 = p2 = None
+    for pattern in _SS_PROPORTION_PAIR_RES:
+        match = pattern.search(raw)
+        if match:
+            first, second = float(match.group(1)), float(match.group(2))
+            if 0 < first < 100 and 0 < second < 100 and first != second:
+                p1, p2 = first / 100, second / 100
+            break
+    if delta is None and p1 is not None:
+        delta = abs(p1 - p2)
+    if sd is None and p1 is not None:
+        pooled = (p1 + p2) / 2
+        sd = (pooled * (1 - pooled)) ** 0.5
+    return {
+        "one_sided": bool(re.search(r"单侧", raw)),
+        "alpha": alpha,
+        "power": power,
+        "sd": sd,
+        "delta": delta,
+        "p1": p1,
+        "p2": p2,
+    }
+
+
+def sample_size_fingerprint(text: str) -> str | None:
+    """P1-53 口径指纹：五要素齐才产 sha256(单双侧|α|把握度|δ|SD)[:16]。
+
+    要素不全（含纯文本无样本量内容）返回 None——首存不产指纹、不触发
+    修订比对；比例型设计的 δ/SD 由 p 对推导后同样入指纹（AD 现场：
+    28%→38% 假设修订必须改变指纹）。
+    """
+    assumptions = _parse_sample_size_assumptions(str(text or ""))
+    alpha = assumptions["alpha"]
+    power = assumptions["power"]
+    sd = assumptions["sd"]
+    delta = assumptions["delta"]
+    if not alpha or not power or sd is None or delta is None or sd <= 0 or delta <= 0:
+        return None
+    canonical = "{}|{:.6g}|{:.6g}|{:.6g}|{:.6g}".format(
+        "单侧" if assumptions["one_sided"] else "双侧",
+        alpha,
+        power,
+        delta,
+        sd,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
+
+def sample_size_revision_check(text: str) -> dict | None:
+    """P1-53 强制重算门：假设修订（指纹变化）后的基数复算。
+
+    比基础 declaration_check 多两类声明/推导形态（只在修订路径启用，
+    首存比例型仍按 P0-18 语义不拦）：
+    - 声明形态：总数+分配括号『共850例（567/283）』——取较小臂为对照
+      口径（1:1 每组需量的近似，±20% 容差吸收 2:1 的 1.125 放大）；
+      裸『共N例』按 1:1 折半；
+    - 推导形态：比例型 p1/p2——n=(z_α+z_β)²[p₁(1-p₁)+p₂(1-p₂)]/δ²
+      （与成型方案口径一致的数量级校验）。
+    """
+    raw = str(text or "")
+    assumptions = _parse_sample_size_assumptions(raw)
+    alpha = assumptions["alpha"]
+    power = assumptions["power"]
+    sd = assumptions["sd"]
+    delta = assumptions["delta"]
+    declared = None
+    for pattern in _SS_DECLARED_RES:
+        match = pattern.search(raw)
+        if match:
+            declared = float(match.group(1))
+            break
+    if declared is None:
+        allocation_match = _SS_TOTAL_WITH_ALLOCATION_RE.search(raw)
+        if allocation_match:
+            arms = [
+                float(re.sub(r"[,，\s]", "", allocation_match.group(index)))
+                for index in (2, 3)
+            ]
+            if arms[0] > 0 and arms[1] > 0:
+                declared = min(arms)
+        else:
+            bare_match = _SS_BARE_TOTAL_RE.search(raw)
+            if bare_match:
+                declared = float(re.sub(r"[,，\s]", "", bare_match.group(1))) / 2
+    if declared is None:
+        return None
+    missing = [
+        label
+        for label, value in (
+            ("α", alpha), ("把握度", power), ("δ", delta), ("SD", sd),
+        )
+        if value is None
+    ]
+    if missing or not alpha or not power or delta is None or sd is None or delta <= 0 or sd <= 0:
+        return {
+            "status": "样本量要素未齐",
+            "declared_per_group": int(declared),
+            "required_per_group": None,
+            "detail": "样本量假设要素不全（缺失：" + "、".join(missing) + "）；无法按修订后假设复算。",
+        }
+    z_alpha = _z_value(alpha, assumptions["one_sided"])
+    z_beta = _z_value(1 - power, True)
+    if assumptions["p1"] is not None and assumptions["p2"] is not None:
+        p1, p2 = assumptions["p1"], assumptions["p2"]
+        required = ((z_alpha + z_beta) ** 2) * (
+            p1 * (1 - p1) + p2 * (1 - p2)
+        ) / (delta ** 2)
+    else:
+        required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
+    required_ceil = max(2, int(required + 0.999))
+    ratio = declared / required_ceil
+    side = "单侧" if assumptions["one_sided"] else "双侧"
+    if ratio < 0.8 or ratio > 1.25:
+        return {
+            "status": "不一致",
+            "declared_per_group": int(declared),
+            "required_per_group": required_ceil,
+            "detail": (
+                f"假设修订后（{side}α={alpha:g}、把握度{int(power * 100)}%、"
+                f"δ={delta:g}{'（比例推导）' if assumptions['p1'] is not None else ''}）"
+                f"复算约需{required_ceil}例/组（对照口径），当前声明基数对应"
+                f"{int(declared)}例/组：请按修订后假设重算并更新声明基数。"
+            ),
+        }
+    return {
+        "status": "自洽",
+        "declared_per_group": int(declared),
+        "required_per_group": required_ceil,
+        "detail": f"按修订后假设复算约需 {required_ceil} 例/组，与声明基数一致。",
+    }
+
+
+def sample_size_sidedness_mixing_check(text: str) -> bool:
+    """P1-53 单双侧混写禁令：同一统计章内单双侧不得混指同一 α/把握度组合。
+
+    『双单侧』（TOST 等效性检验）与『双侧可信/置信区间』（估计语境）
+    是合法表述，不计混写；仅在章节含样本量声明语境时判定。
+    """
+    raw = str(text or "")
+    if "单侧" not in raw or "双侧" not in raw:
+        return False
+    one_sided = re.search(r"(?<!双)单侧", raw)
+    two_sided = re.search(r"双侧(?!(?:可信|置信|CI|ci))", raw)
+    if not (one_sided and two_sided):
+        return False
+    has_sample_size_context = "样本量" in raw or sample_size_declaration_check(raw) is not None
+    return bool(has_sample_size_context)
+
+
 def _rewrite_declared_sample_size(text: str, declared: int, required: int) -> str:
     """生成层护栏②：不一致节的声明数字改写为复算值（含成对总数）。"""
     replaced = text
@@ -321,6 +594,22 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
     if not (section_number.startswith("9") or "统计" in heading or "样本量" in heading):
         return
     text = str(section_item.get("proposal_text") or "")
+    # P1-53（新纪元第1轮修订·E9）单双侧混写禁令：先于声明形态判定——
+    # 混写文本可能解析不出声明例数；同一 α/把握度组合只能有一个口径
+    # （两套 z 值差可达22%例数），混写即插悬置块（导出层据此计缺口→
+    # 草案-N）。『双单侧』（TOST）与『双侧可信/置信区间』不算混写。
+    if sample_size_sidedness_mixing_check(text):
+        section_item["sample_size_check"] = {
+            "status": "口径混写",
+            "detail": "同一统计章内『单侧』与『双侧』混指同一α/把握度组合。",
+        }
+        section_item["proposal_text"] = (
+            "【样本量口径混写待确认：本节同时出现『单侧』与『双侧』的检验"
+            "设定表述——同一α/把握度组合只能有一个口径（两套z值差可达22%"
+            "例数）；锁定条件：统一口径并按统一口径重算样本量后解除，"
+            "正式稿不得带此标记。】" + text
+        )
+        return
     check = sample_size_declaration_check(text)
     if check is None:
         return
@@ -345,11 +634,135 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
             "复算与声明一致（差值≤±20%）后解除，正式稿不得带此标记。】" + text
         )
     # P1-48：溯源标注（有锚点=具名依据上纸；无锚点=如实声明并建议补引）。
+    # E10（新纪元第1轮修订）：溯源状态同时落结构化字段——审阅侧无需
+    # 解析正文即可看到『假设待定/已具名』（成型方案具名先例是标配）。
     anchor_text = str(anchor or "").strip()
     if anchor_text:
+        section_item["sample_size_provenance"] = f"已具名（{anchor_text}）"
         section_item["proposal_text"] += f"（样本量依据：{anchor_text}）"
     else:
+        section_item["sample_size_provenance"] = "假设待定（未具名溯源，建议引用外部先例）"
         section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
+
+
+# ── E11（新纪元第1轮修订）：统计章分节装配五件套 ─────────────────────────
+# 规格 SPEC_statistical_chapter_assembly_20261007.md（P1-49，R8 审阅者B
+# DM/Stat 四件差距+防火墙）。对齐成型方案统计章结构（8.1-8.7）：
+# 分析集成员规则（FAS/SS/PP 三段式）、多重性终点族（指向存在的终点）、
+# 敏感性双法（MI + tipping/跳转至参考）、顺序检验声明、非盲统计师防火墙。
+_STAT_ASSEMBLY_APPLICABILITY_RE = re.compile(r"统计|样本量|分析集|终点|多重性")
+_STAT_ASSEMBLY_SET_RES = (
+    ("FAS", re.compile(r"全分析集|(?<![A-Za-z])FAS(?![A-Za-z])")),
+    ("SS", re.compile(r"安全性分析集|安全分析集|安全集|(?<![A-Za-z])SS(?![A-Za-z])")),
+    (
+        "PP",
+        re.compile(
+            r"符合方案集|符合方案分析集|(?<![A-Za-z])PPS?(?![A-Za-z])|Per[- ]?Protocol"
+        ),
+    ),
+)
+_STAT_MEMBER_RULE_RE = re.compile(
+    r"重大方案偏离|方案偏离|入选标准|随机入组|至少一次[^\n。]{0,12}(?:治疗|给药|用药)"
+)
+_STAT_SENSITIVITY_MI_RE = re.compile(
+    r"多重填补|(?<![A-Za-z])MI(?![A-Za-z])|multiple imputation", re.IGNORECASE
+)
+_STAT_SENSITIVITY_SECONDARY_RE = re.compile(
+    r"tipping|临界点|跳转至参考|jump to reference", re.IGNORECASE
+)
+_STAT_FIREWALL_RE = re.compile(r"防火墙|非盲统计师|揭盲[^\n。]{0,12}隔离")
+_STAT_ORDERED_TEST_RE = re.compile(r"顺序检验|检验顺序|gatekeeping|逐级检验|层级检验")
+_STAT_ENDPOINT_FAMILY_TOKENS = (
+    "主要终点",
+    "关键次要终点",
+    "次要终点",
+    "探索性终点",
+)
+
+
+def statistics_assembly_check(
+    text: str, *, endpoint_families: dict[str, bool] | None = None
+) -> dict:
+    """E11 五件套在场检查（统计章为统计章结构完整性口径）。
+
+    返回 {"missing": [...], "invalid_multiplicity_targets": [...]}；
+    非统计语境文本（无统计/样本量/分析集/终点/多重性关键词）不适用，
+    missing 恒空（不误伤非统计章节）。endpoint_families 提供时（生成层
+    从 PICOS 结构化终点清单注入），多重性声明引用的终点族必须存在
+    （R1-B 反例：3.2 次要终点全空而声明控制对象）。
+    """
+    raw = str(text or "")
+    if not _STAT_ASSEMBLY_APPLICABILITY_RE.search(raw):
+        return {"missing": [], "invalid_multiplicity_targets": []}
+    missing: list[str] = []
+    set_hits = [
+        name
+        for name, pattern in _STAT_ASSEMBLY_SET_RES
+        if pattern.search(raw)
+    ]
+    if len(set_hits) < len(_STAT_ASSEMBLY_SET_RES) or not _STAT_MEMBER_RULE_RE.search(raw):
+        missing.append("分析集成员规则")
+    mentioned_families = [
+        token for token in _STAT_ENDPOINT_FAMILY_TOKENS if token in raw
+    ]
+    invalid_targets: list[str] = []
+    # 多重性终点族与顺序检验声明是无条件声明位（规格：声明位必须在场，
+    # 内容未声明时不编造——挂起块即如实占位）；多重性声明引用的结构化
+    # 终点族必须存在（endpoint_families 提供时逐族校验）。
+    if not mentioned_families:
+        missing.append("多重性终点族")
+    elif endpoint_families is not None:
+        for family in mentioned_families:
+            if family in endpoint_families and not endpoint_families[family]:
+                invalid_targets.append(family)
+        if invalid_targets:
+            missing.append("多重性终点族")
+    if not _STAT_ORDERED_TEST_RE.search(raw):
+        missing.append("顺序检验声明")
+    if not (_STAT_SENSITIVITY_MI_RE.search(raw) and _STAT_SENSITIVITY_SECONDARY_RE.search(raw)):
+        missing.append("敏感性双法")
+    if not _STAT_FIREWALL_RE.search(raw):
+        missing.append("非盲统计师防火墙")
+    return {"missing": missing, "invalid_multiplicity_targets": invalid_targets}
+
+
+def apply_statistics_assembly_guard_to_section(
+    section_item: dict, *, endpoint_families: dict[str, bool] | None = None
+) -> None:
+    """E11 生成层：统计章五件套缺件挂起块（未声明不编造，导出层计缺口）。
+
+    - 缺件（含多重性引用不存在终点族）：正文前插入挂起块，逐件点名并
+      给锁定条件；statistics_assembly_check 记录落工件；
+    - 五件齐：不动。
+    """
+    section_number = str(section_item.get("section_number") or "")
+    heading = str(section_item.get("heading") or "")
+    if not (section_number.startswith("9") or "统计" in heading or "样本量" in heading):
+        return
+    text = str(section_item.get("proposal_text") or "")
+    if not text.strip():
+        return
+    check = statistics_assembly_check(text, endpoint_families=endpoint_families)
+    section_item["statistics_assembly_check"] = check
+    missing = check.get("missing") or []
+    if not missing:
+        return
+    invalid_targets = check.get("invalid_multiplicity_targets") or []
+    named = "、".join(missing)
+    detail = ""
+    if invalid_targets:
+        detail = (
+            "多重性声明引用了结构化终点清单中不存在的终点族（"
+            + "、".join(invalid_targets)
+            + "）；"
+        )
+    section_item["proposal_text"] = (
+        f"【统计章分节装配待确认：{detail}本统计章缺少：{named}"
+        "（对齐成型方案统计章结构：分析集成员规则/多重性终点族/敏感性双法"
+        "/顺序检验声明/非盲统计师防火墙）；锁定条件：按已确认设计事实逐件"
+        "补齐后解除，未声明处不得编造（如检验树），正式稿不得带此标记。】"
+        + text
+    )
 
 
 _DOSING_SECTION_RE = re.compile(r"^(?:6\.2)(?:\.\d+)?$|给药|研究治疗|研究用药")
@@ -358,12 +771,18 @@ _DOSING_SECTION_RE = re.compile(r"^(?:6\.2)(?:\.\d+)?$|给药|研究治疗|研�
 _DOSE_UNIT_RE = re.compile(r"mg|毫克|µg|μg|微克|IU|国际单位", re.IGNORECASE)
 
 
-def apply_dose_presence_guard_to_section(section_item: dict) -> None:
+def apply_dose_presence_guard_to_section(
+    section_item: dict, source: str = ""
+) -> None:
     """P0-27 生成层：给药/研究治疗章的剂量存在性检查。
 
     owner 裁定边界内行为（研究药物自身数据不可外查）：剂量单位 0 命中
     时不编造剂量——显性标记『剂量缺失』并提示『需IB/立项补剂量方案』，
     正文不阻断生成但带悬置提示随工件持久化（导出层据此计缺口→草案-N）。
+
+    E13（新纪元第1轮修订）：剂量已载明时补『剂量出处』——有具名出处
+    （IB 版本/立项剂量方案）即引用上纸；未具名时如实标注待标注（与
+    样本量假设溯源同族，不拦生成）。
     """
     section_number = str(section_item.get("section_number") or "")
     heading = str(section_item.get("heading") or "")
@@ -372,16 +791,25 @@ def apply_dose_presence_guard_to_section(section_item: dict) -> None:
     text = str(section_item.get("proposal_text") or "")
     if not text.strip():
         return
-    if _DOSE_UNIT_RE.search(text):
+    if not _DOSE_UNIT_RE.search(text):
+        section_item["dose_check"] = {
+            "status": "剂量缺失",
+            "detail": "给药章节未出现任何剂量单位（mg/毫克/µg/μg/微克/IU/国际单位）。",
+        }
+        section_item["proposal_text"] = (
+            "【剂量待确认：本节未载明研究药物的剂量与规格（无 mg/毫克/IU 等"
+            "剂量单位）；需IB/立项补剂量方案后写入，正式稿不得带此标记。】" + text
+        )
         return
-    section_item["dose_check"] = {
-        "status": "剂量缺失",
-        "detail": "给药章节未出现任何剂量单位（mg/毫克/µg/μg/微克/IU/国际单位）。",
-    }
-    section_item["proposal_text"] = (
-        "【剂量待确认：本节未载明研究药物的剂量与规格（无 mg/毫克/IU 等"
-        "剂量单位）；需IB/立项补剂量方案后写入，正式稿不得带此标记。】" + text
-    )
+    source_text = str(source or "").strip()
+    if source_text:
+        section_item["dose_source"] = source_text
+        section_item["proposal_text"] += f"（剂量出处：{source_text}）"
+    else:
+        section_item["dose_source"] = ""
+        section_item["proposal_text"] += (
+            "（剂量出处待标注：请引用IB版本或立项剂量方案作为剂量依据。）"
+        )
 
 
 def sample_size_consistency_check(text: str) -> dict | None:
@@ -1059,6 +1487,10 @@ class MedicalWritingFullDraftService:
             "‘候选正文’等写作过程说明；这些内容只可转化为rationale中的简洁证据说明。"
             "公司或共享语料不得直接决定本项目的避孕方法、妊娠报告、AE/SAE定义与时限、"
             "剂量调整、合并/禁限用药、洗脱、救援治疗、随机揭盲、分析集或其他研究实施规则。"
+            "涉及分析集的章节必须逐集落地成员规则：全分析集（FAS）、安全性分析集（SS）与"
+            "符合方案集（PP/PPS）各自给出成员判定与用途；符合方案集的成员判定必须包含"
+            "方案偏离排除条款（无重大方案偏离且完成关键评估者入集，重大方案偏离者排除），"
+            "不得只写集合名词或把定义推给统计分析计划。"
             "缺少项目实施细节时，必须先完成由已确认事实或允许来源支持的实质正文，并把每个未决事项"
             "写入gap_items；此时content_status使用partial，不得因为局部细节待核对而把已有充分依据的整章留空。"
             "gap_items必须给出稳定gap_id、类别、正文目标位置、下一动作和缺少的来源类别；资料已经存在但"
@@ -1529,6 +1961,15 @@ class MedicalWritingFullDraftService:
         actual_ids = [str(item.get("section_id") or "") for item in sections if isinstance(item, dict)]
         if actual_ids != expected_ids:
             raise RuntimeStoreError("全文初稿章节身份或顺序不匹配，未写入任何正文")
+        # P0-A（NEW-13 根治）：同批跨节重复正文确定性拒收——消息含『未通过
+        # 校验』落入既有 validation 重试预算；重试仍犯→批次跳过并点名
+        # （run_job 的 skipped_chunks 记录 section_ids + reason）。
+        duplicates = find_full_draft_duplicate_sections(sections)
+        if duplicates:
+            raise RuntimeStoreError(
+                "全文初稿跨节正文重复未通过校验（同一正文出现于多节，未写入任何正文）："
+                + _duplicate_section_names(duplicates)
+            )
         return output, run, sources
 
     @staticmethod
@@ -2001,11 +2442,26 @@ class MedicalWritingFullDraftService:
             ).get("sample_size_anchor")
             or ""
         )
+        # E11（新纪元第1轮修订）：多重性终点族按 PICOS 结构化终点清单
+        # 校验（R1-B 反例：3.2 次要终点全空而统计章声明控制对象）。
+        picos_payload = (expected.get("authoring_journey") or {}).get("picos") or {}
+        has_key_secondary = bool(picos_payload.get("key_secondary_endpoints"))
+        has_other_secondary = bool(picos_payload.get("other_secondary_endpoints"))
+        endpoint_families = {
+            "主要终点": bool(str(picos_payload.get("primary_endpoint") or "").strip()),
+            "关键次要终点": has_key_secondary,
+            "次要终点": has_key_secondary or has_other_secondary,
+            "探索性终点": bool(picos_payload.get("exploratory_endpoints")),
+        }
         for item in all_sections:
             apply_sample_size_guard_to_section(item, anchor=anchor)
             # P0-27（第10轮末修订）：给药章剂量存在性——零剂量显性标记，
             # 与样本量门同族的参数完整性防线（导出层据此计缺口）。
             apply_dose_presence_guard_to_section(item)
+            # E11：统计章五件套缺件挂起块（导出层据此计缺口）。
+            apply_statistics_assembly_guard_to_section(
+                item, endpoint_families=endpoint_families
+            )
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections
@@ -2251,6 +2707,21 @@ class MedicalWritingFullDraftService:
             elif status != "complete":
                 gap_section_ids.append(section_id)
         gap_section_id_set = set(gap_section_ids)
+        # P0-A（NEW-13 根治）：采纳前对 target_sections 全集做跨节重复扫描
+        # （缺口节本就不写入，不参与）；重复即拒绝采纳并点名节号——把生成
+        # 层漏网的跨批重复挡在落盘之前。
+        duplicates = find_full_draft_duplicate_sections(
+            [
+                {"section_id": section_id, "proposal_text": candidate.get("proposal_text")}
+                for section_id, candidate in candidates.items()
+                if section_id not in gap_section_id_set
+            ]
+        )
+        if duplicates:
+            raise RuntimeStoreError(
+                "全文初稿候选存在跨节重复正文（章节内容装配重复），未采纳："
+                + _duplicate_section_names(duplicates)
+            )
         required_review_ids = {
             section_id
             for section_id, candidate in candidates.items()

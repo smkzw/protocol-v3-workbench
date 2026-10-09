@@ -81,11 +81,11 @@ class FactIntakeEndpointsTests(unittest.TestCase):
         bootstrap = self.client.post(
             "/api/projects",
             json={
-                "project_name": "E2E Fact Intake",
+                "project_name": f"E2E Fact Intake {self.suffix}",
                 "protocol_id": f"E2E-FI-{self.suffix}",
                 "protocol_version": "1.0",
                 "indication": "Rheumatoid Arthritis",
-                "study_phase": "PHASE2",
+                "study_phase": "II期",
                 "product_name": "CMP-001",
                 "entry_mode": "from_zero",
                 "actor": "medical_manager",
@@ -322,7 +322,23 @@ class FactIntakeEndpointsTests(unittest.TestCase):
                 "idempotency_key": "turn-bad",
             },
         )
-        self.assertEqual(422, turn.status_code)
+        # R13 契约（medical_writing_fact_intake.py 降级注释）：AI 编造高影响
+        # 定量值不再整轮 422（模型重试同措辞会把用户锁死在第一步）——改判
+        # 降级：不记录任何已核实值（fact_kind=unknown、value 空），降级
+        # 说明进 rationale 供人工补答。反编造不变量=『零值上纸』仍成立。
+        self.assertEqual(200, turn.status_code, turn.text)
+        proposals = turn.json().get("proposals") or []
+        target = [
+            p
+            for p in proposals
+            if p.get("field_path")
+            == "high_impact_missing.first_in_human_starting_dose"
+        ]
+        self.assertTrue(target, "降级后的高影响提议必须保留在响应中供人工补答")
+        for proposal in target:
+            self.assertEqual("unknown", proposal["fact_kind"])
+            self.assertEqual("", proposal.get("value", ""))
+            self.assertIn("降级", proposal.get("rationale", ""))
 
     def test_get_allow_missing_returns_not_available(self):
         # use a fresh project so no conversation exists yet
@@ -330,11 +346,11 @@ class FactIntakeEndpointsTests(unittest.TestCase):
         bootstrap = self.client.post(
             "/api/projects",
             json={
-                "project_name": "E2E Fact Intake Missing",
+                "project_name": f"E2E Fact Intake Missing {self.suffix}",
                 "protocol_id": f"E2E-FIM-{suffix}",
                 "protocol_version": "1.0",
                 "indication": "Rheumatoid Arthritis",
-                "study_phase": "PHASE2",
+                "study_phase": "II期",
                 "product_name": "CMP-002",
                 "entry_mode": "from_zero",
                 "actor": "medical_manager",

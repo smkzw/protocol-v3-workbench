@@ -21,11 +21,14 @@ export async function loadDevRuntimeExpectation({ dev = Boolean(import.meta.env?
     // （payload.backend_build_id vs live 期望，见 assessRuntimeReadiness）。
     // vite 启动指纹落后不再作为横幅条件——dev 下比对基准本就取自当前
     // 源码树（/runtime-build.json），vite 是否重启不影响判定正确性。
-    return {
-      expectation: Object.freeze({ ...runtimeExpectation, ...live }),
-      live: true,
-      driftHint: "请重启本子系统后端(5301)后刷新页面",
-    };
+  return {
+    expectation: Object.freeze({ ...runtimeExpectation, ...live }),
+    live: true,
+    // 预清理批 r2（20261003b③）：内部端口号不进用户提示；第2轮修订
+    // （NEW-7 残留）：不指挥用户重启服务——测试者无服务权限（越权提示），
+    // 改为状态说明与升级路径。
+    driftHint: "服务同步中，请稍后刷新或联系集成人",
+  };
   } catch {
     return { expectation: runtimeExpectation, driftHint: "", live: false };
   }
@@ -59,9 +62,10 @@ export function assessRuntimeReadiness(payload, {
       // workspace — build fingerprint drift is advisory; the hard gate keeps
       // contract schema/version, readiness and capability checks.
       // NEW-4: 文案给出可执行的处置指引（重启对象），不再让用户猜。
+      // 预清理批 r2（20261003b③）：构建指纹哈希是内部 ID，不再直出；
+      // 正文只留处置指引（哈希仍随 payload/期望值可在控制台核对）。
       warnings.push(
-        `前后端构建不一致（当前源码树期望 ${expectation.expectedBackendBuildId}，`
-        + `运行中后端 ${payload.backend_build_id || "未知"}）`
+        "前后端构建不一致：页面已更新，运行中的服务还是旧版本"
         + `${driftHint ? `——${driftHint}` : "，可能缺少最新修复，建议刷新页面或同步前后端"}`,
       );
     }

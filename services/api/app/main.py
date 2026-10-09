@@ -10382,6 +10382,18 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
             if definition is not None:
                 structured = getattr(definition.framing, "structured_design", None)
                 if structured is not None:
+                    # NEW-17（第2轮修订·内容族）：给药途径入 overrides——
+                    # 外用/局部给药项目的 PK/PD 类节据此自动落『不适用+理由』。
+                    product_profile = getattr(
+                        definition.framing, "product_profile", None
+                    )
+                    routes = list(
+                        getattr(product_profile, "administration_routes", []) or []
+                    )
+                    if routes and str(routes[0] or "").strip():
+                        front_matter_overrides["administration_route"] = str(
+                            routes[0]
+                        ).strip()
                     front_matter_overrides["design_comparator_type"] = str(
                         getattr(structured, "comparator_type", "") or ""
                     )
@@ -10634,6 +10646,38 @@ def _medical_writing_export_headers(
     }
 
 
+# NEW-17（第2轮修订·内容族）：『不适用+理由』声明识别——声明必须给出
+# 理由（≥8 字的具体说明），光写'不适用'不算合规声明。
+_NA_DECLARATION_REASON_RE = re.compile(
+    r"不适用[：:。!！]?\s*(?:理由[：:]?)?\s*([^\n。]{8,})"
+)
+
+
+def _na_declaration_reason(text: str) -> str:
+    match = _NA_DECLARATION_REASON_RE.search(str(text or ""))
+    return match.group(1).strip() if match else ""
+
+
+# NEW-BENCH-3/NEW-16（第2轮修订）导出禁语表：命中即计缺口（草案-N 强制）。
+_EXPORT_FORBIDDEN_PHRASES = (
+    (
+        "以方案定稿时确认的版本为准",
+        "法规版本悬置（应写入钉死版本号，如 CTCAE 5.0 / MedDRA 28.0）",
+    ),
+    (
+        "单侧把握度",
+        "术语错误（把握度无单双侧之分；单侧/双侧修饰检验或α）",
+    ),
+    (
+        "在统计分析计划中统一规定",
+        "推空句（方案正文不得把应载明的内容推给统计计划）",
+    ),
+    (
+        "在统计计划中统一规定",
+        "推空句（方案正文不得把应载明的内容推给统计计划）",
+    ),
+)
+
 _EXPORT_PLACEHOLDER_PATTERN = re.compile(
     r"【待补齐】"
     r"|【切片闭环\d{4}V\d+】"
@@ -10824,9 +10868,27 @@ def _export_placeholder_report(document) -> dict:
     typo_hits: list[dict] = []
     stutters: list[dict] = []
     gap_sections: list[dict] = []
+    # E11（新纪元第1轮修订）：统计章五件套按『章全文聚合』检查（9.1
+    # 样本量/9.2 分析集…分节落位时逐件聚合后判定，不误伤分节文档）。
+    statistics_assembly_texts: list[str] = []
+    # P0-A（新纪元第2轮修订·NEW-13 根治）：导出层跨节重复段落映射——
+    # 逐节聚合正文后走同一共享片段检测（归一化 80 字滑窗）。
+    export_section_texts: list[dict] = []
+    # P0-B（骨架落位批）：参数化骨架节计缺口元数据——骨架正文不得伪装成
+    # 成文内容（导出层按块级 skeleton_review_pending 标记点名）。
+    skeleton_sections: list[dict] = []
     for section in document.sections:
         texts: list[str] = []
         has_table = False
+        section_blocks: list[Mapping] = [
+            block for block in (section.content_blocks or []) if isinstance(block, Mapping)
+        ]
+        section_is_skeleton = bool(section_blocks) and all(
+            block.get("skeleton_review_pending") is True
+            or str(block.get("source_kind") or "") == "full_draft_gap_marker"
+            or str(block.get("block_type") or "") in {"", "heading"}
+            for block in section_blocks
+        )
         for block in section.content_blocks or []:
             if isinstance(block, Mapping):
                 if str(block.get("block_type") or "") == "table":
@@ -10836,6 +10898,20 @@ def _export_placeholder_report(document) -> dict:
                 text = str(block or "")
             if text:
                 texts.append(text)
+        if section_is_skeleton:
+            skeleton_sections.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                }
+            )
+        if any(text.strip() for text in texts):
+            export_section_texts.append(
+                {
+                    "section_id": section.section_number or section.heading or "",
+                    "proposal_text": "\n".join(texts),
+                }
+            )
         matches: list[str] = []
         for text in texts:
             matches.extend(match.group(0) for match in _EXPORT_PLACEHOLDER_PATTERN.finditer(text))
@@ -10875,6 +10951,7 @@ def _export_placeholder_report(document) -> dict:
             # 生成层护栏同源），导出自算不依赖工件链路。
             section_number_text = str(section.section_number or "")
             if section_number_text.startswith("9") or "统计" in section.heading or "样本量" in section.heading:
+                statistics_assembly_texts.append(joined)
                 from .medical_writing_full_draft import sample_size_declaration_check
 
                 ss_check = sample_size_declaration_check(joined)
@@ -10885,6 +10962,23 @@ def _export_placeholder_report(document) -> dict:
                             "section_number": section.section_number or "",
                             "section_heading": section.heading,
                             "reason": f"样本量{status}（{ss_check.get('detail') or ''}）",
+                        }
+                    )
+                # P1-53（新纪元第1轮修订·E9）导出层：单双侧不得混指同一
+                # α/把握度组合——混写计入缺口（草案-N 强制）。
+                from .medical_writing_full_draft import (
+                    sample_size_sidedness_mixing_check,
+                )
+
+                if sample_size_sidedness_mixing_check(joined):
+                    gap_sections.append(
+                        {
+                            "section_number": section.section_number or "",
+                            "section_heading": section.heading,
+                            "reason": (
+                                "样本量口径混写（同一统计章内『单侧』与『双侧』"
+                                "混指同一α/把握度组合，需统一口径并重算）"
+                            ),
                         }
                     )
             # P0-27（第10轮末修订）导出层：给药/研究治疗章剂量单位存在性
@@ -10906,6 +11000,44 @@ def _export_placeholder_report(document) -> dict:
                             "reason": "剂量缺失（给药章节未出现任何剂量单位，需IB/立项补剂量方案）",
                         }
                     )
+        # NEW-17（第2轮修订·内容族）：编号节零实质正文且无合规
+        # 『不适用+理由』声明 → 缺口（空标题不得上纸；光写'不适用'
+        # 不带理由不算声明）。骨架节由骨架门点名，此处不重复。
+        # 空节同样命中（与空章门并存：此处点名编号节语义）。
+        if (
+            str(section.section_number or "").strip()
+            and not has_table
+            and not section_is_skeleton
+        ):
+            from .medical_writing_full_draft import normalize_full_draft_body
+
+            substantive = any(
+                len(normalize_full_draft_body(text)) >= 30
+                or _na_declaration_reason(text)
+                for text in texts
+            )
+            if not substantive:
+                gap_sections.append(
+                    {
+                        "section_number": section.section_number or "",
+                        "section_heading": section.heading,
+                        "reason": (
+                            "编号节零实质正文且无『不适用+理由』声明"
+                            "（空标题不得上纸；N/A 声明必须附理由）"
+                        ),
+                    }
+                )
+        # NEW-BENCH-3/NEW-16（第2轮修订）导出禁语：法规版本悬置句、
+        # 术语错、推空句——命中即计缺口（草案-N 强制）。
+        for phrase, phrase_reason in _EXPORT_FORBIDDEN_PHRASES:
+            if phrase in joined:
+                gap_sections.append(
+                    {
+                        "section_number": section.section_number or "",
+                        "section_heading": section.heading,
+                        "reason": f"导出禁语：『{phrase}』（{phrase_reason}）",
+                    }
+                )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:
             if wrong in joined:
                 typo_hits.append(
@@ -10924,6 +11056,52 @@ def _export_placeholder_report(document) -> dict:
                     "excerpt": joined[max(0, match.start() - 10): match.end() + 10],
                 }
             )
+    # E11（新纪元第1轮修订）导出层：统计章分节装配五件套（分析集成员
+    # 规则/多重性终点族/敏感性双法/顺序检验声明/非盲统计师防火墙）按
+    # 章全文聚合判定——缺件计入缺口（草案-N 强制，对齐成型方案统计章
+    # 8.1-8.7 结构；导出层为文本在场检查，终点族存在性校验在生成层）。
+    if statistics_assembly_texts:
+        from .medical_writing_full_draft import statistics_assembly_check
+
+        assembly = statistics_assembly_check("\n".join(statistics_assembly_texts))
+        if assembly.get("missing"):
+            gap_sections.append(
+                {
+                    "section_number": "9",
+                    "section_heading": "统计学",
+                    "reason": (
+                        "统计章分节装配缺失（"
+                        + "、".join(assembly["missing"])
+                        + "）——需按成型方案统计章结构补齐：分析集成员规则"
+                        "/多重性终点族/敏感性双法/顺序检验声明/非盲统计师防火墙"
+                    ),
+                }
+            )
+    # P0-A（新纪元第2轮修订·NEW-13 根治）：跨节重复段落计缺口——同一
+    # 共享片段出现于 ≥2 个不同节 → 每组一条缺口并点名节号（草案-N 强制）。
+    if export_section_texts:
+        from .medical_writing_full_draft import (
+            find_full_draft_duplicate_sections,
+        )
+
+        for owners in find_full_draft_duplicate_sections(export_section_texts).values():
+            gap_sections.append(
+                {
+                    "section_number": "、".join(owners),
+                    "section_heading": "、".join(owners),
+                    "reason": "章节内容装配重复（同一正文出现于多个章节，需重写涉事节）",
+                }
+            )
+    # P0-B（骨架落位批）：参数化骨架节逐节点名计缺口——正文为骨架待医学
+    # 经理审核确认，不是成文内容（草案-N 强制；与占位计数同通道）。
+    for skeleton in skeleton_sections:
+        gap_sections.append(
+            {
+                "section_number": skeleton["section_number"],
+                "section_heading": skeleton["section_heading"],
+                "reason": "章节正文为参数化标准文本骨架（待医学经理按项目实际审核确认后转正式文本）",
+            }
+        )
     return {
         "total_count": total,
         "sections": sections_report,

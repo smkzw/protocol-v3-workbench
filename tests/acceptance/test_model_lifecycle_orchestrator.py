@@ -393,6 +393,10 @@ def test_d_busy_free_other_resident_drains_then_loads(world):
     _mtplx_up(world.http)
     _pidfile(world.tmp)
     _script_mtplx_lifecycle(world)
+    # 20261004e：共存旁路依赖主机可用内存。本测验证的是互斥排空路径
+    # （内存护栏盖不住载入需求时的行为），注入确定性的低内存读数，
+    # 不受测试机真实内存影响。
+    world.o._host_available_bytes = lambda: 0
     result = world.o.ensure("translation")
     assert result["status"] == "ok", result
     assert world.commands.ran("stop --port 8002"), world.commands.calls
@@ -423,6 +427,8 @@ def test_e_inflight_dispatch_refuses_busy(world):
     _omlx_up(world.http, translation_loaded=False)
     _mtplx_up(world.http)
     _pidfile(world.tmp)
+    # 同 test_d：注入低内存使共存旁路关闭，聚焦在途连接否决路径。
+    world.o._host_available_bytes = lambda: 0
     world.orch_mod.gateway_dispatch_begin(f"{MTPLX}/v1")
     try:
         result = world.o.ensure("translation")

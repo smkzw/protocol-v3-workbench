@@ -1323,6 +1323,9 @@ class MedicalWritingAuthoringJourneyService:
         state = self.get(project_id)
         if request.stage == "picos" and not state.framing_complete:
             raise ValueError("study framing must be complete before PICOS can be committed")
+        # P1-53（E9）：假设修订留痕——指纹变化且复算通过的提交把新旧指纹
+        # 与复算结果带入提交事件（None=无修订或非 PICOS 提交）。
+        sample_size_revision_trail: dict | None = None
         if request.stage == "picos":
             # NEW-1(R1-a) A案：提交前把旧版干预字段派生为结构化权威（见
             # _derive_structured_intervention_rules_from_legacy docstring）。
@@ -1350,6 +1353,49 @@ class MedicalWritingAuthoringJourneyService:
                     "样本量声明与假设不一致："
                     + str(declaration_check.get("detail") or "")
                     + "（可先保存草稿；完成第二步前必须消解该不一致。）"
+                )
+            # P1-53（新纪元第1轮修订·E9，SPEC_sample_size_revision_gate_
+            # P1-53.md）：口径指纹+强制重算——P0-18 只校验『完成第二步』
+            # 时点的参数组合；假设事后修订（指纹变化）而基数不重算（AD
+            # 现场：28%→38% 后 850/567/283 陈旧基数走到导出件）在此阻断。
+            # 重算通过则新旧指纹与复算结果随提交事件留痕（审阅侧可见
+            # 『基数因何变化』）。
+            from .medical_writing_full_draft import (
+                sample_size_fingerprint,
+                sample_size_revision_check,
+            )
+
+            strategy_text = str(request.picos.sample_size_strategy or "")
+            new_fingerprint = sample_size_fingerprint(strategy_text)
+            previous_picos = state.picos if state.picos is not None else None
+            old_fingerprint = (
+                str(getattr(previous_picos, "sample_size_fingerprint", "") or "")
+                if previous_picos is not None
+                else ""
+            )
+            if old_fingerprint and new_fingerprint and new_fingerprint != old_fingerprint:
+                revision_check = sample_size_revision_check(strategy_text)
+                sample_size_revision_trail = {
+                    "old_fingerprint": old_fingerprint,
+                    "new_fingerprint": new_fingerprint,
+                    "status": (revision_check or {}).get("status"),
+                    "detail": (revision_check or {}).get("detail"),
+                }
+                if revision_check and revision_check.get("status") == "不一致":
+                    raise ValueError(
+                        "样本量假设已修订但基数未重算："
+                        + str(revision_check.get("detail") or "")
+                        + "（可先保存草稿；完成第二步前必须按修订后假设重算"
+                        "样本量并更新声明基数。）"
+                    )
+            if new_fingerprint:
+                request = request.model_copy(
+                    update={
+                        "picos": request.picos.model_copy(
+                            update={"sample_size_fingerprint": new_fingerprint}
+                        )
+                    },
+                    deep=True,
                 )
         proposed = request.framing if request.stage == "framing" else request.picos
         assert proposed is not None
@@ -1681,6 +1727,13 @@ class MedicalWritingAuthoringJourneyService:
             if "study_schema" in preview.affected_dependents:
                 updates["study_schema_presentation"] = None
             updated = current.model_copy(update=updates, deep=True)
+            commit_detail = {
+                "changed_fields": preview.changed_fields,
+                "affected_dependents": preview.affected_dependents,
+                "impact_preview_id": preview.preview_id,
+            }
+            if sample_size_revision_trail is not None:
+                commit_detail["sample_size_revision"] = sample_size_revision_trail
             self._persist_update(
                 connection,
                 updated,
@@ -1689,11 +1742,7 @@ class MedicalWritingAuthoringJourneyService:
                 actor=request.actor,
                 idempotency_key=request.idempotency_key,
                 request_sha256=request_sha256,
-                detail={
-                    "changed_fields": preview.changed_fields,
-                    "affected_dependents": preview.affected_dependents,
-                    "impact_preview_id": preview.preview_id,
-                },
+                detail=commit_detail,
             )
             connection.commit()
         return updated
@@ -6388,6 +6437,12 @@ class MedicalWritingAuthoringJourneyService:
             ):
                 return str(existing_row["event_id"])
             raise
+        # 新纪元第1轮修订（全库门未匹配红·prefill_ai 7测）：1b4c7563 的
+        # try/except 重构丢失了成功路径的 return——每次成功落事件都返回
+        # None，生成预约完成时 event_id=NULL 落库，重放侧
+        # 『completed generation reservation lacks a completion event id』
+        # 全线炸。恢复成功路径返回值。
+        return event_id
 
 
 def _changed_fields(prefix: str, current: dict[str, Any], proposed: dict[str, Any]) -> list[str]:
@@ -6452,6 +6507,17 @@ def _derive_structured_intervention_rules_from_legacy(
         if str(item or "").strip()
     ]
     if not any([dose_text, summary_text, background, allowed, prohibited]):
+        return picos
+    # 新纪元第1轮修订（全库门未匹配红）：legacy 权威且 ip_regimens 已有
+    # 方案行（用户已附着结构化方案块）时不派生、不翻权威——翻成 structured
+    # 后 legacy 文本会被 study_definition 投影改写（『产品：文本』重组），
+    # 违反『legacy 权威 legacy 文本原样往返』契约（structured 块在场但
+    # legacy 文本胜出）。派生只服务『旧字段已填、结构块为空』的 NEW-1 场景。
+    if (
+        rules is not None
+        and getattr(rules, "authority", None) == InterventionRulesAuthority.LEGACY
+        and list(getattr(rules, "ip_regimens", None) or [])
+    ):
         return picos
     product_name = str(getattr(framing, "investigational_product", "") or "").strip()
     comparator_text = str(getattr(picos, "comparator_summary", "") or "").strip()

@@ -89,6 +89,49 @@ def test_a11_step4_seeded_random_orders_pass():
         assert proc.returncode == 0, (seed, proc.stdout + proc.stderr[-1500:])
 
 
+# ── E1 顺序污染永久回归（2026-10-08 新纪元账本种子①根治）─────────────────
+# 污染向量（2026-10-08 本会话实测定位；单向：wrapper→policy 红，反序/单跑
+# 全过）：
+#   tests/protocol_v3/test_frontend_check_wrapper.py::
+#       SideEffectSafetyTests::test_wrapper_import_does_not_import_main_py
+# 为验证"wrapper 导入不加载 main.py"，该测试把 sys.modules 里全部 *.main
+# 模块逐出却从不恢复。同进程后续任何"收集期 from services.api.app.main
+# import app + 运行期 patch('services.api.app.main.<attr>)"的测试（如
+# AiExecutionPolicyTests 的 fail-closed 用例）随即发生模块身份分裂：请求
+# 由被逐出的旧实例路由服务，patch 落在重新导入的新实例上 → patch 不生效
+# → with_principal 期望 403 实得 503（monitoring_principal_unavailable）。
+# 修复=污染者根治：逐出前快照、addCleanup 原位恢复（会话身份契约：测试
+# 结束时 sys.modules 的 *.main 条目与进入时同物）。以下三步真实 pytest
+# 子进程锁定该向量，防止未来任何形式的模块逐出泄漏再犯。
+
+WRAPPER_MODULE_POLLUTER = (
+    "tests/protocol_v3/test_frontend_check_wrapper.py"
+    "::SideEffectSafetyTests::test_wrapper_import_does_not_import_main_py"
+)
+E1_POLICY_VICTIMS = (
+    "tests/test_ai_execution_policy.py"
+    "::AiExecutionPolicyTests::test_ai_result_reads_fail_closed_before_runner_access",
+    "tests/test_ai_execution_policy.py"
+    "::AiExecutionPolicyTests::test_registered_source_execution_api_fails_closed_before_runner",
+)
+
+
+def test_e1_step1_policy_victims_alone_pass():
+    proc = _run_nodes(*E1_POLICY_VICTIMS)
+    assert proc.returncode == 0, proc.stdout + proc.stderr[-1500:]
+
+
+def test_e1_step2_wrapper_module_before_policy_passes():
+    # 修复前红：wrapper→policy 单向顺序污染（新纪元账本 E1）。
+    proc = _run_nodes(WRAPPER_MODULE_POLLUTER, *E1_POLICY_VICTIMS)
+    assert proc.returncode == 0, proc.stdout + proc.stderr[-1500:]
+
+
+def test_e1_step3_policy_before_wrapper_module_passes():
+    proc = _run_nodes(*E1_POLICY_VICTIMS, WRAPPER_MODULE_POLLUTER)
+    assert proc.returncode == 0, proc.stdout + proc.stderr[-1500:]
+
+
 # ── A11 家族级静态守卫（0927V1 目标二之二）────────────────────────────────
 # 上述 step1-4 只锁定两个文件的 3 个节点；2026-09-27 全仓普查（AST 扫描）
 # 显示 tests/ 下 22 个文件共 61 处 AiExecutionPolicyResolver( 构造点，其中

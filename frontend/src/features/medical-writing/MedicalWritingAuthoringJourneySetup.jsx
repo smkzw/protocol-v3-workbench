@@ -50,7 +50,7 @@ const COMPLETE_FRAMING_SUBMIT_LABEL = "完整第一步仍需单独提交";
 const CORPUS_EXCEPTION_AUDIT_LABEL = "未就绪状态和医学理由会持续保留";
 
 const PURPOSE_OPTIONS = ["首次人体试验（FIH）", "首次患者试验（first-in-patient）", "药理/药效探索", "机制验证（PoM）", "概念验证（PoC）", "剂量探索", "确证性研究", "长期延展性研究（OLE）"];
-const PHASE_OPTIONS = ["I期", "I/II期", "II期", "II/III期", "III期"];
+const PHASE_OPTIONS = ["I期", "Ib期", "I/II期", "II期", "IIa期", "IIb期", "II/III期", "III期"];
 const PHASE1_PART_OPTIONS = Object.freeze([
   { code: "SAD", label: "单次递增剂量（SAD）" },
   { code: "MAD", label: "多次递增剂量（MAD）" },

@@ -40,7 +40,7 @@ from services.api.app.chapter_translation_pipeline import (
 # FakeTranslationRunner dictionary in the batch tests so callers can use the
 # fixture with no extra configuration for those sources.
 DEFAULT_TRANSLATIONS: dict[str, str] = {
-    "Participants must not receive SCS within 14 days.": "受试者在14天内不得接受SCS。",
+    "Participants must not receive SCS within 14 days.": "受试者在筛选前14天内不得接受SCS全身性皮质类固醇治疗。",
     "The primary endpoint is assessed at Week 16.": "主要终点在第16周进行评估。",
     "Participants are eligible.": "受试者符合条件。",
     "The endpoint is assessed.": "对终点进行评估。",

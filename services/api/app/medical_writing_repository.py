@@ -92,6 +92,11 @@ _SAFETY_REGULATORY_HEADING_MARKERS = (
     "委员会",
     "SRC",
     "DMC",
+    # E12（新纪元第1轮修订）：停药规则/剂量调整章节入确定性骨架族
+    #（本模板族口径：6.4 剂量调整、7.1.x 试验干预终止/永久终止/暂时终止）。
+    "停药",
+    "剂量调整",
+    "干预终止",
 )
 
 _SAFETY_AE_TEMPLATE = (
@@ -211,10 +216,40 @@ _RISK_CONTROL_NO_COMMITTEE_TEMPLATE = (
     "同意书、加强监测或暂停入组，并按法规要求报告监管机构。"
 )
 
+# 新纪元第1轮修订（E12）：6.3/6.4 停药规则操作化骨架——此前停药规则
+# 章节落入通用AE骨架或【待补齐】（r8-r12 基准评审：内容只在骨架尾部）。
+# 三段式操作化（暂停/减量/永久停药各带触发语义）；未确认阈值一律
+# 待医学经理确认槽，绝不编造具体器官阈值与剂量梯度。
+_SAFETY_STOP_RULE_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按研究药物安全性特征审核确认）。"
+    "研究药物剂量调整/暂停/永久停药规则操作化如下："
+    "①暂停给药——出现与研究药物相关的≥2级非血液学毒性或≥3级血液学"
+    "毒性（具体器官与分级阈值按IB/立项安全性资料确认后写入，未确认前"
+    "不得编造为既定阈值）时暂停给药；暂停后按方案规定窗口随访，待毒性"
+    "恢复至≤1级或基线水平，经研究者评估获益风险后可恢复给药。"
+    "②减量——恢复给药时按方案预设剂量梯度下调一级；本研究当前未确认"
+    "剂量调整梯度表（待医学经理按IB确认后写入，不得编造梯度）。"
+    "③永久停药——出现以下任一情形：与研究药物相关的4级毒性、再给药"
+    "风险不可控的SAE、研究者判断继续治疗危害受试者安全、受试者要求"
+    "退出、妊娠、方案规定的其他停药指征（具体清单待医学经理确认）。"
+    "停药受试者完成末次给药后安全性随访（随访窗口按药物特征确认，"
+    "默认30天待确认），停药原因与末次给药信息记录于原始记录与CRF。"
+)
+
 
 def _is_safety_regulatory_section(section: Mapping[str, Any]) -> bool:
     heading = str(section.get("heading") or "")
     return any(marker in heading for marker in _SAFETY_REGULATORY_HEADING_MARKERS)
+
+
+_NA_BY_ROUTE_HEADING_RE = re.compile(r"药代动力学|药效动力学|PK/PD采集点")
+
+
+def _is_topical_route(route: str) -> bool:
+    """外用/局部给药判定（NEW-17）：途径字段含外用/局部类词汇即成立。"""
+    return bool(
+        re.search(r"外用|局部|topical|乳膏|软膏|凝胶|贴", str(route or ""), re.IGNORECASE)
+    )
 
 
 def _gap_placeholder_block(
@@ -225,6 +260,26 @@ def _gap_placeholder_block(
     【待补齐】标记。"""
     overrides = front_matter_overrides or {}
     product = str(overrides.get("investigational_product") or "").strip() or "研究药物"
+    heading = str(section.get("heading") or "").strip()
+    # NEW-17（第2轮修订·内容族）：外用药（局部给药）项目的 PK/PD 类节由
+    # 设计事实推理由，自动落『不适用+理由』声明——空标题不得上纸；给药
+    # 途径未记录或非外用时保持原占位（不编造适用性结论）。
+    if heading and _is_topical_route(str(overrides.get("administration_route") or "")):
+        if _NA_BY_ROUTE_HEADING_RE.search(heading):
+            route_label = str(overrides.get("administration_route")).strip()
+            return {
+                "block_id": f"gap_marker_{section.get('section_id')}",
+                "block_type": "paragraph",
+                "text": (
+                    f"本『{heading}』章节不适用。理由：本研究药物为{route_label}"
+                    "给药制剂，预期全身暴露量极低，不设该类评估；该安排与已确认"
+                    "的给药途径设计事实一致，待医学经理复核确认后固化。"
+                ),
+                "source_kind": "full_draft_gap_marker",
+                "skeleton_review_pending": True,
+                "skeleton_scope": heading,
+                "not_applicable_declaration": True,
+            }
     if _is_safety_regulatory_section(section):
         heading = str(section.get("heading") or "")
         heading_upper = heading.upper()
@@ -255,6 +310,13 @@ def _gap_placeholder_block(
                 template = template.replace(
                     "按 AESI 章节执行主动监测", "按安全性监测章节执行主动监测"
                 )
+        elif (
+            "停药" in heading
+            or "剂量调整" in heading
+            or "干预终止" in heading
+        ):
+            # E12（新纪元第1轮修订）：停药规则操作化三段式骨架。
+            template = _SAFETY_STOP_RULE_TEMPLATE
         elif "随机化" in heading or "盲法" in heading:
             # NEW-15 残留：设计短语由已确认结构化设计事实选择；未记录的值
             # 一律落「待医学经理确认」，不编造比例、区组大小或样本量。
@@ -328,11 +390,26 @@ def _gap_placeholder_block(
             "【待补齐】本章正文尚缺来源证据支持，将在补充资料后"
             "由 AI 重写本节；当前为占位标记，正式导出前必须补齐。"
         )
+    # P0-B（新纪元第2轮修订·骨架落位批）：骨架引导句按节自身标题/范围
+    # 差异化——同一段'本节采用标准监管文本骨架（待医学经理…）'此前逐字
+    # 进多节（PV-C 实证引导句 13-14 块），现首段点名本节标题与范围；
+    # 骨架身份同时落结构化元数据（skeleton_review_pending），导出层据此
+    # 计缺口（草案-N 强制），不再让骨架正文伪装成内容。
+    heading = str(section.get("heading") or "").strip() or "本节"
+    text = re.sub(
+        r"^本节采用标准监管文本骨架（[^）]*）。",
+        f"本『{heading}』章节正文为参数化标准文本骨架，范围限本节"
+        f"（{heading}）；",
+        text,
+        count=1,
+    )
     return {
         "block_id": f"gap_marker_{section.get('section_id')}",
         "block_type": "paragraph",
         "text": text,
         "source_kind": "full_draft_gap_marker",
+        "skeleton_review_pending": True,
+        "skeleton_scope": heading,
     }
 
 

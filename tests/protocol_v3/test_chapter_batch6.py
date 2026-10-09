@@ -11,6 +11,8 @@ from pathlib import Path
 
 import pytest
 
+from _cli_env_site_propagation import with_propagated_site_path  # E2 spawn 环境传播
+
 from app.protocol_workflow.registries.chapters import check_fixture, lint_registry, load_chapter_registry
 from packages.contracts.workbench_contracts.protocol_v3 import ChapterContractV2
 
@@ -208,7 +210,7 @@ def test_partial_lint_is_clean_and_reports_incomplete(document):
 
 
 def _cli_env():
-    return {"PATH": "/Users/smkzw/.local/bin:/opt/homebrew/bin:/usr/bin:/bin", "HOME": os.environ.get("HOME", "/tmp"), "LANG": "en_US.UTF-8", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1", "PYTHONPATH": "tests/protocol_v3:services/api:packages:.", "TMPDIR": os.environ.get("TMPDIR", "/tmp")}
+    return {"PATH": "/Users/smkzw/.local/bin:/opt/homebrew/bin:/usr/bin:/bin", "HOME": os.environ.get("HOME", "/tmp"), "LANG": "en_US.UTF-8", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1", "PYTHONPATH": with_propagated_site_path("tests/protocol_v3:services/api:packages:."), "TMPDIR": os.environ.get("TMPDIR", "/tmp")}
 
 
 def test_assembly_cli_is_stdout_only(tmp_path):

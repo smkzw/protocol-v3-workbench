@@ -105,9 +105,11 @@ describe("medical writing runtime readiness gate contract", () => {
     expect(result.warnings).toEqual([]);
   });
 
-  // 反方向（vite 树与当前树一致、后端旧）：指引必须指向重启后端，
-  // 不能误导去重启 vite。
-  it("NEW-4: stale backend (startup tree equals live tree) names restarting the backend", async () => {
+  // 反方向（vite 树与当前树一致、后端旧）：提示给状态说明与升级路径。
+  // 第2轮修订（NEW-7 残留去越权）：不指挥用户重启服务（测试者无服务
+  // 权限，红线3），改为『服务同步中，请稍后刷新或联系集成人』；同时
+  // 保留不误导去重启 vite 的旧约束。
+  it("NEW-4: stale backend (startup tree equals live tree) reports sync state without commanding a restart", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ ...runtimeExpectation })));
     const dev = await loadDevRuntimeExpectation({ dev: true });
     expect(dev.live).toBe(true);
@@ -118,7 +120,9 @@ describe("medical writing runtime readiness gate contract", () => {
       { expectation: dev.expectation, driftHint: dev.driftHint },
     );
     expect(result.ready).toBe(true);
-    expect(result.warnings.join("\n")).toContain("重启本子系统后端");
+    expect(result.warnings.join("\n")).toContain("服务同步中");
+    expect(result.warnings.join("\n")).toContain("联系集成人");
+    expect(result.warnings.join("\n")).not.toContain("重启");
     expect(result.warnings.join("\n")).not.toContain("重启vite");
   });
 

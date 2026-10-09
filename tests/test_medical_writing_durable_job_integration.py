@@ -286,7 +286,11 @@ class TestContextFingerprint(unittest.TestCase):
         shutil.rmtree(self._tmp, ignore_errors=True)
 
     def test_wc_and_study_definition_change_change_digest(self):
-        """Authoritative WC/StudyDefinition identity must affect the digest."""
+        """Digest v4 lineage contract（A16 2026-09-23，e3603a5f/831e7ba7）：
+        工作副本身份是编辑器移动件（每次重提/自动保存都会铸造新修订），
+        进摘要会让所有已生成候选在采纳期必炸 stale 检查——descriptor 保留
+        working_copy 块供展示，但摘要排除之；StudyDefinition 绑定仍是
+        lineage 锚，变化必须改摘要。本测试钉住该 v4 契约。"""
         from services.api.app.medical_writing import MedicalWritingRevisionService
         from services.api.app.ai_execution_policy import AiExecutionPolicyResolver
         from packages.contracts.workbench_contracts import MedicalWritingRevisionRequest
@@ -345,7 +349,10 @@ class TestContextFingerprint(unittest.TestCase):
         fp3 = service.build_generation_context_descriptor(
             "p1", section_id="sec1", operation="initial", request=request
         )
-        self.assertNotEqual(fp1["digest"], fp3["digest"])
+        # v4 契约：WC 修订变化不进摘要（A16 stale-guard 根修——进摘要则
+        # 每次自动保存后所有既有候选必炸）；身份仍在 descriptor 展示。
+        self.assertEqual(fp1["digest"], fp3["digest"])
+        self.assertEqual(2, fp3["descriptor"]["working_copy"]["revision"])
 
         mock_repo.authoritative_revision_source_identity = lambda pid, sid: ("wc1", 1, "a" * 64)
         mock_repo.authoritative_study_definition_binding = lambda pid: ("sd2", 2, "d" * 64)

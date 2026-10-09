@@ -118,6 +118,23 @@ class _FakeFullDraftRunner:
         self.calls += 1
         packet = request.allowed_sources[0]
         evidence_id = "ev_repeated" if self.repeated_evidence_id else f"ev_{self.calls}"
+        # P0-A（新纪元第2轮修订·装配完整性门）：各节正文必须节间互异——
+        # 80 字滑窗共享片段检测（find_full_draft_duplicate_sections）会把
+        # '同一正文换节号'的旧夹具判为装配重复拒收/拒绝采纳（NEW-13 现场
+        # 形态恰是同段正文进多节）。夹具改为每节独有内容，节间只共享短
+        # 通用短语（<80 字，不触发）。
+        section_specific = {
+            "sec_1": (
+                "本节载明研究背景与立题依据：按已确认适应症与分期陈述疾病现状、"
+                "现有治疗格局与未满足需求，说明本研究的立题理由，并在正文中"
+                "保持与来源证据一一对应的连续监管中文表述，供医学经理逐句审阅。"
+            ),
+            "sec_2": (
+                "本节载明研究目的与终点分层：主要终点给出定义、评价时点、"
+                "归因口径与统计推断方式，关键次要终点按检验顺序逐级陈述，"
+                "探索性终点单独列示；全部终点与研究目的保持一一对应，供医学审阅。"
+            ),
+        }
         sections = []
         for section_id in request.task_context["section_ids"]:
             sections.append(
@@ -125,9 +142,12 @@ class _FakeFullDraftRunner:
                     "section_id": section_id,
                     "content_status": "complete",
                     "proposal_text": (
-                        f"本章节围绕{section_id}说明研究对象、研究目的、执行边界和评价要求。"
-                        "正文明确研究对象、主要评价路径和实施约束，并采用可直接审阅的连续监管中文。"
-                        "关键医学依据通过证据说明单独呈现，正文不混入写作过程或系统操作提示。"
+                        f"本章节围绕{section_id}展开。"
+                        + section_specific.get(
+                            section_id,
+                            f"本节按{section_id}的标题范围载入相应设计事实与来源证据，"
+                            "逐条给出可执行的安排并保持可直接审阅的连续监管中文表述。",
+                        )
                     ),
                     "rationale": "依据已录入的适应症、分期和目标人群；请核对医学依据完整性。",
                     "evidence_span_ids": [evidence_id],

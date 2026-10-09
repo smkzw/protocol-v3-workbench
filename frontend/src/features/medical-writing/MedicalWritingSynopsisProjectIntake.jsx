@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-const PHASES = ["I期", "I/II期", "II期", "II/III期", "III期"];
+const PHASES = ["I期", "Ib期", "I/II期", "II期", "IIa期", "IIb期", "II/III期", "III期"];
 
 // NEW-8（R27 第1轮末修订）：AI 提取的分期写法千差万别（Ⅲ期/三期/２期/
 // ii/iii），而下拉只认 PHASES——旧行为里不匹配值让 select 显示「请选择」

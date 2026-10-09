@@ -145,6 +145,12 @@ button:disabled {
   font-weight: 700;
 }
 
+/* 预清理批 r2（20261003b④）：长导航名在 180px 侧栏的断行点按行宽
+   平衡（'安全信号与PV协/同'→两行均衡），避免词素中间截断。 */
+.nav-item span {
+  text-wrap: balance;
+}
+
 .sidebar-footer {
   margin-top: auto;
   border-top: 1px solid var(--line);
@@ -266,6 +272,9 @@ button:disabled {
   gap: 6px;
   padding: 0 9px;
   background: #fbfcfd;
+  /* 预清理批 r2（20261003b④）：胶囊标签断词换行（'未读决/策'）不和谐，
+     窄视口宁可整体收缩也不许中文断词。 */
+  white-space: nowrap;
 }
 
 .metric span {
@@ -2181,6 +2190,9 @@ button:disabled {
 
 .page {
   padding: 18px;
+  /* 预清理批 r2（20261003b④）：正文超长英文串（链接/哈希）不在词中
+     硬断也不横向撑破；CJK 断行行为不受影响。 */
+  overflow-wrap: break-word;
 }
 
 .section-title {
@@ -12766,6 +12778,10 @@ textarea {
   padding-left: 6px;
   border-left: 1px solid var(--soft-line);
   white-space: nowrap;
+  /* NEW-6（第2轮修订）：nowrap 徽章在窄列溢出会盖住相邻按钮列——
+     min-width:0 列内做省略裁剪，文字完整版在 title/展开详情可见。 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .working-copy-status-main time {
@@ -12783,6 +12799,10 @@ textarea {
   justify-content: flex-end;
   gap: 5px;
   overflow-x: auto;
+  /* NEW-6（第2轮修订）：按钮列相对定位抬层，相邻列任何溢出都不再
+     拦截按钮指针（真实用户点击几何中心必须可达）。 */
+  position: relative;
+  z-index: 1;
 }
 
 .working-copy-actions button {
@@ -12792,6 +12812,9 @@ textarea {
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  /* 预清理批 r2（20261003b④）：工具条按钮标签禁断词换行（'创建工作/副本'
+     '版/式估算'）；容器本就 overflow-x 滚动，按钮保持完整由行内滚动兜底。 */
+  white-space: nowrap;
 }
 
 .working-copy-actions .content-quality-trigger.has-blocking {
