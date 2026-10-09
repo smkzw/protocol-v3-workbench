@@ -477,3 +477,12 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **停机清点**：无agent浏览器空间残留；无omp残留；用户自有ego lite进程按纪律保留；OCR空闲已卸载（202）；MTPLX 8002已停（按需拉起）；durable表名核对未完成（恢复后首轮预检④自查覆盖）。
 **递交**：新纪元证据快照85afb67f已push（359文件剔除5个sqlite备份）。
 **12轮纪元权威档案**：HANDOFF_1004_PAUSE.md + final_audit_r1_12.md（可信度中+12条discrepancies）+ 收口批一二（9339a0c2）。
+
+## 无损暂停检查点（2026-10-09 午，新纪元R2聚合前）
+**位置**：新纪元LOOP=**dwfrun-00a776cb**（TaskStop无损停止于第2轮聚合节点中途——聚合员重新派发即续）。**恢复=ResumeWorkflowRun dwfrun-00a776cb，不重跑**（R1全轮+R2预检/自检/清偿/测试者报告全部已结算重放）。
+**已完成战绩**：
+- **R1全轮**（恢复后14小时）：自检八节点首过全绿；E1顺序污染**根治**（污染向量=test_wrapper_import_does_not_import_main_py把sys.modules全部*.main逐出后不恢复）；E2 CLI环境传播修复；前端预清理r2（真机1728×1031逐页测量，主区宽度98%实证）；MY009基准轮R1：撰写者**走到导出Word**（226段5表，占位68→52）——24新缺陷/13开放P0P1，allPass=false未收敛。
+- **R2大半**：预检/自检（8/8绿，附MTPLX进程死亡可靠性观察入账）/清偿（无开放）全过；MY009轮2：撰写者**BLOCKED于"完成第二步"事实投影冻结**（两个新P0级发现：一键锁378项拖343项深度处理成本爆炸+取消流水线纯显示且PICOS投影冻结）——主会话裁定BLOCKED收敛证据完整；B审阅10P1；**C对照真实mirikizumab文献核验（PMID 31493397/PMC10069555）**。
+**停机清点**：翻译模型已卸载（30GB归还）；MTPLX 8002已停；OCR驻留已清；测试者浏览器空间自清（cleaned=true）；R2A项目僵死OCR批次未及cancel（恢复首轮预检④覆盖）。
+**递交**：6bc4bf7d已push（1659文件，5个sqlite备份剔除）。
+**恢复队列**：R2聚合（重派）→复盘→深度→修订（新P0两件+MTPLX可靠性）→R2再测试→R3=rux-ad轮（同病种对照）。
