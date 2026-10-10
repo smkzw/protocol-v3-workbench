@@ -86,6 +86,22 @@ FULL_DRAFT_HEARTBEAT_INTERVAL_SECONDS = 45.0
 FULL_DRAFT_DUPLICATE_BODY_MIN_CHARS = 80
 
 
+class FullDraftDuplicateSectionsError(RuntimeStoreError):
+    """P0-A 重复门的结构化拒绝（复测N1）：携带重复对供采纳面板逐节处置。
+
+    duplicate_pairs: [{"sections": [{"section_id","section_number","heading"}...],
+                      "shared_fragment_chars": N}]
+    正文文案用节号+标题（人话），内部 section_id 仅在结构化字段中供处置
+    回传，不进用户可见文本。
+    """
+
+    def __init__(self, message: str, duplicate_pairs: list[dict] | None = None,
+                 undecided_section_ids: list[str] | None = None) -> None:
+        super().__init__(message)
+        self.duplicate_pairs = duplicate_pairs or []
+        self.undecided_section_ids = undecided_section_ids or []
+
+
 def normalize_full_draft_body(text: str) -> str:
     """装配重复检测的正文归一化：去除全部空白（含全角空白）。"""
     return re.sub(r"[\s\u3000]+", "", str(text or ""))
@@ -136,6 +152,34 @@ def find_full_draft_duplicate_sections(
         signature = windows[0]
         merged[signature] = list(owners)
     return merged
+
+
+def _duplicate_pairs_payload(
+    duplicates: Mapping[str, list[str]],
+    candidates: Mapping[str, Mapping[str, Any]],
+) -> list[dict]:
+    """重复对结构化载荷：节号+标题+共享片段长度（供采纳面板逐节三选一）。"""
+    pairs: list[dict] = []
+    for signature, section_ids in duplicates.items():
+        pairs.append(
+            {
+                "sections": [
+                    {
+                        "section_id": section_id,
+                        "section_number": str(
+                            candidates.get(section_id, {}).get("section_number")
+                            or ""
+                        ),
+                        "heading": str(
+                            candidates.get(section_id, {}).get("heading") or ""
+                        ),
+                    }
+                    for section_id in section_ids
+                ],
+                "shared_fragment_chars": len(signature),
+            }
+        )
+    return pairs
 
 
 def _duplicate_section_names(duplicates: Mapping[str, list[str]]) -> str:
@@ -639,7 +683,9 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
     anchor_text = str(anchor or "").strip()
     if anchor_text:
         section_item["sample_size_provenance"] = f"已具名（{anchor_text}）"
-        section_item["proposal_text"] += f"（样本量依据：{anchor_text}）"
+        section_item["proposal_text"] += (
+            f"（样本量依据：{format_provenance_reference(anchor_text)}）"
+        )
     else:
         section_item["sample_size_provenance"] = "假设待定（未具名溯源，建议引用外部先例）"
         section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
@@ -663,6 +709,9 @@ _STAT_ASSEMBLY_SET_RES = (
 )
 _STAT_MEMBER_RULE_RE = re.compile(
     r"重大方案偏离|方案偏离|入选标准|随机入组|至少一次[^\n。]{0,12}(?:治疗|给药|用药)"
+    r"|所有随机[^\n。]{0,24}(?:纳入|进入|接受)"
+    r"|接受研究[^\n。]{0,12}(?:给药|治疗)[^\n。]{0,20}(?:受试者|患者)"
+    r"|(?:FAS|SS|PP|PPS)[^\n。]{0,16}(?:包括|指|定义为|成员)"
 )
 _STAT_SENSITIVITY_MI_RE = re.compile(
     r"多重填补|(?<![A-Za-z])MI(?![A-Za-z])|multiple imputation", re.IGNORECASE
@@ -671,7 +720,10 @@ _STAT_SENSITIVITY_SECONDARY_RE = re.compile(
     r"tipping|临界点|跳转至参考|jump to reference", re.IGNORECASE
 )
 _STAT_FIREWALL_RE = re.compile(r"防火墙|非盲统计师|揭盲[^\n。]{0,12}隔离")
-_STAT_ORDERED_TEST_RE = re.compile(r"顺序检验|检验顺序|gatekeeping|逐级检验|层级检验")
+_STAT_ORDERED_TEST_RE = re.compile(
+    r"顺序检验|检验顺序|gatekeeping|逐级检验|层级检验|Holm递阶|递阶策略|递阶检验",
+    re.IGNORECASE,
+)
 _STAT_ENDPOINT_FAMILY_TOKENS = (
     "主要终点",
     "关键次要终点",
@@ -765,10 +817,54 @@ def apply_statistics_assembly_guard_to_section(
     )
 
 
+_INTERNAL_ANCHOR_RE = re.compile(r"§|内部\s*IB", re.IGNORECASE)
+_INTERNAL_IB_VERSION_RE = re.compile(r"IB\s*(v?\d+(?:\.\d+)*)")
+
+
+def format_provenance_reference(source_text: str, *, study_code: str = "") -> str:
+    """溯源串引用格式化层（第4轮·第五刀，NEW-29 根因修）。
+
+    内部锚点串（含'§'或'内部IB'）转为可回验引用：
+    '数据来源：申办方内部资料（IB v3.1，<研究代号>）'——IB 版本号从原文
+    提取，研究代号由调用方注入（未提供时省略）；上纸文本不含裸'§'。
+    已是规范引用（无内部锚点记号）的原样通过。完整原始锚点由调用方保留
+    在结构化字段（dose_source 等审阅面元数据），定位信息不丢失。
+    """
+    raw = str(source_text or "").strip()
+    if not raw or not _INTERNAL_ANCHOR_RE.search(raw):
+        return raw
+    version_match = _INTERNAL_IB_VERSION_RE.search(raw)
+    version = f" {version_match.group(1)}" if version_match else ""
+    study = f"，{study_code}" if str(study_code or "").strip() else ""
+    return f"数据来源：申办方内部资料（IB{version}{study}）"
+
+
 _DOSING_SECTION_RE = re.compile(r"^(?:6\.2)(?:\.\d+)?$|给药|研究治疗|研究用药")
 # P0-27（第10轮末修订）：剂量单位存在性——BE204 现场全文 mg/毫克 0 命中
 # 而一句话正文过门。单位族按基准轮口径：mg/毫克/µg/μg/微克/IU/国际单位。
 _DOSE_UNIT_RE = re.compile(r"mg|毫克|µg|μg|微克|IU|国际单位", re.IGNORECASE)
+
+
+def apply_full_draft_content_guards(
+    sections: Iterable[Mapping[str, Any]],
+    *,
+    anchor: str = "",
+    endpoint_families: dict[str, bool] | None = None,
+) -> None:
+    """全文初稿内容守卫统一入口（第3轮·守卫完整性）。
+
+    样本量门/剂量门/统计章分节装配门必须对到达工作副本的每一份正文候选
+    生效——第2轮复测实证守卫只接在 chunk 完成路径（run_job 持久化前）
+    时，任何旁路采纳（逐节候选/快采/手工带出）都会把无守卫标记的正文
+    送上纸面（NC401 现场：工件有锚点注记、导出无）。所有采纳路径统一
+    调本函数；导出层另有'守卫标记缺失'三方一致性断言兜底。
+    """
+    for item in sections:
+        apply_sample_size_guard_to_section(item, anchor=anchor)
+        apply_dose_presence_guard_to_section(item)
+        apply_statistics_assembly_guard_to_section(
+            item, endpoint_families=endpoint_families
+        )
 
 
 def apply_dose_presence_guard_to_section(
@@ -804,7 +900,11 @@ def apply_dose_presence_guard_to_section(
     source_text = str(source or "").strip()
     if source_text:
         section_item["dose_source"] = source_text
-        section_item["proposal_text"] += f"（剂量出处：{source_text}）"
+        # 第五刀：上纸引用过格式化层（内部锚点→可回验引用；完整原始锚点
+        # 保留在 dose_source 审阅面元数据）。
+        section_item["proposal_text"] += (
+            f"（剂量出处：{format_provenance_reference(source_text)}）"
+        )
     else:
         section_item["dose_source"] = ""
         section_item["proposal_text"] += (
@@ -2453,15 +2553,10 @@ class MedicalWritingFullDraftService:
             "次要终点": has_key_secondary or has_other_secondary,
             "探索性终点": bool(picos_payload.get("exploratory_endpoints")),
         }
-        for item in all_sections:
-            apply_sample_size_guard_to_section(item, anchor=anchor)
-            # P0-27（第10轮末修订）：给药章剂量存在性——零剂量显性标记，
-            # 与样本量门同族的参数完整性防线（导出层据此计缺口）。
-            apply_dose_presence_guard_to_section(item)
-            # E11：统计章五件套缺件挂起块（导出层据此计缺口）。
-            apply_statistics_assembly_guard_to_section(
-                item, endpoint_families=endpoint_families
-            )
+        # 第3轮·守卫完整性：统一入口（与所有采纳路径共享同一守卫集）。
+        apply_full_draft_content_guards(
+            all_sections, anchor=anchor, endpoint_families=endpoint_families
+        )
         required_review_ids = [
             str(item.get("section_id") or "")
             for item in all_sections
@@ -2672,6 +2767,7 @@ class MedicalWritingFullDraftService:
         *,
         actor: str = "medical_manager",
         confirmed_section_ids: Iterable[str] = (),
+        duplicate_dispositions: Mapping[str, str] | None = None,
     ) -> dict[str, Any]:
         artifact = self.read_artifact(project_id, job)
         if artifact.get("schema_version") != FULL_DRAFT_ARTIFACT_SCHEMA:
@@ -2717,11 +2813,79 @@ class MedicalWritingFullDraftService:
                 if section_id not in gap_section_id_set
             ]
         )
+        # 复测N1（第3轮）：重复门从一票否决改为逐节处置——'skip'=本节跳过
+        # 采纳（维持占位）、'adopt_with_gap'=仍要采纳（计入装配重复缺口，
+        # 导出层草案-N）；'重生成'走既有取消+重提交通道。未提供处置表时
+        # 维持 fail-safe 整体拒绝（API 旧调用方语义不变），异常携带结构化
+        # 重复对供采纳面板列出三选一。
+        skipped_duplicate_sections: list[str] = []
+        assembly_duplicate_sections: list[str] = []
         if duplicates:
-            raise RuntimeStoreError(
-                "全文初稿候选存在跨节重复正文（章节内容装配重复），未采纳："
-                + _duplicate_section_names(duplicates)
+            dup_section_ids = {
+                sid for ids in duplicates.values() for sid in ids
+            }
+            dispositions = dict(duplicate_dispositions or {})
+            invalid = sorted(
+                sid for sid, action in dispositions.items()
+                if action not in {"skip", "adopt_with_gap"}
             )
+            if invalid:
+                raise ValueError(
+                    "重复处置值非法（仅允许 skip/adopt_with_gap）："
+                    + "、".join(invalid)
+                )
+            resolved_group = False
+            for signature, members in duplicates.items():
+                actions = {
+                    sid: dispositions.get(sid)
+                    for sid in members
+                    if dispositions.get(sid)
+                }
+                skips = [sid for sid, a in actions.items() if a == "skip"]
+                keeps = [sid for sid, a in actions.items() if a == "adopt_with_gap"]
+                undecided = [sid for sid in members if sid not in actions]
+                remaining = len(members) - len(skips)
+                if remaining <= 1:
+                    # 跳过后组内至多剩一节：共享片段已唯一化——跳过节维持
+                    # 占位，余节自动消解为普通采纳（无需处置）。
+                    resolved_group = True
+                    for sid in skips:
+                        if sid not in skipped_duplicate_sections:
+                            skipped_duplicate_sections.append(sid)
+                            gap_section_id_set.add(sid)
+                            gap_section_ids.append(sid)
+                elif keeps and not undecided:
+                    # 全组逐节表态'仍要采纳'：逐节计入装配重复缺口
+                    #（导出层草案-N）；三选一是逐节契约，未表态即拒绝。
+                    resolved_group = True
+                    for sid in keeps:
+                        if sid not in assembly_duplicate_sections:
+                            assembly_duplicate_sections.append(sid)
+                elif undecided:
+                    # 组内仍有多节共存且有未处置节——等处置齐全再定。
+                    continue
+            if not resolved_group:
+                undecided = sorted(dup_section_ids - set(dispositions))
+                named = "、".join(
+                    str(candidates.get(sid, {}).get("section_number") or sid)
+                    for sid in undecided
+                )
+                message = (
+                    "全文初稿候选存在跨节重复正文（章节内容装配重复），本次未采纳；"
+                    "请对涉事节逐节选择跳过/重生成/仍要采纳。"
+                    + _duplicate_section_names(duplicates)
+                )
+                if undecided:
+                    message += f"——仍有未处置章节：{named}"
+                raise FullDraftDuplicateSectionsError(
+                    message,
+                    duplicate_pairs=_duplicate_pairs_payload(
+                        duplicates, candidates
+                    ),
+                    undecided_section_ids=undecided,
+                )
+            skipped_duplicate_sections = list(dict.fromkeys(skipped_duplicate_sections))
+            assembly_duplicate_sections = list(dict.fromkeys(assembly_duplicate_sections))
         required_review_ids = {
             section_id
             for section_id, candidate in candidates.items()
@@ -2794,6 +2958,8 @@ class MedicalWritingFullDraftService:
             "replayed_section_ids": replayed,
             "adopted_count": len(adopted),
             "replayed_count": len(replayed),
+            "skipped_duplicate_sections": skipped_duplicate_sections,
+            "assembly_duplicate_sections": assembly_duplicate_sections,
             # 0924V1-R08: gap sections stay as visible 待补齐 placeholders in
             # the working draft; partial sections were written as-is.
             "gap_section_ids": sorted(gap_section_id_set),

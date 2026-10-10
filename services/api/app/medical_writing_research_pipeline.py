@@ -790,14 +790,48 @@ class MedicalWritingResearchPipelineService:
                 "started": True,
             }
 
-    def cancel(self, project_id: str, *, actor: str) -> ResearchPipelineState:
+    def cancel(
+        self,
+        project_id: str,
+        *,
+        actor: str,
+        force_cleanup: bool = False,
+    ) -> ResearchPipelineState:
+        """取消研究流水线（NEW-19 三件套，第3轮修订）。
+
+        ①置标志 + ②立即吊销 durable 编排作业租约——旧实现只置
+        cancel_requested 并把 stage 改 cancelled，在途批次只能等条目间
+        协作式检查点感知，且租约仍有效、后台心跳不断续租；durable_store
+        的 cancel() 清空 claim_token 使 worker 的 cancel_check
+        （check_ownership 失败）在下一个检查点硬停，批次计数随之收敛。
+        ③已 cancelled 态的'确认终止并清理'二次入口：force_cleanup=True
+        时幂等重吊销租约并补记清理事件——僵尸态（取消后按钮消失、无法
+        再取消）从语义上消除。
+        """
         state = self.get_state(project_id)
-        if state.stage in TERMINAL_STAGES:
+        already_cancelled = state.stage == "cancelled"
+        if state.stage in TERMINAL_STAGES and not (
+            already_cancelled and force_cleanup
+        ):
             return state
         state.cancel_requested = True
-        state = self._set_stage(
-            state, "cancelled", detail=f"已由 {actor} 取消研究流水线"
+        lease_revoked = False
+        job_id = str(state.job_id or "").strip()
+        if job_id and self.durable_store is not None:
+            try:
+                result = self.durable_store.cancel(project_id, job_id)
+                lease_revoked = bool(result.cancelled)
+            except Exception:
+                lease_revoked = False
+        cleanup_note = ""
+        if already_cancelled and force_cleanup:
+            cleanup_note = "；已确认终止并清理（重吊销编排作业租约）"
+        detail = (
+            f"已由 {actor} 取消研究流水线"
+            + ("；编排作业租约已吊销" if lease_revoked else "")
+            + cleanup_note
         )
+        state = self._set_stage(state, "cancelled", detail=detail)
         return self._persist(project_id, state)
 
     def _reconcile_stale_preparation_state(

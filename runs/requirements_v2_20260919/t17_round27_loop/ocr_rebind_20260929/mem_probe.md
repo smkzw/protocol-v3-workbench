@@ -337,3 +337,43 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论与历轮一致：双模型同驻共存无互斥卸载（co_resident=true）。证据：`../env_precheck_newera_r2_20261009/`。
 
 红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；并行线 ego 空间保留。
+
+---
+
+# 复测 · 2026-10-09 19:53–20:01 CEST（新纪元LOOP·环境预检·第3轮，环境管理员）
+
+背景：后端5301/vite均为当日新进程（指纹 api-291fee25254cca4f 两侧MATCH，HEAD 2ca9ba8c）；ocr 绑定仍为 `ocr_local_omlx/GLM-OCR-bf16`（specialized_whitelisted，role_revision=68）；备份 `.pre-ocr-rebind-20261008` 在位。oMLX pid 2264（RSS 472,576KB 冷态起步）；编排器初始 arbiter=mtplx（MTPLX驻留空闲）。
+
+**异常如实记录**：19:54 OCR 探针 #1 客户端300s超时（HTTP=000）——仲裁器 mtplx→omlx 切相排队约6分钟未放行（期间 users 0/0、mtplx inflight=0，队列悬挂 {phase:translation, server:omlx}）；19:58 复查队列已自行放行（arbiter=omlx、omlx resident=true），未动用运维帽强制释放。oMLX 8001 全程直连健康（/v1/models 正常），属编排器切相迟滞而非 oMLX 故障。该"切相最长达6分钟"现象与历轮（秒级）不同，如实上报供实现师侧留意（可能与今日 HEAD 2ca9ba8c 的 E1/E2 根因修复批同源或无关，未下结论）。
+
+实测序列（全部经产品 API）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 20:00 | OCR 视觉探针 #1（重试）→ **passed**（HTTP 200） | →33,917,776（模型已驻留） | 145 ms |
+| 20:01 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | — | 314 ms |
+| 20:01 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,919,472 | **109 ms** |
+
+结论：双模型同驻共存无互斥卸载（co_resident=true），与历轮一致。证据：`../env_precheck_newera_r3_20261009/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器、未动用 release/admin unload（队列自行放行）；未改产品代码；并行线 ego 空间（147/157/184/186/188）未动。
+
+---
+
+# 复测 · 2026-10-10 02:44–02:52 CEST（新纪元LOOP·环境预检·第4轮，环境管理员）
+
+背景：后端5301/vite当日又换新进程对（指纹 api-b7be2365d992b0aa 两侧MATCH，HEAD 仍 2ca9ba8c）；ocr 绑定仍为 `ocr_local_omlx/GLM-OCR-bf16`（specialized_whitelisted，role_revision=72）；备份在位。oMLX pid 2264（RSS 462,224KB 冷态）；初始 arbiter=mtplx、omlx 未驻留、队列空。
+
+**切相迟滞复现（第3轮已上报，本轮确证）**：OCR 探针 #1 服务端耗时 354,587ms（≈5.9分钟，客户端590s窗口内完成未超时）——与第3轮"~6分钟自行放行"一致，mtplx→omlx 切相迟滞为**可复现现象**（对比第1/2轮秒级~10s）。oMLX 8001 直连全程健康；未动用运维帽（探针最终完成）。持续上报供实现师侧核查。
+
+实测序列（全部经产品 API）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 02:45–02:51 | OCR 视觉探针 #1 → **passed**（含切相等待） | 462,224 → 33,921,920 | 354,587 ms（其中切相≈5.9min） |
+| 02:51 | 翻译探针（dawncr0w，{"status":"ok"}）→ **passed** | — | 263 ms |
+| 02:51 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,923,872 | **124 ms** |
+
+结论：双模型同驻共存无互斥卸载（co_resident=true），与历轮一致。证据：`../env_precheck_newera_r4_20261010/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；并行线 ego 空间未动。

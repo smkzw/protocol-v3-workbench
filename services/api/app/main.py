@@ -240,6 +240,7 @@ from .medical_writing_competitor_triage import CompetitorTriageExecutor
 from .medical_writing import SectionAiCandidateExecutor
 from .medical_writing_full_draft import (
     FULL_DRAFT_JOB_TYPE,
+    FullDraftDuplicateSectionsError,
     MedicalWritingFullDraftService,
     ProtocolFullDraftExecutor,
 )
@@ -8479,12 +8480,26 @@ def adopt_medical_writing_full_draft(project_id: str, job_id: str, request: dict
             record,
             actor=str(request.get("actor") or "medical_manager"),
             confirmed_section_ids=request.get("confirmed_section_ids") or [],
+            # 复测N1（第3轮）：逐节重复处置表（skip/adopt_with_gap）。
+            duplicate_dispositions=request.get("duplicate_dispositions") or None,
         )
         return result
     except HTTPException:
         raise
     except DurableJobNotFound:
         raise HTTPException(status_code=404, detail=f"durable job not found: {job_id}")
+    except FullDraftDuplicateSectionsError as exc:
+        # 复测N1（第3轮）/第4轮第三刀：结构化重复对载荷——采纳面板逐节
+        # 三选一（跳过/带缺口采纳/重生成）的数据源。
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "full_draft_duplicate_sections",
+                "message": str(exc),
+                "duplicate_pairs": exc.duplicate_pairs,
+                "undecided_section_ids": exc.undecided_section_ids,
+            },
+        )
     except (RuntimeStoreError, StaleRuntimeStateError, ValueError) as exc:
         raise HTTPException(status_code=409, detail=str(exc))
 
@@ -8579,7 +8594,10 @@ def cancel_medical_writing_research_pipeline(project_id: str, request: dict):
     try:
         canonical_id = _canonical_module_project_id(project_id, "medical_writing")
         state = medical_writing_research_pipeline_service.cancel(
-            canonical_id, actor=str(request.get("actor") or "medical_manager")
+            canonical_id,
+            actor=str(request.get("actor") or "medical_manager"),
+            # NEW-19③（第3轮修订）：已取消僵尸态的'确认终止并清理'二次入口。
+            force_cleanup=bool(request.get("force_cleanup")),
         )
         return {"pipeline": state.as_dict()}
     except KeyError as exc:
@@ -10457,6 +10475,11 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
     annotation_strip_notes = _apply_export_annotation_sanitization(document)
     # NEW-17 内容族①（R27 第3轮修订）：导出占位符门。
     placeholder_report = _export_placeholder_report(document)
+    # 第4轮·第二刀②：守卫标记缺失→导出副本自动补标（不回写存储）——
+    # 纸面永远诚实（HA501 根因闭环：检出不再只是计缺口）。
+    placeholder_report["guard_annotations"] = _apply_export_guard_annotations(
+        document, placeholder_report
+    )
     if typo_notes:
         placeholder_report["text_quality"]["replacements"] = typo_notes
     if annotation_strip_notes:
@@ -10676,6 +10699,14 @@ _EXPORT_FORBIDDEN_PHRASES = (
         "在统计计划中统一规定",
         "推空句（方案正文不得把应载明的内容推给统计计划）",
     ),
+    (
+        "§",
+        "内部锚点裸引用（不可回验；须转'数据来源：申办方内部资料'式引用）",
+    ),
+    (
+        "内部IB v",
+        "内部锚点裸引用（不可回验；须转'数据来源：申办方内部资料'式引用）",
+    ),
 )
 
 _EXPORT_PLACEHOLDER_PATTERN = re.compile(
@@ -10877,6 +10908,11 @@ def _export_placeholder_report(document) -> dict:
     # P0-B（骨架落位批）：参数化骨架节计缺口元数据——骨架正文不得伪装成
     # 成文内容（导出层按块级 skeleton_review_pending 标记点名）。
     skeleton_sections: list[dict] = []
+    # NEW-20（第3轮·第五步）：给药三元组（剂量/频次/片数）跨节一致性收集
+    #——只收裸陈述（无组限定词），带臂限定的表述（滴定/各臂不同片数）不收。
+    tablet_count_owners: dict[str, list[str]] = {}
+    frequency_owners: dict[str, list[str]] = {}
+    _ARM_SCOPED_RE = re.compile(r"(?:组|队列|臂|剂量水平|滴定|递增|递减)[^。]{0,12}$")
     for section in document.sections:
         texts: list[str] = []
         has_table = False
@@ -10905,13 +10941,25 @@ def _export_placeholder_report(document) -> dict:
                     "section_heading": section.heading,
                 }
             )
+        section_label = section.section_number or section.heading or ""
         if any(text.strip() for text in texts):
             export_section_texts.append(
                 {
-                    "section_id": section.section_number or section.heading or "",
+                    "section_id": section_label,
                     "proposal_text": "\n".join(texts),
                 }
             )
+            # NEW-20：收集裸片数/频次陈述（句尾邻近有组限定词的不收）。
+            for text in texts:
+                for sentence in re.split(r"[。；;\n]", text):
+                    sentence = sentence.strip()
+                    if not sentence or _ARM_SCOPED_RE.search(sentence):
+                        continue
+                # 片数：'每次一片/每次1片' 与 '每次N片'(N>=2)
+                    for match in re.finditer(r"每次(?:一片|1片|[2-9]片)", sentence):
+                        tablet_count_owners.setdefault(match.group(0), []).append(section_label)
+                    for match in re.finditer(r"每日(?:一次|两次|三次|1次|2次|3次|一日一次|一日两次)", sentence):
+                        frequency_owners.setdefault(match.group(0), []).append(section_label)
         matches: list[str] = []
         for text in texts:
             matches.extend(match.group(0) for match in _EXPORT_PLACEHOLDER_PATTERN.finditer(text))
@@ -11038,6 +11086,36 @@ def _export_placeholder_report(document) -> dict:
                         "reason": f"导出禁语：『{phrase}』（{phrase_reason}）",
                     }
                 )
+        # 第3轮·守卫完整性三方断言（NC401 现场形态：工件有锚点注记、
+        # 导出无——旁路采纳丢失守卫标记在此暴露）。口径：与既有导出层门
+        # 不重复——不一致/要素未齐/混写/装配缺件/零剂量由上方各门点名；
+        # 此处专断言自洽声明的溯源上纸契约（P1-48/E10：凡含样本量声明的
+        # 统计章必须携带具名依据或如实未具名标注），缺失即缺口不静默。
+        if (
+            not section_is_skeleton
+            and joined.strip()
+            and (
+                str(section.section_number or "").startswith("9")
+                or "统计" in section.heading
+                or "样本量" in section.heading
+            )
+        ):
+            from .medical_writing_full_draft import sample_size_declaration_check
+
+            ss_check = sample_size_declaration_check(joined)
+            if (
+                ss_check is not None
+                and ss_check.get("status") == "自洽"
+                and "（样本量依据：" not in joined
+                and "假设未具名溯源" not in joined
+            ):
+                gap_sections.append(
+                    {
+                        "section_number": section.section_number or "",
+                        "section_heading": section.heading,
+                        "reason": "守卫标记缺失（生成层守卫标记未到达导出件）：样本量溯源注记（自洽声明必须携带具名依据或如实未具名标注）",
+                    }
+                )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:
             if wrong in joined:
                 typo_hits.append(
@@ -11092,6 +11170,40 @@ def _export_placeholder_report(document) -> dict:
                     "reason": "章节内容装配重复（同一正文出现于多个章节，需重写涉事节）",
                 }
             )
+    # NEW-20（第3轮·第五步）：跨节给药一致性门——不同节出现互斥的片数
+    # 表述（每次一片 vs 每次N片）或频次表述（每日两次 vs 每日一次）→ 缺口
+    # 点名双方（草案-N 强制；NEW-20 现场：6.1 每日两次每次一片 vs 4.4 每次4片）。
+    single_owners = sorted(
+        {o for phrase, owners in tablet_count_owners.items()
+         if phrase in {"每次一片", "每次1片"} for o in owners}
+    )
+    multi_owners = sorted(
+        {o for phrase, owners in tablet_count_owners.items()
+         if phrase not in {"每次一片", "每次1片"} for o in owners}
+    )
+    if single_owners and any(owner not in single_owners for owner in multi_owners):
+        named = "、".join(sorted(set(single_owners + multi_owners)))
+        gap_sections.append(
+            {
+                "section_number": named,
+                "section_heading": named,
+                "reason": f"给药方案片数表述冲突（{named} 章节间对每次片数表述不一致，需统一剂量-规格-片数口径）",
+            }
+        )
+    if frequency_owners:
+        distinct_freqs = {
+            phrase.replace("一日", "每日") for phrase in frequency_owners
+        }
+        if len(distinct_freqs) >= 2:
+            all_owners = sorted({o for owners in frequency_owners.values() for o in owners})
+            named = "、".join(all_owners)
+            gap_sections.append(
+                {
+                    "section_number": named,
+                    "section_heading": named,
+                    "reason": f"给药方案频次表述冲突（{named} 章节间对每日给药次数表述不一致，需统一口径）",
+                }
+            )
     # P0-B（骨架落位批）：参数化骨架节逐节点名计缺口——正文为骨架待医学
     # 经理审核确认，不是成文内容（草案-N 强制；与占位计数同通道）。
     for skeleton in skeleton_sections:
@@ -11115,6 +11227,47 @@ def _export_placeholder_report(document) -> dict:
             "stutter_count": len(stutters),
         },
     }
+
+
+def _apply_export_guard_annotations(document, report):
+    """守卫标记缺失的自动补标（第4轮·第二刀②，只改导出副本）。
+
+    对报告 gap_sections 中 reason 含'守卫标记缺失…样本量溯源注记'的节，
+    在导出副本该节最后一个正文块后追加诚实标注；返回补标清单供报告呈现。
+    """
+    annotations: list[dict] = []
+    annotation_text = "（样本量假设未具名溯源，建议引用外部先例。）"
+    for gap in report.get("gap_sections") or []:
+        reason = str(gap.get("reason") or "")
+        if "守卫标记缺失" not in reason or "样本量溯源注记" not in reason:
+            continue
+        section_number = str(gap.get("section_number") or "")
+        heading = str(gap.get("section_heading") or "")
+        for section in document.sections:
+            if (section.section_number or "") != section_number and section.heading != heading:
+                continue
+            body_indexes = [
+                index
+                for index, block in enumerate(section.content_blocks or [])
+                if isinstance(block, Mapping)
+                and str(block.get("block_type") or "") != "heading"
+            ]
+            if not body_indexes:
+                continue
+            last = section.content_blocks[body_indexes[-1]]
+            text = str(last.get("text") or "")
+            if "样本量假设未具名溯源" in text:
+                continue
+            last["text"] = text + annotation_text
+            annotations.append(
+                {
+                    "section_number": section_number,
+                    "section_heading": heading,
+                    "annotation": "样本量溯源注记",
+                }
+            )
+            break
+    return annotations
 
 
 def _enforce_export_placeholder_gate(

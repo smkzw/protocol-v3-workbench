@@ -525,6 +525,53 @@ def _gap_placeholder_blocks(
 
 
 
+def _project_content_guards_on_save_impl(section, content_blocks):
+    """保存入口守卫投影（第4轮·第二刀①，HA501 根因）。
+
+    统一守卫入口此前只接在 chunk 完成路径——经逐节候选/快采/手工保存
+    入工作副本的统计/样本量/给药正文不带守卫标记（HA501 导出件全文
+    '假设待定'=0）。保存前对正文过同一守卫集：守卫以'前缀+原文+后缀'
+    方式改写时直接回投到首/末正文块；数字改写型（复算改写）不在保存
+    路径静态改写（交由导出层守卫缺口与草案-N），不破坏手工段落结构。
+    """
+    from .medical_writing_full_draft import apply_full_draft_content_guards
+
+    body_indexes = [
+        index
+        for index, block in enumerate(content_blocks)
+        if str(block.get("block_type") or "") != "heading"
+    ]
+    if not body_indexes:
+        return content_blocks
+    original = "\n".join(
+        str(content_blocks[index].get("text") or "")
+        for index in body_indexes
+    )
+    if not original.strip():
+        return content_blocks
+    item = {
+        "section_id": str(getattr(section, "section_id", "") or ""),
+        "section_number": str(getattr(section, "section_number", "") or ""),
+        "heading": str(getattr(section, "heading", "") or ""),
+        "proposal_text": original,
+    }
+    apply_full_draft_content_guards([item])
+    guarded = str(item.get("proposal_text") or "")
+    if guarded == original:
+        return content_blocks
+    split_at = guarded.find(original)
+    if split_at == -1:
+        return content_blocks
+    prefix, suffix = guarded[:split_at], guarded[split_at + len(original):]
+    blocks = [dict(block) for block in content_blocks]
+    first, last = body_indexes[0], body_indexes[-1]
+    if prefix:
+        blocks[first]["text"] = prefix + str(blocks[first].get("text") or "")
+    if suffix:
+        blocks[last]["text"] = str(blocks[last].get("text") or "") + suffix
+    return blocks
+
+
 class MedicalWritingRuntimeRepository:
     _LEGACY_FROZEN_STATES = {
         ApprovalState.MEDICALLY_APPROVED,
@@ -1461,6 +1508,9 @@ class MedicalWritingRuntimeRepository:
                 quarantine_reason=quarantine_reason,
             )
 
+    def _project_content_guards_on_save(self, section, content_blocks):
+        return _project_content_guards_on_save_impl(section, content_blocks)
+
     def save_working_copy(
         self,
         project_id: str,
@@ -1472,6 +1522,14 @@ class MedicalWritingRuntimeRepository:
     ) -> MedicalWritingWorkingCopy:
         document = self.project(project_id)
         section = self.document_service.section(project_id, section_id)
+        # 第4轮·第二刀①：保存入口守卫投影（所有文本生产者共用最后防线）。
+        projected = self._project_content_guards_on_save(
+            section, request.content_blocks
+        )
+        if projected is not request.content_blocks:
+            request = request.model_copy(
+                update={"content_blocks": projected}, deep=True
+            )
         if request.document_id != document.document_id or section.document_id != document.document_id:
             raise ValueError("working copy document does not match the canonical project document")
         request = request.model_copy(

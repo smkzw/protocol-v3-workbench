@@ -2356,12 +2356,19 @@ def _ordered_blocks(document: ProtocolDocument):
     for section_index, section in enumerate(document.sections):
         for block_index, block in enumerate(section.content_blocks):
             indexed.append((section_index, block_index, block))
+    # 第4轮·第一刀（B案，E12/E13/NEW-BENCH-2 五轮根因）：旧排序把无
+    # body_order 的块全局排尾（key 首分量 = is None）——注入到中段节的
+    # 骨架/SoA块被整体甩到 14.4 附录之后渲染（NC401/HA501 两代导出件
+    # 同象）。改为主键=文档节序：无序块按（节序，节内下标）原位渲染，
+    # 有序块在节内仍按 body_order（body_order 为文档级单调分配，
+    # _study_schema_figure_body_order 取前文最大值+1，节序主键不改变
+    # 既有有序块的全局顺序）。
     return sorted(
         indexed,
         key=lambda item: (
-            _body_order(item[2]) is None,
-            _body_order(item[2]) if _body_order(item[2]) is not None else item[0],
             item[0],
+            0 if _body_order(item[2]) is not None else 1,
+            _body_order(item[2]) if _body_order(item[2]) is not None else item[1],
             item[1],
         ),
     )
@@ -5128,9 +5135,12 @@ def _front_matter_context(
                 "protocol_date",
                 values.get("版本日期", "").strip(),
             ),
+            # NEW-28（第3轮）：封面申办者不回退硬编码公司名——项目信息包/
+            # 框架 sponsor 经 authoritative overrides 映射；无来源时留白
+            #（导出门以空白申办者计待确认），绝不冒用默认主体。
             sponsor=authoritative.get(
                 "sponsor",
-                values.get("申办者", "").strip() or _CMS_SPONSOR_NAME,
+                values.get("申办者", "").strip(),
             ),
         )
     return None
@@ -5795,7 +5805,7 @@ def _configure_header(
     paragraph.paragraph_format.line_spacing = Pt(1)
     context = _front_matter_context(document)
     phase = context.study_phase if context is not None else ""
-    sponsor = context.sponsor if context is not None else _CMS_SPONSOR_NAME
+    sponsor = context.sponsor if context is not None else ""
     document_label = f"{phase}临床试验方案" if phase else "临床试验方案"
 
     table = header.add_table(rows=1, cols=2, width=Inches(6.3))

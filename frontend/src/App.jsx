@@ -1490,7 +1490,19 @@ function AppShell({
                   const indication = String(item.indication || "").trim();
                   const phase = String(item.study_phase || "").trim();
                   const code = String(item.project_code || item.project_id || "").trim();
-                  const label = [product || null, indication || null, phase || null, code || null]
+                  // NEW-35（第4轮）：项目身份可辨——来源标识（官方演示/自建）
+                  // + 创建日期进下拉，同药名项目不再混淆错选。
+                  const isUserProject = String(item.project_id || "").startsWith("proj_user_");
+                  const origin = isUserProject ? "自建" : "官方演示";
+                  const createdAt = String(item.created_at || "").trim().slice(0, 10);
+                  const label = [
+                    origin || null,
+                    product || null,
+                    indication || null,
+                    phase || null,
+                    code || null,
+                    createdAt || null,
+                  ]
                     .filter(Boolean)
                     .join(" · ");
                   return (
@@ -8234,6 +8246,9 @@ function WritingPage({
   const [fullDraftDiagnosticOpen, setFullDraftDiagnosticOpen] = useState(false);
   const [fullDraftReviewOpen, setFullDraftReviewOpen] = useState(false);
   const [fullDraftDecisionChoices, setFullDraftDecisionChoices] = useState({});
+  // 第4轮·第三刀：逐节重复处置面板状态（复测N1 跨层接线）。
+  const [fullDraftDuplicatePairs, setFullDraftDuplicatePairs] = useState([]);
+  const [fullDraftDuplicateDispositions, setFullDraftDuplicateDispositions] = useState({});
   const [fullDraftDecisionBusy, setFullDraftDecisionBusy] = useState("");
   const [fullDraftDecisionMessage, setFullDraftDecisionMessage] = useState("");
   const documentExportRunRef = useRef(0);
@@ -10350,6 +10365,17 @@ function WritingPage({
     if (isDemoWritingSession || !sectionContentAvailable || editorFrozen || !workingCopyAuthoritative) return;
     setWorkingCopyDraftBlocks(cloneContentBlocks(sectionContent?.content_blocks || []));
     setWorkingCopyEditing(true);
+    // 复测N2（第3轮）：工作副本已存在但初始保存未完成（尚无版本 1）时，
+    // 入口幂等不再'放行即终点'——标记待保存并指引一次保存完成初始化，
+    // 消除'已存在当终点'的死路（与幂等继承死路同族）。
+    if (workingCopyRevision < 1) {
+      setWorkingCopyDirty(true);
+      setWorkingCopyMessage(
+        "检测到未完成的初始保存：内容已就绪，点击『保存版本』完成工作副本初始化（生成版本 1）。"
+      );
+      setWorkingCopySaveKey(`wc-${projectId}-${selectedSection}-init-complete-${Date.now()}`);
+      return;
+    }
     setWorkingCopyDirty(false);
     setWorkingCopySaveKey(`wc-${projectId}-${selectedSection}-${Date.now()}`);
     setWorkingCopyMessage("可编辑工作副本已就绪；首次实际修订后再保存为版本 1。");
@@ -10794,6 +10820,8 @@ function WritingPage({
       body: JSON.stringify({
         actor: "medical_manager",
         confirmed_section_ids: fullDraftConfirmedSections,
+        // 第4轮·第三刀：逐节重复处置表（复测N1 跨层接线）。
+        duplicate_dispositions: fullDraftDuplicateDispositions,
       }),
     })
       .then(readJsonOrThrow)
@@ -10810,6 +10838,16 @@ function WritingPage({
         await refreshContentQuality();
       })
       .catch((error) => {
+        const detail = error?.payload?.detail;
+        if (detail && typeof detail === "object" && detail.code === "full_draft_duplicate_sections") {
+          // 第4轮·第三刀：逐节重复处置面板（节号+标题+共享片段长度）。
+          setFullDraftDuplicatePairs(detail.duplicate_pairs || []);
+          setFullDraftDuplicateDispositions({});
+          setFullDraftMessage(
+            "全文初稿采纳被阻止：检测到章节内容装配重复。请对涉事章节逐节选择处理方式后重试。"
+          );
+          return;
+        }
         const diagnostic = redactDiagnosticText(medicalWritingDiagnosticRef(error));
         setFullDraftDiagnostic(diagnostic);
         setFullDraftMessage(
@@ -10817,6 +10855,23 @@ function WritingPage({
         );
       })
       .finally(() => setFullDraftBusy(false));
+  };
+  const setFullDraftDuplicateDisposition = (sectionId, action) => {
+    if (action === "regenerate") {
+      // 重生成出路：清除本候选与本地存档，回到重新生成入口。
+      setFullDraftDuplicatePairs([]);
+      setFullDraftDuplicateDispositions({});
+      localStorage.removeItem(fullDraftStorageKey);
+      setFullDraftJob(null);
+      setFullDraftMessage(
+        "已退出本次候选：请点击『生成全文初稿』按当前研究事实重新生成。"
+      );
+      return;
+    }
+    setFullDraftDuplicateDispositions((current) => ({
+      ...current,
+      [sectionId]: action,
+    }));
   };
   const toggleFullDraftSectionConfirmation = (sectionId) => {
     setFullDraftConfirmedSections((current) => (
@@ -12002,6 +12057,31 @@ function WritingPage({
                         已确认 {fullDraftConfirmedSections.length}/{fullDraftArtifact.coverage?.required_review_count || 0} 个关键章节
                       </span>
                     </div>
+                    {(fullDraftDuplicatePairs.length > 0) && (
+                      <section className="panel full-draft-duplicate-panel" role="alert">
+                        <strong>检测到章节内容装配重复</strong>
+                        <p>以下章节的正文存在相同片段。请对每个涉事章节选择处理方式：跳过（本节不写入，保持占位）、仍要采纳（写入并计入装配重复缺口，导出将标注草案版本）、或重新生成全文候选。</p>
+                        {fullDraftDuplicatePairs.map((pair, pairIndex) => (
+                          <div key={`dup-pair-${pairIndex}`} className="full-draft-duplicate-pair">
+                            {(pair.sections || []).map((item) => (
+                              <div key={item.section_id} className="full-draft-duplicate-row">
+                                <span>
+                                  {item.section_number} {item.heading}
+                                  （与同组章节共享约 {pair.shared_fragment_chars || 0} 字正文）
+                                </span>
+                                <span className="full-draft-duplicate-actions">
+                                  <button type="button" onClick={() => setFullDraftDuplicateDisposition(item.section_id, "skip")}>跳过</button>
+                                  <button type="button" onClick={() => setFullDraftDuplicateDisposition(item.section_id, "adopt_with_gap")}>仍要采纳</button>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                        <div className="full-draft-duplicate-footer">
+                          <button type="button" onClick={() => setFullDraftDuplicateDisposition("", "regenerate")}>重新生成全文候选</button>
+                        </div>
+                      </section>
+                    )}
                     {fullDraftReviewOpen && (
                       <div className="full-draft-review-overlay" role="dialog" aria-modal="true" aria-label="审阅研究方案全文初稿">
                         <div className="full-draft-review-workspace">
