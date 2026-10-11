@@ -235,3 +235,95 @@
 | 并发仲裁双负载 | **无双载 ✅**（co_resident 0/61，translation 1101/1101） |
 | allPass | **false**（⑧维持挂账 + N1′ 新 P0：采纳链仍断） |
 | closedIds | P0-03 |
+
+---
+
+# retest_r2(v2) · 复测报告（2026-10-11 18:37–19:30，复测协调员）
+
+> 本节为对**2026-10-11 傍晚修订批**（18:19–18:35 收笔：`test_full_draft_guard_marker_adopt_p0.py` 守卫标记放行、`test_full_draft_consumed_marker_p0.py` 采纳consumed标记、`test_sample_size_proportion_gate_p6.py` 样本量比例复算门、`test_study_phase_subphase_p0.py` 分期子阶段枚举；源码 full_draft/fact_intake/repository/main/models/App.jsx 同批）的复验。本批对应 r2-A/r2-B/r2-C（本日下午第2轮测试席：撰写者 KZ301 骨质疏松、B/C 审阅我上轮 HS501 导出件）的发现清偿。上方 2026-10-05/10-09 两节原样保留不作废。
+
+- 被测现场：HEAD=674e5123 + 未提交修订批（最后源码修改 18:35）。后端 5301 pid 61011（18:41:16 起）、vite 5186 pid 61097（18:41:36 起，显式 `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 --host 127.0.0.1 --port 5186 --strictPort`，进程 env 实测 ✓，日志 `retest_r2_vite_20261011.log`）。
+- 指纹三方一致：`backend_build_id=api-851543e34ca11483`（后端自报 = vite 现算 = 经 5186 代理同值）；frontendBuildId=web-c9136df4cea63bf3；浏览器全程无版本门拦截。
+- 测试者：复测协调员本人，浏览器黑盒（camofox）。工具等价披露（历轮同款）：①camofox click 超时改 DOM `.click()`；②React 受控输入原生 setter+input/change 等价录入（本间轮次出现两次编辑被重渲染吃掉的竞态，均已当场发现重设并如实记）；③标签页回收 1 次，重开恢复；④导出件经产品下载接口归档。
+- 本轮两个项目（均为本人名下）：**MW-II-847F2D95/proj_user_f4646e04bf3f**（HS501，上轮遗留工件复验）+ **新建 proj_user_69c21f87aa43**（KZ-BP601（口服选择性JAK1抑制剂缓释片）· 大疱性类天疱疮（Bullous Pemphigoid，中重度）· **IIa期**——全新任务包，159 项目无 BP 无口服JAK1，IIa期专为子阶段枚举验证而选）。
+- 证据：`retest_r2_material_20261011/`（OCR 探针、drill 产物、导出件）。
+
+## 一、单元证据（本批四新测试文件 + 上批回归，全绿）
+
+`pytest tests/test_full_draft_guard_marker_adopt_p0.py tests/test_full_draft_consumed_marker_p0.py tests/test_sample_size_proportion_gate_p6.py tests/test_study_phase_subphase_p0.py -v` → **15 passed**；上批四文件回归 → **22 passed**；vitest residualAdmission（--environment jsdom）→ **2 passed**。
+
+## 二、fixed_pending_verify 逐项（再测试②）
+
+### 1) 守卫标记门一票否决（上轮 N1·P0）——修复 live 实证 ✅→关闭
+
+HS501 遗留工件（84 候选、6.5/7.1.4/9/9.5 四节带【剂量待确认】【统计章分节装配待确认】守卫标记）上重试采纳：错误由上轮的「全文初稿章节候选不具备实质内容：mwsec_…」（标记被占位正则一票否决）**位移为**「全文初稿采纳遇到正文变化：mwsec_…」（越过了标记门、进到写入相的正文哈希检查）——标记门放行 live 实证；拒绝文案人话化（空内容门现用节号，实读 `medical_writing_full_draft.py:3088-3095`；守卫块剥离 `_GUARD_SUSPENSION_BLOCK_RE` :1042）。真占位不放松（单测 T2 绿）。
+
+### 2) 新立案 N5·P0：正文快照哈希门对系统基线文本误判——采纳仍恒死路（含内部ID直出复发）
+
+上轮工件采纳现卡新门：工件 target_sections 对节 6「研究治疗/干预」快照 `expected_revision=0, body_sha256=e3b0c44…b855`（=空串哈希，即作业提交时工作副本尚未初始化），而 live 工作副本该节已有装配基线正文 → `正文快照哈希≠快照` 且 `≠proposal` → `raise StaleRuntimeStateError("全文初稿采纳遇到正文变化：…")`（`medical_writing_full_draft.py:3081` 一带）——**3 次采纳尝试恒定 409 同节同错**（后端日志 adopt 409×3 实录），无用户出路（重生成确定性再竞态）；且该 raise 行文案仍直出 `mwsec_greenfield_…` 内部 ID（人话化未覆盖此行）。N1″ CAS 重锚（T1 版本漂移/T3 CAS 冲突）依旧被挡在写入相之前，**维持 fixed_pending_verify**；其单测场景「正文仍空」与真实形态「系统基线正文」的缝隙即本缺陷。
+
+### 3) P0-3/NEW-20 采纳consumed标记（浮层复活）——单测 3/3 绿（持久化跨实例/`/full-drafts/current` 排除已采纳作业返回204/adopt 成功路径写标记接线，实读 `main.py:8307-8312、8493-8496` + `App.jsx` 采纳成功清 runRef/job/artifact）；浏览器不可达（采纳被 N5 挡在成功之前，consumed 写入无法触发）→ **维持 fixed_pending_verify**。
+
+### 4) P0-1/NEW-18 研究分期子阶段枚举——live 双点实证 ✅→关闭
+
+新建 KZ-BP601 选 **IIa期**：①建项对话框 IIa期 原样保留（models.py 创建契约，未折叠为 II期）；②第一步「提交并拆解」`POST fact-intake/study_framing` → **201 Created**（r2-A 现场 i2-05 同路径为 422『must be one of 五值』，后端日志实录）；③完成第一步→确认变更重新核验→v4 全程无阻。
+
+### 5) P1-6/NEW-BENCH-8/E9 样本量比例复算门——live 双向实证 ✅→关闭
+
+KZ-BP601 第二步「样本量策略」录入与 r2-B/C 复算现场同款声明「每组45例；20%对45%，双侧α=0.05、把握度90%」→ 点完成第二步：**被人话阻断**「样本量声明与假设不一致：按您输入的比例假设（应答率20% 对 45%）、α=0.05双侧、把握度90% 复算需**69例/组**，当前声明**45例/组**：请修正声明或调整假设。（可先保存草稿；完成第二步前必须消解该不一致。）」——与单测 T1 的 69 例数完全一致；改为 69 例/组声明（含15%脱落放大）重提 → **通过**（v8，进入语料准备）无误伤（T3）。生成层同 checker 单测 T1–T5 绿（连续量 GER601 不回退、指纹覆盖比例要素）。
+
+### 6) ⑧ P0-25 宽容度/507/批次跳过——本轮无生成运行（HS501 未重生成、BP601 未到生成），无自然窗口；晨批注入级收臂证据（507 注入→跳过+整单续跑+退避+心跳『已跳过』）已在库。**维持 fixed_pending_verify**。
+
+### 7) P2-8 忠实度仪式瘦身——BP601 竞品分诊 5/5 批完成（pipeline status：stage=awaiting_triage_confirm「分诊重试已完成，已恢复到人工确认暂停态」）但语料门候选篮子面 **0 项渲染**（23/23 返回、无 NCT 行、刷新后依旧）→ 无法标记候选→无法锁篮子→无译文→忠实度确认面板不可达。**维持 fixed_pending_verify**；语料链「分诊完成但篮子面空」与上轮 N4（失败恢复无出路）同族，断点观察累计 +1。
+
+### 8) 背景自主外查生成层闭环（上轮 N2·P1）——本批未触及（`medical_writing_external_literature.py` 自 08:58 未改，`background_gap_classes_overridable` :414-421 仍为枚举匹配，中文自由文本缺失类仍不降级、记录仍未注入生成上下文）→ **维持挂账**。
+
+## 三、回归抽查（再测试③，2 关键点）
+
+1. **建项**：KZ-BP601·大疱性类天疱疮·IIa期 三字段创建 201、进入研究设计引导、fact-intake 201（同上 4)）→ **重过 ✅**
+2. **导出（HS501 预览 Word）**：59 处【待补齐】逐章点名 → 知悉占位仍导出 → 真 OOXML（mwjob_a734f906293fe93e497fcad8，389 段/6 表，KZ-HS501×44、HiSCR75×20）；**本批 repository.py 占位人话化上纸实证**：「标准模板草稿」×12+「待医学经理审核确认」×12（旧参数化骨架话术 0 残留）；【V1】0 处；归档 `retest_r2_material_20261011/RT2_HS501_preview_export.docx` → **重过 ✅**
+
+## 四、OCR 环境功能验证（③类）
+
+`POST /api/ai-gateway/roles/ocr/probe-visual`（profile=ocr_local_omlx，18:43）→ **HTTP 200 · passed=true · GLM-OCR-bf16 · 11.2s**（`retest_r2_material_20261011/ocr_probe_r2.json`）。
+
+## 五、并发仲裁 300s 双负载复跑（再测试④）
+
+`python3 retest_r2_drill.py`（19:0x 实跑，产物 `concurrency_drill_events.jsonl`/`concurrency_drill_summary.json`）：
+
+| 相 | 请求数 | 通过 | 未通过 | 最快 | 最慢 |
+|---|---|---|---|---|---|
+| translation（oMLX） | 989 | **989** | 0 | 0.26s | 8.61s |
+| triage（MTPLX） | 1 | 1 | 0 | — | 619.5s（翻译满载下全程排队，释放后执行；既有 P2 族第三例） |
+
+- **重量级无双载 ✅**：61 采样 60 样本 MTPLX 未起；唯一 1/61（19:03:36.464 相位交接瞬间）oMLX 侧仅 MarkItDown helper 驻留 + MTPLX 拉起——与上轮同款良性形态，翻译重量级模型与 MTPLX 零共存。
+
+## 六、三句式界面评价
+
+- **美观性**：占位话术人话化上纸（「标准模板草稿…待医学经理审核确认」）是本轮最好的文字改进；比例门阻断文案给了复算依据与出路（先存草稿），是门类文案的标杆。
+- **易用性**：样本量声明被拦时用户第一次拿到了「该改成几例」的答案而不是抽象报错；但采纳链三连门（重复门→标记门→正文变化门）每剥一层又出一层，用户依然到不了终点。
+- **逻辑性**：比例复算门把「声明 vs 假设」的算术账当面算给用户看，逻辑自洽；正文哈希门为保护人工编辑而拦系统基线文本，保护对象认错了人——门的方向都对，汇合处仍缺仲裁。
+
+## 七、收尾
+
+- 浏览器任务空间已清（camofox `list_tabs` 实测 tabs=[]）；本轮未用 /tmp 临时文件；模型服务器未手工触碰（8001/8002 在线为编排器正常驻留）；BP601 流水线停于人工确认暂停态（无模型占用，durable 暂停非在途）。本轮新建 1 个项目（KZ-BP601），复验本人上轮项目 1 个，未动任何他人项目/历史数据。
+
+## 八、判定汇总
+
+| 项 | 结论 |
+|---|---|
+| 守卫标记门一票否决（上轮 N1·P0） | 标记门放行 live 实证（错误位移）+ 单测 T1–T3 → **关闭 ✅** |
+| N5（新）·P0 正文哈希门 vs 系统基线文本 | 3×恒定 409 同节同错、无出路、内部ID直出复发 → **新立案** |
+| P0-3 consumed 浮层复活 | 单测 3/3 绿；浏览器不可达（被 N5 挡）→ **维持 fixed_pending_verify** |
+| N1″ 采纳 CAS 重锚 | 仍被 N5 挡在写入相前 → **维持 fixed_pending_verify** |
+| P0-1 分期子阶段枚举 | 建项保留 IIa期 + fact-intake 201 live → **关闭 ✅** |
+| P1-6 样本量比例复算门 | 45例阻断（点名69例）/69例放行 双向 live → **关闭 ✅** |
+| ⑧ P0-25 | 无自然窗口；注入级证据在库 → **维持 fixed_pending_verify** |
+| P2-8 忠实度仪式 | 语料篮子 0 项渲染、译文链不可达 → **维持 fixed_pending_verify** |
+| 背景外查生成层闭环（上轮 N2） | 本批未触及 → **维持挂账** |
+| OCR 环境 | 200 / passed=true / 11.2s ✓ |
+| 回归抽查（建项/导出） | 2/2 重过 ✅（占位人话化上纸实证） |
+| 并发仲裁双负载 | **重量级无双载 ✅**（60/61；1/61=helper+相位交接；translation 989/989） |
+| 新缺陷 | N5·P0（正文哈希门 vs 系统基线文本，含内部ID复发）；语料篮子空渲染观察（N4 族累计） |
+| allPass | **false**（N5 新 P0 + P0-3/N1″/⑧/P2-8/背景外查维持挂账） |
+| closedIds | 上轮N1（守卫标记门）、P0-1子阶段枚举、P1-6比例门 |

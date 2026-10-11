@@ -15,6 +15,7 @@ import re
 import threading
 import time
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, get_args, get_origin
 
@@ -42,6 +43,12 @@ from .medical_writing_content_quality import (
 )
 from .medical_writing_corpus_policy import CORPUS_GENERALIZATION_PROMPT_RULES
 from .medical_writing_repository import RuntimeStoreError, StaleRuntimeStateError
+from .medical_writing_external_literature import (
+    BACKGROUND_HEADING_RE,
+    apply_background_external_lookup,
+    external_lookup_outcome,
+    PubMedEUtilsClient,
+)
 from .medical_writing_authoring_prefill import SUPPORTED_ADOPT_PATHS
 from .medical_writing_protocol_template import company_template_semantic_node_map
 
@@ -354,6 +361,21 @@ def sample_size_declaration_check(text: str) -> dict | None:
             break
     one_sided = bool(re.search(r"单侧", raw))
 
+    # P1-6（NEW-BENCH-8/E9第四例）：比例型（率差）分支——连续量 SD/δ 解析
+    # 不到时改用假设解析器（p1/p2 → δ/SD 推导），与连续量同语义贯通
+    # （不一致→生成层改写+输入层阻断）。此前比例型恒判'要素未齐'不阻断
+    # （HS501：20%vs45%/双侧α0.05/90% → 需约69/组，声明45无门）。
+    assumptions = _parse_sample_size_assumptions(raw)
+    proportion_craft = assumptions.get("p1") is not None and assumptions.get("p2") is not None
+    if proportion_craft:
+        alpha = alpha if alpha is not None else assumptions.get("alpha")
+        power = power if power is not None else assumptions.get("power")
+        # 比例口径统一：δ 与 SD 一律取 p 对推导值（比例尺度）——连续量
+        # 正则可能把 '差值25个百分点' 误读为连续量 25，与比例 SD 尺度混用。
+        sd = assumptions.get("sd")
+        delta = abs(assumptions["p1"] - assumptions["p2"])
+        one_sided = one_sided or bool(assumptions.get("one_sided"))
+
     missing = [
         label
         for label, value in (
@@ -378,7 +400,19 @@ def sample_size_declaration_check(text: str) -> dict | None:
         }
     z_alpha = _z_value(alpha, one_sided)
     z_beta = _z_value(1 - power, True)
-    required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
+    if proportion_craft:
+        # 两比例 z 公式（非合并方差）：n=(z_α+z_β)²[p₁(1-p₁)+p₂(1-p₂)]/δ²
+        p1 = assumptions["p1"]
+        p2 = assumptions["p2"]
+        required = ((z_alpha + z_beta) ** 2) * (
+            p1 * (1 - p1) + p2 * (1 - p2)
+        ) / (delta ** 2)
+        assumption_note = (
+            f"比例假设（应答率{p1 * 100:g}% 对 {p2 * 100:g}%）"
+        )
+    else:
+        required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
+        assumption_note = f"差值{delta:g}、SD{sd:g}"
     required_ceil = max(2, int(required + 0.999))
     ratio = declared / required_ceil
     side = "单侧" if one_sided else "双侧"
@@ -388,8 +422,8 @@ def sample_size_declaration_check(text: str) -> dict | None:
             "declared_per_group": int(declared),
             "required_per_group": required_ceil,
             "detail": (
-                f"按您输入的差值/SD/α/把握度（组间差{delta:g}、SD{sd:g}、"
-                f"α={alpha:g}{side}、把握度{int(power * 100)}%）复算需"
+                f"按您输入的{assumption_note}、"
+                f"α={alpha:g}{side}、把握度{int(power * 100)}% 复算需"
                 f"{required_ceil}例/组，当前声明{int(declared)}例/组：请修正声明或调整假设。"
             ),
         }
@@ -850,6 +884,7 @@ def apply_full_draft_content_guards(
     *,
     anchor: str = "",
     endpoint_families: dict[str, bool] | None = None,
+    background_lookup_resolver: Callable[[Mapping[str, Any]], dict[str, Any]] | None = None,
 ) -> None:
     """全文初稿内容守卫统一入口（第3轮·守卫完整性）。
 
@@ -858,6 +893,11 @@ def apply_full_draft_content_guards(
     时，任何旁路采纳（逐节候选/快采/手工带出）都会把无守卫标记的正文
     送上纸面（NC401 现场：工件有锚点注记、导出无）。所有采纳路径统一
     调本函数；导出层另有'守卫标记缺失'三方一致性断言兜底。
+
+    P0-2（owner 20261001）：背景外查降级规则同批生效——
+    background_lookup_resolver 提供外查结果（live=PubMed E-utilities，
+    未注入=not_attempted 维持诚实降级），背景类 source_gap 且缺失源全部
+    属背景可覆盖族且外查命中时降级解除；药物特异缺失永不覆盖。
     """
     for item in sections:
         apply_sample_size_guard_to_section(item, anchor=anchor)
@@ -865,6 +905,8 @@ def apply_full_draft_content_guards(
         apply_statistics_assembly_guard_to_section(
             item, endpoint_families=endpoint_families
         )
+        if background_lookup_resolver is not None and isinstance(item, dict):
+            apply_background_external_lookup(item, background_lookup_resolver(item))
 
 
 def apply_dose_presence_guard_to_section(
@@ -994,6 +1036,18 @@ _PLACEHOLDER_RE = re.compile(
     r"(?:^|[\s，。；：])(?:待补充|待确认|待定|TBD|TODO|不适用|无适用内容|由方案规定|见方案规定)(?:$|[\s，。；：])",
     re.IGNORECASE,
 )
+# P0-2（N1门仲裁，新纪元第2轮末修订）：守卫刻意标记块——生成层剂量/统计
+# 装配/样本量守卫写入的【…待确认…】是工作产物（缺口语义由导出层缺口门
+# 接管→草案-N），不是占位缺陷；空内容门放行这些块，其余真占位照拦。
+_GUARD_SUSPENSION_BLOCK_RE = re.compile(
+    r"【(?:剂量待确认|剂量缺失|统计章分节装配待确认|样本量口径混写待确认|样本量待确认)[^】]*】"
+)
+
+
+def _placeholder_hits_outside_guard_blocks(text: str) -> list[str]:
+    """剔除守卫标记块后仍命中的占位词（真占位检测）。"""
+    stripped = _GUARD_SUSPENSION_BLOCK_RE.sub("", str(text or ""))
+    return [match.group(0) for match in _PLACEHOLDER_RE.finditer(stripped)]
 _REQUIRED_REVIEW_HEADING_RE = re.compile(
     r"^(?:方案概要|研究目的和终点|主要目的和主要终点|主要终点.*|研究设计|总体设计|"
     r"确证性设计与假设依据|随机化|盲法与揭盲|研究人群|研究人群选择及依据|"
@@ -1082,9 +1136,87 @@ class MedicalWritingFullDraftService:
         self,
         service_resolver: Callable[[str], Any],
         artifact_root: Path,
+        *,
+        background_external_client: PubMedEUtilsClient | None = None,
     ) -> None:
         self.service_resolver = service_resolver
         self.artifact_root = Path(artifact_root).expanduser().resolve()
+        # P0-2（owner 20261001）：背景外查客户端——未注入时背景降级规则按
+        # not_attempted 诚实留痕（不编造命中）；live 由组合根注入。
+        self.background_external_client = background_external_client
+
+    def build_background_lookup_resolver(
+        self, indication: str = ""
+    ) -> Callable[[Mapping[str, Any]], dict[str, Any]] | None:
+        """live 背景外查解析器：检索词=适应症+流行病学/指南/治疗；失败/空
+        命中/网络异常一律按 failed 留痕（不阻断生成主线）。未注入客户端
+        返回 None（守卫按 not_attempted 处理）。"""
+        client = self.background_external_client
+        if client is None:
+            return None
+        base = str(indication or "").strip()
+        query = (
+            f"{base} epidemiology treatment guideline".strip()
+            if base
+            else "clinical practice guideline epidemiology"
+        )
+
+        def resolver(section: Mapping[str, Any]) -> dict[str, Any]:
+            if not BACKGROUND_HEADING_RE.search(str(section.get("heading") or "")):
+                return external_lookup_outcome(status="not_attempted", note="非背景章")
+            try:
+                outcome = client.search(query, retmax=5)
+                pmids = list(outcome.get("pmids") or [])
+                if not pmids:
+                    return external_lookup_outcome(
+                        status="failed", note="PubMed 检索无命中"
+                    )
+                fetched = client.fetch_records(pmids)
+                records = list((fetched.get("records") or {}).values())
+                if not records:
+                    return external_lookup_outcome(
+                        status="failed", note="PubMed 元数据不可用"
+                    )
+                return external_lookup_outcome(
+                    status="hit", records=records, note="PubMed 命中"
+                )
+            except Exception as exc:  # 网络/解析失败 → 诚实降级
+                return external_lookup_outcome(
+                    status="failed", note=f"外查失败：{exc}"
+                )
+
+        return resolver
+
+    def _adopted_jobs_path(self, project_id: str) -> Path:
+        safe = "".join(ch if ch.isalnum() or ch == "_" else "_" for ch in project_id)
+        return self.artifact_root / "adopted_jobs" / f"{safe}.json"
+
+    def mark_adopted(self, project_id: str, job_id: str) -> None:
+        """P0-3（NEW-20）：采纳 consumed 标记——文档会话维度持久化，使
+        /full-drafts/current 不再返回已采纳作业（浮层复活根治）。"""
+        path = self._adopted_jobs_path(project_id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        payload: dict = {}
+        if path.exists():
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                payload = {}
+        adopted = set(payload.get("adopted_job_ids") or [])
+        adopted.add(str(job_id))
+        payload["adopted_job_ids"] = sorted(adopted)
+        payload["updated_at"] = datetime.now(timezone.utc).isoformat()
+        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    def is_adopted(self, project_id: str, job_id: str) -> bool:
+        path = self._adopted_jobs_path(project_id)
+        if not path.exists():
+            return False
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        return str(job_id) in set(payload.get("adopted_job_ids") or [])
 
     def _service(self, project_id: str) -> Any:
         service = self.service_resolver(project_id)
@@ -1613,6 +1745,9 @@ class MedicalWritingFullDraftService:
             "评价者或其他人员的盲态范围。"
             "除方案概要、研究设计、目的终点和样本量章节外，不要重复整套样本量、剂量、主要终点、"
             "随机和盲法信息，只写与本章节直接相关的事实。"
+            "样本量章节：正文数字只准来自按声明五要素（率差或差值/SD/α/把握度）的系统复算"
+            "输出（连续量或两比例公式），不得自行心算、凑整或另写与声明假设脱节的例数；"
+            "系统会按同一公式复算并把不一致改写为复算值。"
             "每章用evidence_span_ids绑定本次evidence_spans中的直接依据，并将needs_medical_confirmation设为true。"
             "每章还必须返回content_status、decision_items和missing_source_classes。"
             "事实充分时用complete并返回完整正文。只有本批次列出的待确认研究字段能够完整承载一个"
@@ -1629,6 +1764,18 @@ class MedicalWritingFullDraftService:
             "‘由团队确认’或其他写作方式选择冒充科学决定。"
             "探索性目的与终点的选项必须包含‘本研究不设置探索性目的/终点’，不能强迫确证性研究新增"
             "探索程序；目的和终点的推荐必须能够成对对应。"
+            "\n背景类章节综述式撰写三步法（研究背景/疾病背景/治疗现状/治疗格局章适用，"
+            "owner 裁定 20261001）：第一步，evidence_spans 中竞品方案的背景/疾病背景/"
+            "治疗格局片段可借鉴改写（措辞与结构可继承，竞品的药物、人群、剂量、终点、"
+            "样本量一律不得继承）；第二步，本批附带的PubMed外部文献条目（含PMID）在"
+            "命中时必须作为最新证据融入，缺流行病学/指南/治疗现状来源且外查已命中时"
+            "不得判source_gap（外查失败才降级）；研究药物自身数据（IB/非临床/既往临床）"
+            "缺失不受此规则影响，仍必须source_gap；第三步，按学术论文综述结构组织"
+            "（流行病学 burden → 现有治疗与指南 → 未满足需求 → 本研究立题），有引用"
+            "（PMID角标由系统统一渲染，正文不得自写文末参考文献列表）、有逻辑链、有"
+            "递进。篇幅与故事线以竞品方案为尺：命中竞品样本≥2份时按其段落/字数分布"
+            "与行文结构对齐；样本不足2份时采用默认学术结构并在rationale如实标注"
+            "‘竞品样本不足，按学术结构撰写’。"
             "\n语料泛化规则（全部适用）：\n"
             f"{corpus_rules}"
         )
@@ -2554,8 +2701,16 @@ class MedicalWritingFullDraftService:
             "探索性终点": bool(picos_payload.get("exploratory_endpoints")),
         }
         # 第3轮·守卫完整性：统一入口（与所有采纳路径共享同一守卫集）。
+        # P0-2：背景外查 live 解析（framing 适应症作检索词；客户端未注入
+        # 时 resolver=None → 背景降级规则按 not_attempted 诚实留痕）。
+        framing_payload = (expected.get("authoring_journey") or {}).get("framing") or {}
         apply_full_draft_content_guards(
-            all_sections, anchor=anchor, endpoint_families=endpoint_families
+            all_sections,
+            anchor=anchor,
+            endpoint_families=endpoint_families,
+            background_lookup_resolver=self.build_background_lookup_resolver(
+                str(framing_payload.get("indication") or "")
+            ),
         )
         required_review_ids = [
             str(item.get("section_id") or "")
@@ -2910,14 +3065,25 @@ class MedicalWritingFullDraftService:
                 continue
             candidate = candidates[section_id]
             proposal = _text(candidate.get("proposal_text"))
+            # P0-2：未决草稿标记检查同样先剔除守卫标记块——守卫块里的
+            # '待确认'是工作产物；传输词与草稿过程语两检查保持全文（守卫
+            # 块为系统受控文本，不含此类词，防伪造marker夹带）。
+            guard_block_free = _GUARD_SUSPENSION_BLOCK_RE.sub("", proposal)
             if (
                 len(proposal) < FULL_DRAFT_MINIMUM_BODY_CHARS
-                or _PLACEHOLDER_RE.search(proposal)
+                or _placeholder_hits_outside_guard_blocks(proposal)
                 or INTERNAL_TRANSPORT_VOCABULARY_RE.search(proposal)
                 or DRAFTING_PROCESS_VOCABULARY_RE.search(proposal)
-                or next(iter_unresolved_draft_markers(proposal), None)
+                or next(iter_unresolved_draft_markers(guard_block_free), None)
             ):
-                raise RuntimeStoreError(f"全文初稿章节候选不具备实质内容：{section_id}")
+                # P0-2（r1-N3 族人话化）：拒绝文案用节号，不裸奔内部节 ID。
+                section_number = str(
+                    candidates.get(section_id, {}).get("section_number")
+                    or section_id
+                )
+                raise RuntimeStoreError(
+                    f"全文初稿章节候选不具备实质内容：{section_number}"
+                )
             current = repo.working_copy(project_id, section_id)
             blocks = [dict(block) for block in current.content_blocks]
             body_index = next(
@@ -2926,27 +3092,65 @@ class MedicalWritingFullDraftService:
             )
             if body_index is None:
                 raise RuntimeStoreError(f"全文初稿目标正文块不存在：{section_id}")
-            current_text = _text(blocks[body_index].get("text"))
-            if current_text == proposal:
+            # P0-1（N1″重锚）：目标表仅作正文差异基线——快照 expected_
+            # revision 不再作硬门（工件构建后任何节修订号跟涨都曾让首个
+            # 未写节恒定撞『章节版本变化』、整批采纳死路）；正文快照哈希
+            # 保留为人工编辑保护（文本==proposal 自动回放，被人工改过的
+            # 正文仍拦截）；写入以刚读 revision 为锚的 save CAS 防并发；
+            # save 冲突时按 live 状态重锚续跑（文本==proposal 者自动回放），
+            # 有界重试仍冲突才上抛。
+            if hashlib.sha256(_text(blocks[body_index].get("text")).encode("utf-8")).hexdigest() != str(target.get("body_sha256") or ""):
+                replay_body = _text(blocks[body_index].get("text"))
+                if replay_body == proposal:
+                    replayed.append(section_id)
+                    continue
+                raise StaleRuntimeStateError(f"全文初稿采纳遇到正文变化：{section_id}")
+            replayed_here = False
+            saved = None
+            expected_next_revision = None
+            for attempt in range(3):
+                if attempt:
+                    current = repo.working_copy(project_id, section_id)
+                    blocks = [dict(block) for block in current.content_blocks]
+                    body_index = next(
+                        (index for index, block in enumerate(blocks) if str(block.get("block_id")) == str(target.get("body_block_id"))),
+                        None,
+                    )
+                    if body_index is None:
+                        body_index = next(
+                            (index for index, block in enumerate(blocks) if str(block.get("block_type")) == "paragraph"),
+                            None,
+                        )
+                    if body_index is None:
+                        raise RuntimeStoreError(f"全文初稿目标正文块不存在：{section_id}")
+                current_text = _text(blocks[body_index].get("text"))
+                if current_text == proposal:
+                    replayed_here = True
+                    break
+                blocks[body_index]["text"] = proposal
+                expected_next_revision = current.revision + 1
+                try:
+                    saved = repo.save_working_copy(
+                        project_id,
+                        section_id,
+                        MedicalWritingWorkingCopySaveRequest(
+                            document_id=document.document_id,
+                            expected_revision=current.revision,
+                            content_blocks=blocks,
+                            actor=actor,
+                            idempotency_key=f"full-draft-adopt:{job.job_id}:{section_id}",
+                        ),
+                    )
+                    break
+                except StaleRuntimeStateError:
+                    if attempt >= 2:
+                        raise
+                    continue
+            if replayed_here:
                 replayed.append(section_id)
                 continue
-            if current.revision != int(target.get("expected_revision") or 0):
-                raise StaleRuntimeStateError(f"全文初稿采纳遇到章节版本变化：{section_id}")
-            if hashlib.sha256(current_text.encode("utf-8")).hexdigest() != str(target.get("body_sha256") or ""):
-                raise StaleRuntimeStateError(f"全文初稿采纳遇到正文变化：{section_id}")
-            blocks[body_index]["text"] = proposal
-            expected_next_revision = current.revision + 1
-            saved = repo.save_working_copy(
-                project_id,
-                section_id,
-                MedicalWritingWorkingCopySaveRequest(
-                    document_id=document.document_id,
-                    expected_revision=current.revision,
-                    content_blocks=blocks,
-                    actor=actor,
-                    idempotency_key=f"full-draft-adopt:{job.job_id}:{section_id}",
-                ),
-            )
+            if saved is None:
+                raise RuntimeStoreError(f"全文初稿采纳未完成章节写入：{section_id}")
             if saved.revision != expected_next_revision:
                 raise RuntimeStoreError(f"全文初稿采纳未形成预期章节版本：{section_id}")
             adopted.append(section_id)

@@ -398,8 +398,8 @@ def _gap_placeholder_block(
     heading = str(section.get("heading") or "").strip() or "本节"
     text = re.sub(
         r"^本节采用标准监管文本骨架（[^）]*）。",
-        f"本『{heading}』章节正文为参数化标准文本骨架，范围限本节"
-        f"（{heading}）；",
+        f"本『{heading}』章节为标准模板草稿，范围限本节；"
+        "待医学经理审核确认。",
         text,
         count=1,
     )

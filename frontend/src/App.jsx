@@ -10830,6 +10830,12 @@ function WritingPage({
           `全文初稿已写入 ${payload.adopted_count || 0} 个章节（重放 ${payload.replayed_count || 0} 个），请继续逐章审阅后再冻结。`,
         );
         localStorage.removeItem(fullDraftStorageKey);
+        // P0-3（NEW-20）：采纳成功即失效在途作业监视与候选状态——服务端
+        // consumed 标记使 /full-drafts/current 返回 204，restore 效应不再
+        // 复活浮层遮挡'预览 Word'。
+        fullDraftRunRef.current = "";
+        setFullDraftJob(null);
+        setFullDraftArtifact(null);
         setFullDraftReviewOpen(false);
         setWorkingCopyReloadNonce((value) => value + 1);
         await refreshDocumentSession();

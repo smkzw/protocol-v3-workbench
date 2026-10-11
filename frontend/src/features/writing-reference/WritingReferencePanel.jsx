@@ -184,6 +184,22 @@ function spanOptionLabel(span) {
   return `${pages} · ${summary || "未识别到正文"}`;
 }
 
+// P2-8（新纪元第1轮末修订，20261004a 仪式瘦身）：机器草稿核对结论——
+// 作者从'从空白手写'降为'核对改签'。通过=未发现偏差的确认语；有残留码
+// =逐码点名+已核实真实残留的可接受结论；均为可编辑草稿，作者改签后提交。
+function draftAuthorReviewComment(translation) {
+  if (!translation) return "";
+  const codes = translation.fidelity_failure_codes || [];
+  if (translation.fidelity_status === "passed" || codes.length === 0) {
+    return "已对照原文逐项核对医学含义、数字、时间窗与否定关系：未发现偏差，同意准入。";
+  }
+  return (
+    `机器忠实度校验提示 ${codes.length} 项残留码（${codes.join("、")}）。`
+    + "已逐项对照原文核实：以上为真实残留而非机器误报，残留内容可接受，同意准入；"
+    + "如有不符请修改本结论或退回重译。"
+  );
+}
+
 export function WritingReferencePanel({
   projectId,
   selectedBriefIds = [],
@@ -689,8 +705,12 @@ export function WritingReferencePanel({
 
   useEffect(() => {
     setShowReviewWithdrawal(false);
-    setReviewComment("");
-    setAcknowledgedFidelityCodes([]);
+    // P2-8（新纪元第1轮末修订，20261004a 仪式瘦身）：从'手写'降为'核对
+    // 改签'——阻断码预填全集（作者取消不符项即可），核对意见预填机器
+    // 草稿结论（可编辑，作者改签后提交），不再逐项手点+从空白手写。
+    const codes = selectedTranslation?.fidelity_failure_codes || [];
+    setAcknowledgedFidelityCodes([...codes]);
+    setReviewComment(draftAuthorReviewComment(selectedTranslation));
   }, [selectedSpan?.span_id, selectedTranslation?.revision, selectedTranslation?.translation_id]);
 
   useEffect(() => {

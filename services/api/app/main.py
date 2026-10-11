@@ -244,6 +244,7 @@ from .medical_writing_full_draft import (
     MedicalWritingFullDraftService,
     ProtocolFullDraftExecutor,
 )
+from .medical_writing_external_literature import PubMedEUtilsClient
 from .writing_reference_translation_batch import TranslationBatchDurableExecutor
 from .medical_writing_document import MedicalWritingDocumentService
 from .medical_writing_authoring_journey import (
@@ -2749,6 +2750,11 @@ real_medical_writing_revision = MedicalWritingRevisionService(
 medical_writing_full_draft_service = MedicalWritingFullDraftService(
     service_resolver=_mw_service_resolver,
     artifact_root=RUNTIME_DIR / "medical_writing_full_drafts",
+    # P0-2（owner 20261001）：背景自主外查——PubMed E-utilities live 客户端，
+    # 检索原文留档在 runtime 外查档案区；失败/无命中诚实降级 source_gap。
+    background_external_client=PubMedEUtilsClient(
+        archive_dir=RUNTIME_DIR / "external_literature_archive",
+    ),
 )
 
 
@@ -8301,6 +8307,10 @@ def get_current_medical_writing_full_draft(project_id: str):
         status="completed",
     )
     for record in reversed(records):
+        # P0-3（NEW-20）：已采纳作业被 consumed 标记排除——restore 效应
+        # 不再复活浮层遮挡'预览 Word'。
+        if medical_writing_full_draft_service.is_adopted(canonical_id, record.job_id):
+            continue
         if medical_writing_full_draft_service.candidate_is_current(canonical_id, record):
             return _public_durable_job_dict(record)
     return Response(status_code=204)
@@ -8483,6 +8493,9 @@ def adopt_medical_writing_full_draft(project_id: str, job_id: str, request: dict
             # 复测N1（第3轮）：逐节重复处置表（skip/adopt_with_gap）。
             duplicate_dispositions=request.get("duplicate_dispositions") or None,
         )
+        # P0-3（NEW-20）：采纳成功即写 consumed 标记（前端同时令
+        # fullDraftRunRef 失效），/full-drafts/current 不再返回本作业。
+        medical_writing_full_draft_service.mark_adopted(canonical_id, job_id)
         return result
     except HTTPException:
         raise
@@ -11211,7 +11224,7 @@ def _export_placeholder_report(document) -> dict:
             {
                 "section_number": skeleton["section_number"],
                 "section_heading": skeleton["section_heading"],
-                "reason": "章节正文为参数化标准文本骨架（待医学经理按项目实际审核确认后转正式文本）",
+                "reason": "本章节为标准模板草稿，范围限本节；待医学经理审核确认后转正式文本",
             }
         )
     return {

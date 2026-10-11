@@ -140,7 +140,19 @@ ALLOWED_FIELD_PATHS_BY_SCOPE: Dict[MedicalWritingFactIntakeScope, Tuple[str, ...
 }
 
 FIELD_ENUM_VALUES: Dict[str, Tuple[str, ...]] = {
-    "framing.study_phase": ("I期", "I/II期", "II期", "II/III期", "III期"),
+    # P0-1（NEW-18，新纪元第2轮末修订）：子阶段补齐——前端下拉（第1轮
+    # NEW-8 修复）含 IIa/IIb/Ib 期而后端枚举缺位，建项选子阶段后首条
+    # fact-intake turn 即 422（r2-A i2-05 横幅实证）。
+    "framing.study_phase": (
+        "I期",
+        "Ib期",
+        "I/II期",
+        "II期",
+        "IIa期",
+        "IIb期",
+        "II/III期",
+        "III期",
+    ),
     "framing.product_profile.technology_type": (
         "unknown",
         "monoclonal_antibody",
@@ -185,6 +197,11 @@ FIELD_VALUE_ALIASES: Dict[str, Dict[str, str]] = {
         "phase 1": "I期",
         "1期": "I期",
         "一期": "I期",
+        "ib": "Ib期",
+        "phase ib": "Ib期",
+        "phase 1b": "Ib期",
+        "1b": "Ib期",
+        "1b期": "Ib期",
         "i/ii": "I/II期",
         "phase1/2": "I/II期",
         "phase i/ii": "I/II期",
@@ -194,6 +211,18 @@ FIELD_VALUE_ALIASES: Dict[str, Dict[str, str]] = {
         "phase ii": "II期",
         "phase 2": "II期",
         "2期": "II期",
+        "iia": "IIa期",
+        "ii a": "IIa期",
+        "2a": "IIa期",
+        "2a期": "IIa期",
+        "phase iia": "IIa期",
+        "phase 2a": "IIa期",
+        "iib": "IIb期",
+        "ii b": "IIb期",
+        "2b": "IIb期",
+        "2b期": "IIb期",
+        "phase iib": "IIb期",
+        "phase 2b": "IIb期",
         "二期": "II期",
         "ii/iii": "II/III期",
         "phase2/3": "II/III期",

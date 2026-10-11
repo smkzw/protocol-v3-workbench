@@ -173,9 +173,17 @@ describe("fidelity-residual author admission (R26 self-check #3 P0-A)", () => {
     const codeB = screen.getByLabelText(/source_abbreviation_missing/);
     const commentBox = screen.getByLabelText(/核对说明|作者核对意见/);
     const admit = screen.getByRole("button", { name: /确认译文并准入（已核对全部忠实度残留）/ });
-    expect(admit.disabled).toBe(true);
+    // P2-8 仪式瘦身（20261004a，新纪元第1轮末修订）：阻断码默认全选
+    // （勾选语义=取消不符项的改签），核对意见预填机器草稿结论——
+    // 打开面板时准入即就绪；取消任一阻断码才回到禁用。
+    expect(admit.disabled).toBe(false);
 
     fireEvent.click(codeA);
+    expect(admit.disabled).toBe(true);
+    fireEvent.click(codeA);
+    expect(admit.disabled).toBe(false);
+    fireEvent.click(codeB);
+    expect(admit.disabled).toBe(true);
     fireEvent.click(codeB);
     fireEvent.change(commentBox, { target: { value: "已逐项对照原文，数字与缩写残留确认为格式性问题。" } });
     expect(admit.disabled).toBe(false);

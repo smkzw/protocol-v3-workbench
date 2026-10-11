@@ -199,3 +199,92 @@
 | 新缺陷 | N1 P0 采纳被重复门自撞阻断（含 N3 内部ID直出）；N2 P0 工作副本保存死路；N4 外查裁定未落地核实 |
 | allPass | **false**（⑦⑧维持挂账 + N1/N2 两条新 P0） |
 | closedIds | P0-27、P1-48 |
+
+---
+
+# retest_r1(v2) · 复测报告（2026-10-11 09:24–12:30，复测协调员）
+
+> 本节为 dwfrun 恢复后（R4 复盘→修订批）的再测试，对**2026-10-11 晨修订批**（工作树未提交：`medical_writing_external_literature.py` 新增、`medical_writing_full_draft.py` 采纳CAS重锚+背景守卫、`main.py` 客户端注入、`models.py` 样本量口径指纹【10-09批遗留】、`WritingReferencePanel.jsx` 忠实度仪式瘦身、四个新测试文件）做真实浏览器用户视角验证。上方 2026-10-04/10-09 两节原样保留不作废。
+
+- 被测现场：HEAD=674e5123 + 本轮未提交修订批（最后源码修改 09:16）。后端 5301 pid 24818（09:28:10 起 > 09:16，含全部修订）；vite 5186 pid 24907 显式 `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 --host 127.0.0.1 --port 5186 --strictPort`（进程 env 实测 ✓，日志 `retest_r1_v2_vite_20261011.log`）。
+- 指纹三方一致：后端 `/api/runtime-readiness` 自报 `backend_build_id=api-f2b9c4d4635834d3` = vite dev 中间件现算 `/runtime-build.json` 期望值 = 经 5186 代理读值，三方一致 ✓（浏览器全程无版本门拦截）。
+- 测试者：复测协调员本人，浏览器黑盒（camofox）。工具等价如实披露（与历轮同款）：①camofox click 多处 30s 超时未派发，改用 DOM `.click()`（同一事件路径）；②React 受控输入以原生 value setter + input/change 事件等价录入；③camofox 共享实例标签页约 5 分钟被回收 3 次，重开并经项目下拉恢复现场，期间以只读 GET `/medical-writing/jobs/{id}` 轮询生成进度（取证，不推进状态）；④导出件经产品下载接口归档（字节与浏览器保存一致）。
+- 新建项目（只新建）：**MW-II-847F2D95 / proj_user_f4646e04bf3f**（入口A从零：KZ-HS501（口服选择性TYK2变构抑制剂缓释片）· 化脓性汗腺炎（Hidradenitis Suppurativa，中重度）· II期）——159 项目无 HS、无口服 TYK2 用例；慢性咳嗽+P2X3 已被 5 个历史项目占用故弃用；避开用户禁用清单。
+- 证据：`retest_r1_v2_shots/`（4 截图）、`retest_r1_v2_material/`（OCR 探针、drill 产物、导出件、过程检查点 `checkpoint_progress.md`）。
+
+## 一、单元证据（实现师反例测试实跑，全绿）
+
+`pytest tests/test_full_draft_adopt_reanchor_p5.py tests/test_external_literature_background_p5.py tests/test_full_draft_chunk_fault_injection.py -v` → **19 passed**（采纳CAS重锚 T1/T2/T3；背景外查 R1–R6 六反例+归档/引用格式/知网边界；507/空回包注入）；`pytest tests/test_fidelity_review_ritual_p2_8.py` → **3 passed**；`npx vitest run --environment jsdom src/features/writing-reference/WritingReferencePanel.residualAdmission.test.jsx` → **2 passed**（首跑 2 failed 系本协调员漏加 `--environment jsdom`，复跑带参全绿——非产品问题，如实记）。FAST 门 `gate_logs/fastgate.log`：44 passed。
+
+## 二、fixed_pending_verify 逐项（再测试②）
+
+生成窗口：全文初稿 `POST full-drafts` 202 → job **mwjob_d4df91d2f28945acccba4097** → 10:30–11:59 全 21 批完成（84/84 章节候选，**skipped_chunks=0**，provider=mtplx / mtplx-flash-next-optimized-speed 路由全程正确）。
+
+### 1) P0-2 背景自主外查（owner 20261001）——服务层实弹 ✅ / 生成层未闭环 ✗，**维持挂账+新立案 N2(P1)**
+
+- **服务层实弹命中+留档 ✅**：生成完成时 `isolated_runtime/external_literature_archive/` 出现真实归档——`esearch_20261011T035806Z_*.json`（querytranslation=hidradenitis suppurativa+epidemiology+treatment+guideline，count=15，retmax=5，PMID 42610770/41865977/41603075…）+ `efetch_20261011T035806Z_*.xml`（5 篇 131KB 原始 XML）。混合中英文适应症词经 PubMed 正常命中（CJK 词元被注册库忽略，本协调员前置探针 Count=15 实证）。真实 PMID 可回验。
+- **生成层未闭环 ✗（新 N2 · P1）**：工件 2.1「疾病背景及治疗现状」仍 `content_status=source_gap`、`background_external_lookup=null`（连 not_attempted/failed 留痕都没有）；界面同现「暂不可采用·缺来源」。根因（代码实读）：`medical_writing_external_literature.py:414` `background_gap_classes_overridable` 要求缺失类 ⊆ 枚举族 {epidemiology, guidelines, disease_burden, treatment_landscape}，而真实工件的 `missing_source_classes` 是模型产出的中文自由文本（「化脓性汗腺炎流行病学与疾病负担数据」「中国或国际HS诊疗指南」「当前HS系统治疗格局与未满足需求综述」「竞品方案疾病背景/治疗格局参考片段（同适应症）」）——枚举匹配恒失败 → 降级永不触发；且 `apply_background_external_lookup` 在 overridable 不过时直接 return，无任何留痕。单测用枚举形态（test L138 `["epidemiology","guidelines","treatment_landscape"]`）绿、真实形态红——**反例未覆盖真实数据形态**。另一切面：模型 2.1 凭据自述「当前允许来源中无PubMed外部文献条目」——记录仅在装配期守卫处获取，未注入生成上下文，综述三步法第二步「外查文献融入」未发生。药物特异边界正确：2.3/2.3.1/2.3.2 维持 source_gap 且凭据明示「缺失不受外部检索影响，业务标签source_gap」✓。
+
+### 2) N1″ 采纳链 CAS 重锚（R4 复盘 P0）——修复已落+单元绿；浏览器批量采纳被**既有门打架死路**挡在写入相之前，**维持 fixed_pending_verify** + 新立案 N1(本轮)(P0)
+
+浏览器序列：确认关键章节并采用全文 → 第1次 POST adopt **409**（重复门，结构化处置面板正常点出 13 节，人话文案+跳过/仍要采纳/重新生成三出路——N1′修复面 live 在位）；逐节选「跳过」→ 第2次 POST adopt **409**「全文初稿采纳失败：全文初稿章节候选不具备实质内容：mwsec_greenfield_proj_user_f4646e04bf3f_f60f78d99e03c2ce」。代码实读：`medical_writing_full_draft.py:3001`（HEAD 既有行 2920，非本批引入）对**所有非 gap 候选**做占位标记正则一票否决；而既有剂量守卫（E13/E14）已向 6.5「研究治疗依从性」、7.1.4「研究治疗终止退出」写入「【剂量待确认：…】」、统计装配守卫向 9「统计分析」、9.5「安全性数据分析」写入「【统计章分节装配待确认：…】」（4 节 partial 带标记，工件实读）→ **含守卫标记的工件上批量采纳恒定 409，且重新生成确定性再标记，无用户出路**——r1-N1「门与门打架一票否决」族的新切面。CAS 重锚代码因此不可经批量采纳到达（单测 T1/T2/T3 绿）。附带：该错误文案直出内部节 ID `mwsec_greenfield_…`（r1-N3 族在空内容门复现；重复门本体已人话化）。
+
+### 3) ⑧ P0-25 初稿校验宽容度/507/批次跳过——本轮 21 批全净（0 失败 0 重试 0 跳过，无自然窗口）；实现师补齐注入级收臂证据（507 注入 → 跳过+整单续跑+退避+心跳「已跳过」2 反例全绿）。**维持 fixed_pending_verify**（收臂证据在库，等自然窗口或 owner 裁定接受注入级证据关闭）。
+
+### 4) P2-8 忠实度仪式瘦身（20261004a 方向）——单测+代码证据绿；浏览器不可达（本链竞品分诊确定性失败 `no_public_protocol`【HS 检索无公开 Protocol 文档，pipeline status 实录：stage=failed 32%、child 16/19、error_summary=ResearchPipelineError…deterministic corpus disposition: no_public_protocol】→ 5 缺口例外放行进入写作平台，无译文可审），**维持 fixed_pending_verify**。恢复路径现场（新 N4 · P1）：「继续未完成分诊/按当前信息重新分诊」→「project material facts have changed since the run was created」拒绝续跑，「重新检索竞品」→ 409×6（约 10 分钟内），无取消/终止入口；数分钟后重试实际重启了新一轮分诊（3/19 后同样 no_public_protocol 收敛）——失败恢复缺确定性出路，成功靠重试撞窗口。
+
+### 5) r1-N2 工作副本保存死路（上轮新 P0）——**修复 live 验证通过 ✅→关闭**：创建工作副本后出现「检测到未完成的初始保存：内容已就绪，点击『保存版本』完成工作副本初始化（生成版本 1）」→ 点「保存工作副本」→ 版本 1 保存成功、遮罩解除、冻结按钮恢复可用（截图 `03-写作平台-工作副本版本1-N2恢复路径生效.png`）。小瑕疵：提示文案『保存版本』与实际按钮『保存工作副本』不一致（P3 观感，不碍关闭）。
+
+### 6) r1-N1（重复门自撞阻断采纳）——重复门本体修复经本轮 live 复证（处置面板贯通、处置被服务端接受、采纳推进到下一道门）→ **关闭**（其族新切面另立 N1(本轮)）。r1-N3（重复门内部ID直出）——重复门文案已人话化 → **关闭**（同族在空内容门复发归入 N1(本轮) 附带项）。
+
+## 三、回归抽查（再测试③，2 关键点）
+
+1. **建项**：三字段（药物/适应症/分期下拉）单次点击建成 MW-II-847F2D95 并进入研究设计引导 → **重过 ✅**
+2. **导出（预览 Word）**：占位拦截逐章点名（60 处【待补齐】，1/2.1/2.3/…逐节列数）→「知悉占位，仍导出草稿预览」→ 真实 OOXML（mwjob_9ae3f4e1629726e3495c6617，62,681 字节，390 段/6 表，KZ-HS501×43、化脓性汗腺炎×26、HiSCR75×18、208例×4、剂量出处待标注×2；【V1】0 处；归档 `retest_r1_v2_material/RT1V2_HS501_preview_export.docx`，file=Microsoft OOXML）→ **重过 ✅**
+
+## 四、OCR 环境功能验证（③类）
+
+`POST /api/ai-gateway/roles/ocr/probe-visual`（profile=ocr_local_omlx，09:29）→ **HTTP 200 · passed=true · GLM-OCR-bf16 · 17.0s**（`retest_r1_v2_material/ocr_probe_r1v2.json`）。
+
+## 五、并发仲裁 300s 双负载复跑（再测试④）
+
+`python3 retest_r1_v2_drill.py`（round26/r3 脚本原样，12:13 实跑；产物 `concurrency_drill_events.jsonl`/`concurrency_drill_summary.json`）：
+
+| 相 | 请求数 | 通过 | 未通过 | 最快 | 最慢 |
+|---|---|---|---|---|---|
+| translation（oMLX） | 1088 | **1088** | 0 | 0.23s | 9.7s（首请求冷态） |
+| triage（MTPLX） | 1 | 1 | 0 | — | 620.4s（翻译满载下全程排队，释放后执行；r2=602s/r3=600s 同族，客户端耐心 P2 既有挂账） |
+
+- **重量级无双载 ✅**：61 采样中 60 样本 MTPLX 端口未起；唯一 1/61 样本（12:13:18.221，相位交接瞬间）oMLX 侧仅 **MarkItDown 小 helper** 驻留（非推理模型，R4 收官清点已认定其驻留属正常）+ MTPLX 拉起——翻译相 GLM/Qwen 重量级模型与 MTPLX 全程零共存。跨相位排队 620s 仍为既有 P2 族。
+
+## 六、顺带核实：P1-48 样本量锚点（r1 已关闭项）——疑似回归信号，挂观察
+
+第二步「样本量依据（可选锚点）」录入「锚点：KZ-HS501-201 Ib期多次给药耐受性与药代动力学研究（内部IB v1.2，§7.3 群体PK与暴露-应答分析）」→ 工件 `sample_size_provenance="已具名（锚点：KZ-HS501-201…§7.3…）"` **逐字入 provenance ✓**；但正文上纸为意译「（样本量依据：数据来源：申办方内部资料（IB v1.2））」，全工件无「锚点：KZ-HS501-201」逐字正文（r1 关闭标准=逐字上纸，r1 现场 KZ-NC401-101 全串逐字在正文）。行为与 r1 已验证状态不一致——疑似 10-09 P1-53 口径指纹批改动了上纸渲染路径。因采纳未走通，上纸终态未定，挂观察待实现师核对（本轮不据此重开，亦不追加关闭）。
+
+## 七、三句式界面评价
+
+- **美观性**：审阅面板「AI 还缺这些资料」结构化缺源卡片、导出占位逐章点名保持预清理后的整齐水准；无新增裸工程残留（除 N1(本轮) 的 mwsec ID 一处）。
+- **易用性**：r1-N2 恢复出路是本轮最贴心的进步（死路变成了带指引的一键完成）；但「采纳全文」在守卫标记面前仍是无出路的 409（用户不知道 4 个节带标记、更不知道无解）；竞品调研失败后的三处入口互相拒绝、无取消，用户会被卡 10 分钟以上。
+- **逻辑性**：守卫诚实（缺剂量/缺统计要素如实标注且拒绝带标记上正稿）与采纳门（拒绝含标记候选）各自正确、组合起来互相锁死——门与门的仲裁与降级设计仍是全链最薄弱一环；背景外查「宁可不错也不假降级」方向诚实，但 owner 要的「外查优先解除阻断」尚未兑现。
+
+## 八、收尾
+
+- 浏览器任务空间已清（camofox `list_tabs` 实测 tabs=[]）；/tmp 无探针残留；生成 job terminal（completed）无 GPU 占用；8001/8002 在线为编排器按需管理之正常驻留，未手工触碰。本轮只新建 1 个项目（MW-II-847F2D95），未动任何历史项目/数据。
+
+## 九、判定汇总
+
+| 项 | 结论 |
+|---|---|
+| P0-2 背景外查 | 服务层命中+留档 ✅；生成层降级未触发+记录未注入（N2·P1 新立）→ **维持挂账** |
+| N1″ 采纳 CAS 重锚 | 修复已落+单元3反例绿；批量采纳被既有标记门一票否决（N1(本轮)·P0 新立）挡在写入相前 → **维持 fixed_pending_verify** |
+| ⑧ P0-25 | 21 批全净无自然窗口；注入级收臂证据入库 → **维持 fixed_pending_verify** |
+| P2-8 忠实度仪式 | 单测绿；浏览器链路因 no_public_protocol+例外放行不可达（N4·P1 新立：失败恢复无确定性出路）→ **维持 fixed_pending_verify** |
+| r1-N2 工作副本保存死路 | 检测+出路 live 验证 → **关闭 ✅** |
+| r1-N1 / r1-N3 | 重复门本体修复 live 复证 → **关闭 ✅**（标记门新切面另立 N1(本轮)） |
+| OCR 环境 | 200 / passed=true / 17.0s ✓ |
+| 回归抽查（建项/导出） | 2/2 重过 ✅（导出 60 占位逐章点名、真 OOXML） |
+| 并发仲裁双负载 | **重量级无双载 ✅**（60/61 样本 MTPLX 未起；1/61=MarkItDown helper+相位交接） |
+| P1-48 锚点 | provenance 逐字 ✓ / 正文意译（r1=逐字）→ 疑似回归，挂观察 |
+| 新缺陷 | N1(本轮)·P0 采纳标记门一票否决死路（含内部ID复发）；N2·P1 背景外查生成层未闭环；N4·P1 竞品调研失败恢复无出路；P1-48 意译上纸（观察） |
+| allPass | **false**（四项维持挂账 + 新 P0 一条 + P1 两条） |
+| closedIds | r1-N2、r1-N1、r1-N3 |

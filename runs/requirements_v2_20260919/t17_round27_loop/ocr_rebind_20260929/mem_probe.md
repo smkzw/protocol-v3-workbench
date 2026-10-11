@@ -377,3 +377,39 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论：双模型同驻共存无互斥卸载（co_resident=true），与历轮一致。证据：`../env_precheck_newera_r4_20261010/`。
 
 红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；并行线 ego 空间未动。
+
+---
+
+# 复测 · 2026-10-11 12:29–12:34 CST（新纪元LOOP·环境预检·第2轮，环境管理员）
+
+背景：后端5301/vite 5186均为当日09:28重启（pid 24818/24907），指纹 api-f2b9c4d4635834d3 两侧一致；ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（role_revision=75），备份 `.pre-ocr-rebind-20261008` 在位。本轮关键前置：探测开始时仲裁器=mtplx（驻留，pid 55611）——验证mtplx驻留下OCR切相无阻断（r2曾发生8002占用阻断，修复后首次在真实驻留场景复验）。
+
+实测序列（全部经产品 API；oMLX pid 25352）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 12:29 | OCR 视觉探针 #1 → **passed**（HTTP 200；含 mtplx→omlx 切相+GLM-OCR-bf16 加载，无 refused/block） | → 33,839,600 | 258,350 ms |
+| 12:33 | 翻译探针（dawncr0w Hy-MT2-30B，structured {"status":"ok"}）→ **passed** | 33,840,960 | 273 ms |
+| 12:33 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,841,024（稳定） | **128 ms** |
+
+结论：①mtplx 驻留下 OCR 调用经编排器正常切相承接（258s 为切相+冷加载全成本，无占用阻断）——修复行为在真实驻留场景确认；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 单进程共存无互斥卸载（co_resident=true，翻译加载后 OCR 热复测 128ms 即证）；③探针后仲裁=omlx、mtplx 按最小驻留正常卸载（设计内轮换）。证据：`../env_precheck_newera_r2_20261011/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/4/6 保留）。
+
+---
+
+# 复测 · 2026-10-11 19:21–19:24 CST（新纪元LOOP·环境预检·第3轮，环境管理员）
+
+背景：源码下午有更新，后端5301/vite 5186于当日18:41成对重启（pid 61011/61097），指纹 api-851543e34ca11483 两侧一致；ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（role_revision=78），备份 `.pre-ocr-rebind-20261008` 在位。探测开始时仲裁器=mtplx 驻留（真实并行场景再次复验）。
+
+实测序列（全部经产品 API；oMLX pid 25352）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 19:21 | OCR 视觉探针 #1 → **passed**（HTTP 200；mtplx→omlx 切相+GLM-OCR-bf16 加载，无阻断） | 64,496 → 33,853,808 | 142,347 ms |
+| 19:23 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,855,312 | 319 ms |
+| 19:24 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,855,552（稳定） | **114 ms** |
+
+结论与历轮一致：①mtplx 驻留下 OCR 切相无阻断（142s 切相+冷加载全成本）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 114ms 即证）；③探针后仲裁=omlx、mtplx 按最小驻留正常卸载。证据：`../env_precheck_newera_r3_20261011/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/11/13/14 保留）。
