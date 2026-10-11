@@ -413,3 +413,58 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论与历轮一致：①mtplx 驻留下 OCR 切相无阻断（142s 切相+冷加载全成本）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 114ms 即证）；③探针后仲裁=omlx、mtplx 按最小驻留正常卸载。证据：`../env_precheck_newera_r3_20261011/`。
 
 红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/11/13/14 保留）。
+
+---
+
+# 复测 · 2026-10-12 00:03–00:06 CST（新纪元LOOP·环境预检·第4轮，环境管理员）
+
+背景：HEAD=e6dec9bd（20261011 checkpoint），后端5301/vite 5186 成对重启（pid 34439/34440），指纹 api-849e9293abf90c1f 两侧一致；ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（role_revision=81），备份 `.pre-ocr-rebind-20261008` 在位。探测开始时仲裁器=mtplx 驻留（真实并行场景）。
+
+实测序列（全部经产品 API；oMLX pid 25352）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 00:03 | OCR 视觉探针 #1 → **passed**（HTTP 200；mtplx→omlx 切相+GLM-OCR-bf16 加载，无阻断） | 57,600 → 33,881,712 | 165,236 ms |
+| 00:05 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,883,696 | 280 ms |
+| 00:06 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,883,904（稳定） | **102 ms** |
+
+结论与历轮一致：①mtplx 驻留下 OCR 切相无阻断；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 102ms 即证）；③探针后仲裁=omlx、mtplx 按最小驻留正常卸载。证据：`../env_precheck_newera_r4_20261012/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/11/20/21/23 保留）。
+
+---
+
+# 复测 · 2026-10-12 01:36–01:45 CST（新纪元LOOP·环境预检·第5轮，环境管理员）
+
+背景：HEAD=e6dec9bd，后端5301/vite 5186 又成对重启（pid 71299/71300），指纹 api-ef5970b7761b7b28 两侧一致；ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（role_revision=85），备份在位。本轮多线共享特征显著：并行线 01:24-01:34 完成了 mtplx↔omlx 两个方向切相（等478s/573s获批），01:34:03 切回 triage@mtplx 并卸载 GLM-OCR-bf16/dawncr0w。
+
+实测序列（全部经产品 API；oMLX pid 25352）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 01:36 | OCR 探针 #1 首发入队（translation@omlx position 1）——编排器切相窗口等待中，客户端 300s 超时断开（请求本体留队） | — | >300s（排队） |
+| 01:43 | OCR 探针 #1 重发 → **passed**（HTTP 200；切相窗口结束获批+GLM-OCR-bf16 加载一气呵成） | → 33,882,640 | 19,815 ms |
+| 01:44 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,884,352 | 282 ms |
+| 01:45 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,884,720（稳定） | **109 ms** |
+
+结论：①多线共享下 OCR 调用按编排器队列+最小驻留窗口排队承接（本轮实际等待 ~7.3 分钟窗口，与日志中 478s/573s 历史窗口一致，非卡死非阻断）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 109ms 即证）；③探针后仲裁=omlx、queue 清空、mtplx 按最小驻留正常卸载。如实记录：首发请求因客户端 curl 超时断开但请求本体留队，由重发请求承接完成——对"正式运作时人工负担量"无影响（产品内调用不设 300s 人为超时），但多线高峰时段 OCR 冷启动等待可达数分钟，供测试轮排程参考。证据：`../env_precheck_newera_r5_20261012/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/11/20/21/23 保留）。
+
+---
+
+# 复测 · 2026-10-12 04:18–04:27 CST（新纪元LOOP·环境预检·第6轮，环境管理员）
+
+背景：HEAD=e6dec9bd，后端5301/vite 5186 成对重启（pid 18527/18528，前端 buildId 更新为 web-2cc9ef28ddc819de），指纹 api-ef5970b7761b7b28 两侧一致；ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库（role_revision=90），备份在位。探测开始时仲裁器=mtplx 驻留、队列空。
+
+实测序列（全部经产品 API；oMLX pid 25352；本轮吸取第5轮教训直接用 590s 客户端超时）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 04:18 | OCR 视觉探针 #1 → **passed**（HTTP 200；mtplx→omlx 切相窗口等待+GLM-OCR-bf16 加载全程一个请求内完成） | 104,976 → 33,893,744 | 478,324 ms |
+| 04:26 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,895,568 | 290 ms |
+| 04:26 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,895,792（稳定） | **112 ms** |
+
+结论与历轮一致：①mtplx 驻留下 OCR 切相在 ~8 分钟窗口内获批（478s 与第5轮实测 7.3 分钟窗口吻合），无阻断无卡死；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 112ms 即证）；③探针后仲裁=omlx、queue 空、mtplx 按最小驻留正常卸载。证据：`../env_precheck_newera_r6_20261012/`。
+
+红线自检：全部流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（2/11/21/23 保留）。

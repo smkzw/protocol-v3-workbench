@@ -676,6 +676,19 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
     # 混写文本可能解析不出声明例数；同一 α/把握度组合只能有一个口径
     # （两套 z 值差可达22%例数），混写即插悬置块（导出层据此计缺口→
     # 草案-N）。『双单侧』（TOST）与『双侧可信/置信区间』不算混写。
+    # P0-2（NEW-31）：守卫幂等——已带守卫产物的节二次过链为无操作
+    #（RT3 现场双份连排实证：所有采纳路径共享守卫入口，重复过链曾把
+    # 标注追加两份上纸）。
+    if any(
+        token in text
+        for token in (
+            "【样本量待确认",
+            "【样本量口径混写待确认",
+            "（样本量依据：",
+            "（样本量假设未具名溯源",
+        )
+    ):
+        return
     if sample_size_sidedness_mixing_check(text):
         section_item["sample_size_check"] = {
             "status": "口径混写",
@@ -828,6 +841,8 @@ def apply_statistics_assembly_guard_to_section(
     text = str(section_item.get("proposal_text") or "")
     if not text.strip():
         return
+    if "【统计章分节装配待确认" in text:
+        return
     check = statistics_assembly_check(text, endpoint_families=endpoint_families)
     section_item["statistics_assembly_check"] = check
     missing = check.get("missing") or []
@@ -928,6 +943,8 @@ def apply_dose_presence_guard_to_section(
         return
     text = str(section_item.get("proposal_text") or "")
     if not text.strip():
+        return
+    if "（剂量出处" in text or "【剂量待确认" in text:
         return
     if not _DOSE_UNIT_RE.search(text):
         section_item["dose_check"] = {
@@ -1748,6 +1765,10 @@ class MedicalWritingFullDraftService:
             "样本量章节：正文数字只准来自按声明五要素（率差或差值/SD/α/把握度）的系统复算"
             "输出（连续量或两比例公式），不得自行心算、凑整或另写与声明假设脱节的例数；"
             "系统会按同一公式复算并把不一致改写为复算值。"
+            "A3②（NEW-27）删文调和契约：修订/重写删除含剂量、片数、频次、规格或终点"
+            "设计的句子时，必须同步重推导依赖这些事实的句子（如臂名剂量-规格-片数-"
+            "频次的日剂量恒等式）；无法重推导时保留'删文未调和'说明随正文，禁止"
+            "无痕删除承重设计文字（导出层算术门会按臂名×规格×片数×频次复核）。"
             "每章用evidence_span_ids绑定本次evidence_spans中的直接依据，并将needs_medical_confirmation设为true。"
             "每章还必须返回content_status、decision_items和missing_source_classes。"
             "事实充分时用complete并返回完整正文。只有本批次列出的待确认研究字段能够完整承载一个"

@@ -151,6 +151,37 @@ def _route_snapshot_json(snapshot: dict[str, Any]) -> str:
     return json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def validate_synopsis_contract_payload(definition: dict, picos_payload: dict):
+    """P0-1③（NEW-30，新纪元第4轮末修订）：合同校验失败携带字段级摘要——
+    此前一句无细节英文（'does not match the study-definition contract'）让
+    入口B失败不可诊断；现在把字段路径+原因（最多5条）随消息透出，界面可
+    直接显示人话失败原因。"""
+    if not isinstance(definition, dict) or "framing" not in definition:
+        raise RuntimeError(
+            "validated protocol synopsis output does not match the "
+            "study-definition contract；字段：framing 缺失"
+        )
+    try:
+        framing = MedicalWritingStudyFraming.model_validate(definition["framing"])
+        picos = MedicalWritingPicosDefinition.model_validate(picos_payload)
+    except (KeyError, TypeError, ValidationError) as exc:
+        field_summary = ""
+        if isinstance(exc, ValidationError):
+            items = exc.errors()[:5]
+            field_summary = "；字段：" + "、".join(
+                ".".join(str(loc) for loc in item.get("loc", []))
+                + f"（{item.get('msg', '')}）"
+                for item in items
+            )
+        elif isinstance(exc, KeyError):
+            field_summary = f"；字段：{exc.args[0]} 缺失"
+        raise RuntimeError(
+            "validated protocol synopsis output does not match the "
+            "study-definition contract" + field_summary
+        ) from exc
+    return framing, picos
+
+
 class MedicalWritingSynopsisImportService:
     """Persist a project synopsis and produce a source-bound study-definition candidate."""
 
@@ -773,13 +804,7 @@ class MedicalWritingSynopsisImportService:
         picos_payload = _sanitize_synopsis_instrument_candidates(
             definition.get("picos"), source_id=source_id
         )
-        try:
-            framing = MedicalWritingStudyFraming.model_validate(definition["framing"])
-            picos = MedicalWritingPicosDefinition.model_validate(picos_payload)
-        except (KeyError, TypeError, ValidationError) as exc:
-            raise RuntimeError(
-                "validated protocol synopsis output does not match the study-definition contract"
-            ) from exc
+        framing, picos = validate_synopsis_contract_payload(definition, picos_payload)
         evidence_spans = [
             MedicalWritingSynopsisEvidenceSpan(
                 span_id=item["span_id"],
@@ -2401,6 +2426,27 @@ class MedicalWritingSynopsisImportService:
                 """,
                 (now.isoformat(),),
             )
+            # P0-1④（NEW-30，新纪元第4轮末修订）：extraction_pending 超时
+            # （>10 分钟无进展）判 failed 并留人话出路——此前只有冷启动清扫
+            # 且不覆盖'卡在解析中'的作业，UI 永久停'摘要解析中'无报错。
+            timeout_cutoff = (now - timedelta(minutes=10)).isoformat()
+            timeout_cursor = connection.execute(
+                """
+                UPDATE medical_writing_synopsis_imports
+                SET status = 'failed', phase = 'failed',
+                    failure_code = 'extraction_timeout',
+                    error_message = COALESCE(
+                        NULLIF(error_message, ''),
+                        '提取超时：后台解析超过10分钟无进展，已按失败处理；请重新导入。'
+                    ),
+                    updated_at = ?
+                WHERE status IN ('extraction_pending', 'pending')
+                  AND phase IN ('extraction_pending', 'pending', '')
+                  AND updated_at != '' AND updated_at <= ?
+                """,
+                (now.isoformat(), timeout_cutoff),
+            )
+            requeued += int(timeout_cursor.rowcount or 0)
             stale_jobs = connection.execute(
                 """
                 SELECT DISTINCT i.project_id, i.idempotency_key, i.job_id,

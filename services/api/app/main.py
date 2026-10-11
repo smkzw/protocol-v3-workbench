@@ -250,6 +250,7 @@ from .medical_writing_document import MedicalWritingDocumentService
 from .medical_writing_authoring_journey import (
     MedicalWritingAuthoringJourneyConflictError,
     MedicalWritingAuthoringJourneyService,
+    SampleSizeDeclarationBlockedError,
 )
 from .medical_writing_corpus_readiness import MedicalWritingCorpusReadinessService
 from .medical_writing_competitor_triage import (
@@ -7809,12 +7810,31 @@ def get_file_first_synopsis_project_intake(
     intake_id: str,
     idempotency_key: str,
 ):
+    # P0-1④（NEW-30）：状态轮询路径挂接 stale 清扫——运行中卡死的作业
+    # （提取超时10分钟）由此转 failed 并给人话出路，不再依赖冷启动。
+    try:
+        medical_writing_synopsis_import_service.recover_stale_jobs()
+    except Exception:  # noqa: BLE001 - 清扫失败不阻塞状态查询
+        pass
     try:
         return medical_writing_synopsis_import_service.get_job(
             intake_id, idempotency_key
         ).model_dump(mode="json")
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        # P0-1②（NEW-30）：作业记录缺失（现场钉死：状态GET 404）不再是
+        # 无处理死路——结构化载荷让人话失败原因+重新导入出口可见。
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "synopsis_job_missing",
+                "message": (
+                    "导入作业记录不存在（可能已被清理或未创建成功）；"
+                    "请重新导入方案摘要文件。"
+                ),
+                "retryable": True,
+                "reason": str(exc),
+            },
+        )
 
 
 @app.get(
@@ -9049,6 +9069,16 @@ def _mw_journey_error_detail(exc: Exception) -> str:
     第10轮末修订（P1-50）：唯一性类校验拒绝（『<field> must be unique』，
     现场 r10-A：重复行422英文直出）映射为中文标签+可操作指引。"""
     text = str(exc)
+    # A1①（NEW-24①）：样本量门类型化拒绝 → 结构化 422 载荷（code/
+    # field_anchor/复算与声明例数），前端据此跳转到声明字段。
+    if isinstance(exc, SampleSizeDeclarationBlockedError):
+        return {
+            "code": "sample_size_declaration_mismatch",
+            "message": text,
+            "field_anchor": exc.field_anchor,
+            "required_per_group": exc.required_per_group,
+            "declared_per_group": exc.declared_per_group,
+        }
     if "validation error for" in text or "errors.pydantic.dev" in text:
         return ("本次提交未通过系统数据校验，页面与服务器状态可能不同步；"
                 "请刷新页面后重新操作。如重复出现，请保留页面并反馈。")
@@ -9186,6 +9216,19 @@ def commit_medical_writing_authoring_stage(
         raise HTTPException(status_code=409, detail=str(exc))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except SampleSizeDeclarationBlockedError as exc:
+        # A1①（NEW-24①）：结构化 422——前端据此跳转到执行与统计组的
+        # 样本量声明字段（scrollIntoView+去修正声明按钮）。
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "sample_size_declaration_mismatch",
+                "message": str(exc),
+                "field_anchor": exc.field_anchor,
+                "required_per_group": exc.required_per_group,
+                "declared_per_group": exc.declared_per_group,
+            },
+        )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=_mw_journey_error_detail(exc))
 
@@ -10903,6 +10946,77 @@ def _apply_export_text_quality_lint(document) -> list[dict]:
     return notes
 
 
+_DOSE_ARM_LABEL_RE = re.compile(r"(\d{2,4})mg\s*/\s*(\d{2,4})mg\s*(?:BID|bid|每日两次)", re.IGNORECASE)
+_DOSE_TABLET_SPEC_RE = re.compile(r"(\d+(?:\.\d+)?)\s*mg\s*/\s*片")
+_DOSE_TABLETS_PER_ARM_RE = re.compile(r"(\d{2,4})mg(?:剂量组|组|臂)[^。；]{0,10}每次(?:服用)?(\d+|[一二两三四五])片")
+_DOSE_TABLETS_SINGLE_RE = re.compile(r"每次(?:服用)?(\d+|[一二两三四五])片")
+_DOSE_FREQ_RE = re.compile(r"(BID|bid|每日两次|每日2次|TID|tid|每日三次|每日3次|QD|qd|每日一次|每日1次)")
+_CN_NUM = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5}
+
+
+def _dose_freq_per_day(text: str) -> int | None:
+    match = _DOSE_FREQ_RE.search(text)
+    if not match:
+        return None
+    token = match.group(1)
+    upper = token.upper()
+    if upper in {"BID", "TID", "QD"}:
+        return {"BID": 2, "TID": 3, "QD": 1}[upper]
+    # 中文频次形态（每日两次/TID 等已在正则族内）
+    if "两" in token or "2" in token:
+        return 2
+    if "三" in token or "3" in token:
+        return 3
+    if "一" in token or "1" in token:
+        return 1
+    return None
+
+
+def _dose_tablets(token: str) -> int:
+    token = token.strip()
+    if token in _CN_NUM:
+        return _CN_NUM[token]
+    return int(token)
+
+
+def _dose_arithmetic_gaps(text: str) -> list[str]:
+    """A3①：给药日剂量算术不平的缺口理由列表（无臂名/信息不全则空）。"""
+    arms = [
+        (int(first), int(second))
+        for first, second in _DOSE_ARM_LABEL_RE.findall(text or "")
+    ]
+    if not arms:
+        return []
+    spec_match = _DOSE_TABLET_SPEC_RE.search(text)
+    freq = _dose_freq_per_day(text)
+    if not spec_match or not freq:
+        return []
+    spec = float(spec_match.group(1))
+    per_arm = {
+        dose: _dose_tablets(tablets)
+        for dose, tablets in _DOSE_TABLETS_PER_ARM_RE.findall(text or "")
+    }
+    default_match = _DOSE_TABLETS_SINGLE_RE.search(text or "")
+    reasons: list[str] = []
+    for arm_dose in dict.fromkeys(dose for pair in arms for dose in pair):
+        tablets = per_arm.get(arm_dose)
+        if tablets is None:
+            if per_arm:
+                # 已按臂分述而该臂缺失表述 → 不强判（信息不全不编算）
+                continue
+            tablets = _dose_tablets(default_match.group(1)) if default_match else None
+        if tablets is None:
+            continue
+        achieved = spec * tablets * freq
+        if abs(achieved - arm_dose) > 1e-9:
+            reasons.append(
+                f"给药日剂量算术不平：{arm_dose}mg臂按{spec:g}mg/片×每次{tablets}片×"
+                f"每日{freq}次={achieved:g}mg/日，与臂名{arm_dose}mg不符——"
+                "需修正片数/规格/频次或臂名剂量（药房不可执行的矛盾必须消解）"
+            )
+    return reasons
+
+
 def _export_placeholder_report(document) -> dict:
     """NEW-17 内容族①（R27 第3轮修订）：逐章统计导出件中的【待补齐】占位
     与历史测试标记，供导出门拦截与清单确认。NEW-21：同报告附文本质量清单
@@ -10915,6 +11029,8 @@ def _export_placeholder_report(document) -> dict:
     # E11（新纪元第1轮修订）：统计章五件套按『章全文聚合』检查（9.1
     # 样本量/9.2 分析集…分节落位时逐件聚合后判定，不误伤分节文档）。
     statistics_assembly_texts: list[str] = []
+    document_body_texts: list[str] = []
+    sample_gate_fired = False
     # P0-A（新纪元第2轮修订·NEW-13 根治）：导出层跨节重复段落映射——
     # 逐节聚合正文后走同一共享片段检测（归一化 80 字滑窗）。
     export_section_texts: list[dict] = []
@@ -11011,7 +11127,9 @@ def _export_placeholder_report(document) -> dict:
             # 未齐 → 计入缺口（草案-N 强制）；同一正则族（与PICOS提交门、
             # 生成层护栏同源），导出自算不依赖工件链路。
             section_number_text = str(section.section_number or "")
+            document_body_texts.append(joined)
             if section_number_text.startswith("9") or "统计" in section.heading or "样本量" in section.heading:
+                sample_gate_fired = True
                 statistics_assembly_texts.append(joined)
                 from .medical_writing_full_draft import sample_size_declaration_check
 
@@ -11059,6 +11177,18 @@ def _export_placeholder_report(document) -> dict:
                             "section_number": section.section_number or "",
                             "section_heading": section.heading,
                             "reason": "剂量缺失（给药章节未出现任何剂量单位，需IB/立项补剂量方案）",
+                        }
+                    )
+                # A3①（NEW-27，新纪元第3轮末修订）：给药日剂量算术门——
+                # 臂名剂量（如 160mg/80mg BID）×规格（mg/片）×片数×频次
+                # 恒等式：文本一致性门只认片数/频次字面冲突，删文后算术
+                # 矛盾仍静默在（40mg片×每次一片BID=80mg/日凑不出160mg臂）。
+                for math_reason in _dose_arithmetic_gaps(joined):
+                    gap_sections.append(
+                        {
+                            "section_number": section.section_number or "",
+                            "section_heading": section.heading,
+                            "reason": math_reason,
                         }
                     )
         # NEW-17（第2轮修订·内容族）：编号节零实质正文且无合规
@@ -11145,6 +11275,26 @@ def _export_placeholder_report(document) -> dict:
                     "section_number": section.section_number or "",
                     "section_heading": section.heading,
                     "excerpt": joined[max(0, match.start() - 10): match.end() + 10],
+                }
+            )
+    # P0-3（NEW-33，新纪元第4轮末修订）：重导出补门——文档无统计编号节
+    # 时（存量旁路件），对全文聚合重跑样本量复算门：不一致计缺口（草案-N
+    # 升级），存量项目由此获得清纸面路径而无需重走第二步。
+    if document_body_texts and not sample_gate_fired:
+        from .medical_writing_full_draft import sample_size_declaration_check
+
+        whole_doc_check = sample_size_declaration_check(
+            "\n".join(document_body_texts)
+        )
+        if whole_doc_check and whole_doc_check.get("status") == "不一致":
+            gap_sections.append(
+                {
+                    "section_number": "",
+                    "section_heading": "样本量（全文复核）",
+                    "reason": (
+                        "样本量不一致（重导出补门）："
+                        + str(whole_doc_check.get("detail") or "")
+                    ),
                 }
             )
     # E11（新纪元第1轮修订）导出层：统计章分节装配五件套（分析集成员

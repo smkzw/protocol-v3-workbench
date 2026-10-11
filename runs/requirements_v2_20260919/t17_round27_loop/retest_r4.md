@@ -69,3 +69,83 @@ r4-D 的现场：「研究框架被自动竞品流水线卡住，取消流水线
 
 - 浏览器任务空间已清（标签已关）。
 - 只新建自己的 1 个项目（MW-II-2AD6EEB2），未动历史项目/数据/模型服务器。
+
+---
+
+# retest_r4(v2) · 复测报告（2026-10-12 00:57–01:50，复测协调员）
+
+> 本节为对**2026-10-12 凌晨修订批**（00:53–00:55 收笔：`test_synopsis_import_rescue_p0.py` P0-1/NEW-30 入口B救回、`test_guard_idempotency_p2.py` P0-2/NEW-31 守卫幂等、`test_reexport_gate_p3.py` P0-3/NEW-33 重导出补门；源码 synopsis_import/full_draft/main 同批）的复验。上方 2026-10-05/10-10/10-11 三节原样保留不作废。
+
+- 被测现场：HEAD=e6dec9bd + 未提交修订批（最后源码修改 00:55）。后端 5301 pid 71299（00:59:08 起）、vite 5186 pid 71300（同刻起，显式 `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 --host 127.0.0.1 --port 5186 --strictPort`，进程 env 实测 ✓，日志 `retest_r4_vite_20261012.log`）。
+- 指纹三方一致：`backend_build_id=api-ef5970b7761b7b28`（后端自报 = vite 现算 = 经 5186 代理同值）；frontendBuildId=web-8d78e2fd999739b2。
+- 测试者：复测协调员本人，浏览器黑盒（camofox）。工具等价披露（历轮同款）：①入口B文件选择器以页内 File+DataTransfer 注入（209 字节畸形件直接 base64 内联，无临时端口）；②React 受控输入原生 setter 等价录入。
+- 本轮项目：**新建 proj_user_194f92b27d6a**（KZ-UN601（口服选择性KCNQ2/3通道开放剂缓释片）· 特发性震颤（药物难治性）· II期——全新任务包，159+ 项目无特发性震颤无口服KCNQ2/3）+ 复验本人名下 HS501（导出幂等对比 RT2/RT3 基线）。
+- 证据：`retest_r4_material_20261012/`（RT4/RT4b 导出件、garbage_summary.docx 畸形件、Traceback 对话框截图、OCR 探针、drill 产物）。
+
+## 一、单元证据
+
+`pytest tests/test_synopsis_import_rescue_p0.py tests/test_guard_idempotency_p2.py tests/test_reexport_gate_p3.py -v` → **7 passed**；上批六文件回归 → **22 passed**。
+
+## 二、fixed_pending_verify 逐项（再测试②）
+
+### 1) P0-2/NEW-31 守卫幂等——live 实证 ✅→关闭
+
+铁证基线（本人历轮导出件实数）：RT2 剂量出处标记 **2 个/连排 1** → RT3 **3 个/连排 1**（旧代码每次重守卫 +1 膨胀）。本轮 HS501 连续两导出：**RT4a（直接重导）3/1 不变** → 工作副本 6.2 做无害编辑触发真实重守卫（保存 POST 200 实录）→ **RT4b（重守卫保存后重导）仍 3/1 零膨胀**。修复向前防重 live 成立（`apply_full_draft_content_guards` 双调用恰一份，单测 T1）；存量连排一份按设计不回写历史文本（RT3 起留存的那份双连排仍在，属存量不追溯）。
+
+### 2) P0-1/NEW-30 入口B救回——单测 4/4 绿；失败路径浏览器不可达；畸形件探针另获 N7 → **维持 fixed_pending_verify**
+
+T1（extraction_pending>10分钟→failed 人话）/T2（状态路由挂接 recover_stale_jobs+404 结构化 retryable 载荷）/T3（合同错字段级摘要）均单测绿；T1 的 10 分钟窗与 T2 的记录缺失态无法黑盒自然触发。**畸形件探针（本轮新增发现 N7·P2）**：209 字节伪 docx（合法 zip 非 OOXML）走入口B → 对话框直出**整段 Python Traceback**（`ValueError: DOCX package must contain one [Content_Types].xml`，`medical_writing_synopsis_import.py:1506` extract_docx_sections 抛出）——工程语言最重形态（违 20261003b③），但有「继续处理/重新选择」出路（非死路，截图 `04-入口B畸形件-Traceback直出对话框.png`）；后端 202 受理+job 状态 200 实录。T3 的合同错分支未触及（解析错误先于合同校验）。
+
+### 3) P0-3/NEW-33 重导出补门——单测绿；我的项目无比例旁路件（HS501 声明为 69 例自洽、非统计章无样本量文本），RT4 导出报告 0 新缺口（正确静默）→ **维持 fixed_pending_verify**（自然窗口=含存量 45/组旁路文本的项目重导出）。
+
+### 4) 既有挂账顺带核实
+
+- journey 写入死锁（R3 恶化回归 P0）+ 分诊同药排除：本批未触及 → 维持开放（带账）。
+- N5（哈希门）/P0-3 consumed/N1″/⑧ P0-25/P2-8/背景外查 N2/P1-48 观察/N6（滚动未达）/A3（算术门浏览器窗口）：本批未触及或无新证据 → 维持。
+- 本会话 HS501 审阅浮层未自动复活（P0-3 前端半修复旁证+）。
+
+## 三、回归抽查（再测试③，2 关键点）
+
+1. **建项**：KZ-UN601·特发性震颤（药物难治性）·II期 三字段创建 **201**（后端日志实录）、fact-intake 提交→AI拆解待用户确认（后端 200 实录）→ **重过 ✅**
+2. **导出（HS501 预览 Word ×2）**：RT4a 59 处【待补齐】逐章点名→知悉仍导出→真 OOXML；RT4b（重守卫保存后）再导 → 两件均归档（`retest_r4_material_20261012/RT4_HS501_preview_export.docx`、`RT4b_...docx`；【待补齐】×59、【V1】0、KZ-HS501×44）→ **重过 ✅**
+
+## 四、OCR 环境功能验证（③类）
+
+首发 `POST /api/ai-gateway/roles/ocr/probe-visual` → **300s 排队超时 HTTP 000**（NB601/NB601（第3轮）竞品分诊收尾时段占相，环境行为如实记）；重试 → **HTTP 200 · passed=true · GLM-OCR-bf16 · 149.7s**（冷态长尾；`retest_r4_material_20261012/ocr_probe_r4.json`）。两态均如实入账。
+
+## 五、并发仲裁 300s 双负载复跑（再测试④）
+
+`python3 retest_r4_drill.py`（01:4x 实跑）：
+
+| 相 | 请求数 | 通过 | 未通过 | 最快 | 最慢 |
+|---|---|---|---|---|---|
+| translation（oMLX） | 1110 | **1110** | 0 | 0.24s | 0.35s（全程热态） |
+| triage（MTPLX） | 1 | 1 | 0 | — | 592.2s（翻译满载下全程排队，释放后执行；既有 P2 族第五例） |
+
+- **无双载 ✅ 零例外（连续第二次）**：61 采样 co_resident=0，MTPLX 端口全程未起。
+
+## 六、三句式界面评价
+
+- **美观性**：RT4a/RT4b 导出门横幅与占位点名延续既有水准；入口B 的 Traceback 直出是本轮唯一刺眼处。
+- **易用性**：守卫标记不再随保存膨胀，用户文档不再被重复警示污染；畸形文件的报错虽然直出了堆栈，但「重新选择」出路在场，用户不至于无路可走。
+- **逻辑性**：幂等修复让「同一节两过守卫」的记账收敛到恰一份，逻辑自洽；重导出补门把存量旁路件的漏算补上（本轮无此类件，正确静默）。
+
+## 七、收尾
+
+- 浏览器任务空间已清（camofox `list_tabs` 实测 tabs=[]）；本轮 /tmp 未落文件（畸形件 base64 内联）；模型服务器未手工触碰；BP601/NB601 流水线停于 awaiting_triage_confirm 人工确认暂停态（无模型占用）。本轮新建 1 个项目（KZ-UN601），复验本人名下 HS501，未动任何他人项目/历史数据。
+
+## 八、判定汇总
+
+| 项 | 结论 |
+|---|---|
+| P0-2/NEW-31 守卫幂等 | RT3→RT4a→RT4b 标记 3/1 零膨胀 live 实证 + 单测 T1 → **关闭 ✅**（存量连排按设计不追溯） |
+| P0-1/NEW-30 入口B救回 | 单测 4/4 绿；失败路径浏览器不可达；畸形件探针获 N7 → **维持 fixed_pending_verify** |
+| P0-3/NEW-33 重导出补门 | 单测绿；无旁路件自然窗口（正确静默）→ **维持 fixed_pending_verify** |
+| journey 死锁 / 分诊同药排除（R3 两大主题） | 本批未触及 → **维持开放（带账）** |
+| N5 / P0-3 consumed / N1″ / ⑧ / P2-8 / 背景外查 N2 / P1-48 / N6 / A3 | 未触及或无新证据 → **维持挂账** |
+| OCR 环境 | 首发排队超时（如实记）→ 重试 200 / passed=true / 149.7s ✓ |
+| 回归抽查（建项/导出） | 2/2 重过 ✅（双导出件归档） |
+| 并发仲裁双负载 | **无双载 ✅ 零例外**（co_resident 0/61，translation 1110/1110） |
+| 新缺陷 | N7·P2（入口B畸形件整段 Traceback 直出，出路在场非死路） |
+| allPass | **false**（P0-1/P0-3 维持 + N7 新立 + 两大主题与既有挂账仍在） |
+| closedIds | P0-2-守卫幂等 |

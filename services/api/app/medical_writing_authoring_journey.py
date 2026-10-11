@@ -166,6 +166,19 @@ LEGACY_BOOTSTRAP_CONFIRMED_PATHS = frozenset(
 )
 
 
+class SampleSizeDeclarationBlockedError(ValueError):
+    """A1①（NEW-24①，新纪元第3轮末修订）：样本量门拒绝的一等公民形态——
+    带 field_anchor 与复算/声明例数，前端据此定位到执行与统计组的样本量
+    声明字段（scrollIntoView+去修正声明按钮），不再只复用表单中部横幅。
+    保持 ValueError 血统：既有 422 包装路径不破。"""
+
+    def __init__(self, message: str, *, field_anchor: str, required_per_group: int, declared_per_group: int):
+        super().__init__(message)
+        self.field_anchor = field_anchor
+        self.required_per_group = required_per_group
+        self.declared_per_group = declared_per_group
+
+
 class MedicalWritingAuthoringJourneyConflictError(ValueError):
     """Raised for duplicate, stale, or unconfirmed authoring-journey writes."""
 
@@ -1349,10 +1362,13 @@ class MedicalWritingAuthoringJourneyService:
                 str(request.picos.sample_size_strategy or "")
             )
             if declaration_check and declaration_check.get("status") == "不一致":
-                raise ValueError(
+                raise SampleSizeDeclarationBlockedError(
                     "样本量声明与假设不一致："
                     + str(declaration_check.get("detail") or "")
-                    + "（可先保存草稿；完成第二步前必须消解该不一致。）"
+                    + "（可先保存草稿；完成第二步前必须消解该不一致。）",
+                    field_anchor="picos.sample_size_strategy",
+                    required_per_group=int(declaration_check.get("required_per_group") or 0),
+                    declared_per_group=int(declaration_check.get("declared_per_group") or 0),
                 )
             # P1-53（新纪元第1轮修订·E9，SPEC_sample_size_revision_gate_
             # P1-53.md）：口径指纹+强制重算——P0-18 只校验『完成第二步』

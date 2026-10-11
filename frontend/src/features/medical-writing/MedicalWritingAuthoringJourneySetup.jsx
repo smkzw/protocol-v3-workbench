@@ -706,6 +706,7 @@ async function readJson(response) {
       // callers can distinguish policy rejection from revision conflicts.
       error.code = detail.code;
       error.reason = detail.reason;
+      error.detail = detail;
       if (typeof detail.message === "string") error.message = detail.message;
     }
     throw error;
@@ -940,6 +941,10 @@ export function MedicalWritingAuthoringJourneySetup({
   const [interventionPanel, setInterventionPanel] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
+  // A1①（NEW-24①，新纪元第3轮末修订）：样本量门拒绝的一等出路状态——
+  // 捕获结构化 422 后自动跳转执行与统计组并 scrollIntoView 声明字段，
+  // 横幅提供'去修正声明'按钮（拒绝增量可感知，不再静默吞掉）。
+  const [sampleSizeGateError, setSampleSizeGateError] = useState(null);
   const [message, setMessage] = useState("");
   // NEW-1(4)：结构化阻断清单（中文字段名+可跳转目标），与纯文本 message 并存。
   const [messageDetail, setMessageDetail] = useState(null);
@@ -2349,6 +2354,16 @@ export function MedicalWritingAuthoringJourneySetup({
     return response;
   };
 
+  const jumpToSampleSizeDeclaration = () => {
+    setStage("picos");
+    setGroup("execution");
+    setAdvancedRefinementOpen(true);
+    requestAnimationFrame(() => {
+      const target = document.querySelector('[data-testid="sample-size-warning"]');
+      if (target?.scrollIntoView) target.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
+
   const saveStage = async (targetStage, revisionOverride = null) => {
     if (authoringWriteBlocked) {
       setMessage(authoringWriteBlockedMessage);
@@ -2383,6 +2398,19 @@ export function MedicalWritingAuthoringJourneySetup({
       // 「完成第一步/第二步」直接报 stale 且用户无路可走（草稿保存有恢复链，
       // 提交却没有）。刷新修订号后自动重试一次；用户已填内容经 NEW-6 守卫
       // 原样保留。
+      if (error?.code === "sample_size_declaration_mismatch") {
+        const detail = error.detail || {};
+        setSampleSizeGateError({
+          required_per_group: Number(detail.required_per_group || 0),
+          declared_per_group: Number(detail.declared_per_group || 0),
+          message: error.message,
+        });
+        jumpToSampleSizeDeclaration();
+        setMessage(
+          `样本量声明与假设不一致：复算需${detail.required_per_group || "?"}例/组，当前声明${detail.declared_per_group || "?"}例/组——已定位到样本量声明字段，请修正后重新提交。`,
+        );
+        return;
+      }
       if (
         error?.status === 409
         && String(error?.message || "").includes("stale authoring journey revision")
@@ -2744,9 +2772,21 @@ export function MedicalWritingAuthoringJourneySetup({
 
   const overrideCorpusGate = async () => {
     const requestProjectId = projectId;
-    const sourceRevision = journey.revision;
-    const missingLabels = Array.isArray((journey?.corpus_gate || {}).missing_requirements)
-      ? [...((journey?.corpus_gate || {}).missing_requirements || [])]
+    // P0-1①（NEW-35，新纪元第5轮末修订）：提交前 fresh-fetch——分诊/翻译
+    // 批可中途向缺失集注入新要求类（本轮 8 条忠实度锚点实证），快照集≠
+    // live 集曾使 ack(5)≠live(N) 422 恒拒。ack 一律按最新 journey 的缺失
+    // 集过滤；已勾选项在 live 集中的保留，新增项渲染出勾选框供补勾。
+    let liveJourney = journey;
+    try {
+      const latest = await fetch(`/api/projects/${requestProjectId}/medical-writing/authoring-journey`).then(readJson);
+      if (activeProjectRef.current === requestProjectId) {
+        applyJourneyResponse(latest);
+        liveJourney = latest;
+      }
+    } catch { /* 拉取失败时退回快照继续；后端仍为权威拒绝 */ }
+    const sourceRevision = liveJourney.revision;
+    const missingLabels = Array.isArray((liveJourney?.corpus_gate || {}).missing_requirements)
+      ? [...((liveJourney?.corpus_gate || {}).missing_requirements || [])]
       : [];
     // R27 本轮 P0-A：提交集严格过滤为当前缺失集——杜绝把已满足项
     // （或历史缺失项）混入确认集触发后端精确相等校验422。
@@ -2780,7 +2820,31 @@ export function MedicalWritingAuthoringJourneySetup({
       setMessage(response.revision === sourceRevision
         ? "例外放行已生效（此前已记录），无需重复放行；可直接进入写作平台。"
         : "已记录医学例外放行；语料状态仍保持“未就绪”，缺口不会被隐藏。");
-    } catch (error) { setMessage(`例外放行未完成：${error.message}`); }
+    } catch (error) {
+      if (
+        typeof error?.message === "string"
+        && error.message.includes("must acknowledge every current missing requirement")
+      ) {
+        // P0-1②（NEW-35）：服务端缺失集中途变化的 422——自动重拉最新
+        // journey（AGG-P0-03 重渲染缺口清单，新增项出现勾选框）并点名
+        // 请补勾，一轮内恢复可勾可过，不再恒拒死路。
+        try {
+          const latest = await fetch(`/api/projects/${requestProjectId}/medical-writing/authoring-journey`).then(readJson);
+          if (activeProjectRef.current === requestProjectId) applyJourneyResponse(latest);
+          const liveMissing = Array.isArray((latest?.corpus_gate || {}).missing_requirements)
+            ? [...(latest.corpus_gate.missing_requirements)]
+            : [];
+          const previousAck = new Set(acknowledged || []);
+          const addedCount = liveMissing.filter((label) => !previousAck.has(label)).length;
+          setAcknowledged((current) => current.filter((label) => liveMissing.includes(label)));
+          setMessage(
+            `例外放行未完成：准入条件已更新（新增${addedCount}项），已刷新缺口清单，请补勾后重试。`,
+          );
+          return;
+        } catch { /* 重拉失败落回通用错误提示 */ }
+      }
+      setMessage(`例外放行未完成：${error.message}`);
+    }
     finally { setBusy(""); }
   };
 
@@ -2950,9 +3014,16 @@ export function MedicalWritingAuthoringJourneySetup({
   const compactResearchActive = Boolean(compactResearchPipeline.stage)
     && !PIPELINE_TERMINAL_STAGES.has(compactResearchPipeline.stage)
     && !PIPELINE_STABLE_WAITING_STAGES.has(compactResearchPipeline.stage);
-  const showCompactResearchProgress = !competitorSnapshotId
-    || (Boolean(compactResearchPipeline.stage)
-      && !PIPELINE_TERMINAL_STAGES.has(compactResearchPipeline.stage));
+  // A1②（NEW-24③，新纪元第3轮末修订）：无快照且管线已终态（如分诊期
+  // 90% 被取消）时不再永驻进度卡——第一子句恒真曾令取消态卡片永久渲染
+  // 且不可解除。终态改显示一行'竞品调研已取消（…%）·可重新检索'。
+  const compactResearchTerminalCancelled = (
+    compactResearchPipeline.stage === "cancelled"
+  );
+  const showCompactResearchProgress = !compactResearchTerminalCancelled
+    && Boolean(compactResearchPipeline.stage)
+    && !PIPELINE_TERMINAL_STAGES.has(compactResearchPipeline.stage);
+  const showCompactResearchCancelledLine = compactResearchTerminalCancelled;
   const competitorToolbarSummary = competitorSnapshotId
     ? (compactResearchPipeline.stage === "awaiting_corpus_admission"
       && [
@@ -3051,6 +3122,19 @@ export function MedicalWritingAuthoringJourneySetup({
             </span>
           </div>
           <div className="authoring-competitor-toolbar-actions">
+            {showCompactResearchCancelledLine && (
+              <span
+                className="authoring-automatic-research-state"
+                data-testid="authoring-automatic-research-cancelled"
+                data-state="cancelled"
+              >
+                <ShieldAlert size={14} />
+                <span>
+                  <strong>竞品调研已取消{compactResearchPipeline.percent != null ? `（${compactResearchPipeline.percent}%）` : ""}</strong>
+                  <small>可重新检索；本行不阻断写作步骤。</small>
+                </span>
+              </span>
+            )}
             {showCompactResearchProgress && (
               <span
                 className="authoring-automatic-research-state"
@@ -3199,7 +3283,7 @@ export function MedicalWritingAuthoringJourneySetup({
       {stage === "framing" && !readOnly && framingMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="framing-missing-guidance">{framingMissing.map((key) => <li key={key}><span>{missingFieldLabelText("framing", [key])}</span></li>)}</ul>}
       {stage === "picos" && !readOnly && picosMissing.length > 0 && <ul className="authoring-blocker-guidance" data-testid="picos-missing-guidance">{picosMissing.map((key) => <li key={key}><span>{missingFieldLabelText("picos", [key])}</span></li>)}</ul>}
       {messageDetail && messageDetail.length > 0 && <ul className="authoring-blocker-guidance" data-testid="authoring-blocker-guidance">{messageDetail.map((item) => <li key={item.fieldPath}><span>{item.label}</span><button type="button" onClick={() => jumpToBlockerField(item.fieldPath)} disabled={interactionLocked}>去填写</button></li>)}</ul>}
-      {(message || hasUncommittedChanges) && <p className={`authoring-journey-message ${message.includes("失败") ? "danger" : ""}`} role="status"><span>{message || (hasUnsavedChanges ? "当前有尚未保存的修改。" : "草稿已保存，尚未提交当前阶段。")}</span>{researchRecovery?.projectId === projectId && <button type="button" onClick={retryAutomaticResearch} disabled={Boolean(busy)}><RefreshCw size={13} /> 重试</button>}</p>}
+      {(message || hasUncommittedChanges) && <p className={`authoring-journey-message ${message.includes("失败") ? "danger" : ""}`} role="status"><span>{message || (hasUnsavedChanges ? "当前有尚未保存的修改。" : "草稿已保存，尚未提交当前阶段。")}</span>{researchRecovery?.projectId === projectId && <button type="button" onClick={retryAutomaticResearch} disabled={Boolean(busy)}><RefreshCw size={13} /> 重试</button>}{sampleSizeGateError && stage === "picos" && <button type="button" className="primary-button" onClick={jumpToSampleSizeDeclaration} title="跳转到样本量声明字段并定位到复算不一致提示">去修正声明</button>}</p>}
       {stage !== "corpus" && !impact && !readOnly && <footer className="authoring-journey-footer"><span>{authoringWriteBlockedMessage || (unresolvedPhase1PartCount > 0 ? `还有 ${unresolvedPhase1PartCount} 个I期Part缺少研究人群或队列/剂量方案；可先保存草稿，但投影与阶段完成继续阻断。` : stage === "framing" ? "研究药物、适应症和研究分期足以启动竞品检索；产品技术类型或给药途径未知时可先保留待确认，由IB/语料证据提出建议。" : framingPendingDraft ? "研究设计已写入第一步草稿；请返回第一步完成变更后再提交PICOS。" : "先采用或微调调研建议；精确剂量、阈值和终点仍需项目证据支持。")}</span><div>{stage === "picos" && <button type="button" onClick={() => { setStage("framing"); setGroup(isPhaseOneStudy(framing.study_phase) ? "design" : "identity"); setPrefillSection("identity"); setAdvancedRefinementOpen(true); }}><ArrowLeft size={14} /> 返回第一步</button>}<button type="button" onClick={saveCurrentDrafts} disabled={authoringDraftSaveBlocked || Boolean(busy) || (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty))} title={authoringDraftSaveBlocked ? authoringDraftSaveBlockedMessage : busy ? "正在处理中，请稍候" : (journey && !(stage === "framing" ? framingDirty : framingDirty || picosDirty)) ? "当前没有需要保存的修改" : "保存当前草稿"}><Save size={14} /> {String(busy).startsWith("draft-") ? "保存中" : "保存草稿"}</button><button className="primary-button" type="button" onClick={() => saveStage(stage)} disabled={authoringWriteBlocked || Boolean(busy) || (stage === "framing" ? !framingReady : !picosReady || framingDirty || framingPendingDraft || !typedPhase1PartsReady)} title={authoringWriteBlocked ? writeBlockedTitle : busy ? "正在处理中，请稍候" : stage === "framing" ? (!framingReady ? `请先补齐第一步必填项：${missingFieldLabelText("framing", framingMissing)}；未知产品技术类型不会阻断此步骤` : "提交并完成第一步") : framingDirty || framingPendingDraft ? "请先保存并完成第一步变更后再提交PICOS" : !typedPhase1PartsReady ? "请先补齐I期Part必填项" : !picosReady ? `请先补齐第二步必填项：${missingFieldLabelText("picos", picosMissing)}` : "提交并完成第二步"}>{busy === `save-${stage}` ? "提交中" : stage === "framing" ? "完成第一步" : "完成第二步"}<ArrowRight size={14} /></button></div></footer>}
       <AuthoringCompetitorDrawer
         open={competitorDrawerOpen}
