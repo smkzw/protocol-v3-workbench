@@ -27,7 +27,17 @@ def main() -> int:
         pass
     lines = out.splitlines()
     print("EXIT_CODE=%d LINES=%d LOG=%s" % (proc.returncode, len(lines), log_path))
-    print("\n".join(lines[-120:]))
+    # 单行截断（20261012根治）：pytest输出含单行数MB的巨型行（如单行JSON），
+    # 仅截行数不够——每行超过1500字符截断为前1500字符+…（全文仍在log文件里）。
+    # 契约行（EXIT_CODE=/GATE_JSON=）完整保留——截断会破坏脚本侧解析（1013教训：
+    # GATE_JSON被判出行截断→fullGate UNPARSEABLE）；其余行1500字符截断。
+    tail = []
+    for ln in lines[-120:]:
+        if ln.startswith("EXIT_CODE=") or ln.startswith("GATE_JSON="):
+            tail.append(ln[:65536] + ("…[超64KB截断]" if len(ln) > 65536 else ""))
+        else:
+            tail.append(ln[:1500] + ("…[截断,全文见log]" if len(ln) > 1500 else ""))
+    print("\n".join(tail))
     return 0
 
 
