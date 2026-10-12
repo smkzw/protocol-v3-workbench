@@ -19,6 +19,7 @@ ICH E9(R1) 估计目标矩阵 + MI+双敏感性分析）；系统现状 9.2 零�
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 COMPLETE_STATS_TEXT = (
     "9.2 分析集定义：全分析集（FAS）包括所有随机入组且接受至少一次研究"
@@ -186,3 +187,16 @@ class ExportGateTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RandomizationRatioFormatRuleTests(unittest.TestCase):
+    """NEW-37（新纪元第7轮末修订）：等比臂随机化比单一格式（1:1:1）。"""
+
+    def test_instruction_pins_ratio_format_rule(self) -> None:
+        source = (
+            Path(__file__).resolve().parents[1]
+            / "services/api/app/medical_writing_full_draft.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("NEW-37", source)
+        self.assertIn("不写'3:3:3'或", source)
+        self.assertIn("非等比按实际比例（如2:1）", source)

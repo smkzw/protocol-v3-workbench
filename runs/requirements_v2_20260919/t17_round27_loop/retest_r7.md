@@ -76,3 +76,76 @@ R6 的生成已完成，本轮未启动新生成；吞吐透明化 UI 未获观�
 
 - 浏览器任务空间已清（标签已关）。
 - 只新建自己的 1 个项目（MW-II-477482E8），未动历史项目/数据/模型服务器；无遗留后台任务（上轮生成已自然完成）。
+
+---
+
+# retest_r7(v2) · 复测报告（2026-10-12 11:51–13:15，复测协调员）
+
+> 本节为对**2026-10-12 午修订批**（NEW-32 docx 元数据时间从方案日期派生 + NEW-37 随机化比单一格式规则；`medical_writing_document_exporter.py`/`medical_writing_full_draft.py` + `test_docx_metadata_date_p1.py`/`test_mw_statistics_assembly_e11.py` 增补）的复验。上方各节原样保留不作废。
+
+- 被测现场：HEAD=d899d198 + 未提交修订批（exporter/full_draft 修改）。后端 5301 pid 25189（11:52:27 起）、vite 5186 新 pid（显式 `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 --host 127.0.0.1 --port 5186 --strictPort`，进程 env 实测 ✓，日志 `retest_r7_vite_20261012.log`）。
+- 指纹三方一致：**backend_build_id 由 api-ef5970b7761b7b28 变为 api-dc177cd2d247b5fc**（本批后端修改生效直接证据）= vite 现算 = 经代理同值；frontendBuildId=web-a41250cfb49f9ab7（前端未改沿用）。
+- 测试者：复测协调员本人，浏览器黑盒（camofox）。
+- 本轮项目：**新建 proj_user_bab99c978e05**（KZ-GL601（口服选择性GLP-2受体激动剂缓释片）· 短肠综合征（肠功能不全，依赖肠外营养）· II期——全新任务包，项目列表无短肠综合征无口服GLP-2）+ 复验本人名下 HS501。
+- 证据：`retest_r7_material_20261012/`（RT7 导出件、OCR 探针、drill 产物）。
+
+## 一、单元证据
+
+`pytest tests/test_docx_metadata_date_p1.py tests/test_mw_statistics_assembly_e11.py -v` → **14 passed**（NEW-32 派生 T1–T4：ISO/中文/斜杠日期派生+无日期回退+调用点源级；NEW-37 随机化比格式规则钉住）；上批回归 → **9 passed**。
+
+## 二、fixed_pending_verify 逐项（再测试②）
+
+### 1) NEW-32 docx 元数据时间从方案日期派生——派生函数本体单测绿；live 未生效（接线错位）→ **维持 fixed_pending_verify + 新立 N8·P1**
+
+HS501（封面『版本日期 2026-10-11』在案）导出 RT7 → `docProps/core.xml` 实读：`dcterms:created`/`dcterms:modified` 均为 **2000-01-01T00:00:00Z**（回退值）——派生未生效。根因（代码实读）：`_document_core_timestamp(document)` 读 `document.protocol_date`（`medical_writing_document_exporter.py:5267` 一带新增函数），而真实 `ProtocolDocument`（`models.py:1973+`）**没有 protocol_date 字段**——方案日期实际存于 front matter（exporter:138 `protocol_date: str`、:5134 authoritative 填充、:2460 封面『版本日期』行渲染 2026-10-11）。`getattr(document,"protocol_date","")` 恒空 → 恒走 2000-01-01 回退。单测用 `SimpleNamespace(protocol_date=...)` 人造属性绿、真实对象形态红——**与上轮背景外查枚举错配同族（单测夹具 ≠ 真实对象形态）**。新立 **N8·P1**：派生应读 front_matter.protocol_date（或 configure 调用点传入）。
+
+### 2) NEW-37 随机化比单一格式规则——源级契约测试绿（full_draft 生成指令钉住等比臂 1:1:1 单一格式，E11 统计装配族）；其效果体现在后续生成的统计章文本（本轮无生成窗口）→ **在库，随下次生成观察**。
+
+### 3) 既有挂账顺带核实（无新证据，维持）
+
+journey 写入死锁（R3 恶化回归 P0）+ 分诊同药排除：未触及 → 维持开放。N5 / P0-3 consumed / N1″ / ⑧ P0-25 / P2-8 / 背景外查 N2 / P1-48 观察 / N6 / A3 / M1（existingDocument 分支）：未触及或无自然窗口 → 维持。
+
+## 三、回归抽查（再测试③，2 关键点）
+
+1. **建项**：KZ-GL601·短肠综合征·II期 三字段创建 **201**（后端日志实录）→ fact-intake 提交 **200**（AI 拆解完成）→ **重过 ✅**
+2. **导出（HS501 预览 Word）**：59 处【待补齐】逐章点名 → 知悉占位仍导出 → 真 OOXML（mwjob_70c5cc0afc9d437df023fba9，归档 `retest_r7_material_20261012/RT7_HS501_preview_export.docx`）；**守卫幂等第七次导出延续稳定**（剂量出处标记 3 个/连排 1 与 RT4a–RT6 全部持平）；【V1】0 → **重过 ✅**
+
+## 四、OCR 环境功能验证（③类）
+
+首发 → **300s 排队超时 HTTP 000**（oMLX 冷启动）；重试（480s 预算）→ **HTTP 200 · passed=true · GLM-OCR-bf16 · 174.0s**（`retest_r7_material_20261012/ocr_probe_r7.json`）。两态如实入账（冷启动长尾连续第三轮）。
+
+## 五、并发仲裁 300s 双负载复跑（再测试④）
+
+`python3 retest_r7_drill.py`（12:5x 实跑）：
+
+| 相 | 请求数 | 通过 | 未通过 | 最快 | 最慢 |
+|---|---|---|---|---|---|
+| translation（oMLX） | 1173 | **1173** | 0 | 0.23s | 0.41s（全程热态） |
+| triage（MTPLX） | 1 | 1 | 0 | — | 595.0s（翻译满载下全程排队，释放后执行；既有 P2 族第八例） |
+
+- **无双载 ✅ 零例外（连续第五次）**：61 采样 co_resident=0，MTPLX 端口全程未起。
+
+## 六、三句式界面评价
+
+- **美观性**：本轮导出件封面/占位延续既有水准；无新界面增量。
+- **易用性**：导出件文件属性不再对交付审阅者暴露谜之时间（修复意图正确），但本轮实测属性仍是 2000-01-01——用户可见问题未消失。
+- **逻辑性**：方案日期驱动元数据的思路正确（同一文档恒定、随版本变化），差在取数字段的接线；随机化比格式规则钉住 1:1:1 单一写法与 E11 装配族一致。
+
+## 七、收尾
+
+- 浏览器任务空间已清（camofox `list_tabs` 实测 tabs=[]）；本轮 /tmp 未落文件；模型服务器未手工触碰；BP601/NB601 流水线停于 awaiting_triage_confirm（无模型占用）。本轮新建 1 个项目（KZ-GL601），复验本人名下 HS501，未动任何他人项目/历史数据。
+
+## 八、判定汇总
+
+| 项 | 结论 |
+|---|---|
+| NEW-32 docx 元数据日期派生 | 派生函数单测绿；live 恒回退 2000-01-01（ProtocolDocument 无 protocol_date 字段，接线错位）→ **维持 fixed_pending_verify + 新立 N8·P1** |
+| NEW-37 随机化比单一格式 | 源级契约绿；生成效果待下次生成窗口 → 在库 |
+| journey 死锁 / 分诊同药排除（R3 两大主题） | 未触及 → **维持开放（带账）** |
+| N5 / P0-3 consumed / N1″ / ⑧ / P2-8 / 背景外查 N2 / P1-48 / N6 / A3 / M1 | 未触及或无自然窗口 → **维持挂账** |
+| OCR 环境 | 首发 300s 超时（如实记）→ 重试 200 / passed=true / 174.0s ✓ |
+| 回归抽查（建项/导出） | 2/2 重过 ✅（幂等第七次导出稳定） |
+| 并发仲裁双负载 | **无双载 ✅ 零例外（连续第五次）**（co_resident 0/61，translation 1173/1173） |
+| 新缺陷 | N8·P1（元数据日期派生读不存在属性恒回退，接线错位） |
+| allPass | **false**（NEW-32 维持 + N8 新立 + 两大主题与既有挂账仍在） |
+| closedIds | []（本轮无新增关闭） |

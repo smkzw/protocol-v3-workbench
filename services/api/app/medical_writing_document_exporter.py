@@ -13,7 +13,7 @@ import re
 import unicodedata
 import zipfile
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence
@@ -1721,7 +1721,7 @@ def export_medical_writing_document_docx(
         style_presets=style_profile.style_presets,
         enable_company_numbering=bool(style_profile.style_profile_id),
     )
-    _configure_core_properties(output, document, export_mode, approval_ref)
+    _configure_core_properties(output, document, export_mode, approval_ref, front_matter=front_matter)
     _configure_header(output.sections[0], document, export_mode, approval_ref)
     _configure_footer(output.sections[0], document, export_mode)
     _apply_body_layout(output.sections[0], style_profile.body_layout)
@@ -5257,11 +5257,34 @@ def _render_protocol_cover(
     return rendered
 
 
+def _document_core_timestamp(document, front_matter=None) -> datetime:
+    """NEW-32（新纪元第7轮末修订）：docx 元数据时间从方案日期派生——同一
+    文档恒定（字节级确定性以'内容+文档日期'为种子），随版本日期变化，
+    不再把 2000-01-01 恒定值带进交付件文件属性；无方案日期/不可解析时
+    回落固定时间戳保底。
+    N8（新纪元第8轮·终轮）：真实持有者是 front_matter.protocol_date
+    （exporter:138 字段定义、:2460 版本记录表同源）——第7轮误接
+    document.protocol_date（不存在）导致派生恒回落固定时间戳。
+    """
+    raw = ""
+    if front_matter is not None:
+        raw = str(getattr(front_matter, "protocol_date", "") or "").strip()
+    if not raw:
+        raw = str(getattr(document, "protocol_date", "") or "").strip()
+    for pattern in ("%Y-%m-%d", "%Y/%m/%d", "%Y年%m月%d日"):
+        try:
+            return datetime.strptime(raw, pattern).replace(tzinfo=timezone.utc)
+        except (ValueError, TypeError):
+            continue
+    return table_docx._FIXED_CORE_TIMESTAMP
+
+
 def _configure_core_properties(
     output: Document,
     document: ProtocolDocument,
     mode: MedicalWritingDocumentExportMode,
     approval_reference: str,
+    front_matter=None,
 ) -> None:
     properties = output.core_properties
     properties.title = f"{document.protocol_id} {document.version}".strip()
@@ -5274,8 +5297,8 @@ def _configure_core_properties(
     properties.author = "CMS AI医学经理工作台"
     properties.last_modified_by = "CMS AI医学经理工作台"
     properties.comments = approval_reference
-    properties.created = table_docx._FIXED_CORE_TIMESTAMP
-    properties.modified = table_docx._FIXED_CORE_TIMESTAMP
+    properties.created = _document_core_timestamp(document, front_matter)
+    properties.modified = _document_core_timestamp(document, front_matter)
 
 
 def _configure_default_styles(

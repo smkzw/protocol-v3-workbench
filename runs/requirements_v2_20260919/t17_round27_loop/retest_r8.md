@@ -67,3 +67,78 @@
 
 - 浏览器任务空间已清（标签已关）。
 - 只新建自己的 1 个项目（MW-II-1C3FF37C），未动历史项目/数据/模型服务器。
+
+---
+
+# retest_r8(v2) · 复测报告（2026-10-12 12:58–13:50，复测协调员）——LOOP 第8轮（封顶轮）
+
+> 本节为对**NEW-32/N8 接线修复批**（`medical_writing_document_exporter.py` 12:56 更新：`_document_core_timestamp(document, front_matter=None)` 改读真实持有者 front_matter.protocol_date，docstring 明确引用上轮 N8 定案；调用点 `export_medical_writing_document_docx:1721` 传入 front_matter）的复验。上轮（11:52 重启）后至本轮开始（12:58），除该 N8 修复外无其他代码改动。上方各节原样保留不作废。
+
+- 被测现场：HEAD=d899d198 + 未提交修订批（exporter 12:56）。后端 5301 pid 46210（13:00:39 起 > 12:56）、vite 5186 新 pid（显式 `VITE_API_PROXY_TARGET=http://127.0.0.1:5301 --host 127.0.0.1 --port 5186 --strictPort`，进程 env 实测 ✓，日志 `retest_r8_vite_20261012.log`）。
+- 指纹三方一致：**backend_build_id api-dc177cd2d247b5fc → api-fcd3772c173b7eb7**（N8 修复批生效直接证据）= vite 现算 = 经代理同值；frontendBuildId=web-a41250cfb49f9ab7（前端未改沿用）。
+- 测试者：复测协调员本人，浏览器黑盒（camofox）。
+- 本轮项目：**新建 proj_user_206cff2d5271**（KZ-PN601（口服选择性PDE4B亚型抑制剂缓释片）· 结节性痒疹（中重度）· II期——全新任务包，项目列表无结节性痒疹无口服PDE4B）+ 复验本人名下 HS501（NEW-32/N8 元数据验证主现场）。
+- 证据：`retest_r8_material_20261012/`（RT8 导出件、OCR 探针、drill 产物）。
+
+## 一、单元证据
+
+`pytest tests/test_docx_metadata_date_p1.py`（12:56 更新版）→ **3 passed**；上批组合回归（metadata/existing_document/corpus_override/sample_size_escape/dose_arithmetic）→ **16 passed**。
+
+## 二、fixed_pending_verify 逐项（再测试②）
+
+### 1) NEW-32 docx 元数据日期派生（含上轮 N8 接线错位修复）——live ✅→关闭（N8 一并关闭）
+
+HS501（封面『版本日期 2026-10-11』在案）导出 RT8 → `docProps/core.xml` 实读：`dcterms:created`/`dcterms:modified` = **2026-10-11T00:00:00Z**（从封面方案日期派生），**2000-01-01 已从文件属性消失**（上轮 RT7 实读仍为 2000-01-01T00:00:00Z）——`_document_core_timestamp(document, front_matter)` 经真实 front_matter 持有者取数、调用点传参接线（exporter:1721）全链 live 落地；单测 3/3 绿（12:56 更新契约）。同一文档字节级确定性由『内容+文档日期』种子保持（RT8 与 RT7 正文均 59 占位/3 标记不变，仅元数据随日期正确变化）。
+
+### 2) NEW-37 随机化比单一格式规则——源级契约绿在库（本轮无生成窗口，效果随下次生成观察）。
+
+### 3) 既有挂账顺带核实（无新证据，维持）
+
+- **A3 给药算术门**：HS501 6.2 节重开实查——第 3 轮会话稿（160mg 矛盾句）未恢复（会话存储随旧标签页过期），服务端文本干净（标记恰 1 份，幂等可见），无矛盾剂量导出窗口 → 维持。
+- journey 写入死锁（R3 恶化回归 P0）+ 分诊同药排除：未触及 → 维持开放（带账）。
+- N5 / P0-3 consumed / N1″ / ⑧ P0-25 / P2-8 / 背景外查 N2 / P1-48 观察 / N6 / M1：未触及或无自然窗口 → 维持。
+
+## 三、回归抽查（再测试③，2 关键点）
+
+1. **建项**：KZ-PN601·结节性痒疹（中重度）·II期 三字段创建 **201**（后端日志实录）→ fact-intake 提交 **200**（AI 拆解完成）→ **重过 ✅**
+2. **导出（HS501 预览 Word）**：59 处【待补齐】逐章点名 → 知悉占位仍导出 → 真 OOXML（mwjob_4b8a65811bddc66bbee68eff，归档 `retest_r8_material_20261012/RT8_HS501_preview_export.docx`）；守卫幂等第八次导出延续稳定（标记 3/连排 1）；【V1】0；**core 元数据日期派生 live 正确** → **重过 ✅**
+
+## 四、OCR 环境功能验证（③类）
+
+首发（480s 预算）→ **排队超时 HTTP 000**（oMLX 冷载）；重试（600s 预算）→ **HTTP 200 · passed=true · GLM-OCR-bf16 · 0.165s**（热态瞬时——前次请求已在服务端完成模型加载；`retest_r8_material_20261012/ocr_probe_r8.json`）。两态如实入账。
+
+## 五、并发仲裁 300s 双负载复跑（再测试④）
+
+`python3 retest_r8_drill.py`（13:3x 实跑）：
+
+| 相 | 请求数 | 通过 | 未通过 | 最快 | 最慢 |
+|---|---|---|---|---|---|
+| translation（oMLX） | 1347 | **1347** | 0 | 0.20s | 0.30s（全程热态） |
+| triage（MTPLX） | 1 | 1 | 0 | — | 579.8s（翻译满载下全程排队，释放后执行；既有 P2 族第九例） |
+
+- **无双载 ✅ 零例外（连续第六次）**：61 采样 co_resident=0，MTPLX 端口全程未起。
+
+## 六、三句式界面评价
+
+- **美观性**：本轮无界面增量（后端元数据批）；RT8 导出件延续既有整洁度。
+- **易用性**：交付件文件属性不再携带 2000-01-01 谜值（注册/归档场景不再引起审阅者疑问）——用户不直接看见但下游受益的修复。
+- **逻辑性**：元数据随方案日期派生的语义正确落地；同一文档再导出属性恒定（确定性保持），逻辑闭环。
+
+## 七、收尾
+
+- 浏览器任务空间已清（camofox `list_tabs` 实测 tabs=[]）；本轮 /tmp 未落文件；模型服务器未手工触碰；BP601/NB601 流水线停于 awaiting_triage_confirm（无模型占用）。本轮新建 1 个项目（KZ-PN601），复验本人名下 HS501，未动任何他人项目/历史数据。
+
+## 八、判定汇总
+
+| 项 | 结论 |
+|---|---|
+| NEW-32 docx 元数据日期派生（含 N8 接线修复） | RT8 core created/modified=2026-10-11T00:00:00Z live 实证（2000-01-01 消失）+ 单测 3/3 + 指纹 api-fcd3772c173b7eb7 三方一致 → **关闭 ✅（N8 一并关闭）** |
+| NEW-37 随机化比单一格式 | 源级契约绿在库（无生成窗口） → 在库观察 |
+| journey 死锁 / 分诊同药排除（R3 两大主题） | 未触及 → **维持开放（带账）** |
+| A3 / N5 / P0-3 consumed / N1″ / ⑧ / P2-8 / 背景外查 N2 / P1-48 / N6 / M1 | 未触及或无自然窗口 → **维持挂账** |
+| OCR 环境 | 首发 480s 冷载超时（如实记）→ 重试 200 / passed=true / 0.165s 热态 ✓ |
+| 回归抽查（建项/导出） | 2/2 重过 ✅（幂等第八次导出稳定 + 元数据派生 live） |
+| 并发仲裁双负载 | **无双载 ✅ 零例外（连续第六次）**（co_resident 0/61，translation 1347/1347） |
+| 新缺陷 | 本轮无新增 |
+| allPass | **false**（LOOP 封顶轮收官：两大主题与既有挂账仍在，但本轮批全绿且连续六轮零新增 P0） |
+| closedIds | NEW-32-docx元数据日期派生（含 N8 接线） |
