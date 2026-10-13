@@ -445,7 +445,19 @@ def verify_round1_analysis(
         raise CorpusPrefillBridgeError(
             "round-1 corpus analysis has no frozen AI route"
         )
-    if _canonical_json(route) != _canonical_json(identity["ai_route"]):
+    # 自检r1-2红节点④根因修复（2026-10-13）：冻结包（journey-bound
+    # round1_ai_route）由 freeze_active_route() 写入完整信封——主路由 +
+    # fallback_chain/fallback_chain_id（执行韧性元数据）；而 analyze()
+    # 持久化的行 ai_route 永远只是主路由（route.audit_payload()）。
+    # 路由身份比对必须锚定主路由：回退链是执行期韧性信息（实际由谁应答
+    # 已由行内 effective_ai_route/output_hash 单独钉住），不参与
+    # "分析在哪条主路由上产生"的身份判定。旧的全量 canonical 比对使凡
+    # 配置了回退链后冻结的项目（现场 proj_user_ee45e60e004d）桥接必炸，
+    # AI 预填富化失败、设计推荐包恒空、④级联卡死。
+    identity_route = dict(identity["ai_route"])
+    identity_route.pop("fallback_chain", None)
+    identity_route.pop("fallback_chain_id", None)
+    if _canonical_json(route) != _canonical_json(identity_route):
         raise CorpusPrefillBridgeError(
             "round-1 corpus analysis frozen AI route does not match the "
             "journey-bound route"

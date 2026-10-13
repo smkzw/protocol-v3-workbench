@@ -399,6 +399,62 @@ class VerificationFailClosedTests(unittest.TestCase):
         with self.assertRaises(CorpusPrefillBridgeError):
             self._verify(_analysis_row(ai_route=route))
 
+    def test_fallback_chain_envelope_on_bound_route_still_verifies(self):
+        """回归（自检r1-2红节点④根因，2026-10-13）：freeze_active_route()
+        把完整冻结包（主路由 + fallback_chain + fallback_chain_id）写进
+        journey.research_pipeline.round1_ai_route，而 analyze() 持久化的
+        analysis 行 ai_route 只含主路由（route.audit_payload()，不含回退
+        执行元数据）。桥接校验必须比对主路由身份，而不是要求行携带它从未
+        持久化过的回退链元数据——否则凡是在配置了回退链后冻结的项目（现场
+        proj_user_ee45e60e004d）桥接必炸，AI 预填富化失败，设计推荐包恒空。
+        """
+        bound_route = _ai_route()
+        bound_route["fallback_chain"] = {
+            "schema_version": "corpus_analysis_ai_fallback_v1",
+            "routes": [
+                dict(
+                    _ai_route(),
+                    profile_id="product_independent_ai_fallback",
+                    base_url="https://fallback.invalid/v1",
+                    identity_hash="e" * 64,
+                )
+            ],
+        }
+        bound_route["fallback_chain_id"] = "mcaf_" + "0" * 24
+        identity = bound_round1_analysis_identity(
+            _journey(
+                research_pipeline=_research_pipeline(
+                    round1_ai_route=bound_route,
+                )
+            )
+        )
+        assert identity is not None
+        identity["project_id"] = PROJECT_ID
+        # 行侧 ai_route 仍是仅主路由形态（analyze() 的实际写入形状）。
+        self._verify(_analysis_row(), identity)
+
+    def test_fallback_envelope_does_not_mask_primary_route_drift(self):
+        """回退链豁免不得放宽主路由身份校验：行侧主路由漂移仍须拒收。"""
+        bound_route = _ai_route()
+        bound_route["fallback_chain"] = {
+            "schema_version": "corpus_analysis_ai_fallback_v1",
+            "routes": [],
+        }
+        bound_route["fallback_chain_id"] = "mcaf_" + "1" * 24
+        identity = bound_round1_analysis_identity(
+            _journey(
+                research_pipeline=_research_pipeline(
+                    round1_ai_route=bound_route,
+                )
+            )
+        )
+        assert identity is not None
+        identity["project_id"] = PROJECT_ID
+        drifted = _ai_route()
+        drifted["model"] = "qwen3.8-max-preview-drifted"
+        with self.assertRaises(CorpusPrefillBridgeError):
+            self._verify(_analysis_row(ai_route=drifted), identity)
+
     def test_journey_bound_output_hash_drift_rejected(self):
         identity = self._identity()
         identity["output_hash"] = "9" * 64

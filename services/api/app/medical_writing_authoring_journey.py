@@ -15,6 +15,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from .medical_writing_full_draft import normalize_randomization_ratio_labels
+
 from packages.contracts.workbench_contracts import (
     InterventionRulesAuthority,
     InterventionRulesNonIpRuleClass,
@@ -1346,6 +1348,24 @@ class MedicalWritingAuthoringJourneyService:
                 update={
                     "picos": _derive_structured_intervention_rules_from_legacy(
                         request.picos, state.framing
+                    )
+                },
+                deep=True,
+            )
+            # NEW-37（新纪元第10轮·层位定案）：等比随机化比规范化——用户
+            # authored 的 '3:3:3' 形态（live 库 sample_size_anchor 实测）
+            # 在提交层统一为 '1:1:1'（镜像 fact_intake 枚举规范化模式）。
+            request = request.model_copy(
+                update={
+                    "picos": request.picos.model_copy(
+                        update={
+                            "sample_size_anchor": normalize_randomization_ratio_labels(
+                                request.picos.sample_size_anchor
+                            ),
+                            "sample_size_strategy": normalize_randomization_ratio_labels(
+                                request.picos.sample_size_strategy
+                            ),
+                        }
                     )
                 },
                 deep=True,

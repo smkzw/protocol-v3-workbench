@@ -10531,6 +10531,26 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
     annotation_strip_notes = _apply_export_annotation_sanitization(document)
     # NEW-17 内容族①（R27 第3轮修订）：导出占位符门。
     placeholder_report = _export_placeholder_report(document)
+    # NEW-54（新纪元第11轮）：版本间在场性回归——分析集消失且无声明计缺口。
+    try:
+        presence_gaps = _presence_regression_gaps(
+            document,
+            store_dir=RUNTIME_DIR / "export_presence",
+        )
+        placeholder_report["gap_sections"].extend(
+            {
+                "section_number": "",
+                "section_heading": "统计分析考虑（版本间在场性）",
+                "reason": gap,
+            }
+            for gap in presence_gaps
+        )
+        placeholder_report["gap_count"] += len(presence_gaps)
+        _record_presence_snapshot(
+            document, store_dir=RUNTIME_DIR / "export_presence"
+        )
+    except Exception:  # noqa: BLE001 - 在场性检查失败不阻塞导出
+        pass
     # 第4轮·第二刀②：守卫标记缺失→导出副本自动补标（不回写存储）——
     # 纸面永远诚实（HA501 根因闭环：检出不再只是计缺口）。
     placeholder_report["guard_annotations"] = _apply_export_guard_annotations(
@@ -11015,6 +11035,90 @@ def _dose_arithmetic_gaps(text: str) -> list[str]:
                 "需修正片数/规格/频次或臂名剂量（药房不可执行的矛盾必须消解）"
             )
     return reasons
+
+
+# NEW-54（新纪元第11轮）：版本间在场性回归——分析集集合与上一版本 diff，
+# 消失且无声明即缺口『定向删减未声明』（UC2A→UC2B：PPS 消失/零声明形态）。
+_PRESENCE_ANALYSIS_SETS = {
+    "FAS": ("全分析集", "FAS"),
+    "SS": ("安全性分析集", "安全分析集", "SS"),
+    "PPS": ("符合方案集", "PPS", "符合方案分析集"),
+}
+_PRESENCE_DECLARED_RE = re.compile(r"不适用|不再收集|已删除|移除声明", re.IGNORECASE)
+
+
+def _presence_snapshot_from_texts(texts) -> dict[str, bool]:
+    import re as _re
+
+    joined = "\n".join(str(item or "") for item in texts)
+    snapshot: dict[str, bool] = {}
+    for key, patterns in _PRESENCE_ANALYSIS_SETS.items():
+        snapshot[key] = any(
+            _re.search(pattern, joined, _re.IGNORECASE) for pattern in patterns
+        )
+    return snapshot
+
+
+def _presence_store_path(project_id: str, protocol_id: str, store_dir) -> Path:
+    safe = "".join(
+        ch if ch.isalnum() or ch in {"_", "-"} else "_"
+        for ch in f"{project_id}::{protocol_id}"
+    )
+    return Path(store_dir) / f"{safe}.json"
+
+
+def _record_presence_snapshot(document, *, store_dir) -> dict[str, bool]:
+    texts = [
+        str(block.get("text") or block.get("body") or "")
+        for section in document.sections
+        for block in (section.content_blocks or [])
+    ]
+    snapshot = _presence_snapshot_from_texts(texts)
+    path = _presence_store_path(
+        document.project_id, document.protocol_id, store_dir
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(snapshot, ensure_ascii=False, sort_keys=True), encoding="utf-8"
+    )
+    return snapshot
+
+
+def _load_presence_snapshot(project_id: str, protocol_id: str, store_dir) -> dict[str, bool] | None:
+    path = _presence_store_path(project_id, protocol_id, store_dir)
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _presence_regression_gaps(document, *, store_dir) -> list[str]:
+    """上一版本在场、本版本消失且无声明 → 缺口『定向删减未声明』。"""
+    previous = _load_presence_snapshot(
+        document.project_id, document.protocol_id, store_dir
+    )
+    if not previous:
+        return []
+    texts = [
+        str(block.get("text") or block.get("body") or "")
+        for section in document.sections
+        for block in (section.content_blocks or [])
+    ]
+    joined = "\n".join(texts)
+    current = _presence_snapshot_from_texts(texts)
+    gaps: list[str] = []
+    for key in sorted(previous):
+        if previous.get(key) and not current.get(key):
+            if _PRESENCE_DECLARED_RE.search(joined):
+                continue
+            gaps.append(
+                f"定向删减未声明：分析集{key}从上一版本消失"
+                "（需补『不适用+理由』声明或恢复该分析集）"
+            )
+    return gaps
 
 
 def _export_placeholder_report(document) -> dict:

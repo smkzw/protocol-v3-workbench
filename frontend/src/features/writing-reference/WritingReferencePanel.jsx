@@ -673,13 +673,19 @@ export function WritingReferencePanel({
   });
   const alignmentSubmitDisabledReason = !journey?.picos_sha256
     ? "当前PICOS尚未形成可核对版本"
-    : alignmentSummary.trim().length < 10
-      ? "请填写至少10个字的核对与处置说明"
-      : alignmentStatus === "resolved" && Number(alignmentConflictCount) < 1
-        ? "请填写已处置冲突数"
-        : busyAction
-          ? "前一项操作尚未完成"
-          : "";
+    // 自检r1-2红节点④（2026-10-13）：服务端契约要求 picos_complete 才受理
+    // 对齐记录（"PICOS must be complete before corpus alignment review"）。
+    // 此前按钮可点、点了才收 422——用户看到的是"记录PICOS核对结论"与
+    // "完成第二步"互相等待的环。这里把顺序讲明：先完成第二步。
+    : !journey?.picos_complete
+      ? "先完成第二步PICOS设计，再记录核对结论（语料门第5条在PICOS完成后即可闭环）"
+      : alignmentSummary.trim().length < 10
+        ? "请填写至少10个字的核对与处置说明"
+        : alignmentStatus === "resolved" && Number(alignmentConflictCount) < 1
+          ? "请填写已处置冲突数"
+          : busyAction
+            ? "前一项操作尚未完成"
+            : "";
   const artifactBySourceDocument = useMemo(
     () => new Map((workspace?.artifacts || []).map((item) => [item.source_document_id, item])),
     [workspace?.artifacts],

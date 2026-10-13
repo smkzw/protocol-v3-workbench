@@ -779,6 +779,21 @@ _STAT_ENDPOINT_FAMILY_TOKENS = (
 )
 
 
+_EQUAL_RATIO_RE = re.compile(r"(?<![0-9:])([2-9][0-9]?)(?::\1)+(?![0-9:])")
+
+
+def normalize_randomization_ratio_labels(text: str) -> str:
+    """NEW-37（新纪元第10轮·层位定案）：等比随机化比规范化——'3:3:3'
+    （用户 authored 文本，live 库 sample_size_anchor/strategy 实测）统一
+    写作'1:1:1'；非等比（2:1/1:1:2）与时间/编号不受影响。生成指令 :1769
+    管不到用户输入，规范化必须在提交层执行（镜像 fact_intake 枚举规范
+    化模式）。"""
+    return _EQUAL_RATIO_RE.sub(
+        lambda match: "1" + ":1" * (match.group(0).count(":")),
+        str(text or ""),
+    )
+
+
 def statistics_assembly_check(
     text: str, *, endpoint_families: dict[str, bool] | None = None
 ) -> dict:

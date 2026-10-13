@@ -612,3 +612,21 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论与历轮一致：①本轮切相窗口极短（9.4s，GLM-OCR-bf16 页缓存热载，窗口浮动特性再次确认）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 93ms 即证）；③探针后仲裁=omlx、queue 空、mtplx 按最小驻留正常卸载。证据：`../env_precheck_newera_r12_20261013/`。
 
 红线自检：5301 重启经历轮判例授权路径（round27 脚本、TERM 温和退出、重启前 durable 非终态=0 且编排器 users 0/0 队列空确认无任务打断）；全部探针流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（42 用户态保留）。
+
+---
+
+# 复测 · 2026-10-13 08:05–08:06 CST（新纪元LOOP·环境预检·第13轮，环境管理员）
+
+背景：前端 5186（vite pid 81593，env VITE_API_PROXY_TARGET=5301 ✓）与后端 5301（pid 96580，r12 重启后延续）指纹自检即 MATCH（api-2d4246c7ddcf6513 双侧一致），本轮无需重启。ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 在库未变（role_revision=122，API 实测 roles[ocr] available+ready、current_runnable=true），备份在位。预检时仲裁器=mtplx 驻留、队列空。
+
+实测序列（全部经产品 API；oMLX pid 25352；590s 客户端超时）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 08:05 | OCR 视觉探针 #1 → **passed**（HTTP 200；页缓存热加载） | 403,392 → 33,870,160 | 8,009 ms |
+| 08:05 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,876,800 | 264 ms |
+| 08:06 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,876,896（稳定） | **123 ms** |
+
+结论与历轮一致：①切相窗口 8.0s（页缓存热载，浮动特性再现）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 123ms 即证）；③探针后仲裁=omlx、users 0/0、queue 空、mtplx 按最小驻留正常卸载（reason=process_not_running，设计内）。证据：`../env_precheck_newera_r13_20261013/`。
+
+红线自检：本轮无服务重启；全部探针流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（42 用户态保留、54 医学监查线保留）。
