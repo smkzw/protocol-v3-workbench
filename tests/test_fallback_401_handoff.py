@@ -35,8 +35,8 @@ def _failed_run_with_status(http_status: int) -> AiTaskRun:
         task_type="medical_writing_revision",
         purpose="修订候选生成",
         status=AiTaskRunStatus.FAILED,
-        provider="ollama-cloud",
-        model_name="deepseek-v4.1-flash",
+        provider="cms-router",
+        model_name="glm-5.3-flash",
         ai_gateway_status="configured",
         prompt_version="medical_writing_revision_v1_4",
         created_at=now,
@@ -137,7 +137,7 @@ class FallbackProfileIdentityTests(unittest.TestCase):
                 provider="opencode-go",
                 label="OpenCode Go",
                 base_url="https://opencode.ai/zen/go/v1",
-                model="deepseek-v4.1-flash",
+                model="glm-5.3-flash",
                 api_key_env="OPENCODE_API_KEY",
                 deployment_scope="cloud",
                 discovery_mode="manual_plus_probe",
@@ -146,10 +146,10 @@ class FallbackProfileIdentityTests(unittest.TestCase):
             store.upsert(
                 AiProviderProfile(
                     profile_id="independent_ai__ollama_cloud_dsv41",
-                    provider="ollama-cloud",
+                    provider="cms-router",
                     label="Ollama Cloud DSV41",
-                    base_url="https://ollama.com/v1",
-                    model="deepseek-v4.1-flash",
+                    base_url="http://127.0.0.1:20128/v1",
+                    model="glm-5.3-flash",
                     api_key_env="OLLAMA_CLOUD_API_KEY",
                     deployment_scope="cloud",
                     discovery_mode="manual_plus_probe",
@@ -206,7 +206,7 @@ class FallbackProfileIdentityTests(unittest.TestCase):
         )
         self.assertEqual("opencode-go", resolution.provider_name)
         self.assertEqual(
-            "deepseek-v4.1-flash", resolution.model_name
+            "glm-5.3-flash", resolution.model_name
         )
         self.assertEqual(
             "independent_ai__opencode_go_deepseek_v41_flash",

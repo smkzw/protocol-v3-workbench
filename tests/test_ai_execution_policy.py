@@ -430,13 +430,13 @@ class AiExecutionPolicyTests(unittest.TestCase):
         """
         resolver = AiExecutionPolicyResolver(
             deployment_profile="local_private_clinical",
-            provider_name="ollama-cloud",
-            model_name="deepseek-v4.1-flash",
+            provider_name="cms-router",
+            model_name="glm-5.3-flash",
             transport_name="openai_compatible",
             # 0930 fix 后策略钉住 https://ollama.com/v1（adapter 直接拼
             # /chat/completions，缺 /v1 会 404）；本夹具此前用无 /v1 的
             # 旧端点，与已提交的生产修复脱节，属陈旧夹具而非行为断言。
-            base_url="https://ollama.com/v1",
+            base_url="http://127.0.0.1:20128/v1",
         )
         # 修前留痕：该路由曾触发 AiExecutionPolicyDenied（provider must be
         # one of alibaba_token_plan, cms-router, deepseek, mtplx,
@@ -473,17 +473,17 @@ class AiExecutionPolicyTests(unittest.TestCase):
                 provider="opencode-go",
                 label="OpenCode Go",
                 base_url="https://opencode.ai/zen/go/v1",
-                model="deepseek-v4.1-flash",
+                model="glm-5.3-flash",
                 api_key_env="OPENCODE_API_KEY",
                 deployment_scope="cloud",
                 discovery_mode="manual_plus_probe",
             )
             ollama = AiProviderProfile(
                 profile_id="independent_ai__ollama_cloud_dsv41",
-                provider="ollama-cloud",
+                provider="cms-router",
                 label="Ollama Cloud DSV41",
                 base_url="https://ollama.com",
-                model="deepseek-v4.1-flash",
+                model="glm-5.3-flash",
                 api_key_env="OLLAMA_CLOUD_API_KEY",
                 deployment_scope="cloud",
                 discovery_mode="manual_plus_probe",
@@ -548,7 +548,7 @@ class AiExecutionPolicyTests(unittest.TestCase):
             provider="opencode-go",
             label="OpenCode Go",
             base_url="https://opencode.ai/zen/go/v1",
-            model="deepseek-v4.1-flash",
+            model="glm-5.3-flash",
             api_key_env="OPENCODE_API_KEY",
             deployment_scope="cloud",
             discovery_mode="manual_plus_probe",
@@ -557,10 +557,10 @@ class AiExecutionPolicyTests(unittest.TestCase):
         store.upsert(
             AiProviderProfile(
                 profile_id="independent_ai__ollama_cloud_dsv41",
-                provider="ollama-cloud",
+                provider="cms-router",
                 label="Ollama Cloud DSV41",
-                base_url="https://ollama.com/v1",
-                model="deepseek-v4.1-flash",
+                base_url="http://127.0.0.1:20128/v1",
+                model="glm-5.3-flash",
                 api_key_env="OLLAMA_CLOUD_API_KEY",
                 deployment_scope="cloud",
                 discovery_mode="manual_plus_probe",
@@ -614,7 +614,7 @@ class AiExecutionPolicyTests(unittest.TestCase):
                         f"{task_value} 提交层身份必须落 owner 云 profile",
                     )
                     self.assertEqual(
-                        "https://ollama.com/v1",
+                        "http://127.0.0.1:20128/v1",
                         snapshot["base_url"],
                         f"{task_value} 必须实际打到 ollama.com",
                     )

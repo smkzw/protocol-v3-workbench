@@ -231,15 +231,15 @@ _CMS_ROUTER_DEEPSEEK_LATEST_POLICY = TaskAiRoutePolicy(
 # deepseek-v4.1-flash（independent_ai__ollama_cloud_dsv41，与
 # TASK_TYPE_ROUTE_PROFILE_OVERRIDES 的提交层路由同一承载）。NEW-22 只修了
 # 提交层，执行层白名单缺该项导致 mwjob_859f4055 三连拒、修订功能整体不可用。
+# owner 20261013 切换：ollama-cloud 额度耗尽 → cms-router / glm-5.3-flash。
+# 承载 profile_id 不变（independent_ai__ollama_cloud_dsv41，路由表与绑定零改动），
+# 仅换 provider/base_url/model 三元组；常量名保留历史锚（多测试按名引用）。
 _OLLAMA_CLOUD_DEEPSEEK_V41_FLASH_POLICY = TaskAiRoutePolicy(
-    provider_name="ollama-cloud",
+    provider_name="cms-router",
     transport_name="openai_compatible",
-    # 0930 fix: include /v1 — the adapter appends /chat/completions directly
-    # to base_url; without /v1 requests hit https://ollama.com/chat/completions
-    # which the cloud returns 404 (the profile settings JSON was fixed in
-    # tandem; this policy must match its normalized base_url).
-    base_url="https://ollama.com/v1",
-    allowed_models=frozenset({"deepseek-v4.1-flash"}),
+    # 0930 fix 的 /v1 规则沿用到本地网关：adapter 直拼 /chat/completions。
+    base_url="http://127.0.0.1:20128/v1",
+    allowed_models=frozenset({"glm-5.3-flash"}),
 )
 # Route mirrors the owner's actual MTPLX deployment as discovered on
 # 2026-09-23 (LOCAL_ENDPOINT_DISCOVERY_0923V1.json): the server runs on
