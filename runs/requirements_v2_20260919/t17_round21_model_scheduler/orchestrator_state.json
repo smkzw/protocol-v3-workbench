@@ -1,4 +1,18 @@
 {
+  "adoption": {
+    "mtplx": {
+      "adopted": true,
+      "adopted_at": "2026-10-14 07:50:56",
+      "checks": {
+        "cmdline_markers_ok": true,
+        "ledger_reason": "process_not_running",
+        "listener_found": true
+      },
+      "evidence": "SMOKE-r1-2 ③a: ledger pid=40404 (process_not_running) but the port listener matches this deployment's identity markers; cmdline='/Users/smkzw/Library/Application Support/MTPLX/runtime-venv/bin/python -P -m mtplx.server.openai --model /Users/smkzw/.mtplx/models/Youssofal--Qwen3.8-Flash-Next-MTPLX-Optimized-Speed --backend-id nat'",
+      "operator": "self_adopt_stale_pidfile",
+      "pid": 30534
+    }
+  },
   "release_unconfirmed": {},
   "takeover": {
     "mtplx": {

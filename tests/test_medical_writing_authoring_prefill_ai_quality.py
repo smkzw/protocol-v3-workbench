@@ -37,6 +37,7 @@ from services.api.app.medical_writing_authoring_journey import (
 from services.api.app.medical_writing_authoring_prefill import (
     generate_prefill_package,
 )
+from packages.contracts.workbench_contracts import AuthoringPrefillClaimBinding
 from services.api.app.medical_writing_authoring_prefill_ai import (
     DEEPSEEK_PREFILL_MODEL,
     _build_condition_candidate,
@@ -663,6 +664,110 @@ class MergeRankingTests(unittest.TestCase):
     """The corrected merge function must not let evidence-free AI candidates
     displace evidence-bound candidates from the recommendation slot."""
 
+    def test_real_ai_composite_prunes_deterministic_scaffold_placeholder(self):
+        """自检r1-3红节点④（2026-10-14，proj_user_572869985339）：AI富化已为
+        package.design 产出真实design_package候选（preview="竞品Protocol观察：
+        随机、安慰剂对照"、claim_bindings证据绑定）后，确定性骨架占位卡
+        （preview="design模块待AI基于语料生成"、rationale="模块结构已准备；待
+        语料准入和独立AI完成证据绑定后生成3–5个候选包。"、confidence=none）
+        必须从该组剔除。现场两卡并存且推荐槽按策略留空，测试者把骨架卡读成
+        "推荐包未生成"，④级联卡死。"""
+        scaffold = AuthoringPrefillCandidate(
+            candidate_id="mwprefilltest_scaffold_design",
+            field_path="package.design",
+            structured_value={
+                "design.randomization": {"mode": ""},
+                "design.blinding": {"mode": "", "blinded_roles": []},
+            },
+            target_paths=["design.randomization", "design.blinding"],
+            preview="design模块待AI基于语料生成",
+            evidence_refs=[],
+            rationale="模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。",
+            limitations=[],
+            confidence="none",
+            state="ai_proposed",
+            candidate_scope="module",
+            recommendation_role="pending_decision",
+            adoption_mode="manual_only",
+            evidence_status="insufficient",
+        )
+        real = AuthoringPrefillCandidate(
+            candidate_id="mwprefilltest_real_design",
+            field_path="package.design",
+            structured_value={
+                "design.randomization": "随机",
+                "design.blinding": "双盲",
+            },
+            preview="竞品Protocol观察：随机、安慰剂对照",
+            evidence_refs=[_make_evidence_ref(
+                source_id="wref_doc_001",
+                source_text="随机、双盲、安慰剂对照设计（受控中文译文）",
+            )],
+            rationale="基于已准入竞品Protocol的结构观察。",
+            limitations=["AI预填候选，需由医学经理核对后采用。"],
+            confidence="medium",
+            state="ai_proposed",
+            candidate_scope="design_package",
+            target_paths=["design.randomization", "design.blinding"],
+            recommendation_role="pending_decision",
+            adoption_mode="manual_only",
+            evidence_status="partially_supported",
+            evidence_catalog_id="mwcat_test_01",
+            evidence_catalog_sha256="a" * 64,
+            claim_bindings=[AuthoringPrefillClaimBinding(
+                target_path="design.randomization",
+                value_pointer="/design.randomization",
+                catalog_entry_id="mwcae_test_01",
+                source_id="wref_doc_001",
+                locator="page-3",
+                quote_sha256="b" * 64,
+                support_kind="competitor_option",
+            )],
+        )
+        merged = _merge_ai_candidates(
+            field_path="package.design",
+            deterministic=[scaffold],
+            ai_candidates=[real],
+        )
+        previews = [str(c.preview) for c in merged]
+        self.assertIn("竞品Protocol观察：随机、安慰剂对照", previews)
+        self.assertNotIn(
+            "design模块待AI基于语料生成",
+            previews,
+            "真实AI候选已存在时骨架占位卡必须剔除，不得再误导为'待AI生成'",
+        )
+
+    def test_scaffold_kept_when_no_real_ai_candidate_survives(self):
+        """无真实AI候选存活时骨架卡保留（该模块确属待AI，文案仍然真实）。"""
+        scaffold = AuthoringPrefillCandidate(
+            candidate_id="mwprefilltest_scaffold_intervention",
+            field_path="package.intervention",
+            structured_value={"picos.intervention_summary": ""},
+            target_paths=["picos.intervention_summary"],
+            preview="intervention模块待AI基于语料生成",
+            evidence_refs=[],
+            rationale="模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。",
+            limitations=[],
+            confidence="none",
+            state="ai_proposed",
+            candidate_scope="module",
+            recommendation_role="pending_decision",
+            adoption_mode="manual_only",
+            evidence_status="insufficient",
+        )
+        english_reject = _make_candidate(
+            "package.intervention",
+            "Placebo controlled intervention module",
+            rationale="英文候选会被语言门拒绝",
+        )
+        merged = _merge_ai_candidates(
+            field_path="package.intervention",
+            deterministic=[scaffold],
+            ai_candidates=[english_reject],
+        )
+        previews = [str(c.preview) for c in merged]
+        self.assertIn("intervention模块待AI基于语料生成", previews)
+
     def test_ai_without_evidence_does_not_displace_deterministic_with_evidence(self):
         """When a deterministic candidate has real evidence and the AI
         candidate does not, the deterministic candidate must rank first
@@ -903,3 +1008,46 @@ class HasRealEvidenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UncoveredModuleScaffoldRefreshTests(unittest.TestCase):
+    """富化已运行但某package模块无存活候选时，骨架卡文案必须如实反映
+    （"本轮AI未给出建议、可重试/手填"），不得继续声称"待语料准入和独立AI
+    完成证据绑定后生成"——r1-3现场该文案在准入完成+AI运行后仍原样残留，
+    测试者据此误判design推荐被语料门拦截。"""
+
+    def test_uncovered_scaffold_text_refreshed(self):
+        from services.api.app.medical_writing_authoring_prefill_ai import (
+            _refresh_uncovered_package_scaffold,
+        )
+        from packages.contracts.workbench_contracts import (
+            AuthoringPrefillFieldCandidates,
+        )
+        scaffold = AuthoringPrefillCandidate(
+            candidate_id="mwprefilltest_scaffold_outcomes",
+            field_path="package.outcomes",
+            structured_value={"picos.primary_endpoint": ""},
+            target_paths=["picos.primary_endpoint"],
+            preview="outcomes模块待AI基于语料生成",
+            evidence_refs=[],
+            rationale="模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个候选包。",
+            limitations=[],
+            confidence="none",
+            state="ai_proposed",
+            candidate_scope="module",
+            recommendation_role="pending_decision",
+            adoption_mode="manual_only",
+            evidence_status="insufficient",
+        )
+        group = AuthoringPrefillFieldCandidates(
+            field_path="package.outcomes",
+            recommended_candidate_id="",
+            candidates=[scaffold],
+        )
+        refreshed = _refresh_uncovered_package_scaffold(group)
+        self.assertEqual(1, len(refreshed.candidates))
+        card = refreshed.candidates[0]
+        self.assertNotIn("待语料准入", str(card.rationale))
+        self.assertNotIn("待AI基于语料生成", str(card.preview))
+        self.assertIn("本轮AI未给出", str(card.preview))
+        self.assertIn("更新建议", str(card.rationale))

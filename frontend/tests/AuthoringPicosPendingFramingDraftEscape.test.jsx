@@ -26,7 +26,7 @@ const baseFraming = {
   target_mechanism: "",
   competitor_target_scope: "",
   development_regions: ["中国"],
-  design_pattern: "randomized_double_blind_placebo_controlled",
+  design_pattern: "随机双盲、安慰剂对照的平行组多中心设计",
   population_intent: "成人慢性自发性荨麻疹患者",
   key_uncertainties: [],
   manual_source_ids: [],
@@ -166,4 +166,52 @@ it("PICOS页内提供并入第一步草稿的一键出口，不再引导先保�
   });
   const step2After = screen.getByRole("button", { name: /完成第二步/ });
   expect(step2After.title).not.toMatch(/草稿/);
+});
+
+it("「采用当前方案文字建议」应用后立即落库第一步草稿（不再只写UI态）", async () => {
+  const savedDraft = journeyPayload({
+    revision: 21,
+    framing: { ...baseFraming, structured_design: { randomization_mode: "randomized", center_model: "多中心" } },
+    framing_draft: {
+      stage: "framing",
+      framing: { ...baseFraming, structured_design: { randomization_mode: "randomized", center_model: "多中心" } },
+      missing_required_fields: [],
+      saved_from_revision: 20,
+      saved_at: "2026-10-14T00:30:00.000000+00:00",
+      saved_by: "medical_manager",
+    },
+  });
+  const draftCalls = [];
+  const fetchMock = vi.fn(async (url, options = {}) => {
+    const href = String(url);
+    if (href.includes("/stages/framing/draft")) {
+      draftCalls.push(JSON.parse(options.body || "{}"));
+      return okResponse(savedDraft);
+    }
+    if (href.includes("/medical-writing/authoring-journey")) return okResponse(journeyPayload());
+    if (href.includes("/fact-intake/study_framing")) return okResponse({ available: false });
+    if (href.includes("/research-pipeline")) {
+      return okResponse({ pipeline: { stage: "awaiting_corpus_admission", percent: 90 } });
+    }
+    return okResponse({});
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  render(
+    <MedicalWritingAuthoringJourneySetup
+      projectId={PID}
+      projectHeader={{ product_name: "KZ-sGC1801", indication: "慢性自发性荨麻疹", study_phase: "II期" }}
+      initialStage="picos"
+      onJourneyChanged={vi.fn()}
+      onCreated={vi.fn()}
+    />,
+  );
+  const applyButton = await screen.findByRole("button", { name: /采用当前方案文字建议/ });
+  fireEvent.click(applyButton);
+  await waitFor(() => {
+    expect(draftCalls.length).toBeGreaterThanOrEqual(1);
+  });
+  const body = draftCalls[0];
+  expect(body.stage).toBe("framing");
+  const design = (body.framing || {}).structured_design || {};
+  expect(design.randomization_mode).toBe("randomized");
 });

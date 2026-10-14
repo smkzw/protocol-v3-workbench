@@ -1370,6 +1370,21 @@ class DeepSeekPrefillAdapter:
                             candidates=distinct,
                         )
                         continue
+            if (
+                field_path.startswith("package.")
+                and field_overrides
+                and any(
+                    str(c.preview or "").endswith("模块待AI基于语料生成")
+                    for c in group.candidates
+                )
+            ):
+                # 自检r1-3红节点④：富化已运行（有存活候选）但本模块没有——
+                # 骨架卡"待语料准入和独立AI完成证据绑定"文案已失真，改为
+                # 如实的"本轮AI未给出建议，可重试/手填"。
+                new_field_candidates[field_path] = (
+                    _refresh_uncovered_package_scaffold(group)
+                )
+                continue
             new_field_candidates[field_path] = group
 
         for field_path, ai_candidates in field_overrides.items():
@@ -1907,6 +1922,41 @@ def _build_condition_candidate(
     )
 
 
+def _refresh_uncovered_package_scaffold(
+    group: "AuthoringPrefillFieldCandidates",
+) -> "AuthoringPrefillFieldCandidates":
+    """自检r1-3红节点④（2026-10-14）：富化已运行但该package模块无存活候选时，
+    骨架占位卡文案必须如实更新。
+
+    原文案「模块结构已准备；待语料准入和独立AI完成证据绑定后生成3–5个
+    候选包」只在生成时点为真；准入完成、独立AI已运行后仍原样残留，会让
+    用户误判"推荐包仍被语料门拦截"（r1-3现场）。更新为可行动的如实表述：
+    本轮AI未给出该模块的证据充分建议，可点「更新建议」重试或手动填写。
+    仅改preview/rationale文案，不改变候选的身份/证据/策略属性。
+    """
+    refreshed = []
+    for cand in group.candidates:
+        preview = str(cand.preview or "")
+        if not preview.endswith("模块待AI基于语料生成"):
+            refreshed.append(cand)
+            continue
+        module_name = preview[: -len("模块待AI基于语料生成")]
+        refreshed.append(
+            cand.model_copy(
+                update={
+                    "preview": f"{module_name}模块本轮AI未给出建议",
+                    "rationale": (
+                        "语料准入与独立AI证据绑定已完成；本轮AI未对该模块"
+                        "产生证据充分的组合建议。可点击「更新建议」重试，"
+                        "或在下方表单手动填写。"
+                    ),
+                },
+                deep=True,
+            )
+        )
+    return group.model_copy(update={"candidates": refreshed}, deep=True)
+
+
 def _merge_ai_candidates(
     *,
     field_path: str,
@@ -1973,6 +2023,16 @@ def _merge_ai_candidates(
 
     if not gated_ai:
         return deterministic
+
+    # 自检r1-3红节点④（2026-10-14，proj_user_572869985339）：真实AI候选已
+    # 存活时，剔除确定性骨架占位卡（_enforce_deterministic_prefill_safety
+    # 生成的「XX模块待AI基于语料生成」pending卡）。现场两卡并存且推荐槽按
+    # 策略留空，测试者把骨架卡读成"推荐包未生成"。骨架文案只在"该模块
+    # 确属待AI"时为真；真实内容到位后保留它就是过期误导信息。
+    deterministic = [
+        c for c in deterministic
+        if not str(c.preview or "").endswith("模块待AI基于语料生成")
+    ]
 
     # Partition by evidence status.  Candidates with an unsupported
     # substantive gap rank after clean evidence-bound candidates so they

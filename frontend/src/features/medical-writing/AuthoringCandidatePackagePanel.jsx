@@ -1078,7 +1078,7 @@ export function AuthoringCandidatePackagePanel({
           )}
           {!selectedCandidate && (
             <div className="authoring-package-empty-slot" data-testid="composite-empty-slot">
-              <p>该分组当前没有推荐方案；请从下方候选中选择，或先完成待决字段后采用。</p>
+              <p>该分组没有系统预选：整套设计组合含需医学经理逐项确认的决策（随机化/盲法/对照等），系统不代选。请点选下方候选、逐字段确认后采用。</p>
             </div>
           )}
           {!selectedCandidate && displayCandidates.length > 0 && (

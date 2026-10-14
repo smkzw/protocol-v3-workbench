@@ -954,6 +954,9 @@ export function MedicalWritingAuthoringJourneySetup({
   const [acknowledged, setAcknowledged] = useState([]);
   const [selectedCorpusBriefIds, setSelectedCorpusBriefIds] = useState([]);
   const [competitorDrawerOpen, setCompetitorDrawerOpen] = useState(false);
+  // 自检r1-3：结构化设计建议应用后立即落库第一步草稿（nonce驱动effect，
+  // 保证读到提交后的最新framing状态，避免stale闭包存旧值）。
+  const [structuredSuggestionNonce, setStructuredSuggestionNonce] = useState(0);
   const [referencePanelRequest, setReferencePanelRequest] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [loadNonce, setLoadNonce] = useState(0);
@@ -2492,6 +2495,14 @@ export function MedicalWritingAuthoringJourneySetup({
     finally { setBusy(""); }
   };
 
+  useEffect(() => {
+    // 自检r1-3红节点④：「采用当前方案文字建议」只写UI态，刷新即丢——现于
+    // 应用后自动保存第一步草稿（structured_design属于framing）。effect在
+    // 状态提交后运行，framing为最新值。
+    if (structuredSuggestionNonce > 0) saveDraft("framing");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [structuredSuggestionNonce]);
+
   const saveCurrentDrafts = async () => {
     let baseJourney = journey;
     if (framingDirty) {
@@ -3301,7 +3312,7 @@ export function MedicalWritingAuthoringJourneySetup({
           <div className="authoring-group-tabs" role="tablist">{groups.map((item) => <button key={item.key} type="button" role="tab" aria-selected={group === item.key} className={group === item.key ? "active" : ""} onClick={() => setGroup(item.key)} disabled={interactionLocked}>{item.label}</button>)}</div>
           <div className="authoring-advanced-refinement-body">
             {stage === "framing" && <FramingFields projectId={projectId} framing={framing} group={group} update={updateFraming} factConversation={factConversation} setFactConversation={setFactConversation} onSubmitFactIntake={submitFactIntakeTurn} onApplyFactProposal={applyFactIntakeProposal} onAttachIb={attachInvestigatorBrochure} onMarkIbUnavailable={persistIbPacket} onAnalyzeIb={analyzeInvestigatorBrochure} busy={busy} interactionLocked={interactionLocked} />}
-            {stage === "picos" && <PicosFields projectId={projectId} framing={framing} picos={picos} group={group} updateFraming={updateFraming} update={updatePicos} updateApplicability={updatePicosApplicability} interventionPanel={interventionPanel} setInterventionPanel={setInterventionPanel} hasPrefillRecommendations={Boolean(journey.prefill_package)} existingDocument={existingDocument} readOnly={readOnly} appendixReady={Boolean(journey.picos_complete && !picosDirty && !picosPendingDraft)} onSaveDesignDraft={saveCurrentDrafts} framingDirty={framingDirty} busy={busy} />}
+            {stage === "picos" && <PicosFields projectId={projectId} framing={framing} picos={picos} group={group} updateFraming={updateFraming} update={updatePicos} updateApplicability={updatePicosApplicability} interventionPanel={interventionPanel} setInterventionPanel={setInterventionPanel} hasPrefillRecommendations={Boolean(journey.prefill_package)} existingDocument={existingDocument} readOnly={readOnly} appendixReady={Boolean(journey.picos_complete && !picosDirty && !picosPendingDraft)} onSaveDesignDraft={saveCurrentDrafts} framingDirty={framingDirty} busy={busy} onSuggestionApplied={() => setStructuredSuggestionNonce((n) => n + 1)} />}
           </div>
         </details>}
         {stage === "corpus" && <CorpusGate key={`corpus-gate-r${journey.revision}`} projectId={projectId} journey={journey} setJourney={setJourney} selectedBriefIds={selectedCorpusBriefIds} setSelectedBriefIds={setSelectedCorpusBriefIds} searchMessage={searchMessage} busy={busy} onSearch={() => runPublicSearch(journey)} acknowledged={acknowledged} setAcknowledged={setAcknowledged} overrideReason={overrideReason} setOverrideReason={setOverrideReason} allAcknowledged={allAcknowledged} onOverride={overrideCorpusGate} onCreateDocument={createDocument} onReviewAssemblyPlan={() => { setStage("picos"); setGroup("intervention"); }} readOnly={readOnly} existingDocument={existingDocument} pipelineStage={pipelineStage} />}
@@ -4359,7 +4370,7 @@ function plannedValue(value) {
   return "";
 }
 
-function StructuredDesignFactEditor({ framing, picos, update }) {
+function StructuredDesignFactEditor({ framing, picos, update, onSuggestionApplied }) {
   const design = framing.structured_design || {};
   const updateDesign = (patch) => update("structured_design", { ...design, ...patch });
   const updatePlanned = (key, value) => updateDesign({
@@ -4373,17 +4384,23 @@ function StructuredDesignFactEditor({ framing, picos, update }) {
     assignment_model: /平行/.test(text) ? "平行组" : /交叉/.test(text) ? "交叉设计" : "",
     center_model: /多中心/.test(text) ? "多中心" : /单中心/.test(text) ? "单中心" : "",
   };
-  const applyTextSuggestion = () => updateDesign({
-    ...currentTextSuggestion,
-    adaptive_design: { ...(design.adaptive_design || {}), planned: false },
-    crossover: { ...(design.crossover || {}), planned: currentTextSuggestion.assignment_model === "交叉设计" },
-    open_label_extension: { ...(design.open_label_extension || {}), planned: false },
-    treatment_switch: { ...(design.treatment_switch || {}), planned: false },
-    sample_size_reestimation: { ...(design.sample_size_reestimation || {}), planned: false },
-    interim_analysis: { ...(design.interim_analysis || {}), planned: false },
-    src_planned: false,
-    dmc_planned: false,
-  });
+  const applyTextSuggestion = () => {
+    updateDesign({
+      ...currentTextSuggestion,
+      adaptive_design: { ...(design.adaptive_design || {}), planned: false },
+      crossover: { ...(design.crossover || {}), planned: currentTextSuggestion.assignment_model === "交叉设计" },
+      open_label_extension: { ...(design.open_label_extension || {}), planned: false },
+      treatment_switch: { ...(design.treatment_switch || {}), planned: false },
+      sample_size_reestimation: { ...(design.sample_size_reestimation || {}), planned: false },
+      interim_analysis: { ...(design.interim_analysis || {}), planned: false },
+      src_planned: false,
+      dmc_planned: false,
+    });
+    // 自检r1-3红节点④（2026-10-14）：建议只写UI态、刷新/切页即丢——测试者
+    // 现场确认后journey.picos/structured_design仍全空。应用后立即触发第一步
+    // 草稿落库（经effect在状态提交后执行，读到的是最新framing）。
+    if (typeof onSuggestionApplied === "function") onSuggestionApplied();
+  };
   return <section className="authoring-structured-design-facts" data-testid="structured-design-fact-editor">
     <header><div><strong>结构化研究设计确认</strong><span>AI/当前方案文字已给出建议；确认后才会投影到方案摘要、流程图和正文。未确认的维度继续阻断，不会被系统猜测。</span></div><button type="button" className="secondary-button" data-action="apply-structured-design-suggestion" onClick={applyTextSuggestion}>采用当前方案文字建议</button></header>
     <div className="authoring-field-grid three">
@@ -4404,8 +4421,8 @@ function StructuredDesignFactEditor({ framing, picos, update }) {
   </section>;
 }
 
-function PicosFields({ projectId, framing, picos, group, updateFraming, update, updateApplicability, interventionPanel, setInterventionPanel, hasPrefillRecommendations = false, existingDocument = false, readOnly = false, appendixReady = false, onSaveDesignDraft = null, framingDirty = false, busy = "" }) {
-  if (group === "applicability") return <section className="authoring-field-section"><header><strong>研究设计适用性</strong><span>优先采用上方调研建议；随机化、盲法、对照、分组和期中分析等维度分别确认，系统再组合成研究设计。</span></header>{picos.design_archetype && <div className="authoring-current-design"><CheckCircle2 size={15} /><span>当前兼容设计类型：<strong>{DESIGN_ARCHETYPES.find((item) => item.value === picos.design_archetype)?.label || picos.design_archetype}</strong></span></div>}<details className="authoring-manual-design-options" open={!picos.design_archetype}><summary>{hasPrefillRecommendations ? "手动选择兼容设计类型" : "选择兼容设计类型"}</summary><div className="authoring-design-archetypes">{DESIGN_ARCHETYPES.map((item) => <label key={item.value} className={picos.design_archetype === item.value ? "selected" : ""}><input type="radio" name="picos-design-archetype" value={item.value} checked={picos.design_archetype === item.value} onChange={() => update("design_archetype", item.value)} /><span><strong>{item.label}</strong><small>{item.detail}</small></span></label>)}</div></details>{picos.design_archetype && <div className="authoring-applicability-list"><div className="authoring-applicability-head"><strong>条件字段</strong><span>标记为“不适用”时，必须填写理由并由医学经理确认。</span></div>{CONDITIONAL_PICOS_FIELDS.map((item) => { const decision = picos.field_applicability?.[item.key] || { status: "applicable", reason: "", confirmed_by_medical_manager: false }; const lockedRequired = picos.design_archetype === "randomized_confirmatory" || (picos.design_archetype === "randomized_exploratory" && item.key === "comparator_summary"); const notApplicable = decision.status === "not_applicable"; return <div className="authoring-applicability-row" key={item.key}><div><strong>{item.label}</strong><small>{lockedRequired ? "当前随机设计中必须填写" : "可根据已确认的研究设计判断是否适用"}</small></div><select aria-label={`${item.label}适用性`} value={lockedRequired ? "applicable" : decision.status} onChange={(event) => updateApplicability(item.key, { status: event.target.value })} disabled={lockedRequired}><option value="applicable">适用，需填写</option><option value="not_applicable">不适用</option></select>{notApplicable && !lockedRequired && <><textarea aria-label={`${item.label}不适用理由`} rows={2} value={decision.reason || ""} onChange={(event) => updateApplicability(item.key, { reason: event.target.value })} placeholder="说明本研究为何无需该设计项；不少于10个字符" /><label className="authoring-applicability-confirm"><input type="checkbox" checked={Boolean(decision.confirmed_by_medical_manager)} onChange={(event) => updateApplicability(item.key, { confirmed_by_medical_manager: event.target.checked })} /><span>医学经理确认该项不适用</span></label></>}</div>; })}</div>}<StructuredDesignFactEditor framing={framing} picos={picos} update={updateFraming} /><Phase1PartsEditor framing={framing} update={updateFraming} onSave={onSaveDesignDraft} dirty={framingDirty} busy={busy} /></section>;
+function PicosFields({ projectId, framing, picos, group, updateFraming, update, updateApplicability, interventionPanel, setInterventionPanel, hasPrefillRecommendations = false, existingDocument = false, readOnly = false, appendixReady = false, onSaveDesignDraft = null, framingDirty = false, busy = "", onSuggestionApplied = null }) {
+  if (group === "applicability") return <section className="authoring-field-section"><header><strong>研究设计适用性</strong><span>优先采用上方调研建议；随机化、盲法、对照、分组和期中分析等维度分别确认，系统再组合成研究设计。</span></header>{picos.design_archetype && <div className="authoring-current-design"><CheckCircle2 size={15} /><span>当前兼容设计类型：<strong>{DESIGN_ARCHETYPES.find((item) => item.value === picos.design_archetype)?.label || picos.design_archetype}</strong></span></div>}<details className="authoring-manual-design-options" open={!picos.design_archetype}><summary>{hasPrefillRecommendations ? "手动选择兼容设计类型" : "选择兼容设计类型"}</summary><div className="authoring-design-archetypes">{DESIGN_ARCHETYPES.map((item) => <label key={item.value} className={picos.design_archetype === item.value ? "selected" : ""}><input type="radio" name="picos-design-archetype" value={item.value} checked={picos.design_archetype === item.value} onChange={() => update("design_archetype", item.value)} /><span><strong>{item.label}</strong><small>{item.detail}</small></span></label>)}</div></details>{picos.design_archetype && <div className="authoring-applicability-list"><div className="authoring-applicability-head"><strong>条件字段</strong><span>标记为“不适用”时，必须填写理由并由医学经理确认。</span></div>{CONDITIONAL_PICOS_FIELDS.map((item) => { const decision = picos.field_applicability?.[item.key] || { status: "applicable", reason: "", confirmed_by_medical_manager: false }; const lockedRequired = picos.design_archetype === "randomized_confirmatory" || (picos.design_archetype === "randomized_exploratory" && item.key === "comparator_summary"); const notApplicable = decision.status === "not_applicable"; return <div className="authoring-applicability-row" key={item.key}><div><strong>{item.label}</strong><small>{lockedRequired ? "当前随机设计中必须填写" : "可根据已确认的研究设计判断是否适用"}</small></div><select aria-label={`${item.label}适用性`} value={lockedRequired ? "applicable" : decision.status} onChange={(event) => updateApplicability(item.key, { status: event.target.value })} disabled={lockedRequired}><option value="applicable">适用，需填写</option><option value="not_applicable">不适用</option></select>{notApplicable && !lockedRequired && <><textarea aria-label={`${item.label}不适用理由`} rows={2} value={decision.reason || ""} onChange={(event) => updateApplicability(item.key, { reason: event.target.value })} placeholder="说明本研究为何无需该设计项；不少于10个字符" /><label className="authoring-applicability-confirm"><input type="checkbox" checked={Boolean(decision.confirmed_by_medical_manager)} onChange={(event) => updateApplicability(item.key, { confirmed_by_medical_manager: event.target.checked })} /><span>医学经理确认该项不适用</span></label></>}</div>; })}</div>}<StructuredDesignFactEditor framing={framing} picos={picos} update={updateFraming} onSuggestionApplied={onSuggestionApplied} /><Phase1PartsEditor framing={framing} update={updateFraming} onSave={onSaveDesignDraft} dirty={framingDirty} busy={busy} /></section>;
   if (group === "population") return <section className="authoring-field-section"><header><strong>研究人群</strong><span>模块化确定人群、入排、洗脱与重筛边界</span></header><div className="authoring-field-grid two"><Field label="目标人群概述" required className="span-2"><textarea rows={3} value={picos.population_summary} onChange={(event) => update("population_summary", event.target.value)} /></Field><StructuredListField label="入选标准" prefix="IN" required value={picos.inclusion_modules} onChange={(value) => update("inclusion_modules", value)} /><StructuredListField label="排除标准" prefix="EX" required value={picos.exclusion_modules} onChange={(value) => update("exclusion_modules", value)} /><StructuredListField className="span-2" label="药物/治疗洗脱规则" prefix="WO" value={picos.washout_rules} onChange={(value) => update("washout_rules", value)} /></div></section>;
   if (group === "intervention") return <section className="authoring-field-section"><header><strong>干预措施</strong><span>试验药物、非试验用药和普通CM保持清晰边界</span></header><div className="authoring-field-grid two"><Field label="试验药物干预概述" required><textarea rows={4} value={picos.intervention_summary} onChange={(event) => update("intervention_summary", event.target.value)} /></Field><Field label="试验药物常规用法用量" required><textarea rows={4} value={picos.intervention_dose_regimen} onChange={(event) => update("intervention_dose_regimen", event.target.value)} /></Field><StructuredListField label="必须使用/背景治疗" prefix="BG" value={picos.required_background_rules} onChange={(value) => update("required_background_rules", value)} /><StructuredListField label="允许使用的合并用药/治疗" prefix="CM-A" value={picos.allowed_concomitant_rules} onChange={(value) => update("allowed_concomitant_rules", value)} /><StructuredListField label="限制/禁止使用的合并用药/治疗" prefix="CM-P" value={picos.prohibited_concomitant_rules} onChange={(value) => update("prohibited_concomitant_rules", value)} /><StructuredListField label="访视/评价前用药与治疗限制" prefix="TIME" value={picos.assessment_timing_restrictions} onChange={(value) => update("assessment_timing_restrictions", value)} /></div><InterventionRulesEditor value={picos.intervention_rules || null} onChange={(value) => update("intervention_rules", value)} panel={interventionPanel} onPanelChange={setInterventionPanel} /></section>;
   if (group === "comparator") { const notApplicable = picos.field_applicability?.comparator_summary?.status === "not_applicable" && !["randomized_confirmatory", "randomized_exploratory"].includes(picos.design_archetype); return <section className="authoring-field-section"><header><strong>对照</strong><span>{notApplicable ? "已在设计适用性中标记为不适用；理由仍保留在正式研究事实中" : "明确安慰剂、阳性对照或随机组间比较及其用法用量"}</span></header>{notApplicable ? <ApplicabilitySummary label="对照/组间比较设计" decision={picos.field_applicability.comparator_summary} onEdit={() => {}} /> : <Field label="对照/组间比较设计" required><textarea rows={7} value={picos.comparator_summary} onChange={(event) => update("comparator_summary", event.target.value)} /></Field>}</section>; }
