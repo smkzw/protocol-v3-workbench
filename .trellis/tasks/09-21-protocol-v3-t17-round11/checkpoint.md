@@ -511,3 +511,8 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **位置**：纪元三LOOP=**dwfrun-4ae7548a**（provider 5小时用量上限1308自动停止，重置时刻=2026-10-13 15:49本地）。**恢复=ResumeWorkflowRun dwfrun-4ae7548a**（重置后执行；12步journal重放，自检第3次attempt重派）。
 **本段战绩**：R1预检六项全过；自检2次跑出真根因并修一轮（④设计确认循环依赖链——"完成第二步"门槛与语料门picos_alignment互锁；design推荐包恒空=预填语料桥接验证器/写入器形状不一致）；**云端路由切换后分诊实测=cms-router/glm-5.3-flash@20128**（owner 20261013切换生效验证）。
 **停机清点**：模型侧无重驻留；8002正常管理。A类三项待owner决策（模型治理/L3/L5）仍悬。
+
+## 无损暂停检查点（2026-10-14 午，纪元三R1自检第4次attempt中段·20分钟窗口）
+**位置**：LOOP=**dwfrun-4ae7548a**（TaskStop无损停止于自检第4次attempt进行2h16m处）。**恢复=ResumeWorkflowRun dwfrun-4ae7548a**（16步journal重放+自检ask重派，SMOKE牺牲项目证据落库可续验）。
+**本段战绩**：R1自检3次全部跑出真根因并修两批——④研究设计确认的**结构性循环依赖死锁**完整取证（语料门第5条件picos_alignment要求picos_sha256非空而PICOS形成依赖完成第二步=环；design推荐包恒空=桥接验证器/写入器形状不一致）；云端路由cms-router/glm-5.3-flash在分诊节点持续实测正常。
+**停机清点**：模型侧无异常驻留；8002正常。
