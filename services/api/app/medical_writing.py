@@ -130,6 +130,26 @@ def scope_competitor_protocol_evidence(
     return text, ""
 
 
+def _frozen_ai_route_summary(ai_policy: dict) -> dict:
+    """自检r2-4观察①：section 任务的顶层路由审计摘要（创建时点冻结）。
+
+    protocol_full_draft 的路由在顶层 descriptor.ai_policy；section 任务嵌在
+    generation_context.descriptor.ai_policy——审计侧按统一顶层键读取。
+    """
+    policy = ai_policy or {}
+    return {
+        "provider": str(policy.get("provider_name") or ""),
+        "model": str(policy.get("model_name") or ""),
+        "base_url": str(policy.get("base_url") or ""),
+        "route_profile_id": str(policy.get("route_profile_id") or ""),
+        "transport": str(policy.get("transport_name") or ""),
+        "deployment_profile": str(policy.get("deployment_profile") or ""),
+        "required_response_model": str(policy.get("required_response_model") or ""),
+        "route_identity_hash": str(policy.get("route_identity_hash") or ""),
+        "frozen_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 @dataclass(frozen=True)
 class _RevisionAiExecution:
     run: AiTaskRun
@@ -3591,6 +3611,14 @@ class MedicalWritingRevisionService:
         request_hash = context["digest"]
         payload = request.model_dump(mode="json")
         payload["generation_context"] = context
+        # 自检r2-4观察①（2026-10-15）：section 任务此前只在
+        # generation_context.descriptor.ai_policy 深层携带路由，审计口径与
+        # protocol_full_draft（顶层 descriptor.ai_policy）不一致——审计侧
+        # 按 payload 顶层找路由字段扑空。补顶层 ai_route 摘要（创建时点
+        # 冻结），不改执行路径。
+        payload["ai_route"] = _frozen_ai_route_summary(
+            context["descriptor"]["ai_policy"]
+        )
         policy = context["descriptor"]["ai_policy"]
 
         from packages.contracts.workbench_contracts import DurableJobCreateRequest
@@ -3661,6 +3689,8 @@ class MedicalWritingRevisionService:
             "mode": "rewrite",
             **rewrite_payload,
             "generation_context": context,
+            # 自检r2-4观察①：与 initial 同口径的顶层路由审计摘要。
+            "ai_route": _frozen_ai_route_summary(policy),
         }
 
         from packages.contracts.workbench_contracts import DurableJobCreateRequest

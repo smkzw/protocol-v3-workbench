@@ -448,77 +448,20 @@ class AiExecutionPolicyTests(unittest.TestCase):
             )
         )
 
-    def test_revision_task_routes_to_owner_decided_profile_not_chain_order(self):
-        """NEW-22（R27 第2轮修订）反例：owner 决策（2026-09-28 修正）要求
-        MEDICAL_WRITING_REVISION 走 ollama-cloud deepseek-v4.1-flash
-        （independent_ai__ollama_cloud_dsv41），但 _capture_revision_cloud_route
-        泛取 fallback 链第一个 enabled 云 profile——链首是
-        independent_ai__opencode_go_deepseek_v41_flash 时修订任务被送到了
-        opencode 网关（实测 mwjob_3dc3f0fa 的 route_profile_id 即 opencode）。
-        期望：任务级路由表优先解析，ollama_cloud_dsv41 存在且 enabled 时
-        修订路由必须落它；该 profile 不存在/禁用时才回退链序。
-        """
-        import tempfile as _tempfile
-
-        from services.api.app.ai_runtime_settings import (
-            AiFallbackRoute,
-            AiProviderProfile,
-            AiRuntimeSettingsStore,
+    def test_revision_task_falls_back_to_binding_main_route(self):
+        """owner 20261014传导（自检r2-1红节点②）：任务级云档钉子全部移除后，
+        MEDICAL_WRITING_REVISION 等任务回落 independent_ai 绑定主路
+        （表项缺失回退绑定主路是2026-09-28设计的既有合法形态），
+        不再被送到瘫痪的云profile。"""
+        from services.api.app.ai_execution_policy import (
+            TASK_TYPE_ROUTE_PROFILE_OVERRIDES,
+            task_routed_cloud_profile,
         )
 
-        with _tempfile.TemporaryDirectory() as tmp:
-            store = AiRuntimeSettingsStore(Path(tmp) / "settings.json")
-            opencode = AiProviderProfile(
-                profile_id="independent_ai__opencode_go_deepseek_v41_flash",
-                provider="opencode-go",
-                label="OpenCode Go",
-                base_url="https://opencode.ai/zen/go/v1",
-                model="glm-5.3-flash",
-                api_key_env="OPENCODE_API_KEY",
-                deployment_scope="cloud",
-                discovery_mode="manual_plus_probe",
-            )
-            ollama = AiProviderProfile(
-                profile_id="independent_ai__ollama_cloud_dsv41",
-                provider="cms-router",
-                label="Ollama Cloud DSV41",
-                base_url="https://ollama.com",
-                model="glm-5.3-flash",
-                api_key_env="OLLAMA_CLOUD_API_KEY",
-                deployment_scope="cloud",
-                discovery_mode="manual_plus_probe",
-            )
-            local = AiProviderProfile(
-                profile_id="independent_ai__mtplx_local",
-                provider="mtplx",
-                label="本地 MTPLX",
-                base_url="http://127.0.0.1:8002/v1",
-                model="mtplx-flash",
-                deployment_scope="loopback",
-                discovery_mode="models_endpoint",
-            )
-            store.upsert(local, activate=True)
-            store.upsert(opencode)
-            store.upsert(ollama)
-            # 链里只有 opencode：ollama_cloud_dsv41 已定义且 enabled 但不在链中
-            # ——这正是 NEW-22 现场（active=本地 MTPLX，链首=opencode 云）。
-            store.set_fallback_chain(
-                [AiFallbackRoute(profile_id=opencode.profile_id)]
-            )
-
-            resolver = AiExecutionPolicyResolver()
-            with patch(
-                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
-                return_value=store,
-            ):
-                resolver._capture_revision_cloud_route()
-
-            self.assertEqual(
-                "independent_ai__ollama_cloud_dsv41",
-                resolver.route_profile_id,
-                "修订任务必须落在 owner 决策指定的 ollama-cloud profile，"
-                "而不是 fallback 链第一个云 profile",
-            )
+        self.assertNotIn(
+            "medical_writing_revision", TASK_TYPE_ROUTE_PROFILE_OVERRIDES
+        )
+        self.assertIsNone(task_routed_cloud_profile("medical_writing_revision"))
 
     def _owner_route_table_store(self, tmp: str):
         """SMOKE-r1-1 根因1现场复刻：active=本地 MTPLX（xhigh）、链首=
@@ -569,72 +512,13 @@ class AiExecutionPolicyTests(unittest.TestCase):
         store.set_fallback_chain([AiFallbackRoute(profile_id=opencode.profile_id)])
         return store
 
-    def test_cloud_tier_tasks_route_to_owner_decided_profile(self):
-        """SMOKE-r1-1 根因1反例：owner 决策（2026-09-28）的完整路由表要求
-        竞品分诊/研究设计综合/PICOS 辅导走 ollama-cloud
-        deepseek-v4.1-flash，但 TASK_TYPE_ROUTE_PROFILE_OVERRIDES 此前只有
-        medical_writing_revision——分诊经角色绑定主路落本地 MTPLX xhigh
-        （durable 实证 mwjob_7b72ebc6a4eda816682ab3d1，
-        base_url=127.0.0.1:8002/v1），26 批×重推理档与并发全文初稿互拖
-        排队 38 分钟未完成。期望：三个云档任务在提交层身份
-        （route_identity_snapshot）与 resolve_internal/resolve_registered
-        解析里都落 owner 指定云 profile。
-        """
-        import tempfile as _tempfile
-
-        from services.api.app.ai_execution_policy import (
-            TASK_TYPE_ROUTE_PROFILE_OVERRIDES,
-        )
-
-        cloud_tasks = (
-            "competitive_intelligence",
-            "protocol_design_synthesis",
-            "picos_design_coach",
-        )
-        for task_value in cloud_tasks:
-            self.assertEqual(
-                "independent_ai__ollama_cloud_dsv41",
-                TASK_TYPE_ROUTE_PROFILE_OVERRIDES[task_value],
-                f"{task_value} 必须在任务级路由表中",
-            )
-        with _tempfile.TemporaryDirectory() as tmp:
-            store = self._owner_route_table_store(tmp)
-            with patch(
-                "services.api.app.ai_execution_policy.runtime_ai_settings_store",
-                return_value=store,
-            ):
-                for task_value in cloud_tasks:
-                    resolver = AiExecutionPolicyResolver()
-                    snapshot = resolver.route_identity_snapshot(
-                        task_type=task_value
-                    )
-                    self.assertEqual(
-                        "independent_ai__ollama_cloud_dsv41",
-                        snapshot["profile_id"],
-                        f"{task_value} 提交层身份必须落 owner 云 profile",
-                    )
-                    self.assertEqual(
-                        "http://127.0.0.1:20128/v1",
-                        snapshot["base_url"],
-                        f"{task_value} 必须实际打到 ollama.com",
-                    )
-
-    def test_cloud_tier_override_falls_back_to_chain_order_when_missing(self):
-        """配置缺口永不拒绝服务：owner 指定 profile 缺失时，云档任务按
-        NEW-22 既有语义回退 fallback 链第一个 enabled 云 profile
-        （仍是云档，不是本地绑定主路），route_identity_snapshot 不抛错。"""
+    def test_cloud_tier_table_empty_resolves_without_error(self):
+        """owner 20261014传导后表为空：route_identity_snapshot 不抛错，
+        分诊任务身份不再钉死独立AI__ollama_cloud_dsv41。"""
         import tempfile as _tempfile
 
         with _tempfile.TemporaryDirectory() as tmp:
             store = self._owner_route_table_store(tmp)
-            # 删除 owner 指定的 ollama profile（模拟配置缺口）
-            payload = store.load()
-            payload["profiles"] = [
-                item
-                for item in payload["profiles"]
-                if item["profile_id"] != "independent_ai__ollama_cloud_dsv41"
-            ]
-            store.save(payload)
             with patch(
                 "services.api.app.ai_execution_policy.runtime_ai_settings_store",
                 return_value=store,
@@ -643,17 +527,15 @@ class AiExecutionPolicyTests(unittest.TestCase):
                 snapshot = resolver.route_identity_snapshot(
                     task_type="competitive_intelligence"
                 )
-            self.assertEqual(
-                "independent_ai__opencode_go_deepseek_v41_flash",
+            self.assertNotEqual(
+                "independent_ai__ollama_cloud_dsv41",
                 snapshot["profile_id"],
-                "配置缺口时云档任务按链序回退云 profile（NEW-22 语义），"
-                "而非拒绝服务或回落本地 MTPLX",
+                "分诊不得再钉死瘫痪云profile",
             )
 
     def test_registered_path_applies_cloud_tier_override(self):
-        """SMOKE-r1-1 根因1补充：resolve_registered（注册源入口）此前完全
-        不应用任务级路由表；云档任务不应因入口不同而漂移回绑定主路。
-        用 resolve_internal（内部源入口）验证同一表格生效。"""
+        """SMOKE-r1-1 根因1补充（owner 20261014传导修订）：表清空后，
+        内部源入口的分诊任务回落绑定主路，不得因旧表残影再钉云。"""
         import tempfile as _tempfile
 
         with _tempfile.TemporaryDirectory() as tmp:
@@ -681,11 +563,35 @@ class AiExecutionPolicyTests(unittest.TestCase):
                     user_instruction="竞品调研",
                 )
                 resolution = resolver.resolve_internal(PROJECT_ID, request)
-            self.assertEqual(
+            self.assertNotEqual(
                 "independent_ai__ollama_cloud_dsv41",
                 resolution.route_profile_id,
-                "内部源入口的云档任务也必须落 owner 云 profile",
+                "owner 20261014传导：内部源入口的分诊任务回落绑定主路，"
+                "不再钉死瘫痪云profile",
             )
+
+    def test_task_route_overrides_cleared_after_owner_20261014_swap(self):
+        """自检r2-1红节点②反例（2026-10-15，proj_user_fbfddeb2f6e0）：
+        owner 20261014已把independent_ai角色绑定切到本地MTPLX
+        （ai_role_bindings.json revision 126），但分诊网关按
+        TASK_TYPE_ROUTE_PROFILE_OVERRIDES仍冻结independent_ai__ollama_cloud_dsv41
+        （该profile自20261013承载cms-router/glm-5.3-flash，跨两天半瘫痪：
+        单chunk 28-30分钟+批量TimeoutError，连续三个牺牲项目②红）——
+        绑定swap不传导到任务级路由。期望：钉子全部移除，
+        task_routed_cloud_profile一律None，任务回落绑定主路。"""
+        from services.api.app.ai_execution_policy import (
+            TASK_TYPE_ROUTE_PROFILE_OVERRIDES,
+            task_routed_cloud_profile,
+        )
+
+        for task_value in (
+            "competitive_intelligence",
+            "protocol_design_synthesis",
+            "picos_design_coach",
+            "medical_writing_revision",
+        ):
+            self.assertNotIn(task_value, TASK_TYPE_ROUTE_PROFILE_OVERRIDES)
+            self.assertIsNone(task_routed_cloud_profile(task_value))
 
     def test_full_draft_route_stays_on_bound_local_primary(self):
         """SMOKE-r1-2 ⑤ 补充：PROTOCOL_FULL_DRAFT 不在任务级云路由表内——

@@ -20180,3 +20180,242 @@
 2026-10-14 11:30:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
 2026-10-14 11:40:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
 2026-10-14 11:50:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 12:00:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 12:10:16 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 20:46:23 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 20:56:23 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:06:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:16:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:26:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:36:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:39:22 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:49:23 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 21:59:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 22:44:41 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-14 22:44:41 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-14 22:44:52 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=10.97s
+2026-10-14 22:52:15 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 22:52:40 [arbiter/queue] 动作=queue_enter | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-14 22:54:41 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-14 22:54:41 [arbiter/wait] 动作=queue_grant | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=120.76s
+2026-10-14 22:54:41 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-14 22:54:42 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/GLM-OCR-bf16 | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-14 22:54:42 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=0.86s
+2026-10-14 22:54:42 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-14 22:54:59 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=17.76s
+2026-10-14 23:02:16 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 23:12:17 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 23:22:17 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 23:32:18 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 23:42:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-14 23:52:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 00:02:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 00:12:21 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 00:22:21 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 00:32:21 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 00:51:56 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-15 00:53:19 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=83.43s
+2026-10-15 01:07:28 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:09:28 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 01:09:28 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==11075, cmdline markers ok | 前状态=pid=11075 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 01:09:30 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.09s
+2026-10-15 01:09:30 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 01:09:36 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=8.18s
+2026-10-15 01:09:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:09:59 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:10:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:10:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:11:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:13:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:14:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:17:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:19:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:22:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:22:09 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 01:22:09 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 01:22:10 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/GLM-OCR-bf16 | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 01:22:10 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=1.12s
+2026-10-15 01:22:10 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 01:22:21 [arbiter/queue] 动作=queue_enter | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx, users=1 | 结果=queued at position 1 | 耗时=-
+2026-10-15 01:22:25 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=16.00s
+2026-10-15 01:32:09 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 01:32:09 [arbiter/wait] 动作=queue_grant | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=587.50s
+2026-10-15 01:32:09 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==45573, cmdline markers ok | 前状态=pid=45573 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 01:32:11 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.09s
+2026-10-15 01:32:11 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 01:32:17 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=7.93s
+2026-10-15 01:32:17 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:32:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:32:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:33:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:33:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:33:45 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:34:01 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:35:16 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:36:51 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:37:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:38:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:39:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:40:59 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:45:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:46:10 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:48:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:49:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:50:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:51:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:52:37 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:53:05 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:53:58 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:55:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:57:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 01:59:02 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:01:22 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:04:08 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:06:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:08:30 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:10:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:11:44 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:12:23 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:14:00 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:15:26 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:16:09 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:18:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:18:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:19:39 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:20:43 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:21:18 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:22:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:22:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:23:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 02:25:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 04:03:04 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 04:03:05 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 04:03:19 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=14.72s
+2026-10-15 10:28:21 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=None | 结果=granted, queued=0 | 耗时=-
+2026-10-15 10:28:21 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==73319, cmdline markers ok | 前状态=pid=73319 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 10:28:23 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.12s
+2026-10-15 10:28:23 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 10:28:30 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=9.41s
+2026-10-15 10:33:04 [arbiter/queue] 动作=queue_enter | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-15 10:38:21 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 10:38:21 [arbiter/wait] 动作=queue_grant | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=317.24s
+2026-10-15 10:38:21 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 10:38:22 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/GLM-OCR-bf16 | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 10:38:22 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=1.25s
+2026-10-15 10:38:22 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 10:38:39 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=18.19s
+2026-10-15 10:51:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:53:39 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 10:53:39 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==39088, cmdline markers ok | 前状态=pid=39088 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 10:53:42 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.10s
+2026-10-15 10:53:42 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 10:53:48 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=8.35s
+2026-10-15 10:53:50 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:54:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:54:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:55:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:55:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:57:03 [arbiter/queue] 动作=queue_enter | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx, users=1 | 结果=queued at position 1 | 耗时=-
+2026-10-15 10:57:03 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:57:19 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:57:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:58:16 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 10:58:29 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:00:54 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:02:01 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:02:17 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:03:39 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 11:03:39 [arbiter/wait] 动作=queue_grant | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=396.49s
+2026-10-15 11:03:40 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 11:03:40 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/GLM-OCR-bf16 | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 11:03:41 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=1.12s
+2026-10-15 11:03:41 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 11:03:56 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=16.07s
+2026-10-15 11:05:05 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:07:29 [arbiter/queue] 动作=queue_enter | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-15 11:13:40 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 11:13:40 [arbiter/wait] 动作=queue_grant | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=370.68s
+2026-10-15 11:13:40 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==43276, cmdline markers ok | 前状态=pid=43276 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 11:13:42 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.12s
+2026-10-15 11:13:42 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 11:13:48 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=8.02s
+2026-10-15 11:13:48 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:15:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:15:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:17:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:19:15 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:21:28 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:22:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:22:32 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:23:30 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:24:14 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:28:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:29:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:30:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:33:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:35:44 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:36:22 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:37:51 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:38:58 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:41:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:42:25 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:43:51 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:46:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:47:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:48:59 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:51:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:53:49 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:56:31 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 11:58:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:01:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:03:54 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:04:15 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:04:53 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:05:54 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:16:56 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 12:17:03 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 14:27:01 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 14:28:06 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 14:28:38 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 15:21:09 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 15:21:09 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 15:21:28 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=18.92s
+2026-10-15 15:21:33 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://localhost:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:26:20 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:28:36 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 16:28:37 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==64109, cmdline markers ok | 前状态=pid=64109 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 16:28:39 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.12s
+2026-10-15 16:28:39 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 16:28:44 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=7.82s
+2026-10-15 16:28:45 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:28:55 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:29:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:30:56 [arbiter/queue] 动作=queue_enter | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx, users=1 | 结果=queued at position 1 | 耗时=-
+2026-10-15 16:31:35 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:34:13 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:34:34 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:36:22 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:37:47 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:38:07 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:38:24 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:38:37 [arbiter/switch] 动作=phase_switch | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=current=omlx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 16:38:37 [arbiter/wait] 动作=queue_grant | 目标=triage@mtplx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=460.12s
+2026-10-15 16:38:37 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 16:38:37 [action/unload] 动作=admin_unload | 目标=omlx@http://127.0.0.1:8001/GLM-OCR-bf16 | 原因=drain for ensure(triage) | 前置校核=inflight=0, activity=0, no established | 前状态=resident | 结果=unload POST issued | 耗时=-
+2026-10-15 16:38:38 [action/release-done] 动作=drain_complete | 目标=omlx | 原因=phase=triage | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=1.01s
+2026-10-15 16:38:38 [action/start] 动作=launch_detached | 目标=mtplx@http://127.0.0.1:8002 | 原因=ensure(triage) server offline | 前置校核=health!=200, not owned by us | 前状态=offline | 结果=launch issued | 耗时=-
+2026-10-15 16:38:50 [action/ensure-done] 动作=ensure_complete | 目标=mtplx/mtplx-flash-next-optimized-speed | 原因=ensure(triage) | 前置校核=- | 前状态=already resident | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=13.55s
+2026-10-15 16:39:27 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:41:57 [arbiter/queue] 动作=queue_enter | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx, users=0 | 结果=queued at position 1 | 耗时=-
+2026-10-15 16:48:37 [arbiter/switch] 动作=phase_switch | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=current=mtplx | 结果=granted, queued=0 | 耗时=-
+2026-10-15 16:48:37 [arbiter/wait] 动作=queue_grant | 目标=translation@omlx | 原因=dispatch | 前置校核=- | 前状态=queued | 结果=granted after wait | 耗时=399.99s
+2026-10-15 16:48:37 [action/stop] 动作=direct_stop_sigterm | 目标=mtplx@http://127.0.0.1:8002 | 原因=CLI stop refused an auth-enforced server; direct managed stop | 前置校核=health_pid==ledger_pid==76413, cmdline markers ok | 前状态=pid=76413 health=200 | 结果=SIGTERM issued | 耗时=-
+2026-10-15 16:48:39 [action/release-done] 动作=drain_complete | 目标=mtplx | 原因=phase=translation | 前置校核=- | 前状态=resident | 结果=released and confirmed | 耗时=2.09s
+2026-10-15 16:48:39 [action/load-probe] 动作=chat_probe_load | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) model not resident | 前置校核=identity ok, exclusion ok, memory ok | 前状态=not resident | 结果=probe issued | 耗时=-
+2026-10-15 16:48:45 [action/ensure-done] 动作=ensure_complete | 目标=omlx/dawncr0w--Hy-MT2-30B-A3B-oQ8-MLX | 原因=ensure(translation) | 前置校核=- | 前状态=loaded | 结果=A18 verified (identity+choices, max_tokens=8) | 耗时=8.07s
+2026-10-15 16:48:45 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:49:04 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:49:43 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:50:41 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:51:12 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-
+2026-10-15 16:51:40 [refused/arbiter-unresolved] 动作=unarbitrated_managed_dispatch | 目标=http://127.0.0.1:20128/v1 | 原因=- | 前置校核=- | 前状态=- | 结果=allowed: endpoint not managed | 耗时=-

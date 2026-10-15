@@ -3294,6 +3294,157 @@ class TestPartialRunRejection(TriageTestBase):
             )
 
 
+
+    def test_partial_failed_run_confirmable_with_explicit_acknowledgement(self):
+        """自检r1-4红节点②（2026-10-14，proj_user_c1b741eab57a）：云端退化日
+        分诊 4/6 批成功（9 项直接/间接已分类）但 confirm_basket 拒一切非
+        REVIEW_READY、UI 隐藏成功批分类——篮子恒 0，唯一出路是小时级重试，
+        重试又失败即死锁。期望：partial_failed + 医学经理显式知晓
+        （partial_coverage_acknowledgement=True）时允许确认：
+        - 未显式知晓 → 仍然拒绝（fail-closed 不变）；
+        - 知晓但把未分诊候选放进保留篮 → 拒绝（未分诊不得默认保留）；
+        - 知晓且未分诊仅排除 → 确认成功、投影落地、run 进入 CONFIRMED，
+          且确认理由留痕未分诊处置。"""
+        candidates = [
+            _make_candidate(f"NCT0000000{index}") for index in range(1, 10)
+        ]
+        snapshot = self._bind_snapshot(candidates)
+        journey = self.journey_service.get(self.project_id)
+
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {
+                    "results": [
+                        _make_candidate_result(
+                            f"NCT0000000{index}",
+                            "direct_competitor" if index <= 3 else "indirect_reference",
+                        )
+                        for index in range(1, 6)
+                    ]
+                },
+                1: {
+                    "results": [
+                        _make_candidate_result(f"NCT0000000{index}", "excluded")
+                        for index in range(6, 10)
+                    ]
+                },
+            },
+            fail_chunks={1},
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key="ct-test-partial-confirm-create",
+            ),
+            provider,
+        )
+        self.assertEqual(
+            CompetitorTriageRunStatus.PARTIAL_FAILED, response.run.status
+        )
+        run_id = response.run.run_id
+        current_revision = self.journey_service.get(self.project_id).revision
+
+        # ① 未显式知晓 → 仍然拒绝（fail-closed 不变）。
+        with self.assertRaisesRegex(CompetitorTriageError, "知晓|acknowledg"):
+            self.service.confirm_basket(
+                self.project_id,
+                run_id,
+                CompetitorTriageBasketConfirmationRequest(
+                    expected_run_revision=response.run.canonical_input_hash,
+                    retained_nct_ids=[f"NCT0000000{index}" for index in range(1, 6)],
+                    excluded_nct_ids=[f"NCT0000000{index}" for index in range(6, 10)],
+                    final_classifications={
+                        **{
+                            f"NCT0000000{index}": (
+                                "direct_competitor" if index <= 3 else "indirect_reference"
+                            )
+                            for index in range(1, 6)
+                        },
+                        **{
+                            f"NCT0000000{index}": "excluded"
+                            for index in range(6, 10)
+                        },
+                    },
+                    actor="test",
+                    reason="partial without acknowledgement must fail",
+                    expected_journey_revision=current_revision,
+                    idempotency_key="ct-test-partial-confirm-noack",
+                ),
+            )
+
+        # ② 知晓但把未分诊候选（NCT00000008）放进保留篮 → 拒绝。
+        with self.assertRaisesRegex(CompetitorTriageError, "未分诊"):
+            self.service.confirm_basket(
+                self.project_id,
+                run_id,
+                CompetitorTriageBasketConfirmationRequest(
+                    expected_run_revision=response.run.canonical_input_hash,
+                    retained_nct_ids=(
+                        [f"NCT0000000{index}" for index in range(1, 6)]
+                        + ["NCT00000008"]
+                    ),
+                    excluded_nct_ids=[f"NCT0000000{index}" for index in (6, 7, 9)],
+                    final_classifications={
+                        **{
+                            f"NCT0000000{index}": (
+                                "direct_competitor" if index <= 3 else "indirect_reference"
+                            )
+                            for index in range(1, 6)
+                        },
+                        **{
+                            f"NCT0000000{index}": "excluded"
+                            for index in (6, 7, 9)
+                        },
+                        "NCT00000008": "direct_competitor",
+                    },
+                    actor="test",
+                    reason="untriaged retained must fail",
+                    expected_journey_revision=current_revision,
+                    idempotency_key="ct-test-partial-confirm-retained-untriaged",
+                    partial_coverage_acknowledgement=True,
+                ),
+            )
+
+        # ③ 显式知晓 + 未分诊仅排除 → 确认成功，投影落地，CONFIRMED。
+        confirmation = self.service.confirm_basket(
+            self.project_id,
+            run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=[f"NCT0000000{index}" for index in range(1, 6)],
+                excluded_nct_ids=[f"NCT0000000{index}" for index in range(6, 10)],
+                final_classifications={
+                    **{
+                        f"NCT0000000{index}": (
+                            "direct_competitor" if index <= 3 else "indirect_reference"
+                        )
+                        for index in range(1, 6)
+                    },
+                    **{
+                        f"NCT0000000{index}": "excluded"
+                        for index in range(6, 10)
+                    },
+                },
+                actor="test",
+                reason="accept successful chunks; defer untriaged",
+                expected_journey_revision=current_revision,
+                idempotency_key="ct-test-partial-confirm-ack",
+                partial_coverage_acknowledgement=True,
+            ),
+        )
+        self.assertIn(
+            confirmation.projection_status,
+            {"discovery_projected", "corpus_projected"},
+        )
+        self.assertIn("未分诊", confirmation.reason)
+        settled = self.service.get_run(self.project_id, run_id)
+        self.assertEqual(
+            CompetitorTriageRunStatus.CONFIRMED, settled.run.status
+        )
+
+
 class TestExactPartitionValidation(TriageTestBase):
     """Reject 3: Confirmation must be an exact, non-overlapping partition."""
 

@@ -630,3 +630,39 @@ OCR 角色由 `ocr_paddle_official`（PaddleOCR 云端）改绑为 `ocr_local_om
 结论与历轮一致：①切相窗口 8.0s（页缓存热载，浮动特性再现）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥卸载（co_resident=true，热复测 123ms 即证）；③探针后仲裁=omlx、users 0/0、queue 空、mtplx 按最小驻留正常卸载（reason=process_not_running，设计内）。证据：`../env_precheck_newera_r13_20261013/`。
 
 红线自检：本轮无服务重启；全部探针流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（42 用户态保留、54 医学监查线保留）。
+
+---
+
+# 复测 · 2026-10-14 22:44–22:45 CST（新纪元LOOP·环境预检·第14轮/本ask第2轮，环境管理员）
+
+背景：r13 收官后实现师侧有更新——vite 与 5301 双双换新进程（vite pid 81087 env VITE_API_PROXY_TARGET=5301 ✓；后端 pid 7724 于 22:39:41 启动），指纹双侧一致 api-a744e7bfaf0cdeae（ready=true）。oMLX 亦换新进程（pid 99765）。ocr绑定 `ocr_local_omlx/GLM-OCR-bf16` 文件在库（bindings.ocr，specialized_whitelisted、enabled）+ API 实测 available+ready+current_runnable，备份在位。预检时 arbiter=null（后端刚重启、首次AI活动前未初始化，端点自报 status=ok，历轮 r2 判例同型）。
+
+实测序列（全部经产品 API；oMLX pid 99765；590s 客户端超时）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 22:44 | OCR 视觉探针 #1 → **passed**（HTTP 200；冷加载） | 63,328 → 16,381,504 | 14,421 ms |
+| 22:45 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 16,383,616 | 298 ms |
+| 22:45 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 16,383,648（稳定） | **125 ms** |
+
+结论与历轮一致：①oMLX 新进程下冷加载 14.4s（新进程 RSS 基线较 r13 的 33.9GB 低约一半，进程内存记账不同，加载与切相行为不变）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥（co_resident=true，热复测 125ms 即证）；③探针后 arbiter 初始化为 omlx resident、users 0、queue 空、mtplx 按最小驻留正常卸载（reason=process_not_running）。证据：`../env_precheck_newera_r14_20261014/`。
+
+红线自检：本轮无服务重启；全部探针流量经产品 API；未手工启停模型服务器；未改产品代码；未动并行线 ego 空间（42 入排线 + 54/60/67/73/80/83/87 医学监查线全保留）。
+
+---
+
+# 复测 · 2026-10-15 10:28 CST（新纪元LOOP·环境预检·第15轮/本ask第3轮，环境管理员）
+
+背景：实现师侧再次更新——后端 5301 换新进程 pid 36282（2026-10-15 10:23:24 启动，前端 web-60e3543ace22d1c6 同步更新），指纹三方一致 api-be4132cd4b8c8413（ready=true）。vite（pid 81087）与 oMLX（pid 99765）延续。ocr绑定文件+API 双验证 available+ready+current_runnable，备份在位。预检时 arbiter=null（后端 10:23 刚重启未初始化，历轮判例同型）、mtplx resident+owned（编排器自动管理，inflight 0，未干预）。
+
+实测序列（全部经产品 API；oMLX pid 99765；590s 客户端超时）：
+
+| 时刻 | 动作 | oMLX RSS (KB) | 耗时 |
+|---|---|---|---|
+| 10:28 | OCR 视觉探针 #1 → **passed**（HTTP 200；mtplx 驻留下切相+冷加载） | 53,728 → 33,870,528 | 11,372 ms |
+| 10:28 | 翻译探针（dawncr0w，structured {"status":"ok"}）→ **passed** | 33,872,928 | 310 ms |
+| 10:28 | OCR 视觉探针 #2（翻译后热复测）→ **passed** | 33,873,248（稳定） | **115 ms** |
+
+结论与历轮一致：①mtplx 驻留下 OCR 切相本轮 11.4s（窗口浮动特性再现）；②GLM-OCR-bf16 与翻译模型同驻 oMLX 8001 共存无互斥（co_resident=true，热复测 115ms 即证）；③探针后仲裁=omlx、queue 空。证据：`../env_precheck_newera_r15_20261015/`。
+
+红线自检：本轮无服务重启；全部探针流量经产品 API；未手工启停模型服务器（mtplx 驻留系编排器自动行为，未干预）；未改产品代码；未动并行线 ego 空间（42 入排线 + 54–87 医学监查线全保留）。

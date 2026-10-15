@@ -541,20 +541,38 @@ export function WritingReferencePanel({
     snapshotId,
     candidateCount: candidates.length,
   }), [aiTriageJobId, aiTriagePipeline, aiTriageRun, aiTriageStatus, candidates.length, snapshotId, triageReconfirmationRequired]);
+  // 自检r1-4红节点②（2026-10-14）：partial_failed 分诊也把成功批分类
+  // 呈现给医学经理确认。未分诊候选预选「排除」（服务端契约：显式知晓后
+  // 未分诊只能排除；医学经理仍可先人工标记再确认）。
+  const aiTriageUntriagedIds = useMemo(() => {
+    if (aiTriageRun?.run?.status !== "partial_failed") return [];
+    const classified = new Set(aiTriageResults.map((result) => result.nct_id));
+    return candidates
+      .filter((candidate) => !classified.has(candidate.nct_id))
+      .map((candidate) => candidate.nct_id);
+  }, [aiTriageRun?.run?.status, aiTriageResults, candidates]);
+  const effectiveTriageSelections = useMemo(() => {
+    if (!aiTriageUntriagedIds.length) return aiTriageSelections;
+    return {
+      ...Object.fromEntries(aiTriageUntriagedIds.map((nctId) => [nctId, "excluded"])),
+      ...aiTriageSelections,
+    };
+  }, [aiTriageSelections, aiTriageUntriagedIds]);
   const aiTriageCoverageComplete = Boolean(candidates.length)
-    && aiTriageResults.length === candidates.length
-    && candidates.every((candidate) => aiTriageSelections[candidate.nct_id]);
+    && candidates.every((candidate) => effectiveTriageSelections[candidate.nct_id]);
   const aiTriageRetainedCount = candidates.filter((candidate) => (
     ["direct_competitor", "indirect_reference"].includes(
-      aiTriageSelections[candidate.nct_id],
+      effectiveTriageSelections[candidate.nct_id],
     )
   )).length;
   const aiTriageAllExcluded = aiTriageCoverageComplete && aiTriageRetainedCount === 0;
   const candidateDisplayStatus = useCallback((candidate) => (
-    aiTriageRun?.run?.status === "review_ready" || triageReconfirmationRequired
-      ? aiTriageSelections[candidate.nct_id] || candidate.relevance_status
+    aiTriageRun?.run?.status === "review_ready"
+      || aiTriageRun?.run?.status === "partial_failed"
+      || triageReconfirmationRequired
+      ? effectiveTriageSelections[candidate.nct_id] || candidate.relevance_status
       : currentDecision(workspace, candidate.nct_id)?.relevance_status || candidate.relevance_status
-  ), [aiTriageRun?.run?.status, aiTriageSelections, triageReconfirmationRequired, workspace]);
+  ), [aiTriageRun?.run?.status, effectiveTriageSelections, triageReconfirmationRequired, workspace]);
   const candidatePageSize = 50;
   const filteredCandidates = useMemo(() => {
     const query = candidateQuery.trim().toLowerCase();
@@ -1009,20 +1027,22 @@ export function WritingReferencePanel({
     const run = aiTriageRun?.run;
     if (
       !run
-      || (!triageReconfirmationRequired && run.status !== "review_ready")
+      || (!triageReconfirmationRequired
+        && run.status !== "review_ready"
+        && run.status !== "partial_failed")
       || !aiTriageCoverageComplete
     ) return;
     const allCandidateIds = candidates.map((candidate) => candidate.nct_id);
     const retainedNctIds = allCandidateIds.filter((nctId) => (
-      ["direct_competitor", "indirect_reference"].includes(aiTriageSelections[nctId])
+      ["direct_competitor", "indirect_reference"].includes(effectiveTriageSelections[nctId])
     ));
-    const excludedNctIds = allCandidateIds.filter((nctId) => aiTriageSelections[nctId] === "excluded");
+    const excludedNctIds = allCandidateIds.filter((nctId) => effectiveTriageSelections[nctId] === "excluded");
     if (retainedNctIds.length + excludedNctIds.length !== allCandidateIds.length) {
       setAiTriageError("仍有候选研究未完成分类，无法确认。");
       return;
     }
     const finalClassifications = Object.fromEntries(
-      allCandidateIds.map((nctId) => [nctId, aiTriageSelections[nctId]]),
+      allCandidateIds.map((nctId) => [nctId, effectiveTriageSelections[nctId]]),
     );
     setBusyAction("confirm-ai-triage");
     setAiTriageError("");
@@ -1047,6 +1067,8 @@ export function WritingReferencePanel({
             : "competitor-triage-confirm",
         ),
         expected_journey_revision: journey?.revision || 0,
+        // 自检r1-4：partial_failed 显式知晓确认——服务端契约要求此标记。
+        partial_coverage_acknowledgement: aiTriageUntriagedIds.length > 0,
       };
       const confirmation = await fetch(
         `/api/projects/${projectId}/medical-writing/authoring-journey/competitor-triage/${run.run_id}/${endpoint}`,
@@ -1609,11 +1631,18 @@ export function WritingReferencePanel({
             </p>}
             {aiTriageError && aiTriagePresentation.kind === "idle" && <p className="writing-reference-message danger" role="alert">{aiTriageError}</p>}
           </div>}
-          {authoringMode && (aiTriageRun?.run?.status === "review_ready" || triageReconfirmationRequired) && (
+          {authoringMode && (aiTriageRun?.run?.status === "review_ready" || aiTriageRun?.run?.status === "partial_failed" || triageReconfirmationRequired) && (
             <section className="writing-reference-validation" data-section="ai-triage-review">
               <div>
                 <div>
                   <strong>{triageReconfirmationRequired ? "按当前研究信息重新核对" : "批量确认AI分诊建议"}</strong>
+                  {aiTriageRun?.run?.status === "partial_failed" && aiTriageUntriagedIds.length > 0 && (
+                    <p role="alert" data-testid="partial-triage-banner">
+                      分诊部分完成：{aiTriageResults.length}/{candidates.length} 项已分类，
+                      {aiTriageUntriagedIds.length} 项未分诊候选已预选「暂不纳入本轮篮子」；
+                      确认后仍可重试分诊补齐失败批次——云端慢或不稳时先用已分类项推进，不必整轮重跑。
+                    </p>
+                  )}
                   <p>
                     {triageReconfirmationRequired ? "既有人工确认结果已全部预选" : `AI已预设 ${aiTriageResults.length}/${candidates.length} 项分类`}：
                     保留 {aiTriageRetainedCount} 项，排除 {Math.max(0, candidates.length - aiTriageRetainedCount)} 项。
@@ -1650,7 +1679,7 @@ export function WritingReferencePanel({
                         本次最终分类
                         <select
                           aria-label={`${result.nct_id}最终分类`}
-                          value={aiTriageSelections[result.nct_id] || result.classification}
+                          value={effectiveTriageSelections[result.nct_id] || result.classification}
                           onChange={(event) => setAiTriageSelections((current) => ({
                             ...current,
                             [result.nct_id]: event.target.value,
@@ -1691,7 +1720,15 @@ export function WritingReferencePanel({
                 <textarea value={noSuitableCompetitorReason} onChange={(event) => setNoSuitableCompetitorReason(event.target.value)} placeholder="如需留痕，可简要说明候选与当前适应症、分期、人群或设计不匹配之处。" />
               </label>}
               <button className="primary-button" data-action="confirm-ai-triage" onClick={confirmAiTriageRun} disabled={!aiTriageCoverageComplete || Boolean(busyAction)}>
-                {busyAction === "confirm-ai-triage" ? "确认中…" : triageReconfirmationRequired ? `确认当前${candidates.length}项分类` : aiTriageAllExcluded ? "确认全部排除并继续" : `确认并锁定全部${candidates.length}项`}
+                {busyAction === "confirm-ai-triage"
+                  ? "确认中…"
+                  : triageReconfirmationRequired
+                    ? `确认当前${candidates.length}项分类`
+                    : aiTriageRun?.run?.status === "partial_failed" && aiTriageUntriagedIds.length
+                      ? `确认锁定${aiTriageRetainedCount}项（${aiTriageUntriagedIds.length}项未分诊暂不纳入）`
+                      : aiTriageAllExcluded
+                        ? "确认全部排除并继续"
+                        : `确认并锁定全部${candidates.length}项`}
               </button>
             </section>
           )}

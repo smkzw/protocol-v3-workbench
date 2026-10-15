@@ -242,6 +242,44 @@ describe("assembly-plan confirm-on-entry closes the ready-path deadlock (R26 nod
     expect(screen.getByText(/还需确认：.*试验药物给药方案未确认/)).toBeTruthy();
   });
 
+  it("产品画像权威事实阻断显示中文字段名（r2-3红节点⑤：英文prompt不得直出）", async () => {
+    const profileBlocked = planState({
+      confirmationCurrent: false,
+      modules: [
+        {
+          module_id: "product.modality",
+          unresolved_questions: [
+            {
+              code: "authoritative_fact_required",
+              fact_path: "framing.product_profile.technology_type",
+              prompt: "Confirm the authoritative structured design fact before projection.",
+              severity: "blocker",
+            },
+          ],
+        },
+        {
+          module_id: "product.route",
+          unresolved_questions: [
+            {
+              code: "authoritative_fact_required",
+              fact_path: "framing.product_profile.administration_routes",
+              prompt: "Confirm the authoritative structured design fact before projection.",
+              severity: "blocker",
+            },
+          ],
+        },
+      ],
+    });
+    await renderCorpusStage({ plan: profileBlocked });
+
+    const entry = await findWritingEntryButton();
+    expect(entry.disabled).toBe(true);
+    const guidance = await screen.findByText(/还需确认：/);
+    expect(guidance.textContent).toContain("药物技术类型");
+    expect(guidance.textContent).toContain("给药途径");
+    expect(guidance.textContent).not.toMatch(/Confirm the authoritative/);
+  });
+
   it("keeps the already-confirmed ready path one-click", async () => {
     const { fetchMock, onCreated } = await renderCorpusStage({ plan: confirmedPlanState() });
 

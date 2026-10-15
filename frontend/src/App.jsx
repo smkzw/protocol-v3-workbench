@@ -10798,6 +10798,14 @@ function WritingPage({
           fullDraftStorageKey,
           JSON.stringify({ project_id: projectId, job_id: payload.job_id }),
         );
+        if (payload.reused && fullDraftReusedTerminal(payload.status)) {
+          // 自检r2-4观察②：幂等复用命中已结束任务时不再空转轮询——
+          // 明确告知并提供「续跑全文初稿」按钮路径（已完成批次会复用）。
+          setFullDraftMessage(
+            `上次全文初稿任务已${payload.status === "cancelled" ? "被停止" : "失败"}（已完成批次已保留）；点击下方「续跑全文初稿」从断点继续，不会重头再来。`,
+          );
+          return null;
+        }
         return monitorFullDraft(payload.job_id, runToken);
       })
       .catch((error) => {
@@ -12036,7 +12044,7 @@ function WritingPage({
                   </div>
                 )}
                 {fullDraftMessage && <p className="revision-message">{fullDraftMessage}</p>}
-                {fullDraftJob?.status === "failed" && (
+                {fullDraftResumeVisible(fullDraftJob?.status) && (
                   <div className="full-draft-summary-actions">
                     <button type="button" className="primary-button" onClick={resumeFullDraft} disabled={fullDraftBusy} title={fullDraftBusy ? "全文初稿正在生成，完成后可恢复" : "恢复全文初稿生成"}>
                       续跑全文初稿（已完成批次会复用，不会重头再来）
@@ -15940,6 +15948,16 @@ function MedicalWritingRuntimeGate({ readiness, onRetry }) {
       </section>
     </main>
   );
+}
+
+// 自检r2-4观察②（2026-10-15）：失败/取消的全文初稿任务都必须提供续跑
+// 入口——本轮运维帽主动 cancel 后 UI 无任何恢复按钮（姊妹缺陷：仅 failed
+// 有「续跑」，cancelled 被漏掉）。纯函数便于单测与两处 UI 复用。
+export function fullDraftResumeVisible(status) {
+  return status === "failed" || status === "cancelled";
+}
+export function fullDraftReusedTerminal(status) {
+  return status === "failed" || status === "cancelled";
 }
 
 export function App() {

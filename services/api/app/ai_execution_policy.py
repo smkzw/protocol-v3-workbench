@@ -128,12 +128,16 @@ TASK_TYPE_ROUTE_LADDER_BUDGET_SECONDS: Dict[str, float] = {
 # base_url=127.0.0.1:8002/v1），26 批×重推理档与并发的全文初稿互相排队，
 # 单节点 38 分钟仍未完成。表内任务按表解析；表项 profile 缺失/禁用/非云时
 # 回退原链序，永不因配置缺口拒绝服务。
-TASK_TYPE_ROUTE_PROFILE_OVERRIDES: Dict[str, str] = {
-    "medical_writing_revision": "independent_ai__ollama_cloud_dsv41",
-    "competitive_intelligence": "independent_ai__ollama_cloud_dsv41",
-    "protocol_design_synthesis": "independent_ai__ollama_cloud_dsv41",
-    "picos_design_coach": "independent_ai__ollama_cloud_dsv41",
-}
+# 自检r2-1红节点②（2026-10-15，proj_user_fbfddeb2f6e0）：owner 20261014已把
+# independent_ai角色绑定切到本地MTPLX（ai_role_bindings.json revision 126），
+# 但本表仍把分诊/设计综合/PICOS/修订钉在independent_ai__ollama_cloud_dsv41
+# （该profile 20261013起承载cms-router/glm-5.3-flash，10-13/10-14跨两天半
+# 瘫痪：单chunk 28-30分钟+批量TimeoutError，连续三个牺牲项目②红）——
+# 绑定swap不传导到任务级路由。按owner裁定传导：钉子全部移除，任务回落
+# independent_ai绑定主路（表项缺失回退绑定主路是既有合法形态，见
+# task_routed_cloud_profile docstring）。云路由恢复后如需重新分任务钉云，
+# 由owner再裁定并恢复表项。
+TASK_TYPE_ROUTE_PROFILE_OVERRIDES: Dict[str, str] = {}
 
 
 def task_routed_cloud_profile(task_type_value: str) -> AiProviderProfile | None:

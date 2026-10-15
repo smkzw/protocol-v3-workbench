@@ -711,6 +711,60 @@ class DurableCandidateJobTests(unittest.TestCase):
         job = self.durable_store.get(project_id, job_id)
         self.assertEqual("queued", job.status)
 
+    def test_section_job_payload_carries_top_level_ai_route_audit_summary(self):
+        """自检r2-4观察①（2026-10-15）：section_ai_candidate 任务此前只在
+        generation_context.descriptor.ai_policy 深层携带路由——审计侧按
+        payload 顶层找路由字段扑空（protocol_full_draft 在顶层
+        descriptor.ai_policy，口径不一致）。期望：initial durable payload
+        顶层携带 ai_route 摘要（provider/model/base_url/route_profile_id
+        与 descriptor.ai_policy 同源）。"""
+        project_id = PROJECTS[0]
+        document = self.documents.document_session(project_id)
+        section = self.documents.section(project_id, document.sections[0].section_id)
+        block = None
+        for b in section.content_blocks:
+            text = str(b.get("text", "")).strip()
+            if len(text) >= 10 and b.get("source_locator"):
+                block = b
+                break
+        self.assertIsNotNone(block, "test requires a substantive block")
+
+        request = MedicalWritingRevisionRequest(
+            document_id=document.document_id,
+            section_id=section.section_id,
+            selected_text=str(block["text"])[:40],
+            anchor_path=block["source_locator"],
+            user_instruction="请测试顶层路由审计字段",
+            intent="regulatory_tone",
+            requested_by="medical_manager_test",
+        )
+        job_id, _result = self.revision_service.submit_revision_durable(
+            project_id, request, self.durable_store
+        )
+        job = self.durable_store.get(project_id, job_id)
+        payload = json.loads(job.payload_json)
+        self.assertIn("ai_route", payload, "顶层 ai_route 审计摘要必须存在")
+        ai_route = payload["ai_route"]
+        descriptor_policy = payload["generation_context"]["descriptor"]["ai_policy"]
+        self.assertEqual(
+            str(descriptor_policy.get("provider_name") or ""),
+            ai_route.get("provider"),
+            "顶层 ai_route.provider 必须与 descriptor.ai_policy 同源",
+        )
+        self.assertEqual(
+            str(descriptor_policy.get("model_name") or ""),
+            ai_route.get("model"),
+        )
+        self.assertEqual(
+            str(descriptor_policy.get("base_url") or ""),
+            ai_route.get("base_url"),
+        )
+        self.assertEqual(
+            str(descriptor_policy.get("route_profile_id") or ""),
+            ai_route.get("route_profile_id"),
+        )
+        self.assertTrue(ai_route.get("frozen_at"))
+
     def test_ambiguous_selection_is_rejected_before_durable_job_creation(self):
         project_id = PROJECTS[0]
         document = self.documents.document_session(project_id)

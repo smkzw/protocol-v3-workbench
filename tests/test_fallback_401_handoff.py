@@ -137,7 +137,9 @@ class FallbackProfileIdentityTests(unittest.TestCase):
                 provider="opencode-go",
                 label="OpenCode Go",
                 base_url="https://opencode.ai/zen/go/v1",
-                model="glm-5.3-flash",
+                # owner 20261014传导：任务级路由表清空后，指定档案必须是
+                # 任务允许路由；真实注册表该profile即 deepseek-v4.1-flash。
+                model="deepseek-v4.1-flash",
                 api_key_env="OPENCODE_API_KEY",
                 deployment_scope="cloud",
                 discovery_mode="manual_plus_probe",
@@ -206,7 +208,7 @@ class FallbackProfileIdentityTests(unittest.TestCase):
         )
         self.assertEqual("opencode-go", resolution.provider_name)
         self.assertEqual(
-            "glm-5.3-flash", resolution.model_name
+            "deepseek-v4.1-flash", resolution.model_name
         )
         self.assertEqual(
             "independent_ai__opencode_go_deepseek_v41_flash",

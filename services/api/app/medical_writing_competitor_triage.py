@@ -5832,11 +5832,13 @@ class CompetitorTriageService:
         # Reject PARTIAL_FAILED — a one-click AI recommendation cannot be
         # authoritative while any chunk failed. Only reached for first-time
         # confirmations; idempotent replays return above.
-        if run.status != CompetitorTriageRunStatus.REVIEW_READY:
-            raise CompetitorTriageError(
-                f"run must be fully REVIEW_READY to confirm "
-                f"(every chunk succeeded); current status: {run.status.value}"
-            )
+        # 自检r1-4红节点②（2026-10-14，proj_user_c1b741eab57a）：云端退化日
+        # 分诊部分批次成功（现场 4/6 批、9 项直接/间接已分类），但旧契约拒
+        # 一切非 REVIEW_READY 确认且 UI 不呈现成功批分类——篮子恒 0，唯一
+        # 出路是小时级重试，重试再失败即死锁。新语义：PARTIAL_FAILED +
+        # 医学经理显式知晓（partial_coverage_acknowledgement）可确认——
+        # 未分诊候选只能按排除处理（不得默认保留），成功批分类正常入篮。
+        # 其余状态（failed/running/stale 等）仍然拒绝；未显式知晓也拒绝。
 
         # Build classification map from SUCCEEDED chunks only
         classification_map: Dict[str, str] = {}
@@ -5845,6 +5847,31 @@ class CompetitorTriageService:
                 continue
             for result in chunk.results:
                 classification_map[result.nct_id] = result.classification.value
+
+        guard_candidate_ids = {c.nct_id for c in snapshot.candidates}
+        untriaged_ids = sorted(guard_candidate_ids - set(classification_map))
+
+        if run.status == CompetitorTriageRunStatus.PARTIAL_FAILED:
+            if not request.partial_coverage_acknowledgement:
+                raise CompetitorTriageError(
+                    "分诊仅部分完成：确认前必须显式知晓未分诊候选将按"
+                    "「暂不纳入本轮篮子」处理（partial_coverage_acknowledgement）；"
+                    "或先重试分诊补齐失败批次。"
+                )
+            retained_untriaged = sorted(
+                set(request.retained_nct_ids) & set(untriaged_ids)
+            )
+            if retained_untriaged:
+                raise CompetitorTriageError(
+                    "未分诊候选不得默认保留："
+                    + ", ".join(retained_untriaged)
+                    + "（可先重试分诊，或在候选列表中人工标记后再确认）"
+                )
+        elif run.status != CompetitorTriageRunStatus.REVIEW_READY:
+            raise CompetitorTriageError(
+                f"run must be fully REVIEW_READY to confirm "
+                f"(every chunk succeeded); current status: {run.status.value}"
+            )
 
         # --- Exact partition validation ---
         retained_set = set(request.retained_nct_ids)
@@ -5936,8 +5963,14 @@ class CompetitorTriageService:
 
         # REVIEW_READY should already guarantee this, but confirmation remains
         # fail-closed if a persisted run is incomplete or corrupt.
+        # 自检r1-4：显式知晓的 PARTIAL_FAILED 确认允许未分诊候选存在——
+        # 它们已在上方守卫被限定为仅可排除，此处不得再把未分诊当作损坏拒收。
         unclassified_candidates = sorted(candidate_ids - set(classification_map))
-        if unclassified_candidates:
+        partial_acknowledged = (
+            run.status == CompetitorTriageRunStatus.PARTIAL_FAILED
+            and request.partial_coverage_acknowledgement
+        )
+        if unclassified_candidates and not partial_acknowledged:
             raise CompetitorTriageError(
                 "snapshot NCTs have no classification from the run: "
                 + ", ".join(unclassified_candidates)
@@ -5955,6 +5988,16 @@ class CompetitorTriageService:
             else request.no_suitable_competitor_reason.strip()
             or "医学经理确认本次候选均不适合作为竞品或间接参照。"
         )
+        if partial_acknowledged and untriaged_ids:
+            # 审计留痕：部分覆盖确认必须把"哪些候选未分诊、如何处置"写进
+            # 确认理由，评审侧可见。
+            effective_reason = (
+                f"{effective_reason}（部分分诊批次未完成：{len(untriaged_ids)}项"
+                "未分诊候选经医学经理确认暂不纳入本轮篮子："
+                + ", ".join(untriaged_ids[:20])
+                + ("…" if len(untriaged_ids) > 20 else "")
+                + "）"
+            )
         confirmation_journey = self.journey_service.get(project_id)
         confirmation = CompetitorTriageConfirmationRecord(
             confirmation_id=confirmation_id,
