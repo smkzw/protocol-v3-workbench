@@ -516,3 +516,8 @@ run_acceptance_gate.py 新增：位置参数 mode/scope（run|backend|frontend|a
 **位置**：LOOP=**dwfrun-4ae7548a**（TaskStop无损停止于自检第4次attempt进行2h16m处）。**恢复=ResumeWorkflowRun dwfrun-4ae7548a**（16步journal重放+自检ask重派，SMOKE牺牲项目证据落库可续验）。
 **本段战绩**：R1自检3次全部跑出真根因并修两批——④研究设计确认的**结构性循环依赖死锁**完整取证（语料门第5条件picos_alignment要求picos_sha256非空而PICOS形成依赖完成第二步=环；design推荐包恒空=桥接验证器/写入器形状不一致）；云端路由cms-router/glm-5.3-flash在分诊节点持续实测正常。
 **停机清点**：模型侧无异常驻留；8002正常。
+
+## 无损暂停检查点（2026-10-15，纪元三R3新判绿标准落地后）
+**位置**：LOOP=**dwfrun-a0f22d14**（TaskStop无损停止）。**恢复=ResumeWorkflowRun dwfrun-a0f22d14**。
+**本段关键**：R2四节点连续绿（②分诊回本地MTPLX后4分钟completed、④设计确认复验通过、⑤product_profile保存断裂根治）；**owner 20261015自检判绿标准裁定已写入脚本**（⑤≥3章即绿+运维帽取消剩余批次、⑧草稿预览即绿——自检=工程跑通非科学审核），R3起生效，预期自检3-6h→约1h。
+**恢复队列**：R3自检（新标准首跑）→清偿F系列→MY009基准轮→循环至收敛→收口；收官后执行多轮全量复盘+详尽handoff（owner已交代）。
