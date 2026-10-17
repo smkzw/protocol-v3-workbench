@@ -7,3 +7,4 @@
 | 2026-10-17 | 停用 dwfrun 工作流与多测试者 LOOP | 单轮自检3-6小时、账本口径争议、质量反馈不可复现 | 修复 LOOP 判绿口径继续跑 |
 | 2026-10-17 | 主数据对象 schema 以 02_ARCHITECTURE.md 为准（ProjectProfile/CompetitorSet/StyleKit/ClauseBank/StudyDefinition/DecisionCard/SectionCard/SectionDraft/Manuscript） | 评测驱动需要稳定契约；StyleKit/ClauseBank 是数据不是代码 | 在旧 repository 标题骨架上继续打补丁 |
 | 2026-10-17 | M0 先取基线（3 dev 项目全文+全量测试失败族），基线之前不改写作提示词 | 无度量不动引擎 | 立即重写提示词 |
+| 2026-10-17 | 九对象schema定稿（eval/SCHEMAS.md）：StudyDefinition复用现有typed对象不新建表；SectionCard由111份冻结章节合同压缩生成非手写；StyleKit/ClauseBank为runtime数据不进代码不进git | 第一天定接口（05_PLAN并行前提） | 新建独立StudyDefinition表；手写SectionCard |
