@@ -1,0 +1,68 @@
+{
+ "pending": [
+  {
+   "id": "WP-M1-EVALDEV",
+   "desc": "dev/held-out划分+eval/run.py对3基线全量出分+基线报告定稿",
+   "deps": [
+    "WP-M1-FIXTURE",
+    "M0_BASELINE"
+   ]
+  },
+  {
+   "id": "WP-M2-STYLEKIT",
+   "desc": "TopK确认UX+StyleKit/ClauseBank生成器（输入=CompetitorSet+解析后方案段落）",
+   "deps": [
+    "WP-M2-CORPUS_DONE"
+   ]
+  },
+  {
+   "id": "WP-M2-B05",
+   "desc": "分诊专病函数替换为通用术语匹配（B05，删24个专病函数）",
+   "deps": [
+    "WP-M2-CORPUS_DONE"
+   ]
+  },
+  {
+   "id": "WP-M3-RENDER",
+   "desc": "确定性渲染器：剂量表/SoA表/分析集（读StudyDefinition+SectionCard出数字表格）",
+   "deps": [
+    "WP-M4-CALC_DONE"
+   ]
+  },
+  {
+   "id": "WP-M1-MODELEVAL",
+   "desc": "模型对比（08_MODEL_EVAL：DeepSeek V4.1-Flash API vs 本地量化 vs GLM-5.3等，3dev项目×6类章节）",
+   "deps": [
+    "WP-M1-EVALDEV"
+   ]
+  },
+  {
+   "id": "WP-M4-DECISIONCARD",
+   "desc": "S2决定卡生成（选项+分析+推荐+竞品做法）",
+   "deps": [
+    "WP-M2-STYLEKIT"
+   ]
+  },
+  {
+   "id": "WP-M5-DOCCHAIN",
+   "desc": "文档级发布替代逐章冻结+一致性核对+导出",
+   "deps": [
+    "WP-M3-ENGINE"
+   ]
+  }
+ ],
+ "completed": [
+  "WP-M3-CHECKERS",
+  "WP-M3-LINT",
+  "WP-M1-FIXTURE",
+  "WP-M4-CALC",
+  "M0_BASELINE_A",
+  "M0_GITIGNORE",
+  "WP-M2-CORPUS",
+  "WP-M1-EVAL-SKELETON",
+  "M0_STATUS"
+ ],
+ "blocked_on_user": [],
+ "in_flight": [],
+ "updated_at": "2026-10-17T23:05:22"
+}
