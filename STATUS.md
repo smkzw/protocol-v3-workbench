@@ -8,8 +8,8 @@
 |---|---|---|
 | M0-1 敏感资料止血 | 完成 | runs/ 等移出 git 跟踪（.gitignore + untrack，本地保留 13G）；新提交不再带入运行产物 |
 | M0-2 停用 dwfrun LOOP | 完成 | dwfrun-a0f22d14 已停止（2026-10-17）；不再启动多测试者 LOOP |
-| M0-3 三个 dev 项目全文基线 | 进行中 | 后台运行，报告将写入 eval/reports/baseline_m0/ |
-| M0-4 全量测试状态记录 | 进行中 | 后台运行，失败族记录待出 |
+| M0-3 三个 dev 项目全文基线 | A/B完成，C在跑 | A=覆盖率50%/619min；B=覆盖率22.2%/93.6min |
+| M0-4 全量测试状态记录 | 完成 | 失败族已记录（见fulltest_result.txt） |
 | M0-5 STATUS/DECISIONS 建立 | 完成 | 本文件 + DECISIONS.md |
 | M4 决定卡与设计步骤 | 样本量计算器完成 | 四设计33测试绿；决定卡/前端未开始 |
 | M1 eval 基建 | 骨架+fixture抽取完成 | 3 fixture（129/141/160节）落盘runtime；dev/held-out划分与基线全量出分待做 | WP-M1-EVAL合入：对齐/指标/报告链路，MY009产物实测覆盖率38.6%；泄漏与事实冲突待补 |
