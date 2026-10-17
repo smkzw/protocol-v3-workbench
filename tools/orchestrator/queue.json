@@ -5,28 +5,28 @@
    "desc": "dev/held-out划分+eval/run.py对3基线全量出分+基线报告定稿",
    "deps": [
     "WP-M1-FIXTURE",
-    "M0_BASELINE"
+    "M0_BASELINE_C"
    ]
   },
   {
    "id": "WP-M2-STYLEKIT",
    "desc": "TopK确认UX+StyleKit/ClauseBank生成器（输入=CompetitorSet+解析后方案段落）",
    "deps": [
-    "WP-M2-CORPUS_DONE"
+    "WP-M2-CORPUS"
    ]
   },
   {
    "id": "WP-M2-B05",
    "desc": "分诊专病函数替换为通用术语匹配（B05，删24个专病函数）",
    "deps": [
-    "WP-M2-CORPUS_DONE"
+    "WP-M2-CORPUS"
    ]
   },
   {
    "id": "WP-M3-RENDER",
    "desc": "确定性渲染器：剂量表/SoA表/分析集（读StudyDefinition+SectionCard出数字表格）",
    "deps": [
-    "WP-M4-CALC_DONE"
+    "WP-M4-CALC"
    ]
   },
   {

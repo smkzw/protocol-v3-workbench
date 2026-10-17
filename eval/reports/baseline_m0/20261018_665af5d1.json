@@ -1,0 +1,213 @@
+{
+  "schema_version": "mw_eval_report_v1",
+  "generated_at": "2026-10-18T00:41:39+08:00",
+  "set": "smoke",
+  "input": {
+    "path": "runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_full_drafts/proj_user_30ddc897be83/mwjob_1da644d5ab3d3641efb042c3/full-draft.json",
+    "sha256": "e633102e0871bbaa14c00b7e6ea491c33372edcb9cec8fde3776120415f55cbf",
+    "sha8": "665af5d1",
+    "schema_version": "protocol_full_draft_artifact_v10",
+    "job_id": "mwjob_1da644d5ab3d3641efb042c3",
+    "project_id": "proj_user_30ddc897be83",
+    "document_id": "mwdoc_greenfield_proj_user_30ddc897be83_cbeab33ef9f54b70"
+  },
+  "alignment": {
+    "sections_total": 33,
+    "aligned": 27,
+    "unaligned": 6,
+    "by_kind": {
+      "native": 0,
+      "exact": 10,
+      "approx": 17,
+      "number_only": 0,
+      "unmatched": 6
+    }
+  },
+  "metrics": {
+    "coverage": {
+      "applicable": 27,
+      "covered": 6,
+      "ratio": 0.2222222222222222,
+      "uncovered": [
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_723431f9f2d46f5e",
+          "section_number": "2",
+          "heading": "研究背景和立项依据"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_08db7f59b66b6f96",
+          "section_number": "2.1",
+          "heading": "疾病背景及治疗现状"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_89bb7a2ce1393e54",
+          "section_number": "2.3",
+          "heading": "研究药物简介"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_5920230d00a19d0e",
+          "section_number": "4.7",
+          "heading": "研究暂停和终止标准"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_e35f29660eb09c2b",
+          "section_number": "6.1.2",
+          "heading": "制备、包装、标签、储存与管理"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_20357ad7ea825327",
+          "section_number": "6.1.3",
+          "heading": "发放、回收与清点"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_cc677c5a76942086",
+          "section_number": "6.3",
+          "heading": "剂量调整、暂停、恢复与永久停药"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_1e702a3a6de89bbc",
+          "section_number": "6.4",
+          "heading": "药物过量与给药错误管理"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_5094ece91fd3f189",
+          "section_number": "7.1.3",
+          "heading": "计划外访视"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_00ea3e791bf11eeb",
+          "section_number": "7.1.4",
+          "heading": "研究治疗终止、退出研究及失访处理"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_3688603fb855f6e8",
+          "section_number": "8.2.1",
+          "heading": "不良事件"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_dcd46c393032fcb3",
+          "section_number": "8.2.2",
+          "heading": "严重不良事件"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_398748b8a6d95b55",
+          "section_number": "8.2.3",
+          "heading": "可疑且非预期严重不良反应"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_3239c85fea73357b",
+          "section_number": "8.3",
+          "heading": "研究药物相关风险"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_71976bdf80f33198",
+          "section_number": "8.6",
+          "heading": "不良事件的报告"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_649ec6d18536ba4f",
+          "section_number": "8.7",
+          "heading": "不良事件的随访"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_c994ab583de8c237",
+          "section_number": "9.6",
+          "heading": "PK数据分析"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_033991b5b74212fb",
+          "section_number": "11.1",
+          "heading": "遵守法律法规"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_df0abf4fe87167df",
+          "section_number": "11.5",
+          "heading": "保险与赔偿"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_6fff4665898336fc",
+          "section_number": "12.6",
+          "heading": "研究和研究中心的关闭"
+        },
+        {
+          "section_id": "mwsec_greenfield_proj_user_30ddc897be83_147c28e81a03be8a",
+          "section_number": "14.3",
+          "heading": "安全信息报告途径"
+        }
+      ]
+    },
+    "placeholder": {
+      "marker_count": 3,
+      "section_count": 3
+    },
+    "leak": {
+      "computed": false,
+      "section_leak_ratio": null,
+      "leaked_sections": []
+    },
+    "fact_conflicts": {
+      "computed": false,
+      "count": 0
+    },
+    "duration": {
+      "computed": true,
+      "minutes": 93.6,
+      "created_at": "2026-10-17T14:42:46.234214+00:00",
+      "finished_at": "2026-10-17T16:16:19.989208+00:00",
+      "source": "/Users/smkzw/Documents/康哲项目资料/AI/医学经理工作台/implementation/protocol-v3-workbench-mw_protocol_v3_phase0_20260809_111313/runs/requirements_v2_20260919/wp6_0922v2_20260922/real_http_acceptance/isolated_runtime/medical_writing_durable_jobs.sqlite3"
+    }
+  },
+  "issues_total": 28,
+  "issues_top": [
+    {
+      "kind": "placeholder_marker",
+      "severity": "high",
+      "where": "§7.1.4 研究治疗终止、退出研究及失访处理"
+    },
+    {
+      "kind": "placeholder_marker",
+      "severity": "high",
+      "where": "§9.6 PK数据分析"
+    },
+    {
+      "kind": "placeholder_marker",
+      "severity": "high",
+      "where": "§9.7 PD数据分析"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§2 研究背景和立项依据"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§2.1 疾病背景及治疗现状"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§2.3 研究药物简介"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§4.7 研究暂停和终止标准"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§6.1.2 制备、包装、标签、储存与管理"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§6.1.3 发放、回收与清点"
+    },
+    {
+      "kind": "empty_body",
+      "severity": "high",
+      "where": "§6.3 剂量调整、暂停、恢复与永久停药"
+    }
+  ]
+}
