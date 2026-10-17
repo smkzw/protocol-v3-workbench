@@ -1,0 +1,32 @@
+{
+  "_readme": {
+    "purpose": "提示分层 lint 的术语数据文件。prompt_lint.py 只实现通用机制（词表匹配、缺陷编号/轮次正则、预算检查），所有具体药物/疾病/量表名一律放这里，不进代码。",
+    "how_to_extend": [
+      "1. 向 drugs/diseases/scales 数组追加术语；ASCII 术语大小写不敏感（如 PNH/pnh 均命中）。",
+      "2. 扩展来源建议：项目 StudyDefinition/IB 药名、ProjectProfile 适应症与背景治疗、StyleKit 术语表（药物类别术语、终点中文名、量表名），以及出现新泄漏时按 plans/mw_reboot_20261017/03_WRITING_SYSTEM.md 的缺陷处理纪律先修机制再补词表。",
+      "3. allowlist 放已知误报的完整短语（匹配文本是其子串时被抑制），例如监管文件修订号；不要用 allowlist 放行真实药物/疾病/量表名。",
+      "4. layer_budgets 是 L0/L1 字数预算，改这里即可，无需动代码。"
+    ],
+    "version": "0.1-first-examples",
+    "note": "以下术语仅为首版通用示例，证明机制可用；正式项目接入前必须按项目语料扩充。"
+  },
+  "layer_budgets": {
+    "L0": 800,
+    "L1": 400
+  },
+  "drugs": [
+    "依库珠单抗",
+    "阿达木单抗"
+  ],
+  "diseases": [
+    "阵发性睡眠性血红蛋白尿症",
+    "PNH"
+  ],
+  "scales": [
+    "DLQI",
+    "PASI",
+    "ECOG",
+    "NYHA"
+  ],
+  "allowlist": []
+}

@@ -1,0 +1,50 @@
+{
+  "purpose": "WP-M3-LINT 基线：既有 _instruction() 文本应被 lint 抓出违规",
+  "source": "services/api/app/medical_writing_full_draft.py",
+  "layer": "L0",
+  "char_count": 4362,
+  "budget": 800,
+  "pass": false,
+  "rule_categories_flagged": [
+    "budget_L0",
+    "defect_id",
+    "round_wording",
+    "scale_name"
+  ],
+  "rule_category_count": 4,
+  "violation_counts_by_rule": {
+    "budget_L0": 1,
+    "scale_name": 1,
+    "defect_id": 2,
+    "round_wording": 1
+  },
+  "total_violations": 5,
+  "violations": [
+    {
+      "rule": "budget_L0",
+      "span": "全文4362字",
+      "hit": "L0层预算800字，实际4362字"
+    },
+    {
+      "rule": "scale_name",
+      "span": "DLQI",
+      "hit": "…施；不得由终点中的‘较基线变化’自行新增【DLQI】采集时点；不得自行定义TEAE采集窗口、…"
+    },
+    {
+      "rule": "defect_id",
+      "span": "NEW-37",
+      "hit": "…会按同一公式复算并把不一致改写为复算值。【NEW-37】（新纪元第7轮末修订）：随机化比例表述单…"
+    },
+    {
+      "rule": "defect_id",
+      "span": "NEW-27",
+      "hit": "…，非等比按实际比例（如2:1）。A3②（【NEW-27】）删文调和契约：修订/重写删除含剂量、片…"
+    },
+    {
+      "rule": "round_wording",
+      "span": "第7轮",
+      "hit": "…不一致改写为复算值。NEW-37（新纪元【第7轮】末修订）：随机化比例表述单一格式——等比…"
+    }
+  ],
+  "terms_file": "tools/writing/lint_terms.json"
+}
