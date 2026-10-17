@@ -49,9 +49,10 @@ class ExampleEmailRemovalTests(unittest.TestCase):
     def test_sae_skeleton_has_no_placeholder_email_and_fixed_sentence(self) -> None:
         text = _block("8.6 不良事件的报告")["text"]
         self.assertNotIn("safety@sponsor.example", text)
-        self.assertIn("药物警戒联系人及邮箱待医学经理按项目联络表填写", text)
-        # 病句修复：单次24小时（旧文『应在获知…24小时内将完整信息…应在
-        # 24 小时内通过专用报告表报告』双次出现）。
+        # F1 骨架归位批（20261016）：8.6 由通用AE定义骨架升级为报告路径
+        # 操作化骨架（时限写死+途径列明）——联系人留槽语义保留，仍无占位邮箱。
+        self.assertIn("待医学经理按项目联络表填写", text)
+        # 病句修复保持：单次24小时（旧文双次出现）。
         self.assertNotIn("）应在 24 小时内", text)
 
     def test_no_skeleton_carries_placeholder_email(self) -> None:

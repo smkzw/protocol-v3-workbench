@@ -10556,6 +10556,14 @@ def _assemble_medical_writing_document_export(context, verified: dict) -> dict:
     placeholder_report["guard_annotations"] = _apply_export_guard_annotations(
         document, placeholder_report
     )
+    # NEW-44（第2轮末修订，20261017）：守卫悬置标记族剥离——【统计章分节
+    # 装配待确认…】【样本量待确认…】（剂量出处待标注…）是生成层过程标记，
+    # 自述『正式稿不得带此标记』却直接上纸（r2-A 导出件实测：装配待确认
+    # ×2、样本量待确认×1、剂量出处×2）。逐条计入占位符报告『待确认事项』；
+    # 缺口计数不变（上方报告已按存储态计算完毕，本变换只改导出副本）。
+    placeholder_report["guard_pending_items"] = _strip_export_guard_pending_markers(
+        document
+    )
     if typo_notes:
         placeholder_report["text_quality"]["replacements"] = typo_notes
     if annotation_strip_notes:
@@ -10966,7 +10974,13 @@ def _apply_export_text_quality_lint(document) -> list[dict]:
     return notes
 
 
+# F2 臂名形态覆盖批（新纪元修订第1轮末，20261016）：真实导出件臂名有三
+# 种形态——配对形『160mg/80mg BID』、分立形『160mg BID…与80mg BID』、
+# 显式组名形『160mg剂量组』。r1-C 10-13件实跑：配对正则对分立形 matches=[]
+# →算术门静默 return []（NEW-2同证）。三形态并集提取。
 _DOSE_ARM_LABEL_RE = re.compile(r"(\d{2,4})mg\s*/\s*(\d{2,4})mg\s*(?:BID|bid|每日两次)", re.IGNORECASE)
+_DOSE_ARM_DOSE_STATEMENT_RE = re.compile(r"(\d{2,4})\s*mg\s*(?:BID|bid|每日两次)", re.IGNORECASE)
+_DOSE_ARM_EXPLICIT_RE = re.compile(r"(\d{2,4})mg(?:剂量组|组|臂)")
 _DOSE_TABLET_SPEC_RE = re.compile(r"(\d+(?:\.\d+)?)\s*mg\s*/\s*片")
 _DOSE_TABLETS_PER_ARM_RE = re.compile(r"(\d{2,4})mg(?:剂量组|组|臂)[^。；]{0,10}每次(?:服用)?(\d+|[一二两三四五])片")
 _DOSE_TABLETS_SINGLE_RE = re.compile(r"每次(?:服用)?(\d+|[一二两三四五])片")
@@ -10999,33 +11013,57 @@ def _dose_tablets(token: str) -> int:
     return int(token)
 
 
-def _dose_arithmetic_gaps(text: str) -> list[str]:
-    """A3①：给药日剂量算术不平的缺口理由列表（无臂名/信息不全则空）。"""
-    arms = [
-        (int(first), int(second))
-        for first, second in _DOSE_ARM_LABEL_RE.findall(text or "")
+def _dose_arm_doses(text: str) -> list[int]:
+    """F2：三形态并集提取臂名剂量（去重保序）。"""
+    doses = [
+        dose
+        for pair in _DOSE_ARM_LABEL_RE.findall(text or "")
+        for dose in (int(pair[0]), int(pair[1]))
     ]
-    if not arms:
+    doses.extend(int(m) for m in _DOSE_ARM_DOSE_STATEMENT_RE.findall(text or ""))
+    doses.extend(int(m) for m in _DOSE_ARM_EXPLICIT_RE.findall(text or ""))
+    return list(dict.fromkeys(doses))
+
+
+def _dose_arithmetic_gaps(text: str) -> list[str]:
+    """A3①+F2：给药日剂量算术不平/信息不全的缺口理由列表。
+
+    臂名存在时禁止静默放行：规格/频次缺失、臂片数表述缺失均计
+    『信息不全』缺口（r1-C 10-13件实跑同证——信息不全曾整体短路）。
+    """
+    arm_doses = _dose_arm_doses(text or "")
+    if not arm_doses:
         return []
     spec_match = _DOSE_TABLET_SPEC_RE.search(text)
     freq = _dose_freq_per_day(text)
     if not spec_match or not freq:
-        return []
+        missing = "规格与频次"
+        if spec_match:
+            missing = "频次"
+        elif freq:
+            missing = "规格"
+        doses_text = "、".join(f"{dose}mg" for dose in arm_doses)
+        return [
+            f"给药剂量臂（{doses_text}）存在但{missing}信息不全，"
+            "日剂量算术无法校验——需补齐后复核（信息不全不得静默放行）"
+        ]
     spec = float(spec_match.group(1))
     per_arm = {
-        dose: _dose_tablets(tablets)
+        int(dose): _dose_tablets(tablets)
         for dose, tablets in _DOSE_TABLETS_PER_ARM_RE.findall(text or "")
     }
     default_match = _DOSE_TABLETS_SINGLE_RE.search(text or "")
     reasons: list[str] = []
-    for arm_dose in dict.fromkeys(dose for pair in arms for dose in pair):
+    for arm_dose in arm_doses:
         tablets = per_arm.get(arm_dose)
         if tablets is None:
-            if per_arm:
-                # 已按臂分述而该臂缺失表述 → 不强判（信息不全不编算）
-                continue
+            # F2：该臂无专属片数表述时回落默认片数；仍缺失则计缺口。
             tablets = _dose_tablets(default_match.group(1)) if default_match else None
         if tablets is None:
+            reasons.append(
+                f"{arm_dose}mg臂片数表述缺失（信息不全），日剂量算术无法校验——"
+                "需补齐该臂每次片数后复核（信息不全不得静默放行）"
+            )
             continue
         achieved = spec * tablets * freq
         if abs(achieved - arm_dose) > 1e-9:
@@ -11363,6 +11401,21 @@ def _export_placeholder_report(document) -> dict:
                         "reason": "守卫标记缺失（生成层守卫标记未到达导出件）：样本量溯源注记（自洽声明必须携带具名依据或如实未具名标注）",
                     }
                 )
+            elif (
+                ss_check is not None
+                and ss_check.get("status") == "样本量要素未齐"
+                and "样本量待确认" not in joined
+            ):
+                # F3 第三形态堵口（20261016）：要素未齐且正文无悬置标记——
+                # 声明数字未经复算也无标记即上纸（r1-C 10-13件 5.1/9.x 实证
+                # 形态）。计守卫标记缺失缺口，供导出副本补标通道点名。
+                gap_sections.append(
+                    {
+                        "section_number": section.section_number or "",
+                        "section_heading": section.heading,
+                        "reason": "守卫标记缺失（生成层守卫标记未到达导出件）：样本量声明要素未齐且无『样本量待确认』悬置标记——声明数字未经复算即上纸",
+                    }
+                )
         for wrong in _EXPORT_TYPO_REPLACEMENTS:
             if wrong in joined:
                 typo_hits.append(
@@ -11390,15 +11443,25 @@ def _export_placeholder_report(document) -> dict:
         whole_doc_check = sample_size_declaration_check(
             "\n".join(document_body_texts)
         )
-        if whole_doc_check and whole_doc_check.get("status") == "不一致":
+        if whole_doc_check and whole_doc_check.get("status") in {
+            "不一致",
+            "样本量要素未齐",
+        }:
+            # F3（20261016）：全文补门同步扩『要素未齐』——无统计编号节的
+            # 存量件（旁路件）声明数字此前不经任何门上纸，此处给清纸面路径。
+            reason = (
+                (
+                    "样本量不一致（重导出补门）："
+                    if whole_doc_check.get("status") == "不一致"
+                    else "样本量声明要素未齐（重导出补门，存量件清纸面路径）："
+                )
+                + str(whole_doc_check.get("detail") or "")
+            )
             gap_sections.append(
                 {
                     "section_number": "",
                     "section_heading": "样本量（全文复核）",
-                    "reason": (
-                        "样本量不一致（重导出补门）："
-                        + str(whole_doc_check.get("detail") or "")
-                    ),
+                    "reason": reason,
                 }
             )
     # E11（新纪元第1轮修订）导出层：统计章分节装配五件套（分析集成员
@@ -11496,6 +11559,55 @@ def _export_placeholder_report(document) -> dict:
     }
 
 
+_EXPORT_GUARD_PENDING_MARKER_RE = re.compile(
+    r"【(?:统计章分节装配待确认|样本量待确认|样本量口径混写待确认)[^】]*】"
+    r"|（剂量出处待标注[^）]*）"
+)
+
+
+def _strip_export_guard_pending_markers(document) -> list[dict]:
+    """NEW-44（20261017）：守卫悬置标记族从导出副本剥离（只改副本）。
+
+    与 _apply_export_annotation_sanitization 同层同构：text 与 rich_text
+    双表示同步剥离，清扫后重算校验投影==text；逐章逐条计数供占位符
+    报告『待确认事项』呈现。缺口计数不读本函数结果（上游报告已定）。
+    """
+    notes: list[dict] = []
+    for section in getattr(document, "sections", None) or []:
+        section_count = 0
+        for block in section.content_blocks or []:
+            if not isinstance(block, Mapping):
+                continue
+            original_text = block.get("text")
+            if isinstance(original_text, str) and original_text:
+                replaced = _EXPORT_GUARD_PENDING_MARKER_RE.sub("", original_text)
+                if replaced != original_text:
+                    section_count += len(
+                        list(_EXPORT_GUARD_PENDING_MARKER_RE.finditer(original_text))
+                    )
+                    block["text"] = replaced
+            rich = block.get("rich_text")
+            if isinstance(rich, Mapping):
+                for text_node in _iter_rich_text_text_nodes(rich):
+                    original = text_node["text"]
+                    replaced = _EXPORT_GUARD_PENDING_MARKER_RE.sub("", original)
+                    if replaced != original:
+                        text_node["text"] = replaced
+                if isinstance(block.get("text"), str):
+                    projection = _rich_text_projection(rich)
+                    if projection != block["text"]:
+                        block["text"] = projection
+        if section_count:
+            notes.append(
+                {
+                    "section_number": section.section_number or "",
+                    "section_heading": section.heading,
+                    "count": section_count,
+                }
+            )
+    return notes
+
+
 def _apply_export_guard_annotations(document, report):
     """守卫标记缺失的自动补标（第4轮·第二刀②，只改导出副本）。
 
@@ -11504,8 +11616,41 @@ def _apply_export_guard_annotations(document, report):
     """
     annotations: list[dict] = []
     annotation_text = "（样本量假设未具名溯源，建议引用外部先例。）"
+    incomplete_annotation_text = (
+        "（样本量声明要素未齐：数字为声明值，未经假设复算确认，不得作为"
+        "定稿依据。）"
+    )
     for gap in report.get("gap_sections") or []:
         reason = str(gap.get("reason") or "")
+        # F3（20261016）：要素未齐悬置声明同样自动补标（纸面诚实）。
+        if "要素未齐" in reason and "样本量" in reason:
+            section_number = str(gap.get("section_number") or "")
+            heading = str(gap.get("section_heading") or "")
+            for section in document.sections:
+                if (section.section_number or "") != section_number and section.heading != heading:
+                    continue
+                body_indexes = [
+                    index
+                    for index, block in enumerate(section.content_blocks or [])
+                    if isinstance(block, Mapping)
+                    and str(block.get("block_type") or "") != "heading"
+                ]
+                if not body_indexes:
+                    continue
+                last = section.content_blocks[body_indexes[-1]]
+                text = str(last.get("text") or "")
+                if "要素未齐：数字为声明值" in text:
+                    continue
+                last["text"] = text + incomplete_annotation_text
+                annotations.append(
+                    {
+                        "section_number": section_number,
+                        "section_heading": heading,
+                        "annotation": "样本量要素未齐悬置标注",
+                    }
+                )
+                break
+            continue
         if "守卫标记缺失" not in reason or "样本量溯源注记" not in reason:
             continue
         section_number = str(gap.get("section_number") or "")

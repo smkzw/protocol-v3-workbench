@@ -3669,6 +3669,144 @@ class WritingReferenceTranslationBatchService:
             connection.commit()
         return reclaimed
 
+    # R27自检第1次红节点④（20261015，mwjob_669db92acc908aeb07ee1393 /
+    # wref_translation_batch_16f18ac94eeb2388d33dca80 实据）：运维帽合法
+    # cancel（POST /jobs/{id}/cancel → 200 cancelled）后 durable 作业已
+    # cancelled，但批次记录连同未完成条目永久悬置 running/accepted——
+    # 前端永久轮询"生成中"，一键确认与仅重试失败项全部被 active 门禁
+    # 禁用（现场 10 条合格候选无法处置，死路）。
+    # 对账契约：主作业 cancelled 且该批次无任何在途作业（重试/下游迁移）
+    # 时，批次读取把未完成条目（pending/running）回退 failed_retryable
+    # （error_code=cancelled_by_user，人话 error_detail），批次聚合回
+    # 终态，审计留痕；已生成候选保持可确认，『仅重试失败项』即恢复
+    # 生成。在途作业存在时绝不对账（活worker负责终态；条目 CAS 写保护
+    # 兜底与迟归执行器的并发竞争）。
+    def _reconcile_cancelled_durable_job(
+        self, project_id: str, batch_id: str, batch_status: str
+    ) -> bool:
+        if self._durable_store is None:
+            return False
+        if batch_status not in {"accepted", "running"}:
+            return False  # 已终态：无需对账（也是热路径快速出口）
+        from .medical_writing_durable_jobs import TERMINAL_STATES
+
+        try:
+            jobs = self._durable_store.list_by_project(
+                project_id, job_type=REFERENCE_TRANSLATION_JOB_TYPE
+            )
+        except Exception:  # noqa: BLE001 — 作业不可见时不动业务状态
+            logger.exception(
+                "cancel reconcile job lookup failed for batch %s", batch_id
+            )
+            return False
+        batch_job_statuses = [
+            str(job.status)
+            for job in jobs
+            if str(job.business_key).startswith(batch_id)
+        ]
+        if "cancelled" not in batch_job_statuses:
+            return False  # 主作业未取消（未创建/排队/运行/完成/失败）
+        if any(status not in TERMINAL_STATES for status in batch_job_statuses):
+            return False  # 存在在途重试作业：终态由活worker落
+        transition_job_status = self._downstream_transition_job_status(
+            project_id, batch_id
+        )
+        if (
+            transition_job_status is not None
+            and transition_job_status not in TERMINAL_STATES
+        ):
+            return False
+
+        with self.repository._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            rows = connection.execute(
+                """
+                SELECT item_id, payload_json
+                FROM writing_reference_translation_batch_items
+                WHERE tenant_id=? AND project_id=? AND batch_id=?
+                  AND generation_status IN ('pending', 'running')
+                """,
+                (TENANT_ID, project_id, batch_id),
+            ).fetchall()
+            now_iso = self.clock().isoformat()
+            reconciled = 0
+            for row in rows:
+                try:
+                    payload = json.loads(row["payload_json"])
+                except Exception:  # noqa: BLE001 — 坏行不猜测，跳过
+                    continue
+                payload["generation_status"] = "failed_retryable"
+                payload["error_code"] = "cancelled_by_user"
+                payload["error_detail"] = (
+                    "用户取消了候选生成；已生成候选保持可用，"
+                    "剩余片段可通过『仅重试失败项』继续生成。"
+                )
+                payload["pipeline_stage_detail"] = "生成已取消"
+                cursor = connection.execute(
+                    """
+                    UPDATE writing_reference_translation_batch_items
+                    SET generation_status='failed_retryable', payload_json=?, updated_at=?
+                    WHERE tenant_id=? AND project_id=? AND batch_id=? AND item_id=?
+                      AND generation_status IN ('pending', 'running')
+                    """,
+                    (
+                        json.dumps(payload, ensure_ascii=False),
+                        now_iso,
+                        TENANT_ID,
+                        project_id,
+                        batch_id,
+                        row["item_id"],
+                    ),
+                )
+                reconciled += max(cursor.rowcount, 0)
+            if reconciled:
+                self.repository._append_audit(
+                    connection,
+                    project_id,
+                    "translation_batch_cancelled_reconcile",
+                    batch_id,
+                    "system_cancel_reconcile",
+                    {
+                        "batch_id": batch_id,
+                        "reconciled_item_count": reconciled,
+                    },
+                )
+            # 无未完成条目但批次行仍悬置 active 时同样刷新聚合状态。
+            self._refresh_batch_status_with(connection, project_id, batch_id)
+            connection.commit()
+        if reconciled:
+            logger.info(
+                "cancel reconcile: batch %s: %d items -> failed_retryable",
+                batch_id,
+                reconciled,
+            )
+        return True
+
+    def _downstream_transition_job_status(
+        self, project_id: str, batch_id: str
+    ) -> str | None:
+        """下游合同迁移作业状态（business_key=transition_id，不含 batch_id）。"""
+        with self.repository._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT transition_id
+                FROM writing_reference_translation_downstream_transition_records
+                WHERE tenant_id=? AND project_id=? AND target_batch_id=?
+                """,
+                (TENANT_ID, project_id, batch_id),
+            ).fetchone()
+        if row is None:
+            return None
+        try:
+            record = self._durable_store.get_by_business_key(
+                project_id,
+                REFERENCE_TRANSLATION_JOB_TYPE,
+                str(row["transition_id"]),
+            )
+        except Exception:  # noqa: BLE001 — 查无作业视同无在途
+            return None
+        return str(record.status)
+
     def get(self, project_id: str, batch_id: str) -> WritingReferenceTranslationBatch:
         try:
             self._reclaim_stale_running_items(project_id, batch_id)
@@ -3684,8 +3822,32 @@ class WritingReferenceTranslationBatchService:
                 """,
                 (TENANT_ID, project_id, batch_id),
             ).fetchone()
+        if row is None:
+            raise KeyError(batch_id)
+        # R27自检第1次红节点④（20261015）：cancelled 作业与批次状态对账。
+        # 读取边界自愈，与上方 stale-running 回收同一模式；对账发生后重读
+        # 批次行，保证本次返回就是对账后的终态。
+        try:
+            reconciled = self._reconcile_cancelled_durable_job(
+                project_id, batch_id, str(row["status"])
+            )
+        except Exception:  # noqa: BLE001 — 对账失败不阻断读取
+            logger.exception(
+                "cancelled-job reconcile failed for batch %s", batch_id
+            )
+            reconciled = False
+        if reconciled:
+            with self.repository._connect() as connection:
+                row = connection.execute(
+                    """
+                    SELECT * FROM writing_reference_translation_batches
+                    WHERE tenant_id=? AND project_id=? AND batch_id=?
+                    """,
+                    (TENANT_ID, project_id, batch_id),
+                ).fetchone()
             if row is None:
                 raise KeyError(batch_id)
+        with self.repository._connect() as connection:
             item_rows = connection.execute(
                 """
                 SELECT payload_json

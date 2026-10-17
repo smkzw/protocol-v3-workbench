@@ -138,7 +138,18 @@ class CompetitorTriageStaleError(CompetitorTriageError):
 
 
 class CompetitorTriageConflictError(CompetitorTriageError):
-    """Raised for duplicate or concurrent-write conflicts."""
+    """Raised when a triage request conflicts with current durable state."""
+
+
+class CompetitorTriageResearchDesignChangedError(CompetitorTriageConflictError):
+    """NEW-6：研究定义内容已变化——分诊运行不再代表当前研究设计。
+
+    结构化冲突（区别于裸 ValueError/泛化拒绝）：conflict_kind 固定为
+    research_design_changed，前端据此渲染『研究设计已变化，需重新分诊』
+    与一键重分诊出路。
+    """
+
+    conflict_kind = "research_design_changed"
 
 
 @dataclass(frozen=True)
@@ -4428,11 +4439,10 @@ class CompetitorTriageService:
         existing tests that do not supply a durable store).
         """
         journey = self.journey_service.get(project_id)
-        if journey.revision != request.expected_journey_revision:
-            raise CompetitorTriageConflictError(
-                f"stale journey revision: expected "
-                f"{request.expected_journey_revision}, current {journey.revision}"
-            )
+        # NEW-6（第2轮末修订，20261017）：重新分诊不再被 journey revision
+        # 计数器硬拦——创建消费当前研究定义（自动重定基），编辑后重试是
+        # 用户明确意图；定义内容真变由运行后的 stale 检测+确认侧结构化
+        # 冲突兜底（现场：任何编辑推高 revision 即永久卡死重分诊）。
         requested_snapshot_id = str(request.snapshot_id or "").strip()
         if not requested_snapshot_id:
             requested_snapshot_id = str(
@@ -4559,6 +4569,7 @@ class CompetitorTriageService:
                 snapshot_hash=snap_hash,
                 journey_revision=journey.revision,
                 material_facts_hash=facts_hash,
+                definition_hash=facts_hash,
                 chunks=chunk_records,
                 created_at=now,
                 updated_at=now,
@@ -5798,6 +5809,26 @@ class CompetitorTriageService:
                 raise CompetitorTriageConflictError(
                     "idempotent confirmation record is missing"
                 )
+
+        # NEW-6（第2轮末修订，20261017）：STALE 运行确认的结构化对账——
+        # 事实未变（仅 revision 计数漂移）→ 自动重定基复活；事实真变 →
+        # 结构化冲突（研究设计已变化，需重新分诊），禁止泛化拒绝裸奔。
+        if run.status == CompetitorTriageRunStatus.STALE:
+            stale_reason = self._stale_reason(project_id, run)
+            if stale_reason:
+                raise CompetitorTriageResearchDesignChangedError(
+                    "研究设计已变化，分诊结果不再代表当前研究定义——"
+                    "需重新分诊后再确认篮子。"
+                    f"（原因：{stale_reason}）"
+                )
+            run = run.model_copy(
+                update={
+                    "status": CompetitorTriageRunStatus.REVIEW_READY,
+                    "stale_reason": "",
+                    "updated_at": _utc_now(),
+                }
+            )
+            self.repository.store_triage_run(run)
             return existing
 
         # Preserve material-idempotent replay when a caller uses a fresh key
@@ -5999,6 +6030,12 @@ class CompetitorTriageService:
                 + "）"
             )
         confirmation_journey = self.journey_service.get(project_id)
+        # NEW-6：自动重定基——确认记录落当前 revision（事实未变时 revision
+        # 漂移不改变记录语义；事实已变的运行在上游结构化冲突处被拦）。
+        recorded_journey_revision = max(
+            int(request.expected_journey_revision or 0),
+            int(confirmation_journey.revision or 0),
+        )
         confirmation = CompetitorTriageConfirmationRecord(
             confirmation_id=confirmation_id,
             run_id=run.run_id,
@@ -6018,7 +6055,7 @@ class CompetitorTriageService:
             actor=request.actor,
             reason=effective_reason,
             confirmation_hash=confirmation_hash,
-            journey_revision=request.expected_journey_revision,
+            journey_revision=recorded_journey_revision,
             confirmation_kind="initial_ai_assisted",
             confirmed_material_facts_hash=run.material_facts_hash,
             confirmed_search_plan_id=(
@@ -6637,7 +6674,7 @@ class CompetitorTriageService:
                 run_id=run.run_id,
                 actor=request.actor,
                 reason=confirmation.reason,
-                expected_journey_revision=request.expected_journey_revision,
+                expected_journey_revision=confirmation.journey_revision,
                 idempotency_key=f"triage_disc_{confirmation.confirmation_id}",
             )
             # Check if PICOS is already complete — if so, also project corpus

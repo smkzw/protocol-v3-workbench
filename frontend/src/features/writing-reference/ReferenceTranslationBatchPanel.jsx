@@ -100,6 +100,30 @@ function requestKey(prefix) {
   return `${prefix}-${suffix}`;
 }
 
+// 自检红节点④（20261015，现场 proj_user_333afc0399e6）：面板动作 POST 此前
+// 无超时——服务端挂起时 fetch 永不 settle，action 永久停留"确认中"、全部
+// 按钮死锁、零用户可见报错（现场 30s 静默挂起实据）。所有面板动作统一走
+// 此带超时出口；超时消息含"超时"关键词，由 errorContract 映射为受控人话
+// 文案。35s 略高于服务端 SQLite busy_timeout(30s)，正常慢请求不会被误杀；
+// 一键确认按条目幂等（idempotency_key 派生），超时后重试不会重复准入。
+export const ACTION_TIMEOUT_MS = 35000;
+
+export async function fetchJsonWithTimeout(url, options = {}, timeoutMs = ACTION_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return await readJson(response);
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      throw new Error(`请求等待超时（${Math.round(timeoutMs / 1000)}秒未响应），本次操作结果未确认`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function readJson(response, { allowNotFound = false } = {}) {
   if (allowNotFound && response.status === 404) return null;
   const payload = await response.json().catch(() => ({}));
@@ -565,18 +589,20 @@ export function ReferenceTranslationBatchPanel({
     setNotice("");
     if (!createKeyRef.current) createKeyRef.current = requestKey("reference-translation-batch");
     try {
-      const response = await fetch(`/api/projects/${projectId}/medical-writing/references/translation-batches`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          snapshot_id: snapshotId,
-          glossary_version: glossaryVersion,
-          anchor_filter: selectedAnchors,
-          actor: "medical_manager",
-          idempotency_key: createKeyRef.current,
-        }),
-      });
-      const payload = await readJson(response);
+      const payload = await fetchJsonWithTimeout(
+        `/api/projects/${projectId}/medical-writing/references/translation-batches`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            snapshot_id: snapshotId,
+            glossary_version: glossaryVersion,
+            anchor_filter: selectedAnchors,
+            actor: "medical_manager",
+            idempotency_key: createKeyRef.current,
+          }),
+        },
+      );
       setBatch(payload);
       if (payload.durable_job_id) {
         setDurableJobId(payload.durable_job_id);
@@ -630,12 +656,14 @@ export function ReferenceTranslationBatchPanel({
     // busy state, so per-click keys cannot fan out duplicate work.
     const retryKey = requestKey("reference-translation-retry");
     try {
-      const response = await fetch(`/api/projects/${projectId}/medical-writing/references/translation-batches/${encodeURIComponent(batchId)}/retry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actor: "medical_manager", idempotency_key: retryKey }),
-      });
-      const payload = await readJson(response);
+      const payload = await fetchJsonWithTimeout(
+        `/api/projects/${projectId}/medical-writing/references/translation-batches/${encodeURIComponent(batchId)}/retry`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ actor: "medical_manager", idempotency_key: retryKey }),
+        },
+      );
       setBatch(payload);
       const nextDurableId = resolveRetryJobId(durableJobId, payload)
         || payload.durable_job_id
@@ -697,19 +725,21 @@ export function ReferenceTranslationBatchPanel({
       batchReviewKeyRef.current = { batchId, key: requestKey("reference-translation-batch-review") };
     }
     try {
-      const response = await fetch(`/api/projects/${projectId}/medical-writing/references/translation-batches/${encodeURIComponent(batchId)}/medical-review`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          targets: batchReviewEligibleRows.map((row) => ({
-            translation_id: row.translationId,
-            translation_revision: row.translationRevision,
-          })),
-          actor: "medical_manager",
-          idempotency_key: batchReviewKeyRef.current.key,
-        }),
-      });
-      const payload = await readJson(response);
+      const payload = await fetchJsonWithTimeout(
+        `/api/projects/${projectId}/medical-writing/references/translation-batches/${encodeURIComponent(batchId)}/medical-review`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            targets: batchReviewEligibleRows.map((row) => ({
+              translation_id: row.translationId,
+              translation_revision: row.translationRevision,
+            })),
+            actor: "medical_manager",
+            idempotency_key: batchReviewKeyRef.current.key,
+          }),
+        },
+      );
       const approvedCount = safeCount(payload.approved_count);
       const skippedCount = safeCount(payload.skipped_count);
       const staleCount = safeCount(payload.stale_count);
@@ -732,7 +762,7 @@ export function ReferenceTranslationBatchPanel({
   const cancelTranslationJob = async () => {
     if (!durableJobId) return;
     try {
-      await fetch(`/api/projects/${projectId}/medical-writing/jobs/${durableJobId}/cancel`, { method: "POST" });
+      await fetchJsonWithTimeout(`/api/projects/${projectId}/medical-writing/jobs/${durableJobId}/cancel`, { method: "POST" });
       // Do NOT clear locator or jobId here.  The background poll will detect
       // the cancelled status and reconcile before cleanup.
     } catch { /* best-effort */ }
@@ -916,7 +946,16 @@ export function ReferenceTranslationBatchPanel({
                     <td>{statusTag(row.admissionStatus, admissionLabels, "未准入")}</td>
                     <td>
                       <span>{nextStep(row)}</span>
-                      <button type="button" data-action="open-translation-span" onClick={() => onOpenSpan({ artifact_id: row.artifactId, span_id: row.spanId, ich_m11_anchor: row.anchor })} disabled={row.generationStatus === "excluded" || !row.artifactId || !row.spanId} title={row.generationStatus === "excluded" ? "该章节不在本次所选范围，无需核对译文" : "在下方单片段区对照原文并确认译文"}><Eye size={13} />核对译文</button>
+                      <button type="button" data-action="open-translation-span" onClick={() => onOpenSpan({
+                        artifact_id: row.artifactId,
+                        span_id: row.spanId,
+                        ich_m11_anchor: row.anchor,
+                        // 章节级译文按章节首片段 span_id 落库；片段区需要行携带
+                        // 的 translation_id 才能对准该行候选（自检红节点④）。
+                        translation_id: row.translationId,
+                        translation_revision: row.translationRevision,
+                        nct_id: row.nctId,
+                      })} disabled={row.generationStatus === "excluded" || !row.artifactId || !row.spanId} title={row.generationStatus === "excluded" ? "该章节不在本次所选范围，无需核对译文" : "在下方单片段区对照原文并确认译文"}><Eye size={13} />核对译文</button>
                     </td>
                   </tr>
                 ))}

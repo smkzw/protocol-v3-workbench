@@ -150,6 +150,24 @@ def _frozen_ai_route_summary(ai_policy: dict) -> dict:
     }
 
 
+# 自检第2次红节点⑦（20261016，mwjob_fdaf1401f747461c757bb59f 实据）：
+# durable section payload 信封键。r2_4 在 payload 顶层新增 ai_route 审计
+# 摘要后，执行器按 extra=forbid 的 MedicalWritingRevisionRequest 重验业务
+# 请求字段时撞上它即 ValidationError（validating_context 阶段崩、3次重试
+# 全灭）。信封键与业务请求字段分离：执行器重验时剥离全部信封键，审计
+# 摘要保留在 payload 顶层供审计读取（r2_4 契约不回退）。
+_SECTION_PAYLOAD_ENVELOPE_KEYS = frozenset({"generation_context", "ai_route"})
+
+
+def _section_request_fields(payload: dict) -> dict:
+    """剥除 durable section payload 的信封键，返回业务请求字段。"""
+    return {
+        k: v
+        for k, v in (payload or {}).items()
+        if k not in _SECTION_PAYLOAD_ENVELOPE_KEYS
+    }
+
+
 @dataclass(frozen=True)
 class _RevisionAiExecution:
     run: AiTaskRun
@@ -3635,6 +3653,13 @@ class MedicalWritingRevisionService:
         )
         start_response = durable_store.create_or_reuse(create_req)
 
+        if start_response.status in {"failed", "cancelled"}:
+            # ⑦续（20261016）：同一业务键重提=明确的新执行意图。终态失败/
+            # 被取消的复用作业必须重排新尝试（store.retry 语义）——worker
+            # 只认领 queued，原样交回死作业 id 会让前端永远轮询 failed。
+            # completed 幂等重放与在途（queued/running）语义不变。
+            durable_store.retry(project_id, start_response.job_id)
+
         if start_response.status == "completed":
             job = durable_store.get(project_id, start_response.job_id)
             return self._replay_completed_section_job(
@@ -3706,6 +3731,13 @@ class MedicalWritingRevisionService:
             model=policy["model_name"],
         )
         start_response = durable_store.create_or_reuse(create_req)
+
+        if start_response.status in {"failed", "cancelled"}:
+            # ⑦续（20261016）：同一业务键重提=明确的新执行意图。终态失败/
+            # 被取消的复用作业必须重排新尝试（store.retry 语义）——worker
+            # 只认领 queued，原样交回死作业 id 会让前端永远轮询 failed。
+            # completed 幂等重放与在途（queued/running）语义不变。
+            durable_store.retry(project_id, start_response.job_id)
 
         if start_response.status == "completed":
             job = durable_store.get(project_id, start_response.job_id)
@@ -4076,7 +4108,7 @@ class SectionAiCandidateExecutor:
             )
         else:
             request = MedicalWritingRevisionRequest.model_validate(
-                {k: v for k, v in payload.items() if k != "generation_context"}
+                _section_request_fields(payload)
             )
             current = service.build_generation_context_descriptor(
                 project_id,
@@ -4220,7 +4252,7 @@ class SectionAiCandidateExecutor:
             )
 
         request = MedicalWritingRevisionRequest.model_validate(
-            {k: v for k, v in payload.items() if k != "generation_context"}
+            _section_request_fields(payload)
         )
         try:
             thread, submit_audit = service.prepare_revision_submission(

@@ -135,3 +135,55 @@ def test_writing_toolbar_buttons_never_wrap_mid_word() -> None:
     assert "white-space: nowrap" in block, (
         "写作工具条按钮缺 nowrap；窄视口按钮标签断词成多行。"
     )
+
+
+# ── r3 续批（20261016 真机复验）：上轮修复保持 + 新标本 ────────────────────
+# 现场（Camoufox 1728 视口实测，写作平台工作副本工具条）：
+# - .working-copy-identity 的『文档工作副本』『尚未保存版本』各自断成
+#   2 视觉行（元素高 34.8px = 两行）——CJK 词素中间断词（fe_cleanup_r1
+#   r3_before 截图实证）；
+# - 顶栏指标/工具条按钮 r2 修复保持有效（复测按钮高 26px 单行）；
+# - 主内容区 1664/1728 满宽、max-width:none（②结论保持）；
+# - 内部 ID 直出扫描：仅代码注释命中，无 JSX 渲染文本命中——钉契约防新增。
+
+
+def test_working_copy_identity_labels_never_wrap_mid_word() -> None:
+    """工作副本标识与版本值各自整词一行：nowrap 落在子元素，换行只发生在
+    标识块内的元素之间（flex-wrap），不得再出现『文档工作副 本』断词。"""
+    assert ".working-copy-status-main > .working-copy-identity > span," in STYLES, (
+        "工作副本标识 label 缺 nowrap 契约（r3 反例：断词成两行）"
+    )
+    assert ".working-copy-status-main > .working-copy-identity > strong {" in STYLES
+    identity_block = STYLES[
+        STYLES.index(".working-copy-status-main > .working-copy-identity {"):
+    ]
+    assert "flex-wrap: wrap" in identity_block[:400], (
+        "标识块自身需允许在元素之间换行（子元素整词前提下）"
+    )
+
+
+def test_internal_ids_never_render_in_user_facing_copy() -> None:
+    """内部 ID（mwjob_/proj_user_/wref_/ct_run_/mwpipe_）不得出现在
+    用户可见文案：非测试前端源码中，凡含这些 token 且携带中文的行必须是
+    注释行（渲染文本接触不到）。"""
+    import re
+
+    token_re = re.compile(r"mwjob_|proj_user_|wref_|ct_run_|mwpipe_")
+    cjk_re = re.compile(r"[\u4e00-\u9fff]")
+    offenders: list[str] = []
+    src_root = ROOT / "frontend" / "src"
+    for path in src_root.rglob("*"):
+        if path.suffix not in {".jsx", ".js", ".mjs"} or path.name.endswith(
+            (".test.jsx", ".test.js", ".test.mjs")
+        ):
+            continue
+        for lineno, line in enumerate(
+            path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            code_part = line.split("//", 1)[0]
+            if token_re.search(code_part) and cjk_re.search(code_part):
+                offenders.append(f"{path.relative_to(ROOT)}:{lineno}")
+    assert not offenders, (
+        "内部 ID 疑似直出用户文案（非注释行同时含内部 ID 与中文）："
+        + "; ".join(offenders[:8])
+    )

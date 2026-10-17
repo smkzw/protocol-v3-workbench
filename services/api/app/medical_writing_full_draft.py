@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import math
 import re
 import threading
 import time
@@ -307,6 +308,10 @@ _SS_DELTA_RES = (
 _SS_POWER_RES = (
     re.compile(r"把握度\s*(?:达|为|≥|>=)?\s*(\d+(?:\.\d+)?)\s*%"),
     re.compile(r"(\d+(?:\.\d+)?)\s*%\s*把握度"),
+    # F3/NEW-39①（20261017）：『80%功效』『检验效能90%』同义形态——现场
+    # 9.1 原文写『功效』，旧正则 parse 失败=第①洞。
+    re.compile(r"(?:功效|检验效能|检验效力)\s*(?:达|为|≥|>=)?\s*(\d+(?:\.\d+)?)\s*%"),
+    re.compile(r"(\d+(?:\.\d+)?)\s*%\s*(?:功效|检验效能|检验效力)"),
 )
 _SS_ALPHA_RES = (
     re.compile(r"α\s*=\s*(0?\.\d+)"),
@@ -335,12 +340,7 @@ def sample_size_declaration_check(text: str) -> dict | None:
     if declared is None:
         return None
 
-    alpha = None
-    for pattern in _SS_ALPHA_RES:
-        match = pattern.search(raw)
-        if match:
-            alpha = float(match.group(1))
-            break
+    alpha, alpha_note = _select_alpha(raw)
     power = None
     for pattern in _SS_POWER_RES:
         match = pattern.search(raw)
@@ -414,6 +414,36 @@ def sample_size_declaration_check(text: str) -> dict | None:
         required = 2 * ((z_alpha + z_beta) ** 2) * (sd ** 2) / (delta ** 2)
         assumption_note = f"差值{delta:g}、SD{sd:g}"
     required_ceil = max(2, int(required + 0.999))
+    # F3/NEW-39⑤（20261017）：功效声明闭合检查——按声明 n 实算把握度，
+    # 与宣称把握度偏差>5个百分点 → 不一致（±20% 例数门放行而操作性 α 下
+    # 把握度不达标的场景由此合闸；第⑤洞：45例宣称80%实算70.2%/53.3%）。
+    if proportion_craft:
+        _var = assumptions["p1"] * (1 - assumptions["p1"]) + assumptions["p2"] * (
+            1 - assumptions["p2"]
+        )
+        _z_beta = (declared ** 0.5) * (
+            abs(assumptions["p1"] - assumptions["p2"]) / (_var ** 0.5)
+        ) - z_alpha
+    else:
+        _z_beta = (declared ** 0.5) * (delta / sd) - z_alpha
+    achieved_power = _normal_cdf(_z_beta)
+    closure_side = "单侧" if one_sided else "双侧"
+    # 只拦『欠功率』方向：实算低于宣称>5个百分点=宣称不成立（NEW-39⑤）；
+    # 实算高于宣称属保守超配设计（脱落加成等），宣称作为下限仍然成立，
+    # 不判不一致（63例δ6/SD12设计实算97.8%为合法超配）。
+    if achieved_power < power - 0.05:
+        return {
+            "status": "不一致",
+            "declared_per_group": int(declared),
+            "required_per_group": required_ceil,
+            "detail": (
+                f"按声明{int(declared)}例/组、{assumption_note}、"
+                f"α={alpha:g}{closure_side} 实算把握度{achieved_power * 100:.1f}%，"
+                f"与宣称{int(power * 100)}% 偏差超过5个百分点——请将声明增至"
+                f"约{required_ceil}例/组（按宣称把握度复算）或修正把握度宣称。"
+                + (alpha_note if alpha_note else "")
+            ),
+        }
     ratio = declared / required_ceil
     side = "单侧" if one_sided else "双侧"
     if ratio < 0.8 or ratio > 1.25:
@@ -425,6 +455,7 @@ def sample_size_declaration_check(text: str) -> dict | None:
                 f"按您输入的{assumption_note}、"
                 f"α={alpha:g}{side}、把握度{int(power * 100)}% 复算需"
                 f"{required_ceil}例/组，当前声明{int(declared)}例/组：请修正声明或调整假设。"
+                + (alpha_note if alpha_note else "")
             ),
         }
     return {
@@ -459,6 +490,34 @@ _SS_TOTAL_WITH_ALLOCATION_RE = re.compile(
 _SS_BARE_TOTAL_RE = re.compile(r"共[约]?\s*(\d[\d,，\s]*)\s*例")
 
 
+_SS_PLACEBO_RATE_RE = re.compile(r"安慰剂(?:组)?[^。；\n]{0,30}?(\d+(?:\.\d+)?)\s*%")
+_SS_ARM_RATE_RE = re.compile(
+    r"(?:最优剂量组|高剂量组|试验组|研究药物组|活性剂量组)[^。；\n]{0,30}?(\d+(?:\.\d+)?)\s*%"
+)
+
+
+def _select_alpha(raw: str) -> tuple[float | None, str]:
+    """F3/NEW-39③（20261017）：α 选择策略——同文出现多个 α 且伴随
+    多重性/Bonferroni/校正语境时取最小 α（操作性更强的校正口径）并返回
+    注记；单一 α 照旧（first-match 语义不变）。"""
+    values: list[float] = []
+    for pattern in _SS_ALPHA_RES:
+        for match in pattern.finditer(raw):
+            value = float(match.group(1))
+            if value not in values:
+                values.append(value)
+    if not values:
+        return None, ""
+    if len(values) >= 2 and re.search(r"多重性|Bonferroni|校正", raw):
+        chosen = min(values)
+        return chosen, f"（多重性校正语境：同文多α，取最小操作性α={chosen:g}）"
+    return values[0], ""
+
+
+def _normal_cdf(x: float) -> float:
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
 def _parse_sample_size_assumptions(raw: str) -> dict:
     """P1-53 假设五要素解析（单双侧|α|把握度|δ|SD，比例型由 p 对推导）。
 
@@ -466,12 +525,7 @@ def _parse_sample_size_assumptions(raw: str) -> dict:
     设计（无连续 SD/δ）额外解析 p1/p2（百分点），δ=|p1-p2|、
     SD=√(p̄(1-p̄))。任一要素缺失时对应值为 None（不编造）。
     """
-    alpha = None
-    for pattern in _SS_ALPHA_RES:
-        match = pattern.search(raw)
-        if match:
-            alpha = float(match.group(1))
-            break
+    alpha, _alpha_note = _select_alpha(raw)
     power = None
     for pattern in _SS_POWER_RES:
         match = pattern.search(raw)
@@ -498,6 +552,16 @@ def _parse_sample_size_assumptions(raw: str) -> dict:
             if 0 < first < 100 and 0 < second < 100 and first != second:
                 p1, p2 = first / 100, second / 100
             break
+    if p1 is None:
+        # F3/NEW-39②（20261017）：分立表述『安慰剂组…15%』与『最优剂量组
+        # （试验组/高剂量组）…38%』分处两处时成对解析（第②洞）。
+        placebo_match = _SS_PLACEBO_RATE_RE.search(raw)
+        arm_match = _SS_ARM_RATE_RE.search(raw)
+        if placebo_match and arm_match:
+            lo = float(placebo_match.group(1))
+            hi = float(arm_match.group(1))
+            if 0 < lo < 100 and 0 < hi < 100 and lo != hi:
+                p1, p2 = hi / 100, lo / 100
     if delta is None and p1 is not None:
         delta = abs(p1 - p2)
     if sd is None and p1 is not None:
@@ -679,10 +743,20 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
     # P0-2（NEW-31）：守卫幂等——已带守卫产物的节二次过链为无操作
     #（RT3 现场双份连排实证：所有采纳路径共享守卫入口，重复过链曾把
     # 标注追加两份上纸）。
-    if any(
+    if "【样本量待确认" in text:
+        # F3/NEW-39④（20261017）：守卫幂等改『比对刷新』——已带悬置标记的
+        # 节重过守卫时按当前正文重判：假设补齐（自洽/不一致）→ 摘除过期
+        # 标记按当前正文重走守卫；仍要素未齐 → 原标记继续有效（幂等无操作，
+        # 过期 gate 文本不再与正文自相矛盾上纸）。
+        stripped = re.sub(r"^【样本量待确认[^】]*】", "", text)
+        recheck = sample_size_declaration_check(stripped)
+        if recheck is None or recheck.get("status") == "样本量要素未齐":
+            return
+        text = stripped
+        section_item["proposal_text"] = stripped
+    elif any(
         token in text
         for token in (
-            "【样本量待确认",
             "【样本量口径混写待确认",
             "（样本量依据：",
             "（样本量假设未具名溯源",
@@ -728,14 +802,17 @@ def apply_sample_size_guard_to_section(section_item: dict, anchor: str = "") -> 
     # E10（新纪元第1轮修订）：溯源状态同时落结构化字段——审阅侧无需
     # 解析正文即可看到『假设待定/已具名』（成型方案具名先例是标配）。
     anchor_text = str(anchor or "").strip()
+    # F3/NEW-39④：刷新路径的溯源标注幂等——标注已在正文时不再追加第二份。
     if anchor_text:
         section_item["sample_size_provenance"] = f"已具名（{anchor_text}）"
-        section_item["proposal_text"] += (
-            f"（样本量依据：{format_provenance_reference(anchor_text)}）"
-        )
+        if "（样本量依据：" not in str(section_item.get("proposal_text") or ""):
+            section_item["proposal_text"] += (
+                f"（样本量依据：{format_provenance_reference(anchor_text)}）"
+            )
     else:
         section_item["sample_size_provenance"] = "假设待定（未具名溯源，建议引用外部先例）"
-        section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
+        if "样本量假设未具名溯源" not in str(section_item.get("proposal_text") or ""):
+            section_item["proposal_text"] += "（样本量假设未具名溯源，建议引用外部先例。）"
 
 
 # ── E11（新纪元第1轮修订）：统计章分节装配五件套 ─────────────────────────

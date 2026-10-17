@@ -1906,5 +1906,136 @@ class ThreadLocalRepoSafetyTests(unittest.TestCase):
         self.assertIs(self.service.repo, original)
 
 
+
+class SectionPayloadAiRouteExecutorTests(unittest.TestCase):
+    """自检第2次红节点⑦（20261016，mwjob_fdaf1401f747461c757bb59f 实据）。
+
+    r2_4 修复批在 section/rewrite durable 创建路径的 payload 顶层新增
+    ai_route 审计摘要后，SectionAiCandidateExecutor 重验业务请求时只剥离
+    generation_context（_assert_context 与 execute 两处同型）——extra=forbid
+    的 MedicalWritingRevisionRequest 撞上顶层 ai_route 即 ValidationError
+    "Extra inputs are not permitted"，任务在 validating_context 阶段崩、
+    3 次重试全灭（现场 error_summary 与 payload 键序实据）。
+
+    契约：ai_route 与 generation_context 同属 payload 信封——执行器重验
+    业务请求字段时必须一并剥离；r2_4 的审计摘要必须保留在 payload 顶层
+    （本测试同时锁两侧，防任何一侧回退）。
+    """
+
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.durable_store = DurableJobStore(Path(self.tmpdir.name) / "durable.db")
+        (
+            self.documents,
+            _,
+            self.repo,
+            self.service,
+            self.provider,
+        ) = _build_echo_service(Path(self.tmpdir.name) / "echo", tag="R")
+        self.project_id = PROJECTS[0]
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def _submit_initial_revision_job(self, instruction: str) -> str:
+        document, section, block, selected = _substantive_block(
+            self.documents, self.project_id
+        )
+        request = MedicalWritingRevisionRequest(
+            document_id=document.document_id,
+            section_id=section.section_id,
+            selected_text=selected,
+            anchor_path=block["source_locator"],
+            user_instruction=instruction,
+            intent="regulatory_tone",
+            requested_by="medical_manager_test",
+        )
+        job_id, _result = self.service.submit_revision_durable(
+            self.project_id, request, self.durable_store
+        )
+        return job_id
+
+    def test_executor_runs_initial_payload_carrying_top_level_ai_route(self):
+        job_id = self._submit_initial_revision_job("请生成监管口径候选")
+        job = self.durable_store.get(self.project_id, job_id)
+        payload = json.loads(job.payload_json)
+        self.assertIn(
+            "ai_route",
+            payload,
+            "r2_4 审计契约：payload 顶层 ai_route 摘要必须保留。",
+        )
+
+        claim = self.durable_store.claim(self.project_id, job_id)
+        self.assertTrue(claim.claimed)
+
+        result = SectionAiCandidateExecutor(self.service).execute(
+            job,
+            claim.claim_token,
+            lambda: False,
+            lambda progress: True,
+        )
+
+        self.assertFalse(
+            result.error,
+            "修订任务不得在 validating_context 因 payload 信封字段 "
+            f"（ai_route/generation_context）触发 extra_forbidden 崩溃：{result.error}",
+        )
+        self.assertEqual(1, len(self.repo.revision_threads(self.project_id)))
+
+    def test_resubmit_of_failed_section_job_requeues_instead_of_dead_reuse(self):
+        """⑦续（20261016）：同一业务键重提必须重排失败作业，不得原样交回死 id。
+
+        submit_revision_durable 走 create_or_reuse：同一请求的业务键确定性
+        相同——作业 3 次重试全灭（failed）后，用户在界面重新提交同一修订
+        会复用到死作业并原样返回其 id；worker 只认 queued，前端将永远
+        轮询 failed。契约：终态失败/被取消作业的重新提交=明确的新执行
+        意图，必须重排为新尝试（store.retry 语义），completed 复用不变。
+        """
+        request = self._request("重新提交语义测试")
+        job_id, _result = self.service.submit_revision_durable(
+            self.project_id, request, self.durable_store
+        )
+        claim = self.durable_store.claim(self.project_id, job_id)
+        self.durable_store.fail(
+            self.project_id,
+            job_id,
+            claim.claim_token,
+            error_summary="模拟3次重试全灭",
+            retryable=False,
+        )
+        self.assertEqual(
+            "failed", self.durable_store.get(self.project_id, job_id).status
+        )
+
+        resubmitted_job_id, _result = self.service.submit_revision_durable(
+            self.project_id, request, self.durable_store
+        )
+
+        self.assertEqual(
+            job_id,
+            resubmitted_job_id,
+            "同一请求业务键确定性：重提应命中同一作业。",
+        )
+        self.assertEqual(
+            "queued",
+            self.durable_store.get(self.project_id, resubmitted_job_id).status,
+            "重新提交必须把失败作业重排为新尝试，而不是原样返回死作业 id。",
+        )
+
+    def _request(self, instruction: str) -> MedicalWritingRevisionRequest:
+        document, section, block, selected = _substantive_block(
+            self.documents, self.project_id
+        )
+        return MedicalWritingRevisionRequest(
+            document_id=document.document_id,
+            section_id=section.section_id,
+            selected_text=selected,
+            anchor_path=block["source_locator"],
+            user_instruction=instruction,
+            intent="regulatory_tone",
+            requested_by="medical_manager_test",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

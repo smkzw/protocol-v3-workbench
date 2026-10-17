@@ -30,15 +30,16 @@ def _block(heading: str, overrides=None):
 
 class SkeletonDifferentiationTests(unittest.TestCase):
     def test_first_paragraph_names_its_own_section(self) -> None:
-        stop = _block("6.4 研究性干预剂量调整")["text"]
-        self.assertIn("6.4 研究性干预剂量调整", stop.split("。")[0])
-        self.assertIn("范围限本节", stop.split("。")[0])
+        # F1② 去前缀批：正文不印节名前缀；身份在 skeleton_scope 元数据。
+        block = _block("6.4 研究性干预剂量调整")
+        self.assertEqual("6.4 研究性干预剂量调整", block.get("skeleton_scope"))
+        self.assertIs(True, block.get("skeleton_review_pending"))
+        self.assertNotIn("标准模板草稿", str(block.get("text") or ""))
 
     def test_different_sections_no_longer_share_generic_opener(self) -> None:
         stop = _block("6.3 研究性干预剂量调整")["text"]
         pregnancy = _block("8.4 妊娠期女性与避孕")["text"]
-        self.assertNotIn("本节采用标准监管文本骨架", stop)
-        self.assertNotIn("本节采用标准监管文本骨架", pregnancy)
+        # F1②：通用引导句回归合法（前缀已移除）；反回声靠首段互异。
         self.assertNotEqual(
             stop.split("。")[0], pregnancy.split("。")[0],
             "两个不同节的骨架首段不得逐字相同。",
@@ -86,7 +87,9 @@ class SkeletonExportGateTests(unittest.TestCase):
             str(item.get("reason") or "")
             for item in report.get("gap_sections") or []
         )
-        self.assertIn("参数化标准文本骨架", reasons)
+        # r3 复锚（20261016）：缺口理由已改为固定人话句（骨架身份承载于
+        # 占位符报告），原钉定串『参数化标准文本骨架』为陈旧锚。
+        self.assertIn("标准模板草稿", reasons)
         self.assertGreaterEqual(int(report.get("gap_count") or 0), 1)
 
     def test_real_content_section_not_flagged_as_skeleton(self) -> None:

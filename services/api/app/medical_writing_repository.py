@@ -97,6 +97,12 @@ _SAFETY_REGULATORY_HEADING_MARKERS = (
     "停药",
     "剂量调整",
     "干预终止",
+    # F1 骨架归位批（新纪元修订第1轮，20261016）：公司模板 6.4 药物过量
+    # 与给药错误管理、14.4 安全信息报告途径此前整节【待补齐】（r11-B
+    # 6.4占位 / r12-B 挂账⑩报告路径占位）——按标题关键词归入确定性骨架族。
+    "药物过量",
+    "给药错误",
+    "报告途径",
 )
 
 _SAFETY_AE_TEMPLATE = (
@@ -110,7 +116,13 @@ _SAFETY_AE_TEMPLATE = (
     "严重程度、起止时间、因果关系判断及处理措施）通过专用报告表报告至"
     "申办方药物警戒部门（药物警戒联系人及邮箱待医学经理按项目联络表填写），"
     "并同步完成纸质原始记录。随访信息应在获得后 24 小时内补充报告。"
-    "申办方将按 ICH E2A 及国家相关法规时限要求向监管机构快速报告 SUSAR。"
+    "申办方按 ICH E2A 及现行法规时限向监管机构快速报告 SUSAR：致死或"
+    "危及生命的 SUSAR 在首次获知后 7 个自然日内提交首次快速报告，并在"
+    "随后 15 个自然日内提交随访报告；非致死且非危及生命的 SUSAR 在首次"
+    "获知后 15 个自然日内提交。"
+    "不良事件收集窗口三分法：筛选/基线期事件作病史记录；治疗期事件"
+    "（首次给药后至末次给药）全部收集；安全随访期内事件继续收集至"
+    "随访期结束（窗口边界待医学经理按研究周期确认后写入）。"
 )
 
 _SAFETY_UNBLINDING_TEMPLATE = (
@@ -126,7 +138,7 @@ _SAFETY_UNBLINDING_TEMPLATE = (
 _SAFETY_PREGNANCY_TEMPLATE = (
     "本节采用标准监管文本骨架（待医学经理按药物类别审核确认）。"
     "妊娠期女性、哺乳期女性及近半年内有妊娠计划者不入选。具生育能力的"
-    "女性受试者及男性受试者的配偶须在整个研究期间及末次给药后规定时间内"
+    "女性受试者及男性受试者的配偶须在整个研究期间及末次给药后【待医学经理按药物半衰期确认的具体时限】内（未确认前不得编造具体天数）"
     "采取有效避孕措施（方案规定的医学可接受方式）。受试者或其配偶在研究"
     "期间妊娠时，应立即报告研究者；申办方将对妊娠结局进行随访直至分娩，"
     "非预期妊娠流产或胎儿/新生儿不良事件按 SAE 流程 24 小时内上报。"
@@ -144,6 +156,76 @@ _SAFETY_VZV_SENTENCE = (
 def _is_vzv_specific_heading(heading: str) -> bool:
     text = str(heading or "").upper()
     return "VZV" in text or "水痘" in text or "带状疱疹" in text
+
+# F1 骨架归位批（20261016）：8.6/14.4 报告路径操作化骨架——r12-B P1-H2
+# 『SUSAR/SAE报告时限未写死+报告路径占位』。监管标准时限按现行法规写死
+# （致死/危及生命 SUSAR 7日首次、15日随访；其余 SUSAR 15日），联系人/
+# 邮箱等项目事实显式留槽不编造。
+_SAFETY_REPORTING_TEMPLATE = (
+    "本『{heading}』章节为标准监管文本骨架（待医学经理按本项目联络表"
+    "审核确认）。报告时限：研究者应在获知严重不良事件后 24 小时内报告"
+    "申办方药物警戒部门。可疑且非预期严重不良反应（SUSAR）由申办方按"
+    "现行法规时限向国家药监监管部门快速报告：致死或危及生命的 SUSAR"
+    "在首次获知后 7 个自然日内提交首次快速报告，并在随后 15 个自然日内"
+    "提交随访报告；非致死且非危及生命的 SUSAR 在首次获知后 15 个自然日"
+    "内提交；其他安全性数据纳入研发期间安全性更新报告（DSUR）定期汇总。"
+    "报告途径：①研究者填写 SAE 专用报告表并经主要研究者签字确认；"
+    "②同步通过项目 EDC/安全数据库录入；③紧急情况可经电话报告后补交"
+    "书面记录；涉及紧急揭盲的按揭盲章节程序执行。"
+    "报告联系窗口（待医学经理按项目联络表填写后固化）：申办方药物警戒"
+    "联系人【待填写】、24 小时报告电话【待填写】、报告邮箱【待填写】；"
+    "联系人缺失期间本节不得作为正式报告路径导出。"
+)
+
+# F1 骨架归位批：6.4 药物过量与给药错误管理操作化骨架——处理原则/报告
+# 记录/预防三段；特异性解毒与剂量信息未确认前显式留槽，绝不编造。
+_SAFETY_OVERDOSE_TEMPLATE = (
+    "本『{heading}』章节为标准监管文本骨架（待医学经理按研究药物安全性"
+    "特征与IB审核确认）。药物过量处理原则：怀疑药物过量时立即暂停研究"
+    "药物，评估过量剂量与摄入时间，监测生命体征与相关实验室指标"
+    "（监测项目与频次按药物特征确认后写入），给予对症与支持治疗；"
+    "是否存在特异性解毒剂及其用法以IB为准（当前未确认，不得编造解毒"
+    "方案）。给药错误管理：发现给药错误（受试者错误、剂量错误、途径"
+    "错误或方案偏离的用药）时立即评估受试者安全性，按错误类型纠正给药"
+    "并如实记录为方案偏离；伴发不良事件按 AE/SAE 流程报告，达到 SAE "
+    "标准的按 24 小时报告路径执行。预防措施：给药由经培训人员按方案"
+    "执行，实行双人核对与给药记录复核（具体核对流程待医学经理按中心"
+    "标准操作确认）。"
+)
+
+# F1 分化批（20261016）：8.4 采集与记录——记录规则+转归分类（NEW-3：
+# 转归分类/记录规则此前全文缺失，8.4与AE定义同贴一段）。
+_SAFETY_RECORD_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按本项目记录规范审核确认）。"
+    "记录规则：所有不良事件记入原始记录并转录至病例报告表（CRF），"
+    "使用统一医学术语编码（编码词典版本待医学经理确认后写入）；每例"
+    "事件记录起止日期、严重程度、与 research 药物因果关系及处理措施。"
+    "转归分类：痊愈、痊愈伴后遗症、好转（未痊愈）、未好转、死亡、"
+    "未知——事件持续随访至转归明确（随访要求见随访章节）。"
+    "严重事件（SAE）另按 SAE 报告路径在 24 小时内单独报告。"
+)
+
+# F1 分化批：8.5 评估——CTCAE 分级+因果判定（NEW-3：CTCAE/因果判定0命中）。
+_SAFETY_ASSESSMENT_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按研究药物安全性特征审核确认）。"
+    "严重程度分级：不良事件按 CTCAE（美国国立癌症研究所通用不良事件评价"
+    "标准）5.0 版分级（1-5级）；非肿瘤研究若采用其他分级口径，由医学"
+    "经理确认后替换并在此注明。因果关系判定：由研究者按五分法评定"
+    "（肯定有关、很可能有关、可能有关、可能无关、肯定无关）；"
+    "严重性（severity）与严重性事件（serious）为两个独立概念，判定标准"
+    "见定义章节。评估时点：每次访视及每次获知新事件时即时评估。"
+)
+
+# F1 分化批：8.7 随访——随访至转归（NEW-3：随访规则缺失）。
+_SAFETY_FOLLOWUP_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理按研究周期与药物半衰期审核"
+    "确认）。未痊愈的不良事件持续随访直至出现下列转归之一：痊愈、"
+    "痊愈伴后遗症、医学判断为稳定/慢性化、受试者失访或死亡；随访频次"
+    "按事件严重程度确定（具体频次待医学经理确认后写入，建议严重事件"
+    "每两周随访一次直至转归）。随访信息（事件状态、转归、末次接触"
+    "日期）记录于原始记录与 CRF；安全随访期时长与研究周期口径保持"
+    "一致（口径统一待医学经理复核，见研究流程表）。"
+)
 
 _SAFETY_GENERIC_TEMPLATE = _SAFETY_AE_TEMPLATE
 
@@ -232,9 +314,41 @@ _SAFETY_STOP_RULE_TEMPLATE = (
     "③永久停药——出现以下任一情形：与研究药物相关的4级毒性、再给药"
     "风险不可控的SAE、研究者判断继续治疗危害受试者安全、受试者要求"
     "退出、妊娠、方案规定的其他停药指征（具体清单待医学经理确认）。"
-    "停药受试者完成末次给药后安全性随访（随访窗口按药物特征确认，"
-    "默认30天待确认），停药原因与末次给药信息记录于原始记录与CRF。"
+    "{safety_followup_sentence}"
+    "停药原因与末次给药信息记录于原始记录与CRF。"
 )
+
+
+# F1 新策略①（第2轮末修订，20261017，NEW-11/NEW-4 双口径根治）：停药
+# 骨架的安全随访窗口读已确认研究周期事实（study_epochs 含『随访』的
+# 时期名，如『安全性随访期（D85-D98，2周）』）——有事实即注入，无事实
+# 保留显式确认槽；不再自造『默认30天』与研究周期口径打架。
+def _safety_followup_sentence(
+    front_matter_overrides: Mapping[str, Any] | None,
+) -> str:
+    overrides = front_matter_overrides or {}
+    epochs = [
+        str(value or "").strip()
+        for value in (overrides.get("study_epochs") or [])
+        if str(value or "").strip()
+    ]
+    followup_epochs = [value for value in epochs if "随访" in value]
+    if followup_epochs:
+        window = "、".join(dict.fromkeys(followup_epochs))
+        return (
+            "停药受试者完成末次给药后安全性随访，随访窗口按已确认研究"
+            f"周期执行（{window}；起止时点见研究流程表）。"
+        )
+    visit_strategy = str(overrides.get("visit_strategy") or "").strip()
+    if "随访" in visit_strategy:
+        return (
+            "停药受试者完成末次给药后安全性随访，随访窗口按已确认访视"
+            f"策略执行（{visit_strategy[:120]}；详见研究流程表）。"
+        )
+    return (
+        "停药受试者完成末次给药后安全性随访（随访窗口按药物特征确认，"
+        "待医学经理确认后写入；不设默认天数，避免与研究周期口径冲突）。"
+    )
 
 
 def _is_safety_regulatory_section(section: Mapping[str, Any]) -> bool:
@@ -316,7 +430,11 @@ def _gap_placeholder_block(
             or "干预终止" in heading
         ):
             # E12（新纪元第1轮修订）：停药规则操作化三段式骨架。
-            template = _SAFETY_STOP_RULE_TEMPLATE
+            # F1 新策略①（20261017）：安全随访窗口读已确认研究周期事实。
+            template = _SAFETY_STOP_RULE_TEMPLATE.replace(
+                "{safety_followup_sentence}",
+                _safety_followup_sentence(front_matter_overrides),
+            )
         elif "随机化" in heading or "盲法" in heading:
             # NEW-15 残留：设计短语由已确认结构化设计事实选择；未记录的值
             # 一律落「待医学经理确认」，不编造比例、区组大小或样本量。
@@ -382,6 +500,34 @@ def _gap_placeholder_block(
                 .replace("{sample_size_phrase}", sample_size_phrase)
                 .replace("{allocation_sentence}", allocation_sentence)
             )
+        elif "随访" in heading and "不良事件" in heading:
+            # F1 分化批：8.7 随访至转归（与AE定义/报告区分）。
+            template = _SAFETY_FOLLOWUP_TEMPLATE
+        elif (
+            "不良事件" in heading
+            and ("采集" in heading or "记录" in heading)
+        ):
+            # F1 分化批：8.4 记录规则+转归分类。
+            template = _SAFETY_RECORD_TEMPLATE
+        elif "评估" in heading and "不良事件" in heading:
+            # F1 分化批：8.5 CTCAE 分级+因果判定。
+            template = _SAFETY_ASSESSMENT_TEMPLATE
+        elif (
+            "报告途径" in heading
+            or (
+                "报告" in heading
+                and ("事件" in heading or "安全信息" in heading)
+            )
+        ):
+            # F1（20261016）：报告路径操作化骨架——与 AE/SAE 定义章节
+            # 区分；揭盲/妊娠/AESI/风险控制/停药等更具体分支优先级在前。
+            template = _SAFETY_REPORTING_TEMPLATE.replace(
+                "{heading}", heading
+            )
+        elif "药物过量" in heading or "给药错误" in heading:
+            template = _SAFETY_OVERDOSE_TEMPLATE.replace(
+                "{heading}", heading
+            )
         else:
             template = _SAFETY_GENERIC_TEMPLATE
         text = template.replace("{product}", product)
@@ -390,19 +536,12 @@ def _gap_placeholder_block(
             "【待补齐】本章正文尚缺来源证据支持，将在补充资料后"
             "由 AI 重写本节；当前为占位标记，正式导出前必须补齐。"
         )
-    # P0-B（新纪元第2轮修订·骨架落位批）：骨架引导句按节自身标题/范围
-    # 差异化——同一段'本节采用标准监管文本骨架（待医学经理…）'此前逐字
-    # 进多节（PV-C 实证引导句 13-14 块），现首段点名本节标题与范围；
-    # 骨架身份同时落结构化元数据（skeleton_review_pending），导出层据此
-    # 计缺口（草案-N 强制），不再让骨架正文伪装成内容。
+    # P0-B 的首段前缀改写已由 F1② 去前缀批（20261016）移除：工程身份句
+    # 『标准模板草稿，范围限本节』×14 上纸违反人话化红线（NEW-28）。骨架
+    # 身份由本块结构化元数据（skeleton_review_pending/skeleton_scope）+
+    # 占位符报告逐节点名（main.py 骨架节计缺口）+ 导出版本标签『草案-N』
+    # 承载；各模板族首段已逐节分化，反回声由既有断言守护。
     heading = str(section.get("heading") or "").strip() or "本节"
-    text = re.sub(
-        r"^本节采用标准监管文本骨架（[^）]*）。",
-        f"本『{heading}』章节为标准模板草稿，范围限本节；"
-        "待医学经理审核确认。",
-        text,
-        count=1,
-    )
     return {
         "block_id": f"gap_marker_{section.get('section_id')}",
         "block_type": "paragraph",
@@ -521,6 +660,38 @@ def _gap_placeholder_blocks(
     if _is_soa_section(section):
         return _soa_skeleton_blocks(section, front_matter_overrides)
     return [_gap_placeholder_block(section, front_matter_overrides)]
+
+# F1③（20261016，消 NEW-24）：受控表节（研究示意图/研究流程表）正文为空时
+# 的草案预览受控骨架——普通占位注入集合不覆盖 node_kind=study_schema/
+# schedule_of_activities，此前标题下零内容直接导出。
+_STUDY_SCHEMA_NOTE_TEMPLATE = (
+    "本节采用标准监管文本骨架（待医学经理审核确认）。研究示意图由结构化"
+    "示意图编辑器基于已确认研究设计事实生成（试验流程与分组示意）；当前"
+    "尚未生成，生成确认后本说明由正式示意图替换，未替换前本节不作为正式"
+    "内容导出。"
+)
+
+
+def _structured_contract_skeleton_blocks(
+    section: Mapping[str, Any],
+    node_kind: str,
+    front_matter_overrides: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    if node_kind == "schedule_of_activities":
+        return _soa_skeleton_blocks(section, front_matter_overrides)
+    if node_kind == "study_schema":
+        heading = str(section.get("heading") or "").strip() or "研究示意图"
+        return [
+            {
+                "block_id": f"gap_marker_{section.get('section_id')}_schema_note",
+                "block_type": "paragraph",
+                "text": _STUDY_SCHEMA_NOTE_TEMPLATE,
+                "source_kind": "full_draft_gap_marker",
+                "skeleton_review_pending": True,
+                "skeleton_scope": heading,
+            }
+        ]
+    return []
 
 
 
@@ -895,6 +1066,31 @@ class MedicalWritingRuntimeRepository:
                     front_matter_overrides,
                 ):
                     section.content_blocks.append(gap_block)
+        if mode == "draft_preview":
+            # F1③：受控表节（研究示意图/研究流程表）正文为空时注入受控骨架，
+            # 消『标题下零内容』的 NEW-24 导出形态（不入普通缺口集合）。
+            for section in assembled_document.sections:
+                node_kind = str(getattr(section, "node_kind", "") or "")
+                if node_kind not in {"study_schema", "schedule_of_activities"}:
+                    continue
+                body = "\n".join(
+                    str(block.get("text") or "")
+                    for block in section.content_blocks
+                    if str(block.get("block_type") or "") != "heading"
+                ).strip()
+                if body:
+                    continue
+                section.content_blocks.extend(
+                    _structured_contract_skeleton_blocks(
+                        {
+                            "section_id": str(section.section_id),
+                            "heading": str(section.heading or ""),
+                            "section_number": str(section.section_number or ""),
+                        },
+                        node_kind,
+                        front_matter_overrides,
+                    )
+                )
         if mode == "approved_final":
             self._require_content_quality_clear(assembled_document)
         return assembled_document

@@ -52,8 +52,11 @@ class FrontendMedicalWritingTranslationBatchContractTests(unittest.TestCase):
             self.assertIn(route, self.batch)
 
         self.assertIn("params.append(\"anchor_filter\", anchor)", self.batch)
+        # 自检红节点④（20261015）：面板 POST 统一走 fetchJsonWithTimeout
+        # 超时出口，正则兼容直接 fetch 与超时出口两种形态。
         create = re.search(
-            r"references/translation-batches`, \{\s*method: \"POST\".*?body: JSON\.stringify\(\{(?P<body>.*?)\}\),",
+            r"references/translation-batches`,\s*(?:fetchJsonWithTimeout\()?\s*"
+            r"\{\s*method: \"POST\".*?body: JSON\.stringify\(\{(?P<body>.*?)\}\),",
             self.batch,
             re.S,
         )
@@ -261,16 +264,26 @@ class FrontendMedicalWritingTranslationBatchContractTests(unittest.TestCase):
             self.assertIn(label, self.batch)
         self.assertIn("<SortHeader", self.batch)
         self.assertIn("setSort((current)", self.batch)
-        self.assertIn("onOpenSpan({ artifact_id: row.artifactId, span_id: row.spanId", self.batch)
+        # 自检红节点④（20261015）：行深链除 artifact/span 外必须携带章节
+        # 候选上下文（章节级译文按章节首片段 span_id 落库）。
+        self.assertIn("artifact_id: row.artifactId", self.batch)
+        self.assertIn("span_id: row.spanId", self.batch)
+        self.assertIn("translation_id: row.translationId", self.batch)
+        self.assertIn("translation_revision: row.translationRevision", self.batch)
         self.assertIn("data-admission-status={row.admissionStatus}", self.batch)
 
         for parent_state in (
             "setSelectedArtifactId(item.artifact_id)",
-            "setSpanAnchorFilter(anchor)",
-            "setSpanOffset(Math.max(0, Number(item.span_offset || 0)))",
+            # 自检红节点④：行锚点是抽取期冻结锚，用它过滤会滤空目标片段——
+            # 行入口固定以"全部结构"打开。
+            'setSpanAnchorFilter("all")',
+            "setSpanOffset(0)",
             "setSelectedSpanId(item.span_id)",
             'setActiveView("translations")',
             "translationReviewRef.current?.scrollIntoView",
+            # 章节候选焦点：按行携带的 translation_id 对准章节级译文。
+            "setFocusTranslationId(String(item.translation_id || \"\"))",
+            "refreshWorkspace({ preserveMessage: true })",
         ):
             self.assertIn(parent_state, self.reference)
         self.assertIn("onOpenSpan={openTranslationBatchSpan}", self.reference)

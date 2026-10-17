@@ -1776,21 +1776,36 @@ class TestTriageRunCreation(TriageTestBase):
         )
         self.assertEqual(TRIAGE_MODEL_NAME, response.run.response_model)
 
-    def test_revision_mismatch_raises_conflict(self):
+    def test_revision_mismatch_no_longer_blocks_creation(self):
+        """NEW-6（第2轮末修订，20261017）：重分诊不再被 revision 计数器硬拦。
+
+        旧契约（revision 不匹配即 CompetitorTriageConflictError）把任何
+        编辑后的重新分诊永久卡死（现场 16/16 完成后仍报 stale journey
+        revision）。新契约：创建消费当前 journey（自动重定基）；定义内容
+        真变由运行后 stale 检测与确认侧结构化冲突兜底。
+        """
         candidates = [_make_candidate("NCT00000001")]
         snapshot = self._bind_snapshot(candidates)
 
-        provider = FakeTriageProvider(responses_by_chunk={})
-        with self.assertRaises(CompetitorTriageConflictError):
-            self.service.create_run(
-                self.project_id,
-                CompetitorTriageCreateRequest(
-                    snapshot_id=snapshot.snapshot_id,
-                    expected_journey_revision=self.journey_revision + 999,
-                idempotency_key="ct-test-conflict",
-                ),
-                provider,
-            )
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]}
+            }
+        )
+        response = self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=self.journey_revision + 999,
+            idempotency_key="ct-test-conflict",
+            ),
+            provider,
+        )
+        self.assertIn(
+            response.run.status,
+            {CompetitorTriageRunStatus.QUEUED, CompetitorTriageRunStatus.REVIEW_READY},
+        )
+        self.assertNotEqual("", response.run.definition_hash)
 
     def test_snapshot_not_bound_raises_error(self):
         candidates = [_make_candidate("NCT00000001")]
@@ -3760,6 +3775,181 @@ class TestSchemaMigration(unittest.TestCase):
             self.assertIn("competitor_triage_confirmations", tables)
         finally:
             tmp.cleanup()
+
+
+
+# ── NEW-6 分诊确认死锁根治（第2轮末修订策略，20261017）────────────────────
+# 现场（第2轮 16/16 完成后仍报错）：①重新分诊被 journey revision 计数器
+# 硬拦（create_run 'stale journey revision: expected X, current Y'——任何
+# 编辑推高 revision 即永久卡死重试）；②事实真变的过期 run 确认走泛化
+# REVIEW_READY 拒绝，无『研究设计已变化，需重新分诊』结构化出路。
+# 契约：创建消费当前事实（自动重定基）；事实真变 → 结构化冲突
+# conflict_kind=research_design_changed + 人话；revision-only 漂移确认时
+# 自动重定基并记录当前 revision；run 补存 definition_hash。
+
+
+class ResearchDesignConflictTests(TriageTestBase):
+    def _create_run_now(self, snapshot, key: str):
+        journey = self.journey_service.get(self.project_id)
+        provider = FakeTriageProvider(
+            responses_by_chunk={
+                0: {"results": [_make_candidate_result("NCT00000001")]}
+            }
+        )
+        return self.service.create_run(
+            self.project_id,
+            CompetitorTriageCreateRequest(
+                snapshot_id=snapshot.snapshot_id,
+                expected_journey_revision=journey.revision,
+                idempotency_key=key,
+            ),
+            provider,
+        )
+
+    def test_retriage_after_edits_not_blocked_by_revision_counter(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        self._create_run_now(snapshot, "nd6-create-1")
+        # 仅推进 revision 的编辑（title 采纳）：旧代码在 create_run 即以
+        # 'stale journey revision' 硬拦重新分诊（NEW-6 现场死锁面）。
+        journey_now = self.journey_service.get(self.project_id)
+        changed_framing = journey_now.framing.model_copy(
+            update={"document_title": "ND6 retriage title"},
+            deep=True,
+        )
+        preview = self.journey_service.impact_preview(
+            self.project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=journey_now.revision,
+                stage="framing",
+                framing=changed_framing,
+            ),
+        )
+        self.journey_service.commit_stage(
+            self.project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=journey_now.revision,
+                stage="framing",
+                framing=changed_framing,
+                impact_preview_id=preview.preview_id,
+                actor="test",
+                idempotency_key="nd6-retriage-edit",
+            ),
+        )
+        current = self.journey_service.get(self.project_id)
+        self.assertGreater(current.revision, journey_now.revision)
+
+        # 重新分诊携带旧 expected revision：不得被计数器硬拦（自动重定基）。
+        response = self._create_run_now(snapshot, "nd6-create-2")
+        self.assertIn(
+            response.run.status,
+            {CompetitorTriageRunStatus.QUEUED, CompetitorTriageRunStatus.REVIEW_READY},
+            "重新分诊必须成功创建（legacy 内联模式可能已完成到 review_ready）。",
+        )
+        self.assertEqual(
+            current.revision,
+            response.run.journey_revision,
+            "重分诊必须消费当前 journey（revision 重定基），"
+            "任何编辑不得永久卡死重新分诊（NEW-6 现场死锁面）。",
+        )
+
+    def test_fact_changed_run_confirm_raises_structured_conflict(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        response = self._create_run_now(snapshot, "nd6-create-3")
+        self._bump_journey_revision(idempotency_key="nd6-edit-3")
+
+        self.service.get_run(self.project_id, response.run.run_id)
+        from services.api.app.medical_writing_competitor_triage import (
+            CompetitorTriageResearchDesignChangedError,
+        )
+
+        with self.assertRaises(CompetitorTriageResearchDesignChangedError) as ctx:
+            self.service.confirm_basket(
+                self.project_id,
+                response.run.run_id,
+                CompetitorTriageBasketConfirmationRequest(
+                    expected_run_revision=response.run.canonical_input_hash,
+                    retained_nct_ids=["NCT00000001"],
+                    excluded_nct_ids=[],
+                    final_classifications={"NCT00000001": "direct_competitor"},
+                    actor="test",
+                    reason="nd6",
+                    idempotency_key="nd6-confirm-stale",
+                    expected_journey_revision=self.journey_service.get(
+                        self.project_id
+                    ).revision,
+                ),
+            )
+        self.assertEqual(
+            "research_design_changed",
+            getattr(ctx.exception, "conflict_kind", ""),
+            "必须携带结构化 conflict_kind 供前端渲染重分诊出路。",
+        )
+        self.assertIn("重新分诊", str(ctx.exception))
+
+    def test_revision_only_drift_confirms_with_rebased_revision(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        response = self._create_run_now(snapshot, "nd6-create-4")
+        journey_before = self.journey_service.get(self.project_id)
+        # title-only 采纳：revision 推进而事实不变。
+        changed_framing = journey_before.framing.model_copy(
+            update={"document_title": "ND6 derived title"},
+            deep=True,
+        )
+        preview = self.journey_service.impact_preview(
+            self.project_id,
+            MedicalWritingJourneyImpactPreviewRequest(
+                expected_revision=journey_before.revision,
+                stage="framing",
+                framing=changed_framing,
+            ),
+        )
+        self.journey_service.commit_stage(
+            self.project_id,
+            MedicalWritingAuthoringJourneyCommitRequest(
+                expected_revision=journey_before.revision,
+                stage="framing",
+                framing=changed_framing,
+                impact_preview_id=preview.preview_id,
+                actor="test",
+                idempotency_key="nd6-title-only",
+            ),
+        )
+        current = self.journey_service.get(self.project_id)
+        self.assertGreater(current.revision, journey_before.revision)
+
+        confirmation = self.service.confirm_basket(
+            self.project_id,
+            response.run.run_id,
+            CompetitorTriageBasketConfirmationRequest(
+                expected_run_revision=response.run.canonical_input_hash,
+                retained_nct_ids=["NCT00000001"],
+                excluded_nct_ids=[],
+                final_classifications={"NCT00000001": "direct_competitor"},
+                actor="test",
+                reason="nd6 rebase",
+                idempotency_key="nd6-confirm-rebase",
+                expected_journey_revision=journey_before.revision,
+            ),
+        )
+        self.assertEqual(
+            current.revision,
+            confirmation.journey_revision,
+            "事实未变的 revision-only 漂移：确认必须自动重定基并记录当前 revision。",
+        )
+
+    def test_definition_hash_persisted_on_run(self):
+        candidates = [_make_candidate("NCT00000001")]
+        snapshot = self._bind_snapshot(candidates)
+        response = self._create_run_now(snapshot, "nd6-create-5")
+        self.assertTrue(response.run.definition_hash)
+        self.assertEqual(
+            response.run.material_facts_hash,
+            response.run.definition_hash,
+            "definition_hash=研究定义内容hash（创建时点冻结），供确认侧对账。",
+        )
 
 
 if __name__ == "__main__":

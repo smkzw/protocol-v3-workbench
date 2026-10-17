@@ -256,6 +256,10 @@ export function WritingReferencePanel({
   const [selectedNctId, setSelectedNctId] = useState("");
   const [selectedArtifactId, setSelectedArtifactId] = useState("");
   const [selectedSpanId, setSelectedSpanId] = useState("");
+  // 自检红节点④（20261015）：批次行"核对译文"携带的章节候选 translation_id。
+  // 章节级译文按章节首片段 span_id 落库，点击同章非首片段的行时按 span_id
+  // 找不到候选；此焦点让片段区直接对准该行候选。人工切换片段/文档时清除。
+  const [focusTranslationId, setFocusTranslationId] = useState("");
   const [reason, setReason] = useState("");
   const [reviewComment, setReviewComment] = useState("");
   // R26 自检第3次 P0-A：忠实度阻断译文的作者残留准入——逐项确认的阻断码。
@@ -654,7 +658,12 @@ export function WritingReferencePanel({
   const selectedExtractionReview = (workspace?.extraction_reviews || [])
     .filter((item) => item.artifact_id === selectedArtifactId && item.extraction_revision === selectedExtractionRevision)
     .sort((left, right) => right.revision - left.revision)[0];
-  const selectedTranslation = currentSpanTranslation(workspace, selectedSpan);
+  // 自检红节点④：批次行携带的章节候选优先——章节译文按章节首片段 span_id
+  // 落库，同章非首片段的行按 span_id 匹配不到；焦点候选存在时直接对准。
+  const focusTranslation = focusTranslationId
+    ? (workspace?.translations || []).find((item) => item.translation_id === focusTranslationId)
+    : null;
+  const selectedTranslation = focusTranslation || currentSpanTranslation(workspace, selectedSpan);
   const selectedReview = currentReview(workspace, selectedTranslation);
   const selectedBrief = (workspace?.evidence_brief_history || []).find(
     (item) => item.translation_id === selectedTranslation?.translation_id
@@ -1483,9 +1492,6 @@ export function WritingReferencePanel({
   };
 
   const openTranslationBatchSpan = (item) => {
-    const anchor = item.ich_m11_anchor && item.ich_m11_anchor !== "unmapped"
-      ? item.ich_m11_anchor
-      : "all";
     const artifact = (workspace?.artifacts || []).find(
       (candidate) => candidate.artifact_id === item.artifact_id,
     );
@@ -1493,11 +1499,17 @@ export function WritingReferencePanel({
       setSelectedNctId(item.nct_id || artifact.nct_id);
     }
     setSelectedArtifactId(item.artifact_id);
-    setSpanAnchorFilter(anchor);
-    setSpanOffset(Math.max(0, Number(item.span_offset || 0)));
+    // 自检红节点④：行锚点是抽取期冻结锚，文档计划可 refine 章节归属——
+    // 用它过滤片段列表会把目标片段滤空，读取回调再以首条静默覆盖选中。
+    // 行入口一律以"全部结构"打开，保证目标片段必然可见；人工筛选不受影响。
+    setSpanAnchorFilter("all");
+    setSpanOffset(0);
     setSelectedSpanId(item.span_id);
+    setFocusTranslationId(String(item.translation_id || ""));
     setActiveView("translations");
     setMessage("已定位到具体片段；请在现有单片段区对照原文完成作者确认。");
+    // 批次新生成的候选译文落在服务端；不刷新工作区时片段区拿不到该行候选。
+    refreshWorkspace({ preserveMessage: true });
     globalThis.setTimeout(() => translationReviewRef.current?.scrollIntoView({ block: "start", behavior: "smooth" }), 0);
   };
 
@@ -1873,7 +1885,7 @@ export function WritingReferencePanel({
               onBatchSettled={refreshAuthoringAfterBatchSettled}
             />
           )}
-          <label ref={translationReviewRef} className="writing-reference-select writing-reference-translation-review-anchor">已登记文档<select value={selectedArtifactId} onChange={(event) => setSelectedArtifactId(event.target.value)}>{(workspace?.artifacts || []).map((item) => <option value={item.artifact_id} key={item.artifact_id}>{item.nct_id} · {item.filename}</option>)}</select></label>
+          <label ref={translationReviewRef} className="writing-reference-select writing-reference-translation-review-anchor">已登记文档<select value={selectedArtifactId} onChange={(event) => { setSelectedArtifactId(event.target.value); setFocusTranslationId(""); }}>{(workspace?.artifacts || []).map((item) => <option value={item.artifact_id} key={item.artifact_id}>{item.nct_id} · {item.filename}</option>)}</select></label>
           {selectedArtifact && !selectedArtifact.source_current && <div className="writing-reference-invalid"><AlertTriangle size={15} />该来源版本已失效，对应译文和批准引用已退出写作参考库。</div>}
           {selectedValidation && (
             <div className={`writing-reference-validation ${["mismatch", "needs_review"].includes(selectedValidation.status) ? "requires-review" : ""}`}>
@@ -1951,7 +1963,7 @@ export function WritingReferencePanel({
               </select>
             </label>
             <label className="writing-reference-select">结构化片段
-              <select value={selectedSpanId} onChange={(event) => setSelectedSpanId(event.target.value)}>
+              <select value={selectedSpanId} onChange={(event) => { setSelectedSpanId(event.target.value); setFocusTranslationId(""); }}>
                 {spans.map((item) => <option value={item.span_id} key={item.span_id}>{spanOptionLabel(item)}</option>)}
               </select>
             </label>

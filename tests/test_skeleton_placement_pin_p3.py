@@ -45,9 +45,12 @@ class SkeletonPlacementPinTests(unittest.TestCase):
         }
         texts = _skeleton_texts(section)
         self.assertTrue(texts)
-        for text in texts:
-            self.assertIn("6.4", text.split("。")[0])
-            self.assertIn("范围限本节", text.split("。")[0])
+        # F1② 去前缀批（20261016）：身份从正文迁到结构化元数据——落位契约
+        # 保留（骨架落本节），正文不再印『标准模板草稿，范围限本节』。
+        for block in _gap_blocks(section):
+            self.assertIs(True, block.get("skeleton_review_pending"))
+            self.assertEqual("6.4 研究性干预剂量调整", block.get("skeleton_scope"))
+            self.assertNotIn("标准模板草稿", str(block.get("text") or ""))
 
     def test_no_skeleton_block_leaks_to_appendix_sections(self) -> None:
         appendix = {
@@ -78,13 +81,13 @@ class SkeletonPlacementPinTests(unittest.TestCase):
         }
         texts = _skeleton_texts(section)
         self.assertTrue(texts)
+        # F1②：去前缀后首段不再点名节号；落位与身份走元数据。
         self.assertTrue(
-            any("4.7" in text.split("。")[0] for text in texts),
-            "风险控制骨架首段必须点名 4.7 本节。",
+            any("数据监查委员会" in text or "DMC" in text for text in texts),
+            "风险控制骨架必须含 DMC/SRC 内容。",
         )
-        self.assertTrue(
-            any("数据监查委员会" in text or "DMC" in text for text in texts)
-        )
+        for block in _gap_blocks(section):
+            self.assertEqual("4.7 数据监查委员会与风险控制", block.get("skeleton_scope"))
 
 
 class SoaSkeletonRenderPositionTests(unittest.TestCase):

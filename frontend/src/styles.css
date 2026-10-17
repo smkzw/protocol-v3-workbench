@@ -12757,8 +12757,16 @@ textarea {
 .working-copy-status-main > .working-copy-identity {
   min-width: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 5px;
+}
+
+/* 预清理批 r3（20261003b④ 真机反例：『文档工作副 本』『尚未保存版 本』
+   断词两行）：标识与版本值各自整词一行，容器只在元素之间换行。 */
+.working-copy-status-main > .working-copy-identity > span,
+.working-copy-status-main > .working-copy-identity > strong {
+  white-space: nowrap;
 }
 
 .working-copy-status-main span,

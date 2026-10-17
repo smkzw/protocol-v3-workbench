@@ -99,10 +99,30 @@ _PHASE_CN_NUMERALS = (
     ("三期", "3"),
     ("四期", "4"),
 )
-_PHASE_TOKEN_RE = re.compile(r"IV|III|II|I|[1-4]")
+# P0-1（NEW-18，新纪元第2轮末修订）：token 带子阶段后缀（Ib/IIa/IIb），
+# 建项不再把 'IIa期' 静默折叠为 'II期'；最长匹配优先（IIb/IIa 先于 II），
+# 大小写形态（plain form 会转大写）一并覆盖。
+_PHASE_TOKEN_RE = re.compile(r"IV|III|II[ABab]?|I[ABab]?|[1-4][ABab]?|[1-4]")
+_PHASE_SUBPHASE_CANONICAL = {"IB": "Ib", "IIA": "IIa", "IIB": "IIb"}
+
+
+def _canonical_phase_token(token: str) -> str:
+    upper = token.upper()
+    if upper in _PHASE_SUBPHASE_CANONICAL:
+        return _PHASE_SUBPHASE_CANONICAL[upper]
+    return _PHASE_DIGIT_ROMAN.get(token.lower(), token)
 _PHASE_SEPARATOR_CHARS = "/+-· 、,，;；:："
 # 规范标签一律用罗马数字（'3期'→'III期'），与既有 I期/II期/III期 口径一致。
-_PHASE_DIGIT_ROMAN = {"1": "I", "2": "II", "3": "III", "4": "IV"}
+_PHASE_DIGIT_ROMAN = {
+    "1": "I",
+    "1a": "Ib",
+    "1b": "Ib",
+    "2": "II",
+    "2a": "IIa",
+    "2b": "IIb",
+    "3": "III",
+    "4": "IV",
+}
 
 
 def _phase_plain_form(value: str) -> str:
@@ -121,7 +141,7 @@ def _normalize_study_phase_label(value: str) -> tuple[str, str]:
     """
     normalized = _phase_plain_form(value)
     if not normalized:
-        return "", ""
+        return "", "", False
     expression = ""
     position = 0
     while position < len(normalized):
@@ -137,10 +157,14 @@ def _normalize_study_phase_label(value: str) -> tuple[str, str]:
         break
     tokens = [token for token in _PHASE_TOKEN_RE.findall(expression) if token]
     if not tokens:
-        return "", ""
-    canonical = "/".join(_PHASE_DIGIT_ROMAN.get(token, token) for token in tokens) + "期"
+        return "", "", False
+    # P0-1（NEW-18）：子阶段规范化——IIA/IIb/2a 等统一为规范标签
+    # （IIa期/IIb期/Ib期），既有整期 token 行为不变。
+    canonical = "/".join(_canonical_phase_token(token) for token in tokens) + "期"
     code_token = re.sub(r"[^A-Za-z0-9]+", "", canonical).upper()
-    return canonical, code_token
+    # fully_parsed：整个输入都被解析为分期表达（无未知尾巴）——调用方
+    # 据此安全地整体改写为规范标签（数字/大小写形态 → 罗马子阶段形态）。
+    return canonical, code_token, position >= len(normalized)
 
 
 class UserProjectCreateRequest(WorkbenchModel):
@@ -171,23 +195,19 @@ class UserProjectCreateRequest(WorkbenchModel):
             "idempotency_key",
         ):
             setattr(self, field_name, str(getattr(self, field_name)).strip())
-        canonical_phase, phase_token = _normalize_study_phase_label(self.study_phase)
+        canonical_phase, phase_token, fully_parsed_phase = (
+            _normalize_study_phase_label(self.study_phase)
+        )
         if not canonical_phase:
             raise ValueError(
                 "研究分期无法识别，请选择I-IV期（如 II期、III期）；留空或填写"
                 "「不适用/待定」都无法建项"
             )
-        # 纯分期表达（含罗马/中文数词写法）整体改写为规范标签；带自由文本
-        # 尾巴的输入保留原文，仅用归一 token 生成代号。比较前把数字形态也
-        # 折算成罗马数字，使 '三期'（数字形态 '3'）与 'III期' 可判等。
-        normalized_plain = _phase_plain_form(self.study_phase)
-        normalized_roman = "".join(
-            _PHASE_DIGIT_ROMAN.get(char, char) for char in normalized_plain
-        )
-        separator_pattern = rf"[{re.escape(_PHASE_SEPARATOR_CHARS)}\s]"
-        if re.sub(separator_pattern, "", normalized_roman) == re.sub(
-            separator_pattern, "", canonical_phase[:-1]
-        ):
+        # 纯分期表达（含罗马/中文数词写法与子阶段 Ib/IIa/IIb）整体改写为
+        # 规范标签；带自由文本尾巴的输入保留原文，仅用归一 token 生成代号
+        # （P0-1：改写判据改为'整个输入都被解析为分期表达'，数字子阶段
+        # '2a期' 与罗马子阶段 'IIa期' 同路规范化）。
+        if fully_parsed_phase:
             self.study_phase = canonical_phase
         if not self.project_code:
             if not phase_token or phase_token == "PHASE":
@@ -3964,6 +3984,11 @@ class MedicalWritingPicosDefinition(WorkbenchModel):
     # 『假设未具名溯源，建议引用外部先例』——数字正确但说出处是样本量
     # 闭环的最后一段（r9-B 对照结论：系统有推导无出处、成型有出处无推导）。
     sample_size_anchor: str = Field(default="", max_length=500)
+    # 新纪元第1轮修订（P1-53/账本E9）：口径指纹——五要素（单双侧|α|把握度
+    # |δ|SD，比例型由 p1/p2 推导）解析成功后随 PICOS 提交持久化；后续
+    # 修订假设导致指纹变化时强制重跑样本量复算门，新旧指纹与复算结果入
+    # journey 提交事件留痕（供审阅侧看到『基数因何变化』）。
+    sample_size_fingerprint: str = Field(default="", max_length=16)
     statistical_strategy: str = Field(default="", max_length=5_000)
 
     @model_validator(mode="after")
@@ -8327,6 +8352,11 @@ class CompetitorTriageRun(WorkbenchModel):
     snapshot_hash: str = ""
     journey_revision: int = 0
     material_facts_hash: str = ""
+    # NEW-6（第2轮末修订，20261017）：研究定义内容 hash（创建时点冻结，
+    # =material_facts_hash），确认侧以『当前定义 hash vs 运行定义 hash』
+    # 对账取代 journey revision 计数器——计数器被任何编辑推高即永久卡死
+    # 重分诊/确认（现场 16/16 完成后仍报 stale journey revision）。
+    definition_hash: str = ""
     chunks: List[CompetitorTriageChunkRecord] = Field(default_factory=list)
     recommended_retain: List[str] = Field(default_factory=list)
     recommended_exclude: List[str] = Field(default_factory=list)
@@ -8363,6 +8393,10 @@ class CompetitorTriageBasketConfirmationRequest(WorkbenchModel):
     reason: str = Field(default="", max_length=500)
     idempotency_key: str = Field(min_length=8, max_length=160)
     expected_journey_revision: int = Field(ge=1)
+    # 自检r1-4红节点②（2026-10-14）：PARTIAL_FAILED 分诊的显式知晓确认——
+    # 未分诊候选只能按「暂不纳入本轮篮子」处理。默认 False：既有调用方
+    # 的 fail-closed 行为完全不变。
+    partial_coverage_acknowledgement: bool = False
 
 class CompetitorTriageProjectionRetryRequest(WorkbenchModel):
     actor: str = Field(default="medical_manager", min_length=2, max_length=80)
