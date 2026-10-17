@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DecisionCard",
+  "type": "object",
+  "required": ["card_id", "fact_paths", "question", "options", "recommended_index", "affects_sections"],
+  "properties": {
+    "card_id": {"type": "string"},
+    "fact_paths": {"type": "array", "items": {"type": "string"}, "description": "相关字段成组原子提交"},
+    "question": {"type": "string", "description": "一句话，用户语言"},
+    "options": {
+      "type": "array", "minItems": 2, "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["label", "values", "analysis"],
+        "properties": {
+          "label": {"type": "string"},
+          "values": {"type": "object", "description": "选中后直接写入 StudyDefinition 的值"},
+          "analysis": {"type": "string", "description": "适用条件；对样本量/可行性/监管的影响；竞品怎么做"},
+          "competitor_precedent": {"type": "array", "items": {"type": "string"}, "description": "竞品研究ID"},
+          "evidence_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "recommended_index": {"type": "integer", "description": "默认预选，不等于用户已确认"},
+    "recommendation_reason": {"type": "string"},
+    "risk": {"enum": ["high", "medium"]},
+    "affects_sections": {"type": "array", "items": {"type": "string"}}
+  }
+}

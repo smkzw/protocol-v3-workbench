@@ -1,0 +1,19 @@
+# 由 111 份冻结章节合同压缩生成；禁止出现具体药物/疾病/量表名
+semantic_node_id: v2_n_11_1
+title: 样本量
+tier: D            # D 决定类 / C 惯例类 / N 叙述类
+risk: high
+purpose: 说明样本量的计算依据，使统计审阅者可以复算。
+must_cover:
+  - 主要终点与检验假设（优效/非劣效/等效）
+  - 检验方法、单双侧、α、把握度
+  - 效应量与变异度假设及其来源
+  - 分配比例、脱落率与最终例数
+  - 期中分析或多重性对样本量的影响（如适用）
+consumes_facts:
+  - picos.primary_endpoint
+  - framing.structured_design.hypothesis
+  - statistics.sample_size.*
+rendered_by: sample_size_calculator   # 数字由渲染器产出，模型只写解释段
+length_chars: [300, 900]
+decision_card_if_missing: [statistics.sample_size.assumptions, statistics.sample_size.attrition]

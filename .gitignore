@@ -35,3 +35,15 @@ artifacts/
 pocs/protocol_v3/**/results/
 *.sqlite-shm
 *.sqlite-wal
+runs/benchmark_real_protocols/
+
+# M0 2026-10-17（reboot包止血）：运行产物与敏感资料不入库（本地保留）
+runs/
+eval/fixtures/
+eval/reports/*.json
+benchmark_real_protocols/
+*.sqlite3.bak*
+*.sqlite.pre-cleanup*
+# 真实方案/IB/竞品下载件类（防新提交误带入）
+*.ib.pdf
+*_IB_*.pdf
