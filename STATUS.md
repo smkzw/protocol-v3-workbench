@@ -13,7 +13,7 @@
 | M0-5 STATUS/DECISIONS 建立 | 完成 | 本文件 + DECISIONS.md |
 | M1 eval 基建 | 骨架可运行 | WP-M1-EVAL合入：对齐/指标/报告链路，MY009产物实测覆盖率38.6%；泄漏与事实冲突待补 |
 | M2 竞品语料（轨道B） | 未开始 | schema 定稿后开工 |
-| M3 写作引擎（轨道C） | 未开始 | schema 定稿后开工 |
+| M3 写作引擎（轨道C） | lint+SectionCard生成器骨架完成 | 74卡(D26/C39/N9)+needs_review37；lint抓旧提示4类违规；逐节生成主路径未动（待M1度量+M2语料） |
 
 ## 已失效的历史机制（不再执行）
 
