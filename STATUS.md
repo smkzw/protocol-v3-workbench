@@ -12,7 +12,7 @@
 | M0-4 全量测试状态记录 | 进行中 | 后台运行，失败族记录待出 |
 | M0-5 STATUS/DECISIONS 建立 | 完成 | 本文件 + DECISIONS.md |
 | M4 决定卡与设计步骤 | 样本量计算器完成 | 四设计33测试绿；决定卡/前端未开始 |
-| M1 eval 基建 | 骨架可运行 | WP-M1-EVAL合入：对齐/指标/报告链路，MY009产物实测覆盖率38.6%；泄漏与事实冲突待补 |
+| M1 eval 基建 | 骨架+fixture抽取完成 | 3 fixture（129/141/160节）落盘runtime；dev/held-out划分与基线全量出分待做 | WP-M1-EVAL合入：对齐/指标/报告链路，MY009产物实测覆盖率38.6%；泄漏与事实冲突待补 |
 | M2 竞品语料（轨道B） | 检索分类管线完成 | TopK用户确认/StyleKit/ClauseBank生成待做；专病函数替换未动（B05在M2后续包） | schema 定稿后开工 |
 | M3 写作引擎（轨道C） | lint+SectionCard生成器骨架完成 | 74卡(D26/C39/N9)+needs_review37；lint抓旧提示4类违规；逐节生成主路径未动（待M1度量+M2语料） |
 
